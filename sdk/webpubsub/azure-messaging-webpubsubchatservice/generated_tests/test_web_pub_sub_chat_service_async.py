@@ -111,6 +111,15 @@ class TestWebPubSubChatServiceAsync(WebPubSubChatServiceClientTestBaseAsync):
 
     @WebPubSubChatServicePreparer()
     @recorded_by_proxy_async
+    async def test_list_rooms(self, webpubsubchatservice_endpoint):
+        client = self.create_async_client(endpoint=webpubsubchatservice_endpoint)
+        response = client.list_rooms()
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @WebPubSubChatServicePreparer()
+    @recorded_by_proxy_async
     async def test_create_or_replace_room(self, webpubsubchatservice_endpoint):
         client = self.create_async_client(endpoint=webpubsubchatservice_endpoint)
         response = await client.create_or_replace_room(
@@ -138,6 +147,83 @@ class TestWebPubSubChatServiceAsync(WebPubSubChatServiceClientTestBaseAsync):
         client = self.create_async_client(endpoint=webpubsubchatservice_endpoint)
         response = await client.delete_room(
             room_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @WebPubSubChatServicePreparer()
+    @recorded_by_proxy_async
+    async def test_list_topics(self, webpubsubchatservice_endpoint):
+        client = self.create_async_client(endpoint=webpubsubchatservice_endpoint)
+        response = client.list_topics(
+            room_id="str",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @WebPubSubChatServicePreparer()
+    @recorded_by_proxy_async
+    async def test_create_or_replace_topic(self, webpubsubchatservice_endpoint):
+        client = self.create_async_client(endpoint=webpubsubchatservice_endpoint)
+        response = await client.create_or_replace_topic(
+            room_id="str",
+            topic_id="str",
+            resource={
+                "conversationId": "str",
+                "createdAt": "2020-02-20 00:00:00",
+                "createdBy": "str",
+                "etag": "str",
+                "id": "str",
+                "state": "str",
+                "title": "str",
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @WebPubSubChatServicePreparer()
+    @recorded_by_proxy_async
+    async def test_get_topic(self, webpubsubchatservice_endpoint):
+        client = self.create_async_client(endpoint=webpubsubchatservice_endpoint)
+        response = await client.get_topic(
+            room_id="str",
+            topic_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @WebPubSubChatServicePreparer()
+    @recorded_by_proxy_async
+    async def test_update_topic(self, webpubsubchatservice_endpoint):
+        client = self.create_async_client(endpoint=webpubsubchatservice_endpoint)
+        response = await client.update_topic(
+            room_id="str",
+            topic_id="str",
+            resource={
+                "conversationId": "str",
+                "createdAt": "2020-02-20 00:00:00",
+                "createdBy": "str",
+                "etag": "str",
+                "id": "str",
+                "state": "str",
+                "title": "str",
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @WebPubSubChatServicePreparer()
+    @recorded_by_proxy_async
+    async def test_delete_topic(self, webpubsubchatservice_endpoint):
+        client = self.create_async_client(endpoint=webpubsubchatservice_endpoint)
+        response = await client.delete_topic(
+            room_id="str",
+            topic_id="str",
         )
 
         # please add some check logic here by yourself
@@ -181,6 +267,15 @@ class TestWebPubSubChatServiceAsync(WebPubSubChatServiceClientTestBaseAsync):
 
     @WebPubSubChatServicePreparer()
     @recorded_by_proxy_async
+    async def test_list_users(self, webpubsubchatservice_endpoint):
+        client = self.create_async_client(endpoint=webpubsubchatservice_endpoint)
+        response = client.list_users()
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @WebPubSubChatServicePreparer()
+    @recorded_by_proxy_async
     async def test_get_user(self, webpubsubchatservice_endpoint):
         client = self.create_async_client(endpoint=webpubsubchatservice_endpoint)
         response = await client.get_user(
@@ -210,5 +305,16 @@ class TestWebPubSubChatServiceAsync(WebPubSubChatServiceClientTestBaseAsync):
             user_id="str",
         )
 
+        # please add some check logic here by yourself
+        # ...
+
+    @WebPubSubChatServicePreparer()
+    @recorded_by_proxy_async
+    async def test_list_rooms_for_user(self, webpubsubchatservice_endpoint):
+        client = self.create_async_client(endpoint=webpubsubchatservice_endpoint)
+        response = client.list_rooms_for_user(
+            user_id="str",
+        )
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

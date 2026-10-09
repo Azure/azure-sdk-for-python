@@ -12,7 +12,7 @@ from typing_extensions import Required, TypedDict
 from .models._enums import ChatUserKind
 
 if TYPE_CHECKING:
-    from .models import ChatPermission
+    from .models import ChatPermission, ChatTopicState
 
 
 class ChatMessage(TypedDict, total=False):
@@ -102,6 +102,43 @@ class ChatRoomMember(TypedDict, total=False):
     """User ID of the member. Required."""
     roleName: Required[str]
     """Room role assigned to the user within this room. Required."""
+    etag: Required[str]
+    """The entity tag for this resource. Required."""
+
+
+class ChatTopic(TypedDict, total=False):
+    """Represents a chat topic in a room.
+
+    :ivar id: Topic identifier unique within the room. Required.
+    :vartype id: str
+    :ivar title: Topic title. Required.
+    :vartype title: str
+    :ivar createdAt: Timestamp when the topic was created. Required.
+    :vartype createdAt: str
+    :ivar createdBy: User who created the topic. Required.
+    :vartype createdBy: str
+    :ivar state: Current lifecycle state of the topic. Required. Known values are: "Normal",
+     "Archived", and "SoftDeleted".
+    :vartype state: Union[str, "ChatTopicState"]
+    :ivar conversationId: Conversation associated with this topic. Required.
+    :vartype conversationId: str
+    :ivar etag: The entity tag for this resource. Required.
+    :vartype etag: str
+    """
+
+    id: Required[str]
+    """Topic identifier unique within the room. Required."""
+    title: Required[str]
+    """Topic title. Required."""
+    createdAt: Required[str]
+    """Timestamp when the topic was created. Required."""
+    createdBy: Required[str]
+    """User who created the topic. Required."""
+    state: Required[Union[str, "ChatTopicState"]]
+    """Current lifecycle state of the topic. Required. Known values are: \"Normal\", \"Archived\", and
+     \"SoftDeleted\"."""
+    conversationId: Required[str]
+    """Conversation associated with this topic. Required."""
     etag: Required[str]
     """The entity tag for this resource. Required."""
 

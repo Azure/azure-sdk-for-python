@@ -35,6 +35,7 @@ from .._configuration import WebPubSubChatServiceClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC, prep_if_match, prep_if_none_match
+from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
@@ -49,7 +50,7 @@ def build_web_pub_sub_chat_service_get_conversation_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -82,7 +83,7 @@ def build_web_pub_sub_chat_service_list_messages_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -121,7 +122,7 @@ def build_web_pub_sub_chat_service_delete_message_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/api/hubs/{hub}/chat/conversations/{conversationId}/messages/{messageId}"
     path_format_arguments = {
@@ -159,7 +160,7 @@ def build_web_pub_sub_chat_service_update_message_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -195,7 +196,7 @@ def build_web_pub_sub_chat_service_list_roles_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -227,7 +228,7 @@ def build_web_pub_sub_chat_service_get_role_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -260,7 +261,7 @@ def build_web_pub_sub_chat_service_create_or_replace_role_request(  # pylint: di
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -300,7 +301,7 @@ def build_web_pub_sub_chat_service_delete_role_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/api/hubs/{hub}/chat/roles/{roleName}"
     path_format_arguments = {
@@ -324,6 +325,38 @@ def build_web_pub_sub_chat_service_delete_role_request(  # pylint: disable=name-
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_web_pub_sub_chat_service_list_rooms_request(  # pylint: disable=name-too-long
+    hub: str, *, max_page_size: Optional[int] = None, continuation_token_parameter: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/api/hubs/{hub}/chat/rooms"
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if max_page_size is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("max_page_size", max_page_size, "int")
+    if continuation_token_parameter is not None:
+        _params["continuationToken"] = _SERIALIZER.query(
+            "continuation_token_parameter", continuation_token_parameter, "str"
+        )
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_web_pub_sub_chat_service_create_or_replace_room_request(  # pylint: disable=name-too-long
     room_id: str,
     hub: str,
@@ -336,7 +369,7 @@ def build_web_pub_sub_chat_service_create_or_replace_room_request(  # pylint: di
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -371,7 +404,7 @@ def build_web_pub_sub_chat_service_get_room_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -403,12 +436,201 @@ def build_web_pub_sub_chat_service_delete_room_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/api/hubs/{hub}/chat/rooms/{roomId}"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str"),
         "roomId": _SERIALIZER.url("room_id", room_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_web_pub_sub_chat_service_list_topics_request(  # pylint: disable=name-too-long
+    room_id: str,
+    hub: str,
+    *,
+    max_page_size: Optional[int] = None,
+    continuation_token_parameter: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/api/hubs/{hub}/chat/rooms/{roomId}/topics"
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, "str"),
+        "roomId": _SERIALIZER.url("room_id", room_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if max_page_size is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("max_page_size", max_page_size, "int")
+    if continuation_token_parameter is not None:
+        _params["continuationToken"] = _SERIALIZER.query(
+            "continuation_token_parameter", continuation_token_parameter, "str"
+        )
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_web_pub_sub_chat_service_create_or_replace_topic_request(  # pylint: disable=name-too-long
+    room_id: str,
+    topic_id: str,
+    hub: str,
+    *,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/api/hubs/{hub}/chat/rooms/{roomId}/topics/{topicId}"
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, "str"),
+        "roomId": _SERIALIZER.url("room_id", room_id, "str"),
+        "topicId": _SERIALIZER.url("topic_id", topic_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_web_pub_sub_chat_service_get_topic_request(  # pylint: disable=name-too-long
+    room_id: str, topic_id: str, hub: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/api/hubs/{hub}/chat/rooms/{roomId}/topics/{topicId}"
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, "str"),
+        "roomId": _SERIALIZER.url("room_id", room_id, "str"),
+        "topicId": _SERIALIZER.url("topic_id", topic_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_web_pub_sub_chat_service_update_topic_request(  # pylint: disable=name-too-long
+    room_id: str,
+    topic_id: str,
+    hub: str,
+    *,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/api/hubs/{hub}/chat/rooms/{roomId}/topics/{topicId}"
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, "str"),
+        "roomId": _SERIALIZER.url("room_id", room_id, "str"),
+        "topicId": _SERIALIZER.url("topic_id", topic_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_web_pub_sub_chat_service_delete_topic_request(  # pylint: disable=name-too-long
+    room_id: str,
+    topic_id: str,
+    hub: str,
+    *,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    # Construct URL
+    _url = "/api/hubs/{hub}/chat/rooms/{roomId}/topics/{topicId}"
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, "str"),
+        "roomId": _SERIALIZER.url("room_id", room_id, "str"),
+        "topicId": _SERIALIZER.url("topic_id", topic_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -438,7 +660,7 @@ def build_web_pub_sub_chat_service_list_room_members_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -478,7 +700,7 @@ def build_web_pub_sub_chat_service_create_or_replace_room_member_request(  # pyl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -520,7 +742,7 @@ def build_web_pub_sub_chat_service_delete_room_member_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/api/hubs/{hub}/chat/rooms/{roomId}/members/{userId}"
     path_format_arguments = {
@@ -545,13 +767,45 @@ def build_web_pub_sub_chat_service_delete_room_member_request(  # pylint: disabl
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_web_pub_sub_chat_service_list_users_request(  # pylint: disable=name-too-long
+    hub: str, *, max_page_size: Optional[int] = None, continuation_token_parameter: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/api/hubs/{hub}/chat/users"
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if max_page_size is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("max_page_size", max_page_size, "int")
+    if continuation_token_parameter is not None:
+        _params["continuationToken"] = _SERIALIZER.query(
+            "continuation_token_parameter", continuation_token_parameter, "str"
+        )
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_web_pub_sub_chat_service_get_user_request(  # pylint: disable=name-too-long
     user_id: str, hub: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -584,7 +838,7 @@ def build_web_pub_sub_chat_service_create_or_replace_user_request(  # pylint: di
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -624,7 +878,7 @@ def build_web_pub_sub_chat_service_delete_user_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/api/hubs/{hub}/chat/users/{userId}"
     path_format_arguments = {
@@ -646,6 +900,33 @@ def build_web_pub_sub_chat_service_delete_user_request(  # pylint: disable=name-
         _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_web_pub_sub_chat_service_list_rooms_for_user_request(  # pylint: disable=name-too-long
+    user_id: str, hub: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/api/hubs/{hub}/chat/users/{userId}/rooms"
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, "str"),
+        "userId": _SERIALIZER.url("user_id", user_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_web_pub_sub_chat_service_generate_client_token_request(  # pylint: disable=name-too-long
@@ -685,7 +966,7 @@ def build_web_pub_sub_chat_service_generate_client_token_request(  # pylint: dis
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class _WebPubSubChatServiceClientOperationsMixin(
+class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-public-methods
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], WebPubSubChatServiceClientConfiguration]
 ):
 
@@ -1585,6 +1866,113 @@ class _WebPubSubChatServiceClientOperationsMixin(
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": ["api_version", "hub", "max_page_size", "continuation_token_parameter", "accept"]
+        },
+        api_versions_list=["2026-08-01-preview"],
+    )
+    def list_rooms(
+        self, *, max_page_size: Optional[int] = None, continuation_token_parameter: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.ChatRoom"]:
+        """List rooms with pagination.
+
+        List rooms with pagination.
+
+        :keyword max_page_size: The maximum number of result items per page. Default value is None.
+        :paramtype max_page_size: int
+        :keyword continuation_token_parameter: Continuation token for pagination. Default value is
+         None.
+        :paramtype continuation_token_parameter: str
+        :return: An iterator like instance of ChatRoom
+        :rtype: ~azure.core.paging.ItemPaged[~azure.messaging.webpubsubchatservice.models.ChatRoom]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.ChatRoom]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_web_pub_sub_chat_service_list_rooms_request(
+                    hub=self._config.hub,
+                    max_page_size=max_page_size,
+                    continuation_token_parameter=continuation_token_parameter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models.ChatRoom],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
     @overload
     def create_or_replace_room(
         self,
@@ -1892,6 +2280,736 @@ class _WebPubSubChatServiceClientOperationsMixin(
 
         _request = build_web_pub_sub_chat_service_delete_room_request(
             room_id=room_id,
+            hub=self._config.hub,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": [
+                "api_version",
+                "hub",
+                "room_id",
+                "max_page_size",
+                "continuation_token_parameter",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-01-preview"],
+    )
+    def list_topics(
+        self,
+        room_id: str,
+        *,
+        max_page_size: Optional[int] = None,
+        continuation_token_parameter: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.ChatTopic"]:
+        """List topics in a room with pagination.
+
+        List topics in a room with pagination.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :keyword max_page_size: The maximum number of result items per page. Default value is None.
+        :paramtype max_page_size: int
+        :keyword continuation_token_parameter: Continuation token for pagination. Default value is
+         None.
+        :paramtype continuation_token_parameter: str
+        :return: An iterator like instance of ChatTopic
+        :rtype: ~azure.core.paging.ItemPaged[~azure.messaging.webpubsubchatservice.models.ChatTopic]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.ChatTopic]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_web_pub_sub_chat_service_list_topics_request(
+                    room_id=room_id,
+                    hub=self._config.hub,
+                    max_page_size=max_page_size,
+                    continuation_token_parameter=continuation_token_parameter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models.ChatTopic],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @overload
+    def create_or_replace_topic(
+        self,
+        room_id: str,
+        topic_id: str,
+        resource: _models.ChatTopic,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.ChatTopic:
+        """Create or replace a topic.
+
+        Create or replace a topic with a client-specified ID.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :param topic_id: Topic identifier unique within the room. Required.
+        :type topic_id: str
+        :param resource: The resource instance. Required.
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: ChatTopic. The ChatTopic is compatible with MutableMapping
+        :rtype: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_replace_topic(
+        self,
+        room_id: str,
+        topic_id: str,
+        resource: _types.ChatTopic,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.ChatTopic:
+        """Create or replace a topic.
+
+        Create or replace a topic with a client-specified ID.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :param topic_id: Topic identifier unique within the room. Required.
+        :type topic_id: str
+        :param resource: The resource instance. Required.
+        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatTopic
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: ChatTopic. The ChatTopic is compatible with MutableMapping
+        :rtype: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_replace_topic(
+        self,
+        room_id: str,
+        topic_id: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.ChatTopic:
+        """Create or replace a topic.
+
+        Create or replace a topic with a client-specified ID.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :param topic_id: Topic identifier unique within the room. Required.
+        :type topic_id: str
+        :param resource: The resource instance. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: ChatTopic. The ChatTopic is compatible with MutableMapping
+        :rtype: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": [
+                "api_version",
+                "hub",
+                "room_id",
+                "topic_id",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-08-01-preview"],
+    )
+    def create_or_replace_topic(
+        self,
+        room_id: str,
+        topic_id: str,
+        resource: Union[_models.ChatTopic, _types.ChatTopic, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.ChatTopic:
+        """Create or replace a topic.
+
+        Create or replace a topic with a client-specified ID.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :param topic_id: Topic identifier unique within the room. Required.
+        :type topic_id: str
+        :param resource: The resource instance. Is either a ChatTopic type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatTopic or
+         ~azure.messaging.webpubsubchatservice.types.ChatTopic or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: ChatTopic. The ChatTopic is compatible with MutableMapping
+        :rtype: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ChatTopic] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_web_pub_sub_chat_service_create_or_replace_topic_request(
+            room_id=room_id,
+            topic_id=topic_id,
+            hub=self._config.hub,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ChatTopic, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={"2026-08-01-preview": ["api_version", "hub", "room_id", "topic_id", "accept"]},
+        api_versions_list=["2026-08-01-preview"],
+    )
+    def get_topic(self, room_id: str, topic_id: str, **kwargs: Any) -> _models.ChatTopic:
+        """Get topic information.
+
+        Get topic information.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :param topic_id: Topic identifier unique within the room. Required.
+        :type topic_id: str
+        :return: ChatTopic. The ChatTopic is compatible with MutableMapping
+        :rtype: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ChatTopic] = kwargs.pop("cls", None)
+
+        _request = build_web_pub_sub_chat_service_get_topic_request(
+            room_id=room_id,
+            topic_id=topic_id,
+            hub=self._config.hub,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ChatTopic, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def update_topic(
+        self,
+        room_id: str,
+        topic_id: str,
+        resource: _models.ChatTopic,
+        *,
+        content_type: str = "application/merge-patch+json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.ChatTopic:
+        """Update a topic.
+
+        Update a topic.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :param topic_id: Topic identifier unique within the room. Required.
+        :type topic_id: str
+        :param resource: The resource instance. Required.
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: ChatTopic. The ChatTopic is compatible with MutableMapping
+        :rtype: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_topic(
+        self,
+        room_id: str,
+        topic_id: str,
+        resource: _types.ChatTopic,
+        *,
+        content_type: str = "application/merge-patch+json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.ChatTopic:
+        """Update a topic.
+
+        Update a topic.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :param topic_id: Topic identifier unique within the room. Required.
+        :type topic_id: str
+        :param resource: The resource instance. Required.
+        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatTopic
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: ChatTopic. The ChatTopic is compatible with MutableMapping
+        :rtype: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_topic(
+        self,
+        room_id: str,
+        topic_id: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.ChatTopic:
+        """Update a topic.
+
+        Update a topic.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :param topic_id: Topic identifier unique within the room. Required.
+        :type topic_id: str
+        :param resource: The resource instance. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: ChatTopic. The ChatTopic is compatible with MutableMapping
+        :rtype: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": [
+                "api_version",
+                "hub",
+                "room_id",
+                "topic_id",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-08-01-preview"],
+    )
+    def update_topic(
+        self,
+        room_id: str,
+        topic_id: str,
+        resource: Union[_models.ChatTopic, _types.ChatTopic, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.ChatTopic:
+        """Update a topic.
+
+        Update a topic.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :param topic_id: Topic identifier unique within the room. Required.
+        :type topic_id: str
+        :param resource: The resource instance. Is either a ChatTopic type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatTopic or
+         ~azure.messaging.webpubsubchatservice.types.ChatTopic or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: ChatTopic. The ChatTopic is compatible with MutableMapping
+        :rtype: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ChatTopic] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/merge-patch+json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_web_pub_sub_chat_service_update_topic_request(
+            room_id=room_id,
+            topic_id=topic_id,
+            hub=self._config.hub,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ChatTopic, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": ["api_version", "hub", "room_id", "topic_id", "etag", "match_condition"]
+        },
+        api_versions_list=["2026-08-01-preview"],
+    )
+    def delete_topic(  # pylint: disable=inconsistent-return-statements
+        self,
+        room_id: str,
+        topic_id: str,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> None:
+        """Soft delete a topic.
+
+        Soft delete a topic.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :param topic_id: Topic identifier unique within the room. Required.
+        :type topic_id: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_web_pub_sub_chat_service_delete_topic_request(
+            room_id=room_id,
+            topic_id=topic_id,
             hub=self._config.hub,
             etag=etag,
             match_condition=match_condition,
@@ -2314,6 +3432,113 @@ class _WebPubSubChatServiceClientOperationsMixin(
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": ["api_version", "hub", "max_page_size", "continuation_token_parameter", "accept"]
+        },
+        api_versions_list=["2026-08-01-preview"],
+    )
+    def list_users(
+        self, *, max_page_size: Optional[int] = None, continuation_token_parameter: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.ChatUser"]:
+        """List all users with pagination.
+
+        List all users with pagination.
+
+        :keyword max_page_size: The maximum number of result items per page. Default value is None.
+        :paramtype max_page_size: int
+        :keyword continuation_token_parameter: Continuation token for pagination. Default value is
+         None.
+        :paramtype continuation_token_parameter: str
+        :return: An iterator like instance of ChatUser
+        :rtype: ~azure.core.paging.ItemPaged[~azure.messaging.webpubsubchatservice.models.ChatUser]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.ChatUser]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_web_pub_sub_chat_service_list_users_request(
+                    hub=self._config.hub,
+                    max_page_size=max_page_size,
+                    continuation_token_parameter=continuation_token_parameter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models.ChatUser],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
     def get_user(self, user_id: str, **kwargs: Any) -> _models.ChatUser:
         """Get a user's profile.
 
@@ -2650,6 +3875,105 @@ class _WebPubSubChatServiceClientOperationsMixin(
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={"2026-08-01-preview": ["api_version", "hub", "user_id", "accept"]},
+        api_versions_list=["2026-08-01-preview"],
+    )
+    def list_rooms_for_user(self, user_id: str, **kwargs: Any) -> ItemPaged["_models.ChatUserRoom"]:
+        """List rooms for a user with pagination.
+
+        List rooms for a user with pagination.
+
+        :param user_id: User identifier. Required.
+        :type user_id: str
+        :return: An iterator like instance of ChatUserRoom
+        :rtype: ~azure.core.paging.ItemPaged[~azure.messaging.webpubsubchatservice.models.ChatUserRoom]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.ChatUserRoom]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_web_pub_sub_chat_service_list_rooms_for_user_request(
+                    user_id=user_id,
+                    hub=self._config.hub,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models.ChatUserRoom],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     def _generate_client_token(
