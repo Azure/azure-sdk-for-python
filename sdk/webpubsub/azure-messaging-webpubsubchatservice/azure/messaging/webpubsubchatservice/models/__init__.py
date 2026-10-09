@@ -19,13 +19,16 @@ from ._models import (  # type: ignore
     ChatRole,
     ChatRoom,
     ChatRoomMember,
+    ChatTopic,
     ChatUser,
+    ChatUserRoom,
     HumanChatUser,
     MessageContent,
 )
 
 from ._enums import (  # type: ignore
     ChatPermission,
+    ChatTopicState,
     ChatUserKind,
 )
 from ._patch import __all__ as _patch_all
@@ -38,10 +41,13 @@ __all__ = [
     "ChatRole",
     "ChatRoom",
     "ChatRoomMember",
+    "ChatTopic",
     "ChatUser",
+    "ChatUserRoom",
     "HumanChatUser",
     "MessageContent",
     "ChatPermission",
+    "ChatTopicState",
     "ChatUserKind",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

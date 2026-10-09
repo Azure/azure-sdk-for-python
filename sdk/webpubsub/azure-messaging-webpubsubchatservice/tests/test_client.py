@@ -30,7 +30,14 @@ class RequestCaptured(Exception):
 
 @pytest.mark.parametrize(
     "operation_name,arguments",
-    [("list_roles", ()), ("list_messages", ("conversation",)), ("list_room_members", ("room",))],
+    [
+        ("list_roles", ()),
+        ("list_messages", ("conversation",)),
+        ("list_room_members", ("room",)),
+        ("list_rooms", ()),
+        ("list_users", ()),
+        ("list_topics", ("room",)),
+    ],
 )
 def test_max_page_size_uses_original_wire_name(operation_name, arguments):
     def capture(pipeline_request):
@@ -113,7 +120,7 @@ def test_key_credential_request_uses_full_uri_audience_and_sixty_second_token():
         claims = jwt.decode(token, ACCESS_KEY, algorithms=["HS256"], audience=request.url)
 
         assert claims["aud"] == request.url
-        assert "api-version=2026-02-01-preview" in request.url
+        assert "api-version=2026-08-01-preview" in request.url
         assert 0 < claims["exp"] - int(time.time()) <= 60
     finally:
         client.close()

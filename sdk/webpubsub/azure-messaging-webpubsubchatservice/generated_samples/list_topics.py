@@ -15,7 +15,7 @@ from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
     pip install azure-identity
     pip install azure-messaging-webpubsubchatservice
 # USAGE
-    python delete_message.py
+    python list_topics.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,12 +31,13 @@ def main():
         hub="HUB",
     )
 
-    client.delete_message(
-        conversation_id="c.room1.abcd1234",
-        message_id="123",
+    response = client.list_topics(
+        room_id="general",
     )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2026-08-01-preview/DeleteMessage.json
+# x-ms-original-file: 2026-08-01-preview/ListTopics.json
 if __name__ == "__main__":
     main()
