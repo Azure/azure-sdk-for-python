@@ -180,13 +180,21 @@ class _StreamsRegistry:
         storage_dir.mkdir(parents=True, exist_ok=True)
 
         def open_replay(_id: str, backing: type[FileBackedReplayEventStream]) -> EventStream:
-            return backing(
-                path=storage_dir / _safe_stream_filename(_id),
-                cursor_fn=cursor_fn,
-                ttl_seconds=ttl_seconds,
-                serializer=serializer,
-                deserializer=deserializer,
-            )
+            path = storage_dir / _safe_stream_filename(_id)
+            try:
+                return backing(
+                    path=path,
+                    cursor_fn=cursor_fn,
+                    ttl_seconds=ttl_seconds,
+                    serializer=serializer,
+                    deserializer=deserializer,
+                )
+            except OSError as error:
+                setattr(error, "_replay_cleanup_id", None)
+                owner = getattr(error, "_replay_cleanup_owner", None)
+                if isinstance(owner, FileBackedReplayEventStream) and getattr(owner, "_path", None) == path:
+                    setattr(error, "_replay_cleanup_id", _id)
+                raise
 
         self._factory = lambda _id: open_replay(_id, FileBackedReplayEventStream)
 
@@ -265,10 +273,26 @@ class _StreamsRegistry:
         """
         slot = self._slots.get(id)
         if slot is None:
-            slot = self._restore(id, for_deletion)
+            try:
+                slot = self._restore(id, for_deletion)
+            except OSError as error:
+                self._retain_cleanup_owner(id, error)
+                raise
             if slot is not None:
                 self._slots[id] = slot
         return slot
+
+    def _retain_cleanup_owner(self, id: str, error: OSError) -> None:
+        """Retain only the failed constructor's exact owned cleanup resources.
+
+        :param id: The stream lifecycle identifier.
+        :type id: str
+        :param error: The constructor cleanup error.
+        :type error: OSError
+        """
+        owner = getattr(error, "_replay_cleanup_owner", None)
+        if getattr(error, "_replay_cleanup_id", None) == id and isinstance(owner, FileBackedReplayEventStream):
+            self._slots[id] = owner
 
     async def _tombstone_if_close_clock_elapsed(self, id: str, slot: Any) -> bool:
         """If the stream's close-clock TTL elapsed, run its
@@ -328,7 +352,11 @@ class _StreamsRegistry:
             slot = self._slots.get(id, None)
             if slot is not None and slot is not _TOMBSTONE:
                 return slot  # type: ignore[return-value]
-            instance = self._factory(id)
+            try:
+                instance = self._factory(id)
+            except OSError as error:
+                self._retain_cleanup_owner(id, error)
+                raise
             self._slots[id] = instance
             logger.debug("EventStream %s created (%s)", id, type(instance).__name__)
             return instance
