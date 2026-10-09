@@ -68,7 +68,7 @@ readme = { file = ["README.md"], content-type = "text/markdown" }
 "azure.ai.agentserver.activity" = ["py.typed"]
 
 [tool.azure-sdk-build]
-analyze_python_version = "3.11"
+analyze_python_version = "3.10"
 breaking = false
 mypy = true
 pyright = true
