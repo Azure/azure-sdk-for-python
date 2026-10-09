@@ -1157,7 +1157,8 @@ class ResilientResponseOrchestrator:
             return
         if _ref("_record_ref") is None:
             assert self._runtime_state is not None, "runtime_state always wired at orchestrator init"
-            await self._runtime_state.add(record)
+            if not await self._runtime_state.add(record):
+                raise RuntimeError("Response lifecycle ownership changed before recovered publication.")
 
         # Bridge task cancellation → response cancellation surface.
         # ``ctx.cancel`` (steering / explicit cancel) and ``ctx.shutdown``

@@ -750,7 +750,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             return _error_response(exc, _hdrs)
 
     async def _reserve_response_id(
-        self, response_id: str, user_id_key: str | None, *, call_id: str | None = None
+        self,
+        response_id: str,
+        user_id_key: str | None,
+        *,
+        call_id: str | None = None,
+        publication_context: ResponseContext | None = None,
     ) -> bool:
         """Reserve an ID only when neither execution nor replay state retains it.
 
@@ -760,10 +765,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :type user_id_key: str | None
         :keyword call_id: The originating call identity forwarded to storage.
         :paramtype call_id: str | None
+        :keyword publication_context: The fresh request's exact runtime publication owner.
+        :paramtype publication_context: ResponseContext | None
         :return: Whether the caller acquired the reservation.
         :rtype: bool
         """
-        if not await self._runtime_state.reserve(response_id, user_id_key):
+        if not await self._runtime_state.reserve(response_id, user_id_key, publication_context=publication_context):
             return False
         available = False
         try:
@@ -962,7 +969,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         stream_owns_reservation = False
         reservation_acquired = False
         try:
-            if not await self._reserve_response_id(ctx.response_id, ctx.user_id, call_id=ctx.call_id):
+            if not await self._reserve_response_id(
+                ctx.response_id, ctx.user_id, call_id=ctx.call_id, publication_context=ctx.context
+            ):
                 span.end(None)
                 return JSONResponse(
                     {

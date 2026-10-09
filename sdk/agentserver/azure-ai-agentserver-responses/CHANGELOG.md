@@ -4,6 +4,9 @@
 
 ### Bugs Fixed
 
+- Reject runtime publication during active or retained DELETE cleanup, and bind
+  fresh admission to its exact request context so late callbacks cannot replace
+  a successor or clear a completed deletion marker.
 - Partition local in-memory and file-backed responses, items, history, and
   conversation indexes by the platform user key, keeping anonymous local state
   separate.

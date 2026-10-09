@@ -10,6 +10,7 @@ from typing import cast
 import pytest
 
 from azure.ai.agentserver.responses.hosting._runtime_state import _RuntimeState
+from azure.ai.agentserver.responses import ResponseContext
 from azure.ai.agentserver.responses.models import ResponseObject
 from azure.ai.agentserver.responses.models.runtime import ResponseExecution, ResponseModeFlags
 
@@ -135,7 +136,7 @@ async def test_recovered_admission_never_removes_a_newer_live_or_terminal_record
     await stale.execution_task
     await state.add(stale)
     current = _make_execution("shared", user_id_key="owner", status=status)
-    await state.add(current)
+    assert await state.add(current, expected_record=stale)
     assert not await state.reserve("shared", "owner", recovery=True, incarnation_id="b" * 32)
     assert await state.get("shared", "owner") is current
 
@@ -173,10 +174,84 @@ async def test_compare_delete_does_not_remove_a_replacement_record():
     old = _make_execution("shared", user_id_key="owner", status="completed")
     replacement = _make_execution("shared", user_id_key="owner")
     await state.add(old)
-    await state.add(replacement)
+    assert await state.add(replacement, expected_record=old)
     assert not await state.delete("shared", "owner", expected_record=old)
     assert await state.get("shared", "owner") is replacement
     assert not await state.is_deleted("shared", "owner")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("retained", [False, True])
+@pytest.mark.parametrize("marked_deleted", [False, True])
+async def test_publication_cannot_replace_scoped_deletion_ownership_or_clear_its_marker(
+    retained: bool, marked_deleted: bool
+) -> None:
+    state = _RuntimeState()
+    owner = _make_execution("shared", user_id_key="owner", status="completed")
+    foreign = _make_execution("shared", user_id_key="other", status="completed")
+    assert await state.reserve("shared", "owner")
+    assert await state.add(owner)
+    assert await state.add(foreign)
+    assert await state.begin_deletion("shared", "owner")
+    if retained:
+        assert await state.retain_for_deletion(owner)
+        await state.end_deletion("shared", "owner")
+    if marked_deleted:
+        await state.mark_deleted("shared", "owner")
+    replacement = _make_execution("shared", user_id_key="owner", status="in_progress")
+    assert not await state.add(replacement, expected_record=owner)
+    assert not await state.add(owner)
+    assert not await state.add_pending(replacement)
+    assert await state.get("shared", "owner") is owner
+    assert await state.get("shared", "other") is foreign
+    assert await state.is_deleted("shared", "owner") is marked_deleted
+    assert not await state.try_evict("shared", "owner")
+
+
+@pytest.mark.asyncio
+async def test_completed_delete_revokes_old_publication_and_fresh_admission_binds_exact_context() -> None:
+    state = _RuntimeState()
+    old = _make_execution("shared", user_id_key="owner", status="completed")
+    old.response_context = ResponseContext(response_id="shared", mode_flags=old.mode_flags)
+    assert await state.reserve("shared", "owner", publication_context=old.response_context)
+    assert await state.add(old)
+    assert await state.begin_deletion("shared", "owner")
+    assert await state.retain_for_deletion(old)
+    assert await state.delete("shared", "owner", expected_record=old)
+    await state.end_deletion("shared", "owner")
+    assert not await state.add(old)
+    assert not await state.reserve("shared", "owner")
+    assert await state.is_deleted("shared", "owner")
+    await state.release_reservation("shared", "owner")
+    fresh = _make_execution("shared", user_id_key="owner", status="completed")
+    fresh.response_context = ResponseContext(response_id="shared", mode_flags=fresh.mode_flags)
+    assert await state.reserve("shared", "owner", publication_context=fresh.response_context)
+    assert not await state.add(old)
+    assert await state.is_deleted("shared", "owner")
+    assert await state.add_pending(fresh)
+    assert not await state.add(old)
+    assert state._pending_records[("owner", "shared")] is fresh
+    assert await state.add(fresh)
+    assert not await state.is_deleted("shared", "owner")
+    assert not await state.add(old, expected_record=fresh)
+    assert not await state.try_evict("shared", "owner", expected_record=old)
+    assert await state.get("shared", "owner") is fresh
+    await state.release_reservation("shared", "owner")
+    assert state._publication_contexts == {}
+    assert not await state.add(old)
+    assert await state.try_evict("shared", "owner", expected_record=fresh)
+
+
+@pytest.mark.asyncio
+async def test_publication_replaces_only_an_exact_contextless_predecessor() -> None:
+    state = _RuntimeState()
+    old = _make_execution("shared", status="completed")
+    replacement = _make_execution("shared", status="completed")
+    assert await state.add(old)
+    assert not await state.add(replacement)
+    assert await state.add(replacement, expected_record=old)
+    assert not await state.add(old, expected_record=old)
+    assert await state.get("shared") is replacement
 
 
 def test_anonymous_user_isolation_is_not_a_wildcard() -> None:
