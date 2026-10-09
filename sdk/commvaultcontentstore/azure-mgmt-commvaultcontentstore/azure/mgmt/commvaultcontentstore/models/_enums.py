@@ -11,7 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
@@ -64,6 +64,18 @@ class BackUpType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Full backup."""
     BOTH = "BOTH"
     """Both incremental and full backups."""
+
+
+class ComplianceLockStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Compliance lock status of a Commvault Storage."""
+
+    ENABLED = "Enabled"
+    """Compliance lock is enabled — storage is protected."""
+    DISABLEMENT_PENDING = "DisablementPending"
+    """Disablement is pending multi-person authorization (MPA) approval. Status transitions to
+    'Disabled' once approved."""
+    DISABLED = "Disabled"
+    """Compliance lock is disabled."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -213,7 +225,7 @@ class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"
@@ -273,7 +285,9 @@ class RetentionTime(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class RoleName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Supported Commvault role names."""
+    """Supported Commvault role names. Extensible enum — additional roles may be added in future
+    versions without a breaking change.
+    """
 
     BACKUP_ADMIN = "BackupAdmin"
     """Backup Administrator - full access to all resources."""

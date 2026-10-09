@@ -31,11 +31,11 @@ def main():
     )
 
     response = client.saa_soperation_group.begin_activate_resource(
-        body={"saaSGuid": "55555555-6666-7777-8888-999999999999"},
+        body={"saasGuid": "55555555-6666-7777-8888-999999999999"},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-07-03-preview/SaaSOperationGroup_ActivateResource_MinimumSet_Gen.json
+# x-ms-original-file: 2026-09-30/SaaSOperationGroup_ActivateResource_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()
