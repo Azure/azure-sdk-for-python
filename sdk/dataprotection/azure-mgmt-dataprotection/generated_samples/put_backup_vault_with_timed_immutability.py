@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +15,7 @@ from azure.mgmt.dataprotection import DataProtectionMgmtClient
     pip install azure-identity
     pip install azure-mgmt-dataprotection
 # USAGE
-    python list_backup_instances_extension_routing.py
+    python put_backup_vault_with_timed_immutability.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,13 +30,28 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.backup_instances_extension_routing.list(
-        resource_id="subscriptions/36d32b25-3dc7-41b0-bde1-397500644591/resourceGroups/testRG/providers/Microsoft.Compute/disks/testDisk",
-    )
-    for item in response:
-        print(item)
+    response = client.backup_vaults.begin_create_or_update(
+        resource_group_name="SampleResourceGroup",
+        vault_name="swaggerExample",
+        parameters={
+            "identity": {"type": "None"},
+            "location": "WestUS",
+            "properties": {
+                "securitySettings": {
+                    "immutabilitySettings": {
+                        "configuration": {"durationInDays": 30, "type": "TimeBased"},
+                        "state": "Unlocked",
+                    },
+                    "softDeleteSettings": {"retentionDurationInDays": 14, "state": "On"},
+                },
+                "storageSettings": [{"datastoreType": "VaultStore", "type": "LocallyRedundant"}],
+            },
+            "tags": {"key1": "val1"},
+        },
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-07-01/BackupInstanceOperations/ListBackupInstancesExtensionRouting.json
+# x-ms-original-file: 2026-07-01/VaultCRUD/PutBackupVaultWithTimedImmutability.json
 if __name__ == "__main__":
     main()
