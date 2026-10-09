@@ -13,6 +13,7 @@ from unittest.mock import AsyncMock
 from urllib.parse import parse_qs, urlparse
 
 import pytest
+from anyio import CancelScope, lowlevel
 from starlette.requests import Request
 
 from azure.ai.agentserver.core.streaming import EventStreamNotFoundError
@@ -57,6 +58,259 @@ def _delete_request() -> Request:
     request.scope["method"] = "DELETE"
     request.scope["path_params"] = {"response_id": RESPONSE_ID}
     return request
+
+
+def _get_request(*, stream: bool = False, user: str = "owner") -> Request:
+    request = _request(user=user)
+    request.scope["method"] = "GET"
+    request.scope["path_params"] = {"response_id": RESPONSE_ID}
+    request.scope["query_string"] = b"stream=true" if stream else b""
+    return request
+
+
+async def _read_stream(response: Any) -> bytes:
+    chunks = [chunk.encode() if isinstance(chunk, str) else chunk async for chunk in response.body_iterator]
+    return b"".join(chunks)
+
+
+@pytest.mark.parametrize("runtime_record", [False, True])
+@pytest.mark.parametrize("original_stream", [False, True])
+@pytest.mark.parametrize("backend", ["memory", "file"])
+async def test_failed_provider_delete_reads_never_allocate_replacement_replay(
+    registry: _StreamsRegistry,
+    task_store: LocalFileTaskProvider,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    runtime_record: bool,
+    original_stream: bool,
+    backend: str,
+) -> None:
+    host = _host()
+    provider = host._endpoint._provider
+    if backend == "file":
+        registry.use_file_backed_replay(
+            storage_dir=tmp_path / "streams", cursor_fn=lambda event: event["sequence_number"]
+        )
+    identifier = derive_lifecycle_id(RESPONSE_ID, "owner")
+    if original_stream:
+        replay = await registry.get_or_create(identifier)
+        await replay.emit({"sequence_number": 0, "type": "response.completed"}, close=True)
+    await provider.create_response(_snapshot(), [], None, context=PlatformContext(user_id_key="owner"))
+    if runtime_record:
+        record = _execution()
+        record.mode_flags.stream = original_stream
+        record.response_created_signal.set()
+        await host._endpoint._runtime_state.add(record)
+    delete = provider.delete_response
+    monkeypatch.setattr(provider, "delete_response", AsyncMock(side_effect=OSError("provider deletion unavailable")))
+    assert (await host._endpoint.handle_delete(_delete_request())).status_code == 500
+    retained = await host._endpoint._runtime_state.get(RESPONSE_ID, "owner")
+    assert retained is not None
+    with pytest.raises(EventStreamNotFoundError):
+        await registry.get(identifier)
+    create = AsyncMock(side_effect=AssertionError("GET must not allocate replay"))
+    monkeypatch.setattr(registry, "get_or_create", create)
+    try:
+        response = await host._endpoint.handle_get(_get_request(stream=True))
+        if response.status_code == 200:
+            await asyncio.wait_for(_read_stream(response), 2)
+        assert response.status_code in {400, 404}
+        create.assert_not_awaited()
+        assert (await host._endpoint.handle_get(_get_request(stream=True, user="other"))).status_code == 404
+        snapshot = await host._endpoint.handle_get(_get_request())
+        assert snapshot.status_code == 200
+        assert json.loads(snapshot.body)["status"] == "completed"
+        assert await host._endpoint._runtime_state.get(RESPONSE_ID, "owner") is retained
+        assert not await host._endpoint._runtime_state.reserve(RESPONSE_ID, "owner")
+        with pytest.raises(EventStreamNotFoundError):
+            await registry.get(identifier)
+        monkeypatch.setattr(provider, "delete_response", delete)
+        assert (await host._endpoint.handle_delete(_delete_request())).status_code == 200
+    finally:
+        await registry.delete(identifier)
+
+
+@pytest.mark.parametrize("runtime_record", [False, True])
+async def test_retained_delete_reads_preserve_existing_replay_without_creating_a_stream(
+    registry: _StreamsRegistry,
+    task_store: LocalFileTaskProvider,
+    monkeypatch: pytest.MonkeyPatch,
+    runtime_record: bool,
+) -> None:
+    host = _host()
+    identifier = derive_lifecycle_id(RESPONSE_ID, "owner")
+    replay = await registry.get_or_create(identifier)
+    await replay.emit({"sequence_number": 0, "type": "response.completed"}, close=True)
+    await host._endpoint._provider.create_response(_snapshot(), [], None, context=PlatformContext(user_id_key="owner"))
+    if runtime_record:
+        record = _execution()
+        record.subject = replay
+        await host._endpoint._runtime_state.add(record)
+    delete = registry.delete
+    monkeypatch.setattr(registry, "delete", AsyncMock(side_effect=OSError("replay deletion unavailable")))
+    assert (await host._endpoint.handle_delete(_delete_request())).status_code == 500
+    create = AsyncMock(side_effect=AssertionError("GET must not allocate replay"))
+    monkeypatch.setattr(registry, "get_or_create", create)
+    try:
+        response = await host._endpoint.handle_get(_get_request(stream=True))
+        assert response.status_code == 200
+        assert b"response.completed" in await asyncio.wait_for(_read_stream(response), 2)
+        assert await registry.get(identifier) is replay
+        create.assert_not_awaited()
+    finally:
+        await delete(identifier)
+
+
+@pytest.mark.parametrize("settlement", ["malformed", "mark-failed"])
+async def test_early_recovery_settlement_retires_stale_execution_and_serves_terminal_snapshot(
+    registry: _StreamsRegistry, task_store: LocalFileTaskProvider, settlement: str
+) -> None:
+    host = _host()
+    state = host._endpoint._runtime_state
+    disposition = "mark-failed" if settlement == "mark-failed" else "re-invoke"
+    info = await _durable_task(task_store, host, disposition=disposition)
+    params = _params(disposition=disposition)
+    if settlement == "malformed":
+        params["response_incarnation_id"] = "invalid"
+        await task_store.update(info.id, TaskPatchRequest(payload={"input": params}))
+    stored = _snapshot()
+    stored["status"] = "in_progress"
+    await host._endpoint._provider.create_response(stored, [], None, context=PlatformContext(user_id_key="owner"))
+    stale = _execution(status="in_progress")
+    stale.execution_task = asyncio.create_task(asyncio.sleep(0))
+    await stale.execution_task
+    await state.add(stale)
+    foreign = _execution(user="other", status="in_progress")
+    await state.add(foreign)
+    identifier = derive_lifecycle_id(RESPONSE_ID, "owner")
+    replay = await registry.get_or_create(identifier)
+    await replay.emit({"sequence_number": 0, "type": "response.created"})
+    ctx = _task_context(info, disposition=disposition)
+    ctx.input = params
+    try:
+        await host._endpoint._orchestrator._resilient_orchestrator._execute_in_task(ctx)
+        response = await host._endpoint.handle_get(_get_request())
+        assert response.status_code == 200
+        assert json.loads(response.body)["status"] == "failed"
+        assert await state.get(RESPONSE_ID, "owner") is not stale
+        assert await state.get(RESPONSE_ID, "other") is foreign
+        assert (await host._endpoint.handle_create(_request())).status_code == 409  # Retained replay still owns the ID.
+        assert [event["type"] async for event in replay.subscribe()][-1] == "response.failed"
+        await registry.delete(identifier)
+        assert await host._endpoint._reserve_response_id(RESPONSE_ID, "owner")
+        await state.release_reservation(RESPONSE_ID, "owner")
+    finally:
+        await registry.delete(identifier)
+
+
+@pytest.mark.parametrize("failure", ["cancel", "anyio", "error"])
+async def test_early_recovery_interruption_does_not_retain_stale_execution_or_reservation(
+    registry: _StreamsRegistry,
+    task_store: LocalFileTaskProvider,
+    monkeypatch: pytest.MonkeyPatch,
+    failure: str,
+) -> None:
+    host = _host()
+    state = host._endpoint._runtime_state
+    info = await _durable_task(task_store, host)
+    stored = _snapshot()
+    stored["status"] = "in_progress"
+    await host._endpoint._provider.create_response(stored, [], None, context=PlatformContext(user_id_key="owner"))
+    stale = _execution(status="in_progress")
+    stale.execution_task = asyncio.create_task(asyncio.sleep(0))
+    await stale.execution_task
+    await state.add(stale)
+    foreign = _execution(user="other", status="in_progress")
+    await state.add(foreign)
+    orchestrator = host._endpoint._orchestrator._resilient_orchestrator
+    execute = orchestrator._execute_admitted_task
+    scope = CancelScope()
+
+    async def interrupted(ctx: Any) -> None:
+        assert await state.get(RESPONSE_ID, "owner") is None
+        assert not await state.reserve(RESPONSE_ID, "owner")
+        assert not await state.begin_deletion(RESPONSE_ID, "owner")
+        if failure == "anyio":
+            scope.cancel()
+            await lowlevel.checkpoint()
+        if failure == "error":
+            raise OSError("recovery interrupted before reconstruction")
+        raise asyncio.CancelledError()
+
+    monkeypatch.setattr(orchestrator, "_execute_admitted_task", interrupted)
+    ctx = _task_context(info)
+    if failure == "anyio":
+        with scope:
+            await orchestrator._execute_in_task(ctx)
+        assert scope.cancelled_caught
+    else:
+        with pytest.raises(OSError if failure == "error" else asyncio.CancelledError):
+            await orchestrator._execute_in_task(ctx)
+    assert await state.get(RESPONSE_ID, "owner") is None
+    assert await state.get(RESPONSE_ID, "other") is foreign
+    assert not await state.is_deleted(RESPONSE_ID, "owner")
+    assert await state.reserve(RESPONSE_ID, "owner", recovery=True)
+    await state.release_reservation(RESPONSE_ID, "owner")
+    assert await state.reserve(RESPONSE_ID, "owner")
+    await state.release_reservation(RESPONSE_ID, "owner")
+    snapshot = await host._endpoint.handle_get(_get_request())
+    assert snapshot.status_code == 200
+    assert json.loads(snapshot.body)["model"] == "m"
+
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
+        async def events() -> Any:
+            stream = ResponseEventStream(response_id=context.response_id, model="m")
+            yield stream.emit_created()
+            yield stream.emit_completed()
+
+        return events()
+
+    host.response_handler(handler)
+    monkeypatch.setattr(orchestrator, "_execute_admitted_task", execute)
+    await orchestrator._execute_in_task(ctx)
+    snapshot = await host._endpoint.handle_get(_get_request())
+    assert snapshot.status_code == 200
+    assert json.loads(snapshot.body)["status"] == "completed"
+    assert await state.get(RESPONSE_ID, "other") is foreign
+
+
+@pytest.mark.parametrize("status", ["in_progress", "completed"])
+async def test_stale_recovery_callback_cannot_retire_a_newer_incarnation_record(
+    registry: _StreamsRegistry, task_store: LocalFileTaskProvider, monkeypatch: pytest.MonkeyPatch, status: str
+) -> None:
+    host = _host()
+    state = host._endpoint._runtime_state
+    info = await _durable_task(task_store, host)
+    old = {**_params(), "response_incarnation_id": "a" * 32}
+    new = {**_params(), "response_incarnation_id": "b" * 32}
+    await task_store.update(info.id, TaskPatchRequest(payload={"input": old}))
+    stale = _execution(status="in_progress")
+    stale.execution_task = asyncio.create_task(asyncio.sleep(0))
+    await stale.execution_task
+    await state.add(stale)
+    replacement = _execution(status=status)
+    get = task_store.get
+    first = True
+
+    async def raced_get(task_id: str) -> TaskInfo:
+        nonlocal first
+        snapshot = await get(task_id)
+        if first:
+            first = False
+            await task_store.update(info.id, TaskPatchRequest(payload={"input": new}))
+            await state.add(replacement)
+        return snapshot
+
+    monkeypatch.setattr(task_store, "get", raced_get)
+    orchestrator = host._endpoint._orchestrator._resilient_orchestrator
+    admitted = AsyncMock()
+    monkeypatch.setattr(orchestrator, "_execute_admitted_task", admitted)
+    ctx = _task_context(info)
+    ctx.input = old
+    assert isinstance(await orchestrator._execute_in_task(ctx), _ExitForRecovery)
+    admitted.assert_not_awaited()
+    assert await state.get(RESPONSE_ID, "owner") is replacement
+    assert not await state.is_deleted(RESPONSE_ID, "owner")
 
 
 def _execution(*, user: str = "owner", status: Any = "completed") -> ResponseExecution:

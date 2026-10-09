@@ -73,7 +73,7 @@ class _RuntimeState:
         :type response_id: str
         :param user_id_key: The authenticated user partition, or ``None`` for anonymous.
         :type user_id_key: str | None
-        :keyword recovery: Guard recovered admission, rejecting deleted legacy identities.
+        :keyword recovery: Guard recovered admission and retire an exact stopped nonterminal execution.
         :paramtype recovery: bool
         :keyword incarnation_id: Recovery incarnation already validated against durable task state.
         :paramtype incarnation_id: str | None
@@ -103,6 +103,8 @@ class _RuntimeState:
                 or key in self._retained_deletions
             ):
                 return False
+            if stale_execution:
+                del self._records[key]
             self._reservations.add(key)
             return True
 
