@@ -22,7 +22,8 @@ async def create_role(client):
 async def main():
     connection_string = os.environ.get("WPS_CHAT_CONNECTION_STRING")
     if not connection_string:
-        raise SystemExit("Set WPS_CHAT_CONNECTION_STRING to run this sample.")
+        print("Set WPS_CHAT_CONNECTION_STRING to run this sample.")
+        return
 
     async with WebPubSubChatServiceClient.from_connection_string(
         connection_string,

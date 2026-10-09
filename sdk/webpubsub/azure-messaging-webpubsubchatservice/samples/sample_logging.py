@@ -31,7 +31,8 @@ def configure_logging():
 
 def main():
     if not os.environ.get("WPS_CHAT_ENDPOINT"):
-        raise SystemExit("Set WPS_CHAT_ENDPOINT to run this sample.")
+        print("Set WPS_CHAT_ENDPOINT to run this sample.")
+        return
     configure_logging()
 
 
