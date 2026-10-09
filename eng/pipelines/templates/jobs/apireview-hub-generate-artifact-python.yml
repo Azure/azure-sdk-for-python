@@ -1,0 +1,158 @@
+parameters:
+  - name: kind
+    type: string
+    values:
+      - base
+      - target
+  - name: requestMode
+    type: string
+    values:
+      - create
+      - update
+  - name: repositoryOwner
+    type: string
+    default: Azure
+  - name: ref
+    type: string
+  - name: packageName
+    type: string
+  - name: operationId
+    type: string
+  - name: poolName
+    type: string
+    default: 'azsdk-pool'
+  - name: imageOverride
+    type: string
+    default: 'ubuntu-24.04'
+  - name: pythonVersion
+    type: string
+    default: '3.12'
+
+jobs:
+  - template: /eng/common/pipelines/templates/jobs/apireview-hub-generate-artifact-base.yml
+    parameters:
+      ${{ if eq(parameters.kind, 'base') }}:
+        jobName: GenerateBase
+      ${{ if eq(parameters.kind, 'target') }}:
+        jobName: GenerateTarget
+      kind: ${{ parameters.kind }}
+      requestMode: ${{ parameters.requestMode }}
+      language: python
+      repositoryFullName: ${{ format('{0}/{1}', parameters.repositoryOwner, 'azure-sdk-for-python') }}
+      ref: ${{ parameters.ref }}
+      packageName: ${{ parameters.packageName }}
+      operationId: ${{ parameters.operationId }}
+      poolName: ${{ parameters.poolName }}
+      imageOverride: ${{ parameters.imageOverride }}
+      stepList:
+        - task: UsePythonVersion@0
+          displayName: Use Python ${{ parameters.pythonVersion }}
+          inputs:
+            versionSpec: ${{ parameters.pythonVersion }}
+
+        - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+
+        - bash: |
+            set -Eeuo pipefail
+
+            requirements_file="$LANGUAGE_TOOLS_SOURCE_DIRECTORY/apiview_reqs.txt"
+            azpysdk_package="$LANGUAGE_TOOLS_SOURCE_DIRECTORY/tools/azure-sdk-tools[build]"
+            if [ ! -f "$requirements_file" ]; then
+              echo "Expected Python API review requirements file was not found at $requirements_file" >&2
+              exit 1
+            fi
+
+            python -m pip install --upgrade pip
+            python -m pip install virtualenv
+            python -m pip install -r "$requirements_file" \
+              --index-url="https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+            python -m pip install "$azpysdk_package"
+            python -m pip install "setuptools<81"
+            python -c "import apistub, pkg_resources, sys; print(f'Python: {sys.executable}'); print(f'apistub: {apistub.__file__}')"
+          displayName: Install Python API review tooling
+          env:
+            LANGUAGE_TOOLS_SOURCE_DIRECTORY: $(LanguageToolsSourceDirectory)
+            PIP_NO_INPUT: '1'
+
+        - bash: |
+            set -Eeuo pipefail
+
+            find_package_dir() {
+              local matches
+              matches=$(find "$SOURCE_DIRECTORY/sdk" -mindepth 2 -maxdepth 2 -type d -name "$PACKAGE_NAME" | sort)
+              if [ -z "$matches" ]; then
+                echo "Package '$PACKAGE_NAME' was not found under sdk/*/." >&2
+                return 1
+              fi
+              if [ "$(printf '%s\n' "$matches" | wc -l)" -ne 1 ]; then
+                echo "Package '$PACKAGE_NAME' matched multiple directories:" >&2
+                printf '%s\n' "$matches" >&2
+                return 1
+              fi
+              printf '%s' "$matches"
+            }
+
+            package_dir=$(find_package_dir)
+            package_relative_path=$(realpath --relative-to="$SOURCE_DIRECTORY" "$package_dir")
+            common_tasks_dir="$SOURCE_DIRECTORY/scripts/devops_tasks"
+            if [ ! -f "$common_tasks_dir/common_tasks.py" ]; then
+              echo "Expected Python SDK common_tasks.py was not found at $common_tasks_dir/common_tasks.py" >&2
+              exit 1
+            fi
+
+            install -D \
+              "$LANGUAGE_TOOLS_SOURCE_DIRECTORY/common/scripts/Export-APIViewMarkdown.ps1" \
+              "$SOURCE_DIRECTORY/eng/common/scripts/Export-APIViewMarkdown.ps1"
+            install -D \
+              "$LANGUAGE_TOOLS_SOURCE_DIRECTORY/scripts/extract_apiview_metadata.py" \
+              "$SOURCE_DIRECTORY/eng/scripts/extract_apiview_metadata.py"
+
+            if ! (cd "$SOURCE_DIRECTORY" && \
+              PYTHONPATH="$common_tasks_dir${PYTHONPATH:+:$PYTHONPATH}" \
+              python -m azpysdk.main apistub --dest-dir "$package_dir" "$PACKAGE_NAME"); then
+              echo "API review generation failed without package dependencies; retrying with --install-deps."
+              (cd "$SOURCE_DIRECTORY" && \
+                PYTHONPATH="$common_tasks_dir${PYTHONPATH:+:$PYTHONPATH}" \
+                python -m azpysdk.main apistub --install-deps --dest-dir "$package_dir" "$PACKAGE_NAME")
+            fi
+
+            api_path="$package_dir/api.md"
+            metadata_path="$package_dir/api.metadata.yml"
+            if [ ! -f "$api_path" ] || [ ! -f "$metadata_path" ]; then
+              echo "Expected api.md and api.metadata.yml were not generated in $package_dir" >&2
+              exit 1
+            fi
+
+            cp "$api_path" "$ARTIFACT_OUTPUT_DIRECTORY/api.md"
+            python - "$metadata_path" "$ARTIFACT_OUTPUT_DIRECTORY/api.metadata.yml" "$package_relative_path" <<'PY'
+            import pathlib
+            import sys
+
+            source = pathlib.Path(sys.argv[1])
+            destination = pathlib.Path(sys.argv[2])
+            package_relative_path = sys.argv[3]
+            metadata = {}
+            for line in source.read_text(encoding="utf-8-sig").splitlines():
+                if ":" in line and not line.lstrip().startswith("#"):
+                    key, value = line.split(":", 1)
+                    metadata[key.strip()] = value.strip()
+
+            if "apiHash" not in metadata and "apiMdSha256" in metadata:
+                metadata["apiHash"] = metadata.pop("apiMdSha256")
+            metadata["packageRelativePath"] = package_relative_path
+            for field in ("apiHash", "packageVersion", "packageRelativePath"):
+                if not metadata.get(field):
+                    raise ValueError(f"api.metadata.yml is missing {field}")
+
+            destination.write_text(
+                "".join(f"{key}: {metadata[key]}\n" for key in sorted(metadata)),
+                encoding="utf-8",
+            )
+            PY
+          displayName: Generate ${{ parameters.kind }} Python API review bundle
+          env:
+            SOURCE_DIRECTORY: $(Build.SourcesDirectory)
+            LANGUAGE_TOOLS_SOURCE_DIRECTORY: $(LanguageToolsSourceDirectory)
+            ARTIFACT_OUTPUT_DIRECTORY: $(ArtifactOutputDirectory)
+            PACKAGE_NAME: ${{ parameters.packageName }}
+            PIP_NO_INPUT: '1'
