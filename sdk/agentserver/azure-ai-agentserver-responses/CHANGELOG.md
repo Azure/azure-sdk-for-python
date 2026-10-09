@@ -33,6 +33,9 @@
 - Retain DELETE ownership through provider cleanup failures and cancellation,
   and fence deleted durable response inputs without deleting unrelated turns.
   Recovery participates in scoped admission and cannot resurrect deleted responses.
+- Scope durable deletion fences and process-local recovery references by a
+  private response incarnation, allowing a fresh same-ID turn on a retained
+  conversation task without admitting an old deleted recovery.
 
 ### Breaking Changes
 

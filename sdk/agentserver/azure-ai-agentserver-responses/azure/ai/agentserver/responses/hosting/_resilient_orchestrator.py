@@ -21,6 +21,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 from copy import deepcopy
 from typing import TYPE_CHECKING, Any, Callable, cast
+from uuid import uuid4
 
 from anyio import CancelScope
 
@@ -37,6 +38,7 @@ from .._options import ResponsesServerOptions
 from .._response_context import ResponseExitForRecovery
 from ._dispatch import DISPOSITION_MARK_FAILED
 from ._task_id import derive_lifecycle_id, derive_task_id, derive_task_session_scope
+from ._response_task_lifecycle import _input_fence_key
 
 from ..models import _generated as _generated_models
 from ..streaming._internals import materialize_wire_payload
@@ -210,8 +212,8 @@ def _overlay_failed_terminal(
 
 # (Spec 033 §3.1) Process-local cache of typed :class:`RuntimeRefs` (record,
 # context, parsed request, cancellation signal, runtime state), keyed by
-# response_id. These object references cannot be JSON-serialized for
-# cross-process recovery, so they live here out-of-band and are NEVER part of
+# caller-scoped response incarnation. These object references cannot be
+# JSON-serialized for cross-process recovery, so they live out-of-band and are NEVER part of
 # the persisted resilient-task input (which is the typed
 # :class:`ResilientResponseInput` alone). The task body fetches refs from this
 # cache on same-process re-entry; on cross-process recovery the entry is absent
@@ -806,6 +808,7 @@ class ResilientResponseOrchestrator:
         background: bool,
         history_limit: int,
         runtime_state: Any,
+        incarnation_id: str | None = None,
     ) -> None:
         """Run the handler body inside the resilient task (Spec 033 §3.2 extract).
 
@@ -848,6 +851,8 @@ class ResilientResponseOrchestrator:
         :paramtype history_limit: int
         :keyword runtime_state: The runtime-state tracker.
         :paramtype runtime_state: Any
+        :keyword incarnation_id: The durable input's private incarnation identifier.
+        :paramtype incarnation_id: str | None
         :return: None
         :rtype: None
         """
@@ -923,7 +928,7 @@ class ResilientResponseOrchestrator:
             if cancel_bridge is not None and not cancel_bridge.done():
                 cancel_bridge.cancel()
             # (Spec 013 US1(c)) Drop the runtime-refs entry on terminal exit.
-            _RUNTIME_REFS.pop(derive_lifecycle_id(response_id, user_id_key), None)
+            _RUNTIME_REFS.pop(_input_fence_key(response_id, user_id_key, incarnation_id), None)
 
     async def _execute_in_task(self, ctx: TaskContext[dict[str, Any]]) -> Any:
         """Fence deleted inputs and reserve recovered execution before dispatch.
@@ -933,7 +938,10 @@ class ResilientResponseOrchestrator:
         :return: None when settled, or a task recovery deferral sentinel.
         :rtype: Any
         """
-        from ._resilient_input import platform_context_from_params  # pylint: disable=import-outside-toplevel
+        from ._resilient_input import (  # pylint: disable=import-outside-toplevel
+            incarnation_from_params,
+            platform_context_from_params,
+        )
         from ._response_task_lifecycle import _task_input_deleted  # pylint: disable=import-outside-toplevel
 
         params = ctx.input
@@ -941,14 +949,15 @@ class ResilientResponseOrchestrator:
         if not isinstance(response_id, str):
             return await self._execute_admitted_task(ctx)
         user_id_key = platform_context_from_params(params).user_id_key
-        if await _task_input_deleted(ctx.task_id, response_id, user_id_key):
+        incarnation_id = incarnation_from_params(params)
+        if await _task_input_deleted(ctx.task_id, response_id, user_id_key, incarnation_id=incarnation_id):
             logger.info("Skipping deleted durable response input %s", response_id)
             return None
         state = self._runtime_state
         if not _is_recovered_entry(ctx.entry_mode) or state is None:
             return await self._execute_admitted_task(ctx)
-        if not await state.reserve(response_id, user_id_key, recovery=True):
-            if await state.is_deleted(response_id, user_id_key):
+        if not await state.reserve(response_id, user_id_key, recovery=True, incarnation_id=incarnation_id):
+            if incarnation_id is None and await state.is_deleted(response_id, user_id_key):
                 return None
             # A competing lifecycle operation may fail. Preserve the input for
             # recovery rather than consuming it while admission is unavailable.
@@ -959,7 +968,10 @@ class ResilientResponseOrchestrator:
             logger.info("Deferring recovered response %s during a competing lifecycle operation", response_id)
             return _ExitForRecovery()
         try:
-            return await self._execute_admitted_task(ctx)
+            if incarnation_id is None or not await _task_input_deleted(
+                ctx.task_id, response_id, user_id_key, incarnation_id=incarnation_id
+            ):
+                return await self._execute_admitted_task(ctx)
         finally:
             with CancelScope(shield=True):
                 await state.release_reservation(response_id, user_id_key)
@@ -1036,7 +1048,9 @@ class ResilientResponseOrchestrator:
         # cache, never in the serialized input. Build a small key→ref map so the
         # existing ``_ref("_..._ref")`` call sites stay unchanged. Test-injected
         # refs passed via ``ctx.input`` are honored as a fallback.
-        _runtime_refs = _RUNTIME_REFS.get(derive_lifecycle_id(response_id, resilient.user_id_key))
+        _runtime_refs = _RUNTIME_REFS.get(
+            _input_fence_key(response_id, resilient.user_id_key, resilient.incarnation_id)
+        )
         _ref_map: dict[str, Any] = {}
         if _runtime_refs is not None:
             _ref_map = {
@@ -1155,6 +1169,7 @@ class ResilientResponseOrchestrator:
             background=_background,
             history_limit=int(self._options.default_fetch_history_count),
             runtime_state=_ref("_runtime_state_ref") or self._runtime_state,
+            incarnation_id=resilient.incarnation_id,
         )
 
     def build_resilient_input(
@@ -1201,6 +1216,7 @@ class ResilientResponseOrchestrator:
             call_id=ctx.call_id,
             client_headers=dict(ctx.context.client_headers) if ctx.context is not None else {},
             query_parameters=dict(ctx.context.query_parameters) if ctx.context is not None else {},
+            incarnation_id=uuid4().hex,
         )
         refs = RuntimeRefs(
             record=record,
@@ -1330,11 +1346,12 @@ class ResilientResponseOrchestrator:
         # semantics) based on the request's conversation_id /
         # previous_response_id / steerable_conversations tuple.
         # (Spec 033 §3.1) The process-local refs are cached out-of-band keyed by
-        # user-scoped lifecycle ID; the resilient task input is EXACTLY the typed boundary's
+        # caller-scoped incarnation; the resilient task input is EXACTLY the typed boundary's
         # serialization — the single producer (FR-001).
         task_id = derive_lifecycle_id(task_id, resilient_input.user_id_key)
         lifecycle_id = derive_lifecycle_id(response_id, resilient_input.user_id_key)
-        _RUNTIME_REFS[lifecycle_id] = refs
+        refs_key = _input_fence_key(response_id, resilient_input.user_id_key, resilient_input.incarnation_id)
+        _RUNTIME_REFS[refs_key] = refs
 
         start_kwargs: dict[str, Any] = {
             "task_id": task_id,
@@ -1373,7 +1390,7 @@ class ResilientResponseOrchestrator:
             # out-of-band refs — never runs. Drop the cache entry here so we do
             # not permanently retain the record/context/parsed-request/cancel
             # event for a response that fell back to in-process execution.
-            _RUNTIME_REFS.pop(lifecycle_id, None)
+            _RUNTIME_REFS.pop(refs_key, None)
             raise
         # Store the task run reference on the record for observability
         record.resilient_task_run = task_run  # type: ignore[attr-defined]

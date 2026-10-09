@@ -11,11 +11,16 @@ from azure.ai.agentserver.core.tasks._exceptions_internal import _HostedConflict
 from azure.ai.agentserver.core.tasks._manager import get_task_manager
 from azure.ai.agentserver.core.tasks._models import TaskInfo, TaskPatchRequest
 
-from ._resilient_input import platform_context_from_params
+from ._resilient_input import incarnation_from_params, platform_context_from_params
 from ._task_id import derive_lifecycle_id
 
 
 _DELETED_INPUT_IDS = "responses_deleted_input_ids"
+
+
+def _input_fence_key(response_id: str, user_id_key: str | None, incarnation_id: str | None = None) -> str:
+    lifecycle_id = derive_lifecycle_id(response_id, user_id_key)
+    return lifecycle_id if incarnation_id is None else f"{lifecycle_id}:{incarnation_id}"
 
 
 def _deleted_input_ids(info: TaskInfo) -> list[str]:
@@ -25,15 +30,14 @@ def _deleted_input_ids(info: TaskInfo) -> list[str]:
     return value
 
 
-def _owns_response(info: TaskInfo, response_id: str, user_id_key: str | None) -> bool:
+def _response_fence_keys(info: TaskInfo, response_id: str, user_id_key: str | None) -> list[str]:
     lifecycle_id = derive_lifecycle_id(response_id, user_id_key)
-    if info.status == "completed" or lifecycle_id in _deleted_input_ids(info):
-        return False
+    if info.status == "completed":
+        return []
     payload = info.payload or {}
-    if payload.get("last_input_id") == lifecycle_id:
-        return True
     slots = [payload.get("input")]
     slots.extend((payload.get("steering") or {}).get("pending_inputs") or [])
+    keys = []
     for slot in slots:
         if slot is None:
             continue
@@ -41,8 +45,19 @@ def _owns_response(info: TaskInfo, response_id: str, user_id_key: str | None) ->
         if not isinstance(value, dict):
             raise ValueError("Invalid durable response task input")
         if value.get("response_id") == response_id and platform_context_from_params(value).user_id_key == user_id_key:
-            return True
-    return False
+            key = _input_fence_key(response_id, user_id_key, incarnation_from_params(value))
+            if key not in keys:
+                keys.append(key)
+    # Core clears completed input on suspension. A legacy fence covers such
+    # an unknown old incarnation, but never a new persisted nonce-bearing turn.
+    if not keys and payload.get("last_input_id") == lifecycle_id:
+        keys.append(lifecycle_id)
+    return keys
+
+
+def _owns_response(info: TaskInfo, response_id: str, user_id_key: str | None) -> bool:
+    deleted = _deleted_input_ids(info)
+    return any(key not in deleted for key in _response_fence_keys(info, response_id, user_id_key))
 
 
 async def _response_tasks(response_id: str, user_id_key: str | None, task_names: tuple[str, ...]) -> list[TaskInfo]:
@@ -90,18 +105,26 @@ async def _fence_response_tasks(
     if not matches:
         return
     manager = get_task_manager()
-    lifecycle_id = derive_lifecycle_id(response_id, user_id_key)
     for info in matches:
+        targets = list(
+            dict.fromkeys(
+                [
+                    derive_lifecycle_id(response_id, user_id_key),
+                    *_response_fence_keys(info, response_id, user_id_key),
+                ]
+            )
+        )
         for attempt in range(5):
             if info.status == "completed":
                 break  # Immutable terminal tasks cannot recover.
             deleted = _deleted_input_ids(info)
-            if lifecycle_id in deleted:
+            additions = [key for key in targets if key not in deleted]
+            if not additions:
                 break
             try:
                 await manager.provider.update(
                     info.id,
-                    TaskPatchRequest(if_match=info.etag, payload={_DELETED_INPUT_IDS: [*deleted, lifecycle_id]}),
+                    TaskPatchRequest(if_match=info.etag, payload={_DELETED_INPUT_IDS: [*deleted, *additions]}),
                 )
                 break
             except TaskNotFound:
@@ -119,7 +142,9 @@ async def _fence_response_tasks(
                 info = latest
 
 
-async def _task_input_deleted(task_id: str, response_id: str, user_id_key: str | None) -> bool:
+async def _task_input_deleted(
+    task_id: str, response_id: str, user_id_key: str | None, *, incarnation_id: str | None = None
+) -> bool:
     """Check durable fencing before any response recovery writes or admission.
 
     :param task_id: The durable task identifier.
@@ -128,19 +153,34 @@ async def _task_input_deleted(task_id: str, response_id: str, user_id_key: str |
     :type response_id: str
     :param user_id_key: The input's persisted user partition.
     :type user_id_key: str | None
+    :keyword incarnation_id: The persisted incarnation; None denotes a legacy input.
+    :paramtype incarnation_id: str | None
     :return: Whether the task is gone, terminal, or this input has been deleted.
     :rtype: bool
     """
     try:
         manager = get_task_manager()
     except TaskManagerNotInitialized:
+        if incarnation_id is not None:
+            raise
         return False
     try:
         info = await manager.provider.get(task_id)
     except TaskNotFound:
         return True
-    return (
-        info is None
-        or info.status == "completed"
-        or derive_lifecycle_id(response_id, user_id_key) in _deleted_input_ids(info)
+    if info is None or info.status == "completed":
+        return True
+    if _input_fence_key(response_id, user_id_key, incarnation_id) in _deleted_input_ids(info):
+        return True
+    if incarnation_id is None:
+        value = _read_input_value((info.payload or {}).get("input"), info.attachments)
+        return isinstance(value, dict) and incarnation_from_params(value) is not None
+    # Admission/recovery must refer to the exact persisted current input, not
+    # an old callback with a reused response ID. Resume persists this atomically.
+    value = _read_input_value((info.payload or {}).get("input"), info.attachments)
+    return not (
+        isinstance(value, dict)
+        and value.get("response_id") == response_id
+        and platform_context_from_params(value).user_id_key == user_id_key
+        and incarnation_from_params(value) == incarnation_id
     )

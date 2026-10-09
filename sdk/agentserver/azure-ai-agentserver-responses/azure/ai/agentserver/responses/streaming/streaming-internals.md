@@ -110,6 +110,17 @@ in the durable task payload. Other turns and queued inputs are retained.
 Recovery observes the fence before writes or admission and participates in the
 same scoped reservations, so deleting a response cannot resurrect it on restart.
 
+Each newly admitted durable input carries a server-generated private
+`response_incarnation_id`. DELETE retains fences for old incarnations rather
+than clearing a response-wide fence on reuse. The task primitive's conditional
+resume writes the new incarnation with its input, and recovery validates that
+exact persisted incarnation under scoped admission before it writes or runs.
+This permits DELETE followed by a same-ID POST in the same conversation without
+allowing an old recovered turn to reuse the new execution's references or
+reservation. Legacy inputs without an incarnation retain fail-closed deletion
+checks. Public HTTP/SSE IDs, task-chain input IDs, and replay filenames do not
+change.
+
 ## HTTP / SSE wire mapping
 
 The responses host exposes events through Server-Sent-Events on:
