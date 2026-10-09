@@ -96,13 +96,15 @@ class SymmetricKey(Key):
     def default_key_wrap_algorithm(self):
         return _default_kw_alg_by_size[len(self._key)]
 
-    def encrypt(self, plain_text, iv, **kwargs):  # pylint:disable=arguments-differ
+    def encrypt(self, plain_text, **kwargs):
+        iv = kwargs.get("iv")
         algorithm = self._get_algorithm("encrypt", **kwargs)
         raise_if_incorrect_key_size(algorithm, len(self._key))
         encryptor = algorithm.create_encryptor(key=self._key, iv=iv)
         return encryptor.transform(plain_text)
 
-    def decrypt(self, cipher_text, iv, **kwargs):  # pylint:disable=arguments-differ
+    def decrypt(self, cipher_text, **kwargs):
+        iv = kwargs.get("iv")
         algorithm = self._get_algorithm("decrypt", **kwargs)
         raise_if_incorrect_key_size(algorithm, len(self._key))
         decryptor = algorithm.create_decryptor(key=self._key, iv=iv)
