@@ -1140,6 +1140,16 @@ def _build_internal_log_attributes(
     if event_data.get("threshold") is not None:
         internal_log_attributes["gen_ai.evaluation.threshold"] = str(event_data["threshold"])
 
+    status = event_data.get("status")
+    if isinstance(status, str) and status:
+        internal_log_attributes["microsoft.gen_ai.evaluation.status"] = status
+
+    passed = event_data.get("passed")
+    if isinstance(passed, bool):
+        internal_log_attributes["microsoft.gen_ai.evaluation.passed"] = str(
+            passed
+        ).lower()
+
     # Add testing criteria details if present
     testing_criteria_name = event_data.get("name")
     if testing_criteria_name:

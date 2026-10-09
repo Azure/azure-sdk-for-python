@@ -2172,6 +2172,60 @@ class TestBuildInternalLogAttributesThreshold:
 
 
 @pytest.mark.unittest
+class TestBuildInternalLogAttributesOutcome:
+    """Tests for service-owned evaluation outcome telemetry."""
+
+    @pytest.mark.parametrize(
+        "status,passed,expected",
+        [
+            (
+                "completed",
+                True,
+                {
+                    "microsoft.gen_ai.evaluation.status": "completed",
+                    "microsoft.gen_ai.evaluation.passed": "true",
+                },
+            ),
+            (
+                "completed",
+                False,
+                {
+                    "microsoft.gen_ai.evaluation.status": "completed",
+                    "microsoft.gen_ai.evaluation.passed": "false",
+                },
+            ),
+            ("error", None, {"microsoft.gen_ai.evaluation.status": "error"}),
+            ("skipped", None, {"microsoft.gen_ai.evaluation.status": "skipped"}),
+        ],
+    )
+    def test_status_and_passed_are_included(self, status, passed, expected):
+        """Canonical output-item outcome fields should be queryable."""
+        attrs = _build_internal_log_attributes(
+            {"status": status, "passed": passed},
+            "score",
+            None,
+            {},
+        )
+
+        for key, value in expected.items():
+            assert attrs[key] == value
+        if passed is None:
+            assert "microsoft.gen_ai.evaluation.passed" not in attrs
+
+    def test_invalid_or_missing_values_are_excluded(self):
+        """Unknown value types should not become misleading telemetry."""
+        attrs = _build_internal_log_attributes(
+            {"status": 42, "passed": "true"},
+            "score",
+            None,
+            {},
+        )
+
+        assert "microsoft.gen_ai.evaluation.status" not in attrs
+        assert "microsoft.gen_ai.evaluation.passed" not in attrs
+
+
+@pytest.mark.unittest
 class TestExtractTestingCriteriaMetadataPassThreshold:
     """Tests for pass_threshold propagation in _extract_testing_criteria_metadata."""
 
@@ -2365,6 +2419,32 @@ class TestLogEventsTokenUsage:
         # Should NOT be in standard attributes
         assert "gen_ai.evaluation.usage.input_tokens" not in attrs
         assert "gen_ai.evaluation.usage.output_tokens" not in attrs
+
+    def test_status_and_passed_emitted_in_internal_properties(self):
+        """Evaluation outcome should be present on the exported event."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [
+            {
+                "metric": "coherence",
+                "status": "completed",
+                "passed": False,
+            }
+        ]
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config={"connection_string": "fake"},
+        )
+
+        assert len(emitted) == 1
+        attributes = emitted[0].attributes
+        internal_properties = json.loads(attributes["internal_properties"])
+        assert internal_properties["microsoft.gen_ai.evaluation.status"] == "completed"
+        assert internal_properties["microsoft.gen_ai.evaluation.passed"] == "false"
+        assert "microsoft.gen_ai.evaluation.status" not in attributes
+        assert "microsoft.gen_ai.evaluation.passed" not in attributes
 
     def test_token_usage_not_in_standard_attributes(self):
         """Token usage should be in internal_properties, not in standard attributes."""
