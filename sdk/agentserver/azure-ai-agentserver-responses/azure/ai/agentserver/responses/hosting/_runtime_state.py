@@ -60,26 +60,41 @@ class _RuntimeState:
         self._deleted_response_ids: set[_RuntimeKey] = set()
         self._reservations: set[_RuntimeKey] = set()
         self._deletions: set[_RuntimeKey] = set()
+        self._retained_deletions: set[_RuntimeKey] = set()
         self._draining = False
         self._lock = asyncio.Lock()
 
-    async def reserve(self, response_id: str, user_id_key: str | None) -> bool:
+    async def reserve(self, response_id: str, user_id_key: str | None, *, recovery: bool = False) -> bool:
         """Reserve a caller-scoped response ID before starting execution.
 
         :param response_id: The caller-selected response ID.
         :type response_id: str
         :param user_id_key: The authenticated user partition, or ``None`` for anonymous.
         :type user_id_key: str | None
+        :keyword recovery: Reject completed deletion tombstones on recovered entry.
+        :paramtype recovery: bool
         :return: ``True`` when reserved; ``False`` when already live or reserved.
         :rtype: bool
         """
         key = _runtime_key(response_id, user_id_key)
         async with self._lock:
+            record = self._records.get(key)
+            stale_execution = (
+                recovery
+                and record is not None
+                and not record.is_terminal
+                and record.execution_task is not None
+                and record.execution_task.done()
+            )
+            if record is not None and not stale_execution:
+                return False
+            if recovery and (key in self._deleted_response_ids or self._draining):
+                return False
             if (
-                key in self._records
-                or key in self._pending_records
+                key in self._pending_records
                 or key in self._reservations
                 or key in self._deletions
+                or key in self._retained_deletions
             ):
                 return False
             self._reservations.add(key)
@@ -127,6 +142,36 @@ class _RuntimeState:
         """
         async with self._lock:
             self._deletions.discard(_runtime_key(response_id, user_id_key))
+
+    async def retain_for_deletion(self, record: ResponseExecution) -> bool:
+        """Retain exact authorized ownership until all deletion steps succeed.
+
+        :param record: The existing execution or authorized provider snapshot.
+        :type record: ResponseExecution
+        :return: Whether the record was retained under the deletion reservation.
+        :rtype: bool
+        """
+        key = _runtime_key(record.response_id, record.user_id_key)
+        async with self._lock:
+            existing = self._records.get(key)
+            if key not in self._deletions or (existing is not None and existing is not record):
+                return False
+            self._records[key] = record
+            self._retained_deletions.add(key)
+            return True
+
+    async def is_retained_for_deletion(self, response_id: str, user_id_key: str | None) -> bool:
+        """Check whether authorized cleanup is awaiting a retry.
+
+        :param response_id: The response identifier.
+        :type response_id: str
+        :param user_id_key: The caller's user partition.
+        :type user_id_key: str | None
+        :return: Whether deletion owns the retained record.
+        :rtype: bool
+        """
+        async with self._lock:
+            return _runtime_key(response_id, user_id_key) in self._retained_deletions
 
     async def add(self, record: ResponseExecution) -> None:
         """Add or replace an execution record in the store.
@@ -232,6 +277,7 @@ class _RuntimeState:
             if record is None or (expected_record is not None and record is not expected_record):
                 return False
             del self._records[key]
+            self._retained_deletions.discard(key)
             self._deleted_response_ids.add(key)
             return True
 
@@ -246,6 +292,7 @@ class _RuntimeState:
 
         Only records in a terminal status are evicted.  Non-terminal records
         are left untouched so that in-flight operations remain correct.
+        In-flight and failed deletion ownership is retained for cleanup retries.
 
         :param response_id: The response ID to evict.
         :type response_id: str
@@ -256,6 +303,8 @@ class _RuntimeState:
         """
         key = _runtime_key(response_id, user_id_key)
         async with self._lock:
+            if key in self._deletions or key in self._retained_deletions:
+                return False
             record = self._records.get(key)
             if record is None:
                 return False

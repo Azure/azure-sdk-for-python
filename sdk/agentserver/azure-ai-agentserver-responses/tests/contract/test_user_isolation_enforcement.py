@@ -780,7 +780,9 @@ async def test_delete_blocks_same_user_recreation_until_cleanup_finishes(
     deleting = asyncio.create_task(client.request("DELETE", f"/responses/{response_id}", headers=headers))
     try:
         await asyncio.wait_for(reached.wait(), timeout=5)
-        assert await state.get(response_id, "owner") is None
+        retained = await state.get(response_id, "owner")
+        assert retained is not None
+        assert not await state.try_evict(response_id, "owner")
         collision = await client.post(
             "/responses", json_body={"response_id": response_id, "model": "new", "store": False}, headers=headers
         )
@@ -797,6 +799,12 @@ async def test_delete_blocks_same_user_recreation_until_cleanup_finishes(
             deleting.cancel()
             with pytest.raises(asyncio.CancelledError):
                 await deleting
+            assert await state.get(response_id, "owner") is retained
+            assert not await state.is_deleted(response_id, "owner")
+            assert not await state.reserve(response_id, "owner")
+            release.set()
+            retry = await client.request("DELETE", f"/responses/{response_id}", headers=headers)
+            assert retry.status_code == 200, retry.body
         else:
             release.set()
             result = await asyncio.wait_for(deleting, timeout=5)
@@ -856,6 +864,7 @@ async def test_recovered_streaming_tasks_use_their_durable_user_partition(monkey
         contexts.append(
             SimpleNamespace(
                 input=durable.to_task_input(),
+                task_id=f"recovered-task-{user}",
                 entry_mode="recovered",
                 is_steered_turn=False,
                 pending_input_count=0,

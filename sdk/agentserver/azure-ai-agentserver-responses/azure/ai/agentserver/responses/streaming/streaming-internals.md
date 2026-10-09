@@ -97,6 +97,19 @@ persisted event has since expired, the rehydrated stream is in the
 Only a newly admitted producer may use `streams.get_or_create(lifecycle_id)`
 to mint a fresh stream.
 
+An empty ACTIVE file can remain after a crash before durable admission. Under
+the caller-scoped create reservation, the host removes it only after confirming
+that no live or pending execution, stored response, or resumable durable input
+owns it. Storage failures or unavailable durable ownership lookup fail closed;
+an empty cursor alone does not authorize reclamation.
+
+DELETE retains exact caller-scoped ownership until replay and response-provider
+cleanup succeed, including across cleanup errors and cancellation. Before
+removing backing state, it conditionally fences that response's lifecycle input
+in the durable task payload. Other turns and queued inputs are retained.
+Recovery observes the fence before writes or admission and participates in the
+same scoped reservations, so deleting a response cannot resurrect it on restart.
+
 ## HTTP / SSE wire mapping
 
 The responses host exposes events through Server-Sent-Events on:

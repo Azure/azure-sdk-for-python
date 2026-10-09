@@ -22,6 +22,8 @@ import logging
 from copy import deepcopy
 from typing import TYPE_CHECKING, Any, Callable, cast
 
+from anyio import CancelScope
+
 from azure.ai.agentserver.core.tasks import (
     MultiTurnTask,
     Task,
@@ -923,7 +925,46 @@ class ResilientResponseOrchestrator:
             # (Spec 013 US1(c)) Drop the runtime-refs entry on terminal exit.
             _RUNTIME_REFS.pop(derive_lifecycle_id(response_id, user_id_key), None)
 
-    async def _execute_in_task(self, ctx: TaskContext[dict[str, Any]]) -> None:
+    async def _execute_in_task(self, ctx: TaskContext[dict[str, Any]]) -> Any:
+        """Fence deleted inputs and reserve recovered execution before dispatch.
+
+        :param ctx: The resilient task context.
+        :type ctx: TaskContext[dict[str, Any]]
+        :return: None when settled, or a task recovery deferral sentinel.
+        :rtype: Any
+        """
+        from ._resilient_input import platform_context_from_params  # pylint: disable=import-outside-toplevel
+        from ._response_task_lifecycle import _task_input_deleted  # pylint: disable=import-outside-toplevel
+
+        params = ctx.input
+        response_id = params.get("response_id") if isinstance(params, dict) else None
+        if not isinstance(response_id, str):
+            return await self._execute_admitted_task(ctx)
+        user_id_key = platform_context_from_params(params).user_id_key
+        if await _task_input_deleted(ctx.task_id, response_id, user_id_key):
+            logger.info("Skipping deleted durable response input %s", response_id)
+            return None
+        state = self._runtime_state
+        if not _is_recovered_entry(ctx.entry_mode) or state is None:
+            return await self._execute_admitted_task(ctx)
+        if not await state.reserve(response_id, user_id_key, recovery=True):
+            if await state.is_deleted(response_id, user_id_key):
+                return None
+            # A competing lifecycle operation may fail. Preserve the input for
+            # recovery rather than consuming it while admission is unavailable.
+            from azure.ai.agentserver.core.tasks._context import (  # pylint: disable=import-outside-toplevel
+                _ExitForRecovery,
+            )
+
+            logger.info("Deferring recovered response %s during a competing lifecycle operation", response_id)
+            return _ExitForRecovery()
+        try:
+            return await self._execute_admitted_task(ctx)
+        finally:
+            with CancelScope(shield=True):
+                await state.release_reservation(response_id, user_id_key)
+
+    async def _execute_admitted_task(self, ctx: TaskContext[dict[str, Any]]) -> None:
         """Execute the response pipeline inside the task body.
 
         This is the re-entrant function. On each entry:
@@ -1054,7 +1095,6 @@ class ResilientResponseOrchestrator:
             )
             assert record is not None, "_reconstruct_from_params guarantees non-None record"
             assert self._runtime_state is not None, "runtime_state always wired at orchestrator init"
-            await self._runtime_state.add(record)
 
         # After the reconstruction block, context and record are both
         # guaranteed non-None (either set from refs in the same-process
@@ -1068,6 +1108,9 @@ class ResilientResponseOrchestrator:
 
         if await self._flatten_recovery_context(ctx, context, is_recovery):
             return
+        if _ref("_record_ref") is None:
+            assert self._runtime_state is not None, "runtime_state always wired at orchestrator init"
+            await self._runtime_state.add(record)
 
         # Bridge task cancellation → response cancellation surface.
         # ``ctx.cancel`` (steering / explicit cancel) and ``ctx.shutdown``
