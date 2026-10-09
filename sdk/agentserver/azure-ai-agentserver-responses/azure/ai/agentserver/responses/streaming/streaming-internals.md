@@ -41,12 +41,21 @@ Why these choices:
 ## Persistence file layout
 
 When the host is configured with `resilient_background=True`, the
-file-backed backing writes one JSONL file per response under the
+file-backed backing writes one JSONL file per caller-scoped lifecycle ID under the
 configured `storage_dir`:
 
 ```text
-<storage_dir>/<response_id>.jsonl
+<storage_dir>/<lifecycle_id>.jsonl
 ```
+
+The host derives `lifecycle_id` using
+`derive_lifecycle_id(response_id, user_id_key)`. For identified users this is
+`lifecycle-` followed by the SHA-256 digest of the user key and public response
+ID, so different users' replay logs cannot collide. The public response ID in
+HTTP paths and SSE payloads does not change. Anonymous requests (`user_id_key`
+is `None`) retain the original response ID as their lifecycle key and keep the
+previous file naming convention. Identified users never adopt those shared
+legacy replay logs.
 
 Each line is a single JSON object of the form
 `{"emit_time": <unix-float>, "payload": <event-dict>}`, ending with
@@ -63,9 +72,17 @@ subdirectories (`tasks/`, `streams/`, `responses/`).
 
 ## Recovery on restart
 
-A fresh process that calls `await streams.get_or_create(response_id)`
-for a `response_id` whose `.jsonl` file already exists on disk
-rehydrates the stream from the persisted events automatically:
+A fresh process looks up replay using the same caller-scoped lifecycle ID:
+
+```python
+lifecycle_id = derive_lifecycle_id(response_id, user_id_key)
+stream = await streams.get(lifecycle_id)
+```
+
+`get` rehydrates an existing `.jsonl` file from persisted events, but never
+creates a file for an absent ID. Missing or expired replay raises
+`EventStreamNotFoundError`. `get_or_create(lifecycle_id)` is reserved for
+admitted execution that owns the producer lifecycle, not GET replay lookup.
 
 - Buffered events become available to new subscribers immediately.
 - `await stream.last_cursor()` returns the highest `sequence_number`
@@ -76,8 +93,87 @@ rehydrates the stream from the persisted events automatically:
 
 If the previous run finished cleanly (terminator on disk) AND every
 persisted event has since expired, the rehydrated stream is in the
-`GONE` state. Calling `streams.delete(id)` + `streams.get_or_create(id)`
-mints a fresh stream.
+`GONE` state; `streams.get(lifecycle_id)` cleans up and reports it as missing.
+Only a newly admitted producer may use `streams.get_or_create(lifecycle_id)`
+to mint a fresh stream.
+
+An empty ACTIVE file can remain after a crash before durable admission. Under
+the caller-scoped create reservation, the host removes it only after confirming
+that no live or pending execution, stored response, or resumable durable input
+owns it. Storage failures or unavailable durable ownership lookup fail closed;
+an empty cursor alone does not authorize reclamation.
+
+Durable ownership lookup enumerates all matching tasks, not just the newest
+listing page. Providers perform complete no-limit enumeration and retain control
+of their continuation cursors. A failed or incomplete scan never proves absence
+of an owner or permits DELETE to complete.
+
+DELETE retains exact caller-scoped ownership until replay and response-provider
+cleanup succeed, including across cleanup errors and cancellation. Before
+removing backing state, it conditionally fences that response's lifecycle input
+in the durable task payload. Other turns and queued inputs are retained.
+Recovery observes the fence before writes or admission and participates in the
+same scoped reservations, so deleting a response cannot resurrect it on restart.
+
+Retained cleanup ownership is not a live execution or evidence of replay
+capability. GET uses the authorized provider fallback and a noncreating replay
+lookup for such records; a failed provider DELETE cannot recreate removed replay.
+
+Each newly admitted durable input carries a server-generated private
+`response_incarnation_id`. DELETE retains fences for old incarnations rather
+than clearing a response-wide fence on reuse. The task primitive's conditional
+resume writes the new incarnation with its input, and recovery validates that
+exact persisted incarnation under scoped admission before it writes or runs.
+This permits DELETE followed by a same-ID POST in the same conversation without
+allowing an old recovered turn to reuse the new execution's references or
+reservation. Legacy inputs without an incarnation retain fail-closed deletion
+checks. Public HTTP/SSE response IDs remain the original `response_id`.
+Identified callers already use `derive_lifecycle_id` for task IDs, chain
+`input_id` / `if_last_input_id` values, and replay filenames; anonymous callers
+retain the legacy identifier layout. The private incarnation does not further
+change these already caller-scoped task/replay keys. It appears only in the
+durable input and private reference/deletion-fence keys.
+
+An invalid incarnation is never re-invoked. Only an exact match to the current
+persisted input, without a deletion fence and under scoped recovery admission,
+may reach fail-closed response settlement. Deleted or stale malformed callbacks
+cannot create a failure marker for a removed or replacement response.
+
+The durable `user_id_key` is validated as `str | None` before platform-context
+construction or lifecycle/runtime key derivation. Empty strings remain identified
+partitions; missing/`None` legacy values remain anonymous. Lists, mappings,
+numbers, and booleans are rejected, never coerced into the anonymous partition.
+If this identity is corrupt, a response can be settled only using its original
+process-local context and matching task-run, input-ID, and incarnation references,
+with the exact current-input and deletion checks still applied. Neither opaque
+task/input hashes nor a persisted call ID independently recover the missing user
+partition. Without that proof, the handler is not invoked and only the malformed
+task input is settled with a warning: existing response envelopes (possibly still
+`in_progress`), replay, and runtime references are left untouched. Operator repair
+or an authenticated caller operation is needed to address such orphaned storage.
+
+Recovered admission retires an exact stopped nonterminal runtime record only
+after all lifecycle guards pass, under the reservation lock. Early settlement
+and cancellation therefore cannot leave a stale live record shadowing provider
+state. Active, terminal, foreign-user, and deletion-owned records are preserved.
+
+Shutdown closes fresh and recovered reservations atomically with its snapshot of
+published and pending executions. A reservation alone does not admit execution:
+first publication or pending registration must precede that snapshot. Afterward,
+only the exact accepted record or its same-context finalization may publish, with
+the existing predecessor and deletion-ownership guards still enforced.
+Non-stored handlers are tracked as pending work before their first invocation.
+Non-stream startup carries a temporary request-task drain handle until the
+execution task takes ownership, so shutdown can signal and await accepted work
+even before the first handler event. Exact pending cleanup cannot discard a
+successor or another user's record.
+
+A create rejected before HTTP headers returns the existing `503`
+`service_unavailable` shutdown response, not a response-ID conflict or handler
+failure. Once streaming headers have been sent, rejected startup retains the
+existing connection-only `server_error` SSE contract. Newly allocated replay is
+removed before the create reservation is released; retained replay and accepted
+execution ownership are preserved.
 
 ## HTTP / SSE wire mapping
 
@@ -87,16 +183,16 @@ The responses host exposes events through Server-Sent-Events on:
   layer subscribes to the per-response stream and yields each emit as
   an SSE event.
 - `GET /responses/{id}?stream=true` — **replay**. The endpoint looks up
-  the per-response stream from the registry and iterates its buffered
-  history.
+  the persisted response using the caller's user partition before calling
+  `streams.get(lifecycle_id)` and iterating buffered history. Storage errors
+  fail closed rather than falling through to cached replay.
   - Cursored reconnect: the SSE `Last-Event-ID: N` header (or the
     `?starting_after=N` query alias retained for backward compatibility)
     is forwarded as `stream.subscribe(after=N)`.
-  - When no stream exists for `id` (never registered, or destroyed via
-    `DELETE /responses/{id}`), the endpoint returns HTTP `404`. The
-    underlying registry exceptions
-    (`EventStreamNotFoundError` / `EventStreamGoneError`) both map to
-    `404` on this endpoint.
+  - A missing or unauthorized response returns HTTP `404`. If an authorized
+    background response exists but its replay is absent or expired, the
+    endpoint returns HTTP `400` with an invalid-mode error. The registry's
+    `EventStreamNotFoundError` never causes a lookup to create a new replay log.
 
 ## Other modules in this sub-package
 

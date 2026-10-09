@@ -4,9 +4,61 @@
 
 ### Bugs Fixed
 
+- Atomically close fresh response reservations and unpublished execution
+  admission when shutdown takes its drain snapshot. Preserve exact accepted
+  executions for terminal finalization, track handler work before its first
+  event, and return the existing HTTP 503 shutdown response for late creates.
+- Validate durable user partitions as strings or `None` before constructing
+  platform, lifecycle, or runtime identities. Invalid partitions never fall
+  back to anonymous storage. Fail the response only with independently proven
+  original task references and current-input/deletion guards; otherwise settle
+  only the malformed input and leave response, replay, and references untouched.
+- Reject runtime publication during active or retained DELETE cleanup, and bind
+  fresh admission to its exact request context so late callbacks cannot replace
+  a successor or clear a completed deletion marker.
 - Partition local in-memory and file-backed responses, items, history, and
   conversation indexes by the platform user key, keeping anonymous local state
   separate.
+- Release exact caller-scoped incarnation references when durable inputs settle
+  before handler dispatch, preserving successor entries and admission deferrals.
+- Read retained DELETE cleanup ownership through the authorized response
+  provider and noncreating replay lookup, without allocating replacement streams.
+- Retire stopped nonterminal runtime executions under scoped recovery admission,
+  preventing early settlement or cancellation from retaining stale live state.
+- Settle malformed current durable response incarnations as failed without
+  re-invoking execution, while retaining deletion fences and rejecting stale inputs.
+- Check all durable task owners before reclaiming empty replay or fencing DELETE,
+  including older conversation tasks beyond the first listing page.
+- Partition live execution, cancellation state, SSE streams, and resilient
+  task identifiers by the platform user key. Different users can use the same
+  public response ID independently. Duplicate creation within one user's
+  partition returns HTTP 409 while execution or replay is retained.
+- Require a successful user-scoped provider lookup before replaying stored SSE
+  events; storage errors no longer fall through to cached replay.
+- Require Core 2.2.1 so retained file replay is discovered after restart for
+  duplicate admission, authorized replay, and deletion.
+- Return an error when replay cleanup fails during DELETE and retain ownership
+  state so the owner can retry cleanup.
+- Reserve the caller-scoped response ID throughout DELETE cleanup so a new
+  POST cannot reuse the ID before stream, runtime, and provider cleanup finish.
+- Finish retained replay with the persisted terminal snapshot when crash
+  recovery cannot resume execution, preventing indefinite SSE waits.
+- Remove newly allocated replay streams when durable task admission fails or
+  shutdown rejects the request before execution starts, allowing response ID
+  reuse after cleanup. Emit startup errors only on the requesting HTTP stream
+  without recreating rejected replay or closing another execution's stream.
+- Release streaming create reservations and stop disconnect monitors even
+  when sending HTTP headers fails before the first body iteration.
+- Shield non-streaming create reservation cleanup from request cancellation
+  so an interrupted request does not prevent later reuse of the response ID.
+- Reclaim empty crash-abandoned file replay only when no caller-scoped runtime,
+  response provider, or durable task retains ownership.
+- Retain DELETE ownership through provider cleanup failures and cancellation,
+  and fence deleted durable response inputs without deleting unrelated turns.
+  Recovery participates in scoped admission and cannot resurrect deleted responses.
+- Scope durable deletion fences and process-local recovery references by a
+  private response incarnation, allowing a fresh same-ID turn on a retained
+  conversation task without admitting an old deleted recovery.
 
 ### Breaking Changes
 
@@ -16,6 +68,10 @@
   automatically, because their user ownership cannot be established safely.
   Back up and explicitly migrate any required local data into the correct
   partition only after independently verifying its ownership.
+- Identified users now use private user-scoped stream and task keys. Existing
+  shared replay logs and task chains are not adopted for those users because
+  their ownership cannot be verified. Drain active work before upgrading.
+  Anonymous lifecycle keys retain their previous format.
 
 ## 2.3.0 (2026-10-05)
 

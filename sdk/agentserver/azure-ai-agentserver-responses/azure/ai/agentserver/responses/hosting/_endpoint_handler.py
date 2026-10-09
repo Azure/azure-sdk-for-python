@@ -16,7 +16,7 @@ from contextlib import aclosing
 import logging
 import os
 import threading
-from typing import TYPE_CHECKING, Any, AsyncGenerator, cast
+from typing import TYPE_CHECKING, Any, AsyncGenerator, Awaitable, Callable, cast
 
 from anyio import CancelScope
 from opentelemetry import baggage as _otel_baggage
@@ -45,9 +45,11 @@ from azure.ai.agentserver.core.platform_headers import (
 )
 from azure.ai.agentserver.core import read_request_id
 from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-error,no-name-in-module
+    EventStream,
     EventStreamNotFoundError,
     streams,
 )
+from azure.ai.agentserver.core.streaming._concrete import FileBackedReplayEventStream
 
 from ..models import _generated as _generated_models
 
@@ -74,7 +76,7 @@ from ._observability import (
     extract_request_id,
     start_create_span,
 )
-from ._orchestrator import _HandlerError, _refresh_background_status, _ResponseOrchestrator
+from ._orchestrator import _HandlerError, _refresh_background_status, _ResponseOrchestrator, _ServerShuttingDown
 from ._request_parsing import (
     _apply_item_cursors,
     _extract_agent_identity,
@@ -85,6 +87,8 @@ from ._request_parsing import (
     _resolve_session_id,
 )
 from ._runtime_state import _RuntimeState
+from ._response_task_lifecycle import _fence_response_tasks, _response_tasks
+from ._task_id import derive_lifecycle_id
 from ._validation import (
     ERROR_SOURCE_PLATFORM,
     ERROR_SOURCE_UPSTREAM,
@@ -131,9 +135,12 @@ class _CreateStreamingResponse(StreamingResponse):
         interval_seconds: float | None,
         *,
         headers: dict[str, str],
+        on_finalize: Callable[[], Awaitable[None]] | None = None,
     ) -> None:
         self._source = source
         self._stream = cast(AsyncGenerator[str, None], with_keep_alive(source, interval_seconds))
+        self._on_finalize = on_finalize
+        self._finalized = False
         super().__init__(self._stream, media_type="text/event-stream", headers=headers)
 
     async def stream_response(self, send: Send) -> None:
@@ -142,13 +149,11 @@ class _CreateStreamingResponse(StreamingResponse):
         :param send: The ASGI ``send`` callable for the response.
         :type send: ~starlette.types.Send
         """
-        finalized = False
 
         async def finalize() -> None:
-            nonlocal finalized
-            if finalized:
+            if self._finalized:
                 return
-            finalized = True
+            self._finalized = True
             # Starlette's older ASGI path cancels this task's AnyIO scope on
             # disconnect. Finish iterator cleanup before flushing ended spans.
             with CancelScope(shield=True):
@@ -158,7 +163,11 @@ class _CreateStreamingResponse(StreamingResponse):
                     try:
                         await self._source.aclose()
                     finally:
-                        await _flush_spans_for_mode(os.environ.get(_FLUSH_MODE_ENV, _DEFAULT_FLUSH_MODE))
+                        try:
+                            if self._on_finalize is not None:
+                                await self._on_finalize()
+                        finally:
+                            await _flush_spans_for_mode(os.environ.get(_FLUSH_MODE_ENV, _DEFAULT_FLUSH_MODE))
 
         async def send_with_flush(message: Message) -> None:
             if message["type"] == "http.response.body" and not message.get("more_body", False):
@@ -740,6 +749,129 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             span.end(exc)
             return _error_response(exc, _hdrs)
 
+    async def _reserve_response_id(
+        self,
+        response_id: str,
+        user_id_key: str | None,
+        *,
+        call_id: str | None = None,
+        publication_context: ResponseContext | None = None,
+    ) -> bool:
+        """Reserve an ID only when neither execution nor replay state retains it.
+
+        :param response_id: The response identifier to reserve.
+        :type response_id: str
+        :param user_id_key: The user partition, or ``None`` for anonymous.
+        :type user_id_key: str | None
+        :keyword call_id: The originating call identity forwarded to storage.
+        :paramtype call_id: str | None
+        :keyword publication_context: The fresh request's exact runtime publication owner.
+        :paramtype publication_context: ResponseContext | None
+        :return: Whether the caller acquired the reservation.
+        :rtype: bool
+        """
+        if not await self._runtime_state.reserve(response_id, user_id_key, publication_context=publication_context):
+            if await self._runtime_state.is_draining():
+                raise _ServerShuttingDown("Server is shutting down.")
+            return False
+        available = False
+        try:
+            try:
+                replay = await streams.get(derive_lifecycle_id(response_id, user_id_key))
+            except EventStreamNotFoundError:
+                available = True
+            else:
+                available = await self._reclaim_empty_replay(
+                    response_id, PlatformContext(user_id_key=user_id_key, call_id=call_id), replay
+                )
+            if available and await self._runtime_state.is_draining():
+                available = False
+                raise _ServerShuttingDown("Server is shutting down.")
+        finally:
+            if not available:
+                with CancelScope(shield=True):
+                    await self._runtime_state.release_reservation(response_id, user_id_key)
+        return available
+
+    def _execution_error_response(
+        self, ctx: _ExecutionContext, error: _HandlerError | _ServerShuttingDown, agent_session_id: str | None
+    ) -> JSONResponse:
+        """Map rejected admission or handler failure to its HTTP response.
+
+        :param ctx: The create request's execution context.
+        :type ctx: _ExecutionContext
+        :param error: A shutdown rejection or developer-handler failure.
+        :type error: _HandlerError | _ServerShuttingDown
+        :param agent_session_id: The response's session identifier.
+        :type agent_session_id: str | None
+        :return: The existing shutdown or handler-error response.
+        :rtype: JSONResponse
+        """
+        headers = self._session_headers(agent_session_id)
+        if isinstance(error, _ServerShuttingDown):
+            ctx.span.end(None)
+            return _service_unavailable("Server is shutting down.", headers)
+        logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=error.original)
+        return JSONResponse(
+            {
+                "error": {
+                    "message": "internal server error",
+                    "type": "server_error",
+                    "code": "server_error",
+                    "param": None,
+                }
+            },
+            status_code=500,
+            headers=_apply_error_source_headers(headers, ERROR_SOURCE_UPSTREAM),
+        )
+
+    async def _reclaim_empty_replay(self, response_id: str, context: PlatformContext, replay: EventStream) -> bool:
+        """Reclaim a proven ownerless empty file, including unfinished cleanup.
+
+        :param response_id: The public response identifier.
+        :type response_id: str
+        :param context: The caller's authenticated user and call identity.
+        :type context: PlatformContext
+        :param replay: The existing replay returned by noncreating lookup.
+        :type replay: EventStream
+        :return: Whether the abandoned replay was removed.
+        :rtype: bool
+        """
+        if not isinstance(replay, FileBackedReplayEventStream):
+            return False
+        cleanup_started = False
+        try:
+            if await replay.last_cursor() is not None:
+                return False
+        except EventStreamNotFoundError:
+            cleanup_started = True
+        try:
+            if replay._path.stat().st_size != 0:  # pylint: disable=protected-access
+                return False
+        except FileNotFoundError:
+            if not cleanup_started:
+                raise
+        try:
+            await self._provider.get_response(response_id, context=context)
+        except (FoundryResourceNotFoundError, KeyError):
+            if await _response_tasks(response_id, context.user_id_key, self._response_task_names()):
+                return False
+            await streams.delete(derive_lifecycle_id(response_id, context.user_id_key))
+            return True
+        return False
+
+    def _response_task_names(self) -> tuple[str, str]:
+        """Return the durable response primitives registered by this host.
+
+        :return: The one-shot and multi-turn task names.
+        :rtype: tuple[str, str]
+        """
+        resilient = self._orchestrator._resilient_orchestrator  # pylint: disable=protected-access
+        return (
+            resilient.task_fn.name,
+            resilient._multi_turn_task_fn.name,  # pylint: disable=protected-access
+        )
+
     # ------------------------------------------------------------------
     # Route handlers
     # ------------------------------------------------------------------
@@ -798,9 +930,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         config_session_id = getattr(getattr(self._host, "config", None), "session_id", "") or ""
         host_config = getattr(self._host, "config", None)
         config_session_guid = (
-            getattr(host_config, "session_guid", "") or ""
-            if getattr(host_config, "is_hosted", False)
-            else ""
+            getattr(host_config, "session_guid", "") or "" if getattr(host_config, "is_hosted", False) else ""
         )
         agent_session_id = _resolve_session_id(
             parsed, payload, env_session_id=config_session_id, agent_reference=agent_reference
@@ -873,7 +1003,29 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         disconnect_task: asyncio.Task[None] | None = None
         stream_owns_flush = False
+        stream_owns_reservation = False
+        reservation_acquired = False
         try:
+            if not await self._reserve_response_id(
+                ctx.response_id, ctx.user_id, call_id=ctx.call_id, publication_context=ctx.context
+            ):
+                span.end(None)
+                return JSONResponse(
+                    {
+                        "error": {
+                            "message": (
+                                "An active execution or retained replay stream with this response ID already exists."
+                            ),
+                            "type": "conflict",
+                            "code": "response_id_conflict",
+                            "param": "response_id",
+                        }
+                    },
+                    status_code=409,
+                    headers=self._session_headers(agent_session_id),
+                )
+            reservation_acquired = True
+
             if ctx.stream:
                 raw_iter = cast(AsyncGenerator[str, None], self._orchestrator.run_stream(ctx))
 
@@ -915,7 +1067,14 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         raise
                     finally:
                         reset_request_context(stream_ctx_token)
+
+                async def _finalize_request_stream() -> None:
+                    # Unlike a generator's finally, response finalization also
+                    # runs when sending headers fails before the first iteration.
+                    try:
                         await _stop_disconnect_monitor(disconnect_task, ctx.cancellation_signal)
+                    finally:
+                        await self._runtime_state.release_reservation(ctx.response_id, ctx.user_id)
 
                 sse_response = _CreateStreamingResponse(
                     _iter_with_context(),
@@ -923,8 +1082,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     # pump would advance its handler ahead of HTTP sends.
                     self._runtime_options.sse_keep_alive_interval_seconds if ctx.store else None,
                     headers={**self._sse_headers, **self._session_headers(agent_session_id)},
+                    on_finalize=_finalize_request_stream,
                 )
                 stream_owns_flush = True
+                stream_owns_reservation = True
                 return sse_response
 
             if not ctx.background:
@@ -943,28 +1104,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         strip_internal_metadata(snapshot),
                         status_code=200,
                         headers=self._session_headers(agent_session_id),
-                    )
-                except _HandlerError as exc:
-                    logger.error(
-                        "Handler error in sync create (response_id=%s)",
-                        ctx.response_id,
-                        exc_info=exc.original,
-                    )
-                    # Handler errors are server-side faults, not client errors
-                    err_body = {
-                        "error": {
-                            "message": "internal server error",
-                            "type": "server_error",
-                            "code": "server_error",
-                            "param": None,
-                        }
-                    }
-                    return JSONResponse(
-                        err_body,
-                        status_code=500,
-                        headers=_apply_error_source_headers(
-                            self._session_headers(agent_session_id), ERROR_SOURCE_UPSTREAM
-                        ),
                     )
                 finally:
                     await _stop_disconnect_monitor(disconnect_task, ctx.cancellation_signal)
@@ -989,7 +1128,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 ctx.response_id,
                 exc.actual_last_input_id,
             )
-            err_body = {
+            err_body: dict[str, dict[str, str | None]] = {
                 "error": {
                     "message": (
                         "This agent does not support conversation forking. "
@@ -1022,22 +1161,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 }
             }
             return JSONResponse(err_body, status_code=409, headers=self._session_headers(agent_session_id))
-        except _HandlerError as exc:
-            logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=exc.original)
-            # Handler errors are server-side faults, not client errors
-            err_body = {
-                "error": {
-                    "message": "internal server error",
-                    "type": "server_error",
-                    "code": "server_error",
-                    "param": None,
-                }
-            }
-            return JSONResponse(
-                err_body,
-                status_code=500,
-                headers=_apply_error_source_headers(self._session_headers(agent_session_id), ERROR_SOURCE_UPSTREAM),
-            )
+        except (_HandlerError, _ServerShuttingDown) as exc:
+            return self._execution_error_response(ctx, exc, agent_session_id)
         except Exception as exc:  # pylint: disable=broad-exception-caught
             if is_platform_error(exc):
                 # A resilient task-start (or other platform-infrastructure)
@@ -1065,6 +1190,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             logger.error("Unexpected error in create (response_id=%s)", ctx.response_id, exc_info=exc)
             raise
         finally:
+            if reservation_acquired and not stream_owns_reservation:
+                with CancelScope(shield=True):
+                    await self._runtime_state.release_reservation(ctx.response_id, ctx.user_id)
             _response_id_var.reset(rid_token)
             _conversation_id_var.reset(cid_token)
             _streaming_var.reset(str_token)
@@ -1118,8 +1246,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 _context.user_id_key is not None,
                 _context.call_id is not None,
             )
-        record = await self._runtime_state.get(response_id)
-        if record is None:
+        record = await self._runtime_state.get(response_id, _context.user_id_key)
+        if record is None or await self._runtime_state.is_retained_for_deletion(response_id, _context.user_id_key):
             return await self._handle_get_fallback(
                 request,
                 response_id,
@@ -1216,7 +1344,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :return: Response.
         :rtype: Response
         """
-        if await self._runtime_state.is_deleted(response_id):
+        if await self._runtime_state.is_deleted(response_id, _context.user_id_key):
             return _deleted_response(response_id, _hdrs)
 
         if not stream_replay:
@@ -1270,16 +1398,17 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         _hdrs,
                         param="stream",
                     )
-            except FoundryResourceNotFoundError:
-                # Response doesn't exist — fall through to the no-stream
-                # branches below which handle 404 cleanly.
-                pass
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.debug(
-                    "Background pre-check failed for SSE replay (response_id=%s); " + "proceeding to stream lookup",
+            except (FoundryResourceNotFoundError, KeyError):
+                return _not_found(response_id, _hdrs)
+            except FoundryBadRequestError as exc:
+                return _invalid_request(str(exc), _hdrs, param="response_id")
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                logger.error(
+                    "Provider validation failed for SSE replay (response_id=%s)",
                     response_id,
                     exc_info=True,
                 )
+                return _error_response(exc, _hdrs)
 
             # Stream provider fallback: replay persisted SSE events when runtime state is gone.
             replay_response = await self._try_replay_persisted_stream(
@@ -1393,7 +1522,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 # registry. The orchestrator populates ``record.subject``
                 # on the bg+stream path but older eviction-race conditions
                 # may leave it unset; the registry lookup is idempotent.
-                stream = await streams.get_or_create(record.response_id)
+                stream = await streams.get_or_create(derive_lifecycle_id(record.response_id, record.user_id_key))
             async for event in stream.subscribe(after=_cursor):
                 yield encode_sse_any_event(event)
 
@@ -1422,29 +1551,21 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :type request: Request
         :param response_id: The response identifier to replay.
         :type response_id: str
-        :keyword context: Unused (kept for call-site compatibility — the stream
-            registry is process-wide; partitioning is handled by the response
-            provider, not the stream backing).
+        :keyword context: Platform context selecting the user's replay partition.
         :paramtype context: PlatformContext | None
         :keyword headers: Optional extra headers (e.g. session headers) to merge with SSE headers.
         :paramtype headers: dict[str, str] | None
         :return: A streaming replay response, an error response, or ``None``.
         :rtype: Response | None
         """
-        del context  # unused — see docstring
         parsed_cursor = self._parse_starting_after(request, headers)
         if isinstance(parsed_cursor, Response):
             return parsed_cursor
 
-        # Look up an existing stream — do NOT mint one. If the id was
-        # never registered (e.g. ``store=false`` responses never produce
-        # a replay log) ``get`` raises NotFound and we return ``None``
-        # so the caller falls through to its 404 path. Auto-evicted
-        # streams (TTL expiry on a closed file-backed log that was
-        # never re-opened) also surface as NotFound here because the
-        # tombstone was never installed for them.
+        # Restore retained replay after restart without creating an absent log.
+        # Missing or expired logs fall through to the caller's no-stream path.
         try:
-            stream = await streams.get(response_id)
+            stream = await streams.get(derive_lifecycle_id(response_id, context.user_id_key if context else None))
         except EventStreamNotFoundError:
             return None
         # Peek at a method that raises NotFound for already-destroyed
@@ -1497,17 +1618,39 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             return format_error
 
         _context = _extract_platform_context(request)
+        if not await self._runtime_state.begin_deletion(response_id, _context.user_id_key):
+            return _not_found(response_id, _hdrs)
+        try:
+            return await self._handle_reserved_delete(response_id, _context, _hdrs)
+        finally:
+            with CancelScope(shield=True):
+                await self._runtime_state.end_deletion(response_id, _context.user_id_key)
+
+    async def _handle_reserved_delete(
+        self, response_id: str, _context: PlatformContext, _hdrs: dict[str, str]
+    ) -> Response:
+        """Delete while holding the caller-scoped lifecycle reservation.
+
+        :param response_id: The response identifier to delete.
+        :type response_id: str
+        :param _context: The authenticated caller context.
+        :type _context: PlatformContext
+        :param _hdrs: Session response headers.
+        :type _hdrs: dict[str, str]
+        :return: Deletion confirmation or error.
+        :rtype: Response
+        """
         logger.info(
             "Deleting response %s, has_user_id=%s has_call_id=%s",
             response_id,
             _context.user_id_key is not None,
             _context.call_id is not None,
         )
-        record = await self._runtime_state.get(response_id)
+        record = await self._runtime_state.get(response_id, _context.user_id_key)
         if record is None:
             # Provider fallback: response may have been evicted from memory after
             # reaching terminal state, or the server restarted since creation.
-            if await self._runtime_state.is_deleted(response_id):
+            if await self._runtime_state.is_deleted(response_id, _context.user_id_key):
                 return _not_found(response_id, _hdrs)
 
             result = await self._provider_delete_response(response_id, _context, _hdrs)
@@ -1533,7 +1676,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if not record.visible_via_get and not record.mode_flags.background:
             return _not_found(response_id, _hdrs)
 
-        if record.mode_flags.background and record.status in {"queued", "in_progress"}:
+        if (
+            record.mode_flags.background
+            and record.status in {"queued", "in_progress"}
+            and not await self._runtime_state.is_retained_for_deletion(response_id, _context.user_id_key)
+        ):
             return _invalid_request(
                 "Cannot delete an in-flight response.",
                 _hdrs,
@@ -1562,42 +1709,50 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         "Response execution failed before DELETE response_id=%s", response_id, exc_info=error
                     )
 
-        deleted = await self._runtime_state.delete(response_id)
-        if not deleted:
-            # Race: the background task's eager eviction (try_evict) removed
-            # the record between our get() and delete() calls. Eviction for
-            # terminal responses typically happens after a provider
-            # persistence attempt, but persistence is best-effort and may not
-            # have succeeded, so delegate to the provider path as a fallback.
-            if record.mode_flags.store:
-                result = await self._provider_delete_response(response_id, _context, _hdrs)
-                if result is not None:
-                    return result
-            return _not_found(response_id, _hdrs)
+        return await self._delete_owned_response(record, _context, _hdrs)
 
-        if record.mode_flags.store:
-            try:
-                await self._provider.delete_response(response_id, context=_extract_platform_context(request))
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning("Best-effort provider delete failed for response_id=%s", response_id, exc_info=True)
-            # Tear down the per-response stream — frees the registry slot,
-            # installs the deletion tombstone (so subsequent GET ?stream=true
-            # raises Gone, mapped to 404 below), and removes the on-disk log
-            # for the file-backed backing.
-            try:
-                await streams.delete(response_id)
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.debug(
-                    "Best-effort stream delete failed for response_id=%s",
-                    response_id,
-                    exc_info=True,
-                )
+    async def _delete_owned_response(
+        self, record: ResponseExecution, context: PlatformContext, headers: dict[str, str]
+    ) -> Response:
+        """Delete backing state before compare-deleting the retained ownership.
 
+        :param record: The exact authorized execution or provider snapshot.
+        :type record: ResponseExecution
+        :param context: The caller's authenticated platform context.
+        :type context: PlatformContext
+        :param headers: Session response headers.
+        :type headers: dict[str, str]
+        :return: Deletion confirmation or a retryable cleanup error.
+        :rtype: Response
+        """
+        response_id = record.response_id
+        if not await self._runtime_state.retain_for_deletion(record):
+            return _invalid_request("Response execution changed. Retry deletion.", headers)
+        try:
+            await _fence_response_tasks(
+                response_id,
+                context.user_id_key,
+                self._response_task_names(),
+                durable_required=self._runtime_options.resilient_background,
+            )
+            await streams.delete(derive_lifecycle_id(response_id, context.user_id_key))
+            try:
+                await self._provider.delete_response(response_id, context=context)
+            except (FoundryResourceNotFoundError, KeyError):
+                pass  # Idempotent retry after the provider already removed the envelope.
+            deleted = False
+            with CancelScope(shield=True):
+                deleted = await self._runtime_state.delete(response_id, context.user_id_key, expected_record=record)
+            if not deleted:
+                return _invalid_request("Response execution changed. Retry deletion.", headers)
+        except FoundryBadRequestError as exc:
+            return _invalid_request(str(exc), headers, param="response_id")
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            logger.error("Response delete failed for response_id=%s", response_id, exc_info=True)
+            return _error_response(exc, headers)
         logger.info("Deleted response %s", response_id)
         return JSONResponse(
-            {"id": response_id, "object": "response", "deleted": True},
-            status_code=200,
-            headers=_hdrs,
+            {"id": response_id, "object": "response", "deleted": True}, status_code=200, headers=headers
         )
 
     async def _provider_delete_response(
@@ -1608,14 +1763,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
     ) -> Response | None:
         """Delete a response from the resilient provider (storage).
 
-        Used by :meth:`handle_delete` in both the provider-fallback path
-        (record already evicted from memory) and the eviction-race recovery
-        path (record evicted between ``get()`` and ``delete()``).
+        Used by :meth:`handle_delete` after eviction or restart. The authorized
+        snapshot is retained as exact cleanup ownership until deletion succeeds.
 
         Returns a :class:`Response` on success or on a deterministic error
         (bad request, API error).  Returns ``None`` when the provider
-        reports the response as not found **or** when an unexpected error
-        occurs (logged at DEBUG), so the caller can fall through to 404.
+        reports the response as not found. Unexpected errors are logged and
+        returned as errors, preserving ownership for a cleanup retry.
 
         :param response_id: The response ID to delete.
         :type response_id: str
@@ -1627,25 +1781,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :rtype: Response | None
         """
         try:
-            await self._provider.delete_response(response_id, context=context)
-            # Tear down the per-response stream — same as the in-memory
-            # delete path above.
-            try:
-                await streams.delete(response_id)
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.debug(
-                    "Best-effort stream delete failed for response_id=%s",
-                    response_id,
-                    exc_info=True,
-                )
-            # Mark as deleted in runtime state so subsequent requests get 404
-            await self._runtime_state.mark_deleted(response_id)
-            logger.info("Deleted response %s via provider", response_id)
-            return JSONResponse(
-                {"id": response_id, "object": "response", "deleted": True},
-                status_code=200,
-                headers=headers,
-            )
+            # Authorize before touching replay, and retain provider ownership
+            # until backing cleanup succeeds so a failed DELETE can be retried.
+            snapshot = await self._provider.get_response(response_id, context=context)
         except (FoundryResourceNotFoundError, KeyError):
             return None  # Caller falls through to 404
         except FoundryBadRequestError as exc:
@@ -1653,13 +1791,22 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         except FoundryApiError as exc:
             logger.error("Storage API error for DELETE response_id=%s: %s", response_id, exc, exc_info=True)
             return _error_response(exc, headers)
-        except Exception:  # pylint: disable=broad-exception-caught
-            logger.debug(
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            logger.error(
                 "Provider fallback failed for DELETE response_id=%s",
                 response_id,
                 exc_info=True,
             )
-            return None
+            return _error_response(exc, headers)
+        record = ResponseExecution(
+            response_id=response_id,
+            user_id_key=context.user_id_key,
+            mode_flags=ResponseModeFlags(stream=True, store=True, background=bool(snapshot.get("background"))),
+            status=snapshot.get("status") or "completed",
+            response=snapshot,
+            response_created_seen=True,
+        )
+        return await self._delete_owned_response(record, context, headers)
 
     async def handle_cancel(self, request: Request) -> Response:
         """Route handler for ``POST /responses/{response_id}/cancel``.
@@ -1682,7 +1829,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             _context.user_id_key is not None,
             _context.call_id is not None,
         )
-        record = await self._runtime_state.get(response_id)
+        record = await self._runtime_state.get(response_id, _context.user_id_key)
         if record is None:
             return await self._handle_cancel_fallback(response_id, _context, _hdrs)
 
@@ -1760,7 +1907,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         snapshot = _RuntimeState.to_snapshot(record)
 
         # Eager eviction: free memory now that the terminal state is persisted
-        await self._runtime_state.try_evict(record.response_id)
+        await self._runtime_state.try_evict(record.response_id, record.user_id_key)
 
         logger.info("Cancelled response %s, status=%s", response_id, snapshot.get("status"))
         return JSONResponse(strip_internal_metadata(snapshot), status_code=200, headers=_hdrs)
@@ -1857,7 +2004,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         # User isolation enforcement for in-flight responses.  After eviction,
         # the provider (Foundry storage) enforces partitioning server-side.
-        record = await self._runtime_state.get(response_id)
+        record = await self._runtime_state.get(response_id, _context.user_id_key)
         if record is not None:
             if not _RuntimeState.check_user_isolation(record.user_id_key, _context.user_id_key):
                 return _not_found(response_id, _hdrs)
@@ -1893,7 +2040,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             # Fall back to runtime_state for in-flight responses not yet persisted to provider.
             # User isolation was already checked above when the record is in-flight.
             try:
-                items = await self._runtime_state.get_input_items(response_id)
+                items = await self._runtime_state.get_input_items(response_id, _context.user_id_key)
             except ValueError:
                 return _deleted_response(response_id, _hdrs)
             except KeyError:

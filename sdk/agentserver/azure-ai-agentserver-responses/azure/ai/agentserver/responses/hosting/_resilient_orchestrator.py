@@ -21,6 +21,9 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 from copy import deepcopy
 from typing import TYPE_CHECKING, Any, Callable, cast
+from uuid import uuid4
+
+from anyio import CancelScope
 
 from azure.ai.agentserver.core.tasks import (
     MultiTurnTask,
@@ -29,16 +32,19 @@ from azure.ai.agentserver.core.tasks import (
     multi_turn_task,
     task,
 )
+from azure.ai.agentserver.core.streaming import EventStreamClosedError, EventStreamNotFoundError, streams
 
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseExitForRecovery
 from ._dispatch import DISPOSITION_MARK_FAILED
-from ._task_id import derive_task_id, derive_task_session_scope
+from ._task_id import derive_lifecycle_id, derive_task_id, derive_task_session_scope
+from ._response_task_lifecycle import _input_fence_key
 
 from ..models import _generated as _generated_models
+from ..streaming._internals import materialize_wire_payload
 
 if TYPE_CHECKING:
-    from .._response_context import ResponseContext
+    from .._response_context import PlatformContext, ResponseContext
 
     from ..models.runtime import ResponseExecution
     from ..store._base import ResponseProviderProtocol
@@ -206,13 +212,25 @@ def _overlay_failed_terminal(
 
 # (Spec 033 §3.1) Process-local cache of typed :class:`RuntimeRefs` (record,
 # context, parsed request, cancellation signal, runtime state), keyed by
-# response_id. These object references cannot be JSON-serialized for
-# cross-process recovery, so they live here out-of-band and are NEVER part of
+# caller-scoped response incarnation. These object references cannot be
+# JSON-serialized for cross-process recovery, so they live out-of-band and are NEVER part of
 # the persisted resilient-task input (which is the typed
 # :class:`ResilientResponseInput` alone). The task body fetches refs from this
 # cache on same-process re-entry; on cross-process recovery the entry is absent
 # and the body rebuilds state from the persisted ``ResilientResponseInput``.
 _RUNTIME_REFS: dict[str, "RuntimeRefs"] = {}
+
+
+def _discard_runtime_refs(key: str | None, expected_refs: "RuntimeRefs | None") -> None:
+    """Release only the exact process-local entry owned by this callback.
+
+    :param key: The caller-scoped incarnation key, or None when unidentifiable.
+    :type key: str | None
+    :param expected_refs: The entry captured before asynchronous lifecycle work.
+    :type expected_refs: RuntimeRefs | None
+    """
+    if key is not None and expected_refs is not None and _RUNTIME_REFS.get(key) is expected_refs:
+        del _RUNTIME_REFS[key]
 
 
 def _reconstruct_parsed_from_params(params: dict[str, Any]) -> Any:
@@ -792,6 +810,7 @@ class ResilientResponseOrchestrator:
         cancel_bridge: "asyncio.Task[None] | None",
         parsed_ref: Any,
         response_id: str,
+        user_id_key: str | None,
         stream: bool,
         agent_reference: Any,
         model: str | None,
@@ -801,6 +820,7 @@ class ResilientResponseOrchestrator:
         background: bool,
         history_limit: int,
         runtime_state: Any,
+        incarnation_id: str | None = None,
     ) -> None:
         """Run the handler body inside the resilient task (Spec 033 §3.2 extract).
 
@@ -823,6 +843,8 @@ class ResilientResponseOrchestrator:
         :paramtype parsed_ref: Any
         :keyword response_id: The response id.
         :paramtype response_id: str
+        :keyword user_id_key: The user partition from the durable task input.
+        :paramtype user_id_key: str | None
         :keyword stream: Whether the request is streaming.
         :paramtype stream: bool
         :keyword agent_reference: The normalized agent reference.
@@ -841,6 +863,8 @@ class ResilientResponseOrchestrator:
         :paramtype history_limit: int
         :keyword runtime_state: The runtime-state tracker.
         :paramtype runtime_state: Any
+        :keyword incarnation_id: The durable input's private incarnation identifier.
+        :paramtype incarnation_id: str | None
         :return: None
         :rtype: None
         """
@@ -848,6 +872,8 @@ class ResilientResponseOrchestrator:
             _run_background_non_stream,
         )
 
+        refs_key = _input_fence_key(response_id, user_id_key, incarnation_id)
+        expected_refs = _RUNTIME_REFS.get(refs_key)
         try:
             # Dispatch on the request's stream flag: the streaming pipeline goes
             # through the parent orchestrator's streaming runner (events flow to
@@ -916,9 +942,197 @@ class ResilientResponseOrchestrator:
             if cancel_bridge is not None and not cancel_bridge.done():
                 cancel_bridge.cancel()
             # (Spec 013 US1(c)) Drop the runtime-refs entry on terminal exit.
-            _RUNTIME_REFS.pop(response_id, None)
+            _discard_runtime_refs(refs_key, expected_refs)
 
-    async def _execute_in_task(self, ctx: TaskContext[dict[str, Any]]) -> None:
+    async def _execute_in_task(self, ctx: TaskContext[dict[str, Any]]) -> Any:
+        """Fence deleted inputs and reserve recovered execution before dispatch.
+
+        :param ctx: The resilient task context.
+        :type ctx: TaskContext[dict[str, Any]]
+        :return: None when settled, or a task recovery deferral sentinel.
+        :rtype: Any
+        """
+        from ._resilient_input import (  # pylint: disable=import-outside-toplevel
+            incarnation_from_params,
+            platform_context_from_params,
+        )
+        from ._response_task_lifecycle import _task_input_deleted  # pylint: disable=import-outside-toplevel
+
+        params = ctx.input
+        response_id = params.get("response_id") if isinstance(params, dict) else None
+        malformed_identity = False
+        platform_context = None
+        if isinstance(response_id, str):
+            try:
+                platform_context = platform_context_from_params(params)
+            except ValueError:
+                platform_context = self._trusted_input_identity(ctx, params, response_id)
+                malformed_identity = True
+        if not isinstance(response_id, str) or platform_context is None:
+            return await self._execute_admitted_task(ctx)
+        user_id_key = platform_context.user_id_key
+        malformed_input = params if malformed_identity else None
+        try:
+            incarnation_id = incarnation_from_params(params)
+        except ValueError:
+            incarnation_id = None
+            malformed_input = params
+        refs_key = (
+            _input_fence_key(response_id, user_id_key, incarnation_id)
+            if malformed_input is None or malformed_identity
+            else None
+        )
+        expected_refs = _RUNTIME_REFS.get(refs_key) if refs_key is not None else None
+
+        async def _execute_with_refs() -> Any:
+            if malformed_identity:
+                await self._persist_crash_failed(
+                    response_id,
+                    {**params, "user_id_key": user_id_key, "call_id": platform_context.call_id},
+                )
+                result = None
+            else:
+                result = await self._execute_admitted_task(ctx)
+            if result is None:
+                _discard_runtime_refs(refs_key, expected_refs)
+            return result
+
+        state = self._runtime_state
+        if await _task_input_deleted(
+            ctx.task_id, response_id, user_id_key, incarnation_id=incarnation_id, malformed_input=malformed_input
+        ) or (malformed_identity and state is not None and await state.is_deleted(response_id, user_id_key)):
+            logger.info("Skipping deleted durable response input %s", response_id)
+            _discard_runtime_refs(refs_key, expected_refs)
+            return None
+        if (not _is_recovered_entry(ctx.entry_mode) and not malformed_identity) or state is None:
+            return await _execute_with_refs()
+        if not await state.reserve(response_id, user_id_key, recovery=True, incarnation_id=incarnation_id):
+            if incarnation_id is None and await state.is_deleted(response_id, user_id_key):
+                _discard_runtime_refs(refs_key, expected_refs)
+                return None
+            # A competing lifecycle operation may fail. Preserve the input for
+            # recovery rather than consuming it while admission is unavailable.
+            from azure.ai.agentserver.core.tasks._context import (  # pylint: disable=import-outside-toplevel
+                _ExitForRecovery,
+            )
+
+            logger.info("Deferring recovered response %s during a competing lifecycle operation", response_id)
+            return _ExitForRecovery()
+        try:
+            if (incarnation_id is None and malformed_input is None) or not await _task_input_deleted(
+                ctx.task_id, response_id, user_id_key, incarnation_id=incarnation_id, malformed_input=malformed_input
+            ):
+                return await _execute_with_refs()
+            _discard_runtime_refs(refs_key, expected_refs)
+        finally:
+            with CancelScope(shield=True):
+                await state.release_reservation(response_id, user_id_key)
+
+    def _trusted_input_identity(
+        self, ctx: TaskContext[dict[str, Any]], params: dict[str, Any], response_id: str
+    ) -> "PlatformContext | None":
+        """Prove a malformed input's scope from its original admitted runtime references.
+
+        :param ctx: The framework's current task and input identity.
+        :type ctx: TaskContext[dict[str, Any]]
+        :param params: The malformed persisted boundary.
+        :type params: dict[str, Any]
+        :param response_id: The public response identifier.
+        :type response_id: str
+        :return: An independently proven context, or None without sufficient evidence.
+        :rtype: PlatformContext | None
+        """
+        from ._resilient_input import incarnation_from_params  # pylint: disable=import-outside-toplevel
+
+        input_id = getattr(ctx, "input_id", None)
+        try:
+            incarnation = incarnation_from_params(params)
+        except ValueError:
+            return None
+        if not isinstance(input_id, str) or incarnation is None:
+            return None
+        refs = _RUNTIME_REFS.get(f"{input_id}:{incarnation}")
+        if refs is None or self._runtime_state is None or refs.runtime_state is not self._runtime_state:
+            return None
+        return self._trusted_runtime_platform_context(ctx, refs, response_id, input_id)
+
+    def _trusted_runtime_platform_context(
+        self, ctx: TaskContext[dict[str, Any]], refs: "RuntimeRefs", response_id: str, input_id: str
+    ) -> "PlatformContext | None":
+        """Validate the cached original context against its record and task run.
+
+        :param ctx: The framework's current task identity.
+        :type ctx: TaskContext[dict[str, Any]]
+        :param refs: The exact incarnation's server-owned references.
+        :type refs: RuntimeRefs
+        :param response_id: The public response identifier.
+        :type response_id: str
+        :param input_id: The caller-scoped task input identifier.
+        :type input_id: str
+        :return: A proven platform context, or None.
+        :rtype: PlatformContext | None
+        """
+        from .._response_context import PlatformContext, ResponseContext  # pylint: disable=import-outside-toplevel
+        from ..models.runtime import ResponseExecution  # pylint: disable=import-outside-toplevel
+        from ._resilient_input import user_id_key_from_params  # pylint: disable=import-outside-toplevel
+
+        record, context = refs.record, refs.context
+        if not isinstance(record, ResponseExecution) or not isinstance(context, ResponseContext):
+            return None
+        if record.response_context is not context or not isinstance(context.platform_context, PlatformContext):
+            return None
+        try:
+            user_id_key = user_id_key_from_params({"user_id_key": context.platform_context.user_id_key})
+        except ValueError:
+            return None
+        if (
+            record.response_id != response_id
+            or context.response_id != response_id
+            or record.user_id_key != user_id_key
+            or derive_lifecycle_id(response_id, user_id_key) != input_id
+        ):
+            return None
+        task_run = getattr(record, "resilient_task_run", None)
+        if (
+            getattr(task_run, "task_id", None) != ctx.task_id
+            or getattr(task_run, "input_id", None) != input_id
+            or (context.platform_context.call_id is not None and not isinstance(context.platform_context.call_id, str))
+        ):
+            return None
+        return PlatformContext(user_id_key=user_id_key, call_id=context.platform_context.call_id)
+
+    async def _settle_invalid_input(self, ctx: TaskContext[dict[str, Any]], params: Any) -> None:
+        """Settle only response storage whose partition is valid independently of parsing.
+
+        :param ctx: The failing task context.
+        :type ctx: TaskContext[dict[str, Any]]
+        :param params: The malformed persisted boundary.
+        :type params: Any
+        :rtype: None
+        """
+        from ._resilient_input import platform_context_from_params  # pylint: disable=import-outside-toplevel
+
+        response_id = params.get("response_id") if isinstance(params, dict) else None
+        logger.warning(
+            "Resilient input failed validation for task %s (response_id=%s); "
+            "failing closed without re-invoking the handler.",
+            getattr(ctx, "task_id", "?"),
+            response_id,
+        )
+        if not isinstance(response_id, str) or not response_id:
+            return
+        try:
+            platform_context_from_params(params)
+        except ValueError:
+            logger.warning(
+                "Task %s has no independently proven caller partition; settling only the input "
+                "and leaving response, replay, and runtime references untouched.",
+                ctx.task_id,
+            )
+            return
+        await self._persist_crash_failed(response_id, params)
+
+    async def _execute_admitted_task(self, ctx: TaskContext[dict[str, Any]]) -> Any:
         """Execute the response pipeline inside the task body.
 
         This is the re-entrant function. On each entry:
@@ -933,8 +1147,8 @@ class ResilientResponseOrchestrator:
 
         :param ctx: The resilient task context.
         :type ctx: TaskContext[dict[str, Any]]
-        :return: None
-        :rtype: None
+        :return: None when settled, or the handler's recovery deferral sentinel.
+        :rtype: Any
         """
         # Import here to avoid circular imports
         from ._resilient_input import (
@@ -957,15 +1171,7 @@ class ResilientResponseOrchestrator:
         try:
             resilient = ResilientResponseInput.from_task_input(params)
         except ValueError:
-            rid = params.get("response_id") if isinstance(params, dict) else None
-            logger.warning(
-                "Resilient input failed validation for task %s (response_id=%s); "
-                "failing closed without re-invoking the handler.",
-                getattr(ctx, "task_id", "?"),
-                rid,
-            )
-            if rid:
-                await self._persist_crash_failed(rid, params if isinstance(params, dict) else {})
+            await self._settle_invalid_input(ctx, params)
             return None
         request = resilient.request
 
@@ -990,7 +1196,9 @@ class ResilientResponseOrchestrator:
         # cache, never in the serialized input. Build a small key→ref map so the
         # existing ``_ref("_..._ref")`` call sites stay unchanged. Test-injected
         # refs passed via ``ctx.input`` are honored as a fallback.
-        _runtime_refs = _RUNTIME_REFS.get(response_id)
+        _runtime_refs = _RUNTIME_REFS.get(
+            _input_fence_key(response_id, resilient.user_id_key, resilient.incarnation_id)
+        )
         _ref_map: dict[str, Any] = {}
         if _runtime_refs is not None:
             _ref_map = {
@@ -1049,7 +1257,6 @@ class ResilientResponseOrchestrator:
             )
             assert record is not None, "_reconstruct_from_params guarantees non-None record"
             assert self._runtime_state is not None, "runtime_state always wired at orchestrator init"
-            await self._runtime_state.add(record)
 
         # After the reconstruction block, context and record are both
         # guaranteed non-None (either set from refs in the same-process
@@ -1063,6 +1270,10 @@ class ResilientResponseOrchestrator:
 
         if await self._flatten_recovery_context(ctx, context, is_recovery):
             return
+        if _ref("_record_ref") is None:
+            assert self._runtime_state is not None, "runtime_state always wired at orchestrator init"
+            if not await self._runtime_state.add(record):
+                raise RuntimeError("Response lifecycle ownership changed before recovered publication.")
 
         # Bridge task cancellation → response cancellation surface.
         # ``ctx.cancel`` (steering / explicit cancel) and ``ctx.shutdown``
@@ -1097,6 +1308,7 @@ class ResilientResponseOrchestrator:
             cancel_bridge=cancel_bridge,
             parsed_ref=_ref("_parsed_ref") or request,
             response_id=response_id,
+            user_id_key=resilient.user_id_key,
             stream=_stream,
             agent_reference=_agent_reference,
             model=_model,
@@ -1106,6 +1318,7 @@ class ResilientResponseOrchestrator:
             background=_background,
             history_limit=int(self._options.default_fetch_history_count),
             runtime_state=_ref("_runtime_state_ref") or self._runtime_state,
+            incarnation_id=resilient.incarnation_id,
         )
 
     def build_resilient_input(
@@ -1152,6 +1365,7 @@ class ResilientResponseOrchestrator:
             call_id=ctx.call_id,
             client_headers=dict(ctx.context.client_headers) if ctx.context is not None else {},
             query_parameters=dict(ctx.context.query_parameters) if ctx.context is not None else {},
+            incarnation_id=uuid4().hex,
         )
         refs = RuntimeRefs(
             record=record,
@@ -1266,7 +1480,8 @@ class ResilientResponseOrchestrator:
             response_id=response_id,
             steerable=self._options.steerable_conversations,
         )
-        if is_multi_turn and task_id != legacy_task_id:
+        # Never adopt a shared legacy task for an identified caller.
+        if is_multi_turn and task_id != legacy_task_id and resilient_input.user_id_key is None:
             task_id = await self._select_compatible_task_id(
                 picked_primitive,
                 task_id=task_id,
@@ -1280,9 +1495,12 @@ class ResilientResponseOrchestrator:
         # semantics) based on the request's conversation_id /
         # previous_response_id / steerable_conversations tuple.
         # (Spec 033 §3.1) The process-local refs are cached out-of-band keyed by
-        # response_id; the resilient task input is EXACTLY the typed boundary's
+        # caller-scoped incarnation; the resilient task input is EXACTLY the typed boundary's
         # serialization — the single producer (FR-001).
-        _RUNTIME_REFS[response_id] = refs
+        task_id = derive_lifecycle_id(task_id, resilient_input.user_id_key)
+        lifecycle_id = derive_lifecycle_id(response_id, resilient_input.user_id_key)
+        refs_key = _input_fence_key(response_id, resilient_input.user_id_key, resilient_input.incarnation_id)
+        _RUNTIME_REFS[refs_key] = refs
 
         start_kwargs: dict[str, Any] = {
             "task_id": task_id,
@@ -1297,9 +1515,11 @@ class ResilientResponseOrchestrator:
         # task_id per request.
         if is_multi_turn:
             if response_id is not None:
-                start_kwargs["input_id"] = response_id
+                start_kwargs["input_id"] = lifecycle_id
             if previous_response_id is not None:
-                start_kwargs["if_last_input_id"] = previous_response_id
+                start_kwargs["if_last_input_id"] = derive_lifecycle_id(
+                    previous_response_id, resilient_input.user_id_key
+                )
 
         # ``TaskConflictError`` from the underlying primitive ALWAYS signals
         # a real conflict (concurrent overlap on a multi-turn-non-steerable
@@ -1319,7 +1539,7 @@ class ResilientResponseOrchestrator:
             # out-of-band refs — never runs. Drop the cache entry here so we do
             # not permanently retain the record/context/parsed-request/cancel
             # event for a response that fell back to in-process execution.
-            _RUNTIME_REFS.pop(response_id, None)
+            _discard_runtime_refs(refs_key, refs)
             raise
         # Store the task run reference on the record for observability
         record.resilient_task_run = task_run  # type: ignore[attr-defined]
@@ -1332,6 +1552,41 @@ class ResilientResponseOrchestrator:
         # ``status="queued"`` response envelope to the HTTP caller.
         is_queued = task_run.is_queued
         return not is_queued  # True = freshly started, False = queued
+
+    async def _settle_recovered_stream(
+        self,
+        response_id: str,
+        user_id_key: str | None,
+        response: _generated_models.ResponseObject,
+    ) -> None:
+        """Finish existing replay after a non-resumable recovery settles storage.
+
+        :param response_id: The recovered response identifier.
+        :type response_id: str
+        :param user_id_key: The durable input's user partition.
+        :type user_id_key: str | None
+        :param response: The successfully persisted terminal snapshot.
+        :type response: ~azure.ai.agentserver.responses.models.ResponseObject
+        :rtype: None
+        """
+        try:
+            subject = await streams.get(derive_lifecycle_id(response_id, user_id_key))
+        except EventStreamNotFoundError:
+            return
+        cursor = await subject.last_cursor()
+        snapshot = dict(response)
+        try:
+            await subject.emit(
+                {
+                    "type": f"response.{snapshot['status']}",
+                    "response": materialize_wire_payload(snapshot),
+                    "sequence_number": cursor + 1 if cursor is not None else 0,
+                },
+                close=True,
+            )
+        except EventStreamClosedError:
+            # A terminal already reached replay before the crash. Preserve it.
+            await subject.close()
 
     async def _persist_crash_failed(
         self,
@@ -1402,6 +1657,7 @@ class ResilientResponseOrchestrator:
         # ``update`` would now succeed and overwrite a progressed snapshot with
         # empty output.
         existing_snapshot: "_generated_models.ResponseObject | None" = None
+        existing_status: Any = None
         response_known_absent = False
         for _attempt in range(2):
             try:
@@ -1416,7 +1672,6 @@ class ResilientResponseOrchestrator:
                         response_id,
                         existing_status,
                     )
-                    return
                 existing_snapshot = existing
                 break
             except (KeyError, FoundryResourceNotFoundError):
@@ -1429,6 +1684,10 @@ class ResilientResponseOrchestrator:
                 # Unknown/transient store error — retry once, then fall through
                 # to the conservative create-only path below.
                 continue
+
+        if existing_snapshot is not None and isinstance(existing_status, str) and existing_status in _TERMINAL_STATUSES:
+            await self._settle_recovered_stream(response_id, platform_context.user_id_key, existing_snapshot)
+            return
 
         if existing_snapshot is not None:
             # Preserve the persisted snapshot; overlay only status + error.
@@ -1451,11 +1710,13 @@ class ResilientResponseOrchestrator:
                 ),
             )
 
+        persisted = False
         if existing_snapshot is not None or response_known_absent:
             # Safe to write: either we preserve the snapshot (overlay) or the
             # response is confirmed absent (a create lands a fresh terminal).
             try:
                 await self._provider.update_response(failed_response, context=platform_context)
+                persisted = True
             except (KeyError, FoundryResourceNotFoundError):
                 # Response was never persisted at response.created — try
                 # create instead so the failed terminal still lands. The Foundry
@@ -1469,6 +1730,7 @@ class ResilientResponseOrchestrator:
                         history_item_ids=None,
                         context=platform_context,
                     )
+                    persisted = True
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     logger.error(
                         "_persist_crash_failed: create after update-not-found failed for %s: %s",
@@ -1495,9 +1757,12 @@ class ResilientResponseOrchestrator:
                     history_item_ids=None,
                     context=platform_context,
                 )
+                persisted = True
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error(
                     "_persist_crash_failed: create-only (unknown store state) failed for %s: %s",
                     response_id,
                     exc,
                 )
+        if persisted:
+            await self._settle_recovered_stream(response_id, platform_context.user_id_key, failed_response)
