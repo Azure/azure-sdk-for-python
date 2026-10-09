@@ -1,6 +1,6 @@
 # Release History
 
-## 14.1.0 (2026-08-09)
+## 14.1.0 (2026-10-09)
 
 ### Features Added
 
@@ -14,7 +14,7 @@
   - Added enum `TableProtectionLevelEnum`
   - Added model `WorkspacePurgeLakeDataBody`
   - Added model `WorkspacePurgeLakeDataTimeRange`
-  - Operation group `WorkspacePurgeOperations` added method `begin_purge_lake_data`
+  - Model `WorkspacePurgeOperations` added method `begin_purge_lake_data`
 
 ## 14.0.0 (2026-06-24)
 
