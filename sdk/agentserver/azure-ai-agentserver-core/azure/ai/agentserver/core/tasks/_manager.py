@@ -586,7 +586,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         Uses server-side filtering (``agent_name``, ``session_id``,
         ``task_name`` tag, ``status``, ``source_type``) to return only
-        tasks created by this framework for the given function.
+        tasks created by this framework for the given function. Explicitly
+        requests complete enumeration, never a bounded first page.
 
         :keyword fn_name: The task function name (stable identity anchor).
         :paramtype fn_name: str
@@ -608,6 +609,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 status=status,
                 tag={_TAG_TASK_NAME: fn_name},
                 source_type=_SOURCE_TYPE,
+                limit=None,
             )
         except _HostedConflict as exc:
             translated = _translate_hosted_conflict(exc)
@@ -2953,6 +2955,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 status="in_progress",
                 lease_owner=self._lease_owner,
                 source_type=_SOURCE_TYPE,
+                limit=None,
             )
         except Exception:  # pylint: disable=broad-exception-caught
             logger.warning("Failed to query stale tasks for recovery", exc_info=True)

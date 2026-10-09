@@ -44,6 +44,7 @@ from azure.core.pipeline.transport import AsyncHttpTransport
 from azure.core.rest import HttpRequest
 
 from .._version import VERSION
+from ._validation import normalize_list_limit
 from ._attachments import (
     _validate_attachment_count,
     _validate_attachment_size,
@@ -721,7 +722,7 @@ class HostedTaskProvider:
         :paramtype has_error: bool | None
         :keyword lease_expired: Optional filter for tasks whose lease has expired.
         :paramtype lease_expired: bool | None
-        :keyword limit: Page size for cursor pagination.
+        :keyword limit: Total result limit, clamped to 100; None enumerates all pages.
         :paramtype limit: int | None
         :keyword after: Return tasks after this pagination cursor.
         :paramtype after: str | None
@@ -731,12 +732,13 @@ class HostedTaskProvider:
         :paramtype order: str | None
         :keyword omit_attachment_values: When True, omit attachment values from results.
         :paramtype omit_attachment_values: bool
-        :return: All matching tasks across all pages.
+        :return: Matching tasks, bounded by the explicit limit when supplied.
         :rtype: list[TaskInfo]
         """
+        result_limit = normalize_list_limit(limit)
         params: dict[str, str] = {
             "api-version": _API_VERSION,
-            "limit": str(limit if limit is not None else 100),
+            "limit": str(result_limit if result_limit is not None else 100),
         }
         if agent_name is not None:
             params["agent_name"] = agent_name
@@ -773,7 +775,11 @@ class HostedTaskProvider:
                 _raise_classified(response, method="GET", url=self._base_url)
             data = _parse_json_body(response, method="GET", url=self._base_url)
             items: list[dict[str, Any]] = data.get("data", data.get("items", []))
+            if result_limit is not None:
+                items = items[: result_limit - len(all_tasks)]
             all_tasks.extend(TaskInfo.from_dict(item) for item in items)
+            if result_limit is not None and len(all_tasks) >= result_limit:
+                break
 
             if not data.get("has_more", False):
                 break
@@ -782,6 +788,8 @@ class HostedTaskProvider:
                 raise ValueError("Task list continuation cursor is missing or repeated")
             cursors.add(last_id)
             params["after"] = last_id
+            if result_limit is not None:
+                params["limit"] = str(result_limit - len(all_tasks))
 
         return all_tasks
 

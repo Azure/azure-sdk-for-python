@@ -423,7 +423,10 @@ class TestLocalProviderOpaqueCursorRoundTrip:
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("cursor", [None, "", "opaque-page"])
-    async def test_incomplete_continuation_raises_instead_of_returning_partial_tasks(self, cursor: str | None) -> None:
+    @pytest.mark.parametrize("limit", [None, 20])
+    async def test_incomplete_continuation_raises_instead_of_returning_partial_tasks(
+        self, cursor: str | None, limit: int | None
+    ) -> None:
         first = {
             "data": [{"id": "t1", "agent_name": "a", "session_id": "s"}],
             "has_more": True,
@@ -435,7 +438,7 @@ class TestLocalProviderOpaqueCursorRoundTrip:
         )
         try:
             with pytest.raises(ValueError, match="continuation cursor"):
-                await provider.list(agent_name="a", session_id="s")
+                await provider.list(agent_name="a", session_id="s", limit=limit)
         finally:
             await provider.close()
 

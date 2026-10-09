@@ -4,6 +4,9 @@
 
 ### Bugs Fixed
 
+- Apply explicit task-list limits to the total returned records for both hosted
+  and local providers, clamped to 100. Keep omitted or `None` limits as complete
+  enumeration so recovery and response-ownership scans include every page.
 - Reclaim per-ID stream lifecycle locks after their last holder or waiter exits,
   including cancellation, without splitting concurrent lookup, creation, or deletion.
 - Enumerate every matching local durable task when no listing limit is
