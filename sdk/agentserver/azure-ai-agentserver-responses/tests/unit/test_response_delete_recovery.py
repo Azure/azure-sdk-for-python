@@ -28,7 +28,8 @@ from azure.ai.agentserver.core.tasks._manager import TaskManager, _SCHEMA_VERSIO
 from azure.ai.agentserver.core.tasks._models import TaskCreateRequest, TaskInfo, TaskPatchRequest
 from azure.ai.agentserver.responses import PlatformContext, ResponsesAgentServerHost, ResponsesServerOptions
 from azure.ai.agentserver.responses.hosting import _response_task_lifecycle as lifecycle
-from azure.ai.agentserver.responses.hosting._resilient_input import ResilientResponseInput
+from azure.ai.agentserver.responses.hosting import _resilient_orchestrator as resilience
+from azure.ai.agentserver.responses.hosting._resilient_input import ResilientResponseInput, RuntimeRefs
 from azure.ai.agentserver.responses.hosting._runtime_state import _RuntimeState
 from azure.ai.agentserver.responses.hosting._task_id import derive_lifecycle_id
 from azure.ai.agentserver.responses.models._generated import CreateResponse, ResponseObject
@@ -71,6 +72,217 @@ def _get_request(*, stream: bool = False, user: str = "owner") -> Request:
 async def _read_stream(response: Any) -> bytes:
     chunks = [chunk.encode() if isinstance(chunk, str) else chunk async for chunk in response.body_iterator]
     return b"".join(chunks)
+
+
+def _cached_refs(host: ResponsesAgentServerHost, params: dict[str, Any]) -> RuntimeRefs:
+    record, context = resilience._reconstruct_from_params(
+        params=params,
+        response_id=RESPONSE_ID,
+        provider=host._endpoint._provider,
+        runtime_state=host._endpoint._runtime_state,
+        runtime_options=host._endpoint._runtime_options,
+    )
+    return RuntimeRefs(
+        record=record,
+        context=context,
+        parsed=CreateResponse(params["request"]),
+        cancel=asyncio.Event(),
+        runtime_state=host._endpoint._runtime_state,
+    )
+
+
+@pytest.mark.parametrize("entry_mode", ["queued", "recovered", "fresh", "resumed"])
+async def test_deleted_same_process_callback_releases_only_its_incarnation_refs(
+    registry: _StreamsRegistry, task_store: LocalFileTaskProvider, entry_mode: str
+) -> None:
+    host = _host()
+    info = await _durable_task(task_store, host)
+    params = {**_params(), "response_incarnation_id": "a" * 32}
+    await task_store.update(info.id, TaskPatchRequest(payload={"input": params}))
+    key = lifecycle._input_fence_key(RESPONSE_ID, "owner", "a" * 32)
+    successor = lifecycle._input_fence_key(RESPONSE_ID, "owner", "b" * 32)
+    foreign = lifecycle._input_fence_key(RESPONSE_ID, "other", "a" * 32)
+    refs = _cached_refs(host, params)
+    others = {successor: RuntimeRefs(), foreign: RuntimeRefs()}
+    resilience._RUNTIME_REFS.update({key: refs, **others})
+    await host._endpoint._provider.create_response(_snapshot(), [], None, context=PlatformContext(user_id_key="owner"))
+    assert (await host._endpoint.handle_delete(_delete_request())).status_code == 200
+    ctx = _task_context(info, entry_mode=entry_mode)
+    ctx.input = params
+    await host._endpoint._orchestrator._resilient_orchestrator._execute_in_task(ctx)
+    assert resilience._RUNTIME_REFS == others
+
+
+@pytest.mark.parametrize(
+    "settlement", ["malformed", "stale", "mark-failed", "missing-provider", "legacy-deleted", "raced-fence"]
+)
+async def test_terminal_pre_handler_exit_releases_exact_cached_refs(
+    registry: _StreamsRegistry, task_store: LocalFileTaskProvider, monkeypatch: pytest.MonkeyPatch, settlement: str
+) -> None:
+    host = _host()
+    disposition = "mark-failed" if settlement == "mark-failed" else "re-invoke"
+    info = await _durable_task(task_store, host, disposition=disposition)
+    params = _params(disposition=disposition)
+    incarnation = None if settlement == "legacy-deleted" else "a" * 32
+    if incarnation is not None:
+        params["response_incarnation_id"] = incarnation
+    key = lifecycle._input_fence_key(RESPONSE_ID, "owner", incarnation)
+    others = {
+        lifecycle._input_fence_key(RESPONSE_ID, "owner", "b" * 32): RuntimeRefs(),
+        lifecycle._input_fence_key(RESPONSE_ID, "other", incarnation): RuntimeRefs(),
+    }
+    resilience._RUNTIME_REFS.update({key: _cached_refs(host, params), **others})
+    if settlement == "malformed":
+        params.pop("request")
+    await task_store.update(info.id, TaskPatchRequest(payload={"input": params}))
+    if settlement == "stale":
+        await task_store.update(
+            info.id, TaskPatchRequest(payload={"input": {**_params(), "response_incarnation_id": "b" * 32}})
+        )
+    if settlement in {"malformed", "mark-failed"}:
+        snapshot = _snapshot()
+        snapshot["status"] = "in_progress"
+        await host._endpoint._provider.create_response(snapshot, [], None, context=PlatformContext(user_id_key="owner"))
+    elif settlement == "legacy-deleted":
+        await host._endpoint._runtime_state.mark_deleted(RESPONSE_ID, "owner")
+    elif settlement == "raced-fence":
+        get = task_store.get
+        first = True
+
+        async def raced_get(task_id: str) -> TaskInfo:
+            nonlocal first
+            snapshot = await get(task_id)
+            if first:
+                first = False
+                await task_store.update(info.id, TaskPatchRequest(payload={lifecycle._DELETED_INPUT_IDS: [key]}))
+            return snapshot
+
+        monkeypatch.setattr(task_store, "get", raced_get)
+    ctx = _task_context(info, disposition=disposition)
+    ctx.input = params
+    await host._endpoint._orchestrator._resilient_orchestrator._execute_in_task(ctx)
+    assert resilience._RUNTIME_REFS == others
+
+
+@pytest.mark.parametrize("failure", ["busy", "ownership-error", "admitted-deferral", "admitted-error", "recheck-error"])
+async def test_nonterminal_admission_failure_preserves_cached_refs(
+    registry: _StreamsRegistry, task_store: LocalFileTaskProvider, monkeypatch: pytest.MonkeyPatch, failure: str
+) -> None:
+    host = _host()
+    info = await _durable_task(task_store, host)
+    params = {**_params(), "response_incarnation_id": "a" * 32}
+    await task_store.update(info.id, TaskPatchRequest(payload={"input": params}))
+    key = lifecycle._input_fence_key(RESPONSE_ID, "owner", "a" * 32)
+    refs = _cached_refs(host, params)
+    resilience._RUNTIME_REFS[key] = refs
+    ctx = _task_context(info)
+    ctx.input = params
+    if failure == "busy":
+        assert await host._endpoint._runtime_state.reserve(RESPONSE_ID, "owner")
+        assert isinstance(
+            await host._endpoint._orchestrator._resilient_orchestrator._execute_in_task(ctx), _ExitForRecovery
+        )
+        await host._endpoint._runtime_state.release_reservation(RESPONSE_ID, "owner")
+    elif failure == "ownership-error":
+        monkeypatch.setattr(task_store, "get", AsyncMock(side_effect=OSError("ownership lookup unavailable")))
+        with pytest.raises(OSError, match="ownership lookup unavailable"):
+            await host._endpoint._orchestrator._resilient_orchestrator._execute_in_task(ctx)
+    else:
+        orchestrator = host._endpoint._orchestrator._resilient_orchestrator
+        if failure == "admitted-deferral":
+            result = _ExitForRecovery()
+            monkeypatch.setattr(orchestrator, "_execute_admitted_task", AsyncMock(return_value=result))
+            assert await orchestrator._execute_in_task(ctx) is result
+        else:
+            if failure == "recheck-error":
+                snapshot = await task_store.get(info.id)
+                monkeypatch.setattr(
+                    task_store, "get", AsyncMock(side_effect=[snapshot, OSError("ownership lookup unavailable")])
+                )
+            else:
+                monkeypatch.setattr(
+                    orchestrator,
+                    "_execute_admitted_task",
+                    AsyncMock(side_effect=OSError("ownership lookup unavailable")),
+                )
+            with pytest.raises(OSError, match="ownership lookup unavailable"):
+                await orchestrator._execute_in_task(ctx)
+        assert await host._endpoint._runtime_state.reserve(RESPONSE_ID, "owner", recovery=True)
+        await host._endpoint._runtime_state.release_reservation(RESPONSE_ID, "owner")
+    assert resilience._RUNTIME_REFS[key] is refs
+
+
+async def test_terminal_ref_cleanup_preserves_a_replacement_at_the_same_legacy_key(
+    registry: _StreamsRegistry, task_store: LocalFileTaskProvider, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    host = _host()
+    info = await _durable_task(task_store, host)
+    params = _params()
+    key = lifecycle._input_fence_key(RESPONSE_ID, "owner")
+    resilience._RUNTIME_REFS[key] = _cached_refs(host, params)
+    params.pop("request")
+    await task_store.update(info.id, TaskPatchRequest(payload={"input": params}))
+    replacement = RuntimeRefs()
+
+    async def settle(response_id: str, boundary: dict[str, Any]) -> None:
+        resilience._RUNTIME_REFS[key] = replacement
+
+    orchestrator = host._endpoint._orchestrator._resilient_orchestrator
+    monkeypatch.setattr(orchestrator, "_persist_crash_failed", settle)
+    ctx = _task_context(info)
+    ctx.input = params
+    await orchestrator._execute_in_task(ctx)
+    assert resilience._RUNTIME_REFS[key] is replacement
+
+
+@pytest.mark.parametrize("replacement", [False, True])
+async def test_handler_finalization_releases_only_the_refs_it_started_with(
+    registry: _StreamsRegistry, task_store: LocalFileTaskProvider, monkeypatch: pytest.MonkeyPatch, replacement: bool
+) -> None:
+    host = _host()
+    info = await _durable_task(task_store, host)
+    params = {**_params(), "response_incarnation_id": "a" * 32}
+    await task_store.update(info.id, TaskPatchRequest(payload={"input": params}))
+    key = lifecycle._input_fence_key(RESPONSE_ID, "owner", "a" * 32)
+    refs = _cached_refs(host, params)
+    resilience._RUNTIME_REFS[key] = refs
+    next_refs = RuntimeRefs()
+    snapshot = _snapshot()
+    snapshot["status"] = "in_progress"
+    await host._endpoint._provider.create_response(snapshot, [], None, context=PlatformContext(user_id_key="owner"))
+
+    async def run(**kwargs: Any) -> None:
+        if replacement:
+            resilience._RUNTIME_REFS[key] = next_refs
+        kwargs["record"].transition_to("completed")
+
+    monkeypatch.setattr(host._endpoint._orchestrator, "_run_resilient_stream_body", run)
+    ctx = _task_context(info)
+    ctx.input = params
+    await host._endpoint._orchestrator._resilient_orchestrator._execute_in_task(ctx)
+    if replacement:
+        assert resilience._RUNTIME_REFS[key] is next_refs
+    else:
+        assert key not in resilience._RUNTIME_REFS
+
+
+async def test_invalid_incarnation_never_guesses_a_legacy_or_successor_cache_key(
+    registry: _StreamsRegistry, task_store: LocalFileTaskProvider
+) -> None:
+    host = _host()
+    info = await _durable_task(task_store, host)
+    params = {**_params(), "response_incarnation_id": "invalid"}
+    await task_store.update(info.id, TaskPatchRequest(payload={"input": params}))
+    others = {
+        lifecycle._input_fence_key(RESPONSE_ID, "owner"): RuntimeRefs(),
+        lifecycle._input_fence_key(RESPONSE_ID, "owner", "b" * 32): RuntimeRefs(),
+        lifecycle._input_fence_key(RESPONSE_ID, "other"): RuntimeRefs(),
+    }
+    resilience._RUNTIME_REFS.update(others)
+    ctx = _task_context(info)
+    ctx.input = params
+    await host._endpoint._orchestrator._resilient_orchestrator._execute_in_task(ctx)
+    assert resilience._RUNTIME_REFS == others
 
 
 @pytest.mark.parametrize("runtime_record", [False, True])
