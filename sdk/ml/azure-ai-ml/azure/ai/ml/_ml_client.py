@@ -273,6 +273,17 @@ class MLClient:
             workspace_id,
             workspace_location,
         )
+        self._online_operation_scope = (
+            OperationScope(
+                self._ws_operation_scope.subscription_id,
+                self._ws_operation_scope.resource_group_name,
+                workspace_name,
+                workspace_id=workspace_id,
+                workspace_location=workspace_location,
+            )
+            if registry_name or registry_reference
+            else self._operation_scope
+        )
 
         # Cannot send multiple base_url as azure-cli sets the base_url automatically.
         kwargs.pop("base_url", None)
@@ -315,6 +326,12 @@ class MLClient:
 
         self._service_client_02_2022_preview = ServiceClient022022Preview(
             subscription_id=self._operation_scope._subscription_id,
+            credential=self._credential,
+            base_url=base_url,
+            **kwargs,
+        )
+        self._service_client_02_2022_preview_online = ServiceClient022022Preview(
+            subscription_id=self._online_operation_scope._subscription_id,
             credential=self._credential,
             base_url=base_url,
             **kwargs,
@@ -417,6 +434,12 @@ class MLClient:
                 if registry_reference
                 else self._operation_scope._subscription_id
             ),
+            base_url=base_url,
+            **kwargs,
+        )
+        self._service_client_04_2023_preview_online = ServiceClient042023Preview(
+            credential=self._credential,
+            subscription_id=self._online_operation_scope._subscription_id,
             base_url=base_url,
             **kwargs,
         )
@@ -604,9 +627,9 @@ class MLClient:
         self._local_endpoint_helper = _LocalEndpointHelper(requests_pipeline=self._requests_pipeline)
         self._local_deployment_helper = _LocalDeploymentHelper(self._operation_container)
         self._online_endpoints = OnlineEndpointOperations(
-            self._ws_operation_scope if registry_reference else self._operation_scope,
+            self._online_operation_scope,
             self._operation_config,
-            self._service_client_02_2022_preview,
+            self._service_client_02_2022_preview_online,
             self._operation_container,
             self._local_endpoint_helper,
             self._credential,
@@ -625,9 +648,9 @@ class MLClient:
         self._operation_container.add(AzureMLResourceType.BATCH_ENDPOINT, self._batch_endpoints)
         self._operation_container.add(AzureMLResourceType.ONLINE_ENDPOINT, self._online_endpoints)
         self._online_deployments = OnlineDeploymentOperations(
-            self._ws_operation_scope if registry_reference else self._operation_scope,
+            self._online_operation_scope,
             self._operation_config,
-            self._service_client_04_2023_preview,
+            self._service_client_04_2023_preview_online,
             self._operation_container,
             self._local_deployment_helper,
             self._credential,

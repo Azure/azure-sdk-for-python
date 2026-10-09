@@ -6,6 +6,7 @@
 - Added Spark runtime 3.5 support for model monitoring serverless Spark compute while retaining runtime 3.4 support.
 
 ### Bugs Fixed
+- Fixed registry-backed `MLClient` sending online endpoint/deployment calls to the registry's resource group instead of the workspace's, causing `ResourceNotFound` for cross-resource-group workspaces.
 
 ## 1.35.1 (2026-09-30)
 
