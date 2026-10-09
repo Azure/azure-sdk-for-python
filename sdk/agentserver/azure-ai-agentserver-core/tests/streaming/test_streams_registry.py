@@ -17,6 +17,7 @@ import asyncio
 import inspect
 import re
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 from anyio import CancelScope
@@ -135,9 +136,9 @@ async def test_cancelled_waiter_never_splits_interleaved_create_get_delete_lock(
         created.append(stream)
         return stream
 
-    def load(identifier: str):
+    def load(identifier: str, *, for_deletion: bool = False):
         assert registry._id_locks[identifier] is entry
-        return lookup(identifier)
+        return lookup(identifier, for_deletion=for_deletion)
 
     monkeypatch.setattr(registry, "_factory", create)
     monkeypatch.setattr(registry, "_load_existing", load)
@@ -535,6 +536,287 @@ class TestGetOrCreateAtomicity:
 
 
 class TestPersistedLookup:
+    @pytest.mark.parametrize(
+        "invalid_record",
+        [b"not json\n", b"\xff\n", b'{"payload": {"n": 2}}\n'],
+        ids=["malformed-json", "invalid-encoding", "missing-time"],
+    )
+    async def test_cold_delete_removes_corrupt_log_and_allows_recreation(
+        self, tmp_path: Path, invalid_record: bytes
+    ) -> None:
+        from azure.ai.agentserver.core.streaming._registry import _TOMBSTONE
+
+        original_registry = _StreamsRegistry()
+        original_registry.use_file_backed_replay(storage_dir=tmp_path)
+        original = await original_registry.get_or_create("corrupt")
+        await original.emit({"n": 1})
+        await original.emit({"n": 3})
+        await original.close()
+        original._cleanup_locks()
+        path = tmp_path / "corrupt.jsonl"
+        records = path.read_bytes().splitlines(keepends=True)
+        path.write_bytes(records[0] + invalid_record + b"".join(records[1:]))
+
+        restarted = _StreamsRegistry()
+        restarted.use_file_backed_replay(storage_dir=tmp_path)
+        with pytest.raises(RuntimeError, match="malformed|missing 'emit_time'"):
+            await restarted.get("corrupt")
+        assert restarted._slots == {}
+        assert restarted._id_locks == {}
+        await restarted.delete("corrupt")
+        assert list(tmp_path.iterdir()) == []
+        assert restarted._slots["corrupt"] is _TOMBSTONE
+        assert restarted._id_locks == {}
+        with pytest.raises(EventStreamNotFoundError):
+            await restarted.get("corrupt")
+        fresh = await restarted.get_or_create("corrupt")
+        await fresh.emit({"n": 4}, close=True)
+        assert [event async for event in fresh.subscribe()] == [{"n": 4}]
+        await restarted.delete("corrupt")
+
+    async def test_valid_cold_delete_never_rehydrates_or_calls_payload_callbacks(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        registry = _StreamsRegistry()
+        registry.use_file_backed_replay(storage_dir=tmp_path)
+        original = await registry.get_or_create("valid")
+        await original.emit({"n": 1}, close=True)
+        original._cleanup_locks()
+
+        def forbidden(*args, **kwargs):
+            raise AssertionError("cold deletion must not read replay events")
+
+        restarted = _StreamsRegistry()
+        restarted.use_file_backed_replay(
+            storage_dir=tmp_path,
+            cursor_fn=forbidden,
+            serializer=forbidden,
+            deserializer=forbidden,
+        )
+        monkeypatch.setattr(FileBackedReplayEventStream, "_rehydrate", forbidden)
+        await restarted.delete("valid")
+        assert list(tmp_path.iterdir()) == []
+        assert restarted._id_locks == {}
+
+    @pytest.mark.parametrize("windows", [False, True])
+    async def test_cold_delete_lock_contention_preserves_log_and_allows_retry(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, windows: bool
+    ) -> None:
+        from azure.ai.agentserver.core.streaming import _concrete
+
+        if windows:
+            monkeypatch.setattr(_concrete, "fcntl", None)
+        writer = _StreamsRegistry()
+        writer.use_file_backed_replay(storage_dir=tmp_path)
+        original = await writer.get_or_create("locked")
+        await original.emit({"n": 1})
+        path = tmp_path / "locked.jsonl"
+        expected = path.read_bytes()
+        restarted = _StreamsRegistry()
+        restarted.use_file_backed_replay(storage_dir=tmp_path)
+        try:
+            for _ in range(2):
+                with pytest.raises(RuntimeError, match="another process holds"):
+                    await restarted.delete("locked")
+                assert path.read_bytes() == expected
+                assert restarted._slots == {}
+                assert restarted._id_locks == {}
+        finally:
+            original._cleanup_locks()
+        await restarted.delete("locked")
+        assert list(tmp_path.iterdir()) == []
+        assert restarted._id_locks == {}
+
+    @pytest.mark.parametrize("artifact", ["log", "lock", "descriptor"])
+    async def test_corrupt_cold_delete_cleanup_failure_keeps_exact_owner_for_retry(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, artifact: str
+    ) -> None:
+        from azure.ai.agentserver.core.streaming import _concrete
+        from azure.ai.agentserver.core.streaming._registry import _TOMBSTONE
+
+        monkeypatch.setattr(_concrete, "fcntl", None)
+        path = tmp_path / "retry.jsonl"
+        path.write_bytes(b'{"emit_time": 1, "payload": 1}\nnot json\n')
+        lock_path = path.with_suffix(".jsonl.lock")
+        denied_path = path if artifact == "log" else lock_path
+        unlink = Path.unlink
+
+        def denied(candidate: Path, *args, **kwargs):
+            if candidate == denied_path:
+                raise PermissionError("artifact removal denied")
+            return unlink(candidate, *args, **kwargs)
+
+        def denied_close(descriptor: int):
+            raise PermissionError("artifact removal denied")
+
+        restarted = _StreamsRegistry()
+        restarted.use_file_backed_replay(storage_dir=tmp_path)
+        with monkeypatch.context() as patch:
+            patch.setattr(Path, "unlink", denied)
+            if artifact == "descriptor":
+                patch.setattr(_concrete.os, "close", denied_close)
+            with pytest.raises(PermissionError, match="artifact removal denied"):
+                await restarted.delete("retry")
+            owner = restarted._slots["retry"]
+            descriptor = owner._lock_fd
+            assert owner is not _TOMBSTONE
+            for _ in range(2):
+                with pytest.raises(PermissionError, match="artifact removal denied"):
+                    await restarted.delete("retry")
+                assert restarted._slots["retry"] is owner
+                assert restarted._id_locks == {}
+                assert path.exists()
+                assert lock_path.exists() is (artifact != "log")
+                assert owner._file.closed
+                assert owner._lock_fd == descriptor
+                assert (owner._lock_fd is not None) is (artifact == "descriptor")
+            assert await restarted.get_or_create("retry") is owner
+            with pytest.raises(EventStreamNotFoundError):
+                await owner.emit({"n": 2})
+
+        await restarted.delete("retry")
+        assert list(tmp_path.iterdir()) == []
+        assert restarted._slots["retry"] is _TOMBSTONE
+        assert restarted._id_locks == {}
+        fresh = await restarted.get_or_create("retry")
+        await fresh.emit({"n": 2}, close=True)
+        assert [event async for event in fresh.subscribe()] == [{"n": 2}]
+        await restarted.delete("retry")
+
+    @pytest.mark.parametrize("windows", [False, True])
+    @pytest.mark.parametrize("failure", [PermissionError, FileNotFoundError])
+    async def test_cold_delete_lock_acquisition_errors_propagate_and_close_handle(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, windows: bool, failure
+    ) -> None:
+        from azure.ai.agentserver.core.streaming import _concrete
+
+        path = tmp_path / "restricted.jsonl"
+        expected = b"not json\n"
+        path.write_bytes(expected)
+        registry = _StreamsRegistry()
+        registry.use_file_backed_replay(storage_dir=tmp_path)
+        opened = []
+        open_file = open
+
+        def tracked_open(*args, **kwargs):
+            handle = open_file(*args, **kwargs)
+            opened.append(handle)
+            return handle
+
+        def denied(*args, **kwargs):
+            raise failure("lock acquisition denied")
+
+        with monkeypatch.context() as patch:
+            patch.setattr(_concrete, "open", tracked_open, raising=False)
+            if windows:
+                patch.setattr(_concrete, "fcntl", None)
+                patch.setattr(_concrete.os, "open", denied)
+            else:
+                patch.setattr(_concrete, "fcntl", SimpleNamespace(LOCK_EX=1, LOCK_NB=2, flock=denied))
+            with pytest.raises(failure, match="lock acquisition denied"):
+                await registry.delete("restricted")
+            assert len(opened) == 1
+            assert opened[0].closed
+            assert registry._slots == {}
+            assert registry._id_locks == {}
+            assert path.read_bytes() == expected
+            assert sorted(tmp_path.iterdir()) == [path]
+
+        await registry.delete("restricted")
+        assert list(tmp_path.iterdir()) == []
+
+    async def test_cold_delete_file_disappearing_before_open_never_creates_a_log(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        from azure.ai.agentserver.core.streaming import _concrete
+        from azure.ai.agentserver.core.streaming._registry import _TOMBSTONE
+
+        path = tmp_path / "disappearing.jsonl"
+        path.write_bytes(b"not json\n")
+        registry = _StreamsRegistry()
+        registry.use_file_backed_replay(storage_dir=tmp_path)
+        open_file = open
+        modes = []
+
+        def remove_before_open(candidate, mode):
+            assert candidate == path
+            modes.append(mode)
+            candidate.unlink()
+            return open_file(candidate, mode)
+
+        monkeypatch.setattr(_concrete, "open", remove_before_open, raising=False)
+        await registry.delete("disappearing")
+        assert modes == ["r+b"]
+        assert list(tmp_path.iterdir()) == []
+        assert registry._slots["disappearing"] is _TOMBSTONE
+        assert registry._id_locks == {}
+
+    @pytest.mark.parametrize("cancellation", ["task", "scope"])
+    async def test_cancelled_cold_delete_retains_cleanup_owner_until_retry(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, cancellation: str
+    ) -> None:
+        from azure.ai.agentserver.core.streaming import _concrete
+        from azure.ai.agentserver.core.streaming._registry import _TOMBSTONE
+
+        monkeypatch.setattr(_concrete, "fcntl", None)
+        path = tmp_path / "cancelled.jsonl"
+        path.write_bytes(b"not json\n")
+        registry = _StreamsRegistry()
+        registry.use_file_backed_replay(storage_dir=tmp_path)
+        entered = asyncio.Event()
+        release = asyncio.Event()
+        scope = CancelScope()
+        owners = []
+
+        async def paused_delete(owner):
+            owners.append(owner)
+            entered.set()
+            await release.wait()
+
+        async def delete():
+            if cancellation == "scope":
+                with scope:
+                    await registry.delete("cancelled")
+            else:
+                await registry.delete("cancelled")
+
+        with monkeypatch.context() as patch:
+            patch.setattr(FileBackedReplayEventStream, "_on_delete", paused_delete)
+            deleting = asyncio.create_task(delete())
+            try:
+                await asyncio.wait_for(entered.wait(), 2)
+                owner = owners[0]
+                assert registry._slots["cancelled"] is owner
+                assert registry._id_locks["cancelled"].users == 1
+                if cancellation == "scope":
+                    scope.cancel()
+                    await asyncio.wait_for(deleting, 2)
+                    assert scope.cancelled_caught
+                else:
+                    deleting.cancel()
+                    with pytest.raises(asyncio.CancelledError):
+                        await deleting
+                assert registry._slots["cancelled"] is owner
+                assert registry._slots["cancelled"] is not _TOMBSTONE
+                assert not owner._file.closed
+                assert owner._lock_fd is not None
+                assert path.exists()
+                assert registry._id_locks == {}
+            finally:
+                if not deleting.done():
+                    deleting.cancel()
+                    await asyncio.gather(deleting, return_exceptions=True)
+                release.set()
+
+        await registry.delete("cancelled")
+        assert list(tmp_path.iterdir()) == []
+        assert registry._slots["cancelled"] is _TOMBSTONE
+        assert registry._id_locks == {}
+        fresh = await registry.get_or_create("cancelled")
+        await fresh.emit({"n": 1}, close=True)
+        assert [event async for event in fresh.subscribe()] == [{"n": 1}]
+        await registry.delete("cancelled")
+
     async def test_windows_lock_file_removal_failure_is_retryable(self, tmp_path: Path, monkeypatch):
         from azure.ai.agentserver.core.streaming import _concrete
         from azure.ai.agentserver.core.streaming._registry import _TOMBSTONE
