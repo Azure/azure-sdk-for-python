@@ -37,9 +37,9 @@ sys.path.append("..")
 
 class SendWhatsAppMessageSample(object):
 
-    endpoint_string = os.getenv("COMMUNICATION_SAMPLES_ENDPOINT_STRING")
-    phone_number = os.getenv("RECIPIENT_PHONE_NUMBER")
-    channel_id = os.getenv("WHATSAPP_CHANNEL_ID")
+    endpoint_string: str = os.getenv("COMMUNICATION_SAMPLES_ENDPOINT_STRING")  # type: ignore
+    phone_number: str = os.getenv("RECIPIENT_PHONE_NUMBER")  # type: ignore
+    channel_id: str = os.getenv("WHATSAPP_CHANNEL_ID")  # type: ignore
 
     def send_text_send_message(self):
 

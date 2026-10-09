@@ -171,7 +171,7 @@ class ExceptionPolicySamplesAsync(object):
         )
 
         async with router_admin_client:
-            updated_exception_policy: ExceptionPolicy = await router_admin_client.upsert_exception_policy(
+            updated_exception_policy: ExceptionPolicy = await router_admin_client.upsert_exception_policy(  # type: ignore[call-overload]
                 policy_id,
                 exception_rules=[
                     # adding new rule
