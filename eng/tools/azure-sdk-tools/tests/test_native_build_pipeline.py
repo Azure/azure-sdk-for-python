@@ -173,6 +173,24 @@ def test_cargo_feed_configuration_does_not_overwrite_existing_config(tmp_path):
     assert (tmp_path / "config.toml").read_text() == config
 
 
+def test_cargo_feed_configuration_uses_default_cargo_home(tmp_path):
+    configure = load_template("steps/install-msrust-toolchain.yml")["steps"][2]["pwsh"]
+    feed = "sparse+https://pkgs.dev.azure.com/azure-sdk/public/_packaging/example/Cargo/index/"
+
+    result = run_powershell(
+        configure,
+        CARGO_HOME="",
+        CARGO_FEED_URL=feed,
+        HOME=str(tmp_path),
+        RUST_TOOLCHAIN_FEED="example-feed",
+    )
+
+    assert result.returncode == 0, result.stderr
+    config = tmp_path / ".cargo" / "config.toml"
+    assert config.is_file()
+    assert feed in config.read_text()
+
+
 def test_build_powershell_scripts_parse():
     for template_path in (
         "steps/install-msrust-toolchain.yml",

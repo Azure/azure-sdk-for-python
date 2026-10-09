@@ -53,7 +53,7 @@ steps:
       Write-Host "##vso[task.setvariable variable=MSRUSTUP_FEED_URL]$env:RUST_TOOLCHAIN_FEED"
       $cargoHome = $env:CARGO_HOME
       if (-not $cargoHome) {
-        throw 'RustInstaller did not define CARGO_HOME.'
+        $cargoHome = [System.IO.Path]::Combine($HOME, '.cargo')
       }
       New-Item -ItemType Directory -Force -Path $cargoHome | Out-Null
       $configPath = Join-Path $cargoHome 'config.toml'
