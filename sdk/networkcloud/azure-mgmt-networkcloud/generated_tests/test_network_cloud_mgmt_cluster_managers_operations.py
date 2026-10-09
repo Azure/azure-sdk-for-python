@@ -48,6 +48,7 @@ class TestNetworkCloudMgmtClusterManagersOperations(AzureMgmtRecordedTestCase):
                     "managerExtendedLocation": {"name": "str", "type": "str"},
                     "provisioningState": "str",
                     "relayConfiguration": {"relayNamespaceId": "str"},
+                    "rolloutRing": 0,
                     "vmSize": "str",
                 },
                 "etag": "str",

@@ -15,7 +15,7 @@ from azure.mgmt.networkcloud import NetworkCloudMgmtClient
     pip install azure-identity
     pip install azure-mgmt-networkcloud
 # USAGE
-    python bare_metal_machines_patch.py
+    python cluster_managers_patch_rollout_ring.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.bare_metal_machines.begin_update(
+    response = client.cluster_managers.update(
         resource_group_name="resourceGroupName",
-        bare_metal_machine_name="bareMetalMachineName",
-    ).result()
+        cluster_manager_name="clusterManagerName",
+    )
     print(response)
 
 
-# x-ms-original-file: 2026-08-01-preview/BareMetalMachines_Patch.json
+# x-ms-original-file: 2026-08-01-preview/ClusterManagers_Patch_RolloutRing.json
 if __name__ == "__main__":
     main()
