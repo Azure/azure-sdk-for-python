@@ -35,21 +35,22 @@ jobs:
 
       - name: Detect azure-ai-projects branch
         id: branch_check
-        # Scopes the pre-install steps below (Node.js, tsp-client, the TypeSpec Python emitter's
-        # Python dependencies, and the package's dev dependencies) to sessions whose branch name
-        # identifies them as azure-ai-projects work (e.g.
+        # Scopes the azure-ai-projects dev dependency pre-install below to sessions whose branch
+        # name identifies them as azure-ai-projects work (e.g.
         # "copilot/azure-ai-projects-regenerate-<commit>", the actual naming GitHub's issue
         # assignment uses for this package's regeneration workflow), so unrelated cloud agent
-        # sessions in this repo don't pay for a package-specific install. A plain branch-name
-        # check is used instead of git ancestry because actions/checkout's default shallow clone
-        # (fetch-depth: 1) does not reliably support merge-base ancestry checks.
+        # sessions in this repo don't pay for a package-specific install. The Node.js, tsp-client,
+        # and TypeSpec Python emitter steps are deliberately not gated: every package regenerated
+        # through tsp-client needs them. A plain branch-name check is used instead of git ancestry
+        # because actions/checkout's default shallow clone (fetch-depth: 1) does not reliably
+        # support merge-base ancestry checks.
         run: |
           BRANCH="$(git rev-parse --abbrev-ref HEAD)"
           if [[ "${BRANCH,,}" == *azure-ai-projects* ]]; then
-            echo "On branch '$BRANCH' (matches azure-ai-projects); running its pre-install steps."
+            echo "On branch '$BRANCH' (matches azure-ai-projects); pre-installing its dev dependencies."
             echo "azure_ai_projects=true" >> "$GITHUB_OUTPUT"
           else
-            echo "On branch '$BRANCH' (no azure-ai-projects match); skipping its pre-install steps."
+            echo "On branch '$BRANCH' (no azure-ai-projects match); skipping its dev dependency pre-install."
             echo "azure_ai_projects=false" >> "$GITHUB_OUTPUT"
           fi
 
@@ -66,16 +67,16 @@ jobs:
         run: npm ci --prefix eng/common/tsp-client
 
       - name: Pre-install TypeSpec Python emitter's Python dependencies
-        # `tsp-client update` shells out to the TypeSpec Python emitter
-        # (`@azure-tools/typespec-python`), which creates its own isolated venv and pip-installs
-        # the `pygen` generator bundled in `@typespec/http-client-python` (pinned in
-        # eng/emitter-package.json) plus its pinned requirements (black, docutils, Jinja2, PyYAML,
-        # tomli, setuptools, ...). A plain "pip install" here would only warm pip's HTTP cache,
-        # which pip does not consult when the package index is unreachable. Instead, download the
-        # complete runtime requirement set, derived from the pinned package itself, into a fixed
-        # wheelhouse and point PIP_FIND_LINKS at it for the rest of the job, including the
-        # firewalled agent session. The final step verifies an install of the generator succeeds
-        # with the index disabled.
+        # `tsp-client update` (any package, not just azure-ai-projects) shells out to the
+        # TypeSpec Python emitter (`@azure-tools/typespec-python`), which creates its own isolated
+        # venv and pip-installs the `pygen` generator bundled in `@typespec/http-client-python`
+        # (pinned in eng/emitter-package.json) plus its pinned requirements (black, docutils,
+        # Jinja2, PyYAML, tomli, setuptools, ...). A plain "pip install" here would only warm pip's
+        # HTTP cache, which pip does not consult when the package index is unreachable. Instead,
+        # download the complete runtime requirement set, derived from the pinned package itself,
+        # into a fixed wheelhouse and point PIP_FIND_LINKS at it for the rest of the job,
+        # including the firewalled agent session. The final step verifies an install of the
+        # generator succeeds with the index disabled.
         run: |
           WHEELHOUSE="$HOME/.cache/pip-find-links"
           WORKDIR="$(mktemp -d)"
