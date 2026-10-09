@@ -60,6 +60,7 @@ def _assert_page_requests(run, path):
     assert first.method == second.method == "GET"
     assert urlparse(first.url).path == f"/api/hubs/chat/chat/{path}"
     assert parse_qs(urlparse(first.url).query)["maxpagesize"] == ["1"]
+    assert parse_qs(urlparse(first.url).query)["continuationToken"] == ["initial+/=token"]
     assert parse_qs(urlparse(first.url).query)["api-version"] == ["2026-08-01-preview"]
     assert parse_qs(urlparse(second.url).query)["continuationToken"] == ["next"]
     assert parse_qs(urlparse(second.url).query)["api-version"] == ["2026-08-01-preview"]
@@ -83,7 +84,7 @@ def _assert_topic_requests(run):
 def test_collection_paging_and_continuation(operation, args, path, model, fields):
     with WebPubSubChatServiceClient(ENDPOINT, "chat", AzureKeyCredential("test-key")) as client:
         with patch.object(client._client._pipeline, "run", side_effect=_paging_responses(path, fields)) as run:
-            options = {"params": {"maxpagesize": 1}} if operation == "list_rooms_for_user" else {"max_page_size": 1}
+            options = {"max_page_size": 1, "continuation_token_parameter": "initial+/=token"}
             pages = getattr(client, operation)(*args, **options).by_page()
             first = list(next(pages))
             assert len(first) == 1
@@ -103,7 +104,7 @@ async def test_async_collection_paging_and_continuation(operation, args, path, m
         with patch.object(
             client._client._pipeline, "run", new_callable=AsyncMock, side_effect=_paging_responses(path, fields)
         ) as run:
-            options = {"params": {"maxpagesize": 1}} if operation == "list_rooms_for_user" else {"max_page_size": 1}
+            options = {"max_page_size": 1, "continuation_token_parameter": "initial+/=token"}
             pages = getattr(client, operation)(*args, **options).by_page()
             first = [item async for item in await anext(pages)]
             assert len(first) == 1

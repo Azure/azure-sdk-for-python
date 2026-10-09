@@ -1,5 +1,12 @@
 # Release History
 
+## 1.0.0b2 (Unreleased)
+
+### Features Added
+
+  - Added topic lifecycle operations (create or replace, list, get, update, and soft delete)
+  - Added room, user, and user-room collection operations
+
 ## 1.0.0b1 (2026-10-08)
 
 ### Features Added
