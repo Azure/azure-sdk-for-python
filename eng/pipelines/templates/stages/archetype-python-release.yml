@@ -3,6 +3,7 @@ parameters:
   TestPipeline: false
   ArtifactName: 'not-specified'
   ServiceDirectory: 'not-specified'
+  ReleasePlanId: '0'
   DependsOn: Build
   DocArtifact: 'documentation'
   DevFeedName: 'public/azure-sdk-for-python'
@@ -79,6 +80,7 @@ stages:
             ArtifactName: ${{ parameters.ArtifactName }}
             DependsOn: ${{ parameters.DependsOn }}
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          ReleasePlanId: ${{ parameters.ReleasePlanId }}
           TestPipeline: ${{ parameters.TestPipeline }}
           DocArtifact: ${{ parameters.DocArtifact }}
           DevFeedName: ${{ parameters.DevFeedName }}

@@ -27,6 +27,9 @@ parameters:
   - name: ServiceDirectory
     type: string
     default: 'not-specified'
+  - name: ReleasePlanId
+    type: string
+    default: '0'
   - name: TestPipeline
     type: boolean
     default: false
@@ -62,6 +65,9 @@ stages:
       - template: /eng/pipelines/templates/variables/image.yml
       - template: /eng/common/pipelines/templates/variables/api-review-break-glass.yml
       - template: /eng/pipelines/templates/variables/globals.yml
+      - ${{ if and(eq(parameters.ServiceDirectory, 'template'), eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
+          - name: AutoReleaseSdkPullRequestUrl
+            value: $[ stageDependencies.AutoReleasePrepare.ResolveAutoReleasePackages.outputs['resolve.AutoReleaseSdkPullRequestUrl'] ]
     # Auto-release CI: only release when the shared prepare stage flagged this artifact as changed.
     # Manual runs: every declared artifact remains eligible (existing behavior).
     ${{ if and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ne(parameters.SignedArtifactTargetingStage, '')) }}:
@@ -266,6 +272,10 @@ stages:
             parameters:
               ConfigFileDir: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo'
               PackageArtifactName: ${{parameters.Artifact.name}}
+              ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+                ReleasePlanId: ${{ parameters.ReleasePlanId }}
+                ${{ if and(eq(variables['Build.Reason'], 'IndividualCI'), eq(variables['Build.SourceBranch'], 'refs/heads/main')) }}:
+                  SdkPullRequest: $(AutoReleaseSdkPullRequestUrl)
 
           # Management-plane-only workaround: skip marking packages that do not generate an APIView revision.
           - pwsh: |
