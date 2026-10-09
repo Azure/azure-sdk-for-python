@@ -638,7 +638,7 @@ class LocalFileTaskProvider:
         :paramtype has_error: bool | None
         :keyword lease_expired: Optional filter for tasks whose lease has expired.
         :paramtype lease_expired: bool | None
-        :keyword limit: Page size for pagination.
+        :keyword limit: Page size for pagination; None returns all matching tasks.
         :paramtype limit: int | None
         :keyword after: Return tasks after this pagination cursor.
         :paramtype after: str | None
@@ -653,10 +653,8 @@ class LocalFileTaskProvider:
         """
         if before is not None:
             _invalid_request("before is not supported for task list.")
-        page_size = 20 if limit is None else limit
-        if page_size <= 0:
+        if limit is not None and limit <= 0:
             _invalid_request("limit must be greater than 0.")
-        page_size = min(page_size, 100)
         sort_order = order or "desc"
         if sort_order not in {"asc", "desc"}:
             _invalid_request("order must be 'asc' or 'desc'.")
@@ -698,7 +696,8 @@ class LocalFileTaskProvider:
                     break
             else:
                 results = []
-        results = results[:page_size]
+        if limit is not None:
+            results = results[: min(limit, 100)]
         if omit_attachment_values:
             for task in results:
                 if task.attachments is not None:

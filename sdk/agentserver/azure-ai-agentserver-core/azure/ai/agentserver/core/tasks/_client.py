@@ -765,6 +765,7 @@ class HostedTaskProvider:
             params["omit_attachment_values"] = "true"
 
         all_tasks: list[TaskInfo] = []
+        cursors: set[str] = {after} if after is not None else set()
         while True:
             http_request = HttpRequest("GET", self._base_url, params=params)
             response = await self._send(http_request)
@@ -777,8 +778,9 @@ class HostedTaskProvider:
             if not data.get("has_more", False):
                 break
             last_id = data.get("last_id")
-            if not last_id:
-                break
+            if not isinstance(last_id, str) or not last_id or last_id in cursors:
+                raise ValueError("Task list continuation cursor is missing or repeated")
+            cursors.add(last_id)
             params["after"] = last_id
 
         return all_tasks

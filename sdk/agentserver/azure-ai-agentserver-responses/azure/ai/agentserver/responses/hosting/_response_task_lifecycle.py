@@ -4,6 +4,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 from azure.ai.agentserver.core.tasks import TaskManagerNotInitialized
 from azure.ai.agentserver.core.tasks._attachments import _read_input_value
 from azure.ai.agentserver.core.tasks._exceptions import TaskNotFound
@@ -143,7 +145,12 @@ async def _fence_response_tasks(
 
 
 async def _task_input_deleted(
-    task_id: str, response_id: str, user_id_key: str | None, *, incarnation_id: str | None = None
+    task_id: str,
+    response_id: str,
+    user_id_key: str | None,
+    *,
+    incarnation_id: str | None = None,
+    malformed_input: dict[str, Any] | None = None,
 ) -> bool:
     """Check durable fencing before any response recovery writes or admission.
 
@@ -155,32 +162,39 @@ async def _task_input_deleted(
     :type user_id_key: str | None
     :keyword incarnation_id: The persisted incarnation; None denotes a legacy input.
     :paramtype incarnation_id: str | None
+    :keyword malformed_input: An invalid boundary that may only settle its exact current persisted input.
+    :paramtype malformed_input: dict[str, Any] | None
     :return: Whether the task is gone, terminal, or this input has been deleted.
     :rtype: bool
     """
     try:
         manager = get_task_manager()
     except TaskManagerNotInitialized:
-        if incarnation_id is not None:
+        if incarnation_id is not None or malformed_input is not None:
             raise
         return False
     try:
         info = await manager.provider.get(task_id)
     except TaskNotFound:
         return True
-    if info is None or info.status == "completed":
+    if (
+        info is None
+        or info.status == "completed"
+        or _input_fence_key(response_id, user_id_key, incarnation_id) in _deleted_input_ids(info)
+    ):
         return True
-    if _input_fence_key(response_id, user_id_key, incarnation_id) in _deleted_input_ids(info):
-        return True
+    value = _read_input_value((info.payload or {}).get("input"), info.attachments)
+    if malformed_input is not None:
+        # An invalid nonce cannot prove incarnation ownership. Only the exact
+        # current boundary, with no legacy deletion fence, may be failed closed.
+        return not (isinstance(value, dict) and value == malformed_input)
     if incarnation_id is None:
-        value = _read_input_value((info.payload or {}).get("input"), info.attachments)
-        return isinstance(value, dict) and incarnation_from_params(value) is not None
+        return isinstance(value, dict) and "response_incarnation_id" in value
     # Admission/recovery must refer to the exact persisted current input, not
     # an old callback with a reused response ID. Resume persists this atomically.
-    value = _read_input_value((info.payload or {}).get("input"), info.attachments)
     return not (
         isinstance(value, dict)
         and value.get("response_id") == response_id
         and platform_context_from_params(value).user_id_key == user_id_key
-        and incarnation_from_params(value) == incarnation_id
+        and value.get("response_incarnation_id") == incarnation_id
     )

@@ -5,10 +5,12 @@
 from __future__ import annotations
 
 import asyncio
+import json
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
 from unittest.mock import AsyncMock
+from urllib.parse import parse_qs, urlparse
 
 import pytest
 from starlette.requests import Request
@@ -17,6 +19,7 @@ from azure.ai.agentserver.core.streaming import EventStreamNotFoundError
 from azure.ai.agentserver.core.streaming._registry import _StreamsRegistry
 from azure.ai.agentserver.core.tasks import TaskManagerNotInitialized
 from azure.ai.agentserver.core.tasks._attachments import _resolve_input_storage
+from azure.ai.agentserver.core.tasks._client import HostedTaskProvider
 from azure.ai.agentserver.core.tasks._context import _ExitForRecovery
 from azure.ai.agentserver.core.tasks._exceptions_internal import _HostedConflict
 from azure.ai.agentserver.core.tasks._local_provider import LocalFileTaskProvider
@@ -126,6 +129,284 @@ def _task_context(info: TaskInfo, *, disposition: str = "re-invoke", entry_mode:
         cancel=asyncio.Event(),
         shutdown=asyncio.Event(),
     )
+
+
+async def _newer_tasks(provider: LocalFileTaskProvider, host: ResponsesAgentServerHost, name: str) -> None:
+    for index in range(125):
+        await provider.create(
+            TaskCreateRequest(
+                id=f"newer-task-{index}",
+                agent_name=host.config.agent_name or "default",
+                session_id=host.config.session_id or "local",
+                title="Newer response task",
+                payload={"input": _params(response_id=f"newer-response-{index}"), _SCHEMA_VERSION_KEY: _SCHEMA_VERSION},
+                tags={"task_name": name},
+                source=TaskManager._build_source(name),
+            )
+        )
+
+
+@pytest.fixture(params=["local", "hosted"])
+async def complete_listing(task_store: LocalFileTaskProvider, monkeypatch: pytest.MonkeyPatch, request: Any) -> Any:
+    """Exercise local enumeration and real hosted opaque-cursor pagination."""
+    if request.param == "local":
+        yield SimpleNamespace(provider=task_store, requests=[], kind="local")
+        return
+    hosted = HostedTaskProvider(project_endpoint="https://example.invalid", credential=AsyncMock())
+    requests = []
+    cursors: dict[str, str] = {}
+
+    async def send(http_request: Any) -> Any:
+        query = parse_qs(urlparse(http_request.url).query)
+        requests.append(query)
+        after = query.get("after", [None])[0]
+        if after is not None:
+            assert after in cursors  # Task IDs must never replace service cursors.
+        page = await task_store.list(
+            agent_name=query["agent_name"][0],
+            session_id=query["session_id"][0],
+            tag={"task_name": query["tag.task_name"][0]},
+            source_type=query["source_type"][0],
+            limit=7,
+            after=cursors.get(after),
+        )
+        body = {"data": [info.to_dict() for info in page], "has_more": len(page) == 7}
+        if body["has_more"]:
+            cursor = f"opaque-page-{len(requests)}"
+            cursors[cursor] = page[-1].id
+            body["last_id"] = cursor
+        return SimpleNamespace(status_code=200, headers={}, body=lambda: json.dumps(body).encode())
+
+    monkeypatch.setattr(hosted, "_send", send)
+    provider = SimpleNamespace(list=hosted.list, get=task_store.get, update=task_store.update)
+    manager = TaskManager(_host().config, provider=provider)
+    monkeypatch.setattr(lifecycle, "get_task_manager", lambda: manager)
+    try:
+        yield SimpleNamespace(provider=provider, hosted=hosted, requests=requests, kind="hosted")
+    finally:
+        await hosted.close()
+
+
+@pytest.mark.parametrize("multi_turn", [False, True])
+async def test_complete_task_listing_preserves_older_owner_and_fences_delete_after_restart(
+    registry: _StreamsRegistry,
+    task_store: LocalFileTaskProvider,
+    complete_listing: Any,
+    tmp_path: Path,
+    multi_turn: bool,
+) -> None:
+    host = _host()
+    info = await _durable_task(task_store, host, multi_turn=multi_turn, attached=True)
+    name = host._endpoint._response_task_names()[int(multi_turn)]
+    await _newer_tasks(task_store, host, name)
+    first_page = await task_store.list(tag={"task_name": name}, limit=20)
+    assert len(first_page) == 20
+    assert info.id not in {item.id for item in first_page}
+    storage = tmp_path / "streams"
+    first = _StreamsRegistry()
+    first.use_file_backed_replay(storage_dir=storage, cursor_fn=lambda event: event["sequence_number"])
+    identifier = derive_lifecycle_id(RESPONSE_ID, "owner")
+    abandoned = await first.get_or_create(identifier)
+    abandoned._cleanup_locks()
+    registry.use_file_backed_replay(storage_dir=storage, cursor_fn=lambda event: event["sequence_number"])
+    replay = await registry.get(identifier)
+    try:
+        assert not await host._endpoint._reserve_response_id(RESPONSE_ID, "owner")
+        assert replay._path.exists()
+        assert await registry.get(identifier) is replay
+        assert [item.id for item in await lifecycle._response_tasks(RESPONSE_ID, "owner", (name,))] == [info.id]
+        await host._endpoint._provider.create_response(
+            _snapshot(), [], None, context=PlatformContext(user_id_key="owner")
+        )
+        assert (await host._endpoint.handle_delete(_delete_request())).status_code == 200
+        assert lifecycle._DELETED_INPUT_IDS in (await task_store.get(info.id)).payload
+        for item in first_page:
+            assert (await task_store.get(item.id)).payload == item.payload
+        restarted = ResponsesAgentServerHost(
+            options=ResponsesServerOptions(resilient_background=False), store=host._endpoint._provider
+        )
+        restarted.response_handler(_noop_handler)
+        orchestrator = restarted._endpoint._orchestrator._resilient_orchestrator
+        admitted = AsyncMock()
+        orchestrator._execute_admitted_task = admitted
+        await orchestrator._execute_in_task(_task_context(info))
+        admitted.assert_not_awaited()
+        assert await restarted._endpoint._runtime_state.list_records() == []
+        with pytest.raises(KeyError):
+            await restarted._endpoint._provider.get_response(RESPONSE_ID, context=PlatformContext(user_id_key="owner"))
+        if complete_listing.kind == "hosted":
+            assert any("after" in query for query in complete_listing.requests)
+    finally:
+        await registry.delete(identifier)
+
+
+@pytest.mark.parametrize("operation", ["orphan", "delete"])
+async def test_task_scan_failure_never_proves_absence_or_completes_delete(
+    registry: _StreamsRegistry,
+    task_store: LocalFileTaskProvider,
+    complete_listing: Any,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    operation: str,
+) -> None:
+    host = _host()
+    info = await _durable_task(task_store, host)
+    await _newer_tasks(task_store, host, host._endpoint._response_task_names()[0])
+    registry.use_file_backed_replay(storage_dir=tmp_path / "streams", cursor_fn=lambda event: event["sequence_number"])
+    identifier = derive_lifecycle_id(RESPONSE_ID, "owner")
+    replay = await registry.get_or_create(identifier)
+    if operation == "delete":
+        await host._endpoint._provider.create_response(
+            _snapshot(), [], None, context=PlatformContext(user_id_key="owner")
+        )
+    original = task_store._read_task if complete_listing.kind == "local" else complete_listing.hosted._send
+    calls = 0
+
+    def read(path: Path) -> Any:
+        nonlocal calls
+        calls += 1
+        if calls == 25:
+            raise OSError("task scan unavailable")
+        return original(path)
+
+    async def send(http_request: Any) -> Any:
+        nonlocal calls
+        calls += 1
+        if calls == 3:
+            raise OSError("task scan unavailable")
+        return await original(http_request)
+
+    if complete_listing.kind == "local":
+        monkeypatch.setattr(task_store, "_read_task", read)
+    else:
+        monkeypatch.setattr(complete_listing.hosted, "_send", send)
+    try:
+        if operation == "orphan":
+            with pytest.raises(OSError, match="task scan unavailable"):
+                await host._endpoint._reserve_response_id(RESPONSE_ID, "owner")
+        else:
+            assert (await host._endpoint.handle_delete(_delete_request())).status_code == 500
+            assert not await host._endpoint._runtime_state.is_deleted(RESPONSE_ID, "owner")
+            assert (
+                await host._endpoint._provider.get_response(RESPONSE_ID, context=PlatformContext(user_id_key="owner"))
+            )["id"] == RESPONSE_ID
+        assert replay._path.exists()
+        assert lifecycle._DELETED_INPUT_IDS not in (await task_store.get(info.id)).payload
+        if operation == "delete":
+            assert (await host._endpoint.handle_delete(_delete_request())).status_code == 200
+        else:
+            assert not await host._endpoint._reserve_response_id(RESPONSE_ID, "owner")
+    finally:
+        await registry.delete(identifier)
+
+
+@pytest.mark.parametrize("incarnation", [None, "", "invalid", "A" * 32, 7, ["a" * 32]])
+@pytest.mark.parametrize("attached", [False, True])
+async def test_malformed_current_incarnation_settles_failed_without_execution(
+    registry: _StreamsRegistry, task_store: LocalFileTaskProvider, incarnation: Any, attached: bool
+) -> None:
+    host = _host()
+    info = await _durable_task(task_store, host)
+    params = {**_params(), "response_incarnation_id": incarnation}
+    _, slot = _resolve_input_storage(
+        params, threshold_bytes=0 if attached else 1000000, key_for_attachment="input", task_id=info.id
+    )
+    await task_store.update(
+        info.id, TaskPatchRequest(payload={"input": slot}, attachments={"input": params} if attached else None)
+    )
+    snapshot = _snapshot()
+    snapshot["status"] = "in_progress"
+    await host._endpoint._provider.create_response(snapshot, [], None, context=PlatformContext(user_id_key="owner"))
+    identifier = derive_lifecycle_id(RESPONSE_ID, "owner")
+    replay = await registry.get_or_create(identifier)
+    await replay.emit({"type": "response.created", "sequence_number": 0})
+    ctx = _task_context(info)
+    ctx.input = params
+    try:
+        await host._endpoint._orchestrator._resilient_orchestrator._execute_in_task(ctx)
+        stored = await host._endpoint._provider.get_response(RESPONSE_ID, context=PlatformContext(user_id_key="owner"))
+        assert stored["status"] == "failed"
+        events = [event async for event in replay.subscribe()]
+        assert events[-1]["type"] == "response.failed"
+        assert await host._endpoint._runtime_state.reserve(RESPONSE_ID, "owner")
+        await host._endpoint._runtime_state.release_reservation(RESPONSE_ID, "owner")
+    finally:
+        await registry.delete(identifier)
+
+
+@pytest.mark.parametrize("ownership", ["deleted", "replaced", "foreign", "terminal"])
+async def test_malformed_stale_incarnation_never_settles_or_resurrects_response(
+    registry: _StreamsRegistry, task_store: LocalFileTaskProvider, monkeypatch: pytest.MonkeyPatch, ownership: str
+) -> None:
+    host = _host()
+    info = await _durable_task(task_store, host, user="other" if ownership == "foreign" else "owner")
+    params = {**_params(), "response_incarnation_id": "invalid"}
+    if ownership == "deleted":
+        await lifecycle._fence_response_tasks(RESPONSE_ID, "owner", host._endpoint._response_task_names())
+        await task_store.update(info.id, TaskPatchRequest(payload={"input": params}))
+    elif ownership == "terminal":
+        await task_store.update(info.id, TaskPatchRequest(status="completed"))
+    else:
+        await task_store.update(
+            info.id,
+            TaskPatchRequest(
+                payload={
+                    "input": {
+                        **_params(user="other" if ownership == "foreign" else "owner"),
+                        "response_incarnation_id": "b" * 32,
+                    }
+                }
+            ),
+        )
+    restarted = ResponsesAgentServerHost(
+        options=ResponsesServerOptions(resilient_background=False), store=host._endpoint._provider
+    )
+    restarted.response_handler(_noop_handler)
+    orchestrator = restarted._endpoint._orchestrator._resilient_orchestrator
+    failed = AsyncMock()
+    monkeypatch.setattr(orchestrator, "_persist_crash_failed", failed)
+    ctx = _task_context(info)
+    ctx.input = params
+    await orchestrator._execute_in_task(ctx)
+    failed.assert_not_awaited()
+    assert await restarted._endpoint._runtime_state.list_records() == []
+    with pytest.raises(KeyError):
+        await restarted._endpoint._provider.get_response(RESPONSE_ID, context=PlatformContext(user_id_key="owner"))
+
+
+async def test_malformed_current_input_rechecks_deletion_after_scoped_admission(
+    registry: _StreamsRegistry, task_store: LocalFileTaskProvider, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    host = _host()
+    info = await _durable_task(task_store, host)
+    params = {**_params(), "response_incarnation_id": "invalid"}
+    await task_store.update(info.id, TaskPatchRequest(payload={"input": params}))
+    get = task_store.get
+    first = True
+
+    async def raced_get(task_id: str) -> TaskInfo:
+        nonlocal first
+        snapshot = await get(task_id)
+        if first:
+            first = False
+            await task_store.update(
+                info.id,
+                TaskPatchRequest(payload={lifecycle._DELETED_INPUT_IDS: [derive_lifecycle_id(RESPONSE_ID, "owner")]}),
+            )
+        return snapshot
+
+    monkeypatch.setattr(task_store, "get", raced_get)
+    orchestrator = host._endpoint._orchestrator._resilient_orchestrator
+    failed = AsyncMock()
+    monkeypatch.setattr(orchestrator, "_persist_crash_failed", failed)
+    ctx = _task_context(info)
+    ctx.input = params
+    await orchestrator._execute_in_task(ctx)
+    failed.assert_not_awaited()
+    assert await host._endpoint._runtime_state.reserve(RESPONSE_ID, "owner")
+    await host._endpoint._runtime_state.release_reservation(RESPONSE_ID, "owner")
+    with pytest.raises(KeyError):
+        await host._endpoint._provider.get_response(RESPONSE_ID, context=PlatformContext(user_id_key="owner"))
 
 
 @pytest.mark.parametrize(

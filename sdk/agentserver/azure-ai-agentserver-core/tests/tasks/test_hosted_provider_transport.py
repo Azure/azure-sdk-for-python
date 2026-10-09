@@ -422,6 +422,24 @@ class TestLocalProviderOpaqueCursorRoundTrip:
     continuation cursor without parsing it."""
 
     @pytest.mark.asyncio
+    @pytest.mark.parametrize("cursor", [None, "", "opaque-page"])
+    async def test_incomplete_continuation_raises_instead_of_returning_partial_tasks(self, cursor: str | None) -> None:
+        first = {
+            "data": [{"id": "t1", "agent_name": "a", "session_id": "s"}],
+            "has_more": True,
+            "last_id": "opaque-page",
+        }
+        second = {"data": [{"id": "t2", "agent_name": "a", "session_id": "s"}], "has_more": True, "last_id": cursor}
+        provider = _make_provider(
+            FakeAsyncHttpTransport([FakeResponse.json_response(first), FakeResponse.json_response(second)])
+        )
+        try:
+            with pytest.raises(ValueError, match="continuation cursor"):
+                await provider.list(agent_name="a", session_id="s")
+        finally:
+            await provider.close()
+
+    @pytest.mark.asyncio
     async def test_list_cursor_passed_back_verbatim(self) -> None:
         """C-PRV-12: opaque cursor from service is passed back as `after`
         on the next page unchanged. The provider does NOT parse it."""

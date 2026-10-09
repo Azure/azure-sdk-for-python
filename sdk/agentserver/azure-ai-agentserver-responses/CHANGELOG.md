@@ -7,7 +7,10 @@
 - Partition local in-memory and file-backed responses, items, history, and
   conversation indexes by the platform user key, keeping anonymous local state
   separate.
-
+- Settle malformed current durable response incarnations as failed without
+  re-invoking execution, while retaining deletion fences and rejecting stale inputs.
+- Check all durable task owners before reclaiming empty replay or fencing DELETE,
+  including older conversation tasks beyond the first listing page.
 - Partition live execution, cancellation state, SSE streams, and resilient
   task identifiers by the platform user key. Different users can use the same
   public response ID independently. Duplicate creation within one user's
