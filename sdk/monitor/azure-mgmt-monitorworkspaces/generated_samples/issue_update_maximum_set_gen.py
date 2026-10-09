@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -38,17 +37,6 @@ def main():
         properties={
             "properties": {
                 "impactTime": "2024-12-13T02:45:33",
-                "notifications": {
-                    "actionGroupIds": [
-                        "/subscriptions/aceaa046-91f0-492a-96dc-45e10a9183dc/resourceGroups/rg1/providers/Microsoft.Insights/actionGroups/myActionGroup"
-                    ],
-                    "excludeDefaultActionGroups": False,
-                    "updateTypes": [
-                        {"updateType": "IssueCreation"},
-                        {"updateType": "OnChange"},
-                        {"updateInterval": "PT1H", "updateType": "TimeBased"},
-                    ],
-                },
                 "severity": "Sev2",
                 "status": "New",
                 "title": "Alert fired on VM CPU",
@@ -58,6 +46,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-10-03/Issue_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-03-preview/Issue_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
