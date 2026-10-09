@@ -28,6 +28,11 @@
   without recreating rejected replay or closing another execution's stream.
 - Release streaming create reservations and stop disconnect monitors even
   when sending HTTP headers fails before the first body iteration.
+- Reclaim empty crash-abandoned file replay only when no caller-scoped runtime,
+  response provider, or durable task retains ownership.
+- Retain DELETE ownership through provider cleanup failures and cancellation,
+  and fence deleted durable response inputs without deleting unrelated turns.
+  Recovery participates in scoped admission and cannot resurrect deleted responses.
 
 ### Breaking Changes
 

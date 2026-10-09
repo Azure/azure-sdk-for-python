@@ -93,18 +93,19 @@ async def test_reserve_rejects_duplicate_live_id_only_within_user() -> None:
 
 
 @pytest.mark.asyncio
-async def test_deletion_reservation_blocks_admission_after_eviction_and_create_cleanup():
+async def test_deletion_reservation_blocks_eviction_and_admission_until_cleanup():
     state = _RuntimeState()
     record = _make_execution("shared", user_id_key="owner", status="completed")
     assert await state.reserve("shared", "owner")
     await state.add(record)
     assert await state.begin_deletion("shared", "owner")
-    assert await state.try_evict("shared", "owner")
+    assert not await state.try_evict("shared", "owner")
     await state.release_reservation("shared", "owner")
     assert not await state.reserve("shared", "owner")
     assert not await state.begin_deletion("shared", "owner")
     assert await state.reserve("shared", "other")
     await state.end_deletion("shared", "owner")
+    assert await state.try_evict("shared", "owner")
     assert await state.reserve("shared", "owner")
 
 
