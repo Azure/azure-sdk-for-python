@@ -12,13 +12,13 @@ $release.urls | Select-Object filename, packagetype, yanked, upload_time_iso_860
 
 Replace `<version>` with the intended version. Require expected wheel (`bdist_wheel`) and source distribution (`sdist`) availability and inspect yanked state. A 404, missing distribution, or yanked artifact is not a clean successful release; investigate without automatically republishing.
 
-Trace the built artifact back to the verified source SHA. Only describe a version as the "first fixed release" once it is published **and** includes the fix commit; a merged PR, release tag, or dated changelog alone is insufficient.
+Trace the built artifact back to the verified source SHA. Only describe a version as the "first fixed release" once it is published **and** includes the fix commit; a merged PR, release tag, or dated changelog alone is insufficient. See the [worked example](worked-example.md) for one release's exact PyPI/source-SHA evidence.
 
 ## Review the next-version PR
 
 The release template creates **Increment version for evaluation releases**, with branch pattern `increment-package-version-evaluation-<build ID>`. Find the actual PR tied to the observed run; it may be absent if a later task failed.
 
-Inspect its real diff and base/head. Expect `_version.py` and the next unreleased changelog entry to agree, leaving published notes/date intact. Validate the next version against repository classification rules and planned changes, rather than inventing a fixed minor/patch increment. Check scope, CI and human review before any user-authorized auto-merge arrangement; do not enable it or merge on the user's behalf.
+Inspect its real diff and base/head. Expect `_version.py` and the next unreleased changelog entry to agree, leaving published notes/date intact. Validate the next version against repository classification rules and planned changes, rather than inventing a fixed minor/patch increment. Check scope, CI and human review before any user-authorized auto-merge arrangement; do not enable it or merge on the user's behalf. The increment PR's branch name embeds the triggering build ID (`increment-package-version-evaluation-<build ID>`); match it to the actual release run before trusting the PR, since an older open increment PR from an earlier/different run can coexist and must not be merged — see the [worked example](worked-example.md).
 
 Report publication and follow-up separately: a failed version-bump PR task does not undo an observed PyPI upload, and an increment PR is not proof the intended package was published.
 

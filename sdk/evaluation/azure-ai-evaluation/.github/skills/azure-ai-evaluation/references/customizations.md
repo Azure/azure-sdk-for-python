@@ -26,7 +26,7 @@ Paths below are repository-relative unless marked package-relative. Re-read curr
 | `eng\pipelines\templates\stages\archetype-python-release.yml`, `release-artifact.yml` in the same directory | Manual versus post-merge gates, release jobs, next-version PR. |
 | `eng\common\scripts\Resolve-AutoReleasePackages.ps1`, `AutoRelease-Operations.ps1` in the same directory | Source-commit PR resolution, required label, changed-package intersection, fail-closed outputs. |
 
-Authoritative guidance: [Python design guidelines](https://azure.github.io/azure-sdk/python_design.html), repository `doc\dev\release.md`, `doc\dev\package_version\package_version_rule.md`, and `doc\dev\changelog_updates.md`. Use shared `.github\skills\azsdk-common-sdk-release\SKILL.md` for MCP release tooling and `.github\skills\azsdk-common-pipeline-analysis\SKILL.md` before pipeline analysis.
+Authoritative guidance: [Python design guidelines](https://azure.github.io/azure-sdk/python_design.html), repository `doc\dev\release.md`, `doc\dev\package_version\package_version_rule.md`, and `doc\dev\changelog_updates.md`. Use shared `.github\skills\azsdk-common-sdk-release\SKILL.md` for MCP release tooling and `.github\skills\azsdk-common-pipeline-analysis\SKILL.md` before pipeline analysis. See [`worked-example.md`](worked-example.md) for one release's concrete, dated evidence (not a universal template).
 
 ## Team conventions, not repository-wide rules
 

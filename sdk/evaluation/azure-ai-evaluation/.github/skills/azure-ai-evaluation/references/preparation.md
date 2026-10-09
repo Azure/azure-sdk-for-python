@@ -50,4 +50,4 @@ git diff --check
 git --no-pager diff -- sdk\evaluation\azure-ai-evaluation .chronus\changes
 ```
 
-Use the actual chosen version. A notes/version-only preparation does not justify rerunning costly live evaluations. Retain required CI evidence; functional changes need their relevant tests. Do not disable checks to obtain green results.
+Use the actual chosen version. A notes/version-only preparation does not justify rerunning costly live evaluations. Retain required CI evidence; functional changes need their relevant tests. Do not disable checks to obtain green results. See the [worked example](worked-example.md) for one release's concrete preparation-PR scope and dates.
