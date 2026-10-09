@@ -52,14 +52,14 @@ There are several ways to authenticate to Azure, but to be able to record test H
 ### Get a token with Active Directory application and service principal
 
 Follow this detailed tutorial to set up an Active Directory application and service principal:
-https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
+https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 
 To use the credentials from Python, you need:
 * Application ID (a.k.a. client ID)
 * Authentication key (a.k.a. client secret)
 * Tenant ID
 * Subscription ID from the Azure portal
-[This section of the above tutorial](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#get-tenant-and-app-id-values-for-signing-in) describes where to find them (besides the subscription ID, which is in the "Overview" section of the "Subscriptions" blade.)
+[This section of the above tutorial](https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#get-tenant-and-app-id-values-for-signing-in) describes where to find them (besides the subscription ID, which is in the "Overview" section of the "Subscriptions" blade.)
 
 The recommended practice is to store these three values in environment variables called `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, and `AZURE_CLIENT_SECRET`. To set an environment variable use the following commands:
 ```Shell
@@ -343,7 +343,7 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
 ```
 
 <!-- LINKS -->
-[arm_apis]: https://docs.microsoft.com/rest/api/resources/
+[arm_apis]: https://learn.microsoft.com/rest/api/resources/
 [azure_sdk_tools]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/tools/azure-sdk-tools
 [azure_portal]: https://portal.azure.com/
 [decorators]: https://www.python.org/dev/peps/pep-0318/
