@@ -125,11 +125,11 @@ async def test_cancelled_anyio_scope_releases_non_streaming_reservation_exactly_
     method = "run_background" if background else "run_sync"
     monkeypatch.setattr(host._endpoint._orchestrator, method, cancelled_execution)
     monkeypatch.setattr(state, "release_reservation", release)
-    unlocker = asyncio.create_task(unlock())
+    release_task = asyncio.create_task(unlock())
     try:
         with scope:
             await host._endpoint.handle_create(_request(background=background, stream=False))
-        await asyncio.wait_for(unlocker, 2)
+        await asyncio.wait_for(release_task, 2)
         assert scope.cancelled_caught
         assert calls == [(RESPONSE_ID, "owner")]
         assert released.is_set()
@@ -153,7 +153,7 @@ async def test_cancelled_anyio_scope_releases_non_streaming_reservation_exactly_
         await original_release(RESPONSE_ID, "owner")
     finally:
         releasing.set()
-        await asyncio.gather(unlocker, return_exceptions=True)
+        await asyncio.gather(release_task, return_exceptions=True)
         await original_release(RESPONSE_ID, "other")
 
 
