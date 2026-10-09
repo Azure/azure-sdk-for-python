@@ -45,28 +45,30 @@ jobs:
         # session.
         run: npm ci --prefix eng/common/tsp-client
 
-      - name: Pre-install TypeSpec Python emitter's pinned black version
+      - name: Pre-install TypeSpec Python emitter's Python dependencies
         # `tsp-client update` (any package, not just azure-ai-projects) shells out to the
-        # TypeSpec Python emitter (`@azure-tools/typespec-python`) to format generated code. The
-        # emitter creates its own isolated venv and pip-installs a specific pinned `black`
-        # version from its own dev_requirements.txt
-        # (https://github.com/Azure/typespec-azure/blob/main/packages/typespec-python/dev_requirements.txt),
-        # which is versioned with whichever emitter release gets resolved for a given TypeSpec
-        # commit -- so the pin isn't visible from this repository's own manifests and can drift
-        # as the emitter is updated upstream. A plain "pip install" here would only warm pip's
-        # HTTP cache, which pip does not consult as a fallback when the package index itself is
-        # unreachable (verified: pip still fails after retrying the index, even with a matching
-        # wheel already cached). Instead, download the currently-known pinned wheel and its
-        # dependencies into a fixed directory, and point PIP_FIND_LINKS at it for the rest of the
-        # job, including the firewalled agent session: pip treats find-links entries as an extra
-        # local source alongside the index, so an exact-version match is installable from there
-        # even when the index connection fails outright (verified against a fully broken index
-        # connection). Bump the version below if a future regeneration fails while fetching a
-        # different pinned black version.
+        # TypeSpec Python emitter (`@azure-tools/typespec-python`), which creates its own isolated
+        # venv and pip-installs the `pygen` generator bundled in `@typespec/http-client-python`
+        # (pinned in eng/emitter-package.json) plus its pinned requirements (black, docutils,
+        # Jinja2, PyYAML, tomli, setuptools, ...). A plain "pip install" here would only warm pip's
+        # HTTP cache, which pip does not consult when the package index is unreachable. Instead,
+        # download the complete runtime requirement set, derived from the pinned package itself,
+        # into a fixed wheelhouse and point PIP_FIND_LINKS at it for the rest of the job,
+        # including the firewalled agent session. The final step verifies an install of the
+        # generator succeeds with the index disabled.
         run: |
-          mkdir -p "$HOME/.cache/pip-find-links"
-          python -m pip download "black==26.3.1" -d "$HOME/.cache/pip-find-links"
-          echo "PIP_FIND_LINKS=$HOME/.cache/pip-find-links" >> "$GITHUB_ENV"
+          WHEELHOUSE="$HOME/.cache/pip-find-links"
+          WORKDIR="$(mktemp -d)"
+          mkdir -p "$WHEELHOUSE"
+          PYGEN_VERSION="$(jq -r '.devDependencies["@typespec/http-client-python"]' eng/emitter-package.json)"
+          (cd "$WORKDIR" && npm pack "@typespec/http-client-python@${PYGEN_VERSION}" --silent && tar xzf typespec-http-client-python-*.tgz)
+          PYGEN_DIR="$WORKDIR/package/generator"
+          python -m pip download -d "$WHEELHOUSE" pip setuptools wheel
+          python -m pip download -d "$WHEELHOUSE" -r "$WORKDIR/package/generator/dev_requirements.txt" 2>/dev/null || true
+          python -m pip download -d "$WHEELHOUSE" "$PYGEN_DIR"
+          python -m venv "$WORKDIR/verify-venv"
+          PIP_NO_INDEX=1 "$WORKDIR/verify-venv/bin/python" -m pip install --find-links "$WHEELHOUSE" "$PYGEN_DIR"
+          echo "PIP_FIND_LINKS=$WHEELHOUSE" >> "$GITHUB_ENV"
 
       - name: Pre-install azure-ai-projects dev dependencies
         # Scoped to sessions whose branch name identifies them as azure-ai-projects work (e.g.
