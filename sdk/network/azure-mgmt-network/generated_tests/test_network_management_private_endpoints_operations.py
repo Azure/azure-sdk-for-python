@@ -25,7 +25,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
         response = self.client.private_endpoints.get(
             resource_group_name=resource_group.name,
             private_endpoint_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7120,7 +7120,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7132,7 +7132,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
         response = self.client.private_endpoints.begin_delete(
             resource_group_name=resource_group.name,
             private_endpoint_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7143,7 +7143,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
     def test_private_endpoints_list(self, resource_group):
         response = self.client.private_endpoints.list(
             resource_group_name=resource_group.name,
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7153,7 +7153,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
     @recorded_by_proxy
     def test_private_endpoints_list_by_subscription(self, resource_group):
         response = self.client.private_endpoints.list_by_subscription(
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -82,6 +82,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-01/HubVirtualNetworkConnectionPut.json
+# x-ms-original-file: 2026-03-01/HubVirtualNetworkConnectionPut.json
 if __name__ == "__main__":
     main()

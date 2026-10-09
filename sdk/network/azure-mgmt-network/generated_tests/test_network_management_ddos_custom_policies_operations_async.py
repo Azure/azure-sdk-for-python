@@ -25,7 +25,7 @@ class TestNetworkManagementDdosCustomPoliciesOperationsAsync(AzureMgmtRecordedTe
         response = await self.client.ddos_custom_policies.get(
             resource_group_name=resource_group.name,
             ddos_custom_policy_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -58,6 +58,32 @@ class TestNetworkManagementDdosCustomPoliciesOperationsAsync(AzureMgmtRecordedTe
                             }
                         ],
                         "frontEndIpConfiguration": [{"id": "str"}],
+                        "mitigationRules": [
+                            {
+                                "name": "str",
+                                "properties": {
+                                    "trafficScope": "str",
+                                    "provisioningState": "str",
+                                    "sourcePolicyOverrides": [
+                                        {
+                                            "conditions": {
+                                                "geoMatches": [{"continent": "str", "countryCode": "str"}],
+                                                "ipPrefixes": ["str"],
+                                            },
+                                            "policyAction": {"actionType": "str"},
+                                        }
+                                    ],
+                                    "tcpDefaultMitigations": {
+                                        "perSourceConnectionRateLimiting": {"connectionsPerSecond": 0},
+                                        "perSourceRateLimiting": {"packetsPerSecond": 0},
+                                    },
+                                    "udpDefaultMitigations": {"perSourceRateLimiting": {"packetsPerSecond": 0}},
+                                },
+                                "etag": "str",
+                                "id": "str",
+                                "type": "str",
+                            }
+                        ],
                         "provisioningState": "str",
                         "publicIPAddresses": [{"id": "str"}],
                         "resourceGuid": "str",
@@ -65,7 +91,7 @@ class TestNetworkManagementDdosCustomPoliciesOperationsAsync(AzureMgmtRecordedTe
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2026-01-01",
+                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -79,7 +105,7 @@ class TestNetworkManagementDdosCustomPoliciesOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             ddos_custom_policy_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -92,7 +118,7 @@ class TestNetworkManagementDdosCustomPoliciesOperationsAsync(AzureMgmtRecordedTe
             await self.client.ddos_custom_policies.begin_delete(
                 resource_group_name=resource_group.name,
                 ddos_custom_policy_name="str",
-                api_version="2026-01-01",
+                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -104,7 +130,7 @@ class TestNetworkManagementDdosCustomPoliciesOperationsAsync(AzureMgmtRecordedTe
     async def test_ddos_custom_policies_list(self, resource_group):
         response = self.client.ddos_custom_policies.list(
             resource_group_name=resource_group.name,
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -114,7 +140,7 @@ class TestNetworkManagementDdosCustomPoliciesOperationsAsync(AzureMgmtRecordedTe
     @recorded_by_proxy_async
     async def test_ddos_custom_policies_list_all(self, resource_group):
         response = self.client.ddos_custom_policies.list_all(
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

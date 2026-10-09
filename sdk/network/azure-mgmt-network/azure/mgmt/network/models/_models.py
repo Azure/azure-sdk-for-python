@@ -12,7 +12,13 @@ import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
-from ._enums import AdminRuleKind, EffectiveAdminRuleKind, FirewallPolicyRuleCollectionType, FirewallPolicyRuleType
+from ._enums import (
+    AdminRuleKind,
+    EffectiveAdminRuleKind,
+    FirewallPolicyRuleCollectionType,
+    FirewallPolicyRuleType,
+    VirtualNetworkApplianceCapabilityKind,
+)
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -8354,6 +8360,51 @@ class ApprovalReference(_Model):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
+class ArmResource(_Model):
+    """Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the resource."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
+class ArmProxyResource(ArmResource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    """
+
+
 class AuthenticationPolicy(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authentication policy resource for identity integration.
 
@@ -15382,6 +15433,7 @@ class DdosCustomPolicy(Resource):  # pylint: disable=docstring-keyword-should-ma
         "resource_guid",
         "provisioning_state",
         "detection_rules",
+        "mitigation_rules",
         "front_end_ip_configuration",
         "public_ip_addresses",
     ]
@@ -15437,6 +15489,8 @@ class DdosCustomPolicyPropertiesFormat(_Model):  # pylint: disable=docstring-key
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
     :ivar detection_rules: The list of DDoS detection rules associated with the custom policy.
     :vartype detection_rules: list[~azure.mgmt.network.models.DdosDetectionRule]
+    :ivar mitigation_rules: The list of DDoS mitigation rules associated with the custom policy.
+    :vartype mitigation_rules: list[~azure.mgmt.network.models.DdosMitigationRule]
     :ivar front_end_ip_configuration: The list of frontend IP configurations associated with the
      custom policy.
     :vartype front_end_ip_configuration: list[~azure.mgmt.network.models.SubResource]
@@ -15458,6 +15512,10 @@ class DdosCustomPolicyPropertiesFormat(_Model):  # pylint: disable=docstring-key
         name="detectionRules", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of DDoS detection rules associated with the custom policy."""
+    mitigation_rules: Optional[list["_models.DdosMitigationRule"]] = rest_field(
+        name="mitigationRules", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of DDoS mitigation rules associated with the custom policy."""
     front_end_ip_configuration: Optional[list["_models.SubResource"]] = rest_field(
         name="frontEndIpConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -15472,6 +15530,7 @@ class DdosCustomPolicyPropertiesFormat(_Model):  # pylint: disable=docstring-key
         self,
         *,
         detection_rules: Optional[list["_models.DdosDetectionRule"]] = None,
+        mitigation_rules: Optional[list["_models.DdosMitigationRule"]] = None,
         front_end_ip_configuration: Optional[list["_models.SubResource"]] = None,
     ) -> None: ...
 
@@ -15613,6 +15672,163 @@ class DdosFrontendIpConfigurationSettings(_Model):  # pylint: disable=docstring-
         self,
         *,
         ddos_custom_policy: Optional["_models.SubResource"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosGeoMatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A geographic source match. The service validates that at least one of continent or countryCode
+    is specified. If both are specified, the service validates that the country belongs to the
+    continent according to the service-defined mapping. For example, RU, TR, and KZ map to Asia, EG
+    maps to Africa, and CY maps to Europe.
+
+    :ivar continent: The continent to match. Country membership follows the service-defined mapping
+     documented on DdosGeoMatch. Known values are: "Africa", "Antarctica", "Asia", "Europe",
+     "NorthAmerica", "Oceania", and "SouthAmerica".
+    :vartype continent: str or ~azure.mgmt.network.models.DdosContinent
+    :ivar country_code: The uppercase two-letter ISO 3166-1 alpha-2 code for the country or
+     territory to match.
+    :vartype country_code: str
+    """
+
+    continent: Optional[Union[str, "_models.DdosContinent"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The continent to match. Country membership follows the service-defined mapping documented on
+     DdosGeoMatch. Known values are: \"Africa\", \"Antarctica\", \"Asia\", \"Europe\",
+     \"NorthAmerica\", \"Oceania\", and \"SouthAmerica\"."""
+    country_code: Optional[str] = rest_field(
+        name="countryCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The uppercase two-letter ISO 3166-1 alpha-2 code for the country or territory to match."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        continent: Optional[Union[str, "_models.DdosContinent"]] = None,
+        country_code: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosMitigationRule(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A DDoS mitigation rule resource.
+
+    :ivar name: The name of the DDoS mitigation rule. Required.
+    :vartype name: str
+    :ivar id: The resource ID of the DDoS mitigation rule.
+    :vartype id: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar properties: Properties of the DDoS mitigation rule. Required.
+    :vartype properties: ~azure.mgmt.network.models.DdosMitigationRulePropertiesFormat
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the DDoS mitigation rule. Required."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """A unique read-only string that changes whenever the resource is updated."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The resource type."""
+    properties: "_models.DdosMitigationRulePropertiesFormat" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the DDoS mitigation rule. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        properties: "_models.DdosMitigationRulePropertiesFormat",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosMitigationRulePropertiesFormat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """DDoS mitigation rule properties. The service validates that each rule specifies at least one
+    applicable default mitigation or source policy override and that the default mitigations match
+    the selected trafficScope.
+
+    :ivar provisioning_state: The provisioning state of the DDoS mitigation rule. Known values are:
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar traffic_scope: The traffic protocol to which the mitigation rule applies. Required. Known
+     values are: "Tcp" and "Udp".
+    :vartype traffic_scope: str or ~azure.mgmt.network.models.DdosMitigationTrafficScope
+    :ivar tcp_default_mitigations: The default TCP mitigations. This property is valid only when
+     trafficScope is Tcp.
+    :vartype tcp_default_mitigations: ~azure.mgmt.network.models.DdosTcpDefaultMitigations
+    :ivar udp_default_mitigations: The default UDP mitigations. This property is valid only when
+     trafficScope is Udp.
+    :vartype udp_default_mitigations: ~azure.mgmt.network.models.DdosUdpDefaultMitigations
+    :ivar source_policy_overrides: Source-specific actions that override the default mitigations. A
+     rule supports at most one Deny override and one Permit override.
+    :vartype source_policy_overrides: list[~azure.mgmt.network.models.DdosSourcePolicyOverride]
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the DDoS mitigation rule. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+    traffic_scope: Union[str, "_models.DdosMitigationTrafficScope"] = rest_field(
+        name="trafficScope", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The traffic protocol to which the mitigation rule applies. Required. Known values are: \"Tcp\"
+     and \"Udp\"."""
+    tcp_default_mitigations: Optional["_models.DdosTcpDefaultMitigations"] = rest_field(
+        name="tcpDefaultMitigations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The default TCP mitigations. This property is valid only when trafficScope is Tcp."""
+    udp_default_mitigations: Optional["_models.DdosUdpDefaultMitigations"] = rest_field(
+        name="udpDefaultMitigations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The default UDP mitigations. This property is valid only when trafficScope is Udp."""
+    source_policy_overrides: Optional[list["_models.DdosSourcePolicyOverride"]] = rest_field(
+        name="sourcePolicyOverrides", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Source-specific actions that override the default mitigations. A rule supports at most one Deny
+     override and one Permit override."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        traffic_scope: Union[str, "_models.DdosMitigationTrafficScope"],
+        tcp_default_mitigations: Optional["_models.DdosTcpDefaultMitigations"] = None,
+        udp_default_mitigations: Optional["_models.DdosUdpDefaultMitigations"] = None,
+        source_policy_overrides: Optional[list["_models.DdosSourcePolicyOverride"]] = None,
     ) -> None: ...
 
     @overload
@@ -15811,6 +16027,278 @@ class DdosSettings(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         protection_mode: Optional[Union[str, "_models.DdosSettingsProtectionMode"]] = None,
         ddos_custom_policy: Optional["_models.SubResource"] = None,
         ddos_protection_plan: Optional["_models.SubResource"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosSourceMatchConditions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Source conditions for a DDoS source policy override. A source matches when it matches any IP
+    prefix or any geographic match.
+
+    :ivar ip_prefixes: The IPv4 or IPv6 CIDR prefixes in ``<address>/<prefix-length>`` format.
+     Entries are evaluated with OR semantics.
+    :vartype ip_prefixes: list[str]
+    :ivar geo_matches: The geographic matches. Entries are evaluated with OR semantics.
+    :vartype geo_matches: list[~azure.mgmt.network.models.DdosGeoMatch]
+    """
+
+    ip_prefixes: Optional[list[str]] = rest_field(
+        name="ipPrefixes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The IPv4 or IPv6 CIDR prefixes in ``<address>/<prefix-length>`` format. Entries are evaluated
+     with OR semantics."""
+    geo_matches: Optional[list["_models.DdosGeoMatch"]] = rest_field(
+        name="geoMatches", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The geographic matches. Entries are evaluated with OR semantics."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ip_prefixes: Optional[list[str]] = None,
+        geo_matches: Optional[list["_models.DdosGeoMatch"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosSourcePolicyAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The action to apply to traffic matching a source policy override.
+
+    :ivar action_type: The source policy action type. Required. Known values are: "Deny" and
+     "Permit".
+    :vartype action_type: str or ~azure.mgmt.network.models.DdosSourcePolicyActionType
+    """
+
+    action_type: Union[str, "_models.DdosSourcePolicyActionType"] = rest_field(
+        name="actionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The source policy action type. Required. Known values are: \"Deny\" and \"Permit\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        action_type: Union[str, "_models.DdosSourcePolicyActionType"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosSourcePolicyOverride(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A source-specific action that overrides the default mitigations.
+
+    :ivar policy_action: The action to apply to matching traffic. Required.
+    :vartype policy_action: ~azure.mgmt.network.models.DdosSourcePolicyAction
+    :ivar conditions: The source conditions that select traffic for the action. Required.
+    :vartype conditions: ~azure.mgmt.network.models.DdosSourceMatchConditions
+    """
+
+    policy_action: "_models.DdosSourcePolicyAction" = rest_field(
+        name="policyAction", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The action to apply to matching traffic. Required."""
+    conditions: "_models.DdosSourceMatchConditions" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The source conditions that select traffic for the action. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        policy_action: "_models.DdosSourcePolicyAction",
+        conditions: "_models.DdosSourceMatchConditions",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosTcpDefaultMitigations(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Default mitigations for TCP traffic.
+
+    :ivar per_source_rate_limiting: The per-source TCP packet rate limit.
+    :vartype per_source_rate_limiting: ~azure.mgmt.network.models.DdosTcpPerSourceRateLimitPolicy
+    :ivar per_source_connection_rate_limiting: The per-source rate limit for new TCP connection
+     establishments.
+    :vartype per_source_connection_rate_limiting:
+     ~azure.mgmt.network.models.DdosTcpPerSourceConnectionRateLimitPolicy
+    """
+
+    per_source_rate_limiting: Optional["_models.DdosTcpPerSourceRateLimitPolicy"] = rest_field(
+        name="perSourceRateLimiting", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The per-source TCP packet rate limit."""
+    per_source_connection_rate_limiting: Optional["_models.DdosTcpPerSourceConnectionRateLimitPolicy"] = rest_field(
+        name="perSourceConnectionRateLimiting", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The per-source rate limit for new TCP connection establishments."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        per_source_rate_limiting: Optional["_models.DdosTcpPerSourceRateLimitPolicy"] = None,
+        per_source_connection_rate_limiting: Optional["_models.DdosTcpPerSourceConnectionRateLimitPolicy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosTcpPerSourceConnectionRateLimitPolicy(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A per-source TCP connection establishment rate limit.
+
+    :ivar connections_per_second: The maximum number of new TCP connections established per second
+     from a source IP. Required.
+    :vartype connections_per_second: int
+    """
+
+    connections_per_second: int = rest_field(
+        name="connectionsPerSecond", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum number of new TCP connections established per second from a source IP. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connections_per_second: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosTcpPerSourceRateLimitPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A per-source TCP packet rate limit.
+
+    :ivar packets_per_second: The maximum number of TCP packets allowed per second from a source
+     IP. Required.
+    :vartype packets_per_second: int
+    """
+
+    packets_per_second: int = rest_field(
+        name="packetsPerSecond", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum number of TCP packets allowed per second from a source IP. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        packets_per_second: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosUdpDefaultMitigations(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Default mitigations for UDP traffic.
+
+    :ivar per_source_rate_limiting: The per-source UDP packet rate limit.
+    :vartype per_source_rate_limiting: ~azure.mgmt.network.models.DdosUdpPerSourceRateLimitPolicy
+    """
+
+    per_source_rate_limiting: Optional["_models.DdosUdpPerSourceRateLimitPolicy"] = rest_field(
+        name="perSourceRateLimiting", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The per-source UDP packet rate limit."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        per_source_rate_limiting: Optional["_models.DdosUdpPerSourceRateLimitPolicy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosUdpPerSourceRateLimitPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A per-source UDP packet rate limit.
+
+    :ivar packets_per_second: The maximum number of UDP packets allowed per second from a source
+     IP. Required.
+    :vartype packets_per_second: int
+    """
+
+    packets_per_second: int = rest_field(
+        name="packetsPerSecond", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum number of UDP packets allowed per second from a source IP. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        packets_per_second: int,
     ) -> None: ...
 
     @overload
@@ -20426,6 +20914,95 @@ class ExpressRouteLag(Resource):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
+class ProxyResourceWithReadOnlyID(_Model):
+    """Proxy resource representation.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Resource ID."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """Resource name."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """Resource type."""
+
+
+class ExpressRouteLagAuthorization(
+    ProxyResourceWithReadOnlyID
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """ExpressRoute Lag Authorization.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar properties: ExpressRouteLag authorization properties.
+    :vartype properties: ~azure.mgmt.network.models.ExpressRouteLagAuthorizationPropertiesFormat
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    """
+
+    properties: Optional["_models.ExpressRouteLagAuthorizationPropertiesFormat"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ExpressRouteLag authorization properties."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """A unique read-only string that changes whenever the resource is updated."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ExpressRouteLagAuthorizationPropertiesFormat"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExpressRouteLagAuthorizationPropertiesFormat(_Model):  # pylint: disable=name-too-long
+    """ExpressRoute Lag Authorization Properties.
+
+    :ivar authorization_use_status: The authorization use status. Known values are: "Available" and
+     "InUse".
+    :vartype authorization_use_status: str or
+     ~azure.mgmt.network.models.ExpressRouteLagAuthorizationUseStatus
+    :ivar circuit_resource_uri: The reference to the ExpressRoute circuit resource using the
+     authorization.
+    :vartype circuit_resource_uri: str
+    :ivar provisioning_state: The provisioning state of the authorization resource. Known values
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    """
+
+    authorization_use_status: Optional[Union[str, "_models.ExpressRouteLagAuthorizationUseStatus"]] = rest_field(
+        name="authorizationUseStatus", visibility=["read"]
+    )
+    """The authorization use status. Known values are: \"Available\" and \"InUse\"."""
+    circuit_resource_uri: Optional[str] = rest_field(name="circuitResourceUri", visibility=["read"])
+    """The reference to the ExpressRoute circuit resource using the authorization."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the authorization resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+
+
 class ExpressRouteLagLink(SubResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExpressRouteLagLink.
 
@@ -20664,6 +21241,8 @@ class ExpressRouteLagPropertiesFormat(_Model):  # pylint: disable=docstring-keyw
     :ivar circuits: Reference the ExpressRoute circuit(s) that are provisioned on this
      ExpressRouteLag resource.
     :vartype circuits: list[~azure.mgmt.network.models.SubResource]
+    :ivar authorizations: ExpressRouteLagAuthorizations Child-Resources.
+    :vartype authorizations: list[~azure.mgmt.network.models.ExpressRouteLagAuthorization]
     :ivar allocation_date: The date and time when the ExpressRouteLag was allocated.
     :vartype allocation_date: str
     :ivar provisioning_state: The provisioning state of the express route LAG resource. Known
@@ -20706,6 +21285,10 @@ class ExpressRouteLagPropertiesFormat(_Model):  # pylint: disable=docstring-keyw
     """ExpressRouteLagLink Sub-Resources."""
     circuits: Optional[list["_models.SubResource"]] = rest_field(visibility=["read"])
     """Reference the ExpressRoute circuit(s) that are provisioned on this ExpressRouteLag resource."""
+    authorizations: Optional[list["_models.ExpressRouteLagAuthorization"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ExpressRouteLagAuthorizations Child-Resources."""
     allocation_date: Optional[str] = rest_field(name="allocationDate", visibility=["read"])
     """The date and time when the ExpressRouteLag was allocated."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -20741,6 +21324,7 @@ class ExpressRouteLagPropertiesFormat(_Model):  # pylint: disable=docstring-keyw
         bandwidth_in_gbps: Optional[int] = None,
         encapsulation: Optional[Union[str, "_models.ExpressRouteLagEncapsulation"]] = None,
         links: Optional[list["_models.ExpressRouteLagLink"]] = None,
+        authorizations: Optional[list["_models.ExpressRouteLagAuthorization"]] = None,
         billing_type: Optional[Union[str, "_models.ExpressRouteLagBillingType"]] = None,
         number_of_ports: Optional[int] = None,
         minimum_active_ports_required: Optional[int] = None,
@@ -30220,6 +30804,150 @@ class MoveIpConfigurationsRequest(_Model):  # pylint: disable=docstring-keyword-
         super().__init__(*args, **kwargs)
 
 
+class ProxyResourceVirtualNetworkApplianceCapabilityProperties(
+    ArmProxyResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Concrete proxy resource types can be created by aliasing this type using a specific property
+    type.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityProperties
+    """
+
+    properties: Optional["_models.VirtualNetworkApplianceCapabilityProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.VirtualNetworkApplianceCapabilityProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VirtualNetworkApplianceCapability(
+    ProxyResourceVirtualNetworkApplianceCapabilityProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A capability enabled on a virtual network appliance. The top-level ``kind`` discriminator
+    selects the capability family; every kind shares the same ``properties`` schema (see
+    VirtualNetworkApplianceCapabilityProperties). One capability of a given kind may exist per
+    appliance.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    Nat64Capability, PLGatewayCapability, PLGatewayFastpathCapability, PLIPForwardersCapability
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityProperties
+    :ivar kind: The kind of capability (the top-level discriminator). Required. Known values are:
+     "PLGatewayFastpath", "PLGateway", "PLIPForwarders", and "NAT64".
+    :vartype kind: str or ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityKind
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """The kind of capability (the top-level discriminator). Required. Known values are:
+     \"PLGatewayFastpath\", \"PLGateway\", \"PLIPForwarders\", and \"NAT64\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+        properties: Optional["_models.VirtualNetworkApplianceCapabilityProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Nat64Capability(
+    VirtualNetworkApplianceCapability, discriminator="NAT64"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The NAT64 capability. Enables stateful NAT64 translation (IPv6-only workloads reaching IPv4
+    destinations) on the appliance's floating NIC; supported on a dual-stack appliance. This kind
+    is property-less: it carries no ``ipVersion`` (the parent appliance's dual-stack configuration
+    is the precondition, service-validated) beyond the properties common to every capability.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityProperties
+    :ivar kind: The NAT64 capability kind. Required. NAT64 (stateful IPv6-to-IPv4 translation).
+    :vartype kind: str or ~azure.mgmt.network.models.NAT64
+    """
+
+    kind: Literal[VirtualNetworkApplianceCapabilityKind.NAT64] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The NAT64 capability kind. Required. NAT64 (stateful IPv6-to-IPv4 translation)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.VirtualNetworkApplianceCapabilityProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = VirtualNetworkApplianceCapabilityKind.NAT64  # type: ignore
+
+
 class NatGateway(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Nat Gateway resource.
 
@@ -37270,6 +37998,146 @@ class PerimeterBasedAccessRule(_Model):
     """Location of the NSP supplied."""
 
 
+class PLGatewayCapability(
+    VirtualNetworkApplianceCapability, discriminator="PLGateway"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Private Link Gateway (slow-path) capability. Private Link programming offloaded to the
+    appliance's gateway; IPv6 on a dual-stack appliance.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityProperties
+    :ivar kind: The Private Link Gateway (slow-path) capability kind. Required. Private Link
+     Gateway (slow-path).
+    :vartype kind: str or ~azure.mgmt.network.models.PL_GATEWAY
+    """
+
+    kind: Literal[VirtualNetworkApplianceCapabilityKind.PL_GATEWAY] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Private Link Gateway (slow-path) capability kind. Required. Private Link Gateway
+     (slow-path)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.VirtualNetworkApplianceCapabilityProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = VirtualNetworkApplianceCapabilityKind.PL_GATEWAY  # type: ignore
+
+
+class PLGatewayFastpathCapability(
+    VirtualNetworkApplianceCapability, discriminator="PLGatewayFastpath"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Private Link Gateway FastPath capability. Private Link fast-path programming on the
+    appliance's gateway; supported on a dual-stack appliance.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityProperties
+    :ivar kind: The Private Link Gateway FastPath capability kind. Required. Private Link Gateway
+     FastPath.
+    :vartype kind: str or ~azure.mgmt.network.models.PL_GATEWAY_FASTPATH
+    """
+
+    kind: Literal[VirtualNetworkApplianceCapabilityKind.PL_GATEWAY_FASTPATH] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Private Link Gateway FastPath capability kind. Required. Private Link Gateway FastPath."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.VirtualNetworkApplianceCapabilityProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = VirtualNetworkApplianceCapabilityKind.PL_GATEWAY_FASTPATH  # type: ignore
+
+
+class PLIPForwardersCapability(
+    VirtualNetworkApplianceCapability, discriminator="PLIPForwarders"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Private Link IP-forwarders (NVA) capability. Private Link programming offloaded to the
+    appliance NVA; IPv6 on a dual-stack appliance.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityProperties
+    :ivar kind: The Private Link IP-forwarders (NVA) capability kind. Required. Private Link
+     IP-forwarders (NVA).
+    :vartype kind: str or ~azure.mgmt.network.models.PLIP_FORWARDERS
+    """
+
+    kind: Literal[VirtualNetworkApplianceCapabilityKind.PLIP_FORWARDERS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Private Link IP-forwarders (NVA) capability kind. Required. Private Link IP-forwarders
+     (NVA)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.VirtualNetworkApplianceCapabilityProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = VirtualNetworkApplianceCapabilityKind.PLIP_FORWARDERS  # type: ignore
+
+
 class PolicySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines contents of a web application firewall global configuration.
 
@@ -39229,25 +40097,6 @@ class ProtocolSettings(_Model):  # pylint: disable=docstring-keyword-should-matc
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class ProxyResourceWithReadOnlyID(_Model):
-    """Proxy resource representation.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    """
-
-    id: Optional[str] = rest_field(visibility=["read"])
-    """Resource ID."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """Resource name."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """Resource type."""
 
 
 class PublicIPAddress(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -48252,6 +49101,7 @@ class VirtualNetworkAppliance(Resource):  # pylint: disable=docstring-keyword-sh
 
     __flattened_items = [
         "bandwidth_in_gbps",
+        "capacity_provider",
         "ip_configurations",
         "private_ip_address_version",
         "provisioning_state",
@@ -48296,6 +49146,61 @@ class VirtualNetworkAppliance(Resource):  # pylint: disable=docstring-keyword-sh
             setattr(self.properties, key, value)
         else:
             super().__setattr__(key, value)
+
+
+class VirtualNetworkApplianceCapabilityProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Properties common to every virtual network appliance capability, independent of kind.
+
+    :ivar linked_resource_id: The Azure resource ID of the owning virtual network. System-derived
+     and read-only.
+    :vartype linked_resource_id: str
+    :ivar provisioning_state: The provisioning state of the capability resource. Known values are:
+     "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar ip_version: The IP version the capability applies to. Private Link Gateway FastPath
+     (``PLGatewayFastpath``) only accepts ``DualStack``; Private Link Gateway (``PLGateway``) and
+     Private Link IP-forwarders (``PLIPForwarders``) only accept ``IPv6``. Not applicable to
+     ``NAT64``, which is property-less and must omit this value. The service validates the value
+     against the resource's ``kind`` when the capability is created or updated. Known values are:
+     "IPv6" and "DualStack".
+    :vartype ip_version: str or
+     ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityIpVersion
+    """
+
+    linked_resource_id: Optional[str] = rest_field(name="linkedResourceId", visibility=["read"])
+    """The Azure resource ID of the owning virtual network. System-derived and read-only."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the capability resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+    ip_version: Optional[Union[str, "_models.VirtualNetworkApplianceCapabilityIpVersion"]] = rest_field(
+        name="ipVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The IP version the capability applies to. Private Link Gateway FastPath (``PLGatewayFastpath``)
+     only accepts ``DualStack``; Private Link Gateway (``PLGateway``) and Private Link IP-forwarders
+     (``PLIPForwarders``) only accept ``IPv6``. Not applicable to ``NAT64``, which is property-less
+     and must omit this value. The service validates the value against the resource's ``kind`` when
+     the capability is created or updated. Known values are: \"IPv6\" and \"DualStack\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ip_version: Optional[Union[str, "_models.VirtualNetworkApplianceCapabilityIpVersion"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class VirtualNetworkApplianceIpConfiguration(
@@ -48441,6 +49346,8 @@ class VirtualNetworkAppliancePropertiesFormat(_Model):  # pylint: disable=docstr
 
     :ivar bandwidth_in_gbps: Bandwidth of the VirtualNetworkAppliance resource in Gbps.
     :vartype bandwidth_in_gbps: float
+    :ivar capacity_provider: The reference to the capacity provider resource.
+    :vartype capacity_provider: ~azure.mgmt.network.models.SubResource
     :ivar ip_configurations: A list of IPConfigurations of the virtual network appliance.
     :vartype ip_configurations:
      list[~azure.mgmt.network.models.VirtualNetworkApplianceIpConfiguration]
@@ -48461,6 +49368,10 @@ class VirtualNetworkAppliancePropertiesFormat(_Model):  # pylint: disable=docstr
         name="bandwidthInGbps", visibility=["read", "create", "update", "delete", "query"]
     )
     """Bandwidth of the VirtualNetworkAppliance resource in Gbps."""
+    capacity_provider: Optional["_models.SubResource"] = rest_field(
+        name="capacityProvider", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The reference to the capacity provider resource."""
     ip_configurations: Optional[list["_models.VirtualNetworkApplianceIpConfiguration"]] = rest_field(
         name="ipConfigurations", visibility=["read"]
     )
@@ -48485,6 +49396,7 @@ class VirtualNetworkAppliancePropertiesFormat(_Model):  # pylint: disable=docstr
         self,
         *,
         bandwidth_in_gbps: Optional[float] = None,
+        capacity_provider: Optional["_models.SubResource"] = None,
         private_ip_address_version: Optional[Union[str, "_models.VirtualNetworkApplianceIpVersionType"]] = None,
         subnet: Optional["_models.Subnet"] = None,
     ) -> None: ...
