@@ -7,6 +7,8 @@
 - Partition local in-memory and file-backed responses, items, history, and
   conversation indexes by the platform user key, keeping anonymous local state
   separate.
+- Release exact caller-scoped incarnation references when durable inputs settle
+  before handler dispatch, preserving successor entries and admission deferrals.
 - Read retained DELETE cleanup ownership through the authorized response
   provider and noncreating replay lookup, without allocating replacement streams.
 - Retire stopped nonterminal runtime executions under scoped recovery admission,

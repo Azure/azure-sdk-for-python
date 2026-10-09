@@ -221,6 +221,18 @@ def _overlay_failed_terminal(
 _RUNTIME_REFS: dict[str, "RuntimeRefs"] = {}
 
 
+def _discard_runtime_refs(key: str | None, expected_refs: "RuntimeRefs | None") -> None:
+    """Release only the exact process-local entry owned by this callback.
+
+    :param key: The caller-scoped incarnation key, or None when unidentifiable.
+    :type key: str | None
+    :param expected_refs: The entry captured before asynchronous lifecycle work.
+    :type expected_refs: RuntimeRefs | None
+    """
+    if key is not None and expected_refs is not None and _RUNTIME_REFS.get(key) is expected_refs:
+        del _RUNTIME_REFS[key]
+
+
 def _reconstruct_parsed_from_params(params: dict[str, Any]) -> Any:
     """Re-parse the persisted request back to a ``CreateResponse`` model.
 
@@ -860,6 +872,8 @@ class ResilientResponseOrchestrator:
             _run_background_non_stream,
         )
 
+        refs_key = _input_fence_key(response_id, user_id_key, incarnation_id)
+        expected_refs = _RUNTIME_REFS.get(refs_key)
         try:
             # Dispatch on the request's stream flag: the streaming pipeline goes
             # through the parent orchestrator's streaming runner (events flow to
@@ -928,7 +942,7 @@ class ResilientResponseOrchestrator:
             if cancel_bridge is not None and not cancel_bridge.done():
                 cancel_bridge.cancel()
             # (Spec 013 US1(c)) Drop the runtime-refs entry on terminal exit.
-            _RUNTIME_REFS.pop(_input_fence_key(response_id, user_id_key, incarnation_id), None)
+            _discard_runtime_refs(refs_key, expected_refs)
 
     async def _execute_in_task(self, ctx: TaskContext[dict[str, Any]]) -> Any:
         """Fence deleted inputs and reserve recovered execution before dispatch.
@@ -955,16 +969,27 @@ class ResilientResponseOrchestrator:
         except ValueError:
             incarnation_id = None
             malformed_input = params
+        refs_key = None if malformed_input is not None else _input_fence_key(response_id, user_id_key, incarnation_id)
+        expected_refs = _RUNTIME_REFS.get(refs_key) if refs_key is not None else None
+
+        async def _execute_with_refs() -> Any:
+            result = await self._execute_admitted_task(ctx)
+            if result is None:
+                _discard_runtime_refs(refs_key, expected_refs)
+            return result
+
         if await _task_input_deleted(
             ctx.task_id, response_id, user_id_key, incarnation_id=incarnation_id, malformed_input=malformed_input
         ):
             logger.info("Skipping deleted durable response input %s", response_id)
+            _discard_runtime_refs(refs_key, expected_refs)
             return None
         state = self._runtime_state
         if not _is_recovered_entry(ctx.entry_mode) or state is None:
-            return await self._execute_admitted_task(ctx)
+            return await _execute_with_refs()
         if not await state.reserve(response_id, user_id_key, recovery=True, incarnation_id=incarnation_id):
             if incarnation_id is None and await state.is_deleted(response_id, user_id_key):
+                _discard_runtime_refs(refs_key, expected_refs)
                 return None
             # A competing lifecycle operation may fail. Preserve the input for
             # recovery rather than consuming it while admission is unavailable.
@@ -978,12 +1003,13 @@ class ResilientResponseOrchestrator:
             if (incarnation_id is None and malformed_input is None) or not await _task_input_deleted(
                 ctx.task_id, response_id, user_id_key, incarnation_id=incarnation_id, malformed_input=malformed_input
             ):
-                return await self._execute_admitted_task(ctx)
+                return await _execute_with_refs()
+            _discard_runtime_refs(refs_key, expected_refs)
         finally:
             with CancelScope(shield=True):
                 await state.release_reservation(response_id, user_id_key)
 
-    async def _execute_admitted_task(self, ctx: TaskContext[dict[str, Any]]) -> None:
+    async def _execute_admitted_task(self, ctx: TaskContext[dict[str, Any]]) -> Any:
         """Execute the response pipeline inside the task body.
 
         This is the re-entrant function. On each entry:
@@ -998,8 +1024,8 @@ class ResilientResponseOrchestrator:
 
         :param ctx: The resilient task context.
         :type ctx: TaskContext[dict[str, Any]]
-        :return: None
-        :rtype: None
+        :return: None when settled, or the handler's recovery deferral sentinel.
+        :rtype: Any
         """
         # Import here to avoid circular imports
         from ._resilient_input import (
@@ -1397,7 +1423,7 @@ class ResilientResponseOrchestrator:
             # out-of-band refs — never runs. Drop the cache entry here so we do
             # not permanently retain the record/context/parsed-request/cancel
             # event for a response that fell back to in-process execution.
-            _RUNTIME_REFS.pop(refs_key, None)
+            _discard_runtime_refs(refs_key, refs)
             raise
         # Store the task run reference on the record for observability
         record.resilient_task_run = task_run  # type: ignore[attr-defined]
