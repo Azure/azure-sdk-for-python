@@ -402,6 +402,29 @@ class TestCompactionPreservesPostCompactionWrites:
     inode and lost on the next process lifetime.
     """
 
+    async def test_compaction_does_not_recreate_a_removed_replacement(self, tmp_path: Path, monkeypatch) -> None:
+        from azure.ai.agentserver.core.streaming import _concrete
+
+        path = tmp_path / "removed-replacement.jsonl"
+        stream = FileBackedReplayEventStream(path=path)
+        await stream.emit({"n": 1})
+        replace = _concrete.os.replace
+
+        def remove_after_replace(source, destination):
+            # Release the old data handle so this interleaving also works on Windows.
+            stream._file.close()
+            replace(source, destination)
+            Path(destination).unlink()
+
+        monkeypatch.setattr(_concrete.os, "replace", remove_after_replace)
+        try:
+            stream._compact_on_disk()
+            assert not path.exists()
+            assert not path.with_suffix(".jsonl.compact").exists()
+        finally:
+            await stream._on_delete()
+        assert list(tmp_path.iterdir()) == []
+
     async def test_emit_after_compaction_persists_to_live_file(self, tmp_path: Path) -> None:
         p = tmp_path / "fb-compact.jsonl"
         s = FileBackedReplayEventStream(path=p, cursor_fn=lambda e: e["n"], ttl_seconds=600)

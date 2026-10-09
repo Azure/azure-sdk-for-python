@@ -4,6 +4,9 @@
 
 ### Bugs Fixed
 
+- Open existing replay logs in non-creating mode during cold lookup and
+  compaction reopen, preventing concurrent removal from recreating an empty
+  log. Preserve explicit creation and propagate backing-lock acquisition errors.
 - Delete cold file-backed replay logs without deserializing their events, so
   malformed logs remain removable after restart. Preserve locking and retryable
   cleanup when file access, lock acquisition, or removal fails.

@@ -43,6 +43,8 @@ from ._concrete import (
     FileBackedReplayEventStream,
     ReplayEventStream,
     _FileBackedReplayDeletion,
+    _FileBackedReplayRestoration,
+    _ReplayFileNotFoundError,
     _safe_stream_filename,
 )
 from ._protocol import (
@@ -176,26 +178,24 @@ class _StreamsRegistry:
             ttl_seconds = _DEFAULT_STREAM_TTL_SECONDS
         storage_dir = Path(storage_dir)
         storage_dir.mkdir(parents=True, exist_ok=True)
-        self._factory = lambda _id: FileBackedReplayEventStream(
-            path=storage_dir / _safe_stream_filename(_id),
-            cursor_fn=cursor_fn,
-            ttl_seconds=ttl_seconds,
-            serializer=serializer,
-            deserializer=deserializer,
-        )
+
+        def open_replay(_id: str, backing: type[FileBackedReplayEventStream]) -> EventStream:
+            return backing(
+                path=storage_dir / _safe_stream_filename(_id),
+                cursor_fn=cursor_fn,
+                ttl_seconds=ttl_seconds,
+                serializer=serializer,
+                deserializer=deserializer,
+            )
+
+        self._factory = lambda _id: open_replay(_id, FileBackedReplayEventStream)
 
         def restore(_id: str, for_deletion: bool) -> Optional[EventStream]:
-            path = storage_dir / _safe_stream_filename(_id)
-            if for_deletion:
-                try:
-                    return _FileBackedReplayDeletion(path=path)
-                except EventStreamNotFoundError:
-                    return None
             try:
-                path.stat()
-            except FileNotFoundError:
+                backing = _FileBackedReplayDeletion if for_deletion else _FileBackedReplayRestoration
+                return open_replay(_id, backing)
+            except _ReplayFileNotFoundError:
                 return None
-            return self._factory(_id)
 
         self._restore = restore
 

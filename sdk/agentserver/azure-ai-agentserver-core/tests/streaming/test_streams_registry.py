@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import asyncio
 import inspect
+import json
 import re
 from pathlib import Path
 from types import SimpleNamespace
@@ -685,8 +686,9 @@ class TestPersistedLookup:
 
     @pytest.mark.parametrize("windows", [False, True])
     @pytest.mark.parametrize("failure", [PermissionError, FileNotFoundError])
-    async def test_cold_delete_lock_acquisition_errors_propagate_and_close_handle(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, windows: bool, failure
+    @pytest.mark.parametrize("operation", ["get", "delete", "get_or_create"])
+    async def test_cold_access_lock_acquisition_errors_propagate_and_close_handle(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, windows: bool, failure, operation: str
     ) -> None:
         from azure.ai.agentserver.core.streaming import _concrete
 
@@ -714,7 +716,7 @@ class TestPersistedLookup:
             else:
                 patch.setattr(_concrete, "fcntl", SimpleNamespace(LOCK_EX=1, LOCK_NB=2, flock=denied))
             with pytest.raises(failure, match="lock acquisition denied"):
-                await registry.delete("restricted")
+                await getattr(registry, operation)("restricted")
             assert len(opened) == 1
             assert opened[0].closed
             assert registry._slots == {}
@@ -723,6 +725,96 @@ class TestPersistedLookup:
             assert sorted(tmp_path.iterdir()) == [path]
 
         await registry.delete("restricted")
+        assert list(tmp_path.iterdir()) == []
+
+    async def test_cold_lookup_file_disappearing_before_open_does_not_create_or_retain_a_log(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        from azure.ai.agentserver.core.streaming import _concrete
+
+        registry = _StreamsRegistry()
+        registry.use_file_backed_replay(storage_dir=tmp_path)
+        original = await registry.get_or_create("disappearing")
+        await original.emit({"n": 1}, close=True)
+        original._cleanup_locks()
+        path = tmp_path / "disappearing.jsonl"
+        restarted = _StreamsRegistry()
+        restarted.use_file_backed_replay(storage_dir=tmp_path)
+        open_file = open
+        modes = []
+
+        def remove_before_open(candidate, mode):
+            assert candidate == path
+            assert candidate.stat().st_size > 0
+            candidate.unlink()
+            modes.append(mode)
+            return open_file(candidate, mode)
+
+        with monkeypatch.context() as patch:
+            patch.setattr(_concrete, "open", remove_before_open, raising=False)
+            with pytest.raises(EventStreamNotFoundError):
+                await restarted.get("disappearing")
+            assert modes == ["r+b"]
+            assert restarted._slots == {}
+            assert restarted._id_locks == {}
+            assert list(tmp_path.iterdir()) == []
+        with pytest.raises(EventStreamNotFoundError):
+            await restarted.get("disappearing")
+        assert restarted._slots == {}
+        assert restarted._id_locks == {}
+        fresh = await restarted.get_or_create("disappearing")
+        assert path.exists()
+        await fresh.emit({"n": 2}, close=True)
+        assert [event async for event in fresh.subscribe()] == [{"n": 2}]
+        await restarted.delete("disappearing")
+
+    @pytest.mark.parametrize("operation", ["get", "get_or_create"])
+    @pytest.mark.parametrize("custom_payload", [False, True])
+    async def test_cold_lookup_and_creation_preserve_recovery_and_append_semantics(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, operation: str, custom_payload: bool
+    ) -> None:
+        from azure.ai.agentserver.core.streaming import _concrete
+
+        def serialize(payload):
+            return json.dumps({"value": payload}).encode("utf-8")
+
+        def deserialize(payload):
+            return json.loads(payload)["value"]
+
+        configuration = {
+            "storage_dir": tmp_path,
+            "cursor_fn": lambda event: event["n"],
+            "serializer": serialize if custom_payload else None,
+            "deserializer": deserialize if custom_payload else None,
+        }
+        registry = _StreamsRegistry()
+        registry.use_file_backed_replay(**configuration)
+        original = await registry.get_or_create("retained")
+        await original.emit({"n": 1})
+        original._cleanup_locks()
+        restarted = _StreamsRegistry()
+        restarted.use_file_backed_replay(**configuration)
+        open_file = open
+        modes = []
+
+        def track_open(candidate, mode):
+            modes.append(mode)
+            return open_file(candidate, mode)
+
+        with monkeypatch.context() as patch:
+            patch.setattr(_concrete, "open", track_open, raising=False)
+            restored = await getattr(restarted, operation)("retained")
+        assert modes == (["r+b"] if operation == "get" else ["a+b"])
+        assert await restored.last_cursor() == 1
+        await restored.emit({"n": 2}, close=True)
+        assert [event async for event in restored.subscribe()] == [{"n": 1}, {"n": 2}]
+        restored._cleanup_locks()
+        final_registry = _StreamsRegistry()
+        final_registry.use_file_backed_replay(**configuration)
+        final = await final_registry.get("retained")
+        assert await final.last_cursor() == 2
+        assert [event async for event in final.subscribe()] == [{"n": 1}, {"n": 2}]
+        await final_registry.delete("retained")
         assert list(tmp_path.iterdir()) == []
 
     async def test_cold_delete_file_disappearing_before_open_never_creates_a_log(
@@ -975,13 +1067,15 @@ class TestPersistedLookup:
             await streams.delete("locked")
 
     async def test_lookup_permission_failure_is_not_reported_missing(self, tmp_path: Path, monkeypatch) -> None:
+        from azure.ai.agentserver.core.streaming import _concrete
+
         streams.use_file_backed_replay(storage_dir=tmp_path)
 
         def denied(path, *args, **kwargs):
             raise PermissionError("replay access denied")
 
         with monkeypatch.context() as patch:
-            patch.setattr(Path, "stat", denied)
+            patch.setattr(_concrete, "open", denied, raising=False)
             with pytest.raises(PermissionError, match="replay access denied"):
                 await streams.get("restricted")
         assert list(tmp_path.iterdir()) == []

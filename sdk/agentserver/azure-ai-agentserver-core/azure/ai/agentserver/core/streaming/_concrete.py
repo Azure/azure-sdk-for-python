@@ -762,7 +762,7 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
             # the new handle BEFORE closing the old one so the single-writer
             # guarantee is never released across the swap.
             old_file = self._file
-            new_file = open(self._path, "a+b")  # pylint: disable=consider-using-with
+            new_file = open(self._path, "r+b")  # pylint: disable=consider-using-with
             if fcntl is not None:
                 fcntl.flock(new_file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
             new_file.seek(0, os.SEEK_END)
@@ -859,15 +859,23 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
                 raise
 
 
-class _FileBackedReplayDeletion(FileBackedReplayEventStream):
-    """A non-reading, retryable cleanup owner for an existing cold replay."""
+class _ReplayFileNotFoundError(FileNotFoundError):
+    """Only a non-creating replay open found no backing file."""
+
+
+class _FileBackedReplayRestoration(FileBackedReplayEventStream):
+    """Restore an existing replay without creating an absent backing file."""
 
     def _open_file(self) -> BinaryIO:
         # Never create an absent log, including when another process removes it.
         try:
             return open(self._path, "r+b")  # pylint: disable=consider-using-with
         except FileNotFoundError as exc:
-            raise EventStreamNotFoundError(str(self._path)) from exc
+            raise _ReplayFileNotFoundError(str(self._path)) from exc
+
+
+class _FileBackedReplayDeletion(_FileBackedReplayRestoration):
+    """A non-reading, retryable cleanup owner for an existing cold replay."""
 
     def _rehydrate(self) -> None:
         # Reuse the file-lock and deletion hooks without decoding replay events.

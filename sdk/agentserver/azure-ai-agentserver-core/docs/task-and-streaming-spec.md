@@ -3871,6 +3871,12 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   (no verbatim id can alias another id's hash).
 - **C-STR-FBR-2.** Constructor MUST rehydrate from an existing
   file (crash-recovery friendly).
+  Cold registry `get()` MUST open the existing log in non-creating mode,
+  including when it disappears after an earlier existence observation.
+  Only absence reported by that file open means a missing stream; backing-lock
+  acquisition failures MUST propagate, even when they are `FileNotFoundError`.
+  `get_or_create()` retains the creating constructor and rehydrates existing
+  logs. Compaction MUST reopen its replacement log in non-creating mode.
 - **C-STR-FBR-3.** Optional `serializer` / `deserializer` callbacks
   MUST be honored for non-JSON payloads. Default uses JSON.
 - **C-STR-FBR-4.** `delete()` and the close-clock auto-tombstone
