@@ -475,6 +475,95 @@ async def test_begin_draining_rejects_new_pending_work() -> None:
     assert await state.list_records() == [accepted]
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize("recovery", [False, True])
+@pytest.mark.parametrize("user_id_key", [None, "", "owner", "other"])
+async def test_draining_rejects_every_new_reservation_without_mutating_ownership(recovery, user_id_key):
+    state = _RuntimeState()
+    assert await state.reserve("existing", "owner")
+    before = dict(state._publication_contexts)
+    await state.begin_draining()
+    assert not await state.reserve("new", user_id_key, recovery=recovery, incarnation_id="a" * 32)
+    assert state._reservations == {("owner", "existing")}
+    assert state._publication_contexts == before
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("admission", ["none", "reserved", "pending", "published"])
+@pytest.mark.parametrize("publication", ["exact", "same-context", "foreign-context", "wrong-predecessor"])
+async def test_draining_publication_requires_an_exact_snapshot_execution(admission, publication):
+    state = _RuntimeState()
+    owner = _make_execution("shared", user_id_key="owner", status="in_progress")
+    owner.response_context = ResponseContext(response_id="shared", mode_flags=owner.mode_flags)
+    foreign = _make_execution("shared", user_id_key="other", status="completed")
+    assert await state.add(foreign)
+    if admission != "none":
+        assert await state.reserve("shared", "owner", publication_context=owner.response_context)
+    if admission == "pending":
+        assert await state.add_pending(owner)
+    elif admission == "published":
+        assert await state.add(owner)
+    snapshot = await state.begin_draining()
+    assert (owner in snapshot) is (admission in ("pending", "published"))
+    candidate = owner if publication == "exact" else _make_execution("shared", user_id_key="owner", status="completed")
+    if publication != "exact":
+        candidate.response_context = (
+            ResponseContext(response_id="shared", mode_flags=candidate.mode_flags)
+            if publication == "foreign-context"
+            else owner.response_context
+        )
+    predecessor = _make_execution("shared", user_id_key="owner") if publication == "wrong-predecessor" else None
+    allowed = admission in ("pending", "published") and publication in ("exact", "same-context")
+    assert await state.add(candidate, expected_record=predecessor) is allowed
+    assert await state.get("shared", "owner") is (candidate if allowed else owner if admission == "published" else None)
+    assert await state.get("shared", "other") is foreign
+    if admission == "pending" and not allowed:
+        assert state._pending_records[("owner", "shared")] is owner
+    assert not await state.add_pending(candidate)
+    assert not await state.is_deleted("shared", "owner")
+
+
+@pytest.mark.asyncio
+async def test_draining_contextless_replacement_cannot_use_expected_record_as_a_new_execution():
+    state = _RuntimeState()
+    owner = _make_execution("shared", status="in_progress")
+    assert await state.add(owner)
+    await state.begin_draining()
+    replacement = _make_execution("shared", status="completed")
+    assert not await state.add(replacement, expected_record=owner)
+    assert await state.add(owner)
+    assert await state.get("shared") is owner
+
+
+@pytest.mark.asyncio
+async def test_draining_finalization_preserves_newer_record_against_stale_predecessor():
+    state = _RuntimeState()
+    owner = _make_execution("shared", user_id_key="owner", status="in_progress")
+    owner.response_context = ResponseContext(response_id="shared", mode_flags=owner.mode_flags)
+    assert await state.add(owner)
+    await state.begin_draining()
+    terminal = _make_execution("shared", user_id_key="owner", status="completed")
+    terminal.response_context = owner.response_context
+    assert await state.add(terminal, expected_record=owner)
+    assert not await state.add(owner, expected_record=owner)
+    assert await state.get("shared", "owner") is terminal
+
+
+@pytest.mark.asyncio
+async def test_exact_pending_cleanup_preserves_successor_and_foreign_user():
+    state = _RuntimeState()
+    old = _make_execution("shared", user_id_key="owner")
+    current = _make_execution("shared", user_id_key="owner")
+    foreign = _make_execution("shared", user_id_key="other")
+    assert await state.add_pending(old)
+    await state.discard_pending("shared", "owner", expected_record=old)
+    assert await state.add_pending(current)
+    assert await state.add_pending(foreign)
+    await state.begin_draining()
+    await state.discard_pending("shared", "owner", expected_record=old)
+    assert state._pending_records == {("owner", "shared"): current, ("other", "shared"): foreign}
+
+
 # ---------------------------------------------------------------------------
 # T1 (Task 7.1) – _ExecutionRecord is no longer exported from _runtime_state
 # ---------------------------------------------------------------------------

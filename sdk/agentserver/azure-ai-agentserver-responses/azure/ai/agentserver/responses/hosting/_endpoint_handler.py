@@ -76,7 +76,7 @@ from ._observability import (
     extract_request_id,
     start_create_span,
 )
-from ._orchestrator import _HandlerError, _refresh_background_status, _ResponseOrchestrator
+from ._orchestrator import _HandlerError, _refresh_background_status, _ResponseOrchestrator, _ServerShuttingDown
 from ._request_parsing import (
     _apply_item_cursors,
     _extract_agent_identity,
@@ -771,6 +771,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :rtype: bool
         """
         if not await self._runtime_state.reserve(response_id, user_id_key, publication_context=publication_context):
+            if await self._runtime_state.is_draining():
+                raise _ServerShuttingDown("Server is shutting down.")
             return False
         available = False
         try:
@@ -782,11 +784,46 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 available = await self._reclaim_empty_replay(
                     response_id, PlatformContext(user_id_key=user_id_key, call_id=call_id), replay
                 )
+            if available and await self._runtime_state.is_draining():
+                available = False
+                raise _ServerShuttingDown("Server is shutting down.")
         finally:
             if not available:
                 with CancelScope(shield=True):
                     await self._runtime_state.release_reservation(response_id, user_id_key)
         return available
+
+    def _execution_error_response(
+        self, ctx: _ExecutionContext, error: _HandlerError | _ServerShuttingDown, agent_session_id: str | None
+    ) -> JSONResponse:
+        """Map rejected admission or handler failure to its HTTP response.
+
+        :param ctx: The create request's execution context.
+        :type ctx: _ExecutionContext
+        :param error: A shutdown rejection or developer-handler failure.
+        :type error: _HandlerError | _ServerShuttingDown
+        :param agent_session_id: The response's session identifier.
+        :type agent_session_id: str | None
+        :return: The existing shutdown or handler-error response.
+        :rtype: JSONResponse
+        """
+        headers = self._session_headers(agent_session_id)
+        if isinstance(error, _ServerShuttingDown):
+            ctx.span.end(None)
+            return _service_unavailable("Server is shutting down.", headers)
+        logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=error.original)
+        return JSONResponse(
+            {
+                "error": {
+                    "message": "internal server error",
+                    "type": "server_error",
+                    "code": "server_error",
+                    "param": None,
+                }
+            },
+            status_code=500,
+            headers=_apply_error_source_headers(headers, ERROR_SOURCE_UPSTREAM),
+        )
 
     async def _reclaim_empty_replay(self, response_id: str, context: PlatformContext, replay: EventStream) -> bool:
         """Reclaim a proven ownerless empty file, including unfinished cleanup.
@@ -1124,22 +1161,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 }
             }
             return JSONResponse(err_body, status_code=409, headers=self._session_headers(agent_session_id))
-        except _HandlerError as exc:
-            logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=exc.original)
-            # Handler errors are server-side faults, not client errors
-            err_body = {
-                "error": {
-                    "message": "internal server error",
-                    "type": "server_error",
-                    "code": "server_error",
-                    "param": None,
-                }
-            }
-            return JSONResponse(
-                err_body,
-                status_code=500,
-                headers=_apply_error_source_headers(self._session_headers(agent_session_id), ERROR_SOURCE_UPSTREAM),
-            )
+        except (_HandlerError, _ServerShuttingDown) as exc:
+            return self._execution_error_response(ctx, exc, agent_session_id)
         except Exception as exc:  # pylint: disable=broad-exception-caught
             if is_platform_error(exc):
                 # A resilient task-start (or other platform-infrastructure)

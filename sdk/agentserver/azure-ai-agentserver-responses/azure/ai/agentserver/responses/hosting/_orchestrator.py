@@ -15,8 +15,8 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import json
 import logging
 from copy import deepcopy
-from contextlib import aclosing
-from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, Awaitable, Callable, cast
+from contextlib import aclosing, asynccontextmanager
+from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, Awaitable, Callable, NoReturn, cast
 
 import anyio
 
@@ -1164,6 +1164,7 @@ async def _run_background_non_stream(
     :return: None
     :rtype: None
     """
+    record.execution_task = asyncio.current_task()
     record.transition_to("in_progress")
     st = _BgRunState()
     try:
@@ -1279,6 +1280,10 @@ class _HandlerError(Exception):
     def __init__(self, original: BaseException) -> None:
         self.original = original
         super().__init__(str(original))
+
+
+class _ServerShuttingDown(RuntimeError):
+    """Fresh execution was rejected because shutdown closed admission."""
 
 
 def _make_ephemeral_record(ctx: "_ExecutionContext", state: "_PipelineState") -> "ResponseExecution":
@@ -3280,7 +3285,9 @@ class _ResponseOrchestrator:
                         await self._safe_close(wire_stream)
                         await self._drain_deferred_terminal_persist(ctx, state)
                     finally:
-                        await self._runtime_state.discard_pending(ctx.response_id, ctx.user_id)
+                        await self._runtime_state.discard_pending(
+                            ctx.response_id, ctx.user_id, expected_record=start_record
+                        )
 
             # Minimal record only for ``_start_resilient_background``'s parameter
             # shape. The fallback tracks it as unpublished shutdown work until
@@ -3326,7 +3333,9 @@ class _ResponseOrchestrator:
                 # The HTTP response still owns the create reservation. Finish
                 # rejected admission cleanup before it can release that identity.
                 with anyio.CancelScope(shield=True):
-                    await self._runtime_state.discard_pending(ctx.response_id, ctx.user_id)
+                    await self._runtime_state.discard_pending(
+                        ctx.response_id, ctx.user_id, expected_record=start_record
+                    )
                     if (
                         stream_created
                         and getattr(start_record, "resilient_task_run", None) is None
@@ -3360,10 +3369,17 @@ class _ResponseOrchestrator:
         # --- Ephemeral (non-stored) responses: no resilient task ---
         # The request owns this producer even without keep-alives. Keeping handler
         # iteration in one task lets cleanup finish outside the ASGI cancel scope.
-        handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
-        async with aclosing(self._live_stream_keep_alive(ctx, state, handler_iterator)) as ephemeral_stream:
-            async for chunk in ephemeral_stream:
-                yield chunk
+        try:
+            async with self._track_ephemeral_execution(ctx) as pending:
+                state.execution_task = pending.execution_task
+                handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
+                async with aclosing(self._live_stream_keep_alive(ctx, state, handler_iterator)) as ephemeral_stream:
+                    async for chunk in ephemeral_stream:
+                        yield chunk
+        except _ServerShuttingDown:
+            yield encode_sse_any_event(
+                await self._emit_standalone_error(ctx, code="server_error", publish_to_stream=False)
+            )
 
     async def _live_stream_keep_alive(  # pylint: disable=too-many-statements
         self,
@@ -3506,7 +3522,7 @@ class _ResponseOrchestrator:
                             task_exc,
                             exc_info=True,
                         )
-            elif execution_task is not None:
+            elif execution_task is not None and execution_task is not asyncio.current_task():
                 try:
                     await execution_task
                 except asyncio.CancelledError:  # pylint: disable=try-except-raise
@@ -3653,7 +3669,9 @@ class _ResponseOrchestrator:
         if not ctx.store:
             # No store ⇒ no resilient task possible. Run handler inline; the
             # response is ephemeral (not retrievable via GET).
-            return await self._run_sync_inner(ctx, state)
+            async with self._track_ephemeral_execution(ctx) as pending:
+                state.execution_task = pending.execution_task
+                return await self._run_sync_inner(ctx, state)
 
         # (Spec 024 Phase 2 — bookkeeping unification) Row 3 unified path:
         # handler runs inside the resilient task body, HTTP request awaits the
@@ -3674,8 +3692,9 @@ class _ResponseOrchestrator:
             initial_model=ctx.model,
             initial_agent_reference=ctx.agent_reference,
         )
+        record.execution_task = asyncio.current_task()
         if not await self._runtime_state.add(record):
-            raise _HandlerError(RuntimeError("Response lifecycle ownership changed before publication."))
+            await self._raise_publication_rejection()
 
         async def _runner() -> None:
             """Fallback runner if _start_resilient_background's resilient start fails.
@@ -3805,6 +3824,42 @@ class _ResponseOrchestrator:
         ctx.span.end(None)
         return _RuntimeState.to_snapshot(record)
 
+    async def _raise_publication_rejection(self) -> NoReturn:
+        """Surface shutdown admission separately from lifecycle conflicts."""
+        if await self._runtime_state.is_draining():
+            raise _ServerShuttingDown("Server is shutting down.")
+        raise _HandlerError(RuntimeError("Response lifecycle ownership changed before publication."))
+
+    @asynccontextmanager
+    async def _track_ephemeral_execution(self, ctx: _ExecutionContext) -> AsyncIterator[ResponseExecution]:
+        """Track non-stored handler work before its first invocation.
+
+        :param ctx: The admitted create request.
+        :type ctx: _ExecutionContext
+        :return: The exact pending execution included in shutdown snapshots.
+        :rtype: AsyncIterator[ResponseExecution]
+        """
+        record = ResponseExecution(
+            response_id=ctx.response_id,
+            mode_flags=ResponseModeFlags(stream=ctx.stream, store=False, background=ctx.background),
+            status="in_progress",
+            response_context=ctx.context,
+            cancel_signal=ctx.cancellation_signal,
+            agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
+            user_id_key=ctx.user_id,
+            initial_model=ctx.model,
+            initial_agent_reference=ctx.agent_reference,
+        )
+        record.execution_task = asyncio.current_task()
+        if not await self._runtime_state.add_pending(record):
+            await self._raise_publication_rejection()
+        try:
+            yield record
+        finally:
+            with anyio.CancelScope(shield=True):
+                await self._runtime_state.discard_pending(ctx.response_id, ctx.user_id, expected_record=record)
+
     async def _run_sync_inner(self, ctx: _ExecutionContext, state: _PipelineState) -> dict[str, Any]:
         """Inner body of :meth:`run_sync` — extracted so the bookkeeping
         task can be signalled in a ``try/finally`` wrapper in the caller.
@@ -3869,6 +3924,7 @@ class _ResponseOrchestrator:
             user_id_key=ctx.user_id,
         )
         record.set_response_snapshot(cast("generated_models.ResponseObject", response_payload))
+        record.execution_task = state.execution_task
 
         # Always register in runtime state so that cancel/GET can find the record
         # and return the correct status code (e.g., 400 for non-bg cancel).
@@ -3978,8 +4034,9 @@ class _ResponseOrchestrator:
         )
 
         # Register so GET can observe in-flight state
+        record.execution_task = asyncio.current_task()
         if not await self._runtime_state.add(record):
-            raise _HandlerError(RuntimeError("Response lifecycle ownership changed before publication."))
+            await self._raise_publication_rejection()
 
         # Launch handler immediately (S-003: handler runs asynchronously)
         # Use anyio.CancelScope(shield=True) + suppress CancelledError so the
@@ -4177,6 +4234,8 @@ class _ResponseOrchestrator:
         )
 
         state = _PipelineState()
+        state.execution_task = asyncio.current_task()
+        record.execution_task = state.execution_task
         # The wire iterator on _live_stream's side subscribed to the
         # per-response stream BEFORE this body started. Looking it up from
         # the registry returns the SAME instance — every emit fans out to
