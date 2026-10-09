@@ -23,6 +23,18 @@ parameters:
   - name: ExcludePaths
     type: object
     default: []
+  - name: InstallMsRustToolchain
+    type: boolean
+    default: false
+  - name: MsRustWorkingDirectory
+    type: string
+    default: ''
+  - name: MsRustToolchainFeed
+    type: string
+    default: ''
+  - name: MsRustAdditionalTargets
+    type: string
+    default: ''
 
 steps:
   - ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
@@ -118,6 +130,15 @@ steps:
     displayName: 'Install QEMU Dependencies'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
+  - ${{ if parameters.InstallMsRustToolchain }}:
+    - template: /eng/pipelines/templates/steps/install-msrust-toolchain.yml
+      parameters:
+        ToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+        WorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+        ${{ if eq(parameters.ArtifactSuffix, 'windows') }}:
+          AdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
+        Condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
+
   # Windows: cibuildwheel fetches CPython from api.nuget.org, which is blocked.
   # Pre-provision the interpreters from the Azure DevOps NuGet feed into the
   # cibuildwheel cache so it skips the blocked download.
@@ -144,26 +165,59 @@ steps:
         exit 1
       }
       Write-Host "##vso[task.setvariable variable=CIBW_CACHE_PATH]$cache"
+
+      if ($env:INSTALL_MS_RUST_TOOLCHAIN -eq 'true') {
+        # Packages use this path as PYO3_CROSS_LIB_DIR when cross-compiling Windows ARM64 wheels.
+        $arm64Libs = Join-Path $nugetCpython "pythonarm64.$version\tools\libs"
+        if (-not (Test-Path $arm64Libs)) {
+          throw "Expected ARM64 Python import libraries at $arm64Libs"
+        }
+        Write-Host "##vso[task.setvariable variable=PYTHON_ARM64_LIB_DIR]$arm64Libs"
+      }
     displayName: 'Pre-provision CPython for cibuildwheel'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))
+    env:
+      INSTALL_MS_RUST_TOOLCHAIN: ${{ format('{0}', parameters.InstallMsRustToolchain) }}
 
   # Linux: forward PIP_INDEX_URL into the build container so pip fetches build
   # dependencies from the Azure DevOps feed instead of PyPI. Using
   # CIBW_ENVIRONMENT_PASS_LINUX (not CIBW_ENVIRONMENT) preserves the package's
   # own [tool.cibuildwheel].environment (CFLAGS) setting.
+  # This replaces, rather than merges with, the package's environment-pass list.
+  # Include every variable required by its Linux build hooks.
   - pwsh: |
-      Write-Host "##vso[task.setvariable variable=CIBW_ENVIRONMENT_PASS_LINUX]PIP_INDEX_URL"
-    displayName: 'Forward PIP_INDEX_URL to cibuildwheel'
+      $passVariables = @('PIP_INDEX_URL')
+      if ($env:RUST_ENVIRONMENT_PASS) {
+        $passVariables += $env:RUST_ENVIRONMENT_PASS.Split(' ')
+      }
+      Write-Host "##vso[task.setvariable variable=CIBW_ENVIRONMENT_PASS_LINUX]$($passVariables -join ' ')"
+    displayName: 'Forward build environment to cibuildwheel'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
+    env:
+      ${{ if parameters.InstallMsRustToolchain }}:
+        RUST_ENVIRONMENT_PASS: MSRUSTUP_ACCESS_TOKEN MSRUSTUP_FEED_URL CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_INDEX CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER
 
   - pwsh: |
       which python
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --inactive --service="${{ parameters.ServiceDirectory }}"
     displayName: 'Generate Packages'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
-    timeoutInMinutes: 80
+    ${{ if parameters.InstallMsRustToolchain }}:
+      timeoutInMinutes: 210
+    ${{ else }}:
+      timeoutInMinutes: 80
     env:
       CIBW_BUILD_VERBOSITY: 3
+      # The platform resolver selects DEBUG to stream native build output.
+      LOGLEVEL: $(SDK_BUILD_LOGLEVEL)
+      ${{ if parameters.InstallMsRustToolchain }}:
+        # Map secret tokens explicitly for container feed access. Package hooks can read them;
+        # enforce source-trust and credential permissions through external ADO controls.
+        MSRUSTUP_ACCESS_TOKEN: $(System.AccessToken)
+        MSRUSTUP_FEED_URL: $(MSRUSTUP_FEED_URL)
+        # CargoAuthenticate exports the registry token and credential-provider variables.
+        CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN)
+        CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER)
 
   - pwsh: |
       which python
