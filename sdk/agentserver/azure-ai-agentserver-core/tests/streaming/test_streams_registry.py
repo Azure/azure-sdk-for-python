@@ -666,11 +666,11 @@ class TestPersistedLookup:
                     await restarted.delete("retry")
                 assert restarted._slots["retry"] is owner
                 assert restarted._id_locks == {}
-                assert path.exists()
-                assert lock_path.exists() is (artifact != "log")
+                assert path.exists() is (artifact == "log")
+                assert lock_path.exists()
                 assert owner._file.closed
                 assert owner._lock_fd == descriptor
-                assert (owner._lock_fd is not None) is (artifact == "descriptor")
+                assert (owner._lock_fd is not None) is (artifact != "lock")
             assert await restarted.get_or_create("retry") is owner
             with pytest.raises(EventStreamNotFoundError):
                 await owner.emit({"n": 2})
@@ -717,8 +717,8 @@ class TestPersistedLookup:
                 patch.setattr(_concrete, "fcntl", SimpleNamespace(LOCK_EX=1, LOCK_NB=2, flock=denied))
             with pytest.raises(failure, match="lock acquisition denied"):
                 await getattr(registry, operation)("restricted")
-            assert len(opened) == 1
-            assert opened[0].closed
+            assert len(opened) == (0 if windows else 1)
+            assert all(handle.closed for handle in opened)
             assert registry._slots == {}
             assert registry._id_locks == {}
             assert path.read_bytes() == expected
@@ -934,7 +934,7 @@ class TestPersistedLookup:
                 assert streams._slots["windows-retry"] is not _TOMBSTONE
                 assert original._lock_fd is None
                 assert lock_path.exists()
-                assert (tmp_path / "windows-retry.jsonl").exists()
+                assert not (tmp_path / "windows-retry.jsonl").exists()
 
         await streams.delete("windows-retry")
         assert list(tmp_path.iterdir()) == []

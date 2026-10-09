@@ -3873,8 +3873,11 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   file (crash-recovery friendly).
   Cold registry `get()` MUST open the existing log in non-creating mode,
   including when it disappears after an earlier existence observation.
-  Only absence reported by that file open means a missing stream; backing-lock
-  acquisition failures MUST propagate, even when they are `FileNotFoundError`.
+  Absence reported by that file open, or by the post-lock check that its
+  descriptor still names the backing path, means a missing stream. A descriptor
+  for a replaced inode MUST be rejected rather than used for replay or writes.
+  Backing-lock acquisition failures MUST propagate, even when they are
+  `FileNotFoundError`.
   `get_or_create()` retains the creating constructor and rehydrates existing
   logs. Compaction MUST reopen its replacement log in non-creating mode.
 - **C-STR-FBR-3.** Optional `serializer` / `deserializer` callbacks
@@ -3889,6 +3892,13 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   propagate without installing a successful deletion tombstone; an
   allocated cleanup owner MUST remain available for exact-owner retries,
   including Windows lock-file cleanup and cancellation.
+  POSIX inode-lock ownership MUST be retained through removal of the log's
+  directory entry. Windows MUST acquire its sidecar lock before opening the
+  log and retain that ownership while closing and removing the log, releasing
+  the sidecar only afterward. Removal MUST verify the owned backing identity;
+  a replaced backing MUST NOT be unlinked without reacquiring its ownership.
+  Once the owned log has been removed, cleanup retries MUST release only the
+  remaining owned resources, not unlink a subsequently created backing path.
 - **C-STR-FBR-5.** **File format.** Each emitted event is a single
   JSONL line wrapping the payload + arrival time:
 
@@ -3908,6 +3918,10 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   NOT at a terminal-record timestamp. A terminal record MUST be accepted
   even when it carries no `emit_time`; a NON-terminal record missing
   `emit_time` remains malformed and MUST raise.
+  An observed final terminal state and its close-clock anchor MUST be set
+  before recovery-time TTL eviction can compact the log. Compaction MUST
+  preserve that terminal marker, including when 1,000 or more expired events
+  precede surviving events, so a subsequent restart still restores CLOSED.
 - **C-STR-FBR-6.** **Rehydration robustness.** Constructor MUST
   tolerate a trailing partial line (e.g. from a crash mid-write)
   by truncating it. Mid-file malformed JSON lines MUST raise

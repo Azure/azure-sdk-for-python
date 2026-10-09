@@ -565,10 +565,12 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
         self._retired_files: list[BinaryIO] = []
         self._write_failed = False
         self._deletion_owner: Optional[_FileBackedReplayDeletion] = None
+        self._file_identity: Optional[os.stat_result] = None
+        self._backing_removed = False
 
-        self._file = self._open_file()
         initialized = False
         try:
+            self._file = self._open_file()
             self._acquire_file_lock()
             self._rehydrate()
             initialized = True
@@ -593,6 +595,8 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
         :rtype: BinaryIO
         """
         self._path.parent.mkdir(parents=True, exist_ok=True)
+        if fcntl is None:
+            self._acquire_lock_file()
         return open(self._path, "a+b")  # pylint: disable=consider-using-with
 
     def _acquire_file_lock(self) -> None:
@@ -608,18 +612,37 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
                 raise RuntimeError(
                     f"FileBackedReplayEventStream: another process holds the " f"lock on {self._path}"
                 ) from exc
-        else:
-            # Windows fallback: best-effort lock-file approach.
-            lock_path = self._path.with_suffix(self._path.suffix + ".lock")
-            try:
-                self._lock_fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_RDWR)
-                self._lock_path = lock_path
-            except FileExistsError as exc:
-                self._file.close()
-                logger.warning("FileBackedReplayEventStream: lock-file contention on %s", self._path)
-                raise RuntimeError(
-                    f"FileBackedReplayEventStream: another process holds the " f"lock-file on {self._path}"
-                ) from exc
+        elif self._lock_fd is None:
+            self._acquire_lock_file()
+        self._file_identity = os.fstat(self._file.fileno())
+        self._check_backing_identity(self._file_identity)
+
+    def _acquire_lock_file(self) -> None:
+        """Own the Windows sidecar before opening or creating the replay."""
+        lock_path = self._path.with_suffix(self._path.suffix + ".lock")
+        try:
+            self._lock_fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_RDWR)
+            self._lock_path = lock_path
+        except FileExistsError as exc:
+            logger.warning("FileBackedReplayEventStream: lock-file contention on %s", self._path)
+            raise RuntimeError(
+                f"FileBackedReplayEventStream: another process holds the lock-file on {self._path}"
+            ) from exc
+
+    def _check_backing_identity(self, identity: os.stat_result) -> None:
+        """Reject a locked descriptor that no longer names the backing log.
+
+        :param identity: The owned file descriptor's filesystem identity.
+        :type identity: os.stat_result
+        """
+        try:
+            current = self._path.stat()
+        except FileNotFoundError as exc:
+            raise _ReplayFileNotFoundError(str(self._path)) from exc
+        if not os.path.samestat(identity, current):
+            raise RuntimeError(
+                f"FileBackedReplayEventStream: backing file changed while acquiring ownership: {self._path}"
+            )
 
     def _serialize(self, payload: Any, emit_time: float) -> bytes:
         if self._serializer is not None:
@@ -708,8 +731,6 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
                 cursor = self._cursor_fn(entry.payload)
                 if self._highest_cursor is None or cursor > self._highest_cursor:
                     self._highest_cursor = cursor
-        # Apply TTL eviction now (records may have expired since being written).
-        self._evict_expired()
         if had_terminal:
             self._state = self._STATE_CLOSED
             # Spec 037 #2 — close-time is best-effort: the terminal record
@@ -720,7 +741,10 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
                 self._close_time = records[-1]["emit_time"]
             else:
                 self._close_time = time.time()
-            self._maybe_auto_transition_to_gone()
+        # Eviction may compact immediately: publish the observed terminal
+        # state first so the replacement retains its final marker.
+        self._evict_expired()
+        self._maybe_auto_transition_to_gone()
         # Position file at end for subsequent appends.
         self._file.seek(0, os.SEEK_END)
         logger.debug(
@@ -735,8 +759,9 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
         try:
             # Closing the file also releases a POSIX flock. Keep each remaining
             # resource recorded until its cleanup succeeds so retries are safe.
-            if not self._file.closed:
-                self._file.close()
+            handle = getattr(self, "_file", None)
+            if handle is not None and not handle.closed:
+                handle.close()
             while self._retired_files:
                 retired = self._retired_files[0]
                 if not retired.closed:
@@ -818,13 +843,18 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
             new_file = open(self._path, "r+b")  # pylint: disable=consider-using-with
             if fcntl is not None:
                 fcntl.flock(new_file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            identity = os.fstat(new_file.fileno())
+            self._check_backing_identity(identity)
             new_file.seek(0, os.SEEK_END)
             self._file = new_file
+            self._file_identity = identity
             old_file.close()
             ready = True
         finally:
             if not ready:
                 self._write_failed = True
+                if self._file is old_file:
+                    self._file_identity = None
                 for queue in list(self._subscriber_queues):
                     queue.put_nowait(_GONE_SENTINEL)
                 for handle in (old_file, new_file):
@@ -914,24 +944,49 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
             self._state = self._STATE_GONE
             self._buffer.clear()
             await self._fanout_terminate()
-            self._cleanup_locks()
-            if self._write_failed:
+            if self._backing_removed:
+                self._cleanup_locks()
+                return
+            if self._file_identity is None or (self._file.closed and self._lock_path is None):
+                self._cleanup_locks()
                 if self._deletion_owner is None:
                     try:
                         self._deletion_owner = _FileBackedReplayDeletion(path=self._path)
                     except _ReplayFileNotFoundError:
+                        self._backing_removed = True
                         return
                 await self._deletion_owner._on_delete()  # pylint: disable=protected-access
+                self._backing_removed = True
                 return
-            try:
-                self._path.unlink(missing_ok=True)
-            except OSError:
-                logger.error("FileBackedReplayEventStream: failed to delete %s", self._path, exc_info=True)
-                raise
+            self._remove_owned_backing()
+            self._cleanup_locks()
+
+    def _remove_owned_backing(self) -> None:
+        """Remove only the owned log, retaining ownership on removal failure."""
+        assert self._file_identity is not None
+        try:
+            self._check_backing_identity(self._file_identity)
+        except _ReplayFileNotFoundError:
+            self._backing_removed = True
+            return
+        except RuntimeError:
+            self._write_failed = True
+            self._file_identity = None
+            raise
+        # POSIX keeps the inode lock through unlink. Windows must close the
+        # log first, but its sidecar remains owned until removal succeeds.
+        try:
+            if self._lock_path is not None and not self._file.closed:
+                self._file.close()
+            self._path.unlink(missing_ok=True)
+        except OSError:
+            logger.error("FileBackedReplayEventStream: failed to delete %s", self._path, exc_info=True)
+            raise
+        self._backing_removed = True
 
 
 class _ReplayFileNotFoundError(FileNotFoundError):
-    """Only a non-creating replay open found no backing file."""
+    """A replay open or locked-descriptor identity check found no backing log."""
 
 
 class _FileBackedReplayRestoration(FileBackedReplayEventStream):
@@ -939,6 +994,8 @@ class _FileBackedReplayRestoration(FileBackedReplayEventStream):
 
     def _open_file(self) -> BinaryIO:
         # Never create an absent log, including when another process removes it.
+        if fcntl is None:
+            self._acquire_lock_file()
         try:
             return open(self._path, "r+b")  # pylint: disable=consider-using-with
         except FileNotFoundError as exc:

@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import multiprocessing
 import os
 from pathlib import Path
 from types import SimpleNamespace
@@ -32,6 +33,26 @@ from azure.ai.agentserver.core.streaming._concrete import (
 
 
 pytestmark = pytest.mark.asyncio(loop_scope="function")
+
+
+def _delayed_replay_writer(path, connection):
+    class DelayedWriter(FileBackedReplayEventStream):
+        def _acquire_file_lock(self):
+            connection.send("opened")
+            connection.recv()
+            super()._acquire_file_lock()
+
+    stream = None
+    try:
+        stream = DelayedWriter(path=Path(path))
+        asyncio.run(stream.emit({"n": "waiter"}))
+        connection.send("acknowledged")
+    except Exception as error:
+        connection.send(type(error).__name__)
+    finally:
+        if stream is not None:
+            stream._cleanup_locks()
+        connection.close()
 
 
 # ----------------------------------------------------------------
@@ -326,9 +347,13 @@ class TestRehydrationResourceCleanup:
             if foreign._lock_fd is not None:
                 os.fstat(foreign._lock_fd)
                 assert foreign._lock_path.exists()
+            if backend == "posix" and os.name == "nt":
+                monkeypatch.setattr(_concrete, "fcntl", None)
             await registry.delete("failed-recovery")
             assert not path.exists()
         finally:
+            if backend == "posix" and os.name == "nt":
+                foreign._cleanup_locks()
             await foreign._on_delete()
 
     @pytest.mark.parametrize("artifact", ["file", "descriptor", "lock"])
@@ -528,6 +553,339 @@ class TestOnDeleteRemovesFile:
         assert p.exists()
         await s._on_delete()
         assert not p.exists(), "file MUST be unlinked after _on_delete per rule 31"
+
+
+class TestFileLifecycleOrdering:
+    @pytest.mark.parametrize("terminal", ["final", "non-final", "absent"])
+    async def test_recovery_compaction_preserves_final_terminal_and_close_clock(self, tmp_path, monkeypatch, terminal):
+        from azure.ai.agentserver.core.streaming import _concrete
+        from azure.ai.agentserver.core.streaming._registry import _StreamsRegistry, _TOMBSTONE
+
+        path = tmp_path / "recovered-compaction.jsonl"
+        expired = [{"emit_time": 9000 + index / 1000, "payload": {"cursor": 10000 - index}} for index in range(1000)]
+        live = {"emit_time": 9995, "payload": {"cursor": 3}}
+        records = list(expired)
+        if terminal == "non-final":
+            records.append({"__terminal__": True})
+        records.append(live)
+        if terminal == "final":
+            records.append({"__terminal__": True})
+        path.write_text("".join(json.dumps(record) + "\n" for record in records), encoding="utf-8")
+        monkeypatch.setattr(_concrete.time, "time", lambda: 10000)
+        cursors = []
+
+        def cursor(payload):
+            cursors.append(payload["cursor"])
+            return payload["cursor"]
+
+        # Windows cannot replace the open destination. Model a successful
+        # replacement so this test reaches the recovery compaction contract.
+        owners = []
+        rehydrate = FileBackedReplayEventStream._rehydrate
+        replace = os.replace
+
+        def observe(owner):
+            owners.append(owner)
+            rehydrate(owner)
+
+        def commit(source, destination):
+            if os.name == "nt":
+                owners[-1]._file.close()
+            replace(source, destination)
+
+        monkeypatch.setattr(FileBackedReplayEventStream, "_rehydrate", observe)
+        monkeypatch.setattr(_concrete.os, "replace", commit)
+        first = FileBackedReplayEventStream(path=path, cursor_fn=cursor, ttl_seconds=10)
+        try:
+            assert cursors == [record["payload"]["cursor"] for record in expired] + [3]
+            assert first._highest_cursor == 10000
+            expected = [live] + ([{"__terminal__": True}] if terminal == "final" else [])
+            assert [json.loads(line) for line in path.read_text().splitlines()] == expected
+            assert len(first._buffer) == 1
+        finally:
+            first._cleanup_locks()
+
+        restarted = _StreamsRegistry()
+        restarted.use_file_backed_replay(storage_dir=tmp_path, cursor_fn=cursor, ttl_seconds=10)
+        restored = await restarted.get("recovered-compaction")
+        try:
+            assert await restored.last_cursor() == 3
+            if terminal == "final":
+                assert restored._state == "CLOSED"
+                assert restored._close_time == 9995
+                assert [event async for event in restored.subscribe()] == [{"cursor": 3}]
+                with pytest.raises(EventStreamClosedError):
+                    await restored.emit({"cursor": 4})
+                monkeypatch.setattr(_concrete.time, "time", lambda: 10005)
+                with pytest.raises(EventStreamNotFoundError):
+                    await restarted.get("recovered-compaction")
+                assert restarted._slots["recovered-compaction"] is _TOMBSTONE
+                assert list(tmp_path.iterdir()) == []
+            else:
+                assert restored._state == "ACTIVE"
+                await restored.emit({"cursor": 4})
+        finally:
+            await restarted.delete("recovered-compaction")
+
+    @pytest.mark.parametrize("backend", ["windows", "posix"])
+    async def test_delete_keeps_writer_ownership_until_backing_is_removed(self, tmp_path, monkeypatch, backend):
+        from azure.ai.agentserver.core.streaming import _concrete
+
+        held = set()
+
+        def flock(descriptor, flags):
+            del flags
+            if held:
+                raise BlockingIOError("owned inode")
+            held.add(descriptor)
+
+        monkeypatch.setattr(
+            _concrete, "fcntl", None if backend == "windows" else SimpleNamespace(LOCK_EX=1, LOCK_NB=2, flock=flock)
+        )
+        path = tmp_path / "ownership.jsonl"
+        stream = FileBackedReplayEventStream(path=path)
+        original = stream._file
+        descriptor = original.fileno()
+        released = False
+
+        class Handle:
+            @property
+            def closed(self):
+                return released
+
+            def __getattr__(self, name):
+                return getattr(original, name)
+
+            def close(self):
+                nonlocal released
+                if backend == "posix":
+                    assert not path.exists(), "POSIX ownership must survive until unlink"
+                original.close()
+                held.discard(descriptor)
+                released = True
+
+        stream._file = Handle()
+        unlink = Path.unlink
+        observations = []
+
+        def remove(candidate, *args, **kwargs):
+            if candidate == path:
+                observations.append("removing")
+                assert stream._file.closed is (backend == "windows")
+                if backend == "windows":
+                    os.fstat(stream._lock_fd)
+                    assert stream._lock_path.exists()
+                else:
+                    assert held == {descriptor}
+                with pytest.raises(RuntimeError, match="another process holds"):
+                    FileBackedReplayEventStream(path=path)
+                if backend == "posix" and os.name == "nt":
+                    # Model POSIX unlink while keeping the mocked inode lock.
+                    original.close()
+                result = unlink(candidate, *args, **kwargs)
+                if backend == "windows":
+                    with pytest.raises(RuntimeError, match="another process holds"):
+                        FileBackedReplayEventStream(path=path)
+                    assert not path.exists(), "a lock loser must not recreate the deleted log"
+                return result
+            return unlink(candidate, *args, **kwargs)
+
+        try:
+            with monkeypatch.context() as patch:
+                patch.setattr(Path, "unlink", remove)
+                await stream._on_delete()
+        finally:
+            stream._file = original
+            stream._cleanup_locks()
+            held.discard(descriptor)
+        assert observations == ["removing"]
+        assert list(tmp_path.iterdir()) == []
+        successor = FileBackedReplayEventStream(path=path)
+        try:
+            await successor.emit({"n": "successor"})
+            await stream._on_delete()
+            assert '"successor"' in path.read_text()
+        finally:
+            successor._cleanup_locks()
+
+    @pytest.mark.skipif(not hasattr(os, "fork"), reason="inode-lock waiter regression requires POSIX")
+    @pytest.mark.parametrize("timing", ["before-unlink", "after-unlink", "after-release", "after-replacement"])
+    async def test_cross_process_delayed_open_cannot_acknowledge_a_deleted_inode(self, tmp_path, monkeypatch, timing):
+        path = tmp_path / "delayed-writer.jsonl"
+        stream = FileBackedReplayEventStream(path=path)
+        await stream.emit({"n": "owner"})
+        context = multiprocessing.get_context("spawn")
+        parent, child = context.Pipe()
+        process = context.Process(target=_delayed_replay_writer, args=(str(path), child))
+        process.start()
+        child.close()
+        unlink = Path.unlink
+        cleanup = stream._cleanup_locks
+        results = []
+        successor = None
+
+        def attempt():
+            parent.send("acquire")
+            assert parent.poll(10), "delayed writer did not finish"
+            results.append(parent.recv())
+
+        def remove(candidate, *args, **kwargs):
+            if candidate == path and timing == "before-unlink":
+                attempt()
+            result = unlink(candidate, *args, **kwargs)
+            if candidate == path and timing == "after-unlink":
+                attempt()
+            return result
+
+        def release():
+            nonlocal successor
+            cleanup()
+            if timing == "after-replacement":
+                successor = FileBackedReplayEventStream(path=path)
+            if timing in ("after-release", "after-replacement"):
+                attempt()
+
+        try:
+            assert parent.poll(10), "delayed writer did not open the old inode"
+            assert parent.recv() == "opened"
+            with monkeypatch.context() as patch:
+                patch.setattr(Path, "unlink", remove)
+                patch.setattr(stream, "_cleanup_locks", release)
+                await stream._on_delete()
+            process.join(10)
+            assert process.exitcode == 0
+            assert results == ["_ReplayFileNotFoundError" if timing == "after-release" else "RuntimeError"]
+            if successor is not None:
+                await successor.emit({"n": "successor"})
+                await stream._on_delete()
+                assert '"successor"' in path.read_text()
+                assert '"waiter"' not in path.read_text()
+            else:
+                assert not path.exists()
+                assert list(tmp_path.iterdir()) == []
+        finally:
+            if process.is_alive():
+                process.terminate()
+            process.join(10)
+            parent.close()
+            process.close()
+            stream._cleanup_locks()
+            if successor is not None:
+                await successor._on_delete()
+
+    @pytest.mark.parametrize("artifact", ["file", "log", "descriptor", "lock"])
+    @pytest.mark.parametrize("failure", [PermissionError, asyncio.CancelledError])
+    @pytest.mark.parametrize("write_failed", [False, True])
+    async def test_windows_failed_delete_preserves_ownership_and_exact_cleanup_retry(
+        self, tmp_path, monkeypatch, artifact, failure, write_failed
+    ):
+        from azure.ai.agentserver.core.streaming import _concrete
+        from azure.ai.agentserver.core.streaming._registry import _StreamsRegistry, _TOMBSTONE
+
+        monkeypatch.setattr(_concrete, "fcntl", None)
+        registry = _StreamsRegistry()
+        registry.use_file_backed_replay(storage_dir=tmp_path)
+        stream = await registry.get_or_create("interrupted-delete")
+        await stream.emit({"n": "owner"})
+        stream._write_failed = write_failed
+        path = tmp_path / "interrupted-delete.jsonl"
+        lock_path = path.with_suffix(".jsonl.lock")
+        original = stream._file
+        primary = failure("owned cleanup interrupted")
+        active = True
+        unlink = Path.unlink
+        close_descriptor = os.close
+
+        class Handle:
+            def __getattr__(self, name):
+                return getattr(original, name)
+
+            def close(self):
+                if active and artifact == "file":
+                    raise primary
+                original.close()
+
+        stream._file = Handle()
+        descriptor = stream._lock_fd
+
+        def remove(candidate, *args, **kwargs):
+            if (artifact == "log" and candidate == path) or (artifact == "lock" and candidate == lock_path):
+                raise primary
+            return unlink(candidate, *args, **kwargs)
+
+        def close(candidate):
+            if artifact == "descriptor" and candidate == descriptor:
+                raise primary
+            close_descriptor(candidate)
+
+        try:
+            with monkeypatch.context() as patch:
+                patch.setattr(Path, "unlink", remove)
+                patch.setattr(_concrete.os, "close", close)
+                for _ in range(2):
+                    with pytest.raises(failure) as caught:
+                        await registry.delete("interrupted-delete")
+                    assert caught.value is primary
+                    assert registry._slots["interrupted-delete"] is stream
+                    assert registry._slots["interrupted-delete"] is not _TOMBSTONE
+                    assert registry._id_locks == {}
+                    assert path.exists() is (artifact in ("file", "log"))
+                    assert lock_path.exists()
+                    assert (stream._lock_fd is not None) is (artifact != "lock")
+                    if stream._lock_fd is not None:
+                        os.fstat(stream._lock_fd)
+                    with pytest.raises(RuntimeError, match="another process holds"):
+                        FileBackedReplayEventStream(path=path)
+                    assert path.exists() is (artifact in ("file", "log"))
+                if artifact in ("descriptor", "lock"):
+                    # Even an externally recreated path is not this owner's
+                    # pending sidecar cleanup target.
+                    path.write_text('{"emit_time": 1, "payload": "replacement"}\n', encoding="utf-8")
+            active = False
+            await registry.delete("interrupted-delete")
+            assert registry._slots["interrupted-delete"] is _TOMBSTONE
+            assert stream._file.closed
+            assert stream._lock_fd is None
+            assert stream._lock_path is None
+            if artifact in ("descriptor", "lock"):
+                assert path.read_text() == '{"emit_time": 1, "payload": "replacement"}\n'
+            else:
+                assert not path.exists()
+        finally:
+            active = False
+            stream._cleanup_locks()
+
+    async def test_delete_rejects_changed_backing_then_reacquires_only_unowned_replacement(self, tmp_path, monkeypatch):
+        from azure.ai.agentserver.core.streaming import _concrete
+
+        monkeypatch.setattr(_concrete, "fcntl", None)
+        path = tmp_path / "changed-backing.jsonl"
+        stream = FileBackedReplayEventStream(path=path)
+        await stream.emit({"n": "original"})
+        stream._file.close()
+        replacement = tmp_path / "replacement.jsonl"
+        content = '{"emit_time": 1, "payload": "replacement"}\n'
+        replacement.write_text(content, encoding="utf-8")
+        os.replace(replacement, path)
+        try:
+            with pytest.raises(RuntimeError, match="backing file changed"):
+                await stream._on_delete()
+            assert stream._write_failed
+            assert path.read_text() == content
+            os.fstat(stream._lock_fd)
+            stream._cleanup_locks()
+            foreign = FileBackedReplayEventStream(path=path)
+            try:
+                with pytest.raises(RuntimeError, match="another process holds"):
+                    await stream._on_delete()
+                assert path.read_text() == content
+                assert not foreign._file.closed
+            finally:
+                foreign._cleanup_locks()
+            await stream._on_delete()
+            assert list(tmp_path.iterdir()) == []
+        finally:
+            stream._cleanup_locks()
 
 
 # ----------------------------------------------------------------
@@ -820,6 +1178,8 @@ class TestCompactionPreservesPostCompactionWrites:
             assert stream._retired_files == []
         with pytest.raises(RuntimeError, match="writer unavailable"):
             await stream.emit({"n": 2})
+        if os.name == "nt":
+            monkeypatch.setattr(_concrete, "fcntl", None)
         await stream._on_delete()
         assert list(tmp_path.iterdir()) == []
 
@@ -880,6 +1240,8 @@ class TestCompactionPreservesPostCompactionWrites:
             with pytest.raises(RuntimeError, match="writer unavailable"):
                 await stream.emit({"n": 2})
             active = False
+        if os.name == "nt":
+            monkeypatch.setattr(_concrete, "fcntl", None)
         await stream._on_delete()
         assert replacement_handles[0].closed
         assert stream._retired_files == []
@@ -1070,7 +1432,7 @@ class TestCompactionPreservesPostCompactionWrites:
                         deleting.cancel()
                     release.set()
                     await asyncio.gather(deleting, return_exceptions=True)
-            assert path.exists()
+            assert path.exists() is (disruption != "lock")
             assert lock_path.exists()
         await stream._on_delete()
         assert stream._deletion_owner is owner
