@@ -194,5 +194,5 @@
         "azure.mgmt.iothub.operations.ResourceProviderCommonOperations.get_subscription_quota": "Microsoft.Devices.ResourceProviderCommonOperationGroup.getSubscriptionQuota",
         "azure.mgmt.iothub.aio.operations.ResourceProviderCommonOperations.get_subscription_quota": "Microsoft.Devices.ResourceProviderCommonOperationGroup.getSubscriptionQuota"
     },
-    "CrossLanguageVersion": "07577cfc9b2b"
+    "CrossLanguageVersion": "cb6c97c94143"
 }
