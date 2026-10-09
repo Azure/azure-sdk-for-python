@@ -15,7 +15,7 @@ from azure.mgmt.elasticsan import ElasticSanMgmtClient
     pip install azure-identity
     pip install azure-mgmt-elasticsan
 # USAGE
-    python elastic_sans_update_maximum_set_gen.py
+    python volume_groups_general_purpose_update_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,29 +30,32 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.elastic_sans.begin_update(
+    response = client.volume_groups.begin_update(
         resource_group_name="resourcegroupname",
         elastic_san_name="elasticsanname",
+        volume_group_name="volumegroupname",
         parameters={
+            "identity": {"type": "None", "userAssignedIdentities": {"key2350": {}}},
             "properties": {
-                "autoScaleProperties": {
-                    "scaleUpProperties": {
-                        "autoScalePolicyEnforcement": "None",
-                        "capacityUnitScaleUpLimitTiB": 17,
-                        "increaseCapacityUnitByTiB": 4,
-                        "unusedSizeTiB": 24,
-                    }
+                "deleteRetentionPolicy": {"policyState": "Enabled", "retentionPeriodDays": 14},
+                "encryption": "EncryptionAtRestWithPlatformKey",
+                "encryptionProperties": {
+                    "identity": {"userAssignedIdentity": "vgbeephfgecgg"},
+                    "keyVaultProperties": {
+                        "keyName": "rommjwp",
+                        "keyVaultUri": "https://microsoft.com/at",
+                        "keyVersion": "ulmxxgzgsuhalwesmhfslq",
+                    },
                 },
-                "baseSizeTiB": 13,
-                "extendedCapacitySizeTiB": 29,
-                "publicNetworkAccess": "Enabled",
+                "enforceDataIntegrityCheckForIscsi": True,
+                "networkAcls": {"virtualNetworkRules": [{"action": "Allow", "id": "fhhawhc"}]},
+                "protocolType": "Iscsi",
             },
-            "tags": {"key1931": "yhjwkgmrrwrcoxblgwgzjqusch"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/ElasticSans_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/VolumeGroups_GeneralPurpose_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

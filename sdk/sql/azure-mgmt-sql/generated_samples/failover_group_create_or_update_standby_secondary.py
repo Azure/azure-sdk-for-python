@@ -55,6 +55,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-08-01-preview/FailoverGroupCreateOrUpdateStandbySecondary.json
+# x-ms-original-file: 2026-08-01-preview/FailoverGroupCreateOrUpdateStandbySecondary.json
 if __name__ == "__main__":
     main()
