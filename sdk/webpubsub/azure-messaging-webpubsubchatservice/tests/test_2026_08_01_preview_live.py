@@ -109,7 +109,7 @@ class TestWebPubSubChatTopicsLive(WebPubSubChatTest):
             assert {room.id for room in client.list_rooms_for_user(user_ids[0])} == set(room_ids)
             _assert_resumable_pages(client.list_rooms(max_page_size=1))
             _assert_resumable_pages(client.list_users(max_page_size=1))
-            _assert_resumable_pages(client.list_rooms_for_user(user_ids[0], params={"maxpagesize": 1}))
+            _assert_resumable_pages(client.list_rooms_for_user(user_ids[0], max_page_size=1))
             setup.delete_room_member(room_ids[0], user_ids[0])
             assert {room.id for room in client.list_rooms_for_user(user_ids[0])} == {room_ids[1]}
         finally:

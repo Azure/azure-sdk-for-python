@@ -1,5 +1,12 @@
 # Release History
 
+## 1.0.0b2 (Unreleased)
+
+### Features Added
+
+  - Added topic management and topic message operations
+  - Added room, user, and user-room collection operations
+
 ## 1.0.0b1 (2026-09-21)
 
 ### Features Added
