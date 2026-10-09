@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-09-01-preview",
+  "apiVersions": {
+    "Microsoft.ApiManagement": "2026-09-01-preview"
+  },
+  "commit": "2335fe5db98171e7a78d08e712920b1869c536ce",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/apimanagement/resource-manager/Microsoft.ApiManagement/AIGateway",
+  "emitterVersion": "0.63.9",
+  "httpClientPythonVersion": "0.38.1"
+}
