@@ -24,6 +24,7 @@ from testcase import (
 )
 
 
+@pytest.mark.skip(reason="Inherited operations await the runtime 2026-08-01-preview routing fix.")
 class TestWebPubSubChatLive(WebPubSubChatTest):
     @WebPubSubChatPreparer()
     @recorded_by_proxy
