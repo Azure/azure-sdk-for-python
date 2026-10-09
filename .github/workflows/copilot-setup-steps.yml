@@ -33,12 +33,34 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r eng/ci_tools.txt
 
+      - name: Detect azure-ai-projects branch
+        id: branch_check
+        # Scopes the pre-install steps below (Node.js, tsp-client, the TypeSpec Python emitter's
+        # Python dependencies, and the package's dev dependencies) to sessions whose branch name
+        # identifies them as azure-ai-projects work (e.g.
+        # "copilot/azure-ai-projects-regenerate-<commit>", the actual naming GitHub's issue
+        # assignment uses for this package's regeneration workflow), so unrelated cloud agent
+        # sessions in this repo don't pay for a package-specific install. A plain branch-name
+        # check is used instead of git ancestry because actions/checkout's default shallow clone
+        # (fetch-depth: 1) does not reliably support merge-base ancestry checks.
+        run: |
+          BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+          if [[ "${BRANCH,,}" == *azure-ai-projects* ]]; then
+            echo "On branch '$BRANCH' (matches azure-ai-projects); running its pre-install steps."
+            echo "azure_ai_projects=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "On branch '$BRANCH' (no azure-ai-projects match); skipping its pre-install steps."
+            echo "azure_ai_projects=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Set up Node.js
+        if: steps.branch_check.outputs.azure_ai_projects == 'true'
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:
           node-version: "22"
 
       - name: Pre-install tsp-client (TypeSpec regeneration tooling)
+        if: steps.branch_check.outputs.azure_ai_projects == 'true'
         # Installs tsp-client here, while the setup job still has full network access, so that
         # later agent-initiated `npx`/`npm exec` calls against this directory (e.g. `tsp-client
         # generate`) don't need to resolve registry.npmjs.org from inside the agent's firewalled
@@ -46,16 +68,17 @@ jobs:
         run: npm ci --prefix eng/common/tsp-client
 
       - name: Pre-install TypeSpec Python emitter's Python dependencies
-        # `tsp-client update` (any package, not just azure-ai-projects) shells out to the
-        # TypeSpec Python emitter (`@azure-tools/typespec-python`), which creates its own isolated
-        # venv and pip-installs the `pygen` generator bundled in `@typespec/http-client-python`
-        # (pinned in eng/emitter-package.json) plus its pinned requirements (black, docutils,
-        # Jinja2, PyYAML, tomli, setuptools, ...). A plain "pip install" here would only warm pip's
-        # HTTP cache, which pip does not consult when the package index is unreachable. Instead,
-        # download the complete runtime requirement set, derived from the pinned package itself,
-        # into a fixed wheelhouse and point PIP_FIND_LINKS at it for the rest of the job,
-        # including the firewalled agent session. The final step verifies an install of the
-        # generator succeeds with the index disabled.
+        if: steps.branch_check.outputs.azure_ai_projects == 'true'
+        # `tsp-client update` shells out to the TypeSpec Python emitter
+        # (`@azure-tools/typespec-python`), which creates its own isolated venv and pip-installs
+        # the `pygen` generator bundled in `@typespec/http-client-python` (pinned in
+        # eng/emitter-package.json) plus its pinned requirements (black, docutils, Jinja2, PyYAML,
+        # tomli, setuptools, ...). A plain "pip install" here would only warm pip's HTTP cache,
+        # which pip does not consult when the package index is unreachable. Instead, download the
+        # complete runtime requirement set, derived from the pinned package itself, into a fixed
+        # wheelhouse and point PIP_FIND_LINKS at it for the rest of the job, including the
+        # firewalled agent session. The final step verifies an install of the generator succeeds
+        # with the index disabled.
         run: |
           WHEELHOUSE="$HOME/.cache/pip-find-links"
           WORKDIR="$(mktemp -d)"
@@ -70,26 +93,15 @@ jobs:
           echo "PIP_FIND_LINKS=$WHEELHOUSE" >> "$GITHUB_ENV"
 
       - name: Pre-install azure-ai-projects dev dependencies
-        # Scoped to sessions whose branch name identifies them as azure-ai-projects work (e.g.
-        # "copilot/azure-ai-projects-regenerate-<commit>", the actual naming GitHub's issue
-        # assignment uses for this package's regeneration workflow), so unrelated cloud agent
-        # sessions in this repo don't pay for a package-specific install. A plain branch-name
-        # check is used instead of git ancestry because actions/checkout's default shallow clone
-        # (fetch-depth: 1) does not reliably support merge-base ancestry checks.
+        if: steps.branch_check.outputs.azure_ai_projects == 'true'
         run: |
-          BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-          if [[ "${BRANCH,,}" == *azure-ai-projects* ]]; then
-            echo "On branch '$BRANCH' (matches azure-ai-projects); installing its dev dependencies."
-            # dev_requirements.txt contains bare local paths (e.g. "../../core/azure-core") that
-            # pip resolves against the current working directory, not the requirements file's own
-            # directory. Run it with cwd set to the package directory, in a subshell so the rest
-            # of this job keeps the repository root as its working directory.
-            (cd sdk/ai/azure-ai-projects && \
-              python -m pip install -r dev_requirements.txt && \
-              python -m pip install -e .)
-          else
-            echo "On branch '$BRANCH' (no azure-ai-projects match); skipping its dev dependency pre-install."
-          fi
+          # dev_requirements.txt contains bare local paths (e.g. "../../core/azure-core") that
+          # pip resolves against the current working directory, not the requirements file's own
+          # directory. Run it with cwd set to the package directory, in a subshell so the rest
+          # of this job keeps the repository root as its working directory.
+          (cd sdk/ai/azure-ai-projects && \
+            python -m pip install -r dev_requirements.txt && \
+            python -m pip install -e .)
 
       - name: Install azsdk mcp server
         shell: pwsh
