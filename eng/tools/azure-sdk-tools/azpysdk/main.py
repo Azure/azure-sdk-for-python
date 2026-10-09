@@ -74,6 +74,12 @@ def build_parser() -> argparse.ArgumentParser:
             "Passed through to 'uv venv --python'. Requires --isolate and uv."
         ),
     )
+    parser.add_argument(
+        "--disablecov",
+        action="store_true",
+        default=False,
+        help="Disable code coverage collection for test checks.",
+    )
 
     # mutually exclusive logging options
     log_group = parser.add_mutually_exclusive_group()
@@ -117,6 +123,12 @@ def build_parser() -> argparse.ArgumentParser:
             "Python version to use when creating the isolated venv (e.g. 3.13). "
             "Passed through to 'uv venv --python'. Requires --isolate and uv."
         ),
+    )
+    common.add_argument(
+        "--disablecov",
+        action="store_true",
+        default=argparse.SUPPRESS,
+        help="Disable code coverage collection for test checks.",
     )
     common.add_argument(
         "--service",
