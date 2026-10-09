@@ -16,3 +16,11 @@ guidance.
   local validation.
 - Prefer focused changes and the smallest existing validation that covers
   them. Do not claim a check passed unless it was run successfully.
+
+## Learnings
+
+When addressing PR feedback, reply in each addressed review thread with the
+change or deliberate no-change decision and validation evidence. After pushing,
+recheck previously addressed threads and resolve those whose fixes are now
+published and verified. Do not leave delivered fixes open, or resolve a thread
+merely because a fix exists locally; explain and retain unresolved blockers.

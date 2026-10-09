@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 import runpy
+import subprocess
+import sys
 import time
 from pathlib import Path
 from unittest.mock import Mock, patch
@@ -269,6 +271,32 @@ def test_client_access_sample_does_not_log_token(monkeypatch, capsys):
     captured = capsys.readouterr()
     assert captured.out == f"{base_url}\n"
     assert captured.err == ""
+
+
+@pytest.mark.parametrize(
+    "sample_name,variable",
+    [
+        ("sample_errors.py", "WPS_CHAT_CONNECTION_STRING"),
+        ("sample_logging.py", "WPS_CHAT_ENDPOINT"),
+        ("sample_roles_and_permissions.py", "WPS_CHAT_CONNECTION_STRING"),
+        ("sample_roles_and_permissions_async.py", "WPS_CHAT_CONNECTION_STRING"),
+    ],
+)
+def test_sample_without_configuration_exits_successfully(sample_name, variable, monkeypatch):
+    monkeypatch.delenv(variable, raising=False)
+    sample_path = Path(__file__).resolve().parents[1] / "samples" / sample_name
+
+    result = subprocess.run(
+        [sys.executable, str(sample_path)],
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=30,
+    )
+
+    assert result.returncode == 0, result.stderr
+    assert result.stdout == f"Set {variable} to run this sample.\n"
+    assert result.stderr == ""
 
 
 def test_builtin_roles_and_generated_permissions():

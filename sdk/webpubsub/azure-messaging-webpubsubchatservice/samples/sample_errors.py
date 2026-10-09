@@ -23,7 +23,8 @@ def handle_service_errors(client):
 
 def main():
     if not os.environ.get("WPS_CHAT_CONNECTION_STRING"):
-        raise SystemExit("Set WPS_CHAT_CONNECTION_STRING to run this sample.")
+        print("Set WPS_CHAT_CONNECTION_STRING to run this sample.")
+        return
     with WebPubSubChatServiceClient.from_connection_string(
         os.environ["WPS_CHAT_CONNECTION_STRING"], os.environ.get("WPS_CHAT_HUB", "test_hub")
     ) as client:
