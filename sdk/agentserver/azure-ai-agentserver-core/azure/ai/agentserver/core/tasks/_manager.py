@@ -14,7 +14,8 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import os
 import traceback
-from collections.abc import Awaitable, Callable, Mapping
+from collections.abc import AsyncIterator, Awaitable, Callable, Mapping
+from contextlib import asynccontextmanager
 from typing import Any, TypeVar
 
 from .._config import AgentConfig
@@ -33,6 +34,7 @@ from ._attachments import (
     _read_input_value,
     _ref_key,
     _resolve_input_storage,
+    _steering_pending_ack_ids,
 )
 from ._decorator import TaskOptions, _deserialize_input, _resolve_effective_timeout, _serialize_input
 from ._exceptions import (
@@ -186,7 +188,7 @@ def _parse_turn_started_at(value: Any) -> float | None:
 
 
 def _resolve_queued_steerers_on_terminal(
-    pending_steering_futures: dict[str, list["asyncio.Future[Any]"]],
+    pending_steering_futures: dict[str, dict[str, "asyncio.Future[Any]"]],
     task_id: str,
     *,
     current_status: str,
@@ -203,9 +205,9 @@ def _resolve_queued_steerers_on_terminal(
     Pops every queued steerer future for ``task_id`` and resolves
     each with ``TaskConflictError(current_status=current_status)``.
 
-    :param pending_steering_futures: Per-task list of pending steerer
+    :param pending_steering_futures: Per-task map of pending steerer
         futures (mutated in-place — emptied for the given ``task_id``).
-    :type pending_steering_futures: dict[str, list[asyncio.Future[Any]]]
+    :type pending_steering_futures: dict[str, dict[str, asyncio.Future[Any]]]
     :param task_id: The task whose queued steerers should be resolved.
     :type task_id: str
     :keyword current_status: Status string to carry on
@@ -214,8 +216,8 @@ def _resolve_queued_steerers_on_terminal(
     """
     # TaskConflictError is already imported at module top-level (line 24).
 
-    queued = pending_steering_futures.pop(task_id, [])
-    for fut in queued:
+    queued = pending_steering_futures.pop(task_id, {})
+    for fut in queued.values():
         if not fut.done():
             fut.set_exception(TaskConflictError(task_id, current_status))
 
@@ -431,19 +433,22 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         self._shutdown_event = shutdown_event or asyncio.Event()
         self._shutdown_grace_seconds = shutdown_grace_seconds
         self._active_generation_future: dict[str, asyncio.Future[Any]] = {}
-        self._pending_steering_futures: dict[str, list[asyncio.Future[Any]]] = {}
+        self._pending_steering_futures: dict[str, dict[str, asyncio.Future[Any]]] = {}
         #   Layer 2: periodic recovery scan task. Created
         # at startup() time; cancelled at shutdown().
         self._periodic_recovery_task: asyncio.Task[None] | None = None
         #   / C-WQ-1..3 — per-task write-queue
         # registry. A single asyncio.Lock per task_id serializes all
         # in-process PATCHes against that task so etag conflicts become
-        # rare (only cross-process). Lazy-created on first use; dropped
-        # in ``_active_tasks_pop`` (no leaks).
+        # rare (only cross-process). Lazy-created on first use; guards
+        # track holders + waiters so remote-task entries can be reclaimed
+        # safely when the final user exits.
         #   — also tracks the latest known etag
         # per task_id outside the _ActiveTask entry, so reclaim/scan
         # paths (which have no _ActiveTask yet) can still benefit.
         self._task_write_locks: dict[str, asyncio.Lock] = {}
+        self._task_write_lock_users: dict[str, int] = {}
+        self._task_write_cleanup_pending: set[str] = set()
         self._task_etag_cache: dict[str, str] = {}
         # SOT §52 — per-turn timeout watchdog registry. Each per-turn
         # watchdog gets registered here so that the steering-drain
@@ -615,7 +620,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 raise RuntimeError("Task list did not converge after retryable conflict") from exc
             raise translated from exc
 
-    def _register_steering_future(self, task_id: str) -> asyncio.Future[Any]:
+    def _register_steering_future(self, task_id: str, ack_id: str) -> asyncio.Future[Any]:
         """Create and register a future for a queued steering input.
 
         Must be called BEFORE ``_append_steering_input()`` to avoid a race
@@ -623,23 +628,54 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         :param task_id: The task identifier.
         :type task_id: str
+        :param ack_id: Unique internal identifier of the queue slot.
+        :type ack_id: str
         :return: The registered future.
         :rtype: asyncio.Future[Any]
         """
+        pending = self._pending_steering_futures.setdefault(task_id, {})
+        if ack_id in pending:
+            raise ValueError(f"Steering acknowledgment ID already registered for task {task_id!r}")
         loop = asyncio.get_running_loop()
         future: asyncio.Future[Any] = loop.create_future()
-        if task_id not in self._pending_steering_futures:
-            self._pending_steering_futures[task_id] = []
-        self._pending_steering_futures[task_id].append(future)
+        pending[ack_id] = future
         return future
 
-    async def _cancel_queued_steering_input(  # pylint: disable=unused-argument
+    def _remove_steering_future(self, task_id: str, ack_id: str, future: asyncio.Future[Any]) -> None:
+        """Remove a registered future only if this request owns its ID.
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :param ack_id: Internal identifier of the queued slot.
+        :type ack_id: str
+        :param future: The request's registered future.
+        :type future: asyncio.Future[Any]
+        """
+        pending = self._pending_steering_futures.get(task_id)
+        if pending is not None and pending.get(ack_id) is future:
+            del pending[ack_id]
+            if not pending:
+                self._pending_steering_futures.pop(task_id, None)
+
+    def _unregister_steering_future(self, task_id: str, ack_id: str, future: asyncio.Future[Any]) -> None:
+        """Discard only the future owned by a failed steering append.
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :param ack_id: Internal identifier of the attempted queue slot.
+        :type ack_id: str
+        :param future: The failed append's registered future.
+        :type future: asyncio.Future[Any]
+        """
+        self._remove_steering_future(task_id, ack_id, future)
+        future.cancel()
+
+    async def _cancel_queued_steering_input(
         self,
         *,
         task_id: str,
         future: asyncio.Future[Any],
-        input_id: str | None,
-        input_val: Any,
+        ack_id: str,
     ) -> None:
         """Remove a queued steering input from the chain's pending queue.
 
@@ -652,53 +688,41 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         :keyword task_id: The chain task identifier.
         :keyword future: The queued steerer's result_future.
-        :keyword input_id: The input_id of the queued slot (used for the
-            future-list cleanup; the queue entry itself is identified by
-            ``input_val``).
-        :keyword input_val: The raw queued value used to identify which
-            ``pending_inputs`` entry to remove.
+        :keyword ack_id: Internal ID identifying the exact queued slot, even
+            when multiple inputs have identical values or public input IDs.
         """
         from ._attachments import _is_ref, _ref_key  # pylint: disable=import-outside-toplevel
         from ._exceptions import TaskCancelled  # pylint: disable=import-outside-toplevel
 
-        async with self._get_task_write_lock(task_id):
+        async with self._task_write_guard(task_id):
             try:
                 task_info = await self._provider_get_tracked(task_id)
             except Exception:  # pylint: disable=broad-exception-caught
                 task_info = None
             if task_info is None or not task_info.payload:
                 # Chain already gone — just resolve the future.
+                self._remove_steering_future(task_id, ack_id, future)
                 if not future.done():
                     future.set_exception(TaskCancelled())
                 return
             steering = dict(task_info.payload.get("steering") or {})
             pending = list(steering.get("pending_inputs") or [])
+            pending_ack_ids = _steering_pending_ack_ids(steering, len(pending))
             attachments_patch: dict[str, Any] = {}
-            # Drop the first queue entry whose raw value matches ``input_val``.
-            removed = False
-            new_pending: list[Any] = []
-            for entry in pending:
-                if not removed:
-                    raw = entry
-                    if _is_ref(entry):
-                        # For ref-shaped entries, resolve via attachment to
-                        # compare against input_val. If the attachment is
-                        # missing, fall back to ref identity (unlikely).
-                        key = _ref_key(entry)
-                        raw = (task_info.attachments or {}).get(key, entry)
-                    if raw == input_val:
-                        removed = True
-                        if _is_ref(entry):
-                            attachments_patch[_ref_key(entry)] = None
-                        continue
-                new_pending.append(entry)
-            if not removed:
+            if ack_id not in pending_ack_ids:
                 # Queue entry already drained or never landed; just resolve.
+                self._remove_steering_future(task_id, ack_id, future)
                 if not future.done():
                     future.set_exception(TaskCancelled())
                 return
-            steering["pending_inputs"] = new_pending
-            steering["cancel_requested"] = len(new_pending) > 0
+            index = pending_ack_ids.index(ack_id)
+            entry = pending.pop(index)
+            pending_ack_ids.pop(index)
+            if _is_ref(entry):
+                attachments_patch[_ref_key(entry)] = None
+            steering["pending_inputs"] = pending
+            steering["pending_ack_ids"] = pending_ack_ids
+            steering["cancel_requested"] = len(pending) > 0
             payload_patch: dict[str, Any] = {"steering": steering}
             try:
                 # Spec 031 / FR-005a+b: the outer lock is already held, so use
@@ -721,10 +745,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                     task_id,
                     exc_info=True,
                 )
-        # Remove the future from the registered pending list and resolve it.
-        pending_list = self._pending_steering_futures.get(task_id) or []
-        if future in pending_list:
-            pending_list.remove(future)
+        # Remove this request's registration and resolve its returned handle.
+        self._remove_steering_future(task_id, ack_id, future)
         if not future.done():
             future.set_exception(TaskCancelled())
 
@@ -2339,7 +2361,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # cross-process conflicts retry OUTSIDE the lock via the recursion
         # below (the per-task ``asyncio.Lock`` is non-reentrant).
         drain_conflict: BaseException | None = None
-        async with self._get_task_write_lock(task_id):
+        async with self._task_write_guard(task_id):
             task_info = await self._provider_get_tracked(task_id)
             if task_info is None:
                 return None
@@ -2351,6 +2373,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             if not pending:
                 return None
 
+            pending_ack_ids = _steering_pending_ack_ids(steering, len(pending))
+            next_ack_id = pending_ack_ids.pop(0)
             # Pop the next input from the queue.: the entry may be
             # either a raw inline value (≤ 20 KiB at append) or a ref slot
             # pointing into ``task_info.attachments``. Resolve uniformly via
@@ -2367,6 +2391,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             # state need to survive a crash mid-drain.)
             steering["active_input"] = next_input_raw
             steering["pending_inputs"] = pending
+            steering["pending_ack_ids"] = pending_ack_ids
             #   SOT: internal
             # _steering["generation"] writes removed. The drain transition
             # IS the generation advance — no separate counter needed.
@@ -2442,11 +2467,15 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 _conflict_attempt=_conflict_attempt + 1,
             )
 
-        # Pop and bind the next pending steering future (if any)
+        # Bind only the future registered for this durable queue slot.
         new_future: asyncio.Future[Any] | None = None
-        steering_futures = self._pending_steering_futures.get(task_id, [])
-        if steering_futures:
-            new_future = steering_futures.pop(0)
+        steering_futures = self._pending_steering_futures.get(task_id)
+        if next_ack_id is not None and steering_futures is not None:
+            new_future = steering_futures.pop(next_ack_id, None)
+            if not steering_futures:
+                self._pending_steering_futures.pop(task_id, None)
+        if next_ack_id is not None and new_future is None:
+            logger.debug("Steering input %s for task %s has no local acknowledgment future", next_ack_id, task_id)
 
         # Resolve the queued steerer's future binding for the new turn.
         #   /  (Subscriber): the OLD result_future is NOT
@@ -3113,6 +3142,36 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             self._task_write_locks[task_id] = lock
         return lock
 
+    @asynccontextmanager
+    async def _task_write_guard(self, task_id: str) -> AsyncIterator[asyncio.Lock]:
+        """Hold the per-task write lock and reclaim it after its final user.
+
+        Holder/waiter accounting is incremented before lock acquisition, so a
+        releasing holder cannot delete the registry entry while another caller
+        is queued on the same lock.
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :return: The acquired per-task write lock.
+        :rtype: ~collections.abc.AsyncIterator[asyncio.Lock]
+        """
+        lock = self._get_task_write_lock(task_id)
+        self._task_write_lock_users[task_id] = self._task_write_lock_users.get(task_id, 0) + 1
+        try:
+            async with lock:
+                yield lock
+        finally:
+            remaining = self._task_write_lock_users[task_id] - 1
+            if remaining:
+                self._task_write_lock_users[task_id] = remaining
+            else:
+                self._task_write_lock_users.pop(task_id, None)
+                if task_id not in self._active_tasks and self._task_write_locks.get(task_id) is lock:
+                    self._task_write_locks.pop(task_id, None)
+                    if task_id in self._task_write_cleanup_pending:
+                        self._task_write_cleanup_pending.discard(task_id)
+                        self._task_etag_cache.pop(task_id, None)
+
     def _track_etag(self, task_id: str, etag: str | None) -> None:
         """— refresh the latest known etag for a task.
 
@@ -3160,7 +3219,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         :type task_id: str
         """
         self._active_tasks.pop(task_id, None)
+        if self._task_write_lock_users.get(task_id):
+            self._task_write_cleanup_pending.add(task_id)
+            return
         self._task_write_locks.pop(task_id, None)
+        self._task_write_cleanup_pending.discard(task_id)
         self._task_etag_cache.pop(task_id, None)
 
     async def _provider_get_tracked(self, task_id: str) -> Any:
@@ -3263,7 +3326,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         :return: The provider update response.
         :rtype: Any
         """
-        async with self._get_task_write_lock(task_id):
+        async with self._task_write_guard(task_id):
             return await self._provider_update_lock_held(task_id, patch, force_if_match=force_if_match)
 
     async def _terminal_write_locked(  # pylint: disable=too-many-statements
@@ -3309,7 +3372,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         """
         prior_lease_owner = patch.lease_owner
         prior_lease_instance = patch.lease_instance_id
-        async with self._get_task_write_lock(task_id):
+        async with self._task_write_guard(task_id):
             attempts = 0
             cached_expiry_count = self._cached_expiry_count(task_id)
             while True:
