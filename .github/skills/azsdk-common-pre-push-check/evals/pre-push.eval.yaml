@@ -1,0 +1,130 @@
+name: azsdk-common-pre-push-check
+description: Pre-push routing and failure-gate coverage for docs and non-SDK changes
+type: capability
+
+environment:
+  skills:
+    - ..
+
+tags:
+  area: azsdk-common-pre-push-check
+  type: ci-gate
+
+defaults:
+  runs: 1
+  timeout: "90s"
+  model: gpt-5.4
+  executor: copilot-sdk
+
+scoring:
+  threshold: 1.0
+
+stimuli:
+  - name: trigger-docs-only
+    prompt: "I changed only README.md in /work/azure-sdk-for-python. Run pre-push checks for spelling and links before publishing. For this routing test, load the appropriate skill but do not execute commands."
+    graders:
+      - type: skill-invocation
+        config:
+          required: ["azsdk-common-pre-push-check"]
+
+  - name: trigger-non-sdk-tooling
+    prompt: "Validate changes before pushing tools/widget/package.json and tools/widget/src/index.ts in /work/azure-sdk-tools. These are non-SDK tooling changes. For this routing test, load the appropriate skill but do not execute commands."
+    graders:
+      - type: skill-invocation
+        config:
+          required: ["azsdk-common-pre-push-check"]
+
+  - name: trigger-publish-agent-changes
+    prompt: "My changes in /work/azure-sdk-tools are ready to push using the agent's commit-and-push tool. Run local static checks first. For this routing test, load the appropriate skill but do not execute commands."
+    graders:
+      - type: skill-invocation
+        config:
+          required: ["azsdk-common-pre-push-check"]
+
+  - name: anti-trigger-sdk-generation
+    prompt: "Generate the SDK locally from /work/azure-sdk-for-python/sdk/widgets/azure-widgets/tsp-location.yaml, generate only. For this routing test, load the appropriate skill but do not execute commands."
+    environment:
+      skills:
+        - ..
+        - ../../azsdk-common-generate-sdk-locally
+    graders:
+      - type: skill-invocation
+        config:
+          required: ["azsdk-common-generate-sdk-locally"]
+          disallowed: ["azsdk-common-pre-push-check"]
+
+  - name: anti-trigger-sdk-release
+    prompt: "Check release readiness for the Python azure-widgets package. I am not pushing source changes. For this routing test, load the appropriate skill but do not execute commands."
+    environment:
+      skills:
+        - ..
+        - ../../azsdk-common-sdk-release
+    graders:
+      - type: skill-invocation
+        config:
+          required: ["azsdk-common-sdk-release"]
+          disallowed: ["azsdk-common-pre-push-check"]
+
+  - name: anti-trigger-api-feedback
+    prompt: "Delegate APIView feedback from https://apiview.dev/Assemblies/Review/example for the Python azure-widgets package. For this routing test, load the appropriate skill but do not execute commands."
+    environment:
+      skills:
+        - ..
+        - ../../azsdk-common-apiview-feedback-resolution
+    graders:
+      - type: skill-invocation
+        config:
+          required: ["azsdk-common-apiview-feedback-resolution"]
+          disallowed: ["azsdk-common-pre-push-check"]
+
+  - name: failed-spelling-blocks-push
+    prompt: |
+      Use azsdk-common-pre-push-check and read its check guide to assess this
+      hypothetical pre-push report; do not execute checks or push.
+      Repository /work/azure-sdk-for-python targets origin/release, verified
+      with a valid merge base. Two committed files, one staged Markdown file,
+      one unstaged Python file, and one untracked non-ignored doc changed.
+      Spelling was run on all five files and exited 1 with spelling errors.
+      Links on the changed docs and lint on the affected Python project passed.
+      Can I publish? Explain the required next action and the scope of checks.
+    rubric:
+      - Refuses publishing because spelling exited 1.
+      - Requires fixing spelling and rerunning affected checks.
+      - Covers the whole branch plus staged, unstaged, and untracked non-ignored files, not only the latest commit.
+      - Does not claim to have executed checks or pushed.
+    graders:
+      - type: skill-invocation
+        config:
+          required: ["azsdk-common-pre-push-check"]
+      - type: tool-calls
+        config:
+          required:
+            - name: "^(view|read_file)$"
+      - type: output-matches
+        config:
+          pattern: "(?is)(fail|block|do not|cannot|can't|not ready|no\\b).{0,250}(push|publish)|(push|publish).{0,250}(fail|block|do not|cannot|can't|not ready)"
+      - type: prompt
+
+  - name: unavailable-history-blocks-validation
+    prompt: |
+      Use azsdk-common-pre-push-check and read its check guide. Assess these
+      supplied diagnostics for /work/azure-sdk-tools without running commands:
+      git rev-parse --verify origin/release exited 128 (missing ref);
+      fetching target history is not permitted. No file list was produced.
+      Should the empty list count as a successful pre-push check?
+    rubric:
+      - Marks validation blocked, not passed or not applicable, because the target ref is missing and fetching is forbidden.
+      - Does not substitute HEAD^ or origin/main for the missing target.
+      - Does not claim to have run commands or published changes.
+    graders:
+      - type: skill-invocation
+        config:
+          required: ["azsdk-common-pre-push-check"]
+      - type: tool-calls
+        config:
+          required:
+            - name: "^(view|read_file)$"
+      - type: output-matches
+        config:
+          pattern: "(?is)(block|missing|unavailable).{0,200}(history|ref|base|validation)|(history|ref|base|validation).{0,200}(block|missing|unavailable)"
+      - type: prompt
