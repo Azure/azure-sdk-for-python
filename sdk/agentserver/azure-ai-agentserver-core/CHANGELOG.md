@@ -4,6 +4,12 @@
 
 ### Bugs Fixed
 
+- Preserve an observed final terminal marker before recovery-time TTL
+  compaction, keeping closed replay logs closed across subsequent restarts.
+- Retain replay backing ownership through deletion: keep POSIX inode locks
+  until unlink and Windows sidecar locks until log removal. Acquire Windows
+  ownership before opening the log, reject stale or replaced locked descriptors,
+  and retry cleanup without unlinking a successor's backing file.
 - Release owned replay-file and writer-lock resources on every rehydration
   failure, including callback errors and cancellation. Surface cleanup errors
   with their original failure context and retain exact registry cleanup owners
