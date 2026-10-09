@@ -103,6 +103,11 @@ that no live or pending execution, stored response, or resumable durable input
 owns it. Storage failures or unavailable durable ownership lookup fail closed;
 an empty cursor alone does not authorize reclamation.
 
+Durable ownership lookup enumerates all matching tasks, not just the newest
+listing page. Providers perform complete no-limit enumeration and retain control
+of their continuation cursors. A failed or incomplete scan never proves absence
+of an owner or permits DELETE to complete.
+
 DELETE retains exact caller-scoped ownership until replay and response-provider
 cleanup succeed, including across cleanup errors and cancellation. Before
 removing backing state, it conditionally fences that response's lifecycle input
@@ -120,6 +125,11 @@ allowing an old recovered turn to reuse the new execution's references or
 reservation. Legacy inputs without an incarnation retain fail-closed deletion
 checks. Public HTTP/SSE IDs, task-chain input IDs, and replay filenames do not
 change.
+
+An invalid incarnation is never re-invoked. Only an exact match to the current
+persisted input, without a deletion fence and under scoped recovery admission,
+may reach fail-closed response settlement. Deleted or stale malformed callbacks
+cannot create a failure marker for a removed or replacement response.
 
 ## HTTP / SSE wire mapping
 

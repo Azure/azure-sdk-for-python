@@ -102,6 +102,35 @@ class TestLocalProviderListing:
     """Tests for listing/querying tasks."""
 
     @pytest.mark.asyncio
+    async def test_no_limit_enumerates_all_tasks_without_changing_explicit_pages(
+        self, provider: LocalFileTaskProvider
+    ) -> None:
+        expected = set()
+        for index in range(126):
+            info = await provider.create(
+                TaskCreateRequest(
+                    id=f"task-{index}",
+                    agent_name="agent",
+                    session_id="session",
+                    title="Listing regression",
+                    tags={"task_name": "response"},
+                )
+            )
+            expected.add(info.id)
+        await provider.create(TaskCreateRequest(agent_name="other", session_id="session", title="Other agent"))
+        await provider.create(TaskCreateRequest(agent_name="agent", session_id="other", title="Other session"))
+        filters = {"agent_name": "agent", "session_id": "session", "tag": {"task_name": "response"}}
+        all_tasks = await provider.list(**filters)
+        assert len(all_tasks) == 126
+        assert {info.id for info in all_tasks} == expected
+        first = await provider.list(**filters, limit=20)
+        assert len(first) == 20
+        remaining = await provider.list(**filters, after=first[-1].id)
+        assert len(remaining) == 106
+        assert [info.id for info in first + remaining] == [info.id for info in all_tasks]
+        assert len(await provider.list(**filters, limit=1000)) == 100
+
+    @pytest.mark.asyncio
     async def test_list_tasks_by_agent(self, provider: LocalFileTaskProvider) -> None:
         """list filters by agent_name and session_id."""
         req1 = TaskCreateRequest(agent_name="agent-a", session_id="s1", status="pending", title="task a", payload={})

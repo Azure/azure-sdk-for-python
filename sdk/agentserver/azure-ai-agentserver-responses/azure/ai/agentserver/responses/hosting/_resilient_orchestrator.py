@@ -949,8 +949,15 @@ class ResilientResponseOrchestrator:
         if not isinstance(response_id, str):
             return await self._execute_admitted_task(ctx)
         user_id_key = platform_context_from_params(params).user_id_key
-        incarnation_id = incarnation_from_params(params)
-        if await _task_input_deleted(ctx.task_id, response_id, user_id_key, incarnation_id=incarnation_id):
+        malformed_input = None
+        try:
+            incarnation_id = incarnation_from_params(params)
+        except ValueError:
+            incarnation_id = None
+            malformed_input = params
+        if await _task_input_deleted(
+            ctx.task_id, response_id, user_id_key, incarnation_id=incarnation_id, malformed_input=malformed_input
+        ):
             logger.info("Skipping deleted durable response input %s", response_id)
             return None
         state = self._runtime_state
@@ -968,8 +975,8 @@ class ResilientResponseOrchestrator:
             logger.info("Deferring recovered response %s during a competing lifecycle operation", response_id)
             return _ExitForRecovery()
         try:
-            if incarnation_id is None or not await _task_input_deleted(
-                ctx.task_id, response_id, user_id_key, incarnation_id=incarnation_id
+            if (incarnation_id is None and malformed_input is None) or not await _task_input_deleted(
+                ctx.task_id, response_id, user_id_key, incarnation_id=incarnation_id, malformed_input=malformed_input
             ):
                 return await self._execute_admitted_task(ctx)
         finally:

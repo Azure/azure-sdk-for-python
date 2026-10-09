@@ -4,6 +4,9 @@
 
 ### Bugs Fixed
 
+- Enumerate every matching local durable task when no listing limit is
+  requested, matching hosted task enumeration. Reject missing or repeated
+  hosted continuation cursors instead of returning an incomplete task list.
 - Restore existing file-backed replay logs during stream lookup and deletion
   after restart without creating absent logs. Serialize lookup, creation, and
   deletion for the same stream ID within the registry.
