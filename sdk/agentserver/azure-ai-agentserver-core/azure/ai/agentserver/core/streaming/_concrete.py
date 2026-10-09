@@ -23,7 +23,7 @@ import re
 import time
 from collections.abc import AsyncIterator, Callable
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, BinaryIO, Optional
 
 from ._protocol import (
     EventStreamClosedError,
@@ -550,10 +550,27 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
         self._lock_fd: Optional[int] = None
         self._lock_path: Optional[Path] = None
 
-        # Acquire single-writer lock + open file for append (rule 32).
+        self._file = self._open_file()
+        try:
+            self._acquire_file_lock()
+        except OSError:
+            self._file.close()
+            raise
+
+        # Rehydrate from disk if file already had content (rule 28).
+        self._rehydrate()
+
+    def _open_file(self) -> BinaryIO:
+        """Open the replay for append and recovery.
+
+        :return: The replay file handle.
+        :rtype: BinaryIO
+        """
         self._path.parent.mkdir(parents=True, exist_ok=True)
-        # Open in append+read mode; fcntl.flock on POSIX, lock-file fallback elsewhere.
-        self._file = open(self._path, "a+b")  # pylint: disable=consider-using-with
+        return open(self._path, "a+b")  # pylint: disable=consider-using-with
+
+    def _acquire_file_lock(self) -> None:
+        """Acquire the single-writer lock before accessing the replay."""
         if fcntl is not None:
             try:
                 fcntl.flock(self._file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -577,9 +594,6 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
                 raise RuntimeError(
                     f"FileBackedReplayEventStream: another process holds the " f"lock-file on {self._path}"
                 ) from exc
-
-        # Rehydrate from disk if file already had content (rule 28).
-        self._rehydrate()
 
     def _serialize(self, payload: Any, emit_time: float) -> bytes:
         if self._serializer is not None:
@@ -843,6 +857,21 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
             except OSError:
                 logger.error("FileBackedReplayEventStream: failed to delete %s", self._path, exc_info=True)
                 raise
+
+
+class _FileBackedReplayDeletion(FileBackedReplayEventStream):
+    """A non-reading, retryable cleanup owner for an existing cold replay."""
+
+    def _open_file(self) -> BinaryIO:
+        # Never create an absent log, including when another process removes it.
+        try:
+            return open(self._path, "r+b")  # pylint: disable=consider-using-with
+        except FileNotFoundError as exc:
+            raise EventStreamNotFoundError(str(self._path)) from exc
+
+    def _rehydrate(self) -> None:
+        # Reuse the file-lock and deletion hooks without decoding replay events.
+        self._state = self._STATE_GONE
 
 
 __all__ = [

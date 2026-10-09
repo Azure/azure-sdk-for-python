@@ -4,6 +4,9 @@
 
 ### Bugs Fixed
 
+- Delete cold file-backed replay logs without deserializing their events, so
+  malformed logs remain removable after restart. Preserve locking and retryable
+  cleanup when file access, lock acquisition, or removal fails.
 - Apply explicit task-list limits to the total returned records for both hosted
   and local providers, clamped to 100. Keep omitted or `None` limits as complete
   enumeration so recovery and response-ownership scans include every page.

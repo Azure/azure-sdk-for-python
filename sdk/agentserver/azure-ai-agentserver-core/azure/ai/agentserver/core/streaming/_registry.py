@@ -42,6 +42,7 @@ from ._concrete import (
     BroadcastEventStream,
     FileBackedReplayEventStream,
     ReplayEventStream,
+    _FileBackedReplayDeletion,
     _safe_stream_filename,
 )
 from ._protocol import (
@@ -87,7 +88,7 @@ class _StreamsRegistry:
         # Factory closure — set by use_* configurators. Default:
         # use_in_memory_live per rule 37a (also).
         self._factory: Callable[[str], EventStream] = lambda _id: BroadcastEventStream()
-        self._restore: Callable[[str], Optional[EventStream]] = lambda _id: None
+        self._restore: Callable[[str, bool], Optional[EventStream]] = lambda _id, _for_deletion: None
 
     # ----- Configurators (sync) -----
 
@@ -98,7 +99,7 @@ class _StreamsRegistry:
         Suitable when consumers attach before the producer starts.
         """
         self._factory = lambda _id: BroadcastEventStream()
-        self._restore = lambda _id: None
+        self._restore = lambda _id, _for_deletion: None
 
     def use_in_memory_replay(
         self,
@@ -120,7 +121,7 @@ class _StreamsRegistry:
         :paramtype ttl_seconds: Optional[float]
         """
         self._factory = lambda _id: ReplayEventStream(cursor_fn=cursor_fn, ttl_seconds=ttl_seconds)
-        self._restore = lambda _id: None
+        self._restore = lambda _id, _for_deletion: None
 
     def use_file_backed_replay(
         self,
@@ -183,9 +184,15 @@ class _StreamsRegistry:
             deserializer=deserializer,
         )
 
-        def restore(_id: str) -> Optional[EventStream]:
+        def restore(_id: str, for_deletion: bool) -> Optional[EventStream]:
+            path = storage_dir / _safe_stream_filename(_id)
+            if for_deletion:
+                try:
+                    return _FileBackedReplayDeletion(path=path)
+                except EventStreamNotFoundError:
+                    return None
             try:
-                (storage_dir / _safe_stream_filename(_id)).stat()
+                path.stat()
             except FileNotFoundError:
                 return None
             return self._factory(_id)
@@ -245,17 +252,20 @@ class _StreamsRegistry:
                 raise EventStreamNotFoundError(id)
             return slot  # type: ignore[return-value]
 
-    def _load_existing(self, id: str) -> Union[EventStream, object, None]:
+    def _load_existing(self, id: str, *, for_deletion: bool = False) -> Union[EventStream, object, None]:
         """Load an existing slot or replay while holding the per-id lock.
 
         :param id: The stream id to look up.
         :type id: str
+        :keyword for_deletion: Open only the backing resources without replay
+            deserialization, retaining the cleanup owner if deletion fails.
+        :paramtype for_deletion: bool
         :return: An existing stream, tombstone, or ``None``.
         :rtype: EventStream | object | None
         """
         slot = self._slots.get(id)
         if slot is None:
-            slot = self._restore(id)
+            slot = self._restore(id, for_deletion)
             if slot is not None:
                 self._slots[id] = slot
         return slot
@@ -332,13 +342,14 @@ class _StreamsRegistry:
 
         Cleans up backing resources (e.g. file handles for the
         file-backed replay backing) before installing the tombstone
-        / C-STR-FBR-4.
+        / C-STR-FBR-4. Cold deletion locks an existing log without
+        deserializing events, so corrupt replay data remains removable.
 
         :param id: The stream id to destroy.
         :type id: str
         """
         async with self._hold_id_lock(id):
-            slot = self._load_existing(id)
+            slot = self._load_existing(id, for_deletion=True)
             if slot is _TOMBSTONE:
                 return
             on_delete = getattr(slot, "_on_delete", None)

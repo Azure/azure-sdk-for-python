@@ -3875,6 +3875,14 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   MUST be honored for non-JSON payloads. Default uses JSON.
 - **C-STR-FBR-4.** `delete()` and the close-clock auto-tombstone
   MUST clean up the file before the registry tombstones the id.
+  Cold `delete()` MUST open only an existing log, acquire the same
+  single-writer file lock, and remove the backing resources without
+  rehydrating or deserializing events. Malformed records or failing
+  payload callbacks MUST NOT prevent deletion. An absent log MUST NOT
+  be created. File-access, lock-acquisition, and cleanup failures MUST
+  propagate without installing a successful deletion tombstone; an
+  allocated cleanup owner MUST remain available for exact-owner retries,
+  including Windows lock-file cleanup and cancellation.
 - **C-STR-FBR-5.** **File format.** Each emitted event is a single
   JSONL line wrapping the payload + arrival time:
 
