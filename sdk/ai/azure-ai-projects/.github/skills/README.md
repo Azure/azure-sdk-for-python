@@ -60,3 +60,7 @@ This skill updates existing pytest coverage and authors complete sync/async Test
 ### azure-ai-projects-model-reference-graph
 
 This skill generates structured and readable graphs that trace every generated model through direct references, inheritance, runtime ownership, and public operation methods. It supports model-usage investigation and TypeSpec removal analysis without treating static reachability as proof that a model is safe to remove.
+
+### azure-ai-projects-run-issue-regeneration
+
+This skill orchestrates an unattended TypeSpec regeneration for a GitHub issue already assigned to Copilot (an issue labeled with a `TypeSpec commit` and `Base branch`). It validates those inputs, then runs `azure-ai-projects-emit-from-typespec`, `azure-ai-projects-author-samples`, `azure-ai-projects-author-tests`, and `azure-ai-projects-update-changelog` in order against the issue assignment's existing working branch and draft pull request, instead of the interactive branch/PR creation those skills use for a human developer. Use the other skills directly for interactive, local regeneration.

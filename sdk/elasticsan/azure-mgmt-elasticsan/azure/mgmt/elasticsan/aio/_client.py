@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -28,15 +28,26 @@ from .operations import (
     VolumeGroupsOperations,
     VolumeSnapshotsOperations,
     VolumesOperations,
+    _ElasticSanMgmtClientOperationsMixin,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ElasticSanMgmtClient:  # pylint: disable=too-many-instance-attributes
-    """(missing-service-description) Add service description.
+class ElasticSanMgmtClient(
+    _ElasticSanMgmtClientOperationsMixin
+):  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
+    """Elastic SAN is a fully integrated solution that simplifies deploying, scaling, managing, and
+    configuring a storage area network (SAN). It also offers built-in cloud capabilities like high
+    availability. Elastic SAN works with many types of compute resources, such as Azure Virtual
+    Machines, Azure VMware Solution, and Azure Kubernetes Service.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.elasticsan.aio.operations.Operations
@@ -65,8 +76,10 @@ class ElasticSanMgmtClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Default value is "2025-09-01".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-05-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
