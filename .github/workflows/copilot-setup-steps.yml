@@ -64,7 +64,6 @@ jobs:
           (cd "$WORKDIR" && npm pack "@typespec/http-client-python@${PYGEN_VERSION}" --silent && tar xzf typespec-http-client-python-*.tgz)
           PYGEN_DIR="$WORKDIR/package/generator"
           python -m pip download -d "$WHEELHOUSE" pip setuptools wheel
-          python -m pip download -d "$WHEELHOUSE" -r "$WORKDIR/package/generator/dev_requirements.txt" 2>/dev/null || true
           python -m pip download -d "$WHEELHOUSE" "$PYGEN_DIR"
           python -m venv "$WORKDIR/verify-venv"
           PIP_NO_INDEX=1 "$WORKDIR/verify-venv/bin/python" -m pip install --find-links "$WHEELHOUSE" "$PYGEN_DIR"
