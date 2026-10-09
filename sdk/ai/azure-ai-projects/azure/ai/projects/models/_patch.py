@@ -591,6 +591,15 @@ class AgentOptimizationLROPoller(LROPoller[AgentOptimizationJobResult]):
         self._job_id = DatasetGenerationLROPoller._get_job_id(initial_response)
         super().__init__(client, initial_response, deserialization_callback, polling_method)
 
+    def status(self) -> str:
+        """Return the job status using the service spelling ``cancelled``.
+
+        :return: The current job status.
+        :rtype: str
+        """
+        status = super().status()
+        return "cancelled" if status.lower() == "canceled" else status
+
     @property
     def details(self) -> Mapping[str, Any]:
         """Returns metadata associated with the agent optimization job operation.
@@ -627,6 +636,15 @@ class AsyncAgentOptimizationLROPoller(AsyncLROPoller[AgentOptimizationJobResult]
     def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
         super().__init__(client, initial_response, deserialization_callback, polling_method)
         self._job_id = DatasetGenerationLROPoller._get_job_id(initial_response)
+
+    def status(self) -> str:
+        """Return the job status using the service spelling ``cancelled``.
+
+        :return: The current job status.
+        :rtype: str
+        """
+        status = super().status()
+        return "cancelled" if status.lower() == "canceled" else status
 
     @property
     def details(self) -> Mapping[str, Any]:

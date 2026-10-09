@@ -192,52 +192,6 @@ foreach ($f in $files) {
     Set-Content $f $out
 }
 
-# Remove duplicate top-level variable declarations from generated _unions.py.
-# Keep the first declaration for each name and remove any later declarations, including multiline aliases.
-$unionsFile = Resolve-Path 'azure\ai\projects\_unions.py'
-$deduplicateUnionsScript = @'
-import ast
-import sys
-from pathlib import Path
-
-path = Path(sys.argv[1])
-source = path.read_text(encoding="utf-8-sig")
-tree = ast.parse(source, filename=str(path))
-seen = set()
-duplicate_ranges = []
-
-for statement in tree.body:
-    names = []
-    if isinstance(statement, ast.Assign) and len(statement.targets) == 1 and isinstance(statement.targets[0], ast.Name):
-        names = [statement.targets[0].id]
-    elif isinstance(statement, ast.AnnAssign) and isinstance(statement.target, ast.Name):
-        names = [statement.target.id]
-
-    duplicate_names = [name for name in names if name in seen]
-    if duplicate_names:
-        duplicate_ranges.append((statement.lineno, statement.end_lineno))
-    else:
-        seen.update(names)
-
-if duplicate_ranges:
-    lines = source.splitlines(keepends=True)
-    for start, end in reversed(duplicate_ranges):
-        del lines[start - 1 : end]
-    path.write_text("".join(lines), encoding="utf-8")
-'@
-
-$deduplicateUnionsScriptFile = Join-Path ([System.IO.Path]::GetTempPath()) ("azure-ai-projects-deduplicate-unions-{0}.py" -f [guid]::NewGuid().ToString('N'))
-Set-Content $deduplicateUnionsScriptFile $deduplicateUnionsScript -Encoding utf8
-try {
-    & (Get-Command python -ErrorAction Stop).Source $deduplicateUnionsScriptFile $unionsFile
-    if ($LASTEXITCODE -ne 0) {
-        throw "Duplicate union cleanup failed with exit code $LASTEXITCODE."
-    }
-}
-finally {
-    Remove-Item $deduplicateUnionsScriptFile -ErrorAction SilentlyContinue
-}
-
 # Regenerate API review artifacts and the public method inventory.
 $pythonExecutable = (Get-Command python -ErrorAction Stop).Source
 & $pythonExecutable -m pip install --no-deps --editable .

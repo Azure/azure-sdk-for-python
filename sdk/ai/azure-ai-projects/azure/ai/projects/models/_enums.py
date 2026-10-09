@@ -55,6 +55,8 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MODELS_V1_PREVIEW."""
     MODEL_ROUTER_CONTROLS_V1_PREVIEW = "ModelRouterControls=V1Preview"
     """MODEL_ROUTER_CONTROLS_V1_PREVIEW."""
+    FINETUNING_SESSIONS_V1_PREVIEW = "FineTuningSessions=V1Preview"
+    """FINETUNING_SESSIONS_V1_PREVIEW."""
 
 
 class A2AProtocolVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1115,9 +1117,9 @@ class PageOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of PageOrder."""
 
     ASC = "asc"
-    """ASC."""
+    """Return items in ascending creation-time order."""
     DESC = "desc"
-    """DESC."""
+    """Return items in descending creation-time order."""
 
 
 class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2010,8 +2012,8 @@ class TelephonyCallLifecycleEventSource(str, Enum, metaclass=CaseInsensitiveEnum
 
     GATEWAY = "gateway"
     """The Foundry telephony gateway supplied the observation."""
-    TEAMS_PHONE_EXTENSION = "teams_phone_extension"
-    """Microsoft Teams Phone Extension supplied the observation."""
+    TEAMS_PHONE_EXTENSIBILITY = "teams_phone_extensibility"
+    """Microsoft Teams Phone extensibility supplied the observation."""
     TWILIO = "twilio"
     """Twilio supplied the observation."""
     VOICE_AGENT = "voice_agent"
@@ -2115,8 +2117,8 @@ class TelephonyProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     may be added over time.
     """
 
-    TEAMS_PHONE_EXTENSION = "teams_phone_extension"
-    """Microsoft Teams Phone Extension."""
+    TEAMS_PHONE_EXTENSIBILITY = "teams_phone_extensibility"
+    """Microsoft Teams Phone extensibility."""
     TWILIO = "twilio"
     """Twilio Programmable Voice."""
 
@@ -2535,6 +2537,15 @@ class VoiceAgentToolResponseScheduling(str, Enum, metaclass=CaseInsensitiveEnumM
     """Interrupt the active response and create a follow-up response."""
     SKIP_IF_BUSY = "skip_if_busy"
     """Create a follow-up response only when no response is active."""
+
+
+class VoiceAgentTransport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The transport used for a voice-agent connection."""
+
+    WEBSOCKET = "websocket"
+    """Signaling and audio are exchanged as JSON events over the WebSocket. This is the default."""
+    WEBRTC = "webrtc"
+    """WebRTC: the WebSocket carries only SDP signaling; media and the data channel are peer-to-peer."""
 
 
 class VoiceAgentTurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
