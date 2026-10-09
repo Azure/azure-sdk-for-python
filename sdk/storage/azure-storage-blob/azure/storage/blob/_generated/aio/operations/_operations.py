@@ -53,6 +53,7 @@ from ...operations._operations import (
     build_blob_delete_request,
     build_blob_download_request,
     build_blob_get_account_info_request,
+    build_blob_get_layout_request,
     build_blob_get_properties_request,
     build_blob_get_tags_request,
     build_blob_release_lease_request,
@@ -77,6 +78,7 @@ from ...operations._operations import (
     build_container_break_lease_request,
     build_container_change_lease_request,
     build_container_create_request,
+    build_container_create_session_request,
     build_container_delete_request,
     build_container_filter_blobs_request,
     build_container_get_access_policy_request,
@@ -820,7 +822,7 @@ class ServiceOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
 
-class ContainerOperations:  # pylint: disable=docstring-missing-param
+class ContainerOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1532,6 +1534,102 @@ class ContainerOperations:  # pylint: disable=docstring-missing-param
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-06",
+        params_added_on={"2026-10-06": ["content_type", "version", "client_request_id", "timeout", "accept"]},
+        api_versions_list=["2026-10-06", "2026-12-06", "2027-03-07"],
+    )
+    async def create_session(
+        self,
+        create_session_configuration: _models.CreateSessionConfiguration,
+        *,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> _models.CreateSessionResponse:
+        """The Create Session operation enables users to create a session scoped to a container.
+
+        :param create_session_configuration: The configuration used to create the session. Required.
+        :type create_session_configuration:
+         ~azure.storage.blob._generated.models.CreateSessionConfiguration
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :return: CreateSessionResponse. The CreateSessionResponse is compatible with MutableMapping
+        :rtype: ~azure.storage.blob._generated.models.CreateSessionResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        cls: ClsType[_models.CreateSessionResponse] = kwargs.pop("cls", None)
+
+        _content = _get_element(create_session_configuration)
+
+        _request = build_container_create_session_request(
+            timeout=timeout,
+            content_type=content_type,
+            version=self._config.version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize_xml(_models.CreateSessionResponse, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
     async def submit_batch(
         self, body: _models.SubmitBatchRequest, *, content_length: int, timeout: Optional[int] = None, **kwargs: Any
     ) -> _models.SubmitBatchRequest:
@@ -2175,7 +2273,15 @@ class ContainerOperations:  # pylint: disable=docstring-missing-param
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2026-02-06": ["start_from"]},
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06", "2026-10-06", "2026-12-06"],
+        api_versions_list=[
+            "2025-11-05",
+            "2026-02-06",
+            "2026-04-06",
+            "2026-06-06",
+            "2026-10-06",
+            "2026-12-06",
+            "2027-03-07",
+        ],
     )
     async def list_blob_flat_segment(
         self,
@@ -2301,7 +2407,7 @@ class ContainerOperations:  # pylint: disable=docstring-missing-param
                 "end_before",
             ]
         },
-        api_versions_list=["2026-12-06"],
+        api_versions_list=["2026-12-06", "2027-03-07"],
     )
     async def list_blob_flat_segment_apache_arrow(
         self,
@@ -2420,7 +2526,15 @@ class ContainerOperations:  # pylint: disable=docstring-missing-param
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2026-02-06": ["start_from"]},
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06", "2026-10-06", "2026-12-06"],
+        api_versions_list=[
+            "2025-11-05",
+            "2026-02-06",
+            "2026-04-06",
+            "2026-06-06",
+            "2026-10-06",
+            "2026-12-06",
+            "2027-03-07",
+        ],
     )
     async def list_blob_hierarchy_segment(
         self,
@@ -2555,7 +2669,7 @@ class ContainerOperations:  # pylint: disable=docstring-missing-param
                 "end_before",
             ]
         },
-        api_versions_list=["2026-12-06"],
+        api_versions_list=["2026-12-06", "2027-03-07"],
     )
     async def list_blob_hierarchy_segment_apache_arrow(
         self,
@@ -2994,6 +3108,7 @@ class BlobOperations:  # pylint: disable=docstring-missing-param,too-many-public
         response_headers["x-ms-smart-access-tier"] = self._deserialize(
             "str", response.headers.get("x-ms-smart-access-tier")
         )
+        response_headers["x-ms-download-hint"] = self._deserialize("str", response.headers.get("x-ms-download-hint"))
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
@@ -3217,7 +3332,15 @@ class BlobOperations:  # pylint: disable=docstring-missing-param,too-many-public
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2026-04-06": ["access_tier_if_modified_since", "access_tier_if_unmodified_since"]},
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06", "2026-10-06", "2026-12-06"],
+        api_versions_list=[
+            "2025-11-05",
+            "2026-02-06",
+            "2026-04-06",
+            "2026-06-06",
+            "2026-10-06",
+            "2026-12-06",
+            "2027-03-07",
+        ],
     )
     async def delete(  # pylint: disable=too-many-locals
         self,
@@ -5320,7 +5443,15 @@ class BlobOperations:  # pylint: disable=docstring-missing-param,too-many-public
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2026-02-06": ["if_modified_since", "if_unmodified_since", "etag", "match_condition"]},
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06", "2026-10-06", "2026-12-06"],
+        api_versions_list=[
+            "2025-11-05",
+            "2026-02-06",
+            "2026-04-06",
+            "2026-06-06",
+            "2026-10-06",
+            "2026-12-06",
+            "2027-03-07",
+        ],
     )
     async def get_tags(
         self,
@@ -5449,7 +5580,15 @@ class BlobOperations:  # pylint: disable=docstring-missing-param,too-many-public
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2026-02-06": ["if_modified_since", "if_unmodified_since", "etag", "match_condition"]},
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06", "2026-10-06", "2026-12-06"],
+        api_versions_list=[
+            "2025-11-05",
+            "2026-02-06",
+            "2026-04-06",
+            "2026-06-06",
+            "2026-10-06",
+            "2026-12-06",
+            "2027-03-07",
+        ],
     )
     async def set_tags(  # pylint: disable=too-many-locals
         self,
@@ -5574,6 +5713,410 @@ class BlobOperations:  # pylint: disable=docstring-missing-param,too-many-public
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-06",
+        params_added_on={
+            "2026-10-06": [
+                "version",
+                "client_request_id",
+                "snapshot",
+                "version_id",
+                "marker",
+                "maxresults",
+                "timeout",
+                "range",
+                "lease_id",
+                "if_tags",
+                "if_modified_since",
+                "if_unmodified_since",
+                "encryption_key",
+                "encryption_key_sha256",
+                "encryption_algorithm",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-10-06", "2026-12-06", "2027-03-07"],
+    )
+    async def get_layout(  # pylint: disable=too-many-locals
+        self,
+        *,
+        snapshot: Optional[str] = None,
+        version_id: Optional[str] = None,
+        marker: Optional[str] = None,
+        maxresults: Optional[int] = None,
+        timeout: Optional[int] = None,
+        range: Optional[str] = None,
+        lease_id: Optional[str] = None,
+        if_tags: Optional[str] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        encryption_key: Optional[str] = None,
+        encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> Optional[_models.BlobLayout]:
+        """The Get Blob Layout operation returns all user-defined metadata, standard HTTP properties, and
+        system properties for the blob.  In addition, it may optionally return the layout of the blob.
+
+        :keyword snapshot: Specifies the snapshot of the blob. Default value is None.
+        :paramtype snapshot: str
+        :keyword version_id: Specifies the version ID of the blob. Default value is None.
+        :paramtype version_id: str
+        :keyword marker: An opaque string value that identifies the portion of the result set to return
+         with this operation. Default value is None.
+        :paramtype marker: str
+        :keyword maxresults: Specifies the maximum number of resources to return. If the request does
+         not specify maxresults, or specifies a value greater than 5000, the server will return up to
+         5000 items. Default value is None.
+        :paramtype maxresults: int
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
+         <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword range: Specifies the range of the blob to operate on. Default value is None.
+        :paramtype range: str
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword if_tags: Specifies a SQL-like where clause on blob tags to operate only on a blob with
+         matching tags. Default value is None.
+        :paramtype if_tags: str
+        :keyword if_modified_since: Specify this value to operate only on a blob if it has been
+         modified since the specified date-time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: Specify this value to operate only on a blob if it has not been
+         modified since the specified date-time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword encryption_key: Specifies the encryption key to use to encrypt the data provided in
+         the request. Default value is None.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: The SHA-256 hash of the provided encryption key. Must be
+         provided if the encryption key is provided. Default value is None.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: The algorithm used to produce the encryption key hash. Must be
+         provided if the encryption key is provided. "AES256" Default value is None.
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: BlobLayout or None. The BlobLayout is compatible with MutableMapping
+        :rtype: ~azure.storage.blob._generated.models.BlobLayout or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Optional[_models.BlobLayout]] = kwargs.pop("cls", None)
+
+        _request = build_blob_get_layout_request(
+            snapshot=snapshot,
+            version_id=version_id,
+            marker=marker,
+            maxresults=maxresults,
+            timeout=timeout,
+            range=range,
+            lease_id=lease_id,
+            if_tags=if_tags,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            encryption_key=encryption_key,
+            encryption_key_sha256=encryption_key_sha256,
+            encryption_algorithm=encryption_algorithm,
+            etag=etag,
+            match_condition=match_condition,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 200:
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+            response_headers["x-ms-blob-content-length"] = self._deserialize(
+                "int", response.headers.get("x-ms-blob-content-length")
+            )
+            response_headers["x-ms-blob-content-type"] = self._deserialize(
+                "str", response.headers.get("x-ms-blob-content-type")
+            )
+            response_headers["x-ms-blob-content-encoding"] = self._deserialize(
+                "str", response.headers.get("x-ms-blob-content-encoding")
+            )
+            response_headers["x-ms-blob-content-md5"] = self._deserialize(
+                "bytearray", response.headers.get("x-ms-blob-content-md5")
+            )
+            response_headers["x-ms-blob-creation-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-blob-creation-time")
+            )
+            response_headers["x-ms-creation-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-creation-time")
+            )
+            response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
+            response_headers["x-ms-or-policy-id"] = self._deserialize("str", response.headers.get("x-ms-or-policy-id"))
+            response_headers["x-ms-or"] = self._deserialize("{str}", response.headers.get("x-ms-or"))
+            response_headers["x-ms-blob-type"] = self._deserialize("str", response.headers.get("x-ms-blob-type"))
+            response_headers["x-ms-copy-completion-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-copy-completion-time")
+            )
+            response_headers["x-ms-copy-status-description"] = self._deserialize(
+                "str", response.headers.get("x-ms-copy-status-description")
+            )
+            response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
+            response_headers["x-ms-copy-progress"] = self._deserialize(
+                "str", response.headers.get("x-ms-copy-progress")
+            )
+            response_headers["x-ms-copy-source"] = self._deserialize("str", response.headers.get("x-ms-copy-source"))
+            response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
+            response_headers["x-ms-incremental-copy"] = self._deserialize(
+                "bool", response.headers.get("x-ms-incremental-copy")
+            )
+            response_headers["x-ms-copy-destination-snapshot"] = self._deserialize(
+                "str", response.headers.get("x-ms-copy-destination-snapshot")
+            )
+            response_headers["x-ms-lease-duration"] = self._deserialize(
+                "str", response.headers.get("x-ms-lease-duration")
+            )
+            response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
+            response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
+            response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+            response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+            response_headers["Content-Encoding"] = self._deserialize("str", response.headers.get("Content-Encoding"))
+            response_headers["Content-Disposition"] = self._deserialize(
+                "str", response.headers.get("Content-Disposition")
+            )
+            response_headers["Content-Language"] = self._deserialize("str", response.headers.get("Content-Language"))
+            response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
+            response_headers["x-ms-blob-sequence-number"] = self._deserialize(
+                "int", response.headers.get("x-ms-blob-sequence-number")
+            )
+            response_headers["Accept-Ranges"] = self._deserialize("str", response.headers.get("Accept-Ranges"))
+            response_headers["x-ms-blob-committed-block-count"] = self._deserialize(
+                "int", response.headers.get("x-ms-blob-committed-block-count")
+            )
+            response_headers["x-ms-server-encrypted"] = self._deserialize(
+                "bool", response.headers.get("x-ms-server-encrypted")
+            )
+            response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
+                "str", response.headers.get("x-ms-encryption-key-sha256")
+            )
+            response_headers["x-ms-encryption-scope"] = self._deserialize(
+                "str", response.headers.get("x-ms-encryption-scope")
+            )
+            response_headers["x-ms-access-tier"] = self._deserialize("str", response.headers.get("x-ms-access-tier"))
+            response_headers["x-ms-access-tier-inferred"] = self._deserialize(
+                "bool", response.headers.get("x-ms-access-tier-inferred")
+            )
+            response_headers["x-ms-smart-access-tier"] = self._deserialize(
+                "str", response.headers.get("x-ms-smart-access-tier")
+            )
+            response_headers["x-ms-archive-status"] = self._deserialize(
+                "str", response.headers.get("x-ms-archive-status")
+            )
+            response_headers["x-ms-access-tier-change-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-access-tier-change-time")
+            )
+            response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
+            response_headers["x-ms-is-current-version"] = self._deserialize(
+                "bool", response.headers.get("x-ms-is-current-version")
+            )
+            response_headers["x-ms-tag-count"] = self._deserialize("int", response.headers.get("x-ms-tag-count"))
+            response_headers["x-ms-expiry-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-expiry-time")
+            )
+            response_headers["x-ms-blob-sealed"] = self._deserialize("bool", response.headers.get("x-ms-blob-sealed"))
+            response_headers["x-ms-rehydrate-priority"] = self._deserialize(
+                "str", response.headers.get("x-ms-rehydrate-priority")
+            )
+            response_headers["x-ms-last-access-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-last-access-time")
+            )
+            response_headers["x-ms-immutability-policy-until-date"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-immutability-policy-until-date")
+            )
+            response_headers["x-ms-immutability-policy-mode"] = self._deserialize(
+                "str", response.headers.get("x-ms-immutability-policy-mode")
+            )
+            response_headers["x-ms-legal-hold"] = self._deserialize("bool", response.headers.get("x-ms-legal-hold"))
+            response_headers["x-ms-client-request-id"] = self._deserialize(
+                "str", response.headers.get("x-ms-client-request-id")
+            )
+            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+            response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+            response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+            if _stream:
+                deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+            else:
+                deserialized = _deserialize_xml(_models.BlobLayout, response.text())
+
+        if response.status_code == 204:
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+            response_headers["x-ms-blob-content-length"] = self._deserialize(
+                "int", response.headers.get("x-ms-blob-content-length")
+            )
+            response_headers["x-ms-blob-content-type"] = self._deserialize(
+                "str", response.headers.get("x-ms-blob-content-type")
+            )
+            response_headers["x-ms-blob-content-encoding"] = self._deserialize(
+                "str", response.headers.get("x-ms-blob-content-encoding")
+            )
+            response_headers["x-ms-blob-content-md5"] = self._deserialize(
+                "bytearray", response.headers.get("x-ms-blob-content-md5")
+            )
+            response_headers["x-ms-blob-creation-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-blob-creation-time")
+            )
+            response_headers["x-ms-creation-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-creation-time")
+            )
+            response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
+            response_headers["x-ms-or-policy-id"] = self._deserialize("str", response.headers.get("x-ms-or-policy-id"))
+            response_headers["x-ms-or"] = self._deserialize("{str}", response.headers.get("x-ms-or"))
+            response_headers["x-ms-blob-type"] = self._deserialize("str", response.headers.get("x-ms-blob-type"))
+            response_headers["x-ms-copy-completion-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-copy-completion-time")
+            )
+            response_headers["x-ms-copy-status-description"] = self._deserialize(
+                "str", response.headers.get("x-ms-copy-status-description")
+            )
+            response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
+            response_headers["x-ms-copy-progress"] = self._deserialize(
+                "str", response.headers.get("x-ms-copy-progress")
+            )
+            response_headers["x-ms-copy-source"] = self._deserialize("str", response.headers.get("x-ms-copy-source"))
+            response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
+            response_headers["x-ms-incremental-copy"] = self._deserialize(
+                "bool", response.headers.get("x-ms-incremental-copy")
+            )
+            response_headers["x-ms-copy-destination-snapshot"] = self._deserialize(
+                "str", response.headers.get("x-ms-copy-destination-snapshot")
+            )
+            response_headers["x-ms-lease-duration"] = self._deserialize(
+                "str", response.headers.get("x-ms-lease-duration")
+            )
+            response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
+            response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
+            response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+            response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+            response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+            response_headers["Content-Encoding"] = self._deserialize("str", response.headers.get("Content-Encoding"))
+            response_headers["Content-Disposition"] = self._deserialize(
+                "str", response.headers.get("Content-Disposition")
+            )
+            response_headers["Content-Language"] = self._deserialize("str", response.headers.get("Content-Language"))
+            response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
+            response_headers["x-ms-blob-sequence-number"] = self._deserialize(
+                "int", response.headers.get("x-ms-blob-sequence-number")
+            )
+            response_headers["Accept-Ranges"] = self._deserialize("str", response.headers.get("Accept-Ranges"))
+            response_headers["x-ms-blob-committed-block-count"] = self._deserialize(
+                "int", response.headers.get("x-ms-blob-committed-block-count")
+            )
+            response_headers["x-ms-server-encrypted"] = self._deserialize(
+                "bool", response.headers.get("x-ms-server-encrypted")
+            )
+            response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
+                "str", response.headers.get("x-ms-encryption-key-sha256")
+            )
+            response_headers["x-ms-encryption-scope"] = self._deserialize(
+                "str", response.headers.get("x-ms-encryption-scope")
+            )
+            response_headers["x-ms-access-tier"] = self._deserialize("str", response.headers.get("x-ms-access-tier"))
+            response_headers["x-ms-access-tier-inferred"] = self._deserialize(
+                "bool", response.headers.get("x-ms-access-tier-inferred")
+            )
+            response_headers["x-ms-smart-access-tier"] = self._deserialize(
+                "str", response.headers.get("x-ms-smart-access-tier")
+            )
+            response_headers["x-ms-archive-status"] = self._deserialize(
+                "str", response.headers.get("x-ms-archive-status")
+            )
+            response_headers["x-ms-access-tier-change-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-access-tier-change-time")
+            )
+            response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
+            response_headers["x-ms-is-current-version"] = self._deserialize(
+                "bool", response.headers.get("x-ms-is-current-version")
+            )
+            response_headers["x-ms-tag-count"] = self._deserialize("int", response.headers.get("x-ms-tag-count"))
+            response_headers["x-ms-expiry-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-expiry-time")
+            )
+            response_headers["x-ms-blob-sealed"] = self._deserialize("bool", response.headers.get("x-ms-blob-sealed"))
+            response_headers["x-ms-rehydrate-priority"] = self._deserialize(
+                "str", response.headers.get("x-ms-rehydrate-priority")
+            )
+            response_headers["x-ms-last-access-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-last-access-time")
+            )
+            response_headers["x-ms-immutability-policy-until-date"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-immutability-policy-until-date")
+            )
+            response_headers["x-ms-immutability-policy-mode"] = self._deserialize(
+                "str", response.headers.get("x-ms-immutability-policy-mode")
+            )
+            response_headers["x-ms-legal-hold"] = self._deserialize("bool", response.headers.get("x-ms-legal-hold"))
+            response_headers["x-ms-client-request-id"] = self._deserialize(
+                "str", response.headers.get("x-ms-client-request-id")
+            )
+            response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+            response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+            response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
 
 class AppendBlobOperations:  # pylint: disable=docstring-missing-param
@@ -6173,7 +6716,15 @@ class AppendBlobOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-04-06": ["source_encryption_key", "source_encryption_key_sha256", "source_encryption_algorithm"]
         },
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06", "2026-10-06", "2026-12-06"],
+        api_versions_list=[
+            "2025-11-05",
+            "2026-02-06",
+            "2026-04-06",
+            "2026-06-06",
+            "2026-10-06",
+            "2026-12-06",
+            "2027-03-07",
+        ],
     )
     async def append_block_from_url(  # pylint: disable=too-many-locals
         self,
@@ -7035,7 +7586,15 @@ class BlockBlobOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-04-06": ["source_encryption_key", "source_encryption_key_sha256", "source_encryption_algorithm"]
         },
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06", "2026-10-06", "2026-12-06"],
+        api_versions_list=[
+            "2025-11-05",
+            "2026-02-06",
+            "2026-04-06",
+            "2026-06-06",
+            "2026-10-06",
+            "2026-12-06",
+            "2027-03-07",
+        ],
     )
     async def put_blob_from_url(  # pylint: disable=too-many-locals
         self,
@@ -7597,7 +8156,15 @@ class BlockBlobOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-04-06": ["source_encryption_key", "source_encryption_key_sha256", "source_encryption_algorithm"]
         },
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06", "2026-10-06", "2026-12-06"],
+        api_versions_list=[
+            "2025-11-05",
+            "2026-02-06",
+            "2026-04-06",
+            "2026-06-06",
+            "2026-10-06",
+            "2026-12-06",
+            "2027-03-07",
+        ],
     )
     async def stage_block_from_url(  # pylint: disable=too-many-locals
         self,
@@ -9077,7 +9644,15 @@ class PageBlobOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-04-06": ["source_encryption_key", "source_encryption_key_sha256", "source_encryption_algorithm"]
         },
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06", "2026-06-06", "2026-10-06", "2026-12-06"],
+        api_versions_list=[
+            "2025-11-05",
+            "2026-02-06",
+            "2026-04-06",
+            "2026-06-06",
+            "2026-10-06",
+            "2026-12-06",
+            "2027-03-07",
+        ],
     )
     async def upload_pages_from_url(  # pylint: disable=too-many-locals
         self,

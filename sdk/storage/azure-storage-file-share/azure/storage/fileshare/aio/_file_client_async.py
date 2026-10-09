@@ -35,12 +35,18 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from .._deserialize import deserialize_file_properties, deserialize_file_stream, get_file_ranges_result
+from .._deserialize import (
+    deserialize_file_properties,
+    deserialize_file_stream,
+    deserialize_hard_links,
+    get_file_ranges_result,
+)
 from .._file_client_helpers import (
     _format_url,
     _from_file_url,
     _get_ranges_options,
     _parse_url,
+    _assert_not_file_id_addressed,
     _upload_range_from_url_options,
 )
 from .._generated.aio import FileClient as AzureFileStorage
@@ -69,7 +75,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
     from .._models import ContentSettings, NTFSAttributes
-    from .._models import FileRange
+    from .._models import FileRange, HardLink
     from .._shared.base_client import StorageConfiguration
 
 
@@ -202,7 +208,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             )
         if hasattr(credential, "get_token") and not token_intent:
             raise ValueError("'token_intent' keyword is required when 'credential' is an AsyncTokenCredential.")
-        parsed_url = _parse_url(account_url, share_name, file_path)
+        self.file_id: Optional[str] = kwargs.pop("_file_id", None)
+        parsed_url = _parse_url(account_url, share_name, file_path, self.file_id)
         path_snapshot, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError(
@@ -277,11 +284,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: A File client.
         :rtype: ~azure.storage.fileshare.ShareFileClient
         """
-        account_url, share_name, file_path, snapshot = _from_file_url(file_url, snapshot)
-        return cls(account_url, share_name, file_path, snapshot, credential, **kwargs)
+        account_url, share_name, file_path, snapshot, file_id = _from_file_url(file_url, snapshot)
+        return cls(account_url, share_name, file_path, snapshot, credential, _file_id=file_id, **kwargs)
 
     def _format_url(self, hostname: str):
-        return _format_url(self.scheme, hostname, self.share_name, self.file_path, self._query_str)
+        return _format_url(self.scheme, hostname, self.share_name, self.file_path, self._query_str, self.file_id)
 
     @classmethod
     def from_connection_string(
@@ -362,6 +369,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: A ShareLeaseClient object.
         :rtype: ~azure.storage.fileshare.aio.ShareLeaseClient
         """
+        _assert_not_file_id_addressed(self.file_id)
         kwargs["lease_duration"] = -1
         lease = ShareLeaseClient(self, lease_id=lease_id)
         await lease.acquire(**kwargs)
@@ -381,6 +389,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: True if the file exists, False otherwise.
         :rtype: bool
         """
+        _assert_not_file_id_addressed(self.file_id)
         try:
             await self._client.file.get_properties(
                 allow_trailing_dot=self.allow_trailing_dot,
@@ -497,6 +506,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 :dedent: 16
                 :caption: Create a file.
         """
+        _assert_not_file_id_addressed(self.file_id)
         lease_id = get_lease_id(kwargs.pop("lease", None))
         content_settings = kwargs.pop("content_settings", None)
         metadata = kwargs.pop("metadata", None)
@@ -640,6 +650,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 :dedent: 16
                 :caption: Upload a file.
         """
+        _assert_not_file_id_addressed(self.file_id)
         metadata = kwargs.pop("metadata", None)
         content_settings = kwargs.pop("content_settings", None)
         max_concurrency = kwargs.pop("max_concurrency", None)
@@ -827,6 +838,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 :dedent: 16
                 :caption: Copy a file from a URL
         """
+        _assert_not_file_id_addressed(self.file_id)
         metadata = kwargs.pop("metadata", None)
         lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
@@ -888,6 +900,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             #other-client--per-operation-configuration>`__.
         :rtype: None
         """
+        _assert_not_file_id_addressed(self.file_id)
         lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
         if isinstance(copy_id, FileProperties):
@@ -967,6 +980,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 :dedent: 16
                 :caption: Download a file.
         """
+        _assert_not_file_id_addressed(self.file_id)
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
 
@@ -1034,6 +1048,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 :dedent: 16
                 :caption: Delete a file.
         """
+        _assert_not_file_id_addressed(self.file_id)
         lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
         try:
@@ -1119,6 +1134,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: The new File Client.
         :rtype: ~azure.storage.fileshare.ShareFileClient
         """
+        _assert_not_file_id_addressed(self.file_id)
         if not new_name:
             raise ValueError("Please specify a new file name.")
 
@@ -1214,10 +1230,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             )
         except HttpResponseError as error:
             process_storage_error(error)
-        file_props.name = self.file_name
+        file_props.name = file_props.name or self.file_name
         file_props.share = self.share_name
         file_props.snapshot = self.snapshot
-        file_props.path = "/".join(self.file_path)
+        file_props.path = "/".join(self.file_path) if self.file_id is None else None
         return file_props
 
     @distributed_trace_async
@@ -1289,6 +1305,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
+        _assert_not_file_id_addressed(self.file_id)
         lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
         file_content_length = kwargs.pop("size", None)
@@ -1353,6 +1370,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
+        _assert_not_file_id_addressed(self.file_id)
         lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
         headers = kwargs.pop("headers", {})
@@ -1419,6 +1437,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
+        _assert_not_file_id_addressed(self.file_id)
         validate_content = parse_validation_option(kwargs.pop("validate_content", None), force_structured_message=True)
         timeout = kwargs.pop("timeout", None)
         encoding = kwargs.pop("encoding", "UTF-8")
@@ -1519,6 +1538,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: Result after writing to the specified range of the destination Azure File endpoint.
         :rtype: dict[str, Any]
         """
+        _assert_not_file_id_addressed(self.file_id)
         options = _upload_range_from_url_options(
             source_url=source_url, offset=offset, length=length, source_offset=source_offset, **kwargs
         )
@@ -1561,6 +1581,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             A list of valid ranges.
         :rtype: List[dict[str, int]]
         """
+        _assert_not_file_id_addressed(self.file_id)
         warnings.warn("get_ranges is deprecated, use list_ranges instead", DeprecationWarning)
 
         options = _get_ranges_options(offset=offset, length=length, **kwargs)
@@ -1598,6 +1619,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             An iterable (auto-paging) of valid ranges.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.fileshare.FileRange]
         """
+        _assert_not_file_id_addressed(self.file_id)
         results_per_page = kwargs.pop("results_per_page", None)
         options = _get_ranges_options(offset=offset, length=length, **kwargs)
         options["allow_trailing_dot"] = self.allow_trailing_dot
@@ -1649,6 +1671,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             The first element are filled file ranges, the 2nd element is cleared file ranges.
         :rtype: tuple[list[dict[str, int]], list[dict[str, int]]]
         """
+        _assert_not_file_id_addressed(self.file_id)
         warnings.warn("get_ranges_diff is deprecated, use list_ranges_diff instead", DeprecationWarning)
 
         options = _get_ranges_options(
@@ -1709,6 +1732,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             whether the range was cleared between the previous snapshot and the target.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.fileshare.FileRange]
         """
+        _assert_not_file_id_addressed(self.file_id)
         results_per_page = kwargs.pop("results_per_page", None)
         options = _get_ranges_options(
             offset=offset,
@@ -1749,6 +1773,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
+        _assert_not_file_id_addressed(self.file_id)
         lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
 
@@ -1799,6 +1824,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
+        _assert_not_file_id_addressed(self.file_id)
         lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
         try:
@@ -1834,6 +1860,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: An auto-paging iterable of Handle
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.fileshare.Handle]
         """
+        _assert_not_file_id_addressed(self.file_id)
         timeout = kwargs.pop("timeout", None)
         results_per_page = kwargs.pop("results_per_page", None)
         command = functools.partial(
@@ -1863,6 +1890,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             and the number of handles failed to close in a dict.
         :rtype: dict[str, int]
         """
+        _assert_not_file_id_addressed(self.file_id)
         if isinstance(handle, Handle):
             handle_id = handle.id
         else:
@@ -1902,6 +1930,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             and the number of handles failed to close in a dict.
         :rtype: dict[str, int]
         """
+        _assert_not_file_id_addressed(self.file_id)
         timeout = kwargs.pop("timeout", None)
         start_time = time.time()
 
@@ -1958,6 +1987,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: File-updated property dict (ETag and last modified).
         :rtype: dict[str, Any]
         """
+        _assert_not_file_id_addressed(self.file_id)
         try:
             return cast(
                 Dict[str, Any],
@@ -2012,6 +2042,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: File-updated property dict (ETag and last modified).
         :rtype: dict[str, Any]
         """
+        _assert_not_file_id_addressed(self.file_id)
         try:
             return cast(
                 Dict[str, Any],
@@ -2045,6 +2076,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: File-updated property dict (ETag and last modified).
         :rtype: dict[str, Any]
         """
+        _assert_not_file_id_addressed(self.file_id)
         try:
             return cast(
                 Dict[str, Any],
@@ -2052,6 +2084,46 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                     timeout=timeout,
                     cls=return_response_headers,
                     file_request_intent=self.file_request_intent,
+                    **kwargs,
+                ),
+            )
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    @distributed_trace_async
+    async def get_file_links(
+        self,
+        *,
+        lease: Optional[Union[ShareLeaseClient, str]] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
+    ) -> List["HardLink"]:
+        """Lists all hard links to the file. Only supported on a client created from a file ID.
+
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.aio.ShareLeaseClient or str
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timeouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`__.
+        :returns: A list of hard links to the file.
+        :rtype: list[~azure.storage.fileshare.HardLink]
+        """
+        if self.file_id is None:
+            raise ValueError("'get_file_links' is only supported on a client created from a file ID.")
+        try:
+            return cast(
+                List["HardLink"],
+                await self._client.file.get_hard_links(
+                    lease_id=get_lease_id(lease),
+                    timeout=timeout,
+                    allow_trailing_dot=self.allow_trailing_dot,
+                    file_request_intent=self.file_request_intent,
+                    cls=deserialize_hard_links,
                     **kwargs,
                 ),
             )

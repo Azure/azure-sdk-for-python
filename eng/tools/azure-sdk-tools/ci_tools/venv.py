@@ -7,6 +7,9 @@ legacy ``TOX_PIP_IMPL`` for backward compatibility):
 
 * ``"uv"``  → uses ``uv venv`` / ``uv pip``
 * anything else (default ``"pip"``) → uses ``python -m venv`` / ``python -m pip``
+
+For the uv backend, these helpers default ``UV_SYSTEM_CERTS`` to ``1`` to use the
+OS certificate store. Explicit settings, including ``UV_SYSTEM_CERTS=0``, are preserved.
 """
 
 import os

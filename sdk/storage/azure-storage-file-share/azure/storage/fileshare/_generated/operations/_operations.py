@@ -62,7 +62,7 @@ def build_directory_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=directory"
 
@@ -119,7 +119,7 @@ def build_directory_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=directory"
 
@@ -149,7 +149,7 @@ def build_directory_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=directory"
 
@@ -187,7 +187,7 @@ def build_directory_set_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=directory&comp=properties"
 
@@ -238,7 +238,7 @@ def build_directory_set_metadata_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=directory&comp=metadata"
 
@@ -274,7 +274,7 @@ def build_directory_list_files_and_directories_segment_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -321,7 +321,7 @@ def build_directory_list_handles_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -364,7 +364,7 @@ def build_directory_force_close_handles_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?comp=forceclosehandles"
 
@@ -413,7 +413,7 @@ def build_directory_rename_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=directory&comp=rename"
 
@@ -501,7 +501,7 @@ def build_file_create_request(  # pylint: disable=too-many-locals,too-many-state
 
     file_type: Literal["file"] = kwargs.pop("file_type", _headers.pop("x-ms-type", "file"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = ""
 
@@ -593,7 +593,7 @@ def build_file_download_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     accept = _headers.pop("Accept", "application/octet-stream")
 
     # Construct URL
@@ -636,7 +636,7 @@ def build_file_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = ""
 
@@ -669,7 +669,7 @@ def build_file_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = ""
 
@@ -717,7 +717,7 @@ def build_file_set_http_headers_request(  # pylint: disable=too-many-locals
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?comp=properties"
 
@@ -787,7 +787,7 @@ def build_file_set_metadata_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?comp=metadata"
 
@@ -822,7 +822,7 @@ def build_file_acquire_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?comp=lease"
 
@@ -857,7 +857,7 @@ def build_file_release_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?comp=lease"
 
@@ -890,7 +890,7 @@ def build_file_change_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?comp=lease"
 
@@ -924,7 +924,7 @@ def build_file_break_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?comp=lease"
 
@@ -964,7 +964,7 @@ def build_file_upload_range_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?comp=range"
 
@@ -1023,7 +1023,7 @@ def build_file_upload_range_from_url_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?comp=range"
 
@@ -1088,7 +1088,7 @@ def build_file_get_range_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1136,7 +1136,7 @@ def build_file_list_all_ranges_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1200,7 +1200,7 @@ def build_file_start_copy_request(  # pylint: disable=too-many-locals
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = ""
 
@@ -1278,7 +1278,7 @@ def build_file_abort_copy_request(
     copy_action_abort_constant: Literal["abort"] = kwargs.pop(
         "copy_action_abort_constant", _headers.pop("x-ms-copy-action", "abort")
     )
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?comp=copy"
 
@@ -1313,7 +1313,7 @@ def build_file_list_handles_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1353,7 +1353,7 @@ def build_file_force_close_handles_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?comp=forceclosehandles"
 
@@ -1401,7 +1401,7 @@ def build_file_rename_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?comp=rename"
 
@@ -1470,7 +1470,7 @@ def build_file_create_symbolic_link_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=symboliclink"
 
@@ -1509,7 +1509,7 @@ def build_file_get_symbolic_link_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=symboliclink"
 
@@ -1539,7 +1539,7 @@ def build_file_create_hard_link_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     file_type: Literal["file"] = kwargs.pop("file_type", _headers.pop("x-ms-type", "file"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=hardlink"
 
@@ -1559,6 +1559,43 @@ def build_file_create_hard_link_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_file_get_hard_links_request(
+    *,
+    sharesnapshot: Optional[str] = None,
+    timeout: Optional[int] = None,
+    lease_id: Optional[str] = None,
+    allow_trailing_dot: Optional[bool] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
+    accept = _headers.pop("Accept", "application/xml")
+
+    # Construct URL
+    _url = "?comp=hardlinks"
+
+    # Construct parameters
+    if sharesnapshot is not None:
+        _params["sharesnapshot"] = _SERIALIZER.query("sharesnapshot", sharesnapshot, "str")
+    if timeout is not None:
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+
+    # Construct headers
+    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    if lease_id is not None:
+        _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if allow_trailing_dot is not None:
+        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_service_set_properties_request(
     *,
     timeout: Optional[int] = None,
@@ -1569,7 +1606,7 @@ def build_service_set_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "/?restype=service&comp=properties"
 
@@ -1595,7 +1632,7 @@ def build_service_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1627,7 +1664,7 @@ def build_service_list_shares_segment_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1661,7 +1698,7 @@ def build_service_get_user_delegation_key_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1700,7 +1737,7 @@ def build_share_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=share"
 
@@ -1765,7 +1802,7 @@ def build_share_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=share"
 
@@ -1797,7 +1834,7 @@ def build_share_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=share"
 
@@ -1832,7 +1869,7 @@ def build_share_acquire_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=share&comp=lease"
 
@@ -1867,7 +1904,7 @@ def build_share_release_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=share&comp=lease"
 
@@ -1900,7 +1937,7 @@ def build_share_change_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=share&comp=lease"
 
@@ -1934,7 +1971,7 @@ def build_share_renew_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=share&comp=lease"
 
@@ -1967,7 +2004,7 @@ def build_share_break_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=share&comp=lease"
 
@@ -2000,7 +2037,7 @@ def build_share_create_snapshot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=share&comp=snapshot"
 
@@ -2028,7 +2065,7 @@ def build_share_create_permission_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=share&comp=filepermission"
 
@@ -2057,7 +2094,7 @@ def build_share_get_permission_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2101,7 +2138,7 @@ def build_share_set_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=share&comp=properties"
 
@@ -2164,7 +2201,7 @@ def build_share_set_metadata_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=share&comp=metadata"
 
@@ -2194,7 +2231,7 @@ def build_share_get_access_policy_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -2226,7 +2263,7 @@ def build_share_set_access_policy_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=share&comp=acl"
 
@@ -2256,7 +2293,7 @@ def build_share_get_statistics_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -2288,7 +2325,7 @@ def build_share_restore_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-10-06"))
+    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2027-03-07"))
     # Construct URL
     _url = "?restype=share&comp=undelete"
 
@@ -2310,7 +2347,7 @@ def build_share_restore_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class DirectoryOperations:
+class DirectoryOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2581,6 +2618,7 @@ class DirectoryOperations:
         )
         response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
         response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-file-name"] = self._deserialize("str", response.headers.get("x-ms-file-name"))
         response_headers["x-ms-server-encrypted"] = self._deserialize(
             "bool", response.headers.get("x-ms-server-encrypted")
         )
@@ -3398,7 +3436,7 @@ class DirectoryOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
 
-class FileOperations:  # pylint: disable=too-many-public-methods
+class FileOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3415,12 +3453,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace
-    def create(  # pylint: disable=inconsistent-return-statements,too-many-locals
+    @overload
+    def create(  # pylint: disable=too-many-locals
         self,
         optional_body: Optional[bytes] = None,
         *,
         file_content_length: int,
+        content_type: str = "application/octet-stream",
         timeout: Optional[int] = None,
         file_content_type: Optional[str] = None,
         file_content_encoding: Optional[str] = None,
@@ -3454,6 +3493,278 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         :param optional_body: Initial data. Default value is None.
         :type optional_body: bytes
+        :keyword file_content_length: Specifies the maximum size for the file, up to 4 TB. Required.
+        :paramtype file_content_length: int
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword file_content_type: Sets the MIME content type of the file. The default type is
+         'application/octet-stream'. Default value is None.
+        :paramtype file_content_type: str
+        :keyword file_content_encoding: Specifies which content encodings have been applied to the
+         file. Default value is None.
+        :paramtype file_content_encoding: str
+        :keyword file_content_language: Specifies the natural languages used by this resource. Default
+         value is None.
+        :paramtype file_content_language: str
+        :keyword file_cache_control: Sets the file's cache control. The File service stores this value
+         but does not use or modify it. Default value is None.
+        :paramtype file_cache_control: str
+        :keyword file_content_md5: An MD5 hash of the file content. This hash is used to verify the
+         integrity of the file during transport. Default value is None.
+        :paramtype file_content_md5: bytes
+        :keyword file_content_disposition: Sets the file's Content-Disposition header. Default value is
+         None.
+        :paramtype file_content_disposition: str
+        :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword file_permission: If specified the permission (security descriptor) shall be set for
+         the directory/file. This header can be used if Permission size is <= 8KB, else
+         x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
+         input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
+         x-ms-file-permission-key should be specified. Default value is None.
+        :paramtype file_permission: str
+        :keyword file_permission_key: Key of the permission to be set for the directory/file. Note:
+         Only one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default
+         value is None.
+        :paramtype file_permission_key: str
+        :keyword file_attributes: If specified, the provided file attributes shall be set. Default
+         value: 'Archive' for file and 'Directory' for directory. 'None' can also be specified as
+         default. Default value is None.
+        :paramtype file_attributes: str
+        :keyword file_creation_time: Creation time for the file/directory. Default value: Now. Default
+         value is None.
+        :paramtype file_creation_time: str
+        :keyword file_last_write_time: Last write time for the file/directory. Default value: Now.
+         Default value is None.
+        :paramtype file_last_write_time: str
+        :keyword file_change_time: Change time for the file/directory. Default value: Now. Default
+         value is None.
+        :paramtype file_change_time: str
+        :keyword file_permission_format: Optional. Used to set permission format. Known values are:
+         "Sddl" and "Binary". Default value is None.
+        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
+        :paramtype owner: str
+        :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
+         None.
+        :paramtype group: str
+        :keyword file_mode: Optional, NFS only. The file mode of the file or directory. Default value
+         is None.
+        :paramtype file_mode: str
+        :keyword nfs_file_type: Optional, NFS only. Type of the file or directory. Known values are:
+         "Regular", "Directory", and "SymLink". Default value is None.
+        :paramtype nfs_file_type: str or ~azure.storage.fileshare.models.NfsFileType
+        :keyword content_md5: An MD5 hash of the content. This hash is used to verify the integrity of
+         the data during transport. Default value is None.
+        :paramtype content_md5: bytes
+        :keyword file_property_semantics: SMB only. Default value is New. Known values are: "New" and
+         "Restore". Default value is None.
+        :paramtype file_property_semantics: str or
+         ~azure.storage.fileshare.models.FilePropertySemantics
+        :keyword content_length: Specifies the number of bytes being transmitted in the request body.
+         When the x-ms-write header is set to clear, the value of this header must be set to zero.".
+         Default value is None.
+        :paramtype content_length: int
+        :keyword structured_body_type: Specifies the response content should be returned as a
+         structured message and specifies the message schema version and properties. Default value is
+         None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(  # pylint: disable=too-many-locals
+        self,
+        optional_body: Optional[IO[bytes]] = None,
+        *,
+        file_content_length: int,
+        content_type: str = "application/octet-stream",
+        timeout: Optional[int] = None,
+        file_content_type: Optional[str] = None,
+        file_content_encoding: Optional[str] = None,
+        file_content_language: Optional[str] = None,
+        file_cache_control: Optional[str] = None,
+        file_content_md5: Optional[bytes] = None,
+        file_content_disposition: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+        file_permission: Optional[str] = None,
+        file_permission_key: Optional[str] = None,
+        file_attributes: Optional[str] = None,
+        file_creation_time: Optional[str] = None,
+        file_last_write_time: Optional[str] = None,
+        file_change_time: Optional[str] = None,
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
+        lease_id: Optional[str] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        file_mode: Optional[str] = None,
+        nfs_file_type: Optional[Union[str, _models.NfsFileType]] = None,
+        content_md5: Optional[bytes] = None,
+        file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
+        content_length: Optional[int] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """Creates a new file or replaces a file. Note it only initializes the file with no content.
+
+        :param optional_body: Initial data. Default value is None.
+        :type optional_body: IO[bytes]
+        :keyword file_content_length: Specifies the maximum size for the file, up to 4 TB. Required.
+        :paramtype file_content_length: int
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword file_content_type: Sets the MIME content type of the file. The default type is
+         'application/octet-stream'. Default value is None.
+        :paramtype file_content_type: str
+        :keyword file_content_encoding: Specifies which content encodings have been applied to the
+         file. Default value is None.
+        :paramtype file_content_encoding: str
+        :keyword file_content_language: Specifies the natural languages used by this resource. Default
+         value is None.
+        :paramtype file_content_language: str
+        :keyword file_cache_control: Sets the file's cache control. The File service stores this value
+         but does not use or modify it. Default value is None.
+        :paramtype file_cache_control: str
+        :keyword file_content_md5: An MD5 hash of the file content. This hash is used to verify the
+         integrity of the file during transport. Default value is None.
+        :paramtype file_content_md5: bytes
+        :keyword file_content_disposition: Sets the file's Content-Disposition header. Default value is
+         None.
+        :paramtype file_content_disposition: str
+        :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword file_permission: If specified the permission (security descriptor) shall be set for
+         the directory/file. This header can be used if Permission size is <= 8KB, else
+         x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
+         input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
+         x-ms-file-permission-key should be specified. Default value is None.
+        :paramtype file_permission: str
+        :keyword file_permission_key: Key of the permission to be set for the directory/file. Note:
+         Only one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default
+         value is None.
+        :paramtype file_permission_key: str
+        :keyword file_attributes: If specified, the provided file attributes shall be set. Default
+         value: 'Archive' for file and 'Directory' for directory. 'None' can also be specified as
+         default. Default value is None.
+        :paramtype file_attributes: str
+        :keyword file_creation_time: Creation time for the file/directory. Default value: Now. Default
+         value is None.
+        :paramtype file_creation_time: str
+        :keyword file_last_write_time: Last write time for the file/directory. Default value: Now.
+         Default value is None.
+        :paramtype file_last_write_time: str
+        :keyword file_change_time: Change time for the file/directory. Default value: Now. Default
+         value is None.
+        :paramtype file_change_time: str
+        :keyword file_permission_format: Optional. Used to set permission format. Known values are:
+         "Sddl" and "Binary". Default value is None.
+        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
+        :paramtype owner: str
+        :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
+         None.
+        :paramtype group: str
+        :keyword file_mode: Optional, NFS only. The file mode of the file or directory. Default value
+         is None.
+        :paramtype file_mode: str
+        :keyword nfs_file_type: Optional, NFS only. Type of the file or directory. Known values are:
+         "Regular", "Directory", and "SymLink". Default value is None.
+        :paramtype nfs_file_type: str or ~azure.storage.fileshare.models.NfsFileType
+        :keyword content_md5: An MD5 hash of the content. This hash is used to verify the integrity of
+         the data during transport. Default value is None.
+        :paramtype content_md5: bytes
+        :keyword file_property_semantics: SMB only. Default value is New. Known values are: "New" and
+         "Restore". Default value is None.
+        :paramtype file_property_semantics: str or
+         ~azure.storage.fileshare.models.FilePropertySemantics
+        :keyword content_length: Specifies the number of bytes being transmitted in the request body.
+         When the x-ms-write header is set to clear, the value of this header must be set to zero.".
+         Default value is None.
+        :paramtype content_length: int
+        :keyword structured_body_type: Specifies the response content should be returned as a
+         structured message and specifies the message schema version and properties. Default value is
+         None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create(  # pylint: disable=inconsistent-return-statements,too-many-locals
+        self,
+        optional_body: Optional[Union[bytes, IO[bytes]]] = None,
+        *,
+        file_content_length: int,
+        timeout: Optional[int] = None,
+        file_content_type: Optional[str] = None,
+        file_content_encoding: Optional[str] = None,
+        file_content_language: Optional[str] = None,
+        file_cache_control: Optional[str] = None,
+        file_content_md5: Optional[bytes] = None,
+        file_content_disposition: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+        file_permission: Optional[str] = None,
+        file_permission_key: Optional[str] = None,
+        file_attributes: Optional[str] = None,
+        file_creation_time: Optional[str] = None,
+        file_last_write_time: Optional[str] = None,
+        file_change_time: Optional[str] = None,
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
+        lease_id: Optional[str] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        file_mode: Optional[str] = None,
+        nfs_file_type: Optional[Union[str, _models.NfsFileType]] = None,
+        content_md5: Optional[bytes] = None,
+        file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
+        content_length: Optional[int] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """Creates a new file or replaces a file. Note it only initializes the file with no content.
+
+        :param optional_body: Initial data. Is either a bytes type or a IO[bytes] type. Default value
+         is None.
+        :type optional_body: bytes or IO[bytes]
         :keyword file_content_length: Specifies the maximum size for the file, up to 4 TB. Required.
         :paramtype file_content_length: int
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
@@ -3558,12 +3869,11 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         file_type: Literal["file"] = kwargs.pop("file_type", _headers.pop("x-ms-type", "file"))
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", "application/octet-stream")
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if optional_body else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
+        content_type = content_type or "application/octet-stream" if optional_body else None
         _content = optional_body
 
         _request = build_file_create_request(
@@ -3941,6 +4251,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         )
         response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
         response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-file-name"] = self._deserialize("str", response.headers.get("x-ms-file-name"))
         response_headers["x-ms-lease-duration"] = self._deserialize("str", response.headers.get("x-ms-lease-duration"))
         response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
         response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
@@ -4673,10 +4984,140 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
+    @overload
+    def upload_range(
+        self,
+        optional_body: Optional[bytes] = None,
+        *,
+        range: str,
+        file_range_write: Union[str, _models.FileRangeWriteType],
+        content_length: int,
+        content_type: str = "application/octet-stream",
+        timeout: Optional[int] = None,
+        content_md5: Optional[bytes] = None,
+        lease_id: Optional[str] = None,
+        file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """Upload a range of bytes to a file.
+
+        :param optional_body: Initial data. Default value is None.
+        :type optional_body: bytes
+        :keyword range: Specifies the range of bytes to be written. Both the start and end of the range
+         must be specified. Required.
+        :paramtype range: str
+        :keyword file_range_write: Specify one of the following options: - Update: Writes the bytes
+         specified by the request body into the specified range. - Clear: Clears the specified range and
+         releases the space used in storage for that range. Known values are: "update" and "clear".
+         Required.
+        :paramtype file_range_write: str or ~azure.storage.fileshare.models.FileRangeWriteType
+        :keyword content_length: The number of bytes being transmitted in the request body. Required.
+        :paramtype content_length: int
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword content_md5: An MD5 hash of the content. This hash is used to verify the integrity of
+         the data during transport. Default value is None.
+        :paramtype content_md5: bytes
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword file_last_written_mode: If the file last write time should be preserved or
+         overwritten. Known values are: "Now" and "Preserve". Default value is None.
+        :paramtype file_last_written_mode: str or ~azure.storage.fileshare.models.FileLastWrittenMode
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword structured_body_type: Specifies the response content should be returned as a
+         structured message and specifies the message schema version and properties. Default value is
+         None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def upload_range(
+        self,
+        optional_body: Optional[IO[bytes]] = None,
+        *,
+        range: str,
+        file_range_write: Union[str, _models.FileRangeWriteType],
+        content_length: int,
+        content_type: str = "application/octet-stream",
+        timeout: Optional[int] = None,
+        content_md5: Optional[bytes] = None,
+        lease_id: Optional[str] = None,
+        file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """Upload a range of bytes to a file.
+
+        :param optional_body: Initial data. Default value is None.
+        :type optional_body: IO[bytes]
+        :keyword range: Specifies the range of bytes to be written. Both the start and end of the range
+         must be specified. Required.
+        :paramtype range: str
+        :keyword file_range_write: Specify one of the following options: - Update: Writes the bytes
+         specified by the request body into the specified range. - Clear: Clears the specified range and
+         releases the space used in storage for that range. Known values are: "update" and "clear".
+         Required.
+        :paramtype file_range_write: str or ~azure.storage.fileshare.models.FileRangeWriteType
+        :keyword content_length: The number of bytes being transmitted in the request body. Required.
+        :paramtype content_length: int
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword content_md5: An MD5 hash of the content. This hash is used to verify the integrity of
+         the data during transport. Default value is None.
+        :paramtype content_md5: bytes
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword file_last_written_mode: If the file last write time should be preserved or
+         overwritten. Known values are: "Now" and "Preserve". Default value is None.
+        :paramtype file_last_written_mode: str or ~azure.storage.fileshare.models.FileLastWrittenMode
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword structured_body_type: Specifies the response content should be returned as a
+         structured message and specifies the message schema version and properties. Default value is
+         None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @distributed_trace
     def upload_range(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
-        optional_body: Optional[bytes] = None,
+        optional_body: Optional[Union[bytes, IO[bytes]]] = None,
         *,
         range: str,
         file_range_write: Union[str, _models.FileRangeWriteType],
@@ -4693,8 +5134,9 @@ class FileOperations:  # pylint: disable=too-many-public-methods
     ) -> None:
         """Upload a range of bytes to a file.
 
-        :param optional_body: Initial data. Default value is None.
-        :type optional_body: bytes
+        :param optional_body: Initial data. Is either a bytes type or a IO[bytes] type. Default value
+         is None.
+        :type optional_body: bytes or IO[bytes]
         :keyword range: Specifies the range of bytes to be written. Both the start and end of the range
          must be specified. Required.
         :paramtype range: str
@@ -4744,12 +5186,11 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", "application/octet-stream")
-        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if optional_body else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
+        content_type = content_type or "application/octet-stream" if optional_body else None
         _content = optional_body
 
         _request = build_file_upload_range_request(
@@ -5093,7 +5534,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2026-10-06"],
+        api_versions_list=["2026-10-06", "2026-12-06", "2027-03-07"],
     )
     def list_all_ranges(
         self,
@@ -6136,8 +6577,179 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2027-03-07",
+        params_added_on={
+            "2027-03-07": [
+                "version",
+                "client_request_id",
+                "sharesnapshot",
+                "timeout",
+                "lease_id",
+                "allow_trailing_dot",
+                "file_request_intent",
+                "accept",
+            ]
+        },
+        api_versions_list=["2027-03-07"],
+    )
+    def get_hard_links(
+        self,
+        *,
+        sharesnapshot: Optional[str] = None,
+        timeout: Optional[int] = None,
+        lease_id: Optional[str] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        **kwargs: Any
+    ) -> _models.HardLinkList:
+        """Returns the hard links of a file, along with all user-defined metadata, content properties, and
+        system properties for the file. NFS only.
 
-class ServiceOperations:
+        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
+         share snapshot. Default value is None.
+        :paramtype sharesnapshot: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :return: HardLinkList. The HardLinkList is compatible with MutableMapping
+        :rtype: ~azure.storage.fileshare._generated.models.HardLinkList
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.HardLinkList] = kwargs.pop("cls", None)
+
+        _request = build_file_get_hard_links_request(
+            sharesnapshot=sharesnapshot,
+            timeout=timeout,
+            lease_id=lease_id,
+            allow_trailing_dot=allow_trailing_dot,
+            file_request_intent=file_request_intent,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
+        response_headers["x-ms-type"] = self._deserialize("str", response.headers.get("x-ms-type"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["x-ms-content-type"] = self._deserialize("str", response.headers.get("x-ms-content-type"))
+        response_headers["x-ms-content-length"] = self._deserialize("int", response.headers.get("x-ms-content-length"))
+        response_headers["x-ms-content-md5"] = self._deserialize("bytearray", response.headers.get("x-ms-content-md5"))
+        response_headers["x-ms-content-encoding"] = self._deserialize(
+            "str", response.headers.get("x-ms-content-encoding")
+        )
+        response_headers["x-ms-content-language"] = self._deserialize(
+            "str", response.headers.get("x-ms-content-language")
+        )
+        response_headers["x-ms-cache-control"] = self._deserialize("str", response.headers.get("x-ms-cache-control"))
+        response_headers["x-ms-content-disposition"] = self._deserialize(
+            "str", response.headers.get("x-ms-content-disposition")
+        )
+        response_headers["x-ms-copy-completion-time"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-copy-completion-time")
+        )
+        response_headers["x-ms-copy-status-description"] = self._deserialize(
+            "str", response.headers.get("x-ms-copy-status-description")
+        )
+        response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
+        response_headers["x-ms-copy-progress"] = self._deserialize("str", response.headers.get("x-ms-copy-progress"))
+        response_headers["x-ms-copy-source"] = self._deserialize("str", response.headers.get("x-ms-copy-source"))
+        response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
+        response_headers["x-ms-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-server-encrypted")
+        )
+        response_headers["x-ms-file-permission-key"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-permission-key")
+        )
+        response_headers["x-ms-file-attributes"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-attributes")
+        )
+        response_headers["x-ms-file-creation-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-creation-time")
+        )
+        response_headers["x-ms-file-last-write-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-last-write-time")
+        )
+        response_headers["x-ms-file-change-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-change-time")
+        )
+        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
+        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-file-name"] = self._deserialize("str", response.headers.get("x-ms-file-name"))
+        response_headers["x-ms-lease-duration"] = self._deserialize("str", response.headers.get("x-ms-lease-duration"))
+        response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
+        response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
+        response_headers["x-ms-link-count"] = self._deserialize("int", response.headers.get("x-ms-link-count"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize_xml(_models.HardLinkList, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class ServiceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6506,7 +7118,7 @@ class ServiceOperations:
         return deserialized  # type: ignore
 
 
-class ShareOperations:
+class ShareOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
