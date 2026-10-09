@@ -440,6 +440,7 @@
         "azure.mgmt.sql.models.OperationOrigin": "Microsoft.Sql.OperationOrigin",
         "azure.mgmt.sql.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
         "azure.mgmt.sql.models.DiffBackupIntervalInHours": "Microsoft.Sql.DiffBackupIntervalInHours",
+        "azure.mgmt.sql.models.ImmutabilityStatus": "Microsoft.Sql.ImmutabilityStatus",
         "azure.mgmt.sql.models.ShortTermRetentionPolicyName": "Microsoft.Sql.ShortTermRetentionPolicyName",
         "azure.mgmt.sql.models.ColumnDataType": "Microsoft.Sql.ColumnDataType",
         "azure.mgmt.sql.models.TableTemporalType": "Microsoft.Sql.TableTemporalType",
@@ -1708,5 +1709,5 @@
         "azure.mgmt.sql.operations.CapabilitiesOperations.list_by_location": "Microsoft.Sql.CapabilitiesOperationGroup.listByLocation",
         "azure.mgmt.sql.aio.operations.CapabilitiesOperations.list_by_location": "Microsoft.Sql.CapabilitiesOperationGroup.listByLocation"
     },
-    "CrossLanguageVersion": "8886d50d2900"
+    "CrossLanguageVersion": "3c866903bb6f"
 }

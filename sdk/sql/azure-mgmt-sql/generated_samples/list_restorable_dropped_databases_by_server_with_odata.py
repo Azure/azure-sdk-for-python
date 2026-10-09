@@ -15,7 +15,7 @@ from azure.mgmt.sql import SqlManagementClient
     pip install azure-identity
     pip install azure-mgmt-sql
 # USAGE
-    python private_endpoint_connection_list.py
+    python list_restorable_dropped_databases_by_server_with_odata.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.private_endpoint_connections.list_by_server(
-        resource_group_name="Default",
-        server_name="test-svr",
+    response = client.restorable_dropped_databases.list_by_server(
+        resource_group_name="Default-SQL-SouthEastAsia",
+        server_name="testsvr",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2026-08-01-preview/PrivateEndpointConnectionList.json
+# x-ms-original-file: 2026-08-01-preview/ListRestorableDroppedDatabasesByServerWithOdata.json
 if __name__ == "__main__":
     main()

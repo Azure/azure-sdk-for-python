@@ -50,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-08-01-preview/ManagedServerSecurityAlertCreateMax.json
+# x-ms-original-file: 2026-08-01-preview/ManagedServerSecurityAlertCreateMax.json
 if __name__ == "__main__":
     main()

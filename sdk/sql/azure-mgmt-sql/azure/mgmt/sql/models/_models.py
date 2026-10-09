@@ -536,7 +536,7 @@ class BackupShortTermRetentionPolicy(ProxyResource):  # pylint: disable=docstrin
     )
     """Resource properties."""
 
-    __flattened_items = ["retention_days", "diff_backup_interval_in_hours"]
+    __flattened_items = ["retention_days", "diff_backup_interval_in_hours", "lock_immutability", "immutability_status"]
 
     @overload
     def __init__(
@@ -584,6 +584,12 @@ class BackupShortTermRetentionPolicyProperties(_Model):  # pylint: disable=docst
      many interval hours between each differential backup will be supported. This is only applicable
      to live databases but not dropped databases. Known values are: 12 and 24.
     :vartype diff_backup_interval_in_hours: int or ~azure.mgmt.sql.models.DiffBackupIntervalInHours
+    :ivar lock_immutability: Whether to lock the immutability of the backups governed by this short
+     term retention policy.
+    :vartype lock_immutability: bool
+    :ivar immutability_status: The immutability status of the backups governed by this short term
+     retention policy. Known values are: "Disabled", "Enabled", and "Locked".
+    :vartype immutability_status: str or ~azure.mgmt.sql.models.ImmutabilityStatus
     """
 
     retention_days: Optional[int] = rest_field(
@@ -597,6 +603,15 @@ class BackupShortTermRetentionPolicyProperties(_Model):  # pylint: disable=docst
     """The differential backup interval in hours. This is how many interval hours between each
      differential backup will be supported. This is only applicable to live databases but not
      dropped databases. Known values are: 12 and 24."""
+    lock_immutability: Optional[bool] = rest_field(
+        name="lockImmutability", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to lock the immutability of the backups governed by this short term retention policy."""
+    immutability_status: Optional[Union[str, "_models.ImmutabilityStatus"]] = rest_field(
+        name="immutabilityStatus", visibility=["read"]
+    )
+    """The immutability status of the backups governed by this short term retention policy. Known
+     values are: \"Disabled\", \"Enabled\", and \"Locked\"."""
 
     @overload
     def __init__(
@@ -604,6 +619,7 @@ class BackupShortTermRetentionPolicyProperties(_Model):  # pylint: disable=docst
         *,
         retention_days: Optional[int] = None,
         diff_backup_interval_in_hours: Optional[Union[int, "_models.DiffBackupIntervalInHours"]] = None,
+        lock_immutability: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -1381,6 +1397,7 @@ class DatabaseBlobAuditingPolicy(ProxyResource):  # pylint: disable=docstring-ke
         "is_azure_monitor_target_enabled",
         "queue_delay_ms",
         "is_managed_identity_in_use",
+        "required_fields",
         "state",
         "storage_endpoint",
         "storage_account_access_key",
@@ -1530,6 +1547,11 @@ class DatabaseBlobAuditingPolicyProperties(_Model):  # pylint: disable=docstring
     :ivar is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
      storage.
     :vartype is_managed_identity_in_use: bool
+    :ivar required_fields: Specifies the required fields to include in audit events (optional).
+     Each item must be a valid audit_event field name. Can only be specified when
+     isAzureMonitorTargetEnabled is true. For the complete list of valid field names, see the
+     audit_event table schema documentation.
+    :vartype required_fields: list[str]
     :ivar state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Required. Known values are: "Enabled" and "Disabled".
     :vartype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
@@ -1664,6 +1686,12 @@ class DatabaseBlobAuditingPolicyProperties(_Model):  # pylint: disable=docstring
         name="isManagedIdentityInUse", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies whether Managed Identity is used to access blob storage."""
+    required_fields: Optional[list[str]] = rest_field(
+        name="requiredFields", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the required fields to include in audit events (optional). Each item must be a valid
+     audit_event field name. Can only be specified when isAzureMonitorTargetEnabled is true. For the
+     complete list of valid field names, see the audit_event table schema documentation."""
     state: Union[str, "_models.BlobAuditingPolicyState"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1706,6 +1734,7 @@ class DatabaseBlobAuditingPolicyProperties(_Model):  # pylint: disable=docstring
         is_azure_monitor_target_enabled: Optional[bool] = None,
         queue_delay_ms: Optional[int] = None,
         is_managed_identity_in_use: Optional[bool] = None,
+        required_fields: Optional[list[str]] = None,
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         storage_account_subscription_id: Optional[str] = None,
@@ -4979,6 +5008,9 @@ class DistributedAvailabilityGroup(ProxyResource):  # pylint: disable=docstring-
         "failover_mode",
         "seeding_mode",
         "link_mode",
+        "most_recent_error",
+        "most_recent_error_time",
+        "most_recent_error_message",
         "databases",
     ]
 
@@ -5180,6 +5212,14 @@ class DistributedAvailabilityGroupProperties(_Model):  # pylint: disable=docstri
     :ivar link_mode: Specifies whether the link operates in single-database or multi-database mode.
      Known values are: "SingleDatabase" and "MultiDatabase".
     :vartype link_mode: str or ~azure.mgmt.sql.models.LinkModeType
+    :ivar most_recent_error: Most recent error code for the distributed availability group.
+    :vartype most_recent_error: str
+    :ivar most_recent_error_time: Time of the most recent error for the distributed availability
+     group.
+    :vartype most_recent_error_time: ~datetime.datetime
+    :ivar most_recent_error_message: Most recent error message for the distributed availability
+     group.
+    :vartype most_recent_error_message: str
     :ivar databases: Databases in the distributed availability group.
     :vartype databases: list[~azure.mgmt.sql.models.DistributedAvailabilityGroupDatabase]
     """
@@ -5232,6 +5272,14 @@ class DistributedAvailabilityGroupProperties(_Model):  # pylint: disable=docstri
     )
     """Specifies whether the link operates in single-database or multi-database mode. Known values
      are: \"SingleDatabase\" and \"MultiDatabase\"."""
+    most_recent_error: Optional[str] = rest_field(name="mostRecentError", visibility=["read"])
+    """Most recent error code for the distributed availability group."""
+    most_recent_error_time: Optional[datetime.datetime] = rest_field(
+        name="mostRecentErrorTime", visibility=["read"], format="rfc3339"
+    )
+    """Time of the most recent error for the distributed availability group."""
+    most_recent_error_message: Optional[str] = rest_field(name="mostRecentErrorMessage", visibility=["read"])
+    """Most recent error message for the distributed availability group."""
     databases: Optional[list["_models.DistributedAvailabilityGroupDatabase"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6740,6 +6788,7 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):  # pylint: disable=docs
         "is_azure_monitor_target_enabled",
         "queue_delay_ms",
         "is_managed_identity_in_use",
+        "required_fields",
         "state",
         "storage_endpoint",
         "storage_account_access_key",
@@ -6893,6 +6942,11 @@ class ExtendedDatabaseBlobAuditingPolicyProperties(
     :ivar is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
      storage.
     :vartype is_managed_identity_in_use: bool
+    :ivar required_fields: Specifies the required fields to include in audit events (optional).
+     Each item must be a valid audit_event field name. Can only be specified when
+     isAzureMonitorTargetEnabled is true. For the complete list of valid field names, see the
+     audit_event table schema documentation.
+    :vartype required_fields: list[str]
     :ivar state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Required. Known values are: "Enabled" and "Disabled".
     :vartype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
@@ -7031,6 +7085,12 @@ class ExtendedDatabaseBlobAuditingPolicyProperties(
         name="isManagedIdentityInUse", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies whether Managed Identity is used to access blob storage."""
+    required_fields: Optional[list[str]] = rest_field(
+        name="requiredFields", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the required fields to include in audit events (optional). Each item must be a valid
+     audit_event field name. Can only be specified when isAzureMonitorTargetEnabled is true. For the
+     complete list of valid field names, see the audit_event table schema documentation."""
     state: Union[str, "_models.BlobAuditingPolicyState"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7074,6 +7134,7 @@ class ExtendedDatabaseBlobAuditingPolicyProperties(
         is_azure_monitor_target_enabled: Optional[bool] = None,
         queue_delay_ms: Optional[int] = None,
         is_managed_identity_in_use: Optional[bool] = None,
+        required_fields: Optional[list[str]] = None,
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         storage_account_subscription_id: Optional[str] = None,
@@ -7122,6 +7183,7 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=docstr
         "is_azure_monitor_target_enabled",
         "queue_delay_ms",
         "is_managed_identity_in_use",
+        "required_fields",
         "state",
         "storage_endpoint",
         "storage_account_access_key",
@@ -7292,6 +7354,11 @@ class ExtendedServerBlobAuditingPolicyProperties(
     :ivar is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
      storage.
     :vartype is_managed_identity_in_use: bool
+    :ivar required_fields: Specifies the required fields to include in audit events (optional).
+     Each item must be a valid audit_event field name. Can only be specified when
+     isAzureMonitorTargetEnabled is true. For the complete list of valid field names, see the
+     audit_event table schema documentation.
+    :vartype required_fields: list[str]
     :ivar state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Required. Known values are: "Enabled" and "Disabled".
     :vartype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
@@ -7449,6 +7516,12 @@ class ExtendedServerBlobAuditingPolicyProperties(
         name="isManagedIdentityInUse", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies whether Managed Identity is used to access blob storage."""
+    required_fields: Optional[list[str]] = rest_field(
+        name="requiredFields", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the required fields to include in audit events (optional). Each item must be a valid
+     audit_event field name. Can only be specified when isAzureMonitorTargetEnabled is true. For the
+     complete list of valid field names, see the audit_event table schema documentation."""
     state: Union[str, "_models.BlobAuditingPolicyState"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7493,6 +7566,7 @@ class ExtendedServerBlobAuditingPolicyProperties(
         is_azure_monitor_target_enabled: Optional[bool] = None,
         queue_delay_ms: Optional[int] = None,
         is_managed_identity_in_use: Optional[bool] = None,
+        required_fields: Optional[list[str]] = None,
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         storage_account_subscription_id: Optional[str] = None,
@@ -11735,7 +11809,7 @@ class ManagedBackupShortTermRetentionPolicy(
     )
     """Resource properties."""
 
-    __flattened_items = ["retention_days"]
+    __flattened_items = ["retention_days", "lock_immutability", "immutability_status"]
 
     @overload
     def __init__(
@@ -11781,6 +11855,12 @@ class ManagedBackupShortTermRetentionPolicyProperties(
     :ivar retention_days: The backup retention period in days. This is how many days Point-in-Time
      Restore will be supported.
     :vartype retention_days: int
+    :ivar lock_immutability: Whether to lock the immutability of the backups governed by this short
+     term retention policy.
+    :vartype lock_immutability: bool
+    :ivar immutability_status: The immutability status of the backups governed by this short term
+     retention policy. Known values are: "Disabled", "Enabled", and "Locked".
+    :vartype immutability_status: str or ~azure.mgmt.sql.models.ImmutabilityStatus
     """
 
     retention_days: Optional[int] = rest_field(
@@ -11788,12 +11868,20 @@ class ManagedBackupShortTermRetentionPolicyProperties(
     )
     """The backup retention period in days. This is how many days Point-in-Time Restore will be
      supported."""
+    lock_immutability: Optional[bool] = rest_field(name="lockImmutability", visibility=["create", "update"])
+    """Whether to lock the immutability of the backups governed by this short term retention policy."""
+    immutability_status: Optional[Union[str, "_models.ImmutabilityStatus"]] = rest_field(
+        name="immutabilityStatus", visibility=["read"]
+    )
+    """The immutability status of the backups governed by this short term retention policy. Known
+     values are: \"Disabled\", \"Enabled\", and \"Locked\"."""
 
     @overload
     def __init__(
         self,
         *,
         retention_days: Optional[int] = None,
+        lock_immutability: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -13899,6 +13987,10 @@ class ManagedInstanceLongTermRetentionBackup(
         "backup_expiration_time",
         "backup_storage_redundancy",
         "backup_storage_access_tier",
+        "is_backup_immutable",
+        "time_based_immutability",
+        "time_based_immutability_mode",
+        "legal_hold_immutability",
     ]
 
     @overload
@@ -13958,6 +14050,19 @@ class ManagedInstanceLongTermRetentionBackupProperties(_Model):  # pylint: disab
     :ivar backup_storage_access_tier: The BackupStorageAccessTier for the LTR backup. Known values
      are: "Hot" and "Archive".
     :vartype backup_storage_access_tier: str or ~azure.mgmt.sql.models.BackupStorageAccessTier
+    :ivar is_backup_immutable: The setting whether the LTR backup is immutable.
+    :vartype is_backup_immutable: bool
+    :ivar time_based_immutability: The setting for whether or not time-based immutability is
+     enabled for the LTR backup. When time-based immutability is enabled and locked, the backup
+     cannot be deleted until BackupExpirationTime. Known values are: "Enabled" and "Disabled".
+    :vartype time_based_immutability: str or ~azure.mgmt.sql.models.TimeBasedImmutability
+    :ivar time_based_immutability_mode: The time-based immutability mode. Only applicable if
+     time-based immutability is enabled. Known values are: "Locked" and "Unlocked".
+    :vartype time_based_immutability_mode: str or ~azure.mgmt.sql.models.TimeBasedImmutabilityMode
+    :ivar legal_hold_immutability: The setting for whether LegalHold is enabled or disabled on the
+     LTR backup. When LegalHold is enabled, the backup cannot be deleted until the LegalHold is
+     removed. Known values are: "Enabled" and "Disabled".
+    :vartype legal_hold_immutability: str or ~azure.mgmt.sql.models.SetLegalHoldImmutability
     """
 
     managed_instance_name: Optional[str] = rest_field(name="managedInstanceName", visibility=["read"])
@@ -13987,6 +14092,25 @@ class ManagedInstanceLongTermRetentionBackupProperties(_Model):  # pylint: disab
         name="backupStorageAccessTier", visibility=["read"]
     )
     """The BackupStorageAccessTier for the LTR backup. Known values are: \"Hot\" and \"Archive\"."""
+    is_backup_immutable: Optional[bool] = rest_field(name="isBackupImmutable", visibility=["read"])
+    """The setting whether the LTR backup is immutable."""
+    time_based_immutability: Optional[Union[str, "_models.TimeBasedImmutability"]] = rest_field(
+        name="timeBasedImmutability", visibility=["read"]
+    )
+    """The setting for whether or not time-based immutability is enabled for the LTR backup. When
+     time-based immutability is enabled and locked, the backup cannot be deleted until
+     BackupExpirationTime. Known values are: \"Enabled\" and \"Disabled\"."""
+    time_based_immutability_mode: Optional[Union[str, "_models.TimeBasedImmutabilityMode"]] = rest_field(
+        name="timeBasedImmutabilityMode", visibility=["read"]
+    )
+    """The time-based immutability mode. Only applicable if time-based immutability is enabled. Known
+     values are: \"Locked\" and \"Unlocked\"."""
+    legal_hold_immutability: Optional[Union[str, "_models.SetLegalHoldImmutability"]] = rest_field(
+        name="legalHoldImmutability", visibility=["read"]
+    )
+    """The setting for whether LegalHold is enabled or disabled on the LTR backup. When LegalHold is
+     enabled, the backup cannot be deleted until the LegalHold is removed. Known values are:
+     \"Enabled\" and \"Disabled\"."""
 
 
 class ManagedInstanceLongTermRetentionPolicy(
@@ -14016,6 +14140,8 @@ class ManagedInstanceLongTermRetentionPolicy(
 
     __flattened_items = [
         "backup_storage_access_tier",
+        "time_based_immutability",
+        "time_based_immutability_mode",
         "weekly_retention",
         "monthly_retention",
         "yearly_retention",
@@ -14066,6 +14192,15 @@ class ManagedInstanceLongTermRetentionPolicyProperties(
     :ivar backup_storage_access_tier: The BackupStorageAccessTier for the LTR backups. Known values
      are: "Hot" and "Archive".
     :vartype backup_storage_access_tier: str or ~azure.mgmt.sql.models.BackupStorageAccessTier
+    :ivar time_based_immutability: The setting for whether to enable time-based immutability for
+     future backups. When set, future backups will have TimeBasedImmutability enabled. Known values
+     are: "Enabled" and "Disabled".
+    :vartype time_based_immutability: str or ~azure.mgmt.sql.models.TimeBasedImmutability
+    :ivar time_based_immutability_mode: The setting for time-based immutability mode for future
+     backup (Value can be either Locked or UnLocked. Only effective if TimeBasedImmutability is
+     enabled). Caution: Immutability of LTR backup cannot be removed if TimeBasedImmutabilityMode is
+     Locked. Known values are: "Locked" and "Unlocked".
+    :vartype time_based_immutability_mode: str or ~azure.mgmt.sql.models.TimeBasedImmutabilityMode
     :ivar weekly_retention: The weekly retention policy for an LTR backup in an ISO 8601 format.
     :vartype weekly_retention: str
     :ivar monthly_retention: The monthly retention policy for an LTR backup in an ISO 8601 format.
@@ -14080,6 +14215,19 @@ class ManagedInstanceLongTermRetentionPolicyProperties(
         name="backupStorageAccessTier", visibility=["read", "create", "update", "delete", "query"]
     )
     """The BackupStorageAccessTier for the LTR backups. Known values are: \"Hot\" and \"Archive\"."""
+    time_based_immutability: Optional[Union[str, "_models.TimeBasedImmutability"]] = rest_field(
+        name="timeBasedImmutability", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The setting for whether to enable time-based immutability for future backups. When set, future
+     backups will have TimeBasedImmutability enabled. Known values are: \"Enabled\" and
+     \"Disabled\"."""
+    time_based_immutability_mode: Optional[Union[str, "_models.TimeBasedImmutabilityMode"]] = rest_field(
+        name="timeBasedImmutabilityMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The setting for time-based immutability mode for future backup (Value can be either Locked or
+     UnLocked. Only effective if TimeBasedImmutability is enabled). Caution: Immutability of LTR
+     backup cannot be removed if TimeBasedImmutabilityMode is Locked. Known values are: \"Locked\"
+     and \"Unlocked\"."""
     weekly_retention: Optional[str] = rest_field(
         name="weeklyRetention", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -14102,6 +14250,8 @@ class ManagedInstanceLongTermRetentionPolicyProperties(
         self,
         *,
         backup_storage_access_tier: Optional[Union[str, "_models.BackupStorageAccessTier"]] = None,
+        time_based_immutability: Optional[Union[str, "_models.TimeBasedImmutability"]] = None,
+        time_based_immutability_mode: Optional[Union[str, "_models.TimeBasedImmutabilityMode"]] = None,
         weekly_retention: Optional[str] = None,
         monthly_retention: Optional[str] = None,
         yearly_retention: Optional[str] = None,
@@ -20085,6 +20235,7 @@ class ServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=docstring-keyw
         "is_azure_monitor_target_enabled",
         "queue_delay_ms",
         "is_managed_identity_in_use",
+        "required_fields",
         "state",
         "storage_endpoint",
         "storage_account_access_key",
@@ -20251,6 +20402,11 @@ class ServerBlobAuditingPolicyProperties(_Model):  # pylint: disable=docstring-k
     :ivar is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
      storage.
     :vartype is_managed_identity_in_use: bool
+    :ivar required_fields: Specifies the required fields to include in audit events (optional).
+     Each item must be a valid audit_event field name. Can only be specified when
+     isAzureMonitorTargetEnabled is true. For the complete list of valid field names, see the
+     audit_event table schema documentation.
+    :vartype required_fields: list[str]
     :ivar state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Required. Known values are: "Enabled" and "Disabled".
     :vartype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
@@ -20404,6 +20560,12 @@ class ServerBlobAuditingPolicyProperties(_Model):  # pylint: disable=docstring-k
         name="isManagedIdentityInUse", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies whether Managed Identity is used to access blob storage."""
+    required_fields: Optional[list[str]] = rest_field(
+        name="requiredFields", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the required fields to include in audit events (optional). Each item must be a valid
+     audit_event field name. Can only be specified when isAzureMonitorTargetEnabled is true. For the
+     complete list of valid field names, see the audit_event table schema documentation."""
     state: Union[str, "_models.BlobAuditingPolicyState"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -20447,6 +20609,7 @@ class ServerBlobAuditingPolicyProperties(_Model):  # pylint: disable=docstring-k
         is_azure_monitor_target_enabled: Optional[bool] = None,
         queue_delay_ms: Optional[int] = None,
         is_managed_identity_in_use: Optional[bool] = None,
+        required_fields: Optional[list[str]] = None,
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         storage_account_subscription_id: Optional[str] = None,
