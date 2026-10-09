@@ -216,6 +216,61 @@ class ChatRoomMember(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
+class ChatTopic(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents a chat topic in a room.
+
+    :ivar id: Topic identifier unique within the room. Required.
+    :vartype id: str
+    :ivar title: Topic title. Required.
+    :vartype title: str
+    :ivar created_at: Timestamp when the topic was created. Required.
+    :vartype created_at: ~datetime.datetime
+    :ivar created_by: User who created the topic. Required.
+    :vartype created_by: str
+    :ivar state: Current lifecycle state of the topic. Required. Known values are: "Normal",
+     "Archived", and "SoftDeleted".
+    :vartype state: str or ~azure.messaging.webpubsubchatservice.models.ChatTopicState
+    :ivar conversation_id: Conversation associated with this topic. Required.
+    :vartype conversation_id: str
+    :ivar etag: The entity tag for this resource. Required.
+    :vartype etag: str
+    """
+
+    id: str = rest_field(visibility=["read"])
+    """Topic identifier unique within the room. Required."""
+    title: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Topic title. Required."""
+    created_at: datetime.datetime = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    """Timestamp when the topic was created. Required."""
+    created_by: str = rest_field(name="createdBy", visibility=["read"])
+    """User who created the topic. Required."""
+    state: Union[str, "_models.ChatTopicState"] = rest_field(visibility=["read", "update"])
+    """Current lifecycle state of the topic. Required. Known values are: \"Normal\", \"Archived\", and
+     \"SoftDeleted\"."""
+    conversation_id: str = rest_field(name="conversationId", visibility=["read"])
+    """Conversation associated with this topic. Required."""
+    etag: str = rest_field(visibility=["read"])
+    """The entity tag for this resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        title: str,
+        state: Union[str, "_models.ChatTopicState"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ChatUser(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a user profile in the chat system. This is a discriminated base type; concrete
     payloads are selected by the ``kind`` field (e.g. ``HumanChatUser``).
@@ -249,6 +304,49 @@ class ChatUser(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
         *,
         kind: str,
         nickname: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChatUserRoom(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents a read-only room projection used to list rooms associated with a user. This model
+    enables the standard resource operation to derive the
+    ``/api/hubs/{hub}/chat/users/{userId}/rooms`` collection path because ``ChatRoom`` is a child
+    of ``Hub``, not ``ChatUser``. This model does not define an independent room lifecycle.
+
+    :ivar id: Room identifier. Required.
+    :vartype id: str
+    :ivar title: Room title. Required.
+    :vartype title: str
+    :ivar default_conversation: Default conversation ID for this room. Required.
+    :vartype default_conversation: str
+    :ivar etag: The entity tag for this resource. Required.
+    :vartype etag: str
+    """
+
+    id: str = rest_field(visibility=["read"])
+    """Room identifier. Required."""
+    title: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Room title. Required."""
+    default_conversation: str = rest_field(name="defaultConversation", visibility=["read"])
+    """Default conversation ID for this room. Required."""
+    etag: str = rest_field(visibility=["read"])
+    """The entity tag for this resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        title: str,
     ) -> None: ...
 
     @overload

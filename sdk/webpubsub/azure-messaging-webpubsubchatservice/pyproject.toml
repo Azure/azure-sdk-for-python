@@ -54,7 +54,6 @@ exclude = [
     "samples*",
     "generated_samples*",
     "doc*",
-    "build*",
     "azure",
     "azure.messaging",
 ]
