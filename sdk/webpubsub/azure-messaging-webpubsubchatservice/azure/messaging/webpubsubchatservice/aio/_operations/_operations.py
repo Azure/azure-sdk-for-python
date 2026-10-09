@@ -2987,16 +2987,37 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
     @distributed_trace
     @api_version_validation(
         method_added_on="2026-08-01-preview",
-        params_added_on={"2026-08-01-preview": ["api_version", "hub", "user_id", "accept"]},
+        params_added_on={
+            "2026-08-01-preview": [
+                "api_version",
+                "hub",
+                "user_id",
+                "max_page_size",
+                "continuation_token_parameter",
+                "accept",
+            ]
+        },
         api_versions_list=["2026-08-01-preview"],
     )
-    def list_rooms_for_user(self, user_id: str, **kwargs: Any) -> AsyncItemPaged["_models.ChatUserRoom"]:
+    def list_rooms_for_user(
+        self,
+        user_id: str,
+        *,
+        max_page_size: Optional[int] = None,
+        continuation_token_parameter: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.ChatUserRoom"]:
         """List rooms for a user with pagination.
 
         List rooms for a user with pagination.
 
         :param user_id: User identifier. Required.
         :type user_id: str
+        :keyword max_page_size: The maximum number of result items per page. Default value is None.
+        :paramtype max_page_size: int
+        :keyword continuation_token_parameter: Continuation token for pagination. Default value is
+         None.
+        :paramtype continuation_token_parameter: str
         :return: An iterator like instance of ChatUserRoom
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.messaging.webpubsubchatservice.models.ChatUserRoom]
@@ -3021,6 +3042,8 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
                 _request = build_web_pub_sub_chat_service_list_rooms_for_user_request(
                     user_id=user_id,
                     hub=self._config.hub,
+                    max_page_size=max_page_size,
+                    continuation_token_parameter=continuation_token_parameter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,

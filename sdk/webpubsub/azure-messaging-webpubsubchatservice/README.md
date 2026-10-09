@@ -147,7 +147,7 @@ Messages sent to a conversation are delivered in real time to the room's connect
 
 ### Topic
 
-A topic is a named thread within a room with its own conversation. The service assigns its
+A topic is a named thread within a room with its own conversation. The service returns its
 ID, creation time, creator, conversation ID, and ETag in responses. Topic IDs are specified
 by the application in the request path. Topics have a lifecycle state of `Normal`, `Archived`,
 or `SoftDeleted`. Creating a topic requires a title; updating a topic can change its title
@@ -199,8 +199,8 @@ print(role.name, role.permissions)
 
 <!-- END SNIPPET -->
 
-See [sample_roles_and_permissions.py](samples/sample_roles_and_permissions.py)
-and [sample_roles_and_permissions_async.py](samples/sample_roles_and_permissions_async.py)
+See [sample_roles_and_permissions.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_roles_and_permissions.py)
+and [sample_roles_and_permissions_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_roles_and_permissions_async.py)
 for runnable model-and-enum examples. The selected role is created or replaced
 and remains in the hub; these samples do not create users or rooms.
 
@@ -380,10 +380,10 @@ For conditional updates and deletes, pass the current ETag with
 that another caller has changed. Deleting a topic is a soft delete.
 
 For individual API calls, see the generated samples for
-[create or replace](generated_samples/create_or_replace_topic.py),
-[list](generated_samples/list_topics.py), [get](generated_samples/get_topic.py),
-[update](generated_samples/update_topic.py), and
-[delete](generated_samples/delete_topic.py).
+[create or replace](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/create_or_replace_topic.py),
+[list](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/list_topics.py), [get](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/get_topic.py),
+[update](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/update_topic.py), and
+[delete](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/delete_topic.py).
 
 ### List rooms and users
 
@@ -424,9 +424,9 @@ for room in client.list_rooms_for_user(os.environ["WPS_CHAT_USER_ID"]):
 
 <!-- END SNIPPET -->
 
-For basic list calls, see [list_rooms.py](generated_samples/list_rooms.py),
-[list_users.py](generated_samples/list_users.py), and
-[list_rooms_for_user.py](generated_samples/list_rooms_for_user.py).
+For basic list calls, see [list_rooms.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/list_rooms.py),
+[list_users.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/list_users.py), and
+[list_rooms_for_user.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/list_rooms_for_user.py).
 Listing rooms for a user requires an existing user ID.
 
 Collection iterators automatically fetch subsequent pages.
@@ -434,7 +434,7 @@ Collection iterators automatically fetch subsequent pages.
 ### Use the asynchronous client
 
 Run this snippet inside an async function with an authenticated async `client`; see
-[sample_client_access_async.py](samples/sample_client_access_async.py)
+[sample_client_access_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_client_access_async.py)
 for the complete program.
 
 <!-- SNIPPET:sample_client_access_async.client_access_async -->
@@ -468,7 +468,7 @@ python samples/sample_roles_and_permissions_async.py
 
 Service operations raise `HttpResponseError` or a more specific subclass when a request fails:
 
-The [sample_errors.py](samples/sample_errors.py) example reads an existing role,
+The [sample_errors.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_errors.py) example reads an existing role,
 prints the status on failure, and re-raises the error. Set `WPS_CHAT_ROLE_NAME`
 to the role to read (default: `user.python_sample`).
 
@@ -532,7 +532,7 @@ If a newly sent message does not appear immediately, confirm that the sending us
 
 ## Next steps
 
-Explore the [README snippet sources](samples/sample_readme_snippets.py) and
+Explore the [README snippet sources](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_readme_snippets.py) and
 [complete package samples][samples] to learn how to:
 
 - Authenticate with a connection string, access key, or Microsoft Entra ID.

@@ -1,5 +1,5 @@
 directory: specification/webpubsub/data-plane/WebPubSubChat
-commit: d0de34fa02714f3bd535fe2833c645a348a3bcaa
+commit: 44c2a4f48a4a2e4d77f9658749f990bcf9ab110f
 repo: Azure/azure-rest-api-specs
 additionalDirectories: []
 entrypointFile: client.tsp
