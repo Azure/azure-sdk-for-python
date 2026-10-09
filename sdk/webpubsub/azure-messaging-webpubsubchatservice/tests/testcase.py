@@ -22,18 +22,20 @@ from chat_message_seed import (
 
 
 class WebPubSubChatTest(AzureRecordedTestCase):
-    def create_client(self, endpoint):
+    def create_client(self, endpoint, **kwargs):
         return WebPubSubChatServiceClient(
             endpoint,
             "test_hub",
             self.get_credential(WebPubSubChatServiceClient),
+            **kwargs,
         )
 
-    def create_async_client(self, endpoint):
+    def create_async_client(self, endpoint, **kwargs):
         return AsyncWebPubSubChatServiceClient(
             endpoint,
             "test_hub",
             self.get_credential(AsyncWebPubSubChatServiceClient, is_async=True),
+            **kwargs,
         )
 
     @staticmethod
