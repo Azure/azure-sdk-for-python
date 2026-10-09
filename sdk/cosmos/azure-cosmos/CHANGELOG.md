@@ -2,7 +2,7 @@
 > [!IMPORTANT]
 > We strongly recommend that customers use at least version 4.16.3 of `azure-cosmos`.
 
-### 4.17.1 (Unreleased)
+### 4.17.2 (Unreleased)
 
 #### Features Added
 
@@ -11,6 +11,12 @@
 #### Bugs Fixed
 
 #### Other Changes
+
+### 4.17.1 (2026-09-16)
+
+#### Bugs Fixed
+* Fixed unnecessary full routing-map refreshes in sync and async clients when incremental partition metadata updates reference ancestors that have already been removed from the cache. See [PR 49026](https://github.com/Azure/azure-sdk-for-python/pull/49026).
+* Fixed older partition metadata revisions overwriting newer revisions when incremental routing-map updates resolve child ranges out of order during cascading splits. See [PR 49026](https://github.com/Azure/azure-sdk-for-python/pull/49026).
 
 ### 4.17.0 (2026-09-09)
 
@@ -190,6 +196,7 @@ This version and all future versions will require Python 3.9+.
 * Fixed bug where exclusion list was not honored before falling back to global endpoint for multi-write region accounts. See[PR 43297](https://github.com/Azure/azure-sdk-for-python/pull/43297)
  
 #### Other Changes
+* Made `max_concurrency` optional for `read_items`. When omitted or set to `None`, the sync client uses Python's `ThreadPoolExecutor` default instead of 10 (unless a custom executor is provided), and the async client uses an internal default of 5 instead of the preview default of 10. Async callers can explicitly pass `max_concurrency=10` to retain the previous limit. See [PR 43269](https://github.com/Azure/azure-sdk-for-python/pull/43269).
 * Removed dual endpoint tracking from the sdk. See [PR 40451](https://github.com/Azure/azure-sdk-for-python/pull/40451).
 * Reverted typehints to fix the mismatch issue. See [PR 43124](https://github.com/Azure/azure-sdk-for-python/pull/43124)
 * Corrected type hints for `ConsistencyPolicy` in `DatabaseAccount` class. See [PR 43150](https://github.com/Azure/azure-sdk-for-python/pull/43150)

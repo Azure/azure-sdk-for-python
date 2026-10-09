@@ -275,14 +275,16 @@ namespace azure.ai.agentserver.responses
                 response_id: str, 
                 event: StreamEventRecord, 
                 *, 
-                ttl_seconds: int | None = ...
+                ttl_seconds: int | None = ...,
+                context: PlatformContext | None = ...
             ) -> bool: ...
 
         async def create_execution(
                 self, 
                 execution: ResponseExecution, 
                 *, 
-                ttl_seconds: int | None = ...
+                ttl_seconds: int | None = ...,
+                context: PlatformContext | None = ...
             ) -> None: ...
 
         async def create_response(
@@ -294,7 +296,12 @@ namespace azure.ai.agentserver.responses
                 context: PlatformContext | None = ...
             ) -> None: ...
 
-        async def delete(self, response_id: str) -> bool: ...
+        async def delete(
+                self,
+                response_id: str,
+                *,
+                context: PlatformContext | None = ...
+            ) -> bool: ...
 
         async def delete_response(
                 self, 
@@ -303,7 +310,12 @@ namespace azure.ai.agentserver.responses
                 context: PlatformContext | None = ...
             ) -> None: ...
 
-        async def get_execution(self, response_id: str) -> ResponseExecution | None: ...
+        async def get_execution(
+                self,
+                response_id: str,
+                *,
+                context: PlatformContext | None = ...
+            ) -> ResponseExecution | None: ...
 
         async def get_history_item_ids(
                 self, 
@@ -332,7 +344,12 @@ namespace azure.ai.agentserver.responses
                 context: PlatformContext | None = ...
             ) -> list[OutputItem | None]: ...
 
-        async def get_replay_events(self, response_id: str) -> list[StreamEventRecord] | None: ...
+        async def get_replay_events(
+                self,
+                response_id: str,
+                *,
+                context: PlatformContext | None = ...
+            ) -> list[StreamEventRecord] | None: ...
 
         async def get_response(
                 self, 
@@ -351,7 +368,8 @@ namespace azure.ai.agentserver.responses
                 self, 
                 response_id: str, 
                 *, 
-                ttl_seconds: int | None = ...
+                ttl_seconds: int | None = ...,
+                context: PlatformContext | None = ...
             ) -> bool: ...
 
         async def set_response_snapshot(
@@ -359,7 +377,8 @@ namespace azure.ai.agentserver.responses
                 response_id: str, 
                 response: ResponseObject, 
                 *, 
-                ttl_seconds: int | None = ...
+                ttl_seconds: int | None = ...,
+                context: PlatformContext | None = ...
             ) -> bool: ...
 
         async def transition_execution_status(
@@ -367,7 +386,8 @@ namespace azure.ai.agentserver.responses
                 response_id: str, 
                 next_status: ResponseStatus, 
                 *, 
-                ttl_seconds: int | None = ...
+                ttl_seconds: int | None = ...,
+                context: PlatformContext | None = ...
             ) -> bool: ...
 
         async def update_response(
@@ -412,7 +432,7 @@ namespace azure.ai.agentserver.responses
                 client_headers: dict[str, str] | None = ..., 
                 conversation_id: str | None = ..., 
                 created_at: datetime | None = ..., 
-                history_limit: int = 100, 
+                history_limit: int = -1, 
                 input_items: list[InputParam] | list[OutputItem] | None = ..., 
                 mode_flags: ResponseModeFlags, 
                 platform_context: PlatformContext | None = ..., 
@@ -832,7 +852,7 @@ namespace azure.ai.agentserver.responses
                 *, 
                 additional_server_version: str | None = ..., 
                 create_span_hook: CreateSpanHook | None = ..., 
-                default_fetch_history_count: int = 100, 
+                default_fetch_history_count: int = -1, 
                 default_model: str | None = ..., 
                 resilient_background: bool = False, 
                 shutdown_grace_period_seconds: int = 10, 
@@ -5659,7 +5679,7 @@ namespace azure.ai.agentserver.responses.models
 
 
     class azure.ai.agentserver.responses.models.ResponseUsageInputTokensDetails(TypedDict, total=False):
-        key "cache_write_tokens": Required[int]
+        key "cache_write_tokens": int
         key "cached_tokens": Required[int]
         cache_write_tokens: int
         cached_tokens: int

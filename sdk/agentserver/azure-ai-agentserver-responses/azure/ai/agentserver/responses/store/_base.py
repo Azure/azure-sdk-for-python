@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Iterable, Protocol, runtime_checkable
 
-from ..models._generated import OutputItem, ResponseObject
+from ..models import _generated as _generated_models
 
 if TYPE_CHECKING:
     from .._response_context import PlatformContext
@@ -51,14 +51,15 @@ class ResponseProviderProtocol(Protocol):
 
     Every operation accepts an optional ``context`` parameter (S-018).
     Implementations MUST use it to partition data in multi-tenant
-    deployments.  When ``None``, the provider operates without tenant
-    scoping (suitable for local development).
+    deployments. Providers supporting anonymous local development must keep
+    unkeyed state separate from named users' state; ``None`` must not bypass
+    partitioning.
     """
 
     async def create_response(
         self,
-        response: ResponseObject,
-        input_items: Iterable[OutputItem] | None,
+        response: _generated_models.ResponseObject,
+        input_items: Iterable[_generated_models.OutputItem] | None,
         history_item_ids: Iterable[str] | None,
         *,
         context: PlatformContext | None = None,
@@ -76,7 +77,9 @@ class ResponseProviderProtocol(Protocol):
         :rtype: None
         """
 
-    async def get_response(self, response_id: str, *, context: PlatformContext | None = None) -> ResponseObject:
+    async def get_response(
+        self, response_id: str, *, context: PlatformContext | None = None
+    ) -> _generated_models.ResponseObject:
         """Load one response envelope by ID.
 
         :param response_id: The unique identifier of the response to retrieve.
@@ -89,7 +92,9 @@ class ResponseProviderProtocol(Protocol):
         """
         ...
 
-    async def update_response(self, response: ResponseObject, *, context: PlatformContext | None = None) -> None:
+    async def update_response(
+        self, response: _generated_models.ResponseObject, *, context: PlatformContext | None = None
+    ) -> None:
         """Persist an updated response envelope.
 
         :param response: The response envelope with updated fields to persist.
@@ -119,7 +124,7 @@ class ResponseProviderProtocol(Protocol):
         before: str | None = None,
         *,
         context: PlatformContext | None = None,
-    ) -> list[OutputItem]:
+    ) -> list[_generated_models.OutputItem]:
         """Get response input/history items for one response ID using cursor pagination.
 
         :param response_id: The unique identifier of the response whose items to fetch.
@@ -141,7 +146,7 @@ class ResponseProviderProtocol(Protocol):
 
     async def get_items(
         self, item_ids: Iterable[str], *, context: PlatformContext | None = None
-    ) -> list[OutputItem | None]:
+    ) -> list[_generated_models.OutputItem | None]:
         """Get items by ID (missing IDs produce ``None`` entries).
 
         :param item_ids: The item identifiers to look up.
@@ -167,11 +172,11 @@ class ResponseProviderProtocol(Protocol):
         :type previous_response_id: str | None
         :param conversation_id: Optional conversation ID to scope history lookup.
         :type conversation_id: str | None
-        :param limit: Maximum number of history item IDs to return.
+        :param limit: Maximum number of history item IDs to return, or -1 for all items.
         :type limit: int
         :keyword context: Platform context for multi-tenant partitioning.
         :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
-        :returns: A list of history item IDs within the given scope.
+        :returns: An ordered list of unique history item IDs within the given scope.
         :rtype: list[str]
         """
         ...

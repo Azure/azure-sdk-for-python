@@ -1,5 +1,22 @@
 # Release History
 
+## 1.0.0b4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed compatibility with Microsoft 365 Agents SDK 1.8.0 by removing the
+  unsupported `ClaimsIdentity.is_authenticated` constructor argument.
+  Anonymous and bearer outbound authentication behavior is unchanged.
+
+### Other Changes
+
+- Raised the minimum `microsoft-agents-hosting-core` version to `1.4.0` to use
+  the supported claims constructor and `allow_anonymous` API.
+
 ## 1.0.0b3 (2026-08-21)
 
 ### Features Added

@@ -55,6 +55,9 @@ extends:
       safeName: azurestoragequeue
     - name: azure-storage-extensions
       safeName: azurestorageextensions
+      # Ships compiled binaries, so its wheels are routed through a dedicated
+      # Sign_azurestorageextensions stage before release and dev feed publishing.
+      signBinaries: true
       triggeringPaths:
         - /sdk/storage/azure-storage-blob
         - /sdk/storage/azure-storage-file-datalake

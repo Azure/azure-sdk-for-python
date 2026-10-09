@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AutoScaleProperties(_Model):
+class AutoScaleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The auto scale settings on Elastic San Appliance.
 
     :ivar scale_up_properties: Scale up settings on Elastic San Appliance.
@@ -47,7 +47,44 @@ class AutoScaleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskSnapshotList(_Model):
+class DeleteRetentionPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Response for Delete Retention Policy object.
+
+    :ivar policy_state: Known values are: "Enabled" and "Disabled".
+    :vartype policy_state: str or ~azure.mgmt.elasticsan.models.PolicyState
+    :ivar retention_period_days: The number of days to retain the resources after deletion.
+    :vartype retention_period_days: int
+    """
+
+    policy_state: Optional[Union[str, "_models.PolicyState"]] = rest_field(
+        name="policyState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"Enabled\" and \"Disabled\"."""
+    retention_period_days: Optional[int] = rest_field(
+        name="retentionPeriodDays", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The number of days to retain the resources after deletion."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        policy_state: Optional[Union[str, "_models.PolicyState"]] = None,
+        retention_period_days: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DiskSnapshotList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """object to hold array of Disk Snapshot ARM IDs.
 
     :ivar disk_snapshot_ids: array of DiskSnapshot ARM IDs. Required.
@@ -105,7 +142,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -149,7 +186,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class ElasticSan(TrackedResource):
+class ElasticSan(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for ElasticSan request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -188,6 +225,10 @@ class ElasticSan(TrackedResource):
         "private_endpoint_connections",
         "public_network_access",
         "auto_scale_properties",
+        "version",
+        "used_capacity_gi_b",
+        "total_reserved_iops",
+        "total_reserved_m_bps",
     ]
 
     @overload
@@ -228,7 +269,7 @@ class ElasticSan(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ElasticSanProperties(_Model):
+class ElasticSanProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Elastic San response properties.
 
     :ivar sku: resource sku. Required.
@@ -237,21 +278,24 @@ class ElasticSanProperties(_Model):
     :vartype availability_zones: list[str]
     :ivar provisioning_state: State of the operation on the resource. Known values are: "Invalid",
      "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating", "Deleting", "Deleted",
-     and "Restoring".
+     "Restoring", and "SoftDeleting".
     :vartype provisioning_state: str or ~azure.mgmt.elasticsan.models.ProvisioningStates
-    :ivar base_size_ti_b: Base size of the Elastic San appliance in TiB. Required.
+    :ivar base_size_ti_b: Base size of the Elastic San appliance in TiB.
     :vartype base_size_ti_b: int
-    :ivar extended_capacity_size_ti_b: Extended size of the Elastic San appliance in TiB. Required.
+    :ivar extended_capacity_size_ti_b: Extended size of the Elastic San appliance in TiB.
     :vartype extended_capacity_size_ti_b: int
     :ivar total_volume_size_gi_b: Total size of the provisioned Volumes in GiB.
     :vartype total_volume_size_gi_b: int
     :ivar volume_group_count: Total number of volume groups in this Elastic San appliance.
     :vartype volume_group_count: int
-    :ivar total_iops: Total Provisioned IOPS of the Elastic San appliance.
+    :ivar total_iops: Total Provisioned IOPS of the Elastic San appliance. Settable only for
+     ElasticSanVersion V2, where it is required; read-only for V1.
     :vartype total_iops: int
-    :ivar total_m_bps: Total Provisioned MBps Elastic San appliance.
+    :ivar total_m_bps: Total Provisioned MBps Elastic San appliance. Settable only for
+     ElasticSanVersion V2, where it is required; read-only for V1.
     :vartype total_m_bps: int
-    :ivar total_size_ti_b: Total size of the Elastic San appliance in TB.
+    :ivar total_size_ti_b: Total size of the Elastic San appliance in TB. Settable only for
+     ElasticSanVersion V2, where it is required; read-only for V1.
     :vartype total_size_ti_b: int
     :ivar private_endpoint_connections: The list of Private Endpoint Connections.
     :vartype private_endpoint_connections:
@@ -262,6 +306,15 @@ class ElasticSanProperties(_Model):
     :vartype public_network_access: str or ~azure.mgmt.elasticsan.models.PublicNetworkAccess
     :ivar auto_scale_properties: Auto Scale Properties for Elastic San Appliance.
     :vartype auto_scale_properties: ~azure.mgmt.elasticsan.models.AutoScaleProperties
+    :ivar version: Elastic San appliance version. Defaults to V1 if not specified. Known values
+     are: "V1" and "V2".
+    :vartype version: str or ~azure.mgmt.elasticsan.models.ElasticSanVersion
+    :ivar used_capacity_gi_b: Used capacity in GiB.
+    :vartype used_capacity_gi_b: int
+    :ivar total_reserved_iops: Total IOPS reserved by all the volume groups under an ElasticSan.
+    :vartype total_reserved_iops: int
+    :ivar total_reserved_m_bps: Total MBps reserved by all the volume groups under an ElasticSan.
+    :vartype total_reserved_m_bps: int
     """
 
     sku: "_models.Sku" = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -275,21 +328,26 @@ class ElasticSanProperties(_Model):
     )
     """State of the operation on the resource. Known values are: \"Invalid\", \"Succeeded\",
      \"Failed\", \"Canceled\", \"Pending\", \"Creating\", \"Updating\", \"Deleting\", \"Deleted\",
-     and \"Restoring\"."""
-    base_size_ti_b: int = rest_field(name="baseSizeTiB", visibility=["read", "create"])
-    """Base size of the Elastic San appliance in TiB. Required."""
-    extended_capacity_size_ti_b: int = rest_field(name="extendedCapacitySizeTiB", visibility=["read", "create"])
-    """Extended size of the Elastic San appliance in TiB. Required."""
+     \"Restoring\", and \"SoftDeleting\"."""
+    base_size_ti_b: Optional[int] = rest_field(name="baseSizeTiB", visibility=["read", "create"])
+    """Base size of the Elastic San appliance in TiB."""
+    extended_capacity_size_ti_b: Optional[int] = rest_field(
+        name="extendedCapacitySizeTiB", visibility=["read", "create"]
+    )
+    """Extended size of the Elastic San appliance in TiB."""
     total_volume_size_gi_b: Optional[int] = rest_field(name="totalVolumeSizeGiB", visibility=["read"])
     """Total size of the provisioned Volumes in GiB."""
     volume_group_count: Optional[int] = rest_field(name="volumeGroupCount", visibility=["read"])
     """Total number of volume groups in this Elastic San appliance."""
-    total_iops: Optional[int] = rest_field(name="totalIops", visibility=["read"])
-    """Total Provisioned IOPS of the Elastic San appliance."""
-    total_m_bps: Optional[int] = rest_field(name="totalMBps", visibility=["read"])
-    """Total Provisioned MBps Elastic San appliance."""
-    total_size_ti_b: Optional[int] = rest_field(name="totalSizeTiB", visibility=["read"])
-    """Total size of the Elastic San appliance in TB."""
+    total_iops: Optional[int] = rest_field(name="totalIops", visibility=["read", "create"])
+    """Total Provisioned IOPS of the Elastic San appliance. Settable only for ElasticSanVersion V2,
+     where it is required; read-only for V1."""
+    total_m_bps: Optional[int] = rest_field(name="totalMBps", visibility=["read", "create"])
+    """Total Provisioned MBps Elastic San appliance. Settable only for ElasticSanVersion V2, where it
+     is required; read-only for V1."""
+    total_size_ti_b: Optional[int] = rest_field(name="totalSizeTiB", visibility=["read", "create"])
+    """Total size of the Elastic San appliance in TB. Settable only for ElasticSanVersion V2, where it
+     is required; read-only for V1."""
     private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = rest_field(
         name="privateEndpointConnections", visibility=["read"]
     )
@@ -303,17 +361,30 @@ class ElasticSanProperties(_Model):
         name="autoScaleProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """Auto Scale Properties for Elastic San Appliance."""
+    version: Optional[Union[str, "_models.ElasticSanVersion"]] = rest_field(visibility=["read", "create"])
+    """Elastic San appliance version. Defaults to V1 if not specified. Known values are: \"V1\" and
+     \"V2\"."""
+    used_capacity_gi_b: Optional[int] = rest_field(name="usedCapacityGiB", visibility=["read"])
+    """Used capacity in GiB."""
+    total_reserved_iops: Optional[int] = rest_field(name="totalReservedIops", visibility=["read"])
+    """Total IOPS reserved by all the volume groups under an ElasticSan."""
+    total_reserved_m_bps: Optional[int] = rest_field(name="totalReservedMBps", visibility=["read"])
+    """Total MBps reserved by all the volume groups under an ElasticSan."""
 
     @overload
     def __init__(
         self,
         *,
         sku: "_models.Sku",
-        base_size_ti_b: int,
-        extended_capacity_size_ti_b: int,
         availability_zones: Optional[list[str]] = None,
+        base_size_ti_b: Optional[int] = None,
+        extended_capacity_size_ti_b: Optional[int] = None,
+        total_iops: Optional[int] = None,
+        total_m_bps: Optional[int] = None,
+        total_size_ti_b: Optional[int] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         auto_scale_properties: Optional["_models.AutoScaleProperties"] = None,
+        version: Optional[Union[str, "_models.ElasticSanVersion"]] = None,
     ) -> None: ...
 
     @overload
@@ -327,7 +398,7 @@ class ElasticSanProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ElasticSanUpdate(_Model):
+class ElasticSanUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for ElasticSan update request.
 
     :ivar properties: Properties of ElasticSan.
@@ -348,6 +419,9 @@ class ElasticSanUpdate(_Model):
         "extended_capacity_size_ti_b",
         "public_network_access",
         "auto_scale_properties",
+        "total_iops",
+        "total_m_bps",
+        "total_size_ti_b",
     ]
 
     @overload
@@ -387,7 +461,7 @@ class ElasticSanUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class ElasticSanUpdateProperties(_Model):
+class ElasticSanUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Elastic San update properties.
 
     :ivar base_size_ti_b: Base size of the Elastic San appliance in TiB.
@@ -400,6 +474,15 @@ class ElasticSanUpdateProperties(_Model):
     :vartype public_network_access: str or ~azure.mgmt.elasticsan.models.PublicNetworkAccess
     :ivar auto_scale_properties: Auto Scale Properties for Elastic San Appliance.
     :vartype auto_scale_properties: ~azure.mgmt.elasticsan.models.AutoScaleProperties
+    :ivar total_iops: Total Provisioned IOPS of the Elastic San appliance. Supported only for
+     ElasticSanVersion V2.
+    :vartype total_iops: int
+    :ivar total_m_bps: Total Provisioned MBps Elastic San appliance. Supported only for
+     ElasticSanVersion V2.
+    :vartype total_m_bps: int
+    :ivar total_size_ti_b: Total size of the Elastic San appliance in TB. Supported only for
+     ElasticSanVersion V2.
+    :vartype total_size_ti_b: int
     """
 
     base_size_ti_b: Optional[int] = rest_field(name="baseSizeTiB", visibility=["update"])
@@ -415,6 +498,12 @@ class ElasticSanUpdateProperties(_Model):
         name="autoScaleProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """Auto Scale Properties for Elastic San Appliance."""
+    total_iops: Optional[int] = rest_field(name="totalIops", visibility=["update"])
+    """Total Provisioned IOPS of the Elastic San appliance. Supported only for ElasticSanVersion V2."""
+    total_m_bps: Optional[int] = rest_field(name="totalMBps", visibility=["update"])
+    """Total Provisioned MBps Elastic San appliance. Supported only for ElasticSanVersion V2."""
+    total_size_ti_b: Optional[int] = rest_field(name="totalSizeTiB", visibility=["update"])
+    """Total size of the Elastic San appliance in TB. Supported only for ElasticSanVersion V2."""
 
     @overload
     def __init__(
@@ -424,6 +513,9 @@ class ElasticSanUpdateProperties(_Model):
         extended_capacity_size_ti_b: Optional[int] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         auto_scale_properties: Optional["_models.AutoScaleProperties"] = None,
+        total_iops: Optional[int] = None,
+        total_m_bps: Optional[int] = None,
+        total_size_ti_b: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -437,7 +529,7 @@ class ElasticSanUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionIdentity(_Model):
+class EncryptionIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Encryption identity for the volume group.
 
     :ivar encryption_user_assigned_identity: Resource identifier of the UserAssigned identity to be
@@ -469,7 +561,7 @@ class EncryptionIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionProperties(_Model):
+class EncryptionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The encryption settings on the volume group.
 
     :ivar key_vault_properties: Properties provided by key vault.
@@ -550,7 +642,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -578,7 +670,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Identity(_Model):
+class Identity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity for the resource.
 
     :ivar principal_id: The principal ID of resource identity.
@@ -627,7 +719,7 @@ class Identity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IscsiTargetInfo(_Model):
+class IscsiTargetInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Iscsi target information.
 
     :ivar target_iqn: iSCSI Target IQN (iSCSI Qualified Name); example:
@@ -639,7 +731,7 @@ class IscsiTargetInfo(_Model):
     :vartype target_portal_port: int
     :ivar provisioning_state: State of the operation on the resource. Known values are: "Invalid",
      "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating", "Deleting", "Deleted",
-     and "Restoring".
+     "Restoring", and "SoftDeleting".
     :vartype provisioning_state: str or ~azure.mgmt.elasticsan.models.ProvisioningStates
     :ivar status: Operational status of the iSCSI Target. Known values are: "Invalid", "Unknown",
      "Healthy", "Unhealthy", "Updating", "Running", "Stopped", and "Stopped (deallocated)".
@@ -657,7 +749,7 @@ class IscsiTargetInfo(_Model):
     )
     """State of the operation on the resource. Known values are: \"Invalid\", \"Succeeded\",
      \"Failed\", \"Canceled\", \"Pending\", \"Creating\", \"Updating\", \"Deleting\", \"Deleted\",
-     and \"Restoring\"."""
+     \"Restoring\", and \"SoftDeleting\"."""
     status: Optional[Union[str, "_models.OperationalStatus"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -683,7 +775,7 @@ class IscsiTargetInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultProperties(_Model):
+class KeyVaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of key vault.
 
     :ivar key_name: The name of KeyVault key.
@@ -746,25 +838,33 @@ class KeyVaultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedByInfo(_Model):
-    """Parent resource information.
+class ManagedByResources(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Information about Azure services owning the ElasticSan volume resource.
 
-    :ivar resource_id: Resource ID of the resource managing the volume, this is a restricted field
-     and can only be set for internal use.
-    :vartype resource_id: str
+    :ivar client_id: ClientId of the application managing the resource.
+    :vartype client_id: str
+    :ivar version: Version number to keep track of resources using the Volume.
+    :vartype version: int
+    :ivar resource_ids: ARM Resource IDs of the resources managing the volume.
+    :vartype resource_ids: list[str]
     """
 
-    resource_id: Optional[str] = rest_field(
-        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read", "create", "update", "delete", "query"])
+    """ClientId of the application managing the resource."""
+    version: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Version number to keep track of resources using the Volume."""
+    resource_ids: Optional[list[str]] = rest_field(
+        name="resourceIds", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Resource ID of the resource managing the volume, this is a restricted field and can only be set
-     for internal use."""
+    """ARM Resource IDs of the resources managing the volume."""
 
     @overload
     def __init__(
         self,
         *,
-        resource_id: Optional[str] = None,
+        client_id: Optional[str] = None,
+        version: Optional[int] = None,
+        resource_ids: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -778,7 +878,7 @@ class ManagedByInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkRuleSet(_Model):
+class NetworkRuleSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A set of rules governing the network accessibility.
 
     :ivar virtual_network_rules: The list of virtual network rules.
@@ -808,7 +908,7 @@ class NetworkRuleSet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -866,7 +966,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -896,7 +996,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class PreValidationResponse(_Model):
+class PreValidationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """response object for pre validation api.
 
     :ivar validation_status: a status value indicating success or failure of validation.
@@ -954,7 +1054,7 @@ class ProxyResource(Resource):
     """
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for PrivateEndpoint Connection object.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1015,12 +1115,12 @@ class PrivateEndpointConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for PrivateEndpoint connection properties.
 
     :ivar provisioning_state: Provisioning State of Private Endpoint connection resource. Known
      values are: "Invalid", "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating",
-     "Deleting", "Deleted", and "Restoring".
+     "Deleting", "Deleted", "Restoring", and "SoftDeleting".
     :vartype provisioning_state: str or ~azure.mgmt.elasticsan.models.ProvisioningStates
     :ivar private_endpoint: Private Endpoint resource.
     :vartype private_endpoint: ~azure.mgmt.elasticsan.models.PrivateEndpoint
@@ -1036,7 +1136,7 @@ class PrivateEndpointConnectionProperties(_Model):
     )
     """Provisioning State of Private Endpoint connection resource. Known values are: \"Invalid\",
      \"Succeeded\", \"Failed\", \"Canceled\", \"Pending\", \"Creating\", \"Updating\", \"Deleting\",
-     \"Deleted\", and \"Restoring\"."""
+     \"Deleted\", \"Restoring\", and \"SoftDeleting\"."""
     private_endpoint: Optional["_models.PrivateEndpoint"] = rest_field(
         name="privateEndpoint", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1070,7 +1170,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(Resource):
+class PrivateLinkResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1131,7 +1231,7 @@ class PrivateLinkResource(Resource):
             super().__setattr__(key, value)
 
 
-class PrivateLinkResourceListResult(_Model):
+class PrivateLinkResourceListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of private link resources.
 
     :ivar value: Array of private link resources. Required.
@@ -1163,7 +1263,7 @@ class PrivateLinkResourceListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private link resource.
 
     :ivar group_id: The private link resource group id.
@@ -1201,7 +1301,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for Private Link Service Connection state.
 
     :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
@@ -1246,7 +1346,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScaleUpProperties(_Model):
+class ScaleUpProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Scale up properties on Elastic San Appliance.
 
     :ivar unused_size_ti_b: Unused size on Elastic San appliance in TiB.
@@ -1301,17 +1401,19 @@ class ScaleUpProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The SKU name. Required for account creation; optional for update.
 
-    :ivar name: The sku name. Required. Known values are: "Premium_LRS" and "Premium_ZRS".
+    :ivar name: The sku name. Required. Known values are: "Premium_LRS", "Premium_ZRS", and
+     "ElasticSAN_LRS".
     :vartype name: str or ~azure.mgmt.elasticsan.models.SkuName
     :ivar tier: The sku tier. "Premium"
     :vartype tier: str or ~azure.mgmt.elasticsan.models.SkuTier
     """
 
     name: Union[str, "_models.SkuName"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The sku name. Required. Known values are: \"Premium_LRS\" and \"Premium_ZRS\"."""
+    """The sku name. Required. Known values are: \"Premium_LRS\", \"Premium_ZRS\", and
+     \"ElasticSAN_LRS\"."""
     tier: Optional[Union[str, "_models.SkuTier"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1351,10 +1453,11 @@ class SKUCapability(_Model):
     """A string value to indicate states of given capability."""
 
 
-class SkuInformation(_Model):
+class SkuInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ElasticSAN SKU and its properties.
 
-    :ivar name: Sku Name. Required. Known values are: "Premium_LRS" and "Premium_ZRS".
+    :ivar name: Sku Name. Required. Known values are: "Premium_LRS", "Premium_ZRS", and
+     "ElasticSAN_LRS".
     :vartype name: str or ~azure.mgmt.elasticsan.models.SkuName
     :ivar tier: Sku Tier. "Premium"
     :vartype tier: str or ~azure.mgmt.elasticsan.models.SkuTier
@@ -1370,7 +1473,7 @@ class SkuInformation(_Model):
     """
 
     name: Union[str, "_models.SkuName"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Sku Name. Required. Known values are: \"Premium_LRS\" and \"Premium_ZRS\"."""
+    """Sku Name. Required. Known values are: \"Premium_LRS\", \"Premium_ZRS\", and \"ElasticSAN_LRS\"."""
     tier: Optional[Union[str, "_models.SkuTier"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1411,15 +1514,34 @@ class SkuLocationInfo(_Model):
     :vartype location: str
     :ivar zones: The zones.
     :vartype zones: list[str]
+    :ivar zone_details: Details of capabilities available in each zone.
+    :vartype zone_details: list[~azure.mgmt.elasticsan.models.SkuZoneDetails]
     """
 
     location: Optional[str] = rest_field(visibility=["read"])
     """The location."""
     zones: Optional[list[str]] = rest_field(visibility=["read"])
     """The zones."""
+    zone_details: Optional[list["_models.SkuZoneDetails"]] = rest_field(name="zoneDetails", visibility=["read"])
+    """Details of capabilities available in each zone."""
 
 
-class Snapshot(ProxyResource):
+class SkuZoneDetails(_Model):
+    """Details of capabilities available in each zone.
+
+    :ivar name: The zone(s).
+    :vartype name: list[str]
+    :ivar capabilities: The capabilities supported in the zone(s).
+    :vartype capabilities: list[~azure.mgmt.elasticsan.models.SKUCapability]
+    """
+
+    name: Optional[list[str]] = rest_field(visibility=["read"])
+    """The zone(s)."""
+    capabilities: Optional[list["_models.SKUCapability"]] = rest_field(visibility=["read"])
+    """The capabilities supported in the zone(s)."""
+
+
+class Snapshot(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for Volume Snapshot request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1440,7 +1562,14 @@ class Snapshot(ProxyResource):
     properties: "_models.SnapshotProperties" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Properties of Volume Snapshot. Required."""
 
-    __flattened_items = ["creation_data", "provisioning_state", "source_volume_size_gi_b", "volume_name"]
+    __flattened_items = [
+        "creation_data",
+        "provisioning_state",
+        "source_volume_size_gi_b",
+        "volume_name",
+        "snapshot_access_state",
+        "completion_percent",
+    ]
 
     @overload
     def __init__(
@@ -1478,7 +1607,7 @@ class Snapshot(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SnapshotCreationData(_Model):
+class SnapshotCreationData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data used when creating a volume snapshot.
 
     :ivar source_id: Fully qualified resource ID of the volume. E.g.
@@ -1510,19 +1639,26 @@ class SnapshotCreationData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SnapshotProperties(_Model):
+class SnapshotProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for Snapshot.
 
     :ivar creation_data: Data used when creating a volume snapshot. Required.
     :vartype creation_data: ~azure.mgmt.elasticsan.models.SnapshotCreationData
     :ivar provisioning_state: State of the operation on the resource. Known values are: "Invalid",
      "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating", "Deleting", "Deleted",
-     and "Restoring".
+     "Restoring", and "SoftDeleting".
     :vartype provisioning_state: str or ~azure.mgmt.elasticsan.models.ProvisioningStates
     :ivar source_volume_size_gi_b: Size of Source Volume.
     :vartype source_volume_size_gi_b: int
     :ivar volume_name: Source Volume Name of a snapshot.
     :vartype volume_name: str
+    :ivar snapshot_access_state: The state of snapshot which determines the access availability of
+     the snapshot. Known values are: "Unknown", "Pending", "Available", "InstantAccess", and
+     "AvailableWithInstantAccess".
+    :vartype snapshot_access_state: str or ~azure.mgmt.elasticsan.models.SnapshotAccessState
+    :ivar completion_percent: Percentage complete for the background copy of the snapshot when a
+     snapshot is in InstantAccess state.
+    :vartype completion_percent: float
     """
 
     creation_data: "_models.SnapshotCreationData" = rest_field(
@@ -1534,11 +1670,20 @@ class SnapshotProperties(_Model):
     )
     """State of the operation on the resource. Known values are: \"Invalid\", \"Succeeded\",
      \"Failed\", \"Canceled\", \"Pending\", \"Creating\", \"Updating\", \"Deleting\", \"Deleted\",
-     and \"Restoring\"."""
+     \"Restoring\", and \"SoftDeleting\"."""
     source_volume_size_gi_b: Optional[int] = rest_field(name="sourceVolumeSizeGiB", visibility=["read"])
     """Size of Source Volume."""
     volume_name: Optional[str] = rest_field(name="volumeName", visibility=["read"])
     """Source Volume Name of a snapshot."""
+    snapshot_access_state: Optional[Union[str, "_models.SnapshotAccessState"]] = rest_field(
+        name="snapshotAccessState", visibility=["read"]
+    )
+    """The state of snapshot which determines the access availability of the snapshot. Known values
+     are: \"Unknown\", \"Pending\", \"Available\", \"InstantAccess\", and
+     \"AvailableWithInstantAccess\"."""
+    completion_percent: Optional[float] = rest_field(name="completionPercent", visibility=["read"])
+    """Percentage complete for the background copy of the snapshot when a snapshot is in InstantAccess
+     state."""
 
     @overload
     def __init__(
@@ -1558,7 +1703,7 @@ class SnapshotProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceCreationData(_Model):
+class SourceCreationData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data source used when creating the volume.
 
     :ivar create_source: This enumerates the possible sources of a volume creation. Known values
@@ -1597,7 +1742,7 @@ class SourceCreationData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -1679,7 +1824,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the identity."""
 
 
-class VirtualNetworkRule(_Model):
+class VirtualNetworkRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual Network rule.
 
     :ivar virtual_network_resource_id: Resource ID of a subnet, for example:
@@ -1718,7 +1863,7 @@ class VirtualNetworkRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Volume(ProxyResource):
+class Volume(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for Volume request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1784,7 +1929,7 @@ class Volume(ProxyResource):
             super().__setattr__(key, value)
 
 
-class VolumeGroup(ProxyResource):
+class VolumeGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for Volume Group request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1819,6 +1964,11 @@ class VolumeGroup(ProxyResource):
         "network_acls",
         "private_endpoint_connections",
         "enforce_data_integrity_check_for_iscsi",
+        "encryption_in_transit",
+        "reserved_iops",
+        "reserved_m_bps",
+        "quality_of_service",
+        "delete_retention_policy",
     ]
 
     @overload
@@ -1858,14 +2008,15 @@ class VolumeGroup(ProxyResource):
             super().__setattr__(key, value)
 
 
-class VolumeGroupProperties(_Model):
+class VolumeGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VolumeGroup response properties.
 
     :ivar provisioning_state: State of the operation on the resource. Known values are: "Invalid",
      "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating", "Deleting", "Deleted",
-     and "Restoring".
+     "Restoring", and "SoftDeleting".
     :vartype provisioning_state: str or ~azure.mgmt.elasticsan.models.ProvisioningStates
-    :ivar protocol_type: Type of storage target. Known values are: "Iscsi" and "None".
+    :ivar protocol_type: Type of storage target. Known values are: "Iscsi", "DirectAttach", and
+     "None".
     :vartype protocol_type: str or ~azure.mgmt.elasticsan.models.StorageTargetType
     :ivar encryption: Type of encryption. Known values are: "EncryptionAtRestWithPlatformKey" and
      "EncryptionAtRestWithCustomerManagedKey".
@@ -1882,6 +2033,21 @@ class VolumeGroupProperties(_Model):
     :ivar enforce_data_integrity_check_for_iscsi: A boolean indicating whether or not Data
      Integrity Check is enabled.
     :vartype enforce_data_integrity_check_for_iscsi: bool
+    :ivar encryption_in_transit: A boolean indicating whether or not Encryption in Transit is
+     enabled, supported only for ISCSI protocol.
+    :vartype encryption_in_transit: bool
+    :ivar reserved_iops: Reserved IOPS allocated for this volume group, applicable for
+     QualityOfService PerformanceCritical only.
+    :vartype reserved_iops: int
+    :ivar reserved_m_bps: Reserved MBps allocated for this volume group, applicable for
+     QualityOfService PerformanceCritical only.
+    :vartype reserved_m_bps: int
+    :ivar quality_of_service: Quality of Service tier for the volume group, applicable for
+     ElasticSanVersion V2 only. Known values are: "GeneralPurpose" and "PerformanceCritical".
+    :vartype quality_of_service: str or ~azure.mgmt.elasticsan.models.QualityOfService
+    :ivar delete_retention_policy: The retention policy for the soft deleted volume group and its
+     associated resources.
+    :vartype delete_retention_policy: ~azure.mgmt.elasticsan.models.DeleteRetentionPolicy
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningStates"]] = rest_field(
@@ -1889,11 +2055,11 @@ class VolumeGroupProperties(_Model):
     )
     """State of the operation on the resource. Known values are: \"Invalid\", \"Succeeded\",
      \"Failed\", \"Canceled\", \"Pending\", \"Creating\", \"Updating\", \"Deleting\", \"Deleted\",
-     and \"Restoring\"."""
+     \"Restoring\", and \"SoftDeleting\"."""
     protocol_type: Optional[Union[str, "_models.StorageTargetType"]] = rest_field(
         name="protocolType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Type of storage target. Known values are: \"Iscsi\" and \"None\"."""
+    """Type of storage target. Known values are: \"Iscsi\", \"DirectAttach\", and \"None\"."""
     encryption: Optional[Union[str, "_models.EncryptionType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1913,6 +2079,26 @@ class VolumeGroupProperties(_Model):
         name="enforceDataIntegrityCheckForIscsi", visibility=["read", "create", "update", "delete", "query"]
     )
     """A boolean indicating whether or not Data Integrity Check is enabled."""
+    encryption_in_transit: Optional[bool] = rest_field(
+        name="encryptionInTransit", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A boolean indicating whether or not Encryption in Transit is enabled, supported only for ISCSI
+     protocol."""
+    reserved_iops: Optional[int] = rest_field(name="reservedIops", visibility=["read", "create"])
+    """Reserved IOPS allocated for this volume group, applicable for QualityOfService
+     PerformanceCritical only."""
+    reserved_m_bps: Optional[int] = rest_field(name="reservedMBps", visibility=["read", "create"])
+    """Reserved MBps allocated for this volume group, applicable for QualityOfService
+     PerformanceCritical only."""
+    quality_of_service: Optional[Union[str, "_models.QualityOfService"]] = rest_field(
+        name="qualityOfService", visibility=["read", "create"]
+    )
+    """Quality of Service tier for the volume group, applicable for ElasticSanVersion V2 only. Known
+     values are: \"GeneralPurpose\" and \"PerformanceCritical\"."""
+    delete_retention_policy: Optional["_models.DeleteRetentionPolicy"] = rest_field(
+        name="deleteRetentionPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The retention policy for the soft deleted volume group and its associated resources."""
 
     @overload
     def __init__(
@@ -1923,6 +2109,11 @@ class VolumeGroupProperties(_Model):
         encryption_properties: Optional["_models.EncryptionProperties"] = None,
         network_acls: Optional["_models.NetworkRuleSet"] = None,
         enforce_data_integrity_check_for_iscsi: Optional[bool] = None,
+        encryption_in_transit: Optional[bool] = None,
+        reserved_iops: Optional[int] = None,
+        reserved_m_bps: Optional[int] = None,
+        quality_of_service: Optional[Union[str, "_models.QualityOfService"]] = None,
+        delete_retention_policy: Optional["_models.DeleteRetentionPolicy"] = None,
     ) -> None: ...
 
     @overload
@@ -1936,7 +2127,7 @@ class VolumeGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeGroupUpdate(_Model):
+class VolumeGroupUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume Group request.
 
     :ivar identity: The identity of the resource.
@@ -1958,6 +2149,9 @@ class VolumeGroupUpdate(_Model):
         "encryption_properties",
         "network_acls",
         "enforce_data_integrity_check_for_iscsi",
+        "reserved_iops",
+        "reserved_m_bps",
+        "delete_retention_policy",
     ]
 
     @overload
@@ -1997,10 +2191,11 @@ class VolumeGroupUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class VolumeGroupUpdateProperties(_Model):
+class VolumeGroupUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VolumeGroup response properties.
 
-    :ivar protocol_type: Type of storage target. Known values are: "Iscsi" and "None".
+    :ivar protocol_type: Type of storage target. Known values are: "Iscsi", "DirectAttach", and
+     "None".
     :vartype protocol_type: str or ~azure.mgmt.elasticsan.models.StorageTargetType
     :ivar encryption: Type of encryption. Known values are: "EncryptionAtRestWithPlatformKey" and
      "EncryptionAtRestWithCustomerManagedKey".
@@ -2014,12 +2209,21 @@ class VolumeGroupUpdateProperties(_Model):
     :ivar enforce_data_integrity_check_for_iscsi: A boolean indicating whether or not Data
      Integrity Check is enabled.
     :vartype enforce_data_integrity_check_for_iscsi: bool
+    :ivar reserved_iops: Reserved IOPS allocated for this volume group, applicable for
+     QualityOfService PerformanceCritical only.
+    :vartype reserved_iops: int
+    :ivar reserved_m_bps: Reserved MBps allocated for this volume group, applicable for
+     QualityOfService PerformanceCritical only.
+    :vartype reserved_m_bps: int
+    :ivar delete_retention_policy: The retention policy for the soft deleted volume group and its
+     associated resources.
+    :vartype delete_retention_policy: ~azure.mgmt.elasticsan.models.DeleteRetentionPolicy
     """
 
     protocol_type: Optional[Union[str, "_models.StorageTargetType"]] = rest_field(
         name="protocolType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Type of storage target. Known values are: \"Iscsi\" and \"None\"."""
+    """Type of storage target. Known values are: \"Iscsi\", \"DirectAttach\", and \"None\"."""
     encryption: Optional[Union[str, "_models.EncryptionType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2035,6 +2239,16 @@ class VolumeGroupUpdateProperties(_Model):
         name="enforceDataIntegrityCheckForIscsi", visibility=["read", "create", "update", "delete", "query"]
     )
     """A boolean indicating whether or not Data Integrity Check is enabled."""
+    reserved_iops: Optional[int] = rest_field(name="reservedIops", visibility=["update"])
+    """Reserved IOPS allocated for this volume group, applicable for QualityOfService
+     PerformanceCritical only."""
+    reserved_m_bps: Optional[int] = rest_field(name="reservedMBps", visibility=["update"])
+    """Reserved MBps allocated for this volume group, applicable for QualityOfService
+     PerformanceCritical only."""
+    delete_retention_policy: Optional["_models.DeleteRetentionPolicy"] = rest_field(
+        name="deleteRetentionPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The retention policy for the soft deleted volume group and its associated resources."""
 
     @overload
     def __init__(
@@ -2045,6 +2259,9 @@ class VolumeGroupUpdateProperties(_Model):
         encryption_properties: Optional["_models.EncryptionProperties"] = None,
         network_acls: Optional["_models.NetworkRuleSet"] = None,
         enforce_data_integrity_check_for_iscsi: Optional[bool] = None,
+        reserved_iops: Optional[int] = None,
+        reserved_m_bps: Optional[int] = None,
+        delete_retention_policy: Optional["_models.DeleteRetentionPolicy"] = None,
     ) -> None: ...
 
     @overload
@@ -2058,7 +2275,7 @@ class VolumeGroupUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeNameList(_Model):
+class VolumeNameList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """object to hold array of volume names.
 
     :ivar volume_names: array of volume names. Required.
@@ -2086,7 +2303,7 @@ class VolumeNameList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeProperties(_Model):
+class VolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume response properties.
 
     :ivar volume_id: Unique Id of the volume in GUID format.
@@ -2097,11 +2314,11 @@ class VolumeProperties(_Model):
     :vartype size_gi_b: int
     :ivar storage_target: Storage target information.
     :vartype storage_target: ~azure.mgmt.elasticsan.models.IscsiTargetInfo
-    :ivar managed_by: Parent resource information.
-    :vartype managed_by: ~azure.mgmt.elasticsan.models.ManagedByInfo
+    :ivar managed_by: Information about Azure services owning the ElasticSan volume resource.
+    :vartype managed_by: list[~azure.mgmt.elasticsan.models.ManagedByResources]
     :ivar provisioning_state: State of the operation on the resource. Known values are: "Invalid",
      "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating", "Deleting", "Deleted",
-     and "Restoring".
+     "Restoring", and "SoftDeleting".
     :vartype provisioning_state: str or ~azure.mgmt.elasticsan.models.ProvisioningStates
     """
 
@@ -2115,16 +2332,16 @@ class VolumeProperties(_Model):
     """Volume size. Required."""
     storage_target: Optional["_models.IscsiTargetInfo"] = rest_field(name="storageTarget", visibility=["read"])
     """Storage target information."""
-    managed_by: Optional["_models.ManagedByInfo"] = rest_field(
+    managed_by: Optional[list["_models.ManagedByResources"]] = rest_field(
         name="managedBy", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Parent resource information."""
+    """Information about Azure services owning the ElasticSan volume resource."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningStates"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
     """State of the operation on the resource. Known values are: \"Invalid\", \"Succeeded\",
      \"Failed\", \"Canceled\", \"Pending\", \"Creating\", \"Updating\", \"Deleting\", \"Deleted\",
-     and \"Restoring\"."""
+     \"Restoring\", and \"SoftDeleting\"."""
 
     @overload
     def __init__(
@@ -2132,7 +2349,7 @@ class VolumeProperties(_Model):
         *,
         size_gi_b: int,
         creation_data: Optional["_models.SourceCreationData"] = None,
-        managed_by: Optional["_models.ManagedByInfo"] = None,
+        managed_by: Optional[list["_models.ManagedByResources"]] = None,
     ) -> None: ...
 
     @overload
@@ -2146,7 +2363,7 @@ class VolumeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeUpdate(_Model):
+class VolumeUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for Volume request.
 
     :ivar properties: Properties of Volume.
@@ -2196,28 +2413,28 @@ class VolumeUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class VolumeUpdateProperties(_Model):
+class VolumeUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume response properties.
 
     :ivar size_gi_b: Volume size.
     :vartype size_gi_b: int
-    :ivar managed_by: Parent resource information.
-    :vartype managed_by: ~azure.mgmt.elasticsan.models.ManagedByInfo
+    :ivar managed_by: Information about Azure services owning the ElasticSan volume resource.
+    :vartype managed_by: list[~azure.mgmt.elasticsan.models.ManagedByResources]
     """
 
     size_gi_b: Optional[int] = rest_field(name="sizeGiB", visibility=["read", "create", "update", "delete", "query"])
     """Volume size."""
-    managed_by: Optional["_models.ManagedByInfo"] = rest_field(
+    managed_by: Optional[list["_models.ManagedByResources"]] = rest_field(
         name="managedBy", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Parent resource information."""
+    """Information about Azure services owning the ElasticSan volume resource."""
 
     @overload
     def __init__(
         self,
         *,
         size_gi_b: Optional[int] = None,
-        managed_by: Optional["_models.ManagedByInfo"] = None,
+        managed_by: Optional[list["_models.ManagedByResources"]] = None,
     ) -> None: ...
 
     @overload

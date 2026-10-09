@@ -1,4 +1,5 @@
 import argparse
+import fnmatch
 import os
 import sys
 
@@ -6,7 +7,7 @@ from typing import Optional, List
 from subprocess import CalledProcessError, run
 
 from .Check import Check
-from ci_tools.functions import install_into_venv, find_whl
+from ci_tools.functions import install_into_venv, find_whl, get_interpreter_compatible_tags, check_whl_against_tags
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import discover_repo_root, set_envvar_defaults
 from ci_tools.logging import logger
@@ -15,6 +16,68 @@ from ci_tools.parsing import ParsedSetup
 REPO_ROOT = discover_repo_root()
 AZURE_SDK_INDEX_URL = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
 PYPI_INDEX_URL = "https://pypi.org/simple/"
+
+# Platform tag substrings that identify a Linux-compatible wheel. Used to deterministically pick a
+# wheel when multiple platform-specific wheels (win_amd64/macosx_*/manylinux) are present for the same
+# package/version, e.g. when Build_Extended downloads all three platform build artifacts into a single
+# staging directory for signed-binary packages.
+LINUX_WHEEL_TAG_MARKERS = ("manylinux", "linux_x86_64", "linux_aarch64", "musllinux")
+
+
+def _glob_whls(whl_dir: str, pkg_name: str, pkg_version: str) -> List[str]:
+    """Return all wheel filenames (relative to whl_dir) matching pkg_name/pkg_version under whl_dir."""
+    pkg_name_format = f"{pkg_name.replace('-', '_')}-{pkg_version}*.whl"
+    whls = []
+    for root, _, filenames in os.walk(whl_dir):
+        for filename in fnmatch.filter(filenames, pkg_name_format):
+            whls.append(os.path.join(root, filename))
+    return [os.path.relpath(w, whl_dir) for w in whls]
+
+
+def _resolve_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> Optional[str]:
+    """Find the wheel to use for pkg_name/pkg_version under whl_dir.
+
+    apistub only needs to statically introspect the package's Python-level API surface, and the job
+    that runs it (Build_Extended) always runs on a Linux agent. If Build_Extended has combined
+    multiple platform-specific wheels (win_amd64/macosx_*/manylinux) for the same package/version into
+    one directory (e.g. signed-binary packages), only the Linux wheel is actually usable on that
+    agent, so we pick it deterministically instead of relying on find_whl's interpreter-tag matching,
+    which fails when multiple platform wheels are present and none happen to match the invoking
+    interpreter's tags.
+    """
+    whls = _glob_whls(whl_dir, pkg_name, pkg_version)
+    if len(whls) <= 1:
+        # Single (or no) candidate: defer to find_whl's existing lookup/logging behavior.
+        return find_whl(whl_dir, pkg_name, pkg_version)
+
+    linux_whls = [w for w in whls if any(marker in w for marker in LINUX_WHEEL_TAG_MARKERS)]
+    if linux_whls:
+        if len(linux_whls) > 1:
+            # More than one Linux wheel can legitimately exist for the same package/version, e.g.
+            # cibuildwheel producing separate CPython and PyPy manylinux wheels. Picking blindly
+            # (as an earlier version of this function did) can select a wheel that isn't
+            # installable on the invoking interpreter. Narrow to the one(s) that actually match
+            # this interpreter's tags, same as find_whl does for the single-Linux-wheel case.
+            compatible_tags = get_interpreter_compatible_tags()
+            interpreter_compatible = [w for w in linux_whls if check_whl_against_tags(w, compatible_tags)]
+            if interpreter_compatible:
+                linux_whls = interpreter_compatible
+            else:
+                logger.error(
+                    f"Multiple Linux wheels found for {pkg_name}=={pkg_version} in {whl_dir}, but none match "
+                    f"the invoking interpreter's tags: {linux_whls}"
+                )
+                return find_whl(whl_dir, pkg_name, pkg_version)
+
+        logger.info(
+            f"Multiple platform-specific wheels found for {pkg_name}=={pkg_version} in {whl_dir}; "
+            f"selecting Linux wheel: {linux_whls[0]}"
+        )
+        return linux_whls[0]
+
+    # No Linux wheel among the candidates (e.g. a genuinely ambiguous set); fall back to find_whl's
+    # interpreter-tag matching/error handling.
+    return find_whl(whl_dir, pkg_name, pkg_version)
 
 
 def get_package_wheel_path(pkg_root: str, staging_dir: Optional[str] = None) -> str:
@@ -25,7 +88,7 @@ def get_package_wheel_path(pkg_root: str, staging_dir: Optional[str] = None) -> 
     prebuilt_dir = os.getenv("PREBUILT_WHEEL_DIR")
     if prebuilt_dir:
         logger.info("Using prebuilt wheel directory: {}".format(prebuilt_dir))
-        found_whl = find_whl(prebuilt_dir, pkg_details.name, pkg_details.version)
+        found_whl = _resolve_whl(prebuilt_dir, pkg_details.name, pkg_details.version)
         pkg_path = os.path.join(prebuilt_dir, found_whl) if found_whl else None
         if not pkg_path:
             raise FileNotFoundError(
@@ -35,7 +98,7 @@ def get_package_wheel_path(pkg_root: str, staging_dir: Optional[str] = None) -> 
             )
         return pkg_path
     if staging_dir:
-        found_whl = find_whl(staging_dir, pkg_details.name, pkg_details.version)
+        found_whl = _resolve_whl(staging_dir, pkg_details.name, pkg_details.version)
         if found_whl:
             return os.path.join(staging_dir, found_whl)
     # Otherwise, use a wheel in the source directory, or fall back on the source directory

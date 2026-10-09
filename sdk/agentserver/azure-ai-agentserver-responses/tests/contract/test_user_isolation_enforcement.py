@@ -15,12 +15,15 @@ from __future__ import annotations
 import asyncio
 import json as _json
 from typing import Any
+from unittest.mock import AsyncMock
 
 import pytest
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses._id_generator import IdGenerator
+from azure.ai.agentserver.responses._response_context import PlatformContext
+from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 from tests._helpers import poll_until
 
@@ -209,6 +212,63 @@ def _build_async_client(handler: Any) -> _AsyncAsgiClient:
     return _AsyncAsgiClient(app)
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "owner_key,other_key,evict",
+    [
+        ("key_A", "key_B", False),
+        ("key_A", None, False),
+        ("key_A", "key_B", True),
+        ("key_A", None, True),
+        (None, "key_A", True),
+    ],
+)
+async def test_memory_provider_isolation_before_and_after_runtime_eviction(
+    owner_key: str | None, other_key: str | None, evict: bool, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Envelope/input provider fallbacks retain the caller's partition after eviction."""
+    provider = InMemoryResponseProvider()
+    host = ResponsesAgentServerHost(store=provider)
+    host.response_handler(_noop_handler)
+    client = _AsyncAsgiClient(host)
+    runtime = host._orchestrator._runtime_state
+    try_evict = runtime.try_evict
+    # Hold eager terminal eviction so both sides of the provider fallback are exercised.
+    monkeypatch.setattr(runtime, "try_evict", AsyncMock(return_value=False))
+    owner_headers = {"x-agent-user-id": owner_key} if owner_key is not None else {}
+    other_headers = {"x-agent-user-id": other_key} if other_key is not None else {}
+    created = await client.post(
+        "/responses",
+        json_body={"model": "m", "input": [{"role": "user", "content": "private input"}], "store": True},
+        headers={**owner_headers, "x-agent-foundry-call-id": "creation-call"},
+    )
+    assert created.status_code == 200
+    response_id = created.json()["id"]
+    monkeypatch.setattr(runtime, "try_evict", try_evict)
+    assert await runtime.get(response_id) is not None
+    if evict:
+        assert await runtime.try_evict(response_id)
+        assert await runtime.get(response_id) is None
+
+    path = f"/responses/{response_id}"
+    for method, endpoint in [("GET", path), ("GET", f"{path}/input_items"), ("DELETE", path)]:
+        denied = await client.request(method, endpoint, headers=other_headers)
+        assert denied.status_code == 404, denied.body
+    with pytest.raises(KeyError):
+        await provider.update_response(created.json(), context=PlatformContext(user_id_key=other_key))
+
+    later_headers = {**owner_headers, "x-agent-foundry-call-id": "later-call"}
+    fetched = await client.get(path, headers=later_headers)
+    assert fetched.status_code == 200
+    inputs = await client.get(f"{path}/input_items", headers=later_headers)
+    assert inputs.status_code == 200
+    assert inputs.json()["data"][0]["content"][0]["text"] == "private input"
+    deleted = await client.request("DELETE", path, headers=later_headers)
+    assert deleted.status_code == 200
+    with pytest.raises(KeyError):
+        await provider.get_response(response_id, context=PlatformContext(user_id_key=owner_key))
+
+
 # ── GET with isolation ────────────────────────────────────
 
 
@@ -297,14 +357,14 @@ class TestGetUserIsolation:
                 except (asyncio.CancelledError, Exception):
                     pass
 
-    def test_get_created_without_key_any_request_returns_200(self) -> None:
-        """GET with or without key when response was created without one → 200 (backward compat)."""
+    def test_get_created_without_key_is_visible_only_to_anonymous_requests(self) -> None:
+        """Anonymous responses are isolated from named user partitions."""
         client = _make_client()
         resp = _create_response(client)
         _wait_for_terminal(client, resp["id"])
         # With a key
         r = client.get(f"/responses/{resp['id']}", headers={"x-agent-user-id": "any_key"})
-        assert r.status_code == 200
+        assert r.status_code == 404
         # Without a key
         r = client.get(f"/responses/{resp['id']}")
         assert r.status_code == 200

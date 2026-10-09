@@ -4,6 +4,7 @@ The AI Projects client library is part of the Microsoft Foundry SDK, and provide
 resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 
 * **Create and run Agents** using methods on the `.agents` client property. This includes **Hosted Agents**, which let you run your own containerized agent runtime while using Microsoft Foundry for managed hosting and scaling.
+* **Build and run Voice Agents (preview)** for real-time, speech-to-speech conversational AI, reachable over a WebSocket (`.beta.voice_agents.realtime`) or telephony (`.beta.voice_agents.telephony`), with persisted conversation transcripts and audio through `.beta.voice_agents.conversations`.
 * **Enhance Agents with specialized tools and toolbox tools** such as:
   * Agent-to-Agent (A2A)
   * Azure AI Search
@@ -62,7 +63,7 @@ To report an issue with the client library, or request additional features, plea
 
 ### Prerequisite
 
-* Python 3.9 or later.
+* Python 3.10 or later.
 * An [Azure subscription][azure_sub].
 * A [project in Microsoft Foundry](https://learn.microsoft.com/azure/foundry/how-to/create-projects).
 * A Foundry project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Microsoft Foundry Project home page. Below we will assume the environment variable `FOUNDRY_PROJECT_ENDPOINT` was defined to hold this value.
@@ -192,6 +193,7 @@ The table below lists the operation groups supported by the client library, with
 | Sessions | [Manage hosted sessions](https://learn.microsoft.com/azure/foundry/agents/how-to/manage-hosted-sessions?pivots=python) | `samples/hosted_agents/` |
 | Skills (preview) | | `samples/skills/` |
 | Toolboxes | [Curate intent-based toolbox in Foundry](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox?pivots=python) | `samples/hosted_agents/`, `samples/toolboxes/` |
+| Voice agents (preview) | | `samples/agents/voice/` |
 
 
 ## Client-side tracing
@@ -229,7 +231,7 @@ Operation returned an invalid status 'Unauthorized'
 
 ### Logging
 
-The client uses the standard [Python logging library](https://docs.python.org/3/library/logging.html). The logs include HTTP request and response headers and body, which are often useful when troubleshooting or reporting an issue to Microsoft.
+The client uses the standard [Python logging library](https://docs.python.org/3/library/logging.html). Logs can include request, response, and transport details that are useful when troubleshooting or reporting an issue to Microsoft.
 
 #### Default console logging
 
@@ -259,13 +261,20 @@ openai_logger.setLevel(logging.DEBUG)
 openai_logger.propagate = False
 openai_logger.addHandler(handler)
 
+# Optional: Voice Agent WebSocket transport logger.
+voice_logger = logging.getLogger("azure.ai.projects.realtime")
+voice_logger.setLevel(logging.DEBUG)
+voice_logger.propagate = False
+voice_logger.addHandler(handler)
 
 # Optional: change the default logging format. Here we add a timestamp.
-#formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
-#handler.setFormatter(formatter)
+# formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
+# handler.setFormatter(formatter)
 ```
 
-By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Authorization` which holds the key or token), and the request and response payloads. To create logs without redaction, add `logging_enable=True` to the client constructor:
+The `azure` logger includes logs from `azure-ai-projects` and `azure-core`, including Voice Agent WebSocket transport logs. The dedicated OpenAI and Voice Agent loggers shown above can be used when you want only those transport logs. At `DEBUG` level, the Voice Agent logger records connection and close events and the type and byte count of each event sent or received. It does not log event payloads, URL query strings, request headers, or authentication tokens.
+
+By default, logs redact URL query values, some HTTP request and response headers (including `Authorization`), and request and response payloads. To create HTTP pipeline logs without redaction, add `logging_enable=True` to the client constructor:
 
 ```python
 project_client = AIProjectClient(

@@ -46,11 +46,13 @@ def main():
                         "rules": [
                             {
                                 "destinationAddresses": ["*"],
+                                "destinationGeoLocations": ["US"],
                                 "destinationPorts": ["*"],
                                 "ipProtocols": ["TCP"],
                                 "name": "network-rule1",
                                 "ruleType": "NetworkRule",
                                 "sourceAddresses": ["10.1.25.0/24"],
+                                "sourceGeoLocations": ["CA", "US"],
                             }
                         ],
                     }
@@ -61,6 +63,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/FirewallPolicyRuleCollectionGroupPut.json
+# x-ms-original-file: 2026-01-01/FirewallPolicyRuleCollectionGroupPut.json
 if __name__ == "__main__":
     main()

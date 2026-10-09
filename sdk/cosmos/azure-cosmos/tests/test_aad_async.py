@@ -4,7 +4,6 @@
 import base64
 import json
 import time
-import os
 import unittest
 import uuid
 from io import StringIO
@@ -180,7 +179,8 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
     async def test_override_scope_no_fallback_async(self):
         """When override scope is provided, only that scope is used and no fallback occurs."""
         override_scope = "https://my.custom.scope/.default"
-        os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"] = override_scope
+        previous_env = test_config.set_environment_variables(AZURE_COSMOS_AAD_SCOPE_OVERRIDE=override_scope)
+        self.addCleanup(test_config.restore_environment_variables, previous_env)
 
         async def action(scopes_captured):
             credential = CosmosEmulatorCredential()
@@ -197,7 +197,6 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
         try:
             assert all(scope == override_scope for scope in scopes), f"Expected only override scope, got: {scopes}"
         finally:
-            del os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"]
             try:
                 await container.delete_item(item='Item_20', partition_key='pk')
             except Exception:
@@ -207,7 +206,8 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
     async def test_override_scope_no_fallback_on_error_async(self):
         """When override scope is provided and auth fails, no fallback occurs."""
         override_scope = "https://my.custom.scope/.default"
-        os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"] = override_scope
+        previous_env = test_config.set_environment_variables(AZURE_COSMOS_AAD_SCOPE_OVERRIDE=override_scope)
+        self.addCleanup(test_config.restore_environment_variables, previous_env)
 
         class FailingCredential(CosmosEmulatorCredential):
             async def get_token(self, *scopes, **kwargs):
@@ -231,7 +231,6 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
         try:
             assert all(scope == override_scope for scope in scopes), f"Expected only override scope, got: {scopes}"
         finally:
-            del os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"]
             try:
                 await container.delete_item(item='Item_21', partition_key='pk')
             except Exception:
@@ -241,7 +240,8 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
     async def test_account_scope_only_async(self):
         """When account scope is provided, only that scope is used."""
         account_scope = "https://localhost/.default"
-        os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"] = ""
+        previous_env = test_config.set_environment_variables(AZURE_COSMOS_AAD_SCOPE_OVERRIDE="")
+        self.addCleanup(test_config.restore_environment_variables, previous_env)
 
         async def action(scopes_captured):
             credential = CosmosEmulatorCredential()
@@ -268,7 +268,8 @@ class TestAADAsync(unittest.IsolatedAsyncioTestCase):
         """When account scope is provided and auth fails, fallback to default scope occurs."""
         account_scope = "https://localhost/.default"
         fallback_scope = "https://cosmos.azure.com/.default"
-        os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"] = ""
+        previous_env = test_config.set_environment_variables(AZURE_COSMOS_AAD_SCOPE_OVERRIDE="")
+        self.addCleanup(test_config.restore_environment_variables, previous_env)
 
         class FallbackCredential(CosmosEmulatorCredential):
             def __init__(self):

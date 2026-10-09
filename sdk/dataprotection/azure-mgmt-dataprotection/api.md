@@ -221,7 +221,7 @@ namespace azure.mgmt.dataprotection.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'backup_instance_name']}, api_versions_list=['2026-06-01'])
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'backup_instance_name']}, api_versions_list=['2026-06-01', '2026-07-01'])
         async def begin_resume_protection(
                 self, 
                 resource_group_name: str, 
@@ -945,7 +945,7 @@ namespace azure.mgmt.dataprotection.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01', '2026-04-01-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01', '2026-04-01-preview', '2026-06-01', '2026-07-01'])
         async def get(
                 self, 
                 location: str, 
@@ -954,7 +954,7 @@ namespace azure.mgmt.dataprotection.aio.operations
             ) -> DeletedBackupVaultResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01', '2026-04-01-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01', '2026-04-01-preview', '2026-06-01', '2026-07-01'])
         def list_by_location(
                 self, 
                 location: str, 
@@ -1761,6 +1761,7 @@ namespace azure.mgmt.dataprotection.models
     class azure.mgmt.dataprotection.models.AzureBackupDiscreteRecoveryPoint(AzureBackupRecoveryPoint, discriminator='AzureBackupDiscreteRecoveryPoint'):
         expiry_time: Optional[datetime]
         friendly_name: Optional[str]
+        immutability_properties: Optional[RecoveryPointImmutabilityProperties]
         object_type: Literal["AzureBackupDiscreteRecoveryPoint"]
         policy_name: Optional[str]
         policy_version: Optional[str]
@@ -2301,6 +2302,11 @@ namespace azure.mgmt.dataprotection.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.dataprotection.models.BackupSolutionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        LOGICAL_BACKUP = "LogicalBackup"
+        PHYSICAL_BACKUP = "PhysicalBackup"
 
 
     class azure.mgmt.dataprotection.models.BackupVault(_Model):
@@ -3342,13 +3348,31 @@ namespace azure.mgmt.dataprotection.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.dataprotection.models.ImmutabilityConfiguration(_Model):
+        duration_in_days: Optional[int]
+        type: Optional[Union[str, ImmutabilityType]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                duration_in_days: Optional[int] = ..., 
+                type: Optional[Union[str, ImmutabilityType]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.dataprotection.models.ImmutabilitySettings(_Model):
+        configuration: Optional[ImmutabilityConfiguration]
         state: Optional[Union[str, ImmutabilityState]]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                configuration: Optional[ImmutabilityConfiguration] = ..., 
                 state: Optional[Union[str, ImmutabilityState]] = ...
             ) -> None: ...
 
@@ -3360,6 +3384,11 @@ namespace azure.mgmt.dataprotection.models
         DISABLED = "Disabled"
         LOCKED = "Locked"
         UNLOCKED = "Unlocked"
+
+
+    class azure.mgmt.dataprotection.models.ImmutabilityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AS_PER_POLICY = "AsPerPolicy"
+        TIME_BASED = "TimeBased"
 
 
     class azure.mgmt.dataprotection.models.InfrastructureEncryptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3849,6 +3878,21 @@ namespace azure.mgmt.dataprotection.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.dataprotection.models.PostgreSqlFlexibleServerBackupDatasourceParameters(BackupDatasourceParameters, discriminator='PostgreSqlFlexibleServerBackupDatasourceParameters'):
+        backup_solution_type: Optional[Union[str, BackupSolutionType]]
+        object_type: Literal["PostgreSqlFlexibleServerBackupDatasourceParameters"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                backup_solution_type: Optional[Union[str, BackupSolutionType]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.dataprotection.models.ProtectionStatusDetails(_Model):
         error_details: Optional[UserFacingError]
         status: Optional[Union[str, Status]]
@@ -3928,6 +3972,22 @@ namespace azure.mgmt.dataprotection.models
                 state: Optional[str] = ..., 
                 type: Optional[str] = ..., 
                 visible: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.dataprotection.models.RecoveryPointImmutabilityProperties(_Model):
+        expiry_time: Optional[datetime]
+        is_immutable: bool
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                expiry_time: Optional[datetime] = ..., 
+                is_immutable: bool
             ) -> None: ...
 
         @overload
@@ -4898,7 +4958,7 @@ namespace azure.mgmt.dataprotection.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'backup_instance_name']}, api_versions_list=['2026-06-01'])
+        @api_version_validation(method_added_on='2026-06-01', params_added_on={'2026-06-01': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'backup_instance_name']}, api_versions_list=['2026-06-01', '2026-07-01'])
         def begin_resume_protection(
                 self, 
                 resource_group_name: str, 
@@ -5622,7 +5682,7 @@ namespace azure.mgmt.dataprotection.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01', '2026-04-01-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01', '2026-04-01-preview', '2026-06-01', '2026-07-01'])
         def get(
                 self, 
                 location: str, 
@@ -5631,7 +5691,7 @@ namespace azure.mgmt.dataprotection.operations
             ) -> DeletedBackupVaultResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01', '2026-04-01-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-09-01', '2026-03-01', '2026-04-01-preview', '2026-06-01', '2026-07-01'])
         def list_by_location(
                 self, 
                 location: str, 
@@ -6884,8 +6944,17 @@ namespace azure.mgmt.dataprotection.types
         objectType: Literal[ImmediateCopyOption]
 
 
+    class azure.mgmt.dataprotection.types.ImmutabilityConfiguration(TypedDict, total=False):
+        key "durationInDays": int
+        key "type": Union[str, ImmutabilityType]
+        durationInDays: int
+        type: Union[str, ImmutabilityType]
+
+
     class azure.mgmt.dataprotection.types.ImmutabilitySettings(TypedDict, total=False):
+        key "configuration": ForwardRef('ImmutabilityConfiguration', module='types')
         key "state": Union[str, ImmutabilityState]
+        configuration: ImmutabilityConfiguration
         state: Union[str, ImmutabilityState]
 
 
@@ -7052,6 +7121,13 @@ namespace azure.mgmt.dataprotection.types
     class azure.mgmt.dataprotection.types.PolicyParameters(TypedDict, total=False):
         backupDatasourceParametersList: list[BackupDatasourceParameters]
         dataStoreParametersList: list[DataStoreParameters]
+
+
+    class azure.mgmt.dataprotection.types.PostgreSqlFlexibleServerBackupDatasourceParameters(TypedDict, total=False):
+        key "backupSolutionType": Union[str, BackupSolutionType]
+        key "objectType": Required[Literal["PostgreSqlFlexibleServerBackupDatasourceParameters"]]
+        backupSolutionType: Union[str, BackupSolutionType]
+        objectType: Literal[PostgreSqlFlexibleServerBackupDatasourceParameters]
 
 
     class azure.mgmt.dataprotection.types.ProtectionStatusDetails(TypedDict, total=False):

@@ -35,11 +35,11 @@ def main():
         recovery_plan_name="samplePlanName",
         recovery_job_name="c56888ef-9ced-4001-a6d4-7145a0309bdb",
         body={"description": "Resuming the recovery job after user verification"},
-        operation_id="str",
+        operation_id="qmn",
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/RecoveryJobs_Resume_MaximumSet_Gen.json
+# x-ms-original-file: 2026-08-31-preview/RecoveryJobs_Resume_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

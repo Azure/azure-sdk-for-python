@@ -44,7 +44,14 @@ def main():
                 "identityProviders": {
                     "facebook": {"registration": {"appId": "123", "appSecretSettingName": "facebook-secret"}}
                 },
-                "login": {"tokenStore": {"azureBlobStorage": {"sasUrlSettingName": "sasUrlSettingName1"}}},
+                "login": {
+                    "tokenStore": {
+                        "azureBlobStorage": {
+                            "blobContainerUri": "https://test.blob.core.windows.net/container1",
+                            "clientId": "00000000-0000-0000-0000-000000000000",
+                        }
+                    }
+                },
                 "platform": {"enabled": True},
             }
         },
@@ -52,6 +59,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-01/AuthConfigs_BlobStorageTokenStore_ClientId_CreateOrUpdate.json
+# x-ms-original-file: 2026-07-01/AuthConfigs_BlobStorageTokenStore_ClientId_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
