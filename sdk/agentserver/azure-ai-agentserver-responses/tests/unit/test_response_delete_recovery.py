@@ -20,7 +20,7 @@ from azure.ai.agentserver.core.tasks._attachments import _resolve_input_storage
 from azure.ai.agentserver.core.tasks._context import _ExitForRecovery
 from azure.ai.agentserver.core.tasks._exceptions_internal import _HostedConflict
 from azure.ai.agentserver.core.tasks._local_provider import LocalFileTaskProvider
-from azure.ai.agentserver.core.tasks._manager import TaskManager, _SCHEMA_VERSION, _SCHEMA_VERSION_KEY
+from azure.ai.agentserver.core.tasks._manager import TaskManager, _SCHEMA_VERSION, _SCHEMA_VERSION_KEY, set_task_manager
 from azure.ai.agentserver.core.tasks._models import TaskCreateRequest, TaskInfo, TaskPatchRequest
 from azure.ai.agentserver.responses import PlatformContext, ResponsesAgentServerHost, ResponsesServerOptions
 from azure.ai.agentserver.responses.hosting import _response_task_lifecycle as lifecycle
@@ -30,7 +30,7 @@ from azure.ai.agentserver.responses.hosting._task_id import derive_lifecycle_id
 from azure.ai.agentserver.responses.models._generated import CreateResponse, ResponseObject
 from azure.ai.agentserver.responses.models.runtime import ResponseExecution, ResponseModeFlags
 from azure.ai.agentserver.responses.streaming import ResponseEventStream
-from tests.contract.test_user_isolation_enforcement import _noop_handler
+from tests.contract.test_user_isolation_enforcement import _AsyncAsgiClient, _PartitionedProvider, _noop_handler
 from tests.unit.test_stream_lifecycle_cleanup import RESPONSE_ID, _host, _request, registry
 
 
@@ -629,3 +629,265 @@ async def test_runtime_completed_deletion_fences_recovery_but_allows_explicit_fr
     assert await state.reserve(RESPONSE_ID, "owner")
     assert not await state.reserve(RESPONSE_ID, "owner", recovery=True)
     await state.release_reservation(RESPONSE_ID, "owner")
+
+
+@pytest.mark.parametrize("steerable", [False, True])
+async def test_delete_then_same_id_post_resumes_same_conversation_with_a_new_incarnation(
+    registry: _StreamsRegistry,
+    task_store: LocalFileTaskProvider,
+    monkeypatch: pytest.MonkeyPatch,
+    steerable: bool,
+) -> None:
+    from azure.ai.agentserver.responses.hosting import _resilient_orchestrator as resilience
+
+    provider = _PartitionedProvider()
+    host = ResponsesAgentServerHost(
+        options=ResponsesServerOptions(resilient_background=True, steerable_conversations=steerable), store=provider
+    )
+    executions = []
+
+    async def handler(request, context, cancellation_signal):
+        executions.append((context.response_id, request["input"], context.is_recovery))
+
+        async def events():
+            stream = ResponseEventStream(response_id=context.response_id, model="m")
+            yield stream.emit_created()
+            for event in stream.output_item_message(request["input"]):
+                yield event
+            yield stream.emit_completed()
+
+        return events()
+
+    host.response_handler(handler)
+    manager = TaskManager(host.config, provider=task_store)
+    set_task_manager(manager)
+    monkeypatch.setattr(lifecycle, "get_task_manager", lambda: manager)
+    suspended = asyncio.Queue()
+    original_update = task_store.update
+
+    async def observed_update(task_id, patch):
+        info = await original_update(task_id, patch)
+        if patch.status == "suspended":
+            suspended.put_nowait(info)
+        return info
+
+    monkeypatch.setattr(task_store, "update", observed_update)
+    orchestrator = host._endpoint._orchestrator._resilient_orchestrator
+    original_execute = orchestrator._execute_admitted_task
+    boundaries = []
+    second_entered = asyncio.Event()
+    release_second = asyncio.Event()
+
+    async def observed_execute(ctx):
+        boundaries.append(dict(ctx.input))
+        if len(boundaries) == 2:
+            second_entered.set()
+            await release_second.wait()
+        return await original_execute(ctx)
+
+    monkeypatch.setattr(orchestrator, "_execute_admitted_task", observed_execute)
+    client = _AsyncAsgiClient(host)
+    headers = {"x-agent-user-id": "owner"}
+    payload = {
+        "response_id": RESPONSE_ID,
+        "conversation": "conv_incarnation_reuse",
+        "model": "m",
+        "input": "first incarnation",
+        "store": True,
+        "background": True,
+        "stream": True,
+    }
+    second_post = None
+    try:
+        first = await client.post("/responses", json_body=payload, headers=headers)
+        assert first.status_code == 200, first.body
+        first_info = await asyncio.wait_for(suspended.get(), 3)
+        first_boundary = boundaries[0]
+        assert first_boundary["response_incarnation_id"]
+        deleted = await client.request("DELETE", f"/responses/{RESPONSE_ID}", headers=headers)
+        assert deleted.status_code == 200, deleted.body
+        assert (await task_store.get(first_info.id)).status == "suspended"
+
+        second_post = asyncio.create_task(
+            client.post("/responses", json_body={**payload, "input": "second incarnation"}, headers=headers)
+        )
+        await asyncio.wait_for(second_entered.wait(), 3)
+        current = await task_store.get(first_info.id)
+        second_boundary = boundaries[1]
+        assert current.payload["input"] == second_boundary
+        assert current.payload["last_input_id"] == derive_lifecycle_id(RESPONSE_ID, "owner")
+        assert first_boundary["response_incarnation_id"] != second_boundary["response_incarnation_id"]
+        refs_key = lifecycle._input_fence_key(RESPONSE_ID, "owner", second_boundary["response_incarnation_id"])
+        refs = resilience._RUNTIME_REFS[refs_key]
+        old_context = _task_context(first_info)
+        old_context.input = first_boundary
+        await orchestrator._execute_in_task(old_context)
+        assert executions == [(RESPONSE_ID, "first incarnation", False)]
+        assert resilience._RUNTIME_REFS[refs_key] is refs
+        assert not await host._endpoint._runtime_state.reserve(RESPONSE_ID, "owner")
+
+        # A recovery of the admitted new incarnation must defer, not settle
+        # against the previous incarnation's in-memory deletion tombstone.
+        new_context = _task_context(current)
+        new_context.input = second_boundary
+        assert isinstance(await orchestrator._execute_in_task(new_context), _ExitForRecovery)
+        assert resilience._RUNTIME_REFS[refs_key] is refs
+        release_second.set()
+        second = await asyncio.wait_for(second_post, 3)
+        assert second.status_code == 200, second.body
+        second_info = await asyncio.wait_for(suspended.get(), 3)
+        assert second_info.id == first_info.id
+        snapshot = await provider.get_response(RESPONSE_ID, context=PlatformContext(user_id_key="owner"))
+        assert snapshot["status"] == "completed"
+        assert "response_incarnation_id" not in snapshot
+        assert b"second incarnation" in second.body
+        assert executions == [(RESPONSE_ID, "first incarnation", False), (RESPONSE_ID, "second incarnation", False)]
+
+        # A fresh process reading the retained task must still reject the
+        # old incarnation, without modifying the replacement response.
+        restarted = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
+        restarted.response_handler(_noop_handler)
+        recovered = restarted._endpoint._orchestrator._resilient_orchestrator
+        unexpected = AsyncMock()
+        monkeypatch.setattr(recovered, "_execute_admitted_task", unexpected)
+        await recovered._execute_in_task(old_context)
+        unexpected.assert_not_awaited()
+        assert await provider.get_response(RESPONSE_ID, context=PlatformContext(user_id_key="owner")) == snapshot
+
+        from azure.ai.agentserver.responses._id_generator import IdGenerator
+
+        other_response_id = IdGenerator.new_response_id()
+        third = await client.post(
+            "/responses",
+            json_body={**payload, "response_id": other_response_id, "input": "another turn"},
+            headers=headers,
+        )
+        assert third.status_code == 200, third.body
+        third_info = await asyncio.wait_for(suspended.get(), 3)
+        assert third_info.id == first_info.id
+        assert executions[-1] == (other_response_id, "another turn", False)
+        assert (await provider.get_response(RESPONSE_ID, context=PlatformContext(user_id_key="owner")))[
+            "status"
+        ] == "completed"
+    finally:
+        release_second.set()
+        if second_post is not None:
+            await asyncio.gather(second_post, return_exceptions=True)
+        await manager.shutdown()
+
+
+@pytest.mark.parametrize("attached", [False, True])
+async def test_nonce_fence_preserves_old_incarnation_across_cas_retry_and_fresh_resume(
+    registry: _StreamsRegistry, task_store: LocalFileTaskProvider, monkeypatch: pytest.MonkeyPatch, attached: bool
+) -> None:
+    host = _host()
+    info = await _durable_task(task_store, host, multi_turn=True)
+    old = {**_params(), "response_incarnation_id": "a" * 32}
+    new = {**_params(), "response_incarnation_id": "b" * 32}
+    _, slot = _resolve_input_storage(
+        old, threshold_bytes=0 if attached else 1000000, key_for_attachment="input", task_id=info.id
+    )
+    await task_store.update(
+        info.id, TaskPatchRequest(payload={"input": slot}, attachments={"input": old} if attached else None)
+    )
+    original_update = task_store.update
+    count = 0
+
+    async def raced_update(task_id, patch):
+        nonlocal count
+        count += 1
+        if count == 1:
+            await original_update(task_id, TaskPatchRequest(payload={"input": new}))
+            raise _HostedConflict(_code="etag_mismatch", status_code=412)
+        return await original_update(task_id, patch)
+
+    monkeypatch.setattr(task_store, "update", raced_update)
+    await lifecycle._fence_response_tasks(RESPONSE_ID, "owner", host._endpoint._response_task_names())
+    assert count == 2
+    assert await lifecycle._task_input_deleted(info.id, RESPONSE_ID, "owner", incarnation_id="a" * 32)
+    assert not await lifecycle._task_input_deleted(info.id, RESPONSE_ID, "owner", incarnation_id="b" * 32)
+    assert await lifecycle._task_input_deleted(info.id, RESPONSE_ID, "owner")
+    assert await lifecycle._response_tasks(RESPONSE_ID, "owner", host._endpoint._response_task_names())
+
+
+async def test_recovery_rechecks_incarnation_after_acquiring_reservation_when_delete_races(
+    registry: _StreamsRegistry, task_store: LocalFileTaskProvider, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    host = _host()
+    await host._endpoint._provider.create_response(_snapshot(), [], None, context=PlatformContext(user_id_key="owner"))
+    info = await _durable_task(task_store, host)
+    params = {**_params(), "response_incarnation_id": "a" * 32}
+    await task_store.update(info.id, TaskPatchRequest(payload={"input": params}))
+    get = task_store.get
+    first = True
+
+    async def raced_get(task_id):
+        nonlocal first
+        snapshot = await get(task_id)
+        if first:
+            first = False
+            assert (await host._endpoint.handle_delete(_delete_request())).status_code == 200
+        return snapshot
+
+    monkeypatch.setattr(task_store, "get", raced_get)
+    orchestrator = host._endpoint._orchestrator._resilient_orchestrator
+    unexpected = AsyncMock()
+    monkeypatch.setattr(orchestrator, "_execute_admitted_task", unexpected)
+    ctx = _task_context(info)
+    ctx.input = params
+    await orchestrator._execute_in_task(ctx)
+    unexpected.assert_not_awaited()
+    assert await host._endpoint._runtime_state.list_records() == []
+    assert await host._endpoint._runtime_state.reserve(RESPONSE_ID, "owner")
+    await host._endpoint._runtime_state.release_reservation(RESPONSE_ID, "owner")
+    with pytest.raises(KeyError):
+        await host._endpoint._provider.get_response(RESPONSE_ID, context=PlatformContext(user_id_key="owner"))
+
+
+async def test_current_incarnation_recovery_survives_a_previous_incarnation_tombstone(
+    registry: _StreamsRegistry, task_store: LocalFileTaskProvider
+) -> None:
+    host = _host()
+    calls = []
+
+    async def handler(request, context, cancellation_signal):
+        assert context.is_recovery
+        calls.append(context.response_id)
+
+        async def events():
+            stream = ResponseEventStream(response_id=context.response_id, model="m")
+            yield stream.emit_created()
+            yield stream.emit_completed()
+
+        return events()
+
+    host.response_handler(handler)
+    params = {**_params(), "response_incarnation_id": "b" * 32}
+    info = await _durable_task(task_store, host, multi_turn=True)
+    await task_store.update(
+        info.id,
+        TaskPatchRequest(
+            payload={
+                "input": params,
+                "responses_deleted_input_ids": [
+                    derive_lifecycle_id(RESPONSE_ID, "owner"),
+                    lifecycle._input_fence_key(RESPONSE_ID, "owner", "a" * 32),
+                ],
+            }
+        ),
+    )
+    await host._endpoint._runtime_state.mark_deleted(RESPONSE_ID, "owner")
+    await host._endpoint._provider.create_response(
+        ResponseObject({"id": RESPONSE_ID, "status": "in_progress", "model": "m", "background": True, "output": []}),
+        [],
+        None,
+        context=PlatformContext(user_id_key="owner"),
+    )
+    ctx = _task_context(info)
+    ctx.input = params
+    await host._endpoint._orchestrator._resilient_orchestrator._execute_in_task(ctx)
+    assert calls == [RESPONSE_ID]
+    assert not await host._endpoint._runtime_state.is_deleted(RESPONSE_ID, "owner")
+    assert (await host._endpoint._provider.get_response(RESPONSE_ID, context=PlatformContext(user_id_key="owner")))[
+        "status"
+    ] == "completed"

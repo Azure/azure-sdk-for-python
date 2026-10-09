@@ -113,6 +113,27 @@ def test_runtime_refs_never_serialized() -> None:
     assert refs.record is not None and refs.context is not None
 
 
+def test_incarnation_round_trip_is_private_and_never_regenerated_on_recovery() -> None:
+    original = _make_input(incarnation_id="a" * 32)
+    params = original.to_task_input()
+    assert params["response_incarnation_id"] == "a" * 32
+    assert "response_incarnation_id" not in params["request"]
+    restored = ResilientResponseInput.from_task_input(params)
+    assert restored.incarnation_id == original.incarnation_id
+    assert restored.to_task_input() == params
+    legacy = _make_input().to_task_input()
+    assert "response_incarnation_id" not in legacy
+    assert ResilientResponseInput.from_task_input(legacy).incarnation_id is None
+
+
+@pytest.mark.parametrize("invalid", [None, "", "short", "g" * 32, 42, {}])
+def test_malformed_incarnation_fails_closed(invalid) -> None:
+    params = _make_input().to_task_input()
+    params["response_incarnation_id"] = invalid
+    with pytest.raises(ValueError, match="incarnation"):
+        ResilientResponseInput.from_task_input(params)
+
+
 # --------------------------------------------------------------------------- #
 # FR-002f — fail-closed on malformed persisted input
 # --------------------------------------------------------------------------- #

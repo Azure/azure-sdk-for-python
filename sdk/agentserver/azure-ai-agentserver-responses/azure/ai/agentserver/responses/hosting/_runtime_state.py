@@ -64,15 +64,19 @@ class _RuntimeState:
         self._draining = False
         self._lock = asyncio.Lock()
 
-    async def reserve(self, response_id: str, user_id_key: str | None, *, recovery: bool = False) -> bool:
+    async def reserve(
+        self, response_id: str, user_id_key: str | None, *, recovery: bool = False, incarnation_id: str | None = None
+    ) -> bool:
         """Reserve a caller-scoped response ID before starting execution.
 
         :param response_id: The caller-selected response ID.
         :type response_id: str
         :param user_id_key: The authenticated user partition, or ``None`` for anonymous.
         :type user_id_key: str | None
-        :keyword recovery: Reject completed deletion tombstones on recovered entry.
+        :keyword recovery: Guard recovered admission, rejecting deleted legacy identities.
         :paramtype recovery: bool
+        :keyword incarnation_id: Recovery incarnation already validated against durable task state.
+        :paramtype incarnation_id: str | None
         :return: ``True`` when reserved; ``False`` when already live or reserved.
         :rtype: bool
         """
@@ -88,7 +92,9 @@ class _RuntimeState:
             )
             if record is not None and not stale_execution:
                 return False
-            if recovery and (key in self._deleted_response_ids or self._draining):
+            if recovery and self._draining:
+                return False
+            if recovery and incarnation_id is None and key in self._deleted_response_ids:
                 return False
             if (
                 key in self._pending_records
