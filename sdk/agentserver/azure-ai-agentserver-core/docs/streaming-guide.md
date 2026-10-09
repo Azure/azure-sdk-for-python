@@ -289,6 +289,13 @@ All three lifecycle operations use the same per-id lock within the registry,
 so concurrent lookup, restoration, creation, and deletion are serialized.
 This is in-process atomicity, not cross-process coordination.
 
+Per-ID locks exist only while lifecycle operations hold or wait for them.
+Each operation registers its reference before awaiting the lock; cancellation
+releases that reference without awaiting further work. The entry is removed
+only after its last holder or waiter exits, so missing lookups do not accumulate
+locks and concurrent operations cannot switch to a different lock mid-lifecycle.
+Stream slots and deletion tombstones retain their existing lifecycle semantics.
+
 You typically do not need to call `delete(id)` for replay backings
 with `ttl_seconds` configured — the close-clock auto-destroy
 cleans up for you. Call `delete(id)` explicitly when you want

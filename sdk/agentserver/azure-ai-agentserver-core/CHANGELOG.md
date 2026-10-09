@@ -4,6 +4,8 @@
 
 ### Bugs Fixed
 
+- Reclaim per-ID stream lifecycle locks after their last holder or waiter exits,
+  including cancellation, without splitting concurrent lookup, creation, or deletion.
 - Enumerate every matching local durable task when no listing limit is
   requested, matching hosted task enumeration. Reject missing or repeated
   hosted continuation cursors instead of returning an incomplete task list.
