@@ -45,6 +45,29 @@ jobs:
         # session.
         run: npm ci --prefix eng/common/tsp-client
 
+      - name: Pre-install TypeSpec Python emitter's pinned black version
+        # `tsp-client update` (any package, not just azure-ai-projects) shells out to the
+        # TypeSpec Python emitter (`@azure-tools/typespec-python`) to format generated code. The
+        # emitter creates its own isolated venv and pip-installs a specific pinned `black`
+        # version from its own dev_requirements.txt
+        # (https://github.com/Azure/typespec-azure/blob/main/packages/typespec-python/dev_requirements.txt),
+        # which is versioned with whichever emitter release gets resolved for a given TypeSpec
+        # commit -- so the pin isn't visible from this repository's own manifests and can drift
+        # as the emitter is updated upstream. A plain "pip install" here would only warm pip's
+        # HTTP cache, which pip does not consult as a fallback when the package index itself is
+        # unreachable (verified: pip still fails after retrying the index, even with a matching
+        # wheel already cached). Instead, download the currently-known pinned wheel and its
+        # dependencies into a fixed directory, and point PIP_FIND_LINKS at it for the rest of the
+        # job, including the firewalled agent session: pip treats find-links entries as an extra
+        # local source alongside the index, so an exact-version match is installable from there
+        # even when the index connection fails outright (verified against a fully broken index
+        # connection). Bump the version below if a future regeneration fails while fetching a
+        # different pinned black version.
+        run: |
+          mkdir -p "$HOME/.cache/pip-find-links"
+          python -m pip download "black==26.3.1" -d "$HOME/.cache/pip-find-links"
+          echo "PIP_FIND_LINKS=$HOME/.cache/pip-find-links" >> "$GITHUB_ENV"
+
       - name: Pre-install azure-ai-projects dev dependencies
         # Scoped to sessions whose branch name identifies them as azure-ai-projects work (e.g.
         # "copilot/azure-ai-projects-regenerate-<commit>", the actual naming GitHub's issue
