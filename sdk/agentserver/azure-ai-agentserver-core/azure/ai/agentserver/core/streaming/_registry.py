@@ -32,7 +32,9 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
-from collections.abc import Callable
+from collections.abc import AsyncIterator, Callable
+from contextlib import asynccontextmanager
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Optional, Union
 
@@ -60,6 +62,14 @@ _TOMBSTONE: object = object()
 _DEFAULT_STREAM_TTL_SECONDS = 600.0
 
 
+@dataclass
+class _LifecycleLock:
+    """A per-ID lock shared by its active holder and registered waiters."""
+
+    lock: asyncio.Lock = field(default_factory=asyncio.Lock)
+    users: int = 0
+
+
 class _StreamsRegistry:
     """Implementation of the module-level :data:`streams` singleton.
 
@@ -72,10 +82,8 @@ class _StreamsRegistry:
         # Streams keyed by id; value is either an EventStream
         # instance OR _TOMBSTONE for destroyed ids.
         self._slots: dict[str, Union[EventStream, object]] = {}
-        # Per-id locks for get_or_create atomicity (rule 34).
-        self._id_locks: dict[str, asyncio.Lock] = {}
-        # Global lock guarding _slots + _id_locks structural mutations.
-        self._struct_lock = asyncio.Lock()
+        # Entries live only while lifecycle operations hold or await the lock.
+        self._id_locks: dict[str, _LifecycleLock] = {}
         # Factory closure — set by use_* configurators. Default:
         # use_in_memory_live per rule 37a (also).
         self._factory: Callable[[str], EventStream] = lambda _id: BroadcastEventStream()
@@ -186,13 +194,29 @@ class _StreamsRegistry:
 
     # ----- Lifecycle (async) -----
 
-    async def _get_id_lock(self, id: str) -> asyncio.Lock:
-        async with self._struct_lock:
-            lock = self._id_locks.get(id)
-            if lock is None:
-                lock = asyncio.Lock()
-                self._id_locks[id] = lock
-            return lock
+    @asynccontextmanager
+    async def _hold_id_lock(self, id: str) -> AsyncIterator[None]:
+        """Share a lifecycle lock until its last holder or waiter exits.
+
+        :param id: The stream lifecycle identifier.
+        :type id: str
+        :return: A context manager holding the per-ID lock.
+        :rtype: AsyncIterator[None]
+        """
+        # These structural mutations contain no await: they are atomic within
+        # the event loop, and cancellation cannot interrupt reference cleanup.
+        entry = self._id_locks.get(id)
+        if entry is None:
+            entry = _LifecycleLock()
+            self._id_locks[id] = entry
+        entry.users += 1
+        try:
+            async with entry.lock:
+                yield
+        finally:
+            entry.users -= 1
+            if entry.users == 0 and self._id_locks.get(id) is entry:
+                del self._id_locks[id]
 
     async def get(self, id: str) -> EventStream:
         """Look up an existing stream, restoring a persisted replay if present.
@@ -213,8 +237,7 @@ class _StreamsRegistry:
         :return: The live stream instance for ``id``.
         :rtype: EventStream
         """
-        lock = await self._get_id_lock(id)
-        async with lock:
+        async with self._hold_id_lock(id):
             slot = self._load_existing(id)
             if slot is None or slot is _TOMBSTONE:
                 raise EventStreamNotFoundError(id)
@@ -291,8 +314,7 @@ class _StreamsRegistry:
         :return: The cached or newly-created stream instance.
         :rtype: EventStream
         """
-        lock = await self._get_id_lock(id)
-        async with lock:
+        async with self._hold_id_lock(id):
             slot = self._slots.get(id, None)
             if slot is not None and slot is not _TOMBSTONE:
                 return slot  # type: ignore[return-value]
@@ -315,8 +337,7 @@ class _StreamsRegistry:
         :param id: The stream id to destroy.
         :type id: str
         """
-        lock = await self._get_id_lock(id)
-        async with lock:
+        async with self._hold_id_lock(id):
             slot = self._load_existing(id)
             if slot is _TOMBSTONE:
                 return

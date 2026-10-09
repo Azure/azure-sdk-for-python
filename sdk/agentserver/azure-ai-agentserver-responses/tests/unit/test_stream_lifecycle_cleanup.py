@@ -87,6 +87,32 @@ async def _send(message: dict[str, Any]) -> None:
     pass
 
 
+async def test_many_unstored_posts_do_not_retain_registry_lifecycle_locks(
+    registry: _StreamsRegistry, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    host = _host()
+
+    async def complete(ctx: Any) -> dict[str, Any]:
+        assert not ctx.store
+        return {"id": ctx.response_id, "status": "completed", "output": []}
+
+    monkeypatch.setattr(host._endpoint._orchestrator, "run_sync", complete)
+    monkeypatch.setattr(host._endpoint, "_monitor_disconnect", AsyncMock())
+    for _ in range(250):
+        response_id = IdGenerator.new_response_id()
+        request = _request(stream=False, background=False)
+        body = json.dumps(
+            {"response_id": response_id, "model": "m", "input": "hi", "store": False, "stream": False}
+        ).encode()
+        request = Request(
+            request.scope, AsyncMock(return_value={"type": "http.request", "body": body, "more_body": False})
+        )
+        assert (await host._endpoint.handle_create(request)).status_code == 200
+    assert registry._id_locks == {}
+    assert registry._slots == {}
+    assert host._endpoint._runtime_state._reservations == set()
+
+
 @pytest.mark.parametrize("background", [False, True])
 async def test_cancelled_anyio_scope_releases_non_streaming_reservation_exactly_once(
     registry: _StreamsRegistry, monkeypatch: pytest.MonkeyPatch, background: bool

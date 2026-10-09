@@ -19,6 +19,7 @@ import re
 from pathlib import Path
 
 import pytest
+from anyio import CancelScope
 
 from azure.ai.agentserver.core.streaming import (
     EventStream,
@@ -31,9 +32,251 @@ from azure.ai.agentserver.core.streaming._concrete import (
     FileBackedReplayEventStream,
     ReplayEventStream,
 )
+from azure.ai.agentserver.core.streaming._registry import _StreamsRegistry
 
 
 pytestmark = pytest.mark.asyncio(loop_scope="function")
+
+
+@pytest.mark.parametrize("backing", ["memory", "file"])
+async def test_many_missing_lookups_do_not_retain_lifecycle_locks(tmp_path: Path, backing: str) -> None:
+    registry = _StreamsRegistry()
+    if backing == "file":
+        registry.use_file_backed_replay(storage_dir=tmp_path)
+    for index in range(1000):
+        with pytest.raises(EventStreamNotFoundError):
+            await registry.get(f"missing-{index}")
+    assert registry._id_locks == {}
+    assert registry._slots == {}
+    assert list(tmp_path.iterdir()) == []
+
+
+async def test_lifecycle_locks_are_reclaimed_without_discarding_tombstones() -> None:
+    from azure.ai.agentserver.core.streaming._registry import _TOMBSTONE
+
+    registry = _StreamsRegistry()
+    registry.use_in_memory_replay()
+    for index in range(100):
+        identifier = f"lifecycle-{index}"
+        original = await registry.get_or_create(identifier)
+        assert registry._id_locks == {}
+        assert await registry.get(identifier) is original
+        assert registry._id_locks == {}
+        await registry.delete(identifier)
+        assert registry._id_locks == {}
+        with pytest.raises(EventStreamNotFoundError):
+            await registry.get(identifier)
+        assert registry._slots[identifier] is _TOMBSTONE
+        assert registry._id_locks == {}
+        fresh = await registry.get_or_create(identifier)
+        assert fresh is not original
+        await registry.delete(identifier)
+
+
+async def test_cancelled_delete_reclaims_its_lock_without_installing_a_tombstone(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    registry = _StreamsRegistry()
+    registry.use_in_memory_replay()
+    original = await registry.get_or_create("shared")
+    entered = asyncio.Event()
+    release = asyncio.Event()
+    on_delete = original._on_delete
+
+    async def interrupted_delete() -> None:
+        entered.set()
+        await release.wait()
+        await on_delete()
+
+    monkeypatch.setattr(original, "_on_delete", interrupted_delete)
+    deleting = asyncio.create_task(registry.delete("shared"))
+    await asyncio.wait_for(entered.wait(), 2)
+    deleting.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await deleting
+    assert registry._id_locks == {}
+    assert registry._slots["shared"] is original
+    monkeypatch.setattr(original, "_on_delete", on_delete)
+    await registry.delete("shared")
+    assert registry._id_locks == {}
+    fresh = await registry.get_or_create("shared")
+    assert fresh is not original
+    assert registry._id_locks == {}
+
+
+@pytest.mark.parametrize("cancellation", ["task", "scope"])
+async def test_cancelled_waiter_never_splits_interleaved_create_get_delete_lock(
+    monkeypatch: pytest.MonkeyPatch, cancellation: str
+) -> None:
+    registry = _StreamsRegistry()
+    registry.use_in_memory_replay()
+    original = await registry.get_or_create("shared")
+    entered = asyncio.Event()
+    release = asyncio.Event()
+    scope = CancelScope()
+    on_delete = original._on_delete
+
+    async def paused_delete() -> None:
+        entered.set()
+        await release.wait()
+        await on_delete()
+
+    monkeypatch.setattr(original, "_on_delete", paused_delete)
+    holder = asyncio.create_task(registry.delete("shared"))
+    await asyncio.wait_for(entered.wait(), 2)
+    entry = registry._id_locks["shared"]
+    factory = registry._factory
+    lookup = registry._load_existing
+    created = []
+
+    def create(identifier: str) -> EventStream:
+        assert registry._id_locks[identifier] is entry
+        stream = factory(identifier)
+        created.append(stream)
+        return stream
+
+    def load(identifier: str):
+        assert registry._id_locks[identifier] is entry
+        return lookup(identifier)
+
+    monkeypatch.setattr(registry, "_factory", create)
+    monkeypatch.setattr(registry, "_load_existing", load)
+
+    async def start(operation, *, cancelled: bool = False) -> asyncio.Task:
+        starting = asyncio.Event()
+
+        async def run():
+            if cancelled and cancellation == "scope":
+                with scope:
+                    starting.set()
+                    return await operation("shared")
+                return None
+            starting.set()
+            return await operation("shared")
+
+        task = asyncio.create_task(run())
+        await starting.wait()
+        return task
+
+    pending = []
+    try:
+        cancelled = await start(registry.get, cancelled=True)
+        pending.append(cancelled)
+        creating = await start(registry.get_or_create)
+        pending.append(creating)
+        getting = await start(registry.get)
+        pending.append(getting)
+        deleting = await start(registry.delete)
+        pending.append(deleting)
+        assert entry.users == 5
+        if cancellation == "scope":
+            scope.cancel()
+            await asyncio.wait_for(cancelled, 2)
+            assert scope.cancelled_caught
+        else:
+            cancelled.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await cancelled
+        assert registry._id_locks["shared"] is entry
+        assert entry.users == 4
+        release.set()
+        await asyncio.wait_for(holder, 2)
+        instance = await asyncio.wait_for(creating, 2)
+        assert await asyncio.wait_for(getting, 2) is instance
+        await asyncio.wait_for(deleting, 2)
+        assert created == [instance]
+        assert registry._id_locks == {}
+    finally:
+        release.set()
+        for task in pending:
+            if not task.done():
+                task.cancel()
+        await asyncio.gather(holder, *pending, return_exceptions=True)
+
+
+@pytest.mark.parametrize("cancellation", ["task", "scope"])
+async def test_cancelled_holder_keeps_waiters_on_the_exact_lock_until_last_release(
+    monkeypatch: pytest.MonkeyPatch, cancellation: str
+) -> None:
+    registry = _StreamsRegistry()
+    registry.use_in_memory_replay()
+    original = await registry.get_or_create("shared")
+    first_entered = asyncio.Event()
+    second_entered = asyncio.Event()
+    first_release = asyncio.Event()
+    second_release = asyncio.Event()
+    scope = CancelScope()
+    active = 0
+    calls = 0
+
+    async def inspect_stream(identifier: str, slot: EventStream) -> bool:
+        nonlocal active, calls
+        active += 1
+        calls += 1
+        assert active == 1
+        try:
+            if calls == 1:
+                first_entered.set()
+                await first_release.wait()
+            elif calls == 2:
+                second_entered.set()
+                await second_release.wait()
+            return False
+        finally:
+            active -= 1
+
+    monkeypatch.setattr(registry, "_tombstone_if_close_clock_elapsed", inspect_stream)
+
+    async def first():
+        if cancellation == "scope":
+            with scope:
+                return await registry.get("shared")
+            return None
+        return await registry.get("shared")
+
+    holder = asyncio.create_task(first())
+    await asyncio.wait_for(first_entered.wait(), 2)
+    entry = registry._id_locks["shared"]
+    starting = asyncio.Event()
+
+    async def next_get():
+        starting.set()
+        return await registry.get("shared")
+
+    waiter = asyncio.create_task(next_get())
+    await starting.wait()
+    assert entry.users == 2
+    tasks = [holder, waiter]
+    try:
+        if cancellation == "scope":
+            scope.cancel()
+            await asyncio.wait_for(holder, 2)
+            assert scope.cancelled_caught
+        else:
+            holder.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await holder
+        await asyncio.wait_for(second_entered.wait(), 2)
+        assert registry._id_locks["shared"] is entry
+        assert entry.users == 1
+        starting.clear()
+        last = asyncio.create_task(next_get())
+        tasks.append(last)
+        await starting.wait()
+        assert registry._id_locks["shared"] is entry
+        assert entry.users == 2
+        second_release.set()
+        assert await waiter is original
+        assert await last is original
+        assert registry._id_locks == {}
+        assert active == 0
+    finally:
+        first_release.set()
+        second_release.set()
+        for task in tasks:
+            if not task.done():
+                task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
 
 
 # ----------------------------------------------------------------
