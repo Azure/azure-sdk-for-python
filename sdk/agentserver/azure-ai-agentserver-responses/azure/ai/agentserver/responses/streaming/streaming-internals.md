@@ -115,6 +115,10 @@ in the durable task payload. Other turns and queued inputs are retained.
 Recovery observes the fence before writes or admission and participates in the
 same scoped reservations, so deleting a response cannot resurrect it on restart.
 
+Retained cleanup ownership is not a live execution or evidence of replay
+capability. GET uses the authorized provider fallback and a noncreating replay
+lookup for such records; a failed provider DELETE cannot recreate removed replay.
+
 Each newly admitted durable input carries a server-generated private
 `response_incarnation_id`. DELETE retains fences for old incarnations rather
 than clearing a response-wide fence on reuse. The task primitive's conditional
@@ -130,6 +134,11 @@ An invalid incarnation is never re-invoked. Only an exact match to the current
 persisted input, without a deletion fence and under scoped recovery admission,
 may reach fail-closed response settlement. Deleted or stale malformed callbacks
 cannot create a failure marker for a removed or replacement response.
+
+Recovered admission retires an exact stopped nonterminal runtime record only
+after all lifecycle guards pass, under the reservation lock. Early settlement
+and cancellation therefore cannot leave a stale live record shadowing provider
+state. Active, terminal, foreign-user, and deletion-owned records are preserved.
 
 ## HTTP / SSE wire mapping
 

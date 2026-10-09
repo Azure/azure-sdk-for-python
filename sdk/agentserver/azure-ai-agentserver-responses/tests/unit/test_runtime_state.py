@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from typing import cast
 
 import pytest
@@ -90,6 +91,53 @@ async def test_reserve_rejects_duplicate_live_id_only_within_user() -> None:
     await state.release_reservation(response_id, "user-A")
     assert await state.reserve(response_id, "user-A") is True
     assert await state.reserve(response_id, "user-B") is False
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("guard", ["none", "reserved", "deleting", "retained", "draining", "deleted"])
+async def test_recovered_admission_retires_only_exact_stale_record_after_all_guards(guard: str) -> None:
+    state = _RuntimeState()
+    assert await state.reserve("shared", "owner")
+    stale = _make_execution("shared", user_id_key="owner", status="in_progress")
+    stale.execution_task = asyncio.create_task(asyncio.sleep(0))
+    await stale.execution_task
+    await state.add(stale)
+    other = _make_execution("shared", user_id_key="other")
+    await state.add(other)
+    if guard != "reserved":
+        await state.release_reservation("shared", "owner")
+    if guard in {"deleting", "retained"}:
+        assert await state.begin_deletion("shared", "owner")
+        if guard == "retained":
+            assert await state.retain_for_deletion(stale)
+            await state.end_deletion("shared", "owner")
+    elif guard == "draining":
+        await state.begin_draining()
+    elif guard == "deleted":
+        await state.mark_deleted("shared", "owner")
+    assert await state.reserve("shared", "owner", recovery=True) is (guard == "none")
+    assert await state.get("shared", "owner") is (None if guard == "none" else stale)
+    assert await state.get("shared", "other") is other
+    if guard == "none":
+        assert not await state.begin_deletion("shared", "owner")
+        replacement = _make_execution("shared", user_id_key="owner", status="completed")
+        await state.add(replacement)
+        await state.release_reservation("shared", "owner")
+        assert await state.get("shared", "owner") is replacement
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("status", ["in_progress", "completed"])
+async def test_recovered_admission_never_removes_a_newer_live_or_terminal_record(status: str) -> None:
+    state = _RuntimeState()
+    stale = _make_execution("shared", user_id_key="owner", status="in_progress")
+    stale.execution_task = asyncio.create_task(asyncio.sleep(0))
+    await stale.execution_task
+    await state.add(stale)
+    current = _make_execution("shared", user_id_key="owner", status=status)
+    await state.add(current)
+    assert not await state.reserve("shared", "owner", recovery=True, incarnation_id="b" * 32)
+    assert await state.get("shared", "owner") is current
 
 
 @pytest.mark.asyncio

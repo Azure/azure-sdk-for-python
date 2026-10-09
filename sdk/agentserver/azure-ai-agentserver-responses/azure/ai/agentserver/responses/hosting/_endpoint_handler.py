@@ -1215,7 +1215,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 _context.call_id is not None,
             )
         record = await self._runtime_state.get(response_id, _context.user_id_key)
-        if record is None:
+        if record is None or await self._runtime_state.is_retained_for_deletion(response_id, _context.user_id_key):
             return await self._handle_get_fallback(
                 request,
                 response_id,

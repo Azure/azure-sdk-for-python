@@ -7,6 +7,10 @@
 - Partition local in-memory and file-backed responses, items, history, and
   conversation indexes by the platform user key, keeping anonymous local state
   separate.
+- Read retained DELETE cleanup ownership through the authorized response
+  provider and noncreating replay lookup, without allocating replacement streams.
+- Retire stopped nonterminal runtime executions under scoped recovery admission,
+  preventing early settlement or cancellation from retaining stale live state.
 - Settle malformed current durable response incarnations as failed without
   re-invoking execution, while retaining deletion fences and rejecting stale inputs.
 - Check all durable task owners before reclaiming empty replay or fencing DELETE,
