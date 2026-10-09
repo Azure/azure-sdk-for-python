@@ -4,6 +4,11 @@
 
 ### Bugs Fixed
 
+- Validate durable user partitions as strings or `None` before constructing
+  platform, lifecycle, or runtime identities. Invalid partitions never fall
+  back to anonymous storage. Fail the response only with independently proven
+  original task references and current-input/deletion guards; otherwise settle
+  only the malformed input and leave response, replay, and references untouched.
 - Reject runtime publication during active or retained DELETE cleanup, and bind
   fresh admission to its exact request context so late callbacks cannot replace
   a successor or clear a completed deletion marker.
