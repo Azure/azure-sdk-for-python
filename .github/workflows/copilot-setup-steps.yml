@@ -54,13 +54,11 @@ jobs:
           fi
 
       - name: Set up Node.js
-        if: steps.branch_check.outputs.azure_ai_projects == 'true'
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:
           node-version: "22"
 
       - name: Pre-install tsp-client (TypeSpec regeneration tooling)
-        if: steps.branch_check.outputs.azure_ai_projects == 'true'
         # Installs tsp-client here, while the setup job still has full network access, so that
         # later agent-initiated `npx`/`npm exec` calls against this directory (e.g. `tsp-client
         # generate`) don't need to resolve registry.npmjs.org from inside the agent's firewalled
@@ -68,7 +66,6 @@ jobs:
         run: npm ci --prefix eng/common/tsp-client
 
       - name: Pre-install TypeSpec Python emitter's Python dependencies
-        if: steps.branch_check.outputs.azure_ai_projects == 'true'
         # `tsp-client update` shells out to the TypeSpec Python emitter
         # (`@azure-tools/typespec-python`), which creates its own isolated venv and pip-installs
         # the `pygen` generator bundled in `@typespec/http-client-python` (pinned in
