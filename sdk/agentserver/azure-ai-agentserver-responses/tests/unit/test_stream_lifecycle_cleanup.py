@@ -20,7 +20,7 @@ from azure.ai.agentserver.core.platform_headers import PLATFORM_ERROR_TAG
 from azure.ai.agentserver.core.streaming._registry import _StreamsRegistry
 from azure.ai.agentserver.core.tasks import LastInputIdPreconditionFailed, TaskConflictError
 from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesServerOptions
-from azure.ai.agentserver.responses import PlatformContext
+from azure.ai.agentserver.responses import PlatformContext, ResponseContext
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.hosting import _endpoint_handler as endpoint
 from azure.ai.agentserver.responses.hosting import _orchestrator as orchestration
@@ -48,13 +48,13 @@ def registry(monkeypatch: pytest.MonkeyPatch) -> _StreamsRegistry:
     return value
 
 
-def _request(*, user: str = "owner", background: bool = True, stream: bool = True) -> Request:
+def _request(*, user: str = "owner", background: bool = True, stream: bool = True, store: bool = True) -> Request:
     body = json.dumps(
         {
             "response_id": RESPONSE_ID,
             "model": "m",
             "input": "hi",
-            "store": True,
+            "store": store,
             "stream": stream,
             "background": background,
         }
@@ -85,6 +85,256 @@ def _host() -> ResponsesAgentServerHost:
 
 async def _send(message: dict[str, Any]) -> None:
     pass
+
+
+@pytest.mark.parametrize(
+    "stream,background,store",
+    [
+        (False, False, False),
+        (True, False, False),
+        (False, False, True),
+        (False, True, True),
+        (True, False, True),
+        (True, True, True),
+    ],
+    ids=["ephemeral-sync", "ephemeral-stream", "sync", "background", "foreground-stream", "background-stream"],
+)
+@pytest.mark.parametrize("timing", ["before-reserve", "after-reserve", "before-publication"])
+@pytest.mark.parametrize("file_backed", [False, True])
+async def test_shutdown_barrier_rejects_unpublished_execution_without_leaking_owned_state(
+    registry, monkeypatch, tmp_path, stream, background, store, timing, file_backed
+):
+    host = _host()
+    state = host._endpoint._runtime_state
+    storage_dir = tmp_path / "replay"
+    if file_backed:
+        registry.use_file_backed_replay(storage_dir=storage_dir, cursor_fn=lambda event: event["sequence_number"])
+    lifecycle_id = derive_lifecycle_id(RESPONSE_ID, "owner")
+    other_id = derive_lifecycle_id(RESPONSE_ID, "other")
+    foreign = await registry.get_or_create(other_id)
+    await foreign.emit({"type": "response.created", "sequence_number": 0})
+    assert await state.reserve(RESPONSE_ID, "other")
+    foreign_refs = {"foreign-incarnation": object()}
+    monkeypatch.setattr(resilience, "_RUNTIME_REFS", foreign_refs.copy())
+    started = AsyncMock()
+    monkeypatch.setattr(resilience.ResilientResponseOrchestrator, "start_resilient", started)
+    entered = asyncio.Event()
+    resume = asyncio.Event()
+    reserve = state.reserve
+
+    async def blocked_reserve(*args, **kwargs):
+        if timing == "before-reserve":
+            entered.set()
+            await resume.wait()
+        result = await reserve(*args, **kwargs)
+        if timing == "after-reserve":
+            assert result
+            entered.set()
+            await resume.wait()
+        return result
+
+    monkeypatch.setattr(state, "reserve", blocked_reserve)
+    if timing == "before-publication":
+        method = "add_pending" if stream or not store else "add"
+        publish = getattr(state, method)
+
+        async def blocked_publication(record, **kwargs):
+            entered.set()
+            await resume.wait()
+            return await publish(record, **kwargs)
+
+        monkeypatch.setattr(state, method, blocked_publication)
+    request = _request(background=background, stream=stream, store=store)
+    creating = asyncio.create_task(host._endpoint.handle_create(request))
+    sending = None
+    frames = []
+
+    async def send(message):
+        if message["type"] == "http.response.body" and message.get("body"):
+            frames.append(message["body"])
+
+    try:
+        if timing == "before-publication" and stream:
+            response = await asyncio.wait_for(creating, 2)
+            assert response.status_code == 200
+            sending = asyncio.create_task(response.stream_response(send))
+        await asyncio.wait_for(entered.wait(), 2)
+        assert await state.list_records() == []
+        await asyncio.wait_for(host._endpoint.handle_shutdown(), 2)
+        resume.set()
+        if sending is not None:
+            await asyncio.wait_for(sending, 2)
+            assert len(frames) == 1
+            error = json.loads(frames[0].decode().split("data: ", 1)[1].strip())
+            assert error["type"] == "error"
+            assert error["code"] == "server_error"
+        else:
+            response = await asyncio.wait_for(creating, 2)
+            assert response.status_code == 503
+            assert json.loads(response.body)["error"]["code"] == "service_unavailable"
+        started.assert_not_awaited()
+        assert await state.list_records() == []
+        assert state._reservations == {("other", RESPONSE_ID)}
+        assert set(state._publication_contexts) == {("other", RESPONSE_ID)}
+        assert resilience._RUNTIME_REFS == foreign_refs
+        with pytest.raises(EventStreamNotFoundError):
+            await registry.get(lifecycle_id)
+        assert await registry.get(other_id) is foreign
+        assert [entry.payload for entry in foreign._buffer] == [{"type": "response.created", "sequence_number": 0}]
+        with pytest.raises(KeyError):
+            await host._endpoint._provider.get_response(RESPONSE_ID, context=PlatformContext(user_id_key="owner"))
+        if file_backed:
+            expected_files = [f"{other_id}.jsonl"]
+            if foreign._lock_path is not None:
+                expected_files.append(f"{other_id}.jsonl.lock")
+            assert sorted(path.name for path in storage_dir.iterdir()) == sorted(expected_files)
+    finally:
+        resume.set()
+        for task in (creating, sending):
+            if task is not None and not task.done():
+                task.cancel()
+        await asyncio.gather(*(task for task in (creating, sending) if task is not None), return_exceptions=True)
+        await state.release_reservation(RESPONSE_ID, "other")
+        await registry.delete(other_id)
+
+
+@pytest.mark.parametrize("stream", [False, True])
+async def test_shutdown_signals_and_awaits_ephemeral_handler_before_first_event(registry, stream):
+    host = _host()
+    entered = asyncio.Event()
+    finish = asyncio.Event()
+    contexts = []
+
+    async def handler(request, context, cancellation_signal):
+        contexts.append(context)
+        entered.set()
+        await context.shutdown.wait()
+        await finish.wait()
+        if False:
+            yield
+
+    host.response_handler(handler)
+    creating = asyncio.create_task(host._endpoint.handle_create(_request(background=False, stream=stream, store=False)))
+    sending = None
+    shutting_down = None
+    try:
+        if stream:
+            response = await asyncio.wait_for(creating, 2)
+            sending = asyncio.create_task(response.stream_response(_send))
+        await asyncio.wait_for(entered.wait(), 2)
+        state = host._endpoint._runtime_state
+        pending = state._pending_records[("owner", RESPONSE_ID)]
+        assert pending.response_context is contexts[0]
+        assert pending.execution_task is (sending if stream else creating)
+        shutting_down = asyncio.create_task(host._endpoint.handle_shutdown())
+        await asyncio.wait_for(contexts[0].shutdown.wait(), 2)
+        assert not shutting_down.done()
+        finish.set()
+        await asyncio.wait_for(sending if stream else creating, 2)
+        await asyncio.wait_for(shutting_down, 2)
+        assert state._pending_records == {}
+        assert state._reservations == set()
+        assert state._publication_contexts == {}
+        assert resilience._RUNTIME_REFS == {}
+        assert registry._slots == {}
+    finally:
+        finish.set()
+        for task in (creating, sending, shutting_down):
+            if task is not None and not task.done():
+                task.cancel()
+        await asyncio.gather(
+            *(task for task in (creating, sending, shutting_down) if task is not None), return_exceptions=True
+        )
+
+
+@pytest.mark.parametrize("background", [False, True])
+async def test_shutdown_tracks_published_nonstream_startup_and_allows_exact_finalization(
+    registry, monkeypatch, background
+):
+    host = _host()
+    entered = asyncio.Event()
+    finish = asyncio.Event()
+    records = []
+    contexts = []
+
+    async def startup(ctx, record, fallback, *, disposition):
+        records.append(record)
+        contexts.append(ctx.context)
+        entered.set()
+        await finish.wait()
+        assert ctx.context.shutdown.is_set()
+        record.transition_to("completed")
+        assert await host._endpoint._runtime_state.add(record)
+        record.execution_task = asyncio.create_task(asyncio.sleep(0))
+        await record.execution_task
+        record.response_created_signal.set()
+
+    monkeypatch.setattr(host._endpoint._orchestrator, "_start_resilient_background", startup)
+    creating = asyncio.create_task(host._endpoint.handle_create(_request(background=background, stream=False)))
+    shutting_down = None
+    try:
+        await asyncio.wait_for(entered.wait(), 2)
+        assert records[0].execution_task is creating
+        shutting_down = asyncio.create_task(host._endpoint.handle_shutdown())
+        await asyncio.wait_for(contexts[0].shutdown.wait(), 2)
+        assert not shutting_down.done()
+        finish.set()
+        if background:
+            assert (await asyncio.wait_for(creating, 2)).status_code == 200
+        else:
+            with pytest.raises(asyncio.CancelledError):
+                await asyncio.wait_for(creating, 2)
+        await asyncio.wait_for(shutting_down, 2)
+        assert await host._endpoint._runtime_state.get(RESPONSE_ID, "owner") is records[0]
+        assert records[0].status == "completed"
+        assert host._endpoint._runtime_state._reservations == set()
+        assert resilience._RUNTIME_REFS == {}
+    finally:
+        finish.set()
+        for task in (creating, shutting_down):
+            if task is not None and not task.done():
+                task.cancel()
+        await asyncio.gather(*(task for task in (creating, shutting_down) if task is not None), return_exceptions=True)
+
+
+async def test_nonstream_body_hands_drain_tracking_to_actual_execution_task(registry, monkeypatch):
+    record = ResponseExecution(
+        response_id=RESPONSE_ID,
+        mode_flags=ResponseModeFlags(stream=False, store=False, background=True),
+        status="in_progress",
+        user_id_key="owner",
+    )
+    context = ResponseContext(response_id=RESPONSE_ID, mode_flags=record.mode_flags)
+    record.execution_task = asyncio.current_task()
+    entered = asyncio.Event()
+    finish = asyncio.Event()
+
+    async def drain(*args, **kwargs):
+        entered.set()
+        await finish.wait()
+        return True
+
+    monkeypatch.setattr(orchestration, "_bg_drain_handler_events", drain)
+    executing = asyncio.create_task(
+        orchestration._run_background_non_stream(
+            create_fn=AsyncMock(),
+            parsed=CreateResponse(model="m", input="hi"),
+            context=context,
+            cancellation_signal=record.cancel_signal,
+            record=record,
+            response_id=RESPONSE_ID,
+            agent_reference={},
+            model="m",
+            store=False,
+        )
+    )
+    try:
+        await asyncio.wait_for(entered.wait(), 2)
+        assert record.execution_task is executing
+        assert not executing.done()
+    finally:
+        finish.set()
+        await asyncio.wait_for(executing, 2)
 
 
 async def test_many_unstored_posts_do_not_retain_registry_lifecycle_locks(
@@ -422,8 +672,8 @@ async def test_shutdown_rejection_deletes_new_replay_before_yield_and_reservatio
         assert not frames
         assert not await state.reserve(RESPONSE_ID, "owner")
         competing = await host._endpoint.handle_create(_request())
-        assert competing.status_code == 409
-        assert json.loads(competing.body)["error"]["code"] == "response_id_conflict"
+        assert competing.status_code == 503
+        assert json.loads(competing.body)["error"]["code"] == "service_unavailable"
         assert await state.list_records() == []
     finally:
         release_delete.set()
@@ -439,8 +689,8 @@ async def test_shutdown_rejection_deletes_new_replay_before_yield_and_reservatio
     with pytest.raises(EventStreamNotFoundError):
         await registry.get(lifecycle_id)
     assert await registry.get(other_id) is other
-    assert await state.reserve(RESPONSE_ID, "owner")
-    await state.release_reservation(RESPONSE_ID, "owner")
+    assert not await state.reserve(RESPONSE_ID, "owner")
+    assert state._reservations == set()
     with pytest.raises(KeyError):
         await host._endpoint._provider.get_response(RESPONSE_ID, context=PlatformContext(user_id_key="owner"))
     if file_backed:

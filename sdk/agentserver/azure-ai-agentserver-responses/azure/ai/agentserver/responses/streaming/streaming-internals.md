@@ -157,6 +157,24 @@ after all lifecycle guards pass, under the reservation lock. Early settlement
 and cancellation therefore cannot leave a stale live record shadowing provider
 state. Active, terminal, foreign-user, and deletion-owned records are preserved.
 
+Shutdown closes fresh and recovered reservations atomically with its snapshot of
+published and pending executions. A reservation alone does not admit execution:
+first publication or pending registration must precede that snapshot. Afterward,
+only the exact accepted record or its same-context finalization may publish, with
+the existing predecessor and deletion-ownership guards still enforced.
+Non-stored handlers are tracked as pending work before their first invocation.
+Non-stream startup carries a temporary request-task drain handle until the
+execution task takes ownership, so shutdown can signal and await accepted work
+even before the first handler event. Exact pending cleanup cannot discard a
+successor or another user's record.
+
+A create rejected before HTTP headers returns the existing `503`
+`service_unavailable` shutdown response, not a response-ID conflict or handler
+failure. Once streaming headers have been sent, rejected startup retains the
+existing connection-only `server_error` SSE contract. Newly allocated replay is
+removed before the create reservation is released; retained replay and accepted
+execution ownership are preserved.
+
 ## HTTP / SSE wire mapping
 
 The responses host exposes events through Server-Sent-Events on:

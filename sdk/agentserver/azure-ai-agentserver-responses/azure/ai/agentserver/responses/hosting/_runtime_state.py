@@ -89,11 +89,13 @@ class _RuntimeState:
         :paramtype incarnation_id: str | None
         :keyword publication_context: The fresh request's exact runtime publication owner.
         :paramtype publication_context: ResponseContext | None
-        :return: ``True`` when reserved; ``False`` when already live or reserved.
+        :return: ``True`` when reserved; ``False`` when draining or lifecycle ownership prevents admission.
         :rtype: bool
         """
         key = _runtime_key(response_id, user_id_key)
         async with self._lock:
+            if self._draining:
+                return False
             record = self._records.get(key)
             stale_execution = (
                 recovery
@@ -103,8 +105,6 @@ class _RuntimeState:
                 and record.execution_task.done()
             )
             if record is not None and not stale_execution:
-                return False
-            if recovery and self._draining:
                 return False
             if recovery and incarnation_id is None and key in self._deleted_response_ids:
                 return False
@@ -211,8 +211,19 @@ class _RuntimeState:
             pending = self._pending_records.get(key)
             context = record.response_context
             reserved_context = self._publication_contexts.get(key)
+            drain_owner = existing if existing is not None else pending
             blocked = (
-                key in self._deletions
+                (
+                    self._draining
+                    and (
+                        drain_owner is None
+                        or (
+                            drain_owner is not record
+                            and (context is None or context is not drain_owner.response_context)
+                        )
+                    )
+                )
+                or key in self._deletions
                 or key in self._retained_deletions
                 or (key in self._deleted_response_ids and key not in self._publication_contexts)
                 or (reserved_context is not None and context is not reserved_context)
@@ -263,7 +274,7 @@ class _RuntimeState:
             return True
 
     async def begin_draining(self) -> list[ResponseExecution]:
-        """Atomically reject new pending work and snapshot active executions.
+        """Atomically reject fresh admission and snapshot accepted executions.
 
         :return: Published and pending executions accepted before shutdown.
         :rtype: list[ResponseExecution]
@@ -272,18 +283,37 @@ class _RuntimeState:
             self._draining = True
             return list(self._records.values()) + list(self._pending_records.values())
 
-    async def discard_pending(self, response_id: str, user_id_key: str | None = None) -> None:
+    async def is_draining(self) -> bool:
+        """Check whether shutdown has closed admission.
+
+        :return: Whether the shutdown snapshot has been taken.
+        :rtype: bool
+        """
+        async with self._lock:
+            return self._draining
+
+    async def discard_pending(
+        self,
+        response_id: str,
+        user_id_key: str | None = None,
+        *,
+        expected_record: ResponseExecution | None = None,
+    ) -> None:
         """Discard shutdown bookkeeping for an execution that never published.
 
         :param response_id: The pending execution's response ID.
         :type response_id: str
         :param user_id_key: The user partition, or ``None`` for anonymous.
         :type user_id_key: str | None
+        :keyword expected_record: Discard only this exact pending execution when supplied.
+        :paramtype expected_record: ResponseExecution | None
         :return: None
         :rtype: None
         """
         async with self._lock:
-            self._pending_records.pop(_runtime_key(response_id, user_id_key), None)
+            key = _runtime_key(response_id, user_id_key)
+            if expected_record is None or self._pending_records.get(key) is expected_record:
+                self._pending_records.pop(key, None)
 
     async def get(self, response_id: str, user_id_key: str | None = None) -> ResponseExecution | None:
         """Look up an execution record by response ID.

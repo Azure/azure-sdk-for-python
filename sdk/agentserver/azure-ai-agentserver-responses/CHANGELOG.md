@@ -4,6 +4,10 @@
 
 ### Bugs Fixed
 
+- Atomically close fresh response reservations and unpublished execution
+  admission when shutdown takes its drain snapshot. Preserve exact accepted
+  executions for terminal finalization, track handler work before its first
+  event, and return the existing HTTP 503 shutdown response for late creates.
 - Validate durable user partitions as strings or `None` before constructing
   platform, lifecycle, or runtime identities. Invalid partitions never fall
   back to anonymous storage. Fail the response only with independently proven
