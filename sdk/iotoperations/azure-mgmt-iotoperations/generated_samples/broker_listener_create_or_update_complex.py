@@ -49,13 +49,7 @@ def main():
                         "port": 8443,
                         "protocol": "WebSockets",
                         "tls": {
-                            "certManagerCertificateSpec": {
-                                "issuerRef": {
-                                    "group": "jtmuladdkpasfpoyvewekmiy",
-                                    "kind": "Issuer",
-                                    "name": "example-issuer",
-                                }
-                            },
+                            "certManagerCertificateSpec": {"issuerRef": {"kind": "Issuer", "name": "example-issuer"}},
                             "mode": "Automatic",
                         },
                     },
@@ -73,6 +67,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-01/BrokerListener_CreateOrUpdate_Complex.json
+# x-ms-original-file: 2026-10-01/BrokerListener_CreateOrUpdate_Complex.json
 if __name__ == "__main__":
     main()
