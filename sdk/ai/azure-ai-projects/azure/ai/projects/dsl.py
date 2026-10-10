@@ -20,7 +20,8 @@ from ._component_source import _ComponentSource, _RUNNER_NAME, _source_for_compo
 from .models import AssetTypes, CommandJob, Input, InputOutputModes, JobResourceConfiguration, PipelineJob
 from .models import Output as _JobOutput
 
-__all__ = ["Input", "Output", "component", "pipeline"]
+# Keep Input available for explicit imports without documenting the same model twice in Sphinx.
+__all__ = ["Output", "component", "pipeline"]
 
 
 @dataclass(frozen=True)

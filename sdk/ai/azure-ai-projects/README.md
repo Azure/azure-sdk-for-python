@@ -186,7 +186,7 @@ builder. Submit it with `client.beta.jobs.create_or_update(job)` for an autogene
 optionally passing `experiment_name="pipeline_samples"`, or use the existing
 `create_or_update(name=..., job=...)` form.
 
-See the [two-component Python sample](samples/jobs/sample_pipeline_dsl.py) for a producer and
+See the [two-component Python sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/jobs/sample_pipeline_dsl.py) for a producer and
 consumer connected through a mounted file. Each function body is packaged into a separate Code
 folder and runs on the selected compute, not when the graph is built. Component functions must be
 defined in a readable `.py` file; referenced module-level imports are copied into the generated
@@ -206,7 +206,7 @@ closure values. Shared code roots are uploaded once per pipeline submission.
 The snapshot honors `.amlignore` (or `.gitignore` when no `.amlignore` exists) in each directory,
 always omits `.env` files and common Python/Git artifacts, and rejects included symlinks.
 Review the code root before submitting: only files not excluded by these rules are uploaded.
-See the [multi-file source-backed sample](samples/jobs/pipeline_source/README.md) for this
+See the [multi-file source-backed sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/jobs/pipeline_source/README.md) for this
 layout; the original single-file sample retains its standalone, SDK-free execution mode.
 
 ### Hosted agents (preview)
