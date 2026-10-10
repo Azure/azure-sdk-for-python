@@ -36,6 +36,28 @@ def main():
         storage_discovery_workspace_name="Sample-Storage-Workspace",
         properties={
             "properties": {
+                "capabilities": {
+                    "azureBlobStorage": {
+                        "capacityDetails": {"status": "Enabled"},
+                        "prefixConfigurations": [
+                            {
+                                "containerName": "samplecontainer",
+                                "prefix": "sampleDir",
+                                "storageAccountName": "firstsa",
+                            },
+                            {
+                                "containerName": "samplecontainer",
+                                "prefix": "sampleDir/sampleSubDir",
+                                "storageAccountName": "secondsa",
+                            },
+                            {
+                                "containerName": "anothersamplecontainer",
+                                "prefix": "anotherSampleDir",
+                                "storageAccountName": "thirdsa",
+                            },
+                        ],
+                    }
+                },
                 "description": "Updated Sample Storage Discovery Workspace",
                 "scopes": [
                     {
@@ -55,6 +77,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/StorageDiscoveryWorkspaces_Update.json
+# x-ms-original-file: 2026-10-01-preview/StorageDiscoveryWorkspaces_Update.json
 if __name__ == "__main__":
     main()

@@ -630,6 +630,13 @@ def _extract_text_from_content(content):
     return text
 
 
+def _extract_system_message_content(content):
+    """Extract system-message text from string or typed content."""
+    if isinstance(content, list):
+        return "\n".join(_extract_text_from_content(content))
+    return content
+
+
 def filter_to_used_tools(tool_definitions, msgs_lists, logger=None):
     """Filters the tool definitions to only include those that were actually used in the messages lists."""
     try:
@@ -673,7 +680,7 @@ def _get_conversation_history(
         if not role:
             continue
         if include_system_messages and role == "system":
-            system_message = msg.get("content", "")
+            system_message = _extract_system_message_content(msg.get("content", ""))
 
         elif role == "user" and "content" in msg:
             if cur_agent_response:
@@ -1232,7 +1239,7 @@ def _get_conversation_history_with_tool_calls(query, include_system_messages=Fal
             continue
 
         if include_system_messages and msg["role"] == "system" and "content" in msg:
-            system_message = msg.get("content", "")
+            system_message = _extract_system_message_content(msg.get("content", ""))
 
         if msg["role"] == "user" and "content" in msg:
             if cur_agent_response != []:
@@ -1453,11 +1460,7 @@ def serialize_messages(messages):
             normalized = {**msg, "content": [{"type": "text", "text": msg["content"]}]}
 
         if role in (MessageRole.SYSTEM, MessageRole.DEVELOPER):
-            content = msg.get("content", "")
-            if isinstance(content, list):
-                system_message = "\n".join(_extract_text_from_content(content))
-            else:
-                system_message = content
+            system_message = _extract_system_message_content(msg.get("content", ""))
 
         elif role == MessageRole.USER and "content" in msg:
             if cur_agent_response:
