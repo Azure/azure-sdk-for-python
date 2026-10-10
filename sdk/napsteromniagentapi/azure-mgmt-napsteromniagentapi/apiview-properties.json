@@ -53,5 +53,5 @@
         "azure.mgmt.napsteromniagentapi.operations.SaaSOperationGroupOperations.begin_activate_resource": "Napster.CompanionAPI.SaaSOperationGroup.activateResource",
         "azure.mgmt.napsteromniagentapi.aio.operations.SaaSOperationGroupOperations.begin_activate_resource": "Napster.CompanionAPI.SaaSOperationGroup.activateResource"
     },
-    "CrossLanguageVersion": "198697443c25"
+    "CrossLanguageVersion": "4dd098844fb3"
 }
