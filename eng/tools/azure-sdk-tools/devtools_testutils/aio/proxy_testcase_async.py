@@ -21,6 +21,7 @@ except ImportError:
 from ..helpers import is_live_and_not_recording, trim_kwargs_from_test_function
 from ..proxy_testcase import (
     RecordedTransport,
+    _bypass_httpx_proxy_transport,
     _transform_args,
     _transform_httpx_args,
     get_test_id,
@@ -133,6 +134,12 @@ def _make_proxy_decorator_async(transports):
             test_variables = None
             test_run = False
             originals = []
+            if (AsyncHTTPXTransport, "handle_async_request") in transports:
+                original_for_url = httpx.AsyncClient._transport_for_url
+                httpx.AsyncClient._transport_for_url = _bypass_httpx_proxy_transport(
+                    original_for_url, AsyncHTTPXTransport
+                )
+                originals.append((httpx.AsyncClient, "_transport_for_url", original_for_url))
             # monkeypatch all requested transports
             for owner, name in transports:
                 original = getattr(owner, name)

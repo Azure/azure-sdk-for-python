@@ -231,6 +231,17 @@ def _transform_httpx_args(recording_id: str, *call_args, **call_kwargs):
     return tuple(copied_positional_args), call_kwargs
 
 
+def _bypass_httpx_proxy_transport(original_for_url, transport_type):
+    def select_transport(client, url):
+        selected = original_for_url(client, url)
+        # HTTPX selects the proxy before handle_request rewrites the URL to the local TestProxy.
+        if isinstance(selected, transport_type) and isinstance(client._transport, transport_type):
+            return client._transport
+        return selected
+
+    return select_transport
+
+
 def recorded_by_proxy(*transports):
     """
     Decorator for recording and playing back test proxy sessions.
@@ -332,6 +343,10 @@ def _make_proxy_decorator(transports):
             test_variables = None
             test_run = False
             originals = []
+            if (HTTPXTransport, "handle_request") in transports:
+                original_for_url = httpx.Client._transport_for_url
+                httpx.Client._transport_for_url = _bypass_httpx_proxy_transport(original_for_url, HTTPXTransport)
+                originals.append((httpx.Client, "_transport_for_url", original_for_url))
             # monkeypatch all requested transports
             for owner, name in transports:
                 original = getattr(owner, name)
