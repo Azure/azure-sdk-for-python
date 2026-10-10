@@ -39,6 +39,7 @@ class TestResilienceManagementGoalAssignmentsOperations(AzureMgmtRecordedTestCas
                 "id": "str",
                 "name": "str",
                 "properties": {
+                    "requireZonalResiliency": bool,
                     "errorDetails": {
                         "additionalInfo": [{"info": {}, "type": "str"}],
                         "code": "str",
@@ -46,13 +47,10 @@ class TestResilienceManagementGoalAssignmentsOperations(AzureMgmtRecordedTestCas
                         "message": "str",
                         "target": "str",
                     },
-                    "goalAssignmentType": "str",
-                    "goalTemplateId": "str",
                     "provisioningState": "str",
-                    "requireZonalResiliency": bool,
-                    "serviceLevelResources": [
-                        {"serviceLevelIndicatorResourceId": "str", "serviceLevelObjectiveResourceId": "str"}
-                    ],
+                    "regionalObjectives": {"targetRecoveryPointObjective": "str", "targetRecoveryTimeObjective": "str"},
+                    "requireRegionalResiliency": bool,
+                    "serviceLevelResources": [{"serviceLevelIndicatorResourceId": "str"}],
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -79,6 +77,7 @@ class TestResilienceManagementGoalAssignmentsOperations(AzureMgmtRecordedTestCas
                 "id": "str",
                 "name": "str",
                 "properties": {
+                    "requireZonalResiliency": bool,
                     "errorDetails": {
                         "additionalInfo": [{"info": {}, "type": "str"}],
                         "code": "str",
@@ -86,13 +85,10 @@ class TestResilienceManagementGoalAssignmentsOperations(AzureMgmtRecordedTestCas
                         "message": "str",
                         "target": "str",
                     },
-                    "goalAssignmentType": "str",
-                    "goalTemplateId": "str",
                     "provisioningState": "str",
-                    "requireZonalResiliency": bool,
-                    "serviceLevelResources": [
-                        {"serviceLevelIndicatorResourceId": "str", "serviceLevelObjectiveResourceId": "str"}
-                    ],
+                    "regionalObjectives": {"targetRecoveryPointObjective": "str", "targetRecoveryTimeObjective": "str"},
+                    "requireRegionalResiliency": bool,
+                    "serviceLevelResources": [{"serviceLevelIndicatorResourceId": "str"}],
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -122,21 +118,19 @@ class TestResilienceManagementGoalAssignmentsOperations(AzureMgmtRecordedTestCas
                         "name": "str",
                         "properties": {
                             "resourceArmId": "str",
-                            "disasterRecoveryAttestationStatus": "str",
-                            "disasterRecoveryGoalParticipation": "str",
-                            "exclusionReasonForDisasterRecoveryGoals": "str",
-                            "exclusionReasonForHighAvailabilityGoals": "str",
-                            "highAvailabilityAttestationStatus": "str",
-                            "highAvailabilityGoalParticipation": "str",
                             "provisioningState": "str",
-                            "serviceGroupMemberships": [{"membershipType": "str", "serviceGroupId": "str"}],
-                            "userConfirmationForHighAvailability": [
-                                {
-                                    "confirmationStatus": "str",
-                                    "solutionDisplayName": "str",
-                                    "reasonForRequestingConfirmation": "str",
-                                }
-                            ],
+                            "regionalResiliency": {
+                                "attestationStatus": "str",
+                                "exclusionReason": "str",
+                                "goalParticipation": "str",
+                                "userConfirmation": [
+                                    {
+                                        "confirmationStatus": "str",
+                                        "solutionDisplayName": "str",
+                                        "reasonForRequestingConfirmation": "str",
+                                    }
+                                ],
+                            },
                             "zonalResiliency": {
                                 "attestationStatus": "str",
                                 "exclusionReason": "str",

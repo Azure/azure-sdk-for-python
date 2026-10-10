@@ -48,8 +48,14 @@ def main():
                     },
                 },
                 "drillAssetProperties": {"region": "zuvwzxnbqyzdkthrewruw", "subscription": "pxlmwjuhcif"},
+                "goalAssignmentProperties": {
+                    "identity": {
+                        "type": "UserAssigned",
+                        "userAssignedIdentity": "/subscriptions/4e88bed3-114f-443d-9975-28f64122ec5e/resourcegroups/resourceGroup1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uami1",
+                    }
+                },
                 "healthModelMonitoringProperties": {
-                    "discoveryRuleId": "/subscriptions/4e88bed3-114f-443d-9975-28f64122ec5e/resourceGroups/contoso-health/providers/Microsoft.CloudHealth/healthmodels/contoso-payments-hm/discoveryrules/payments-frontend-rule",
+                    "healthModelId": "/subscriptions/4e88bed3-114f-443d-9975-28f64122ec5e/resourceGroups/contoso-health/providers/Microsoft.CloudHealth/healthmodels/contoso-payments-hm",
                     "identity": {
                         "type": "UserAssigned",
                         "userAssignedIdentity": "/subscriptions/4e88bed3-114f-443d-9975-28f64122ec5e/resourcegroups/resourceGroup1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uami1",
@@ -85,6 +91,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-08-31-preview/Drills_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-10-31-preview/Drills_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

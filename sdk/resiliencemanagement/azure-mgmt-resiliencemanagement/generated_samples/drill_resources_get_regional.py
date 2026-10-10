@@ -15,7 +15,7 @@ from azure.mgmt.resiliencemanagement import ResilienceManagementClient
     pip install azure-identity
     pip install azure-mgmt-resiliencemanagement
 # USAGE
-    python goal_templates_get_maximum_set_gen.py
+    python drill_resources_get_regional.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.goal_templates.get(
-        service_group_name="qsqjquhxpermcblvegajq",
-        goal_template_name="gt1",
+    response = client.drill_resources.get(
+        service_group_name="sampleServiceGroupName",
+        drill_name="regionalDrill",
+        drill_resource_name="b6378181-9dc0-4a43-8e09-97a8b08aabaa",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-08-31-preview/GoalTemplates_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-10-31-preview/DrillResources_Get_Regional.json
 if __name__ == "__main__":
     main()
