@@ -5,7 +5,7 @@ import math
 import os
 import pathlib
 import numpy as np
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import ANY, MagicMock, call, patch
 
 from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.pipeline import PipelineContext, PipelineRequest
@@ -3729,7 +3729,9 @@ class TestAppInsightsAuthentication:
         assert exporter_options["credential_scopes"] == ["https://monitor.azure.com/.default"]
         assert exporter_options["credential"] is not credential
         assert "token" not in config
-        assert "Successfully logged 1 evaluation results to App Insights" in caplog.text
+        assert '"flush_status": "completed"' in caplog.text
+        assert '"items_accepted": null' in caplog.text
+        assert "Successfully logged" not in caplog.text
 
     def test_exporter_credential_refresh_uses_monitor_scope(self):
         credential = MagicMock(spec=TokenCredential)
@@ -3779,7 +3781,8 @@ class TestAppInsightsAuthentication:
                 self._RESULTS,
             )
 
-        assert "Failed to emit evaluation results to App Insights: authentication failed" in caplog.text
+        assert '"outcome": "emit_exception"' in caplog.text
+        assert "authentication failed" not in caplog.text
         mock_lp_cls.return_value.shutdown.assert_called_once()
 
     @patch("opentelemetry.sdk._logs.LoggerProvider")
@@ -3810,7 +3813,7 @@ class TestAppInsightsAuthentication:
                 self._RESULTS,
             )
 
-        assert "Failed to export evaluation results to App Insights." in caplog.text
+        assert '"export_status": "failure"' in caplog.text
         assert "Successfully logged" not in caplog.text
         exporter.export.assert_called_once_with([])
         mock_lp_cls.return_value.force_flush.assert_called_once()
@@ -3834,7 +3837,7 @@ class TestAppInsightsAuthentication:
                 self._RESULTS,
             )
 
-        assert "App Insights force_flush timed out after 60000ms" in caplog.text
+        assert '"flush_status": "timeout"' in caplog.text
         mock_lp_cls.return_value.shutdown.assert_called_once()
 
     @patch("azure.identity.DefaultAzureCredential")
@@ -3881,7 +3884,9 @@ class TestAppInsightsAuthentication:
         with patch.dict("sys.modules", {"azure.monitor.opentelemetry.exporter": exporter_module}):
             emit_eval_result_events_to_app_insights(config, self._RESULTS)
 
-        exporter_module.AzureMonitorLogExporter.assert_called_once_with(connection_string="InstrumentationKey=fake-key")
+        exporter_module.AzureMonitorLogExporter.assert_called_once_with(
+            connection_string="InstrumentationKey=fake-key", raw_response_hook=ANY
+        )
 
     @patch("opentelemetry.sdk._logs.LoggerProvider")
     def test_api_key_configuration_disables_environment_fallback(self, mock_lp_cls):
@@ -3902,4 +3907,5 @@ class TestAppInsightsAuthentication:
         exporter_module.AzureMonitorLogExporter.assert_called_once_with(
             connection_string="InstrumentationKey=fake-key",
             credential=None,
+            raw_response_hook=ANY,
         )

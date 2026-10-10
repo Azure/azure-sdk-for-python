@@ -182,4 +182,6 @@ class AppInsightsConfig(TypedDict):
     run_type: NotRequired[str]
     schedule_type: NotRequired[str]
     run_id: NotRequired[str]
+    correlation_id: NotRequired[str]
+    resource_id: NotRequired[str]
     extra_attributes: NotRequired[Dict[str, Any]]
