@@ -208,6 +208,10 @@ jobs:
   - job: 'Analyze'
     condition: and(succeeded(), ne(variables['Skip.Analyze'], 'true'))
 
+    variables:
+      ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+        NPM_CONFIG_USERCONFIG: $(Agent.TempDirectory)/cspell.npmrc
+
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
 
     dependsOn:
@@ -232,9 +236,16 @@ jobs:
 
     - template: /eng/pipelines/templates/steps/use-venv.yml
 
+    # eng/common is managed elsewhere; point CSpell at an authenticated temp npmrc in this job.
+    - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+      - template: /eng/common/pipelines/templates/steps/create-authenticated-npmrc.yml
+        parameters:
+          npmrcPath: $(Agent.TempDirectory)/cspell.npmrc
+
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
       parameters:
         ContinueOnError: false
+        NpmConfigUserConfig: $(Agent.TempDirectory)/cspell.npmrc
 
     - template: /eng/common/pipelines/templates/steps/verify-links.yml
       parameters:
