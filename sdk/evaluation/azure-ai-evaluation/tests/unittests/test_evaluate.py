@@ -2182,20 +2182,20 @@ class TestBuildInternalLogAttributesOutcome:
                 "completed",
                 True,
                 {
-                    "microsoft.gen_ai.evaluation.status": "completed",
-                    "microsoft.gen_ai.evaluation.passed": "true",
+                    "gen_ai.evaluation.status": "completed",
+                    "gen_ai.evaluation.passed": "true",
                 },
             ),
             (
                 "completed",
                 False,
                 {
-                    "microsoft.gen_ai.evaluation.status": "completed",
-                    "microsoft.gen_ai.evaluation.passed": "false",
+                    "gen_ai.evaluation.status": "completed",
+                    "gen_ai.evaluation.passed": "false",
                 },
             ),
-            ("error", None, {"microsoft.gen_ai.evaluation.status": "error"}),
-            ("skipped", None, {"microsoft.gen_ai.evaluation.status": "skipped"}),
+            ("error", None, {"gen_ai.evaluation.status": "error"}),
+            ("skipped", None, {"gen_ai.evaluation.status": "skipped"}),
         ],
     )
     def test_status_and_passed_are_included(self, status, passed, expected):
@@ -2210,7 +2210,7 @@ class TestBuildInternalLogAttributesOutcome:
         for key, value in expected.items():
             assert attrs[key] == value
         if passed is None:
-            assert "microsoft.gen_ai.evaluation.passed" not in attrs
+            assert "gen_ai.evaluation.passed" not in attrs
 
     def test_invalid_or_missing_values_are_excluded(self):
         """Unknown value types should not become misleading telemetry."""
@@ -2221,8 +2221,8 @@ class TestBuildInternalLogAttributesOutcome:
             {},
         )
 
-        assert "microsoft.gen_ai.evaluation.status" not in attrs
-        assert "microsoft.gen_ai.evaluation.passed" not in attrs
+        assert "gen_ai.evaluation.status" not in attrs
+        assert "gen_ai.evaluation.passed" not in attrs
 
 
 @pytest.mark.unittest
@@ -2441,10 +2441,10 @@ class TestLogEventsTokenUsage:
         assert len(emitted) == 1
         attributes = emitted[0].attributes
         internal_properties = json.loads(attributes["internal_properties"])
-        assert internal_properties["microsoft.gen_ai.evaluation.status"] == "completed"
-        assert internal_properties["microsoft.gen_ai.evaluation.passed"] == "false"
-        assert "microsoft.gen_ai.evaluation.status" not in attributes
-        assert "microsoft.gen_ai.evaluation.passed" not in attributes
+        assert internal_properties["gen_ai.evaluation.status"] == "completed"
+        assert internal_properties["gen_ai.evaluation.passed"] == "false"
+        assert "gen_ai.evaluation.status" not in attributes
+        assert "gen_ai.evaluation.passed" not in attributes
 
     def test_token_usage_not_in_standard_attributes(self):
         """Token usage should be in internal_properties, not in standard attributes."""
