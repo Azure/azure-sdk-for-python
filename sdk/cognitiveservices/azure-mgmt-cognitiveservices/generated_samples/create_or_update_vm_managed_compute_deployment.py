@@ -39,6 +39,9 @@ def main():
             "properties": {
                 "computeId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroupName/providers/Microsoft.CognitiveServices/accounts/accountName/computes/my-h100-pool",
                 "deploymentTemplate": "projects/my-project/deploymentTemplates/gpt-oss-120b-vllm-tuned/versions/2",
+                "gatedModelAccess": {
+                    "connectionId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resourceGroupName/providers/Microsoft.CognitiveServices/accounts/accountName/projects/my-project/connections/my-hf-connection"
+                },
                 "model": "azureml://registries/azureml-openai-oss/models/gpt-oss-120b/versions/4",
                 "priority": "High",
             },
@@ -48,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-15-preview/CreateOrUpdateVmManagedComputeDeployment.json
+# x-ms-original-file: 2026-09-15-preview/CreateOrUpdateVmManagedComputeDeployment.json
 if __name__ == "__main__":
     main()
