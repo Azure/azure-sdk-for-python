@@ -1,4 +1,3 @@
-
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -47,6 +46,7 @@ def _assert_upload_limit_schedule(agent):
     assert recurrence.end_time.minute == 0
 
 
+@pytest.mark.live_test_only
 class TestStorageMoverMgmtAgentsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(StorageMoverMgmtClient, is_async=True)

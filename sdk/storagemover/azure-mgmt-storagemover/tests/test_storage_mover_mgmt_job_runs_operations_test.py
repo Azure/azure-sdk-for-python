@@ -22,6 +22,7 @@ FAKE_STORAGE_ACCOUNT_ID = (
 )
 
 
+@pytest.mark.live_test_only
 class TestStorageMoverMgmtJobRunsOperations(AzureMgmtRecordedTestCase):
     """Read-only coverage for job_runs (list + get).
 
