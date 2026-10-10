@@ -108,12 +108,12 @@ mcp-scripts:
   # Do not create a separate test branch. Uncomment the block below, compile with gh-aw v0.88.8,
   # commit/push both files to the same PR branch, then dispatch with --ref set to that branch.
   # Comment it out and recompile before merging. Keep concurrency active in both modes.
-  workflow_dispatch:
-    inputs:
-      pr_number:
-        description: Azure-owned-source SDK PR number to review and publish to
-        required: true
-        type: string
+  # workflow_dispatch:
+  #   inputs:
+  #     pr_number:
+  #       description: Azure-owned-source SDK PR number to review and publish to
+  #       required: true
+  #       type: string
 permissions:
   contents: read
   copilot-requests: write
