@@ -1,5 +1,13 @@
 # Release History
 
+## 1.0.0b3 (Unreleased)
+
+### Features Added
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0b2 (2026-09-24)
 
 ### Other Changes
