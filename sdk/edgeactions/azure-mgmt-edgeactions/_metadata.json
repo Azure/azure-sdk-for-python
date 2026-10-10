@@ -1,7 +1,11 @@
 {
-  "apiVersion": "2025-12-01-preview",
-  "commit": "3abfa8f11bad975f073171c499e5ec6eb01b42d2",
+  "apiVersion": "2026-10-01",
+  "apiVersions": {
+    "Microsoft.Cdn": "2026-10-01"
+  },
+  "commit": "65eb9311d304dcf9874d05fdec39ea65baae8db8",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/cdn/resource-manager/Microsoft.Cdn/EdgeActions",
-  "emitterVersion": "0.60.0"
+  "emitterVersion": "0.63.9",
+  "httpClientPythonVersion": "0.38.1"
 }

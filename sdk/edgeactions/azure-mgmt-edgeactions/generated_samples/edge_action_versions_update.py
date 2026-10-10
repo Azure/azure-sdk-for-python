@@ -34,11 +34,14 @@ def main():
         resource_group_name="testrg",
         edge_action_name="edgeAction1",
         version="version1",
-        properties={"properties": {"deploymentType": "others"}},
+        properties={
+            "properties": {"deploymentType": "zip", "isDefaultVersion": "True"},
+            "tags": {"environment": "production"},
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-12-01-preview/EdgeActionVersions_Update.json
+# x-ms-original-file: 2026-10-01/EdgeActionVersions_Update.json
 if __name__ == "__main__":
     main()
