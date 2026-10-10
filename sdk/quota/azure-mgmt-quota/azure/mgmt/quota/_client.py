@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -29,24 +29,35 @@ from .operations import (
     GroupQuotaSubscriptionsOperations,
     GroupQuotaUsagesOperations,
     GroupQuotasOperations,
+    IncomingQuotaTransfersOperations,
     QuotaOperationOperations,
     QuotaOperations,
     QuotaRequestStatusOperations,
+    QuotaTransfersOperations,
     UsagesOperations,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class QuotaMgmtClient:  # pylint: disable=too-many-instance-attributes
+class QuotaMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Microsoft Azure Quota Resource Provider.
 
     :ivar quota_operation: QuotaOperationOperations operations
     :vartype quota_operation: azure.mgmt.quota.operations.QuotaOperationOperations
     :ivar quota_request_status: QuotaRequestStatusOperations operations
     :vartype quota_request_status: azure.mgmt.quota.operations.QuotaRequestStatusOperations
+    :ivar quota_transfers: QuotaTransfersOperations operations
+    :vartype quota_transfers: azure.mgmt.quota.operations.QuotaTransfersOperations
+    :ivar incoming_quota_transfers: IncomingQuotaTransfersOperations operations
+    :vartype incoming_quota_transfers: azure.mgmt.quota.operations.IncomingQuotaTransfersOperations
     :ivar group_quotas: GroupQuotasOperations operations
     :vartype group_quotas: azure.mgmt.quota.operations.GroupQuotasOperations
     :ivar group_quota_limits_request: GroupQuotaLimitsRequestOperations operations
@@ -86,8 +97,10 @@ class QuotaMgmtClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Default value is "2025-09-01".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-09-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -142,6 +155,10 @@ class QuotaMgmtClient:  # pylint: disable=too-many-instance-attributes
         self._serialize.client_side_validation = False
         self.quota_operation = QuotaOperationOperations(self._client, self._config, self._serialize, self._deserialize)
         self.quota_request_status = QuotaRequestStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.quota_transfers = QuotaTransfersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.incoming_quota_transfers = IncomingQuotaTransfersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.group_quotas = GroupQuotasOperations(self._client, self._config, self._serialize, self._deserialize)
