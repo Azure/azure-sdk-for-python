@@ -11,7 +11,11 @@ azure-mgmt-resource
 azure-mgmt-subscription
 azure-monitor-opentelemetry
 azure-monitor-query
+# Pre-install runtime dependencies before APIView's time-limited wheel install.
+azure-storage-blob>=12.15.0
+httpx>=0.27.2,<1
 jsonref
+openai>=2.8.0,<3
 opentelemetry-sdk
 python-dotenv
 black
