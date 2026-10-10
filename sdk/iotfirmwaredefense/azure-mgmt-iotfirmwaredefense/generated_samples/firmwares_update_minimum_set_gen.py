@@ -15,7 +15,7 @@ from azure.mgmt.iotfirmwaredefense import IoTFirmwareDefenseMgmtClient
     pip install azure-identity
     pip install azure-mgmt-iotfirmwaredefense
 # USAGE
-    python summaries_get_minimum_set_gen.py
+    python firmwares_update_minimum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,15 +30,27 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.summaries.get(
-        resource_group_name="FirmwareAnalysisRG",
-        workspace_name="default",
-        firmware_id="00000000-0000-0000-0000-000000000000",
-        summary_type="Firmware",
+    response = client.firmwares.update(
+        resource_group_name="rgworkspaces-firmwares",
+        workspace_name="A7",
+        firmware_id="umrkdttp",
+        properties={
+            "properties": {
+                "description": "str",
+                "fileName": "str",
+                "fileSize": 0,
+                "model": "str",
+                "provisioningState": "str",
+                "status": "str",
+                "statusMessages": [{"errorCode": 0, "message": "str"}],
+                "vendor": "str",
+                "version": "str",
+            }
+        },
     )
     print(response)
 
 
-# x-ms-original-file: 2026-06-01-preview/Summaries_Get_MinimumSet_Gen.json
+# x-ms-original-file: 2026-06-01-preview/Firmwares_Update_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

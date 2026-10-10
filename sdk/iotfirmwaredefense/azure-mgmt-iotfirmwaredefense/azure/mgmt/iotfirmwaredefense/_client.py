@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,8 +8,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -29,15 +30,22 @@ from .operations import (
     PasswordHashesOperations,
     SbomComponentsOperations,
     SummariesOperations,
+    UnsafeFunctionCallsOperations,
     UsageMetricsOperations,
     WorkspacesOperations,
 )
 
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
+
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class IoTFirmwareDefenseMgmtClient:  # pylint: disable=too-many-instance-attributes
+class IoTFirmwareDefenseMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Firmware & IoT Security REST API.
 
     :ivar operations: Operations operations
@@ -63,24 +71,38 @@ class IoTFirmwareDefenseMgmtClient:  # pylint: disable=too-many-instance-attribu
     :vartype summaries: azure.mgmt.iotfirmwaredefense.operations.SummariesOperations
     :ivar usage_metrics: UsageMetricsOperations operations
     :vartype usage_metrics: azure.mgmt.iotfirmwaredefense.operations.UsageMetricsOperations
+    :ivar unsafe_function_calls: UnsafeFunctionCallsOperations operations
+    :vartype unsafe_function_calls:
+     azure.mgmt.iotfirmwaredefense.operations.UnsafeFunctionCallsOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service host. Default value is None.
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is "2025-08-02".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-06-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(
-        self, credential: "TokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self,
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
@@ -89,6 +111,7 @@ class IoTFirmwareDefenseMgmtClient:  # pylint: disable=too-many-instance-attribu
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),
+            cloud_setting=cloud_setting,
             credential_scopes=credential_scopes,
             **kwargs
         )
@@ -131,6 +154,9 @@ class IoTFirmwareDefenseMgmtClient:  # pylint: disable=too-many-instance-attribu
         self.sbom_components = SbomComponentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.summaries = SummariesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.usage_metrics = UsageMetricsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.unsafe_function_calls = UnsafeFunctionCallsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
