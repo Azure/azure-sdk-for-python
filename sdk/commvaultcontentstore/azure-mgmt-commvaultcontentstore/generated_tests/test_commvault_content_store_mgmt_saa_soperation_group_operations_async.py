@@ -24,7 +24,30 @@ class TestCommvaultContentStoreMgmtSaaSOperationGroupOperationsAsync(AzureMgmtRe
     async def test_saa_soperation_group_begin_activate_resource(self, resource_group):
         response = await (
             await self.client.saa_soperation_group.begin_activate_resource(
-                body={"saaSGuid": "str"},
+                body={
+                    "saasGuid": "str",
+                    "activateSaaSRequestParam": {
+                        "company": {
+                            "city": "str",
+                            "companyName": "str",
+                            "country": "str",
+                            "jobTitle": "str",
+                            "postalCode": "str",
+                            "state": "str",
+                            "street": "str",
+                            "website": "str",
+                        },
+                        "saasResourceId": "str",
+                        "user": {
+                            "emailAddress": "str",
+                            "firstName": "str",
+                            "lastName": "str",
+                            "phoneNumber": "str",
+                            "upn": "str",
+                        },
+                    },
+                    "publisherId": "str",
+                },
             )
         ).result()  # call '.result()' to poll until service return final result
 
