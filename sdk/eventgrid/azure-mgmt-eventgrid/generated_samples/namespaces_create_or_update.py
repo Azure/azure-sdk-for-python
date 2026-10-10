@@ -37,10 +37,11 @@ def main():
         namespace_info={
             "location": "westus",
             "properties": {
+                "ipAddressType": "DualStack",
                 "topicSpacesConfiguration": {
                     "routeTopicResourceId": "/subscriptions/8f6b6269-84f2-4d09-9e31-1127efcd1e40/resourceGroups/examplerg/providers/Microsoft.EventGrid/topics/exampleTopic1",
                     "state": "Enabled",
-                }
+                },
             },
             "tags": {"tag1": "value11", "tag2": "value22"},
         },
@@ -48,6 +49,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-15-preview/Namespaces_CreateOrUpdate.json
+# x-ms-original-file: 2026-06-15-preview/Namespaces_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

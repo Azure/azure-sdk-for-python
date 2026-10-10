@@ -496,6 +496,15 @@ class IpActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allow."""
 
 
+class IpAddressType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """IP address type for the namespace resource."""
+
+    I_PV4 = "IPv4"
+    """Only IPv4 addresses are supported."""
+    DUAL_STACK = "DualStack"
+    """Both IPv4 and IPv6 addresses are supported."""
+
+
 class KeyEncryptionIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of managed identity used. Only UserAssigned or SystemAssigned Identity are supported."""
 
@@ -862,7 +871,7 @@ class PrivateEndpointConnectionsParentType(str, Enum, metaclass=CaseInsensitiveE
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This determines if traffic is allowed over public network. By default it is enabled. You can
     further restrict to specific IPs by configuring <seealso
-    cref="P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.DomainProperties.InboundIpRules"
+    cref=\"P:Microsoft.Azure.Events.ResourceProvider.Common.Contracts.DomainProperties.InboundIpRules\"
     />.
     """
 
@@ -995,6 +1004,8 @@ class TlsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """1.1."""
     ONE2 = "1.2"
     """1.2."""
+    ONE3 = "1.3"
+    """TLS version 1.3."""
 
 
 class TopicProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -38,6 +38,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-07-15-preview/NamespaceTopicEventSubscriptions_Delete.json
+# x-ms-original-file: 2026-06-15-preview/NamespaceTopicEventSubscriptions_Delete.json
 if __name__ == "__main__":
     main()
