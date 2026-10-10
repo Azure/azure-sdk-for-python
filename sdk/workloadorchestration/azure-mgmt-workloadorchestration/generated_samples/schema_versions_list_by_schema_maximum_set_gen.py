@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-06-01/SchemaVersions_ListBySchema_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/SchemaVersions_ListBySchema_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

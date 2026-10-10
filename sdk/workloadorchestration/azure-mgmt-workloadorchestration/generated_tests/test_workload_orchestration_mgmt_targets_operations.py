@@ -47,7 +47,6 @@ class TestWorkloadOrchestrationMgmtTargetsOperations(AzureMgmtRecordedTestCase):
                     "description": "str",
                     "displayName": "str",
                     "hierarchyLevel": "str",
-                    "targetSpecification": {"str": {}},
                     "provisioningState": "str",
                     "solutionScope": "str",
                     "state": "str",
@@ -63,6 +62,7 @@ class TestWorkloadOrchestrationMgmtTargetsOperations(AzureMgmtRecordedTestCase):
                             {"componentStatuses": [{"name": "str", "status": "str"}], "name": "str", "status": "str"}
                         ],
                     },
+                    "targetSpecification": {"str": {}},
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -87,44 +87,17 @@ class TestWorkloadOrchestrationMgmtTargetsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             target_name="str",
             properties={
-                "location": "str",
-                "eTag": "str",
-                "extendedLocation": {"name": "str", "type": "str"},
-                "id": "str",
-                "name": "str",
                 "properties": {
                     "capabilities": ["str"],
                     "contextId": "str",
                     "description": "str",
                     "displayName": "str",
                     "hierarchyLevel": "str",
-                    "targetSpecification": {"str": {}},
-                    "provisioningState": "str",
                     "solutionScope": "str",
                     "state": "str",
-                    "status": {
-                        "deployed": 0,
-                        "expectedRunningJobId": 0,
-                        "generation": 0,
-                        "lastModified": "2020-02-20 00:00:00",
-                        "runningJobId": 0,
-                        "status": "str",
-                        "statusDetails": "str",
-                        "targetStatuses": [
-                            {"componentStatuses": [{"name": "str", "status": "str"}], "name": "str", "status": "str"}
-                        ],
-                    },
-                },
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
+                    "targetSpecification": {"str": {}},
                 },
                 "tags": {"str": "str"},
-                "type": "str",
             },
         ).result()  # call '.result()' to poll until service return final result
 
@@ -276,6 +249,18 @@ class TestWorkloadOrchestrationMgmtTargetsOperations(AzureMgmtRecordedTestCase):
                     "target": "str",
                 },
             },
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_targets_begin_unstage_solution_version(self, resource_group):
+        response = self.client.targets.begin_unstage_solution_version(
+            resource_group_name=resource_group.name,
+            target_name="str",
+            body={"solutionVersionId": "str"},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -34,11 +34,11 @@ def main():
         resource_group_name="rgconfigurationmanager",
         context_name="testname",
         site_reference_name="testname",
-        properties={"properties": {"siteId": "nwiuyaro"}},
+        properties={"properties": {"siteId": "cifefexczjlpyn"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/SiteReferences_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/SiteReferences_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
