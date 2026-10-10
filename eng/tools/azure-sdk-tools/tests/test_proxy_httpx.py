@@ -2,13 +2,12 @@ from contextlib import contextmanager
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from threading import Thread
 
-import httpx
 import pytest
 
+httpx = pytest.importorskip("httpx")
+
 from devtools_testutils import RecordedTransport, recorded_by_proxy
-from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import proxy_testcase
-from devtools_testutils.aio import proxy_testcase_async
 
 
 class _PlaybackHandler(BaseHTTPRequestHandler):
@@ -75,7 +74,6 @@ def playback_servers(monkeypatch):
         monkeypatch.setattr(proxy_testcase, "PLAYBACK_STOP_URL", f"{playback_url}/playback/stop")
         monkeypatch.setattr(proxy_testcase, "is_live", lambda: False)
         monkeypatch.setattr(proxy_testcase, "is_live_and_not_recording", lambda: False)
-        monkeypatch.setattr(proxy_testcase_async, "is_live_and_not_recording", lambda: False)
         for name in ("HTTP_PROXY", "http_proxy", "ALL_PROXY", "all_proxy", "NO_PROXY", "no_proxy"):
             monkeypatch.delenv(name, raising=False)
         monkeypatch.delenv("https_proxy", raising=False)
@@ -106,7 +104,11 @@ def test_recorded_httpx_bypasses_https_proxy(playback_servers):
 
 
 @pytest.mark.asyncio
-async def test_recorded_async_httpx_bypasses_https_proxy(playback_servers):
+async def test_recorded_async_httpx_bypasses_https_proxy(playback_servers, monkeypatch):
+    pytest.importorskip("aiohttp")
+    from devtools_testutils.aio import recorded_by_proxy_async, proxy_testcase_async
+
+    monkeypatch.setattr(proxy_testcase_async, "is_live_and_not_recording", lambda: False)
     playback, outbound_proxy = playback_servers
     upstream_url = "https://example.invalid/echo?name=async"
 
