@@ -15,7 +15,7 @@ from azure.mgmt.iothubprovisioningservices import IotDpsClient
     pip install azure-identity
     pip install azure-mgmt-iothubprovisioningservices
 # USAGE
-    python dps_create_or_update_private_endpoint_connection.py
+    python dps_get_user_assigned_namespace_identity.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,22 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.iot_dps_resource.begin_create_or_update_private_endpoint_connection(
+    response = client.iot_dps_resource.get(
+        provisioning_service_name="myFirstProvisioningService",
         resource_group_name="myResourceGroup",
-        resource_name="myFirstProvisioningService",
-        private_endpoint_connection_name="myPrivateEndpointConnection",
-        private_endpoint_connection={
-            "properties": {
-                "privateLinkServiceConnectionState": {
-                    "description": "Approved by `johndoe@contoso.com <mailto:johndoe@contoso.com>`_",
-                    "status": "Approved",
-                }
-            }
-        },
-    ).result()
+    )
     print(response)
 
 
-# x-ms-original-file: 2026-11-01/DPSCreateOrUpdatePrivateEndpointConnection.json
+# x-ms-original-file: 2026-11-01/DPSGet_UserAssignedNamespaceIdentity.json
 if __name__ == "__main__":
     main()
