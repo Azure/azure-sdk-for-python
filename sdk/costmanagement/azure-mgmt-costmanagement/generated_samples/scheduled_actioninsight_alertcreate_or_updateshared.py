@@ -53,6 +53,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-01/scheduledActions/scheduledAction-insightAlert-createOrUpdate-shared.json
+# x-ms-original-file: 2026-06-01/scheduledActions/scheduledAction-insightAlert-createOrUpdate-shared.json
 if __name__ == "__main__":
     main()

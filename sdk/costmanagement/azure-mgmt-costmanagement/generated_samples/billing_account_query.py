@@ -59,6 +59,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-01/BillingAccountQuery.json
+# x-ms-original-file: 2026-06-01/BillingAccountQuery.json
 if __name__ == "__main__":
     main()
