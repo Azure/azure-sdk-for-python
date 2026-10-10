@@ -1,0 +1,89 @@
+parameters:
+  - name: languageRepoResource
+    type: string
+  - name: toolsRef
+    type: string
+  - name: languageToolsRef
+    type: string
+  - name: poolName
+    type: string
+    default: 'azsdk-pool'
+  - name: imageOverride
+    type: string
+    default: 'ubuntu-24.04'
+  - name: stepList
+    type: stepList
+    default: []
+
+jobs:
+  - job: BuildTools
+    displayName: Build API review tools
+    pool:
+      name: ${{ parameters.poolName }}
+      demands: ImageOverride -equals ${{ parameters.imageOverride }}
+    variables:
+      - template: /eng/pipelines/templates/variables/globals.yml
+      - name: BinOutputDirectory
+        value: $(Build.ArtifactStagingDirectory)/bin
+    steps:
+      - checkout: self
+        path: tools
+        fetchDepth: 1
+        sparseCheckoutDirectories: eng
+      - checkout: ${{ parameters.languageRepoResource }}
+        path: s
+        fetchDepth: 1
+        sparseCheckoutDirectories: eng
+
+      - bash: |
+          set -Eeuo pipefail
+
+          checkout_ref() {
+            local repository="$1"
+            local name="$2"
+            local ref="$3"
+            if [[ "$ref" != refs/heads/* && "$ref" != refs/tags/* ]]; then
+              echo "$name must be a fully-qualified branch or tag ref." >&2
+              exit 1
+            fi
+            git -C "$repository" fetch --depth=1 origin "$ref"
+            git -C "$repository" checkout --detach FETCH_HEAD
+            git -C "$repository" clean -ffd
+            echo "$name=$ref sourceCommit=$(git -C "$repository" rev-parse HEAD)"
+          }
+
+          checkout_ref "$TOOLS_REPOSITORY" toolsRef "$TOOLS_REF"
+          checkout_ref "$LANGUAGE_REPOSITORY" languageToolsRef "$LANGUAGE_TOOLS_REF"
+        displayName: Resolve API review tool refs
+        env:
+          TOOLS_REF: ${{ parameters.toolsRef }}
+          LANGUAGE_TOOLS_REF: ${{ parameters.languageToolsRef }}
+          TOOLS_REPOSITORY: $(Pipeline.Workspace)/tools
+          LANGUAGE_REPOSITORY: $(Build.SourcesDirectory)
+
+      - pwsh: |
+          $ErrorActionPreference = 'Stop'
+
+          $toolsSource = Join-Path $env:STAGING_DIRECTORY 'toolsSource'
+          $languageToolsSource = Join-Path $env:STAGING_DIRECTORY 'languageToolsSource'
+          New-Item -ItemType Directory -Force -Path $toolsSource, $languageToolsSource, $env:BIN_OUTPUT_DIRECTORY | Out-Null
+          Copy-Item -Path (Join-Path $env:TOOLS_REPOSITORY 'eng/*') -Destination $toolsSource -Recurse -Force
+          Copy-Item -Path (Join-Path $env:LANGUAGE_REPOSITORY 'eng/*') -Destination $languageToolsSource -Recurse -Force
+        displayName: Stage API review tool sources
+        env:
+          TOOLS_REPOSITORY: $(Pipeline.Workspace)/tools
+          LANGUAGE_REPOSITORY: $(Build.SourcesDirectory)
+          STAGING_DIRECTORY: $(Build.ArtifactStagingDirectory)
+          BIN_OUTPUT_DIRECTORY: $(BinOutputDirectory)
+
+      - ${{ parameters.stepList }}
+
+      - publish: $(Build.ArtifactStagingDirectory)/toolsSource
+        artifact: toolsSource
+        displayName: Publish shared tool sources
+      - publish: $(Build.ArtifactStagingDirectory)/languageToolsSource
+        artifact: languageToolsSource
+        displayName: Publish language tool sources
+      - publish: $(BinOutputDirectory)
+        artifact: bin
+        displayName: Publish built tools

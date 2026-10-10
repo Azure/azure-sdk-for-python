@@ -1,0 +1,23 @@
+parameters:
+  - name: languageRepoResource
+    type: string
+  - name: toolsRef
+    type: string
+  - name: languageToolsRef
+    type: string
+  - name: poolName
+    type: string
+    default: 'azsdk-pool'
+  - name: imageOverride
+    type: string
+    default: 'ubuntu-24.04'
+
+jobs:
+  - template: /eng/common/pipelines/templates/jobs/apireview-hub-build-tools-base.yml
+    parameters:
+      languageRepoResource: ${{ parameters.languageRepoResource }}
+      toolsRef: ${{ parameters.toolsRef }}
+      languageToolsRef: ${{ parameters.languageToolsRef }}
+      poolName: ${{ parameters.poolName }}
+      imageOverride: ${{ parameters.imageOverride }}
+      stepList: []
