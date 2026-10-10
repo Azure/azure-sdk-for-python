@@ -11,6 +11,7 @@
         "azure.mgmt.managedops.models.DesiredConfigurationUpdate": "Microsoft.ManagedOps.DesiredConfigurationUpdate",
         "azure.mgmt.managedops.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
         "azure.mgmt.managedops.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
+        "azure.mgmt.managedops.models.ErrorDetails": "Microsoft.ManagedOps.ErrorDetails",
         "azure.mgmt.managedops.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
         "azure.mgmt.managedops.models.GuestConfigurationInformation": "Microsoft.ManagedOps.GuestConfigurationInformation",
         "azure.mgmt.managedops.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
@@ -29,6 +30,8 @@
         "azure.mgmt.managedops.models.Origin": "Azure.ResourceManager.CommonTypes.Origin",
         "azure.mgmt.managedops.models.ActionType": "Azure.ResourceManager.CommonTypes.ActionType",
         "azure.mgmt.managedops.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
+        "azure.mgmt.managedops.models.SkuName": "Microsoft.ManagedOps.SkuName",
+        "azure.mgmt.managedops.models.SkuTier": "Microsoft.ManagedOps.SkuTier",
         "azure.mgmt.managedops.models.ProvisioningState": "Microsoft.ManagedOps.ProvisioningState",
         "azure.mgmt.managedops.models.DesiredEnablementState": "Microsoft.ManagedOps.DesiredEnablementState",
         "azure.mgmt.managedops.models.EnablementState": "Microsoft.ManagedOps.EnablementState",
@@ -44,5 +47,6 @@
         "azure.mgmt.managedops.aio.operations.ManagedOpsOperations.begin_update": "Microsoft.ManagedOps.ManagedOps.update",
         "azure.mgmt.managedops.operations.ManagedOpsOperations.begin_delete": "Microsoft.ManagedOps.ManagedOps.delete",
         "azure.mgmt.managedops.aio.operations.ManagedOpsOperations.begin_delete": "Microsoft.ManagedOps.ManagedOps.delete"
-    }
+    },
+    "CrossLanguageVersion": "88add912d73c"
 }
