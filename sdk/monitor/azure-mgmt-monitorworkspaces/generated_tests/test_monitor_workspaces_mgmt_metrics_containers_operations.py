@@ -40,7 +40,11 @@ class TestMonitorWorkspacesMgmtMetricsContainersOperations(AzureMgmtRecordedTest
             resource={
                 "id": "str",
                 "name": "str",
-                "properties": {"provisioningState": "str", "version": "str"},
+                "properties": {
+                    "limits": {"enableAutoScale": bool, "maxActiveTimeSeries": 0, "maxEventsPerMinute": 0},
+                    "provisioningState": "str",
+                    "version": "str",
+                },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",

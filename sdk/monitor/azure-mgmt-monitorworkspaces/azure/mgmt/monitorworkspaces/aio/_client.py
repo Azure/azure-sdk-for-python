@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -19,7 +20,18 @@ from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import MonitorWorkspacesMgmtClientConfiguration
-from .operations import AzureMonitorWorkspacesOperations, IssueOperations, MetricsContainersOperations, Operations
+from .operations import (
+    AzureMonitorWorkspacesOperations,
+    IssueOperations,
+    MetricConfigurationsOperations,
+    MetricNamespacesOperations,
+    MetricsContainersOperations,
+    Operations,
+    TraceAssociationsAtResourceGroupOperations,
+    TraceAssociationsAtSubscriptionOperations,
+    TraceAssociationsOperations,
+    TraceContainersOperations,
+)
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -31,7 +43,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class MonitorWorkspacesMgmtClient:
+class MonitorWorkspacesMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """MonitorWorkspacesMgmtClient.
 
     :ivar operations: Operations operations
@@ -44,6 +56,25 @@ class MonitorWorkspacesMgmtClient:
     :ivar metrics_containers: MetricsContainersOperations operations
     :vartype metrics_containers:
      azure.mgmt.monitorworkspaces.aio.operations.MetricsContainersOperations
+    :ivar metric_namespaces: MetricNamespacesOperations operations
+    :vartype metric_namespaces:
+     azure.mgmt.monitorworkspaces.aio.operations.MetricNamespacesOperations
+    :ivar metric_configurations: MetricConfigurationsOperations operations
+    :vartype metric_configurations:
+     azure.mgmt.monitorworkspaces.aio.operations.MetricConfigurationsOperations
+    :ivar trace_containers: TraceContainersOperations operations
+    :vartype trace_containers:
+     azure.mgmt.monitorworkspaces.aio.operations.TraceContainersOperations
+    :ivar trace_associations_at_resource_group: TraceAssociationsAtResourceGroupOperations
+     operations
+    :vartype trace_associations_at_resource_group:
+     azure.mgmt.monitorworkspaces.aio.operations.TraceAssociationsAtResourceGroupOperations
+    :ivar trace_associations_at_subscription: TraceAssociationsAtSubscriptionOperations operations
+    :vartype trace_associations_at_subscription:
+     azure.mgmt.monitorworkspaces.aio.operations.TraceAssociationsAtSubscriptionOperations
+    :ivar trace_associations: TraceAssociationsOperations operations
+    :vartype trace_associations:
+     azure.mgmt.monitorworkspaces.aio.operations.TraceAssociationsOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -53,9 +84,10 @@ class MonitorWorkspacesMgmtClient:
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2025-10-03"
-     and None. Default value is None. If not set, the operation's default API version will be used.
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-09-03-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -116,6 +148,24 @@ class MonitorWorkspacesMgmtClient:
         )
         self.issue = IssueOperations(self._client, self._config, self._serialize, self._deserialize)
         self.metrics_containers = MetricsContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.metric_namespaces = MetricNamespacesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.metric_configurations = MetricConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.trace_containers = TraceContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.trace_associations_at_resource_group = TraceAssociationsAtResourceGroupOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.trace_associations_at_subscription = TraceAssociationsAtSubscriptionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.trace_associations = TraceAssociationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
