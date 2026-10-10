@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,6 +31,7 @@ from .operations import (
     GlobalRulestackOperations,
     LocalRulesOperations,
     LocalRulestacksOperations,
+    LogIngestionSettingsResourcesOperations,
     MetricsObjectFirewallOperations,
     Operations,
     PaloAltoNetworksCloudngfwOperationsOperations,
@@ -49,7 +51,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class PaloAltoNetworksNgfwMgmtClient:  # pylint: disable=too-many-instance-attributes
+class PaloAltoNetworksNgfwMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """PaloAltoNetworksNgfwMgmtClient.
 
     :ivar operations: Operations operations
@@ -58,6 +60,9 @@ class PaloAltoNetworksNgfwMgmtClient:  # pylint: disable=too-many-instance-attri
      CustomCaptureConfigurationsFirewallResourcesOperations operations
     :vartype custom_capture_configurations_firewall_resources:
      azure.mgmt.paloaltonetworksngfw.operations.CustomCaptureConfigurationsFirewallResourcesOperations
+    :ivar log_ingestion_settings_resources: LogIngestionSettingsResourcesOperations operations
+    :vartype log_ingestion_settings_resources:
+     azure.mgmt.paloaltonetworksngfw.operations.LogIngestionSettingsResourcesOperations
     :ivar global_rulestack: GlobalRulestackOperations operations
     :vartype global_rulestack: azure.mgmt.paloaltonetworksngfw.operations.GlobalRulestackOperations
     :ivar certificate_object_global_rulestack: CertificateObjectGlobalRulestackOperations
@@ -108,7 +113,7 @@ class PaloAltoNetworksNgfwMgmtClient:  # pylint: disable=too-many-instance-attri
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-05-11-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-07-29-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -165,6 +170,9 @@ class PaloAltoNetworksNgfwMgmtClient:  # pylint: disable=too-many-instance-attri
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.custom_capture_configurations_firewall_resources = CustomCaptureConfigurationsFirewallResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.log_ingestion_settings_resources = LogIngestionSettingsResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.global_rulestack = GlobalRulestackOperations(
