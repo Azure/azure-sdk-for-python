@@ -16,6 +16,14 @@ from typing import Any, ClassVar, Literal, NoReturn, Optional, Union
 from .partition_key_input import BindingPartitionKey
 
 
+def reject_trigger_header(name: str) -> None:
+    if name.lower() in (
+        "x-ms-documentdb-pre-trigger-include",
+        "x-ms-documentdb-post-trigger-include",
+    ):
+        raise TypeError(f"{name} is not supported by the Rust-backed APIs; triggers are excluded.")
+
+
 @dataclass(frozen=True)
 class _ValidatedSettings:
     def _invalid_type(self, name: str) -> NoReturn:
@@ -55,16 +63,12 @@ class HedgingSettings(_ValidatedSettings):
 class ItemSettings(_ValidatedSettings):
     if_match: Optional[str] = None
     if_none_match: Optional[str] = None
-    pre_triggers: Optional[tuple[str, ...]] = None
-    post_triggers: Optional[tuple[str, ...]] = None
     indexing_directive: Optional[Union[int, str]] = None
     max_staleness_ms: Optional[int] = None
 
     def __post_init__(self) -> None:
         self._check_type("if_match", self.if_match, str)
         self._check_type("if_none_match", self.if_none_match, str)
-        self._check_strings("pre_triggers", self.pre_triggers)
-        self._check_strings("post_triggers", self.post_triggers)
         if self.indexing_directive is not None and type(self.indexing_directive) not in (int, str):
             self._invalid_type("indexing_directive")
         self._check_type("max_staleness_ms", self.max_staleness_ms, int)

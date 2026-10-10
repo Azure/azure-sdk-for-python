@@ -142,10 +142,6 @@ def _assert_header_parity(options: Mapping[str, Any], *, resource_type: str = "d
 # Each entry is one option-key with a value a customer could realistically pass.
 # ``id`` is the key name so a failure names the offending knob directly.
 _TRUTHY_CASES = [
-    ("preTriggerInclude", ["t1", "t2"]),
-    ("preTriggerInclude", "t1"),
-    ("postTriggerInclude", ["p1", "p2"]),
-    ("postTriggerInclude", "p1"),
     ("indexingDirective", "Include"),
     ("maxItemCount", 100),
     ("priorityLevel", "High"),
@@ -220,8 +216,6 @@ _FALSY_CASES = [
     ("offerType", ""),
     ("autoUpgradePolicy", ""),
     ("containerRID", ""),
-    ("preTriggerInclude", []),
-    ("postTriggerInclude", []),
     ("disableRUPerMinuteUsage", False),
     ("enableCrossPartitionQuery", False),
     ("enableScanInQuery", False),
@@ -287,8 +281,6 @@ def test_many_options_at_once_stay_in_parity():
     real ``create_item`` with triggers, an etag, and routing hints.
     """
     _assert_header_parity({
-        "preTriggerInclude": ["validate", "audit"],
-        "postTriggerInclude": "notify",
         "indexingDirective": "Include",
         "maxItemCount": 50,
         "priorityLevel": "Low",
@@ -363,7 +355,8 @@ def test_header_inventory_contains_required_anchors():
     mapping = _rust_option_key_to_wire_name()
     assert len(mapping) > 20
     assert mapping["maxitemcount"] == "x-ms-max-item-count"
-    assert mapping["pretriggerinclude"] == "x-ms-documentdb-pre-trigger-include"
+    assert "pretriggerinclude" not in mapping
+    assert "posttriggerinclude" not in mapping
     assert mapping["offerenableruperminutethroughput"] == (
         "x-ms-offer-is-ru-per-minute-throughput-enabled"
     )

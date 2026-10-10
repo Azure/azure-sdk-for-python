@@ -32,6 +32,7 @@ from azure.cosmos._backend.partition_key_input import (
 from azure.cosmos._backend.request_settings import RequestSettings
 from azure.cosmos._helpers._partition_key import (
     normalize_partition_key,
+    normalize_feed_range_partition_key,
     query_partition_key_components,
     serialize_partition_key_for_continuation,
     parse_customer_partition_key_header,
@@ -55,7 +56,7 @@ from azure.cosmos.partition_key import _Empty, _Undefined, NonePartitionKeyValue
         (["tenant", _Undefined()], "components", ("tenant", None)),
     ],
 )
-def test_point_and_feed_range_normalization_preserves_source(value, kind, values):
+def test_point_normalization_preserves_source(value, kind, values):
     """Each accepted input keeps its own meaning instead of collapsing into a shared one.
 
     The cases worth reading carefully are the ones that used to look alike. A container
@@ -69,6 +70,29 @@ def test_point_and_feed_range_normalization_preserves_source(value, kind, values
     preserved rather than tidied up.
     """
     assert normalize_partition_key(value) == BindingPartitionKey(kind, values)
+
+
+@pytest.mark.parametrize(
+    "value,expected",
+    [
+        ("customer-17", BindingPartitionKey("components", ("customer-17",))),
+        (None, BindingPartitionKey("components", (None,))),
+        (_Undefined(), BindingPartitionKey("components", (UNDEFINED_PARTITION_KEY,))),
+        (_Empty(), BindingPartitionKey("empty_sentinel")),
+        ([], BindingPartitionKey("empty_sequence")),
+        ((), BindingPartitionKey("empty_sequence")),
+        ([None], BindingPartitionKey("components", (None,))),
+        ([NonePartitionKeyValue], BindingPartitionKey("components", (UNDEFINED_PARTITION_KEY,))),
+        ([_Undefined()], BindingPartitionKey("components", (UNDEFINED_PARTITION_KEY,))),
+        ([{}], BindingPartitionKey("components", (UNDEFINED_PARTITION_KEY,))),
+        (
+            ("customer-17", NonePartitionKeyValue, None),
+            BindingPartitionKey("components", ("customer-17", UNDEFINED_PARTITION_KEY, None)),
+        ),
+    ],
+)
+def test_feed_range_normalization_preserves_missing_components(value, expected):
+    assert normalize_feed_range_partition_key(value) == expected
 
 
 def test_query_components_do_not_erase_undefined():

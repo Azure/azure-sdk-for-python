@@ -120,6 +120,10 @@ class TestNoneOptions(unittest.TestCase):
                                             session_token=None, etag=None, match_condition=None, priority=None,
                                             no_response=None, retry_write=None, throughput_bucket=None)
         assert patched["patched"] is True
+        expected = {**item, "patched": True}
+        self.assertEqual({key: patched[key] for key in expected}, expected)
+        stored = self.container.read_item(item["id"], partition_key=item["pk"])
+        self.assertEqual({key: stored[key] for key in expected}, expected)
 
     def test_delete_item_none_options(self):
         item = self._create_sample_item()

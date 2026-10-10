@@ -73,6 +73,21 @@ def query_partition_key_components(components: Sequence[Any]) -> BindingPartitio
     )
 
 
+def normalize_feed_range_partition_key(value: Any) -> BindingPartitionKey:
+    """Keep missing range components distinct from JSON null without changing item inputs."""
+    if not isinstance(value, Sequence) or isinstance(value, (str, bytes)) or not value:
+        return normalize_partition_key(value)
+    return BindingPartitionKey(
+        "components",
+        tuple(
+            UNDEFINED_PARTITION_KEY
+            if component is NonePartitionKeyValue or isinstance(component, _Undefined)
+            else None if isinstance(component, _Empty) else _scalar(component)
+            for component in value
+        ),
+    )
+
+
 def parse_customer_partition_key_header(header: str) -> BindingPartitionKey:
     """Decode an explicitly supplied HTTP header, never an internally serialized key."""
     values = json.loads(header)

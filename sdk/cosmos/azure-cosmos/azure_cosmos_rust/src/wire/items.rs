@@ -89,6 +89,7 @@ pub(crate) fn execute_item_operation_sync<'py>(
     body_bytes: Vec<u8>,
     op_name: &str,
     honor_content_response: bool,
+    include_attempts: bool,
     build_op: impl FnOnce(ItemReference, Vec<u8>) -> CosmosOperation + Send,
 ) -> PyResult<Bound<'py, PyTuple>> {
     run_prepared_driver_operation_sync(
@@ -114,7 +115,11 @@ pub(crate) fn execute_item_operation_sync<'py>(
             );
             Ok(async move { future.await? })
         },
-        |py, result| tuple_from_result(py, result?),
+        if include_attempts {
+            |py, result| tuple_from_result_with_attempts(py, result?)
+        } else {
+            |py, result| tuple_from_result(py, result?)
+        },
     )
 }
 
@@ -286,6 +291,7 @@ fn execute_item_on_driver(
             modifiers.custom_headers,
         );
         options.read_consistency_strategy = read_consistency;
+        options.patch_strategy = modifiers.patch_strategy;
 
         Ok(driver.execute_singleton_operation(op, options).await)
     }
@@ -358,6 +364,146 @@ mod tests {
                 .unwrap();
             super::super::request::extract_account_prepared_modifiers(&prepared).unwrap()
         })
+    }
+
+    #[tokio::test]
+    async fn recreated_container_refresh_does_not_reextract_missing_body_key() {
+        #[derive(Debug, Default)]
+        struct WriteKeys(Mutex<Vec<String>>);
+
+        impl RequestObserver for WriteKeys {
+            fn on_request(&self, request: &Request) {
+                if request.method() == Method::Post
+                    && request.url().path().trim_end_matches('/') == "/dbs/db/colls/orders/docs"
+                {
+                    let key = request
+                        .headers()
+                        .get_optional_str(&HeaderName::from_static("x-ms-documentdb-partitionkey"))
+                        .unwrap();
+                    self.0.lock().unwrap().push(key.to_owned());
+                }
+            }
+        }
+
+        pyo3::prepare_freethreaded_python();
+        let url = Url::parse("https://recreated-key.emulator.local").unwrap();
+        let keys = Arc::new(WriteKeys::default());
+        let emulator = Arc::new(
+            InMemoryEmulatorHttpClient::new(
+                VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())])
+                    .unwrap(),
+            )
+            .with_request_observer(keys.clone()),
+        );
+        emulator.store().create_database("db");
+        emulator.store().create_container(
+            "db",
+            "orders",
+            PartitionKeyDefinition::from("/customerId"),
+        );
+        let runtime = emulator.runtime_builder().build().await.unwrap();
+        let driver = runtime
+            .create_driver(
+                DriverOptions::builder(AccountReference::with_master_key(
+                    url.clone(),
+                    "ZW11bGF0b3Ita2V5",
+                ))
+                .build(),
+            )
+            .await
+            .unwrap();
+        let original = driver
+            .resolve_container("db", "orders", Default::default())
+            .await
+            .unwrap();
+        let admin_runtime = emulator.runtime_builder().build().await.unwrap();
+        let admin = admin_runtime
+            .create_driver(
+                DriverOptions::builder(AccountReference::with_master_key(url, "ZW11bGF0b3Ita2V5"))
+                    .build(),
+            )
+            .await
+            .unwrap();
+        admin
+            .execute_singleton_operation(
+                CosmosOperation::delete_container(original.clone()),
+                Default::default(),
+            )
+            .await
+            .unwrap();
+        emulator
+            .store()
+            .create_container("db", "orders", PartitionKeyDefinition::from("/region"));
+        // Characterize gap 15: the driver's retry retains the old undefined key.
+        let rejected = execute_item_on_driver(
+            driver.clone(),
+            "db".into(),
+            "orders".into(),
+            None,
+            "order-42".into(),
+            br#"{"id":"order-42","region":"West US"}"#.to_vec(),
+            modifiers(),
+            true,
+            |item, body| CosmosOperation::create_item(item).with_body(body),
+        )
+        .await
+        .unwrap()
+        .unwrap_err();
+        assert_eq!(u16::from(rejected.status().status_code()), 400);
+        assert!(rejected
+            .to_string()
+            .contains("partition key extracted from the document does not match"));
+        assert_eq!(*keys.0.lock().unwrap(), vec!["[{}]", "[{}]"]);
+        let current = driver
+            .resolve_container("db", "orders", Default::default())
+            .await
+            .unwrap();
+        assert_ne!(original.rid(), current.rid());
+        assert_eq!(
+            current.partition_key_definition().paths(),
+            PartitionKeyDefinition::from("/region").paths()
+        );
+        // A separate customer call uses fresh metadata; it is not automatic recovery.
+        let created = execute_item_on_driver(
+            driver.clone(),
+            "db".into(),
+            "orders".into(),
+            None,
+            "order-42".into(),
+            br#"{"id":"order-42","region":"West US"}"#.to_vec(),
+            modifiers(),
+            true,
+            |item, body| CosmosOperation::create_item(item).with_body(body),
+        )
+        .await
+        .unwrap()
+        .unwrap();
+        assert!(created.status().is_success());
+        assert_eq!(
+            *keys.0.lock().unwrap(),
+            vec!["[{}]", "[{}]", "[\"West US\"]"]
+        );
+        let read = execute_item_on_driver(
+            driver,
+            "db".into(),
+            "orders".into(),
+            Some(PartitionKey::from("West US")),
+            "order-42".into(),
+            Vec::new(),
+            modifiers(),
+            false,
+            |item, _| CosmosOperation::read_item(item),
+        )
+        .await
+        .unwrap()
+        .unwrap();
+        let ResponseBody::Bytes(body) = read.body() else {
+            panic!("Expected JSON order");
+        };
+        assert_eq!(
+            serde_json::from_slice::<serde_json::Value>(body).unwrap()["region"],
+            "West US"
+        );
     }
 
     #[derive(Debug, Default)]
@@ -588,6 +734,85 @@ mod tests {
     struct CreateRequests {
         metadata_reads: Mutex<usize>,
         writes: Mutex<Vec<Option<String>>>,
+    }
+
+    #[derive(Debug, Default)]
+    struct FilteredPatchRequests(Mutex<Vec<(Method, Vec<u8>)>>);
+
+    impl RequestObserver for FilteredPatchRequests {
+        fn on_request(&self, request: &Request) {
+            if request.url().path().contains("/docs") {
+                self.0.lock().unwrap().push((
+                    request.method(),
+                    azure_core::Bytes::from(request.body()).to_vec(),
+                ));
+            }
+        }
+    }
+
+    #[tokio::test]
+    async fn filtered_increment_reaches_transport_as_patch_with_condition() {
+        pyo3::prepare_freethreaded_python();
+        let url = Url::parse("https://filtered-patch.emulator.local").unwrap();
+        let observed = Arc::new(FilteredPatchRequests::default());
+        let emulator = Arc::new(
+            InMemoryEmulatorHttpClient::new(
+                VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())])
+                    .unwrap(),
+            )
+            .with_request_observer(observed.clone()),
+        );
+        emulator.store().create_database("db");
+        emulator
+            .store()
+            .create_container("db", "orders", PartitionKeyDefinition::from("/pk"));
+        let runtime = emulator.runtime_builder().build().await.unwrap();
+        let driver = runtime
+            .create_driver(
+                DriverOptions::builder(AccountReference::with_master_key(url, "ZW11bGF0b3Ita2V5"))
+                    .build(),
+            )
+            .await
+            .unwrap();
+        let container = driver
+            .resolve_container("db", "orders", Default::default())
+            .await
+            .unwrap();
+        driver
+            .execute_singleton_operation(
+                CosmosOperation::create_item(ItemReference::from_name(
+                    &container,
+                    PartitionKey::from("pk"),
+                    "item",
+                ))
+                .with_body(br#"{"id":"item","pk":"pk","n":0}"#.to_vec()),
+                Default::default(),
+            )
+            .await
+            .unwrap();
+        observed.0.lock().unwrap().clear();
+        let body = br#"{"condition":"FROM c WHERE c.n = 0","operations":[{"op":"incr","path":"/n","value":1}]}"#;
+        let mut settings = modifiers();
+        settings.patch_strategy =
+            Some(azure_data_cosmos_driver::options::PatchStrategy::ServerSide);
+        let _response = execute_item_on_driver(
+            driver,
+            "db".into(),
+            "orders".into(),
+            Some(PartitionKey::from("pk")),
+            "item".into(),
+            body.to_vec(),
+            settings,
+            true,
+            |item, body| CosmosOperation::patch_item(item).with_body(body),
+        )
+        .await
+        .unwrap();
+        // This checks transport selection, not the emulator's SQL condition semantics.
+        assert_eq!(
+            *observed.0.lock().unwrap(),
+            vec![(Method::Patch, body.to_vec())]
+        );
     }
 
     #[derive(Debug, Default)]

@@ -33,6 +33,7 @@ This module is Python wrapper code, not the binding or the Rust driver.
 """
 
 import warnings
+from ._backend.capabilities import reject_rust_arguments, reject_unsupported_rust_arguments
 import logging
 from copy import copy
 from typing import Any, Iterable, Mapping, Optional, Union, cast, Callable, overload, Literal, TYPE_CHECKING
@@ -48,7 +49,7 @@ from ._backend.client_config import _resolve_hedging
 from ._helpers._item_context import ItemClientContext, ItemClientDefaults
 from ._utils import _validate_enable_compact_utf8_item_writes
 from ._backend.errors import raise_account_read_unsupported
-from ._backend.factory import make_backend
+from ._backend.factory import make_backend, resolve_backend_name
 from ._backend.transport_settings import resolve_client_transport_timeouts
 from ._base import build_options
 from ._helpers._request_database import prepare_create_database_options
@@ -180,11 +181,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     Use this client to obtain database objects and perform account-level
     database operations.
 
-    It's recommended to maintain a single instance of CosmosClient per lifetime of the application which enables
-        efficient connection management and performance.
+    Reuse a CosmosClient across operations against the same account rather than
+    constructing one for each request. This allows those operations to reuse
+    the client's retained state and connection resources.
 
-    CosmosClient initialization is a heavy operation - don't use initialization CosmosClient instances as
-        credentials or network connectivity validations.
+    Successful construction does not establish that the supplied credential
+    is valid or that the service is reachable.
 
     :param str url: The URL of the Cosmos DB account.
     :param credential: An account key or Microsoft Entra token credential.
@@ -241,8 +243,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
     :keyword Union[bool, dict[str, Any]] availability_strategy:
         Enables an availability strategy by using cross-region request hedging.
-        Can be True (use default values: threshold_ms=500, threshold_steps_ms=100),
-        False (disable hedging), or a dict with keys ``threshold_ms`` and ``threshold_steps_ms``.
+        Can be True (use default values: threshold_ms=500),
+        False (disable hedging), or a dict with key ``threshold_ms``.
         Default value is False (hedging disabled).
     :paramtype availability_strategy: Union[bool, dict[str, Any]]
     :keyword ~concurrent.futures.thread.ThreadPoolExecutor availability_strategy_executor:
@@ -281,7 +283,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         # Choose which backend this client will use. A ``_backend=`` argument
         # wins; otherwise the COSMOS_BACKEND environment variable decides;
         # otherwise it falls back to core-python.
-        backend_choice = kwargs.pop("_backend", None)
+        backend_choice = resolve_backend_name(kwargs.pop("_backend", None))
+        if backend_choice != "core-python":
+            reject_rust_arguments(kwargs)
         fault_injection_rules = kwargs.pop("_fault_injection_rules", None)
         proxy_allowed = kwargs.pop("proxy_allowed", None)
         connection_timeout, read_timeout = resolve_client_transport_timeouts(kwargs)
@@ -326,7 +330,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             chosen, ItemClientDefaults(
                 priority=kwargs.get("priority"),
                 throughput_bucket=kwargs.get("throughput_bucket"),
-                hedging_threshold_ms=_resolve_hedging(kwargs.get("availability_strategy")),
+                hedging_threshold_ms=(
+                    _resolve_hedging(kwargs.get("availability_strategy"))
+                    if chosen.name != "core-python" else None
+                ),
                 no_response_on_write=bool(kwargs.get("no_response_on_write", False)),
                 enable_compact_utf8_item_writes=_validate_enable_compact_utf8_item_writes(
                     kwargs.get("enable_compact_utf8_item_writes", False)
@@ -577,6 +584,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 :dedent: 0
                 :caption: Create a database in the Cosmos DB account:
         """
+        reject_unsupported_rust_arguments(self, kwargs)
         return_properties = kwargs.pop("return_properties", False)
 
         response_hook = kwargs.pop("response_hook", None)
@@ -741,6 +749,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         creation requests no shared database throughput; an existing database's
         allocation is never changed.
         """
+        reject_unsupported_rust_arguments(self, kwargs)
         return_properties = kwargs.pop("return_properties", False)
 
         response_hook = kwargs.pop("response_hook", None)
@@ -832,6 +841,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         A non-callable hook raises ``TypeError``. Hook iteration-stop exceptions
         become ``RuntimeError`` rather than ending the listing silently.
         """
+        reject_unsupported_rust_arguments(self, kwargs, headers=initial_headers)
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if initial_headers is not None:
@@ -898,6 +908,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         Synchronous setup and callbacks cannot be forcibly interrupted; cancellation
         cleanup can delay return beyond the timeout.
         """
+        reject_unsupported_rust_arguments(self, kwargs, headers=initial_headers)
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         if throughput_bucket is not None:
@@ -939,6 +950,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         ``False``. Conditional request arguments remain supported and are validated
         before dispatch. Unsupported Rust requests raise without using legacy transport.
         """
+        reject_unsupported_rust_arguments(self, kwargs, headers=initial_headers)
         for option in ("session_token", "populate_query_metrics"):
             if option in kwargs:
                 raise TypeError(f"delete_database() does not support the '{option}' keyword argument")
@@ -972,6 +984,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
         :rtype: ~azure.cosmos.DatabaseAccount
         """
+        reject_unsupported_rust_arguments(self, kwargs)
         # Reading account properties has not moved to the Rust path yet. On a
         # Rust-backed client, raise rather than quietly falling back to the
         # legacy connection, which would hide that this is still missing.

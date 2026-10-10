@@ -128,11 +128,12 @@ def test_shared_adapter_module_identifies_which_implementations_share_it():
 
 def test_item_client_context_names_its_execution_reference_adapter():
     assert [field.name for field in fields(ItemClientContext)] == [
-        "adapter", "defaults", "response_state",
+        "adapter", "defaults", "response_state", "telemetry_handlers",
     ]
     adapter = MagicMock(spec=CosmosBackend)
     context = ItemClientContext(adapter=adapter)
     assert context.adapter is adapter
+    assert context.telemetry_handlers == ()
     assert not hasattr(context, "backend")
     with pytest.raises(TypeError, match="backend"):
         ItemClientContext(backend=adapter)

@@ -32,6 +32,7 @@ from typing import TYPE_CHECKING, Any, Iterator, Optional
 from azure.core.exceptions import ServiceResponseError
 from .._operation_deadline import remaining_timeout
 from ..exceptions import CosmosClientTimeoutError
+from .._telemetry import get_operation
 
 from .cosmos_backend import CosmosBackend
 from .operations import (
@@ -288,6 +289,8 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
             raise NotImplementedError(
                 "BindingAdapter.execute does not yet support op={!r}.".format(prepared.op)
             )
+        operation = get_operation(self, prepared.op)
+        contribution = operation.begin_contribution() if operation is not None else None
         driver_handle = self._ensure_driver_handle()
         # This records the chosen function, not proof that a request was sent.
         # Do not include the driver handle in logs.
@@ -299,21 +302,26 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         )
         # A transport error does not prove the service backend did no work.
         try:
-            raw_response = (
-                binding_function(driver_handle, prepared)
-                if deadline is None
-                else binding_function(driver_handle, prepared, timeout_seconds=remaining_timeout(deadline))
-            )
+            binding_kwargs: dict[str, Any] = {}
+            if deadline is not None:
+                binding_kwargs["timeout_seconds"] = remaining_timeout(deadline)
+            if contribution is not None:
+                binding_kwargs["include_attempts"] = True
+            raw_response = binding_function(driver_handle, prepared, **binding_kwargs)
         except TimeoutError as exc:
             if deadline is None:
                 raise
             raise CosmosClientTimeoutError(error=exc) from exc
         except _DRIVER_TRANSPORT_ERROR as exc:
+            if contribution is not None:
+                contribution.error(exc)
             raise ServiceResponseError(message=str(exc)) from exc
         except _DRIVER_RESPONSE_ERROR as exc:
             raise metadata_exception_from_binding(exc) from exc
         if raw_response is None:
             raise BindingProtocolError(f"The binding returned no response for {prepared.op!r}")
+        if contribution is not None:
+            raw_response = contribution.response(raw_response)
         return build_backend_response(*raw_response)
 
     def _debug_fault_injection_rule_hit_count(self, rule_id: str) -> int:

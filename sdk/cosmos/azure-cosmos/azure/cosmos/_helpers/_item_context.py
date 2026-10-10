@@ -3,13 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Keep the Python adapter, operation defaults, and response headers available
-to database, container, and operation helpers.
+"""Keep the Python adapter, operation defaults, response headers and internal
+telemetry registrations available to database, container, and operation helpers.
 
 The customer app configures CosmosClient once. Its database and container
 objects then retain the same ItemClientContext, which groups references
 to the existing Python adapter, ItemClientDefaults, and
-ClientLastResponseHeaders.
+ClientLastResponseHeaders. The immutable telemetry handler registrations
+default to empty; they contain no per-operation state and are not public
+client constructor options.
 
 Helpers use these references directly rather than retrieve them through
 CosmosClientConnection. Creating the objects defined here does not send
@@ -27,6 +29,7 @@ from .._availability_strategy_config import CrossRegionHedgingStrategy
 if TYPE_CHECKING:
     from .._backend.cosmos_backend import CosmosBackend
     from ..aio._backend.cosmos_backend import AsyncCosmosBackend
+    from .._telemetry import CompletionHandler
 
 _BackendT = TypeVar("_BackendT", "CosmosBackend", "AsyncCosmosBackend")
 
@@ -72,7 +75,7 @@ class ClientLastResponseHeaders:
 
 @dataclass(frozen=True)
 class ItemClientContext(Generic[_BackendT]):
-    """Group references to one client's Python adapter, defaults, and header state.
+    """Group one client's adapter, defaults, header state and telemetry registrations.
 
     Client state means the information retained for a client, not the
     CosmosClient object itself. For a synchronous Rust-backed client with
@@ -119,3 +122,5 @@ class ItemClientContext(Generic[_BackendT]):
     adapter: _BackendT
     defaults: ItemClientDefaults = field(default_factory=ItemClientDefaults)
     response_state: ClientLastResponseHeaders = field(default_factory=ClientLastResponseHeaders)
+    # SDK-internal consumers share configuration, never per-operation mutable data.
+    telemetry_handlers: tuple[CompletionHandler, ...] = ()

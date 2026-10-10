@@ -31,7 +31,7 @@ from ._backend.operations import (
 from ._backend.contracts import PreparedRequest
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._helpers._wire_encoding import serialize_body_to_bytes
-from ._helpers._partition_key import normalize_partition_key
+from ._helpers._partition_key import normalize_feed_range_partition_key
 from ._routing.routing_range import Range
 
 
@@ -135,7 +135,7 @@ def build_feed_range_from_partition_key_prepared_request(
     feed range happens later through the binding, not in this builder.
     """
     normalized_container_link = base.TrimBeginningAndEndingSlashes(container_link)
-    partition_key = normalize_partition_key(partition_key_value)
+    partition_key = normalize_feed_range_partition_key(partition_key_value)
     return PreparedRequest(
         op=OP_FEED_RANGE_FROM_PARTITION_KEY,
         container_link=normalized_container_link,

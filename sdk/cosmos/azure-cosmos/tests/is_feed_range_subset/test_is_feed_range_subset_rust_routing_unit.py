@@ -81,22 +81,9 @@ def test_gate_allows_backend():
     ],
 )
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_legacy_only_ranges_are_selected_before_execution(parent, async_mode):
-    """Awkward range shapes are answered locally and never dispatched to Rust.
-
-    Five parents that the Rust path does not handle: bounds the wrong way
-    round, bounds that are not hexadecimal, an odd number of hex digits, an
-    inclusive upper bound, and a range carrying a value that cannot be turned
-    into JSON.
-
-    Both backends fail the test outright if ``execute`` is ever called, which
-    is what proves the decision happens before dispatch rather than after a
-    failed attempt.
-
-    Each answer is compared against the legacy calculation, so falling back has
-    to produce the right result and not merely avoid crashing. Run for sync and
-    async, since the two dispatch through different code.
-    """
+@pytest.mark.parametrize("invalid_side", ["parent", "child"])
+def test_unsupported_ranges_are_rejected_without_fallback(parent, async_mode, invalid_side, monkeypatch):
+    """The approved strict contract rejects unsupported inputs before either execution path."""
     import asyncio
     from azure.cosmos._backend.cosmos_backend import CosmosBackend
     from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
@@ -104,32 +91,38 @@ def test_legacy_only_ranges_are_selected_before_execution(parent, async_mode):
         is_feed_range_subset,
         is_feed_range_subset_async,
     )
+    from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 
     class Sync(CosmosBackend):
         name = "rust"
 
         def execute(self, prepared, *, deadline=None):
-            pytest.fail("A legacy-only shape must not be dispatched to Rust")
+            pytest.fail("An unsupported shape must not be dispatched to Rust")
 
     class Async(AsyncCosmosBackend):
         name = "rust"
 
         async def execute(self, prepared, *, deadline=None):
-            pytest.fail("A legacy-only shape must not be dispatched to Rust")
+            pytest.fail("An unsupported shape must not be dispatched to Rust")
 
     child = _feed_range("20", "40")
-    expected = (
-        FeedRangeInternalEpk.from_json(child)
-        .get_normalized_range()
-        .is_subset(FeedRangeInternalEpk.from_json(parent).get_normalized_range())
+    if invalid_side == "child":
+        parent, child = child, parent
+    monkeypatch.setattr(
+        FeedRangeInternalEpk, "from_json",
+        lambda *_: pytest.fail("Unsupported inputs must not execute legacy comparison"),
     )
     connection = SimpleNamespace(_backend=Async() if async_mode else Sync())
-    result = (is_feed_range_subset_async if async_mode else is_feed_range_subset)(
-        client_connection=connection,
-        parent_feed_range=parent,
-        child_feed_range=child,
-    )
-    assert (asyncio.run(result) if async_mode else result) == expected
+    before = rust_compatibility_fallback_count()
+    with pytest.raises(NotImplementedError, match="is_feed_range_subset requires supported"):
+        result = (is_feed_range_subset_async if async_mode else is_feed_range_subset)(
+            client_connection=connection,
+            parent_feed_range=parent,
+            child_feed_range=child,
+        )
+        if async_mode:
+            asyncio.run(result)
+    assert rust_compatibility_fallback_count() == before
 
 
 # ---------------------------------------------------------------------------

@@ -180,18 +180,22 @@ def test_L6_is_feed_range_subset_leaves_last_response_headers_untouched(parity_c
     )
 
 
-def test_L7_is_feed_range_subset_inverted_range_matches_legacy(parity_container):
-    """Compare the local compatibility result for an inverted parent range.
+@pytest.mark.parametrize("backend_name", ["core-python", "rust"])
+def test_L7_is_feed_range_subset_inverted_range_contract(parity_container, backend_name):
+    """Retain the legacy result and explicitly reject unsupported Rust input without fallback."""
+    from azure.cosmos import _rust
+    from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 
-    Routing selects the compatibility calculation before native execution.
-    This is not replay after a rejected native operation.
-    """
     inverted_parent = _feed_range("7F", "3F")
     child = _feed_range("3F", "7F")
-    _run(
-        parity_container.id,
-        inverted_parent,
-        child,
-        description="[L7] is_feed_range_subset inverted range falls back to legacy",
-        request_kwargs={"parent": "[7F,3F) (inverted)", "child": "[3F,7F)"},
-    )
+    with CosmosClient(
+        os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend=backend_name
+    ) as client:
+        container = client.get_database_client("parity_db").get_container_client(parity_container.id)
+        before = (rust_compatibility_fallback_count(), _rust._debug_operation_count())
+        if backend_name == "rust":
+            with pytest.raises(NotImplementedError, match="is_feed_range_subset requires supported"):
+                container.is_feed_range_subset(inverted_parent, child)
+        else:
+            assert container.is_feed_range_subset(inverted_parent, child) is False
+        assert (rust_compatibility_fallback_count(), _rust._debug_operation_count()) == before

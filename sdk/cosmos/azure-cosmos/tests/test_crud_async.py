@@ -1801,44 +1801,45 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         patched_item = await created_container.patch_item(item=item_id, partition_key="patch_item_pk",
                                                           patch_operations=operations)
         # Verify results from patch operations
-        assert patched_item.get("color") is None
-        assert patched_item.get("prop") is None
+        assert "color" not in patched_item
+        assert "prop" not in patched_item
         assert patched_item.get("company") == "CosmosDB"
         assert patched_item.get("address").get("new_city") == "Atlanta"
         assert patched_item.get("number") == 10
         assert patched_item.get("favorite_color") == "yellow"
 
+        stored_item = await created_container.read_item(item_id, partition_key="patch_item_pk")
+        assert "color" not in stored_item
+        assert "prop" not in stored_item
+        assert stored_item.get("favorite_color") == "yellow"
+
         # Negative test - attempt to replace non-existent field
         operations = [{"op": "replace", "path": "/wrong_field", "value": "wrong_value"}]
-        try:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
             await created_container.patch_item(item=item_id, partition_key="patch_item_pk",
                                                patch_operations=operations)
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == StatusCodes.BAD_REQUEST
+        assert caught.exception.status_code == StatusCodes.BAD_REQUEST
 
         # Negative test - attempt to remove non-existent field
         operations = [{"op": "remove", "path": "/wrong_field"}]
-        try:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
             await created_container.patch_item(item=item_id, partition_key="patch_item_pk",
                                                patch_operations=operations)
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == StatusCodes.BAD_REQUEST
+        assert caught.exception.status_code == StatusCodes.BAD_REQUEST
 
         # Negative test - attempt to increment non-number field
         operations = [{"op": "incr", "path": "/company", "value": 3}]
-        try:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
             await created_container.patch_item(item=item_id, partition_key="patch_item_pk",
                                                patch_operations=operations)
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == StatusCodes.BAD_REQUEST
+        assert caught.exception.status_code == StatusCodes.BAD_REQUEST
 
         # Negative test - attempt to move from non-existent field
         operations = [{"op": "move", "from": "/wrong_field", "path": "/other_field"}]
-        try:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
             await created_container.patch_item(item=item_id, partition_key="patch_item_pk",
                                                patch_operations=operations)
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == StatusCodes.BAD_REQUEST
+        assert caught.exception.status_code == StatusCodes.BAD_REQUEST
 
     async def test_conditional_patching_async(self):
 
@@ -1869,11 +1870,14 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # Run patch operations with wrong filter
         num_false = item.get("number") + 1
         filter_predicate = "from root where root.number = " + str(num_false)
-        try:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
             await created_container.patch_item(item=item_id, partition_key="patch_item_pk",
                                                patch_operations=operations, filter_predicate=filter_predicate)
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == StatusCodes.PRECONDITION_FAILED
+        assert caught.exception.status_code == StatusCodes.PRECONDITION_FAILED
+        unchanged = await created_container.read_item(item_id, partition_key="patch_item_pk")
+        assert {key: unchanged[key] for key in item} == item
+        assert "color" not in unchanged
+        assert "favorite_color" not in unchanged
 
         # Run patch operations with correct filter
         filter_predicate = "from root where root.number = " + str(item.get("number"))
@@ -1887,6 +1891,18 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         assert patched_item.get("address").get("new_city") == "Atlanta"
         assert patched_item.get("number") == 10
         assert patched_item.get("favorite_color") == "yellow"
+
+        expected = {
+            "id": item["id"], "pk": item["pk"], "company": "CosmosDB",
+            "address": {"city": "Redmond", "new_city": "Atlanta"},
+            "number": 10, "favorite_color": "yellow",
+        }
+        assert {key: patched_item[key] for key in expected} == expected
+        stored = await created_container.read_item(item_id, partition_key="patch_item_pk")
+        assert {key: stored[key] for key in expected} == expected
+        for result in (patched_item, stored):
+            assert "color" not in result
+            assert "prop" not in result
 
     # Temporarily commenting analytical storage tests until emulator support comes.
     #
@@ -2009,5 +2025,3 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-

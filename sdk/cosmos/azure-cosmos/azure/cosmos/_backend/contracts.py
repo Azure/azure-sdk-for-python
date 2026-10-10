@@ -124,7 +124,7 @@ class PreparedFaultInjectionRule(_ValidatedSettings):
     id: str
     #: Rust driver test-rule label, such as "ReadItem", not Python's "read_item".
     operation_type: str
-    status_code: int
+    status_code: Optional[int] = None
     sub_status: int = 0
     container_id: Optional[str] = None
     region: Optional[str] = None
@@ -132,11 +132,12 @@ class PreparedFaultInjectionRule(_ValidatedSettings):
     probability: float = 1.0
     hit_limit: Optional[int] = None
     enabled: bool = True
+    error_type: Optional[str] = None
 
     def __post_init__(self) -> None:
         self._check_type("id", self.id, str, optional=False)
         self._check_type("operation_type", self.operation_type, str, optional=False)
-        self._check_type("status_code", self.status_code, int, optional=False)
+        self._check_type("status_code", self.status_code, int)
         self._check_type("sub_status", self.sub_status, int, optional=False)
         self._check_type("container_id", self.container_id, str)
         self._check_type("region", self.region, str)
@@ -144,6 +145,7 @@ class PreparedFaultInjectionRule(_ValidatedSettings):
         self._check_number("probability", self.probability)
         self._check_type("hit_limit", self.hit_limit, int)
         self._check_type("enabled", self.enabled, bool, optional=False)
+        self._check_type("error_type", self.error_type, str)
 
 
 @dataclass(frozen=True)
@@ -180,7 +182,7 @@ class PreparedClientConfig(_ValidatedSettings):
     #: Delay before the driver may send another request to a different region
     #: while the first is still pending. This is called cross-region hedging.
     #: None disables it, including when the whole config is absent. The Python
-    #: threshold_steps_ms setting is not passed because the driver has one threshold.
+    #: threshold_steps_ms setting is rejected because the driver has one threshold.
     hedging_threshold_ms: Optional[int] = None
 
     #: Optional label added to the User-Agent header, such as "orders-westus".

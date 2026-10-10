@@ -11,6 +11,7 @@ use super::*;
 use crate::wire::ItemTarget;
 use azure_core::http::headers::HeaderName;
 use azure_data_cosmos_driver::models::{ItemReference, Precondition};
+use azure_data_cosmos_driver::options::PatchStrategy;
 use pyo3::exceptions::{PyNotImplementedError, PyValueError};
 
 fn item_target(
@@ -56,13 +57,14 @@ fn patch_precondition(
             "The Python Rust binding does not support If-None-Match for patch_item.",
         ));
     }
-    if serde_json::from_slice::<serde_json::Value>(body)
-        .ok()
-        .is_some_and(|value| value.get("condition").is_some())
-    {
-        return Err(PyNotImplementedError::new_err(
-            "The Python Rust binding does not support filtered patches.",
-        ));
+    let payload: serde_json::Value = serde_json::from_slice(body)
+        .map_err(|error| PyValueError::new_err(format!("Invalid patch body: {error}")))?;
+    if let Some(condition) = payload.get("condition") {
+        if !condition.is_string() {
+            return Err(PyValueError::new_err("patch_item condition must be a string."));
+        }
+        // Auto can evaluate mutations locally, but cannot evaluate the SQL condition.
+        modifiers.patch_strategy = Some(PatchStrategy::ServerSide);
     }
     modifiers
         .custom_headers
@@ -96,12 +98,13 @@ fn patch_operation(
 /// is None or empty, read the id from body_bytes. Missing or wrongly typed
 /// attributes raise instead; this does not select the legacy execution path.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn create_item<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "create_item")?;
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
@@ -118,6 +121,7 @@ pub(crate) fn create_item<'py>(
         body_bytes,
         "create_item",
         true,
+        include_attempts,
         |item_ref, body| CosmosOperation::create_item(item_ref).with_body(body),
     )
 }
@@ -128,10 +132,12 @@ pub(crate) fn create_item<'py>(
 /// existence check in the binding. Prepared `If-Match` / `If-None-Match`
 /// headers remain in `custom_headers`; their enforcement is not done here.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, include_attempts=false))]
 pub(crate) fn upsert_item<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "upsert_item")?;
     let (container_link, partition_key, modifiers, item_id, body_bytes) =
@@ -147,6 +153,7 @@ pub(crate) fn upsert_item<'py>(
         body_bytes,
         "upsert_item",
         true,
+        include_attempts,
         |item_ref, body| CosmosOperation::upsert_item(item_ref).with_body(body),
     )
 }
@@ -185,6 +192,7 @@ pub(crate) fn replace_item<'py>(
         body_bytes,
         "replace_item",
         true,
+        false,
         |item_ref, body| CosmosOperation::replace_item(item_ref).with_body(body),
     )
 }
@@ -194,10 +202,12 @@ pub(crate) fn replace_item<'py>(
 ///
 /// On success the driver returns HTTP 204 with an empty body.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, include_attempts=false))]
 pub(crate) fn delete_item<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "delete_item")?;
     let (container_link, partition_key, modifiers, item_id) = extract_item_inputs(
@@ -216,6 +226,7 @@ pub(crate) fn delete_item<'py>(
         Vec::new(),
         "delete_item",
         false,
+        include_attempts,
         |item_ref, _| CosmosOperation::delete_item(item_ref),
     )
 }
@@ -232,12 +243,13 @@ pub(crate) fn delete_item<'py>(
 /// `max_integrated_cache_staleness_in_ms`, is forwarded through
 /// `custom_headers` like any other per-request header.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn read_item<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "read_item")?;
     let (container_link, partition_key, mut modifiers, target) =
@@ -255,11 +267,12 @@ pub(crate) fn read_item<'py>(
         Vec::new(),
         "read_item",
         false,
+        include_attempts,
         |item_ref, _| CosmosOperation::read_item(item_ref),
     )
 }
 
-/// Patch using the driver's Auto strategy, with a typed caller If-Match guard.
+/// Patch using Auto, or ServerSide when the body includes a filter condition.
 /// Remove the guard from custom headers so it cannot leak to an internal read
 /// or override the fresh ETag protecting an internal replacement.
 ///
@@ -267,7 +280,8 @@ pub(crate) fn read_item<'py>(
 /// than an item. The target uses `item_self_link` when supplied, otherwise `item_id`. The driver
 /// chooses the execution plan for Auto; this entry point does not guarantee a
 /// particular number of service requests. `patch_precondition` accepts If-Match
-/// as a typed precondition and rejects If-None-Match and a body `condition`.
+/// as a typed precondition and rejects If-None-Match. Filter conditions stay in
+/// the body and force service-side execution, including for increments.
 /// These binding checks raise errors; they do not repeat the operation through legacy.
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
@@ -300,6 +314,7 @@ pub(crate) fn patch_item<'py>(
         body_bytes,
         "patch_item",
         true,
+        false,
         move |item_ref, body| patch_operation(item_ref, body, precondition),
     )
 }
@@ -338,10 +353,12 @@ pub(crate) fn create_item_async<'py>(
 /// Async twin of `upsert_item`: identical inputs and driver work, returns a
 /// Python awaitable instead of a ready tuple.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, include_attempts=false))]
 pub(crate) fn upsert_item_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "upsert_item")?;
     let (container_link, partition_key, modifiers, item_id, body_bytes) =
@@ -357,7 +374,7 @@ pub(crate) fn upsert_item_async<'py>(
         body_bytes,
         "upsert_item",
         true,
-        false,
+        include_attempts,
         |item_ref, body| CosmosOperation::upsert_item(item_ref).with_body(body),
     )
 }
@@ -396,10 +413,12 @@ pub(crate) fn replace_item_async<'py>(
 /// Async twin of `delete_item`: identical inputs and driver work, returns a
 /// Python awaitable instead of a ready tuple.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, include_attempts=false))]
 pub(crate) fn delete_item_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "delete_item")?;
     let (container_link, partition_key, modifiers, item_id) = extract_item_inputs(
@@ -418,7 +437,7 @@ pub(crate) fn delete_item_async<'py>(
         Vec::new(),
         "delete_item",
         false,
-        false,
+        include_attempts,
         |item_ref, _| CosmosOperation::delete_item(item_ref),
     )
 }
@@ -426,12 +445,13 @@ pub(crate) fn delete_item_async<'py>(
 /// Async twin of `read_item`: identical inputs and driver work, returns a
 /// Python awaitable instead of a ready tuple.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn read_item_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "read_item")?;
     let (container_link, partition_key, mut modifiers, target) =
@@ -449,7 +469,7 @@ pub(crate) fn read_item_async<'py>(
         Vec::new(),
         "read_item",
         false,
-        false,
+        include_attempts,
         |item_ref, _| CosmosOperation::read_item(item_ref),
     )
 }
@@ -579,9 +599,9 @@ mod tests {
                 ));
                 for asynchronous in [false, true] {
                     let error = if asynchronous {
-                        read_item_async(py, "invalid-driver-handle", &prepared, None).map(|_| ())
+                        read_item_async(py, "invalid-driver-handle", &prepared, None, false).map(|_| ())
                     } else {
-                        read_item(py, "invalid-driver-handle", &prepared, None).map(|_| ())
+                        read_item(py, "invalid-driver-handle", &prepared, None, false).map(|_| ())
                     }
                     .unwrap_err();
                     assert!(error
@@ -600,9 +620,9 @@ mod tests {
                 prepared.setattr("item_self_link", link).unwrap();
                 for asynchronous in [false, true] {
                     let error = if asynchronous {
-                        read_item_async(py, "invalid-driver-handle", &prepared, None).map(|_| ())
+                        read_item_async(py, "invalid-driver-handle", &prepared, None, false).map(|_| ())
                     } else {
-                        read_item(py, "invalid-driver-handle", &prepared, None).map(|_| ())
+                        read_item(py, "invalid-driver-handle", &prepared, None, false).map(|_| ())
                     }
                     .unwrap_err();
                     assert!(error.is_instance_of::<PyValueError>(py));
@@ -613,9 +633,9 @@ mod tests {
             prepared.setattr("item_id", py.None()).unwrap();
             for asynchronous in [false, true] {
                 let error = if asynchronous {
-                    read_item_async(py, "invalid-driver-handle", &prepared, None).map(|_| ())
+                    read_item_async(py, "invalid-driver-handle", &prepared, None, false).map(|_| ())
                 } else {
-                    read_item(py, "invalid-driver-handle", &prepared, None).map(|_| ())
+                    read_item(py, "invalid-driver-handle", &prepared, None, false).map(|_| ())
                 }
                 .unwrap_err();
                 assert!(error.is_instance_of::<PyValueError>(py));
@@ -669,17 +689,13 @@ mod tests {
             prepared
                 .setattr("settings", crate::wire::settings::test_settings(py))
                 .unwrap();
-            for filtered in [false, true] {
+            for body in [
+                br#"{"operations":[{"op":"set","path":"/n","value":2}]}"#.as_slice(),
+                br#"{"condition":"FROM c","operations":[{"op":"set","path":"/n","value":2}]}"#.as_slice(),
+            ] {
                 let headers = PyDict::new_bound(py);
-                if !filtered {
-                    headers.set_item("IF-NONE-MATCH", "*").unwrap();
-                }
+                headers.set_item("IF-NONE-MATCH", "*").unwrap();
                 prepared.setattr("headers", headers).unwrap();
-                let body: &[u8] = if filtered {
-                    br#"{"condition":"FROM c","operations":[{"op":"set","path":"/n","value":2}]}"#
-                } else {
-                    br#"{"operations":[{"op":"set","path":"/n","value":2}]}"#
-                };
                 prepared
                     .setattr("body_bytes", PyBytes::new_bound(py, body))
                     .unwrap();
@@ -689,6 +705,38 @@ mod tests {
                 assert!(patch_item_async(py, "unused-handle", &prepared, None)
                     .unwrap_err()
                     .is_instance_of::<PyNotImplementedError>(py));
+            }
+        });
+    }
+
+    #[test]
+    fn filtered_patch_selects_server_side_without_losing_if_match() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            for op in ["set", "incr"] {
+                let body = serde_json::to_vec(&serde_json::json!({
+                    "condition": "FROM c WHERE c.n = 0",
+                    "operations": [{"op": op, "path": "/n", "value": 1}],
+                })).unwrap();
+                let mut settings = modifiers(py);
+                settings.custom_headers.insert(
+                    HeaderName::from_static("if-match"), HeaderValue::from_static("\"v1\""),
+                );
+                let guard = patch_precondition(&mut settings, &body).unwrap();
+                assert_eq!(guard, Some(Precondition::if_match("\"v1\"")));
+                assert_eq!(settings.patch_strategy, Some(PatchStrategy::ServerSide));
+                assert!(settings.custom_headers.is_empty());
+            }
+            let mut settings = modifiers(py);
+            patch_precondition(&mut settings, br#"{"operations":[]}"#).unwrap();
+            assert_eq!(settings.patch_strategy, None);
+            for body in [
+                br#"{"condition":7,"operations":[]}"#.as_slice(),
+                br#"{"condition":null,"operations":[]}"#.as_slice(),
+                b"invalid",
+            ] {
+                assert!(patch_precondition(&mut modifiers(py), body).unwrap_err()
+                    .is_instance_of::<PyValueError>(py));
             }
         });
     }

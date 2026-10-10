@@ -19,6 +19,7 @@ configuring the results container. --run-id also accepts separate capture identi
 """
 
 import argparse
+from contextlib import contextmanager
 import math
 import os
 import sys
@@ -57,6 +58,7 @@ except Exception:  # pragma: no cover - perf_stats import is best-effort
 _OP_ORDER = ["read", "create", "upsert", "replace", "delete", "patch"]
 
 
+@contextmanager
 def _connect():
     uri = os.environ.get("RESULTS_COSMOS_URI")
     key = os.environ.get("RESULTS_COSMOS_KEY")
@@ -69,7 +71,8 @@ def _connect():
             file=sys.stderr,
         )
         sys.exit(2)
-    return CosmosClient(uri, key).get_database_client(db).get_container_client(cont)
+    with CosmosClient(uri, key) as client:
+        yield client.get_database_client(db).get_container_client(cont)
 
 
 def _split_wid(workload_id: str):
@@ -397,7 +400,11 @@ def main():
     if any(not math.isfinite(value) or value <= 0 for value in (args.expected_rps, args.max_p99_ms)):
         ap.error("Rate and latency threshold must be finite and positive")
 
-    container = _connect()
+    with _connect() as container:
+        _run_report(container, args, ap)
+
+
+def _run_report(container, args, ap):
     run_id = args.run_id or _latest_run_id(container, args.prefix)
     if not run_id:
         print(f"ERROR: no {args.prefix}* runs found in the results container.", file=sys.stderr)

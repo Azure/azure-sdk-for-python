@@ -71,7 +71,7 @@ from azure.cosmos._helpers._request_container import (
     is_read_container_rust_eligible,
 )
 from azure.cosmos._helpers._container_operations import ContainerHelper
-from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
+from azure.cosmos._helpers._item_context import ClientLastResponseHeaders, ItemClientContext
 from common.typed_requests import flatten_options_to_headers
 from azure.cosmos._query_rust_routing import (
     build_list_containers_prepared_page_request,
@@ -174,7 +174,7 @@ def container_create_case(request):
         _set_container_properties_cache=MagicMock(),
     )
     proxy_type = AsyncDatabaseProxy if is_async else DatabaseProxy
-    item_context = object()
+    item_context = ItemClientContext(backend)
     return SimpleNamespace(
         database=proxy_type(connection, "db1", _item_context=item_context),
         connection=connection,
@@ -190,6 +190,9 @@ def _call_container_create(case, *args, method="create_container", **kwargs):
     The method name is an argument because plain create and get-or-create share
     almost all of their rules, so most tests here run against both.
     """
+    if case.item_context.adapter is not case.connection._backend:
+        case.item_context = ItemClientContext(case.connection._backend)
+        case.database._item_context = case.item_context
     result = getattr(case.database, method)(*args, **kwargs)
     return asyncio.run(result) if inspect.isawaitable(result) else result
 

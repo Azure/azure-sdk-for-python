@@ -15,13 +15,14 @@ points:
    disabled.
 2. A wired backend's ``BackendResponse`` is parsed into a ``CosmosDict`` and
    ``PatchItem`` is not awaited.
-3. Caller If-Match uses Rust, while unsupported filters fail without replay
+3. Caller If-Match and filter conditions use Rust without replay
    through legacy ``PatchItem``.
 
 The partition key arrives as ``request_options={"partitionKey": ...}`` in
 kwargs, the way the container method seeds it.
 """
 import asyncio
+import json
 import unittest
 from unittest.mock import AsyncMock, MagicMock
 
@@ -130,8 +131,8 @@ class TestAsyncPatchItem(unittest.TestCase):
         self.assertEqual(result.get_response_headers()["etag"], "v2")
         cc.PatchItem.assert_not_awaited()
 
-    def test_async_filter_predicate_raises_without_legacy(self):
-        """An unsupported filter fails without invoking either transport."""
+    def test_async_filter_predicate_uses_rust_without_legacy(self):
+        """The body retains the condition without invoking legacy."""
         cc = _connection_with_cache()
         backend = _async_dispatch_backend(
             BackendResponse(status_code=200, sub_status=0, headers=None, body=b"{}")
@@ -147,9 +148,10 @@ class TestAsyncPatchItem(unittest.TestCase):
                 request_options={"partitionKey": "a"},
             )
 
-        with self.assertRaises(NotImplementedError):
-            asyncio.run(_run())
-        backend.execute_mock.assert_not_awaited()
+        asyncio.run(_run())
+        backend.execute_mock.assert_awaited_once()
+        prepared = backend.execute_mock.await_args.args[0]
+        self.assertEqual(json.loads(prepared.body_bytes)["condition"], "from root where root.number = 3")
         cc.PatchItem.assert_not_awaited()
 
     def test_async_version_guard_uses_rust_without_legacy(self):

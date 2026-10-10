@@ -30,10 +30,12 @@ from typing_extensions import Literal
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
+from ._telemetry import trace_operation
 from azure.core.utils import CaseInsensitiveDict
 
 from . import _utils as utils
 from ._availability_strategy_config import _validate_request_hedging_strategy
+from ._backend.capabilities import require_legacy_api
 from ._base import (_build_properties_cache, build_options,
                     GenerateGuidId, validate_cache_staleness_value)
 from ._constants import _Constants as Constants, TimeoutScope
@@ -74,6 +76,7 @@ from .partition_key import (_build_partition_key_from_properties, PartitionKeyTy
                             _return_undefined_or_empty_partition_key, _SequentialPartitionKeyType,
                             NonePartitionKeyValue, NullPartitionKeyValue, PartitionKey)
 from .scripts import ScriptsProxy
+from ._backend.capabilities import reject_unsupported_rust_arguments
 
 if TYPE_CHECKING:
     from ._backend.cosmos_backend import CosmosBackend
@@ -204,6 +207,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @property
     def scripts(self) -> ScriptsProxy:
+        require_legacy_api(self.client_connection, "ContainerProxy.scripts", item_context=self._item_context)
         if self._scripts is None:
             self._scripts = ScriptsProxy(self.client_connection, self.container_link, self.is_system_key)
         return self._scripts
@@ -261,6 +265,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: Container properties with response headers available through ``get_response_headers()``.
         :rtype: ~azure.cosmos.CosmosDict
         """
+        reject_unsupported_rust_arguments(self, kwargs, headers=initial_headers)
         validate_container_create_kwargs(kwargs, method_name="ContainerProxy.read")
         if priority is not None:
             kwargs['priority'] = priority
@@ -287,13 +292,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                                                                _build_properties_cache(container, self.container_link))
         return container
 
-    @distributed_trace
+    @trace_operation(binding_operation="read_item")
     def read_item(  # pylint:disable=docstring-missing-param
         self,
         item: Union[str, Mapping[str, Any]],
         partition_key: PartitionKeyType,
         *,
-        post_trigger_include: Optional[str] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         session_token: Optional[str] = None,
@@ -314,7 +318,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             to fetch an item with a partition key of null. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
         :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
-        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str etag: ETag used with ``IfModified`` or ``IfNotModified``.
         :keyword match_condition: Service-enforced conditional read. ``IfPresent`` and ``IfMissing``
             use wildcard conditions. A matching ``IfModified`` returns an empty CosmosDict (HTTP 304).
@@ -340,9 +343,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (uses client settings when configured, otherwise defaults to threshold_ms=500, threshold_steps_ms=100),
-            False (disable hedging even if client has it enabled), or a dict with keys
-            ``threshold_ms`` and ``threshold_steps_ms``. If not provided, uses the client's configured strategy.
+            Can be True (uses client settings when configured, otherwise defaults to threshold_ms=500),
+            False (disable hedging even if client has it enabled), or a dict with key ``threshold_ms``. If not provided, uses the client's configured strategy.
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
         :returns: A CosmosDict representing the item to be retrieved.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
@@ -357,6 +359,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :dedent: 0
                 :caption: Get an item from the database and update one of its properties:
         """
+        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
         prepare_item_target(kwargs, item)
         # Check the cache-staleness value here rather than deeper in, so a bad
         # value raises where the caller can see it. None means skip the check.
@@ -366,7 +369,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         merge_read_item_explicit_kwargs(
             kwargs,
-            post_trigger_include=post_trigger_include,
             etag=etag,
             match_condition=match_condition,
             session_token=session_token,
@@ -424,9 +426,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
         :keyword response_hook: Optional callback receiving independent header and CosmosList snapshots once
@@ -441,6 +443,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             Repeated pairs produce one result per occurrence. Empty input performs no network calls.
         :rtype: ~azure.cosmos.CosmosList
         """
+        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
 
         items, deadline = prepare_read_items(items, max_concurrency, kwargs)
         if not items:
@@ -529,15 +532,16 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
             Per-call availability overrides are supported only on core-python.
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
+        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
         if session_token is not None:
             kwargs['session_token'] = session_token
         if initial_headers is not None:
@@ -598,9 +602,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
         :keyword response_hook: A callable invoked with the response metadata.
@@ -648,9 +652,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
         :keyword response_hook: A callable invoked with the response metadata.
@@ -685,9 +689,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
         :keyword response_hook: A callable invoked with the response metadata.
@@ -732,9 +736,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
         :keyword response_hook: A callable invoked with the response metadata.
@@ -789,9 +793,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
         :keyword response_hook: A callable invoked with the response metadata.
@@ -800,6 +804,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: An Iterable of items (dicts), or change records for AllVersionsAndDeletes.
         :rtype: Iterable[dict[str, Any]]
         """
+        reject_unsupported_rust_arguments(self, kwargs)
 
         from ._helpers._change_feed import query_items_change_feed
 
@@ -881,9 +886,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
         :returns: An Iterable of items (dicts).
@@ -980,9 +985,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
         :returns: An Iterable of items (dicts).
@@ -1071,9 +1076,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword str query: The Azure Cosmos DB SQL query to execute.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
@@ -1098,6 +1103,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :dedent: 0
                 :caption: Parameterized query to get all products that have been discontinued:
         """
+        reject_unsupported_rust_arguments(self, kwargs)
         # Add positional arguments to keyword argument to support backward compatibility.
         original_positional_arg_names = ["query", "parameters", "partition_key", "enable_cross_partition_query",
                                          "max_item_count", "enable_scan_in_query", "populate_query_metrics"]
@@ -1242,8 +1248,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         item: Union[str, Mapping[str, Any]],
         body: dict[str, Any],
         populate_query_metrics: Optional[bool] = None,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
         *,
         session_token: Optional[str] = None,
         initial_headers: Optional[dict[str, str]] = None,
@@ -1265,8 +1269,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :type item: Union[str, dict[str, Any]]
         :param body: A dict representing the item to replace.
         :type body: dict[str, Any]
-        :param str pre_trigger_include: trigger id to be used as pre operation trigger.
-        :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -1289,9 +1291,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
             given id does not exist.
@@ -1299,6 +1301,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
+        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
         prepare_item_target(kwargs, item)
         # The id of the item to overwrite comes from ``item`` -- either a
         # string id, or the ``id`` of a dict -- and not from the body. This
@@ -1308,8 +1311,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         # merge and options build.
         merge_upsert_item_explicit_kwargs(
             kwargs,
-            pre_trigger_include=pre_trigger_include,
-            post_trigger_include=post_trigger_include,
             session_token=session_token,
             initial_headers=initial_headers,
             etag=etag,
@@ -1330,13 +1331,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             **kwargs,
         )
 
-    @distributed_trace
+    @trace_operation(binding_operation="upsert_item")
     def upsert_item(  # pylint:disable=docstring-missing-param
         self,
         body: dict[str, Any],
         populate_query_metrics: Optional[bool]=None,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
         *,
         session_token: Optional[str] = None,
         initial_headers: Optional[dict[str, str]] = None,
@@ -1357,8 +1356,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         :param body: A dict-like object representing the item to update or insert.
         :type body: dict[str, Any]
-        :param str pre_trigger_include: trigger id to be used as pre operation trigger.
-        :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -1381,14 +1378,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :returns: A CosmosDict representing the upserted item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
+        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
         # Upsert sends a body, like create, so the partition key is read out
         # of that body during the send. It also accepts etag and
         # match_condition, which narrow it to insert-only or to a replace
@@ -1396,8 +1394,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         # helper warns and then ignores it.
         merge_upsert_item_explicit_kwargs(
             kwargs,
-            pre_trigger_include=pre_trigger_include,
-            post_trigger_include=post_trigger_include,
             session_token=session_token,
             initial_headers=initial_headers,
             etag=etag,
@@ -1417,13 +1413,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             **kwargs,
         )
 
-    @distributed_trace
+    @trace_operation(binding_operation="create_item")
     def create_item(  # pylint:disable=docstring-missing-param
         self,
         body: dict[str, Any],
         *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
         indexing_directive: Optional[int] = None,
         enable_automatic_id_generation: bool = False,
         session_token: Optional[str] = None,
@@ -1448,8 +1442,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         :param body: A dict-like object representing the item to create.
         :type body: dict[str, Any]
-        :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
-        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword indexing_directive: Enumerates the possible values to indicate whether the document should
             be omitted from indexing. Possible values include: 0 for Default, 1 for Exclude, or 2 for Include.
         :paramtype indexing_directive: Union[int, ~azure.cosmos.documents.IndexingDirective]
@@ -1474,9 +1466,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :keyword float timeout: One metadata-plus-write budget, finite and at least one second.
         :raises TypeError: A retired keyword, invalid body type, non-string ID, or non-callable response hook was supplied.
@@ -1485,13 +1477,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
+        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
         deadline = prepare_create_item_kwargs(kwargs, response_hook=response_hook)
         # Fold the named keyword arguments back into kwargs so the helper
         # receives a single dict.
         merge_create_item_explicit_kwargs(
             kwargs,
-            pre_trigger_include=pre_trigger_include,
-            post_trigger_include=post_trigger_include,
             session_token=session_token,
             initial_headers=initial_headers,
             priority=priority,
@@ -1519,8 +1510,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         patch_operations: list[dict[str, Any]],
         *,
         filter_predicate: Optional[str] = None,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
         session_token: Optional[str] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1553,8 +1542,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param patch_operations: The list of patch operations to apply to the item.
         :type patch_operations: list[dict[str, Any]]
         :keyword str filter_predicate: conditional filter to apply to Patch operations.
-        :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
-        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
@@ -1576,9 +1563,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
@@ -1586,11 +1573,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
+        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy)
         # Fold the named keyword arguments into kwargs, then hand off.
         merge_patch_item_explicit_kwargs(
             kwargs,
-            pre_trigger_include=pre_trigger_include,
-            post_trigger_include=post_trigger_include,
             session_token=session_token,
             etag=etag,
             match_condition=match_condition,
@@ -1624,8 +1610,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], dict[str, Any]]]],
         partition_key: PartitionKeyType,
         *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
         session_token: Optional[str] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         retry_write: Optional[int] = None,
@@ -1643,8 +1627,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
         :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
-        :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
-        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
@@ -1654,9 +1636,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1669,6 +1651,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
         :rtype: ~azure.cosmos.CosmosList[dict[str, Any]]
         """
+        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy)
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
@@ -1682,10 +1665,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
         if session_token is not None:
             kwargs['session_token'] = session_token
         if priority is not None:
@@ -1706,14 +1685,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return self.client_connection.Batch(
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
 
-    @distributed_trace
+    @trace_operation(binding_operation="delete_item")
     def delete_item(  # pylint:disable=docstring-missing-param
         self,
         item: Union[Mapping[str, Any], str],
         partition_key: PartitionKeyType,
         populate_query_metrics: Optional[bool] = None,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
         *,
         session_token: Optional[str] = None,
         initial_headers: Optional[dict[str, str]] = None,
@@ -1737,8 +1714,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
         :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
-        :param str pre_trigger_include: trigger id to be used as pre operation trigger.
-        :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
@@ -1756,9 +1731,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500, threshold_steps_ms=100),
+            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
             False (disable hedging even if client has it enabled),
-            or a dict with keys ``threshold_ms`` and ``threshold_steps_ms`` to override the client's configured availability strategy.
+            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], None], None]
@@ -1766,6 +1741,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
         :rtype: None
         """
+        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
         if populate_query_metrics is not None:
             # populate_query_metrics does nothing on a single-item delete, since
             # there is no query to measure. Warn and drop it so no header is built.
@@ -1774,12 +1750,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 DeprecationWarning,
             )
 
-        # pre_trigger_include and post_trigger_include can be passed either by
-        # position or by name, so move them into kwargs to get one dict.
         merge_delete_item_explicit_kwargs(
             kwargs,
-            pre_trigger_include=pre_trigger_include,
-            post_trigger_include=post_trigger_include,
             session_token=session_token,
             initial_headers=initial_headers,
             etag=etag,
@@ -1828,6 +1800,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :raises TypeError: The response hook or an options dictionary is invalid.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
+        reject_unsupported_rust_arguments(self, kwargs)
         return _get_throughput(
             client_connection=self.client_connection,
             container_link=self.container_link,
@@ -1858,6 +1831,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             or the throughput properties could not be updated.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
+        reject_unsupported_rust_arguments(self, kwargs)
         return _replace_container_throughput(
             client_connection=self.client_connection,
             container_link=self.container_link,
@@ -1883,6 +1857,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: An Iterable of conflicts (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
+        reject_unsupported_rust_arguments(self, kwargs)
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -1926,6 +1901,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: An Iterable of conflicts (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
+        reject_unsupported_rust_arguments(self, kwargs)
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -1967,6 +1943,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: A CosmosDict representing the retrieved conflict.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
+        reject_unsupported_rust_arguments(self, kwargs)
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
         self._get_properties_with_options(request_options)
@@ -1999,6 +1976,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The conflict does not exist in the container.
         :rtype: None
         """
+        reject_unsupported_rust_arguments(self, kwargs)
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
         self._get_properties_with_options(request_options)
@@ -2013,8 +1991,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self,
         partition_key: PartitionKeyType,
         *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
         session_token: Optional[str] = None,
         throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], None], None]] = None,
@@ -2030,8 +2006,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             try to delete the items with a partition key of null. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
         :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
-        :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
-        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
@@ -2042,6 +2016,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype response_hook: Callable[[Mapping[str, str], None], None] = None,
         :rtype: None
         """
+        reject_unsupported_rust_arguments(self, kwargs)
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
@@ -2055,10 +2030,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
-        if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
-        if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
         if session_token is not None:
             kwargs['session_token'] = session_token
         if throughput_bucket is not None:
@@ -2106,6 +2077,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
           are present. It therefore should only be treated as an opaque value.
 
         """
+        reject_unsupported_rust_arguments(self, kwargs)
         return _read_feed_ranges(
             client_connection=self.client_connection,
             container_link=self.container_link,
@@ -2184,6 +2156,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :type child_feed_range: dict[str, Any]
         :returns: a boolean indicating if child feed range is a subset of parent feed range
         :rtype: bool
+        :raises NotImplementedError: A supplied range has an unsupported shape or invalid bounds on the Rust path.
 
         .. warning::
           The structure of the dict representation of a feed range may vary, including which keys

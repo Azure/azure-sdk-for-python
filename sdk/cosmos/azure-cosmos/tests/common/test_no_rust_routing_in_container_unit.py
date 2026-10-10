@@ -24,6 +24,7 @@ from __future__ import annotations
 import ast
 import inspect
 import pathlib
+import textwrap
 import unittest
 
 from azure.cosmos import container as sync_container_module
@@ -126,17 +127,23 @@ class _NoRustRoutingInContainerBase:
         )
 
     def test_throughput_and_feed_range_methods_do_not_name_rust(self):
-        """Each of the five public methods, read individually by source, never
-        mentions "rust" (case-insensitive) -- unlike a whole-file scan, this
-        does not false-positive on unrelated architecture comments elsewhere
-        in the module (e.g. on the item-operation methods, which legitimately
-        route through ``ItemHelper`` / ``get_selected_backend``)."""
+        """Reject Rust routing identifiers, not explanatory docstrings or the
+        shared input validator, which never executes an alternative backend."""
         source = self._source()
         tree = ast.parse(source, filename=inspect.getfile(self.module))
         violations = []
         for method_name in _THROUGHPUT_AND_FEED_RANGE_METHODS:
             method_source = _method_source(tree, source, method_name)
-            if "rust" in method_source.lower():
+            method_tree = ast.parse(textwrap.dedent(method_source))
+            identifiers = [
+                node.id if isinstance(node, ast.Name) else node.attr
+                for node in ast.walk(method_tree)
+                if isinstance(node, (ast.Name, ast.Attribute))
+            ]
+            if any(
+                "rust" in name.lower() and name != "reject_unsupported_rust_arguments"
+                for name in identifiers
+            ):
                 violations.append(method_name)
         self.assertEqual(
             violations, [],

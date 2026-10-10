@@ -195,7 +195,8 @@ def test_only_item_and_partition_key_are_positional(point_read):
     signature = inspect.signature(point_read.proxy.read_item)
     assert [name for name, parameter in signature.parameters.items()
             if parameter.kind == inspect.Parameter.POSITIONAL_OR_KEYWORD] == ["item", "partition_key"]
-    for name in ("etag", "match_condition", "post_trigger_include", "response_hook"):
+    assert "post_trigger_include" not in signature.parameters
+    for name in ("etag", "match_condition", "response_hook"):
         assert signature.parameters[name].kind == inspect.Parameter.KEYWORD_ONLY
     with pytest.raises(TypeError):
         point_read.call("item", "pk", None)

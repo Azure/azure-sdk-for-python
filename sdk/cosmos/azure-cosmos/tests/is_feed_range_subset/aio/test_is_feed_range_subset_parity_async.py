@@ -171,15 +171,20 @@ async def test_L6_is_feed_range_subset_leaves_last_response_headers_untouched(pa
         )
 
 
-async def test_L7_is_feed_range_subset_inverted_range_matches_legacy(parity_container_id):
-    """An inverted range (min > max) is a nonsensical opaque value the legacy compare
-    tolerates. The rust driver rejects such bounds, so the rust path must fall back to
-    legacy rather than raise -- both backends return the same answer and neither errors.
-    Guards the invalid-range behavior-drift fix on the async path."""
-    await _run(
-        parity_container_id,
-        _feed_range("7F", "3F"),
-        _feed_range("3F", "7F"),
-        description="[L7] async is_feed_range_subset inverted range falls back to legacy",
-        request_kwargs={"parent": "[7F,3F) (inverted)", "child": "[3F,7F)"},
-    )
+@pytest.mark.parametrize("backend_name", ["core-python", "rust"])
+async def test_L7_is_feed_range_subset_inverted_range_contract(parity_container_id, backend_name):
+    """Retain the legacy result and explicitly reject unsupported Rust input without fallback."""
+    from azure.cosmos import _rust
+    from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
+
+    async with CosmosClient(
+        os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend=backend_name
+    ) as client:
+        container = client.get_database_client("parity_db").get_container_client(parity_container_id)
+        before = (rust_compatibility_fallback_count(), _rust._debug_operation_count())
+        if backend_name == "rust":
+            with pytest.raises(NotImplementedError, match="is_feed_range_subset requires supported"):
+                await container.is_feed_range_subset(_feed_range("7F", "3F"), _feed_range("3F", "7F"))
+        else:
+            assert await container.is_feed_range_subset(_feed_range("7F", "3F"), _feed_range("3F", "7F")) is False
+        assert (rust_compatibility_fallback_count(), _rust._debug_operation_count()) == before

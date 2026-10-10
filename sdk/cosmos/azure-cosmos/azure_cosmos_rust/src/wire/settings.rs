@@ -51,11 +51,6 @@ impl WireValue for i64 {
         self.to_string()
     }
 }
-impl WireValue for Vec<String> {
-    fn wire(self) -> String {
-        self.join(",")
-    }
-}
 
 #[derive(FromPyObject)]
 enum IndexingValue {
@@ -94,8 +89,6 @@ macro_rules! header_group {
 header_group!(item_headers, ITEM_FIELDS, {
     if_match: String => "if-match",
     if_none_match: String => "if-none-match",
-    pre_triggers: Vec<String> => "x-ms-documentdb-pre-trigger-include",
-    post_triggers: Vec<String> => "x-ms-documentdb-post-trigger-include",
     indexing_directive: IndexingValue => "x-ms-indexing-directive",
     max_staleness_ms: i64 => "x-ms-dedicatedgateway-max-age",
 });
@@ -199,6 +192,7 @@ pub(crate) fn extract_settings(prepared: &Bound<'_, PyAny>) -> PyResult<RequestH
     for pair in prepared.getattr("headers")?.call_method0("items")?.iter()? {
         let (key, value) = pair?.extract::<(String, String)>()?;
         let name = key.to_ascii_lowercase();
+        reject_trigger_header(&name)?;
         if name == "x-ms-activity-id" {
             raw_activity = Some(value.clone());
         }
@@ -207,7 +201,15 @@ pub(crate) fn extract_settings(prepared: &Bound<'_, PyAny>) -> PyResult<RequestH
         }
         custom_headers.insert(HeaderName::from(name), HeaderValue::from(value));
     }
-    item_headers(&settings.getattr("item")?, &mut custom_headers)?;
+    let item = settings.getattr("item")?;
+    for field in ["pre_triggers", "post_triggers"] {
+        if item.hasattr(field)? && !item.getattr(field)?.is_none() {
+            return Err(PyTypeError::new_err(format!(
+                "{field} is not supported by the Rust-backed APIs; triggers are excluded."
+            )));
+        }
+    }
+    item_headers(&item, &mut custom_headers)?;
     query_headers(&settings.getattr("query")?, &mut custom_headers)?;
     resource_headers(&settings.getattr("resource")?, &mut custom_headers)?;
     for (field, wire) in [
@@ -244,6 +246,11 @@ pub(crate) fn extract_settings(prepared: &Bound<'_, PyAny>) -> PyResult<RequestH
     let availability_strategy = if hedging.is_none() {
         None
     } else {
+        if hedging.hasattr("threshold_steps_ms")? {
+            return Err(PyTypeError::new_err(
+                "threshold_steps_ms is not supported by the Rust-backed APIs",
+            ));
+        }
         let enabled = optional::<bool>(&hedging, "enabled")?
             .ok_or_else(|| PyTypeError::new_err("hedging.enabled is required"))?;
         let threshold = optional::<u64>(&hedging, "threshold_ms")?;
@@ -276,8 +283,20 @@ pub(crate) fn extract_settings(prepared: &Bound<'_, PyAny>) -> PyResult<RequestH
         operation_timeout: None,
         availability_strategy,
         read_consistency_strategy: None,
+        patch_strategy: None,
         custom_headers,
     })
+}
+
+pub(crate) fn reject_trigger_header(name: &str) -> PyResult<()> {
+    if name.eq_ignore_ascii_case("x-ms-documentdb-pre-trigger-include")
+        || name.eq_ignore_ascii_case("x-ms-documentdb-post-trigger-include")
+    {
+        return Err(PyTypeError::new_err(format!(
+            "{name} is not supported by the Rust-backed APIs; triggers are excluded."
+        )));
+    }
+    Ok(())
 }
 
 #[cfg(test)]
@@ -323,6 +342,36 @@ mod tests {
             .unwrap()
             .call((), Some(&kwargs))
             .unwrap()
+    }
+
+    #[test]
+    fn excluded_trigger_and_step_inputs_are_rejected() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            for name in [
+                "X-MS-DOCUMENTDB-PRE-TRIGGER-INCLUDE",
+                "x-ms-documentdb-post-trigger-include",
+            ] {
+                let request = prepared(py);
+                request.getattr("headers").unwrap().set_item(name, "validateOrder").unwrap();
+                assert!(extract_settings(&request).err().unwrap().is_instance_of::<PyTypeError>(py));
+            }
+            for field in ["pre_triggers", "post_triggers"] {
+                let request = prepared(py);
+                request.getattr("settings").unwrap().getattr("item").unwrap()
+                    .setattr(field, vec!["validateOrder"]).unwrap();
+                assert!(extract_settings(&request).err().unwrap().is_instance_of::<PyTypeError>(py));
+            }
+            let request = prepared(py);
+            let hedging = PyDict::new_bound(py);
+            hedging.set_item("enabled", true).unwrap();
+            hedging.set_item("threshold_ms", 100).unwrap();
+            hedging.set_item("threshold_steps_ms", 50).unwrap();
+            let namespace = py.import_bound("types").unwrap().getattr("SimpleNamespace").unwrap()
+                .call((), Some(&hedging)).unwrap();
+            request.getattr("settings").unwrap().setattr("hedging", namespace).unwrap();
+            assert!(extract_settings(&request).err().unwrap().is_instance_of::<PyTypeError>(py));
+        });
     }
 
     #[test]
@@ -406,9 +455,6 @@ mod tests {
                 let obj = settings.getattr(group).unwrap();
                 for field in names {
                     match *field {
-                        "pre_triggers" | "post_triggers" => {
-                            obj.setattr(*field, vec!["a", "b"]).unwrap()
-                        }
                         "indexing_directive"
                         | "max_staleness_ms"
                         | "max_item_count"
@@ -444,12 +490,9 @@ mod tests {
                 result.content_response_on_write,
                 ContentResponseOnWrite::Disabled
             );
-            assert_eq!(
-                result.custom_headers
-                    [&HeaderName::from_static("x-ms-documentdb-pre-trigger-include")]
-                    .as_str(),
-                "a,b"
-            );
+            assert!(!result.custom_headers.contains_key(
+                &HeaderName::from_static("x-ms-documentdb-pre-trigger-include")
+            ));
             assert_eq!(
                 result.custom_headers[&HeaderName::from_static("x-ms-max-item-count")].as_str(),
                 "7"

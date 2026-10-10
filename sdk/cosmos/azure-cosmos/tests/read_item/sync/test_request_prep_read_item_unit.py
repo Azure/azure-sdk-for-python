@@ -209,18 +209,15 @@ def test_initial_headers_are_flattened_into_outer_headers():
 # ---------------------------------------------------------------------------
 
 
-def test_post_trigger_include_lands_as_option_key():
-    """``post_trigger_include='auditRead'`` lands as the ``postTriggerInclude``
-    option key in the headers map (the binding then turns it into
-    ``x-ms-documentdb-post-trigger-include``)."""
-    prepared = prepare_read_item_request(
-        container_link="dbs/d/colls/c",
-        item_id="x",
-        partition_key_value="a",
-        container_rid=None,
-        kwargs={"post_trigger_include": "auditRead"},
-    )
-    assert wire_headers(prepared)["x-ms-documentdb-post-trigger-include"] == "auditRead"
+def test_post_trigger_include_is_rejected():
+    with pytest.raises(TypeError, match="triggers are excluded"):
+        prepare_read_item_request(
+            container_link="dbs/d/colls/c",
+            item_id="x",
+            partition_key_value="a",
+            container_rid=None,
+            kwargs={"post_trigger_include": "auditRead"},
+        )
 
 
 def test_priority_high_lands_as_option_key():

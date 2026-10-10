@@ -20,7 +20,7 @@ use azure_data_cosmos_driver::{
     options::{
         AvailabilityStrategy, BinaryEncodingOptions, ContentResponseOnWrite,
         EndToEndOperationLatencyPolicy, ExcludedRegions, OperationOptionsBuilder,
-        ReadConsistencyStrategy,
+        PatchStrategy, ReadConsistencyStrategy,
     },
 };
 
@@ -71,6 +71,7 @@ pub(crate) struct RequestHeadersAndOptions {
     pub(crate) availability_strategy: Option<AvailabilityStrategy>,
     // Read-item entry points validate once, before driver lookup or async dispatch.
     pub(crate) read_consistency_strategy: Option<ReadConsistencyStrategy>,
+    pub(crate) patch_strategy: Option<PatchStrategy>,
     pub(crate) custom_headers: HashMap<HeaderName, HeaderValue>,
 }
 

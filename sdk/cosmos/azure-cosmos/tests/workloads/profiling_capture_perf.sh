@@ -79,14 +79,15 @@ if [[ ! "${PERF_SCHED_DURATION}" =~ ^[1-9][0-9]*$ ]]; then
   _perf_failed=1
 fi
 
-if [[ "${_perf_failed}" -eq 0 ]] && ! sudo -v; then
-  echo "ERROR: sudo permission is required for Linux perf." >&2
+if [[ "${_perf_failed}" -eq 0 ]] && ! sudo -n perf --version; then
+  echo "ERROR: non-interactive sudo permission is required for Linux perf." >&2
+  echo "       Authorize perf before starting the capture; no password prompt is attempted." >&2
   _perf_failed=1
 fi
 
 if [[ "${_perf_failed}" -eq 0 ]]; then
   echo "=== Recording all workload threads for ${PERF_CAPTURE_DURATION}s ==="
-  sudo perf record \
+  sudo -n perf record \
     --event cpu-clock \
     --pid "${WORKLOAD_PID}" \
     --freq "${PERF_SAMPLE_FREQUENCY}" \
@@ -109,7 +110,7 @@ fi
 
 if [[ "${_perf_failed}" -eq 0 ]]; then
   echo "=== Writing a readable all-thread report ==="
-  sudo perf report \
+  sudo -n perf report \
     --stdio \
     --input "${PROFILING_SESSION_DIR}/perf.data" \
     --sort comm,dso,symbol \
@@ -133,7 +134,7 @@ fi
 
 if [[ "${_perf_failed}" -eq 0 && "${PERF_CAPTURE_SCHED}" == "true" ]]; then
   echo "=== Recording scheduler states for ${PERF_SCHED_DURATION}s ==="
-  sudo perf sched record \
+  sudo -n perf sched record \
     --all-cpus \
     --output "${PROFILING_SESSION_DIR}/perf-sched.data" \
     -- sleep "${PERF_SCHED_DURATION}" \
@@ -142,7 +143,7 @@ if [[ "${_perf_failed}" -eq 0 && "${PERF_CAPTURE_SCHED}" == "true" ]]; then
   if [[ "${_perf_sched_record_rc[*]}" != "0 0" ]]; then
     echo "ERROR: scheduler capture or its log write failed: ${_perf_sched_record_rc[*]}." >&2
     _perf_failed=1
-  elif ! sudo perf sched timehist \
+  elif ! sudo -n perf sched timehist \
     --input "${PROFILING_SESSION_DIR}/perf-sched.data" \
     --pid "${WORKLOAD_PID}" \
     >"${PROFILING_SESSION_DIR}/perf-sched-timehist.txt" \

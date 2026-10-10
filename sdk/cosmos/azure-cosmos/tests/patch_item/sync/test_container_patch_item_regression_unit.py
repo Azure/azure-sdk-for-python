@@ -11,8 +11,7 @@ the patch sends on. They check two things:
 1. When no Rust backend is set, the patch goes to the existing client with
    the right item, the operations unchanged, the filter, the partition
    key, and the options.
-2. Routing: plain and If-Match patches use Rust. Unsupported filters raise
-   without legacy replay.
+2. Routing: plain, If-Match, and filtered patches use Rust without legacy replay.
 """
 from common.typed_requests import wire_headers, settings_options, legacy_settings
 import json
@@ -248,20 +247,19 @@ class TestContainerPatchItemBackendRouting(unittest.TestCase):
             ]},
         )
 
-    def test_filter_predicate_patch_raises_without_legacy(self):
-        """Unsupported filters fail without crossing engines."""
+    def test_filter_predicate_patch_uses_rust_without_legacy(self):
+        """Filtered patches reach the selected backend with the condition intact."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()
         cc._backend = backend
         proxy._item_context = ItemClientContext(backend)
 
-        with self.assertRaises(NotImplementedError):
-            proxy.patch_item(
-                "patch_item", "a", _OPERATIONS,
-                filter_predicate="from root where root.number = 3",
-            )
+        proxy.patch_item(
+            "patch_item", "a", _OPERATIONS,
+            filter_predicate="from root where root.number = 3",
+        )
 
-        self.assertFalse(backend.executed)
+        self.assertTrue(backend.executed)
         cc.PatchItem.assert_not_called()
 
     def test_version_guarded_patch_uses_rust_without_legacy(self):

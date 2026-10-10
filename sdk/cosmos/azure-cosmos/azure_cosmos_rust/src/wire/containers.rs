@@ -469,6 +469,7 @@ mod tests {
             operation_timeout: None,
             availability_strategy: None,
             read_consistency_strategy: None,
+            patch_strategy: None,
             custom_headers: [(
                 HeaderName::from_static("if-none-match"),
                 HeaderValue::from_static("*"),

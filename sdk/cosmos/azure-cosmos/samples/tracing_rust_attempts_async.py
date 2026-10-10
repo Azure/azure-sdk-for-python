@@ -3,47 +3,186 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Private Rust-backed create proof with locally inspected spans.
+"""Public Rust-backed create/read proof with locally inspected spans.
 
 Set COSMOSDBCONNECTIONSTRING to an authorized test account. Database sales and
 container orders must already exist with partition key /customerId. The sample
 creates and removes one unique synthetic order; it never changes the resources.
 Use --conflict for a setup create followed by a measured duplicate create.
 Without that flag, the measured call is the original Bite 15 successful create.
+Use --read for a successful read of the setup order, or --read-missing for
+a read of a different, absent ID returning 404. Only the measured client
+request is inspected or optionally exported.
 OpenTelemetry, its SDK, and a rebuilt azure.cosmos._rust extension are required.
+Use --azure-monitor to also export an allowlisted copy of the measured trace.
+Install samples/requirements-telemetry.txt and set
+APPLICATIONINSIGHTS_CONNECTION_STRING in the same terminal first. Local-only
+remains the default. Export success is not proof of visibility in Azure.
 """
 
 import argparse
 import asyncio
 from datetime import datetime, timezone
 import json
+import logging
 import os
 from pathlib import Path
 import sys
+import threading
+from typing import Optional, Sequence
 import uuid
+
+from opentelemetry import trace
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace import ReadableSpan, TracerProvider
+from opentelemetry.sdk.trace.export import (
+    BatchSpanProcessor,
+    SimpleSpanProcessor,
+    SpanExporter,
+    SpanExportResult,
+)
+from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 
 from azure.core.settings import settings
 from azure.cosmos import _rust
 from azure.cosmos.aio import CosmosClient
-from azure.cosmos.aio._telemetry_poc import create_item_with_attempt_tracing
 from azure.cosmos.exceptions import CosmosResourceExistsError, CosmosResourceNotFoundError
-from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor
-from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+
+_PROOF_RESOURCE = Resource(
+    {
+        "service.name": "cosmos-rust-telemetry-proof",
+        "service.instance.id": "synthetic-proof",
+    }
+)
+_PROOF_NAMES = frozenset(("checkout", "ContainerProxy.create_item", "ContainerProxy.read_item", "cosmosdb.request"))
+_PROOF_ATTRIBUTES = frozenset(
+    (
+        "cosmos.poc.request_count",
+        "cosmos.poc.retained_request_count",
+        "cosmos.poc.driver_status_code",
+        "cosmos.poc.execution_context",
+    )
+)
+_LOGGER = logging.getLogger(__name__)
 
 
-async def run_proof(exporter, *, conflict=False):
-    proof_name = "telemetry-bite22" if conflict else "telemetry-bite15"
+class MeasuredTraceExporter(SpanExporter):
+    """Send only sanitized measured spans; retain export outcomes for the proof.
+
+    :param delegate: Exporter receiving the sanitized spans.
+    :type delegate: ~opentelemetry.sdk.trace.export.SpanExporter
+    """
+
+    def __init__(self, delegate: SpanExporter) -> None:
+        self.delegate = delegate
+        self.trace_id: Optional[int] = None
+        self.exported = 0
+        self.failed = False
+        self._lock = threading.Lock()
+
+    def export(self, spans: Sequence[ReadableSpan]) -> SpanExportResult:
+        selected = [
+            ReadableSpan(
+                name=span.name,
+                context=span.context,
+                parent=span.parent,
+                resource=_PROOF_RESOURCE,
+                kind=span.kind,
+                start_time=span.start_time,
+                end_time=span.end_time,
+                status=trace.Status(span.status.status_code),
+                attributes={k: v for k, v in span.attributes.items() if k in _PROOF_ATTRIBUTES},
+            )
+            for span in spans
+            if span.context.trace_id == self.trace_id and span.name in _PROOF_NAMES
+        ]
+        if not selected:
+            return SpanExportResult.SUCCESS
+        try:
+            result = self.delegate.export(selected)
+        # Exporters may raise arbitrary errors containing private configuration.
+        except Exception:  # pylint: disable=broad-exception-caught
+            result = SpanExportResult.FAILURE
+        with self._lock:
+            if result == SpanExportResult.SUCCESS:
+                self.exported += len(selected)
+            else:
+                self.failed = True
+                _LOGGER.error("Azure trace export failed; destination visibility is not established.")
+        return result
+
+    def verify(self, expected_count: int) -> None:
+        with self._lock:
+            if self.failed or self.exported != expected_count:
+                raise RuntimeError(
+                    f"Azure export incomplete: {self.exported}/{expected_count} spans reported successful; "
+                    "check exporter diagnostics and destination access. Do not rerun a database write "
+                    "just to retry telemetry."
+                )
+
+    def shutdown(self) -> None:
+        self.delegate.shutdown()
+
+
+def configure_recording(
+    azure_monitor: bool = False,
+) -> tuple[TracerProvider, InMemorySpanExporter, Optional[MeasuredTraceExporter]]:
+    azure_exporter = None
+    if azure_monitor:
+        connection_string = os.environ.get("APPLICATIONINSIGHTS_CONNECTION_STRING", "").strip()
+        if not connection_string:
+            raise ValueError(
+                "--azure-monitor requires APPLICATIONINSIGHTS_CONNECTION_STRING in this process. "
+                "Set it locally in the same terminal; do not paste it into chat."
+            )
+        # This standalone proof sends traces only, not exporter health/resource metrics.
+        for name in (
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL",
+            "APPLICATIONINSIGHTS_SDKSTATS_DISABLED",
+            "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED",
+            "APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED",
+        ):
+            os.environ[name] = "true"
+        from azure.monitor.opentelemetry.exporter import (
+            ApplicationInsightsSampler,
+            AzureMonitorTraceExporter,
+        )
+
+        provider = TracerProvider(resource=_PROOF_RESOURCE, sampler=ApplicationInsightsSampler(1.0))
+        try:
+            delegate = AzureMonitorTraceExporter(
+                connection_string=connection_string,
+                disable_offline_storage=True,
+                tracer_provider=provider,
+            )
+        except Exception:
+            provider.shutdown()
+            raise ValueError(
+                "Could not initialize Azure export; check local connection string and authentication."
+            ) from None
+        azure_exporter = MeasuredTraceExporter(delegate)
+        provider.add_span_processor(BatchSpanProcessor(azure_exporter))
+    else:
+        provider = TracerProvider()
+    local_exporter = InMemorySpanExporter()
+    provider.add_span_processor(SimpleSpanProcessor(local_exporter))
+    return provider, local_exporter, azure_exporter
+
+
+async def run_proof(exporter, *, conflict=False, read=False, not_found=False, azure_exporter=None):
+    if (not_found and not read) or (conflict and read):
+        raise ValueError("A read proof cannot measure a create conflict; not_found requires read")
+    proof_name = "telemetry-bite26" if read else ("telemetry-bite22" if conflict else "telemetry-bite15")
+    operation_name = "ContainerProxy.read_item" if read else "ContainerProxy.create_item"
+    expected_driver_status = 404 if not_found else (200 if read else (409 if conflict else 201))
+    failed = conflict or not_found
     order = {
         "id": proof_name + "-" + uuid.uuid4().hex,
         "customerId": proof_name,
         "total": 125.5,
     }
     # The selector is private migration scaffolding, not a customer-facing option.
-    async with CosmosClient.from_connection_string(
-        os.environ["COSMOSDBCONNECTIONSTRING"], _backend="rust"
-    ) as client:
+    async with CosmosClient.from_connection_string(os.environ["COSMOSDBCONNECTIONSTRING"], _backend="rust") as client:
         container = client.get_database_client("sales").get_container_client("orders")
         properties = await container.read()
         if properties["partitionKey"]["paths"] != ["/customerId"]:
@@ -51,45 +190,46 @@ async def run_proof(exporter, *, conflict=False):
         created = False
         public_exception = None
         try:
-            if conflict:
-                await container.create_item(order, no_response=False, timeout=30)
+            if conflict or read:
+                await container.create_item(order, no_response=False, timeout=30, tracing_options={"enabled": False})
                 created = True
             exporter.clear()
             with trace.get_tracer("customer.checkout").start_as_current_span("checkout") as checkout:
-                if conflict:
-                    try:
-                        await create_item_with_attempt_tracing(
-                            container, order, no_response=False, timeout=30
-                        )
-                    except CosmosResourceExistsError as error:
-                        if error.status_code != 409:
-                            raise AssertionError("Expected conflict status 409") from error
-                        response_headers = error.headers
-                        public_exception = type(error).__name__
+                if azure_exporter is not None:
+                    azure_exporter.trace_id = checkout.get_span_context().trace_id
+                try:
+                    if read:
+                        target = order["id"] + "-missing" if not_found else order["id"]
+                        result = await container.read_item(target, partition_key=order["customerId"], timeout=30)
                     else:
-                        raise AssertionError("The duplicate create unexpectedly succeeded")
+                        result = await container.create_item(order, no_response=False, timeout=30)
+                        created = True
+                except (CosmosResourceExistsError, CosmosResourceNotFoundError) as error:
+                    if not failed or error.status_code != expected_driver_status:
+                        raise
+                    response_headers = error.headers
+                    public_exception = type(error).__name__
                 else:
-                    result = await create_item_with_attempt_tracing(
-                        container, order, no_response=False, timeout=30
-                    )
-                    created = True
+                    if failed:
+                        raise AssertionError("The expected failing operation unexpectedly succeeded")
                     if result["id"] != order["id"]:
-                        raise AssertionError("The created order ID differs from the submitted ID")
+                        raise AssertionError("The returned order ID differs from the expected ID")
+                    if read and any(result[key] != value for key, value in order.items()):
+                        raise AssertionError("The measured read did not return the saved order")
                     response_headers = result.get_response_headers()
-            read = await container.read_item(order["id"], partition_key=order["customerId"])
-            if any(read[key] != value for key, value in order.items()):
+            saved = await container.read_item(
+                order["id"], partition_key=order["customerId"], tracing_options={"enabled": False}
+            )
+            if any(saved[key] != value for key, value in order.items()):
                 raise AssertionError("The service backend did not return the saved order")
             trace_id = checkout.get_span_context().trace_id
-            spans = [
-                span for span in exporter.get_finished_spans()
-                if span.context.trace_id == trace_id
-            ]
-            operations = [span for span in spans if span.name == "ContainerProxy.create_item"]
+            spans = [span for span in exporter.get_finished_spans() if span.context.trace_id == trace_id]
+            operations = [span for span in spans if span.name == operation_name]
             attempts = [span for span in spans if span.name == "cosmosdb.request"]
             if len(operations) != 1:
-                raise AssertionError("Expected exactly one create operation span")
+                raise AssertionError("Expected exactly one measured operation span")
             operation = operations[0]
-            expected_status = trace.StatusCode.ERROR if conflict else trace.StatusCode.UNSET
+            expected_status = trace.StatusCode.ERROR if failed else trace.StatusCode.UNSET
             if operation.status.status_code is not expected_status:
                 raise AssertionError("The operation span status differs from the public outcome")
             total = operation.attributes["cosmos.poc.request_count"]
@@ -106,7 +246,6 @@ async def run_proof(exporter, *, conflict=False):
                 if attempt.kind is not trace.SpanKind.CLIENT:
                     raise AssertionError("Expected a client attempt span")
             terminal = max(attempts, key=lambda span: span.end_time)
-            expected_driver_status = 409 if conflict else 201
             if terminal.attributes["cosmos.poc.driver_status_code"] != expected_driver_status:
                 raise AssertionError("The last completed attempt has an unexpected driver status")
             if not response_headers.get("x-ms-cosmos-sdk-diagnostics"):
@@ -116,16 +255,14 @@ async def run_proof(exporter, *, conflict=False):
                 "binding": Path(_rust.__file__).name,
                 "database": "sales",
                 "container": "orders",
-                "mode": "conflict" if conflict else "success",
+                "mode": "read-missing" if not_found else ("read" if read else ("conflict" if conflict else "success")),
                 "public_exception": public_exception,
                 "expected_status": expected_driver_status,
                 "saved_order_verified": True,
                 "trace_id": f"{trace_id:032x}",
                 "request_count": total,
                 "retained_request_count": retained,
-                "diagnostic_text_present": bool(
-                    response_headers.get("x-ms-cosmos-sdk-diagnostics")
-                ),
+                "diagnostic_text_present": bool(response_headers.get("x-ms-cosmos-sdk-diagnostics")),
                 "spans": [
                     {
                         "name": span.name,
@@ -135,8 +272,7 @@ async def run_proof(exporter, *, conflict=False):
                         "end_ns": span.end_time,
                         "status": span.status.status_code.name,
                         "attributes": {
-                            key: value for key, value in span.attributes.items()
-                            if key.startswith("cosmos.poc.")
+                            key: value for key, value in span.attributes.items() if key.startswith("cosmos.poc.")
                         },
                     }
                     for span in spans
@@ -169,19 +305,38 @@ async def run_proof(exporter, *, conflict=False):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--conflict", action="store_true", help="Measure a duplicate create returning 409")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--conflict", action="store_true", help="Measure a duplicate create returning 409")
+    mode.add_argument("--read", action="store_true", help="Measure a read of the setup order returning 200")
+    mode.add_argument("--read-missing", action="store_true", help="Measure a read of an absent ID returning 404")
+    parser.add_argument("--azure-monitor", action="store_true", help="Also send the sanitized measured trace to Azure")
     args = parser.parse_args()
-    provider = TracerProvider()
-    exporter = InMemorySpanExporter()
-    provider.add_span_processor(SimpleSpanProcessor(exporter))
+    provider, exporter, azure_exporter = configure_recording(args.azure_monitor)
     trace.set_tracer_provider(provider)
     settings.tracing_enabled = True
     settings.tracing_implementation = None
     try:
-        evidence = asyncio.run(run_proof(exporter, conflict=args.conflict))
+        evidence = asyncio.run(
+            run_proof(
+                exporter,
+                conflict=args.conflict,
+                read=args.read or args.read_missing,
+                not_found=args.read_missing,
+                azure_exporter=azure_exporter,
+            )
+        )
+        # Preserve the local proof and correlation ID even if delivery fails.
+        print(json.dumps(evidence, indent=2), flush=True)
         if not provider.force_flush():
-            raise RuntimeError("The local exporter did not flush successfully")
-        print(json.dumps(evidence, indent=2))
+            raise RuntimeError("Span processors did not flush successfully; Azure visibility is unverified.")
+        if azure_exporter is not None:
+            azure_exporter.verify(len(evidence["spans"]))
+            print(
+                f"Azure exporter reported success for {azure_exporter.exported} measured spans. "
+                f"Verify operation_Id == '{evidence['trace_id']}' in Application Insights Logs; "
+                "ingestion visibility has not yet been checked.",
+                file=sys.stderr,
+            )
     finally:
         provider.shutdown()
 

@@ -6,8 +6,8 @@
 """Tests for the async patch path (no network).
 
 The async version of the sync patch tests. They check that options the
-caller passes are kept, that a plain patch goes to the Rust backend, and
-that a patch with a filter goes to the existing client instead.
+caller passes are kept, and that plain and filtered patches use the Rust
+backend without legacy replay.
 """
 import unittest
 from unittest.mock import AsyncMock, MagicMock
@@ -100,20 +100,19 @@ class TestAsyncContainerPatchItemRouting(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(backend.prepared.op, OP_PATCH_ITEM)
         self.assertEqual(backend.prepared.item_id, "patch_item")
 
-    async def test_filter_predicate_patch_raises_without_legacy(self):
-        """An unsupported filter fails without crossing engines."""
+    async def test_filter_predicate_patch_uses_rust_without_legacy(self):
+        """Filtered patches use the selected backend without legacy replay."""
         proxy, cc = _make_async_proxy()
         backend = _CapturingAsyncBackend()
         cc._backend = backend
         proxy._item_context = ItemClientContext(backend)
 
-        with self.assertRaises(NotImplementedError):
-            await proxy.patch_item(
-                "patch_item", "a", _OPERATIONS,
-                filter_predicate="from root where root.number = 3",
-            )
+        await proxy.patch_item(
+            "patch_item", "a", _OPERATIONS,
+            filter_predicate="from root where root.number = 3",
+        )
 
-        self.assertFalse(backend.executed)
+        self.assertTrue(backend.executed)
         cc.PatchItem.assert_not_awaited()
 
 

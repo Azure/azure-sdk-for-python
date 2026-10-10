@@ -4,6 +4,7 @@
 
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import nullcontext
 import importlib
 import json
 import math
@@ -39,6 +40,12 @@ class Rows:
 
     def upsert_item(self, row):
         self.rows.append(row)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        pass
 
 
 def measurement(modules, **changes):
@@ -737,7 +744,9 @@ def test_profiling_report_identifier_selects_existing_rows(modules, monkeypatch,
             selections.append(kwargs["parameters"][-1]["value"])
             return []
 
-    monkeypatch.setattr(module, "_connect", lambda: SelectedRows())
+    monkeypatch.setattr(module, "_connect", lambda: (
+        nullcontext(SelectedRows()) if name == "perf_validate" else SelectedRows()
+    ))
     monkeypatch.setattr(sys, "argv", [name, flag, STAMP])
     with pytest.raises(SystemExit) as exc:
         module.main()
@@ -757,6 +766,94 @@ def test_profiling_report_rejects_conflicting_identifier_flags(modules, monkeypa
     with pytest.raises(SystemExit) as exc:
         module.main()
     assert exc.value.code == 2
+
+
+@pytest.mark.parametrize("outcome", ["pass", "fail", "missing", "query-error", "container-error"])
+def test_integrity_report_closes_results_client(modules, monkeypatch, outcome):
+    module = modules["perf_validate"]
+    events = []
+
+    class Client:
+        def __init__(self, uri, key):
+            assert (uri, key) == ("https://example.invalid", "test-key")
+
+        def __enter__(self):
+            events.append("enter")
+            return self
+
+        def __exit__(self, *exc):
+            events.append("close")
+
+        def get_database_client(self, _):
+            return self
+
+        def get_container_client(self, _):
+            if outcome == "container-error":
+                raise RuntimeError("container setup failed")
+            return Rows()
+
+    def quality(*_):
+        if outcome == "query-error":
+            raise RuntimeError("query failed")
+        return outcome != "fail", []
+
+    monkeypatch.setenv("RESULTS_COSMOS_URI", "https://example.invalid")
+    monkeypatch.setenv("RESULTS_COSMOS_KEY", "test-key")
+    monkeypatch.setattr(module, "CosmosClient", Client)
+    monkeypatch.setattr(module, "_latest_run_id", lambda *_: "")
+    monkeypatch.setattr(module, "check_quality", quality)
+    for name in ("check_continuity", "check_warnings", "check_backend_execution", "check_completion"):
+        monkeypatch.setattr(module, name, lambda *_, **__: (True, []))
+    monkeypatch.setattr(sys, "argv", ["perf_validate"] + (
+        [] if outcome == "missing" else ["--run-id", STAMP]
+    ))
+    expected = RuntimeError if outcome.endswith("error") else SystemExit
+    with pytest.raises(expected) as exc:
+        module.main()
+    if expected is SystemExit:
+        assert exc.value.code == {"pass": 0, "fail": 1, "missing": 2}[outcome]
+    assert events == ["enter", "close"]
+
+
+@pytest.mark.parametrize("outcome", [0, 1, 2, "query-error", "container-error"])
+def test_latency_report_closes_results_client(modules, monkeypatch, outcome):
+    module = modules["latency_report"]
+    events = []
+
+    class Client:
+        def __init__(self, uri, key):
+            assert (uri, key) == ("https://example.invalid", "test-key")
+
+        def __enter__(self):
+            events.append("enter")
+            return self
+
+        def __exit__(self, *exc):
+            events.append("close")
+
+        def get_database_client(self, _):
+            return self
+
+        def get_container_client(self, _):
+            if outcome == "container-error":
+                raise RuntimeError("container setup failed")
+            return Rows()
+
+    def report(*_):
+        if outcome == "query-error":
+            raise RuntimeError("query failed")
+        raise SystemExit(outcome)
+
+    monkeypatch.setenv("RESULTS_COSMOS_URI", "https://example.invalid")
+    monkeypatch.setenv("RESULTS_COSMOS_KEY", "test-key")
+    monkeypatch.setattr(module, "CosmosClient", Client)
+    monkeypatch.setattr(module, "_run_report", report)
+    monkeypatch.setattr(sys, "argv", ["latency_report", "--run-id", STAMP])
+    with pytest.raises(RuntimeError if isinstance(outcome, str) else SystemExit) as exc:
+        module.main()
+    if isinstance(outcome, int):
+        assert exc.value.code == outcome
+    assert events == ["enter", "close"]
 
 
 def test_build_check_accepts_current_counter_exports(monkeypatch):
@@ -1449,6 +1546,88 @@ def test_captures_preserve_configuration_before_launch(tmp_path, script):
     assert result.returncode == 2, result.stdout + result.stderr
     assert (tmp_path / "settings.txt").read_text().strip() == "123/7/17/true/true"
     assert not (tmp_path / "launched.txt").exists()
+
+
+@pytest.mark.parametrize("summary,accepted", [
+    ("Samples: 21101 Errors: 0", True),
+    ("Samples: 21101 Errors: 21", False),
+    ("Samples: 0 Errors: 0", False),
+    ("Samples: 21101 Errors: 01", False),
+    ("Samples: 21101 Errors: 0 trailing text", False),
+    ("recording ended without a summary", False),
+    ("behind in sampling\nSamples: 21101 Errors: 0", False),
+    ("failed to read\nSamples: 21101 Errors: 0", False),
+])
+def test_py_spy_capture_requires_error_free_sample_summary(tmp_path, summary, accepted):
+    script = (WORKLOADS / "profiling_capture_py_spy.sh").read_text(encoding="utf-8")
+    start = script.index('if [[ "${_py_spy_failed}" -eq 0 ]]; then\n'
+                         '  echo "=== Recording Python-visible stacks')
+    end = script.index('if [[ "${_py_spy_failed}" -eq 0 ]]; then\n'
+                       '  echo "=== Capturing one searchable', start)
+    (tmp_path / "summary.txt").write_text(summary + "\n", encoding="utf-8")
+    command = (
+        'py-spy() {\n'
+        ' test "$RUST_LOG" = warn || return 8\n'
+        ' printf "<svg>workload</svg>\\n" > "$PY_SPY_SVG"\n'
+        ' cat summary.txt\n'
+        '}\n'
+        '_py_spy_failed=0\nWORKLOAD_PID=123\nPY_SPY_DURATION=60\nPY_SPY_RATE=100\n'
+        'PY_SPY_SVG=recording.svg\nPY_SPY_LOG=recording.log\n'
+        + script[start:end] + '\nexit "$_py_spy_failed"\n'
+    )
+    result = subprocess.run([bash_executable(), "-c", command], cwd=tmp_path,
+                            capture_output=True, text=True, timeout=15)
+    assert (result.returncode == 0) == accepted, result.stdout + result.stderr
+    assert (tmp_path / "recording.svg").exists()
+    assert (tmp_path / "recording.log").read_text().strip() == summary
+    if not accepted:
+        assert "ERROR:" in result.stderr
+
+
+@pytest.mark.parametrize("authorized", [True, False])
+def test_perf_capture_uses_command_permission_and_never_password_validation(tmp_path, authorized):
+    shutil.copyfile(WORKLOADS / "profiling_capture_perf.sh", tmp_path / "profiling_capture_perf.sh")
+    (tmp_path / "smaps-before.txt").write_text("before\n", encoding="utf-8")
+    (tmp_path / "profiling_common.sh").write_text(
+        'WORKLOAD_PID=123\nPROFILING_SESSION_DIR="$PWD"\n'
+        f'PROFILING_CAPTURE_ID={STAMP}\n'
+        'workload_is_running() { return 0; }\n'
+        'cleanup_workload() { WORKLOAD_RC=0; echo cleaned > cleanup.txt; }\n'
+        'sudo() {\n'
+        ' printf "%s\\n" "$*" >> sudo.txt\n'
+        ' [[ "$1" == -n && "$2" == perf ]] || return 98\n'
+        ' shift 2\n'
+        ' if [[ "$1" == --version ]]; then\n'
+        f'  return {0 if authorized else 1}\n'
+        ' fi\n'
+        ' if [[ "$1" == record ]]; then\n'
+        '  echo perf-data > perf.data\n'
+        ' elif [[ "$1" == report ]]; then\n'
+        '  echo python3\n'
+        ' else return 99\n'
+        ' fi\n'
+        '}\n'
+        'perf() { return 99; }\n'
+        'pidstat() { echo process-data; }\n'
+        'c++filt() { command cat; }\n'
+        'cat() { if [[ "$1" == /proc/*/smaps_rollup ]]; then echo after; else command cat "$@"; fi; }\n'
+        'ps() { echo threads; }\n'
+        'python3() { echo health-or-integrity; }\n',
+        encoding="utf-8",
+    )
+    env = {key: value for key, value in os.environ.items() if not key.startswith("PERF_CAPTURE_")}
+    result = subprocess.run([bash_executable(), "-c", "source ./profiling_capture_perf.sh"],
+                            cwd=tmp_path, env=env, capture_output=True, text=True, timeout=15)
+    assert (result.returncode == 0) == authorized, result.stdout + result.stderr
+    assert (tmp_path / "cleanup.txt").read_text().strip() == "cleaned"
+    commands = (tmp_path / "sudo.txt").read_text().splitlines()
+    assert commands[0] == "-n perf --version"
+    assert len(commands) == (3 if authorized else 1)
+    assert all(command.startswith("-n perf ") for command in commands)
+    if authorized:
+        assert commands[1].startswith("-n perf record ")
+        assert commands[2].startswith("-n perf report ")
+        assert (tmp_path / "profile-integrity.txt").exists()
 
 
 def test_transport_check_rejects_saved_target_mismatch_before_read(tmp_path):

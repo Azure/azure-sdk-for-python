@@ -9,7 +9,7 @@ These pin ``build_patch_operations_payload`` and
 ``prepare_patch_item_request``.
 
 The body uses canonical ``incr`` instructions. Caller If-Match is forwarded;
-unsupported filters and If-None-Match are rejected without legacy replay.
+filter conditions are sent in the body; If-None-Match is rejected without legacy replay.
 """
 from __future__ import annotations
 from common.typed_requests import legacy_partition_key_from_request
@@ -85,13 +85,17 @@ def test_input_operations_are_not_mutated():
     assert original[0]["op"] == "incr"  # still the public spelling
 
 
-def test_payload_never_carries_a_condition():
-    """The payload builder takes only the operations; there is no way for a
-    ``condition`` (a filter_predicate) to land in the body the driver reads
-    -- filtered Rust patches are rejected before dispatch."""
+def test_payload_omits_an_unspecified_condition():
+    """Unfiltered patches preserve their original operations-only body."""
     payload = build_patch_operations_payload([_SET_OP])
     assert "condition" not in payload
     assert set(payload.keys()) == {"operations"}
+
+
+def test_payload_carries_the_filter_condition():
+    assert build_patch_operations_payload([_SET_OP], filter_predicate="FROM c WHERE c.n = 1") == {
+        "operations": [_SET_OP], "condition": "FROM c WHERE c.n = 1",
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -201,15 +205,11 @@ def test_trigger_priority_bucket_no_response_land_as_option_keys():
         partition_key_value="a",
         container_rid=None,
         kwargs={
-            "pre_trigger_include": "validateOrder",
-            "post_trigger_include": "auditOrder",
             "priority": "High",
             "throughput_bucket": 1,
             "no_response": True,
         },
     )
-    assert wire_headers(prepared)["x-ms-documentdb-pre-trigger-include"] == "validateOrder"
-    assert wire_headers(prepared)["x-ms-documentdb-post-trigger-include"] == "auditOrder"
     assert wire_headers(prepared)["x-ms-cosmos-priority-level"] == "High"
     assert wire_headers(prepared)["x-ms-cosmos-throughput-bucket"] == '1'
     assert settings_options(prepared)["responsePayloadOnWriteDisabled"] is True
@@ -234,7 +234,7 @@ def test_compose_consumes_recognised_kwargs():
     """The option-shortcut keyword arguments the prep recognises are removed
     from the input dict, so the caller doesn't forward them again to the
     legacy path."""
-    kwargs = {"pre_trigger_include": "validateOrder", "extra_unknown": "left-alone"}
+    kwargs = {"priority": "High", "extra_unknown": "left-alone"}
     prepare_patch_item_request(
         container_link="dbs/d/colls/c",
         item_id="x",
@@ -243,8 +243,7 @@ def test_compose_consumes_recognised_kwargs():
         container_rid=None,
         kwargs=kwargs,
     )
-    assert kwargs["pre_trigger_include"] == "validateOrder"
-    assert kwargs == {"pre_trigger_include": "validateOrder", "extra_unknown": "left-alone"}
+    assert kwargs == {"priority": "High", "extra_unknown": "left-alone"}
 
 
 # ---------------------------------------------------------------------------

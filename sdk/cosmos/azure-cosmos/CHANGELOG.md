@@ -10,12 +10,15 @@
 
 #### Breaking Changes
 
+* For the Rust-backed release, reject trigger options and headers and exclude Cosmos user/permission APIs and stored-procedure, trigger, and UDF definition APIs, including stored-procedure execution; SQL invocation of deployed UDFs remains supported.
+* Rust-backed client and per-operation hedging configuration now rejects `threshold_steps_ms`; use `threshold_ms` for one alternate attempt.
 * Synchronous `ContainerProxy.query_items()` now enables cross-partition execution by default when no partition key or feed range is supplied, matching async; explicit `enable_cross_partition_query=False` remains honored.
 * For v5, removed `DatabaseProxy.read_offer()` and `ContainerProxy.read_offer()`; use `get_throughput()` to read the same configured throughput.
 * Container `get_throughput()` now rejects unsupported Rust inputs instead of using legacy Python and isolates returned throughput from response-hook mutations.
 
 #### Bugs Fixed
 
+* Restored synchronous and asynchronous Rust-backed `patch_item()` filter conditions by forwarding them to service-side PATCH, preserving conditional rejection without legacy replay.
 * Restored legacy resource-ID validation for synchronous and asynchronous Rust-backed `upsert_item()` calls, including `TypeError` for a non-string ID, before backend execution.
 * Fixed container `get_throughput()` response-header retention, input-option ownership, missing-offer errors and recovery after container recreation.
 * Fixed `get_latest_session_token()` discarding a saved parent token when child observations leave an uncovered gap, and restored acceptance of a single simple token.

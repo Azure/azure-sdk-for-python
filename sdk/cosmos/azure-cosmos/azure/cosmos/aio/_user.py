@@ -34,6 +34,7 @@ from azure.cosmos import CosmosDict
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options
 from ..permission import Permission
+from .._backend.capabilities import require_legacy_api
 
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
@@ -57,6 +58,7 @@ class UserProxy:
         database_link: str,
         properties: Optional[CosmosDict] = None
     ) -> None:
+        require_legacy_api(client_connection, "UserProxy")
         self.client_connection = client_connection
         self.id = id
         self.user_link = "{}/users/{}".format(database_link, id)

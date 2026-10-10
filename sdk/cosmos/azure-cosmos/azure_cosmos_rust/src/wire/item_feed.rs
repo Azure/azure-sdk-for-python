@@ -699,6 +699,7 @@ mod tests {
             operation_timeout: None,
             availability_strategy: None,
             read_consistency_strategy: None,
+            patch_strategy: None,
             custom_headers: HashMap::from([(
                 HeaderName::from_static("x-ms-max-item-count"),
                 HeaderValue::from_static("2"),

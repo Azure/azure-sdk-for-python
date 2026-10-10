@@ -2137,12 +2137,13 @@ def test_build_client_config_hedging_true_uses_default_threshold():
     assert config.hedging_threshold_ms == 500
 
 
-def test_build_client_config_hedging_dict_uses_threshold_ms_and_drops_steps():
-    """A dict carries threshold_ms; threshold_steps_ms has no driver home."""
-    config = build_client_config(
-        None, availability_strategy={"threshold_ms": 20, "threshold_steps_ms": 10}
-    )
+def test_build_client_config_hedging_dict_uses_threshold_ms_and_rejects_steps():
+    config = build_client_config(None, availability_strategy={"threshold_ms": 20})
     assert config.hedging_threshold_ms == 20
+    with pytest.raises(TypeError, match="threshold_steps_ms"):
+        build_client_config(
+            None, availability_strategy={"threshold_ms": 20, "threshold_steps_ms": 10}
+        )
 
 
 def test_build_client_config_hedging_false_carries_nothing():

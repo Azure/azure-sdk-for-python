@@ -96,7 +96,7 @@ def test_driver_source_and_features_are_preserved():
     recorded state describes the other.
 
     The optional features are listed explicitly because they change what the driver can
-    do. Two are on for normal use; a separate one is on only for the driver's own tests,
+    do. Three are on for normal use; a separate one is on only for the driver's own tests,
     which is what keeps a built-in test service out of what customers receive.
     """
     workspace = _read_toml(PACKAGE_ROOT / "Cargo.toml")
@@ -110,7 +110,7 @@ def test_driver_source_and_features_are_preserved():
         assert dependency["workspace"] is True
         assert "path" not in dependency
     assert set(binding["dependencies"]["azure_data_cosmos_driver"]["features"]) == {
-        "__internal_native_query_plan", "fault_injection"
+        "__internal_native_query_plan", "fault_injection", "preview_patch"
     }
     assert binding["dev-dependencies"]["azure_data_cosmos_driver"]["features"] == [
         "__internal_in_memory_emulator"

@@ -64,7 +64,7 @@ from ..._operation_deadline import remaining_timeout
 from ...exceptions import CosmosClientTimeoutError
 
 from .cosmos_backend import AsyncCosmosBackend
-from .._telemetry_poc import emit_attempts, emit_exception_attempts, take_operation_parent
+from ..._telemetry import get_operation
 
 if TYPE_CHECKING:
     from azure.cosmos._rust import _ItemFeedCursor
@@ -392,7 +392,8 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
             raise NotImplementedError(
                 "AsyncBindingAdapter.execute does not yet support op={!r}.".format(prepared.op)
             )
-        attempt_parent = take_operation_parent(self) if prepared.op == "create_item" else None
+        operation = get_operation(self, prepared.op)
+        contribution = operation.begin_contribution() if operation is not None else None
         driver_handle = await self._ensure_driver_handle()
         # Record the selected binding function, not successful execution or
         # service I/O. Omit the credential-bearing handle.
@@ -409,7 +410,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
             binding_kwargs: dict[str, Any] = {}
             if deadline is not None:
                 binding_kwargs["timeout_seconds"] = remaining_timeout(deadline)
-            if attempt_parent is not None:
+            if contribution is not None:
                 binding_kwargs["include_attempts"] = True
             result = await binding_function(driver_handle, prepared, **binding_kwargs)
         except TimeoutError as exc:
@@ -417,30 +418,15 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
                 raise
             raise CosmosClientTimeoutError(error=exc) from exc
         except _DRIVER_TRANSPORT_ERROR as exc:
-            if attempt_parent is not None:
-                emit_exception_attempts(attempt_parent, exc)
+            if contribution is not None:
+                contribution.error(exc)
             raise ServiceResponseError(message=str(exc)) from exc
         except _DRIVER_RESPONSE_ERROR as exc:
             raise metadata_exception_from_binding(exc) from exc
         if result is None:
             raise BindingProtocolError(f"The binding returned no response for {prepared.op!r}")
-        if attempt_parent is not None:
-            payload = None
-            if isinstance(result, tuple) and result and isinstance(result[0], tuple):
-                response_tuple = result[0]
-                if len(result) == 2:
-                    payload = result[1]
-                else:
-                    _LOGGER.warning("Rust attempt POC envelope has invalid detail; response is preserved")
-            elif isinstance(result, tuple) and len(result) in (4, 5):
-                response_tuple = result
-                _LOGGER.warning("Rust attempt POC envelope is missing; response is preserved")
-            else:
-                # No recognizable database response can be recovered.
-                raise BindingProtocolError("The binding returned an invalid attempt POC envelope")
-            response = build_backend_response(*response_tuple)
-            emit_attempts(attempt_parent, payload)
-            return response
+        if contribution is not None:
+            result = contribution.response(result)
         return build_backend_response(*result)
 
     async def get_container_metadata(

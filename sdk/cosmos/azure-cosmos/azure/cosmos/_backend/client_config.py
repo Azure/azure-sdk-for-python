@@ -41,10 +41,13 @@ from dataclasses import fields
 from numbers import Real
 from typing import Any, Optional, Sequence, Tuple
 
-from .._availability_strategy_config import CrossRegionHedgingStrategy, DEFAULT_THRESHOLD_MS
+from .._availability_strategy_config import (
+    CrossRegionHedgingStrategy, DEFAULT_THRESHOLD_MS, reject_rust_threshold_steps,
+)
 from ..documents import ConsistencyLevel
 from .contracts import PreparedClientConfig, PreparedFaultInjectionRule
 from ._immutable import freeze_headers
+from .request_settings import reject_trigger_header
 
 # Levels this binding supports. Strong maps to the driver's GlobalStrong;
 # other recognized Cosmos levels are rejected rather than ignored.
@@ -185,6 +188,8 @@ def build_client_config(
     )
     prepared_fault_rules = _prepare_fault_injection_rules(fault_injection_rules)
     prepared_headers = freeze_headers(headers if headers is not None else {})
+    for name in prepared_headers:
+        reject_trigger_header(name)
     if (
         not preferred
         and not excluded
@@ -270,7 +275,12 @@ def _prepare_fault_injection_rules(
             )
 
         status_code = rule.get("status_code")
-        if (
+        error_type = rule.get("error_type")
+        if error_type is not None and error_type != "ConnectionError":
+            raise ValueError("fault rule error_type must be ConnectionError or None.")
+        if error_type is not None and (status_code is not None or rule.get("sub_status", 0) != 0):
+            raise ValueError("fault rule error_type cannot be combined with status_code or sub_status.")
+        if error_type is None and (
             isinstance(status_code, bool)
             or not isinstance(status_code, int)
             or not 100 <= status_code <= 599
@@ -368,6 +378,7 @@ def _prepare_fault_injection_rules(
                 probability=float(probability),
                 hit_limit=hit_limit,
                 enabled=enabled,
+                error_type=error_type,
             )
         )
     return tuple(prepared)
@@ -455,9 +466,10 @@ def _resolve_hedging(availability_strategy: Any) -> Optional[int]:
     Other values, including None, False and unrecognized inputs, return None.
     When preparing client settings, the binding uses that absence to select a
     disabled client strategy, subject to driver environment overrides.
-    threshold_steps_ms is checked by the validator but is not passed to the
-    binding: the Rust driver does not support progressively adding more regions.
+    Explicit threshold_steps_ms is rejected: the Rust driver does not support
+    progressively adding more regions.
     """
+    reject_rust_threshold_steps(availability_strategy)
     if availability_strategy is True:
         return DEFAULT_THRESHOLD_MS
     if isinstance(availability_strategy, dict):

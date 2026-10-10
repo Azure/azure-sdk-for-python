@@ -52,8 +52,7 @@ def test_every_point_operation_has_only_headers_and_explicit_options(async_mode,
     settings, and leaves the caller's options untouched.
 
     All six operations run on both the sync and async client. The split is the
-    point: a trigger becomes a real header because that is how the service
-    receives it, while whether to return the written item, which regions to
+    point: a customer header remains a header, while whether to return the written item, which regions to
     avoid, and the availability strategy become named settings, because the Rust
     side has to act on them rather than pass them along.
 
@@ -74,12 +73,11 @@ def test_every_point_operation_has_only_headers_and_explicit_options(async_mode,
     before = deepcopy(options)
     invoke((AsyncItemHelper if async_mode else ItemHelper)(backend), op,
            request_options=options, no_response=False,
-           pre_trigger_include=["a", "b"], excluded_locations=["West US"],
+           excluded_locations=["West US"],
            availability_strategy=False)
     request = backend.events[-1]
     assert wire_headers(request) == {
         "x-customer": "value",
-        "x-ms-documentdb-pre-trigger-include": "a,b",
     }
     assert settings_options(request) == {
         "responsePayloadOnWriteDisabled": False,

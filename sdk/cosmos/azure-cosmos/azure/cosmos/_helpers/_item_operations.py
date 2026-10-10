@@ -110,7 +110,8 @@ def normalize_item_arguments(
     if op == "patch_item":
         options = deepcopy(options)
         args["body_bytes"] = serialize_patch_body(
-            patch_operations, compact_utf8=compact_utf8
+            patch_operations, compact_utf8=compact_utf8,
+            filter_predicate=options.pop("filterPredicate", None),
         )
         apply_patch_item_options(options)
     args["kwargs"] = kwargs

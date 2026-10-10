@@ -123,7 +123,7 @@ fi
 
 if [[ "${_py_spy_failed}" -eq 0 ]]; then
   echo "=== Recording Python-visible stacks for ${PY_SPY_DURATION}s at ${PY_SPY_RATE} Hz ==="
-  py-spy record \
+  RUST_LOG=warn py-spy record \
     --pid "${WORKLOAD_PID}" \
     --duration "${PY_SPY_DURATION}" \
     --rate "${PY_SPY_RATE}" \
@@ -137,6 +137,10 @@ if [[ "${_py_spy_failed}" -eq 0 ]]; then
     _py_spy_failed=1
   elif grep -Eqi 'behind in sampling|failed to (sample|read)' "${PY_SPY_LOG}"; then
     echo "ERROR: py-spy reported that it could not sustain or read the requested samples." >&2
+    _py_spy_failed=1
+  elif ! grep -Eq 'Samples: [1-9][0-9]* Errors: 0[[:space:]]*$' "${PY_SPY_LOG}"; then
+    echo "ERROR: py-spy did not report a positive sample count with zero sampling errors." >&2
+    echo "       Keep the recording and inspect ${PY_SPY_LOG}; the capture is not accepted." >&2
     _py_spy_failed=1
   elif [[ ! -s "${PY_SPY_SVG}" ]]; then
     echo "ERROR: py-spy produced no flame graph at ${PY_SPY_SVG}." >&2

@@ -136,36 +136,24 @@ mod tests {
     // without exposing it outside the binding.
 
     #[test]
-    fn feed_range_special_case_empty_sentinel_matches_legacy_v2_hashing() {
-        let hash_v2 = PartitionKeyDefinition::from("/pk")
-            .with_kind(PartitionKeyKind::Hash)
-            .with_version(PartitionKeyVersion::V2);
-        let payload = maybe_handle_feed_range_partition_key_special_case(
-            &hash_v2,
-            FeedRangePartitionKeySource::EmptySentinel,
-        )
-        .expect("v2 hash _Empty should be supported")
-        .expect("v2 hash _Empty should short-circuit with payload");
-        assert_eq!(payload.min, "00000000000000000000000000000000");
-        assert_eq!(payload.max, "00000000000000000000000000000000");
-        assert!(payload.is_max_inclusive);
-    }
-
-    #[test]
-    fn feed_range_special_case_empty_sentinel_v1_matches_legacy_type_error() {
-        let hash_v1 = PartitionKeyDefinition::from("/pk")
-            .with_kind(PartitionKeyKind::Hash)
-            .with_version(PartitionKeyVersion::V1);
-        let err = maybe_handle_feed_range_partition_key_special_case(
-            &hash_v1,
-            FeedRangePartitionKeySource::EmptySentinel,
-        )
-        .expect_err("v1 hash _Empty should raise legacy type error");
-        match err {
-            FeedRangeFromPartitionKeyError::LegacyType(message) => {
-                assert!(message.contains("Unexpected type for PK component"));
-            }
-            other => panic!("unexpected error: {other:?}"),
+    fn feed_range_special_case_empty_sentinel_matches_legacy_minimum_range() {
+        let definitions = [
+            PartitionKeyDefinition::from("/pk").with_version(PartitionKeyVersion::V1),
+            PartitionKeyDefinition::from("/pk").with_version(PartitionKeyVersion::V2),
+            PartitionKeyDefinition::new(vec!["/a".into(), "/b".into()])
+                .with_kind(PartitionKeyKind::MultiHash)
+                .with_version(PartitionKeyVersion::V2),
+        ];
+        for definition in definitions {
+            let payload = maybe_handle_feed_range_partition_key_special_case(
+                &definition,
+                FeedRangePartitionKeySource::EmptySentinel,
+            )
+            .expect("_Empty should be supported")
+            .expect("_Empty should return the minimum range");
+            assert_eq!(payload.min, "");
+            assert_eq!(payload.max, "00");
+            assert!(!payload.is_max_inclusive);
         }
     }
 

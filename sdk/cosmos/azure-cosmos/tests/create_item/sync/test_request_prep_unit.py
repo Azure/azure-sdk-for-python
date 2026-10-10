@@ -63,7 +63,7 @@ class TestHappyPathComposition(unittest.TestCase):
             body={"id": "order-42", "pk": "customerA", "total": 99.5},
             partition_key_value="customerA",
             container_rid="rid-orders-1",
-            kwargs={"pre_trigger_include": "validateOrder"},
+            kwargs={"priority": "High"},
         )
         item_id = prepared.item_id
 
@@ -84,7 +84,7 @@ class TestHappyPathComposition(unittest.TestCase):
         # The partition-key header holds the single string value.
         self.assertEqual(legacy_partition_key_from_request(prepared), '["customerA"]')
         # The keyword shortcut landed under its internal option-key name.
-        self.assertEqual(wire_headers(prepared)["x-ms-documentdb-pre-trigger-include"], "validateOrder")
+        self.assertEqual(wire_headers(prepared)["x-ms-cosmos-priority-level"], "High")
         # The rid is set into the headers under the key the SDK reads.
         self.assertEqual(wire_headers(prepared)["x-ms-cosmos-intended-collection-rid"], "rid-orders-1")
 
@@ -92,7 +92,6 @@ class TestHappyPathComposition(unittest.TestCase):
         """The prep removes every recognised keyword argument from the input
         dict, so the caller doesn't forward it a second time to azure-core."""
         kwargs = {
-            "pre_trigger_include": "validateOrder",
             "priority": "High",
             "extra_unknown": "left-alone",
         }
@@ -103,7 +102,6 @@ class TestHappyPathComposition(unittest.TestCase):
             container_rid="rid",
             kwargs=kwargs,
         )
-        self.assertEqual(kwargs["pre_trigger_include"], "validateOrder")
         self.assertEqual(kwargs["priority"], "High")
         # Keyword arguments the prep doesn't recognise stay put.
         self.assertEqual(kwargs["extra_unknown"], "left-alone")
@@ -408,64 +406,19 @@ class TestGeneratedIdConsistency(unittest.TestCase):
         self.assertEqual(uuid.UUID(item_id).version, 4)
 
 
-class TestTriggerIncludeSerialization(unittest.TestCase):
-    """``pre_trigger_include`` / ``post_trigger_include`` may be a single
-    trigger id or a list of them.
-
-    The legacy path joins a list into one comma-separated string
-    (``"t1,t2"``), and ``flatten_options_to_headers`` must do the same. If
-    it didn't, the Rust binding would call ``str()`` on the list and put
-    its repr (``"['t1', 't2']"``) on the wire instead. These tests guard
-    against that.
-    """
-
-    def test_single_string_pre_trigger_passes_through(self):
-        """A plain-string ``pre_trigger_include`` is emitted unchanged."""
-        prepared = prepare_create_item_request(
-            container_link="dbs/db/colls/c",
-            body={"id": "x"},
-            partition_key_value="pk",
-            container_rid="rid",
-            kwargs={"pre_trigger_include": "validateOrder"},
-        )
-        _id = prepared.item_id
-        self.assertEqual(wire_headers(prepared)["x-ms-documentdb-pre-trigger-include"], "validateOrder")
-
-    def test_list_pre_trigger_is_comma_joined(self):
-        """A list ``pre_trigger_include`` is comma-joined, not turned into a Python repr."""
-        prepared = prepare_create_item_request(
-            container_link="dbs/db/colls/c",
-            body={"id": "x"},
-            partition_key_value="pk",
-            container_rid="rid",
-            kwargs={"pre_trigger_include": ["t1", "t2"]},
-        )
-        _id = prepared.item_id
-        self.assertEqual(wire_headers(prepared)["x-ms-documentdb-pre-trigger-include"], "t1,t2")
-
-    def test_tuple_post_trigger_is_comma_joined(self):
-        """A tuple ``post_trigger_include`` is comma-joined the same way."""
-        prepared = prepare_create_item_request(
-            container_link="dbs/db/colls/c",
-            body={"id": "x"},
-            partition_key_value="pk",
-            container_rid="rid",
-            kwargs={"post_trigger_include": ("a", "b", "c")},
-        )
-        _id = prepared.item_id
-        self.assertEqual(wire_headers(prepared)["x-ms-documentdb-post-trigger-include"], "a,b,c")
-
-    def test_single_element_list_has_no_brackets_or_comma(self):
-        """A one-element list is just the bare id: no brackets, no trailing comma."""
-        prepared = prepare_create_item_request(
-            container_link="dbs/db/colls/c",
-            body={"id": "x"},
-            partition_key_value="pk",
-            container_rid="rid",
-            kwargs={"pre_trigger_include": ["only"]},
-        )
-        _id = prepared.item_id
-        self.assertEqual(wire_headers(prepared)["x-ms-documentdb-pre-trigger-include"], "only")
+class TestTriggerIncludeRejection(unittest.TestCase):
+    def test_trigger_inputs_are_rejected_instead_of_serialized(self):
+        for key in ("pre_trigger_include", "post_trigger_include"):
+            for value in ("validateOrder", ["t1", "t2"], ("a", "b"), ["only"], None, []):
+                with self.subTest(key=key, value=value):
+                    with self.assertRaisesRegex(TypeError, "triggers are excluded"):
+                        prepare_create_item_request(
+                            container_link="dbs/db/colls/c",
+                            body={"id": "x"},
+                            partition_key_value="pk",
+                            container_rid="rid",
+                            kwargs={key: value},
+                        )
 
 
 class TestFlattenOptionsToHeaders(unittest.TestCase):
@@ -475,13 +428,11 @@ class TestFlattenOptionsToHeaders(unittest.TestCase):
     the way to wire headers, so its behaviour is pinned here in one place.
     """
 
-    def test_trigger_list_comma_joined(self):
-        """Trigger lists are comma-joined; a one-element list is the bare id."""
-        headers = flatten_options_to_headers(
-            {"preTriggerInclude": ["t1", "t2"], "postTriggerInclude": ["p1"]}
-        )
-        self.assertEqual(headers["x-ms-documentdb-pre-trigger-include"], "t1,t2")
-        self.assertEqual(headers["x-ms-documentdb-post-trigger-include"], "p1")
+    def test_trigger_list_is_rejected(self):
+        with self.assertRaisesRegex(TypeError, "triggers are excluded"):
+            flatten_options_to_headers(
+                {"preTriggerInclude": ["t1", "t2"], "postTriggerInclude": ["p1"]}
+            )
 
     def test_initial_headers_are_real_headers(self):
         """Customer headers are actual top-level HTTP headers, never nested options."""

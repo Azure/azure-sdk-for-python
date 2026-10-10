@@ -42,6 +42,29 @@ driver_handle = _rust.acquire_driver_handle("https://localhost:8081", master_key
 status, sub_status, headers, body, diagnostics = _rust.create_item(driver_handle, prepared)
 ```
 
+For public `create_item`, `read_item`, `delete_item` and `upsert_item`, the Python
+wrapper requests structured request diagnostics when it owns a recording
+operation span or an SDK-internal
+completion handler requires request detail. No such handler is registered by
+default, and this is not a new public client option. The sync and
+async binding entry points accept the internal keyword `include_attempts=False`.
+When enabled, they return `(response_tuple, attempt_payload)`; the response tuple
+itself is unchanged. A response-less driver error keeps its existing exception
+and carries available diagnostics in `_cosmos_attempt_payload`.
+
+Both item runners reuse `wire/response.rs` for this conversion. The shared Python
+module `azure.cosmos._telemetry` records the request spans before Azure Core ends
+the public operation span, including when a response hook raises. Customer apps
+call the normal methods and retain ownership of tracing configuration and
+exporters. This integration does not yet cover the other operations listed below.
+
+Each binding invocation contributes through a single-use token. The Python
+collector rejects duplicate or late delivery and records operation totals once.
+The current public create/read/delete/upsert path accepts one binding result;
+future composed paths must explicitly configure a retained-detail limit before collecting
+multiple independent results. Driver retries already included in one result
+are not additional Python contributions.
+
 Exports are registered in `src/lib.rs` (`#[pymodule] fn _rust(...)`).
 Current surface:
 
@@ -193,7 +216,15 @@ supplies its `threshold_ms`. A positive threshold enables hedging; an invalid
 threshold is rejected. Supported per-request strategies still override the
 client strategy, and the driver's `AZURE_COSMOS_HEDGING_ENABLED` and
 `AZURE_COSMOS_HEDGING_ENABLED_OVERRIDE` environment overrides retain precedence.
-Progressive `threshold_steps_ms` remains unsupported (migration pushback 24).
+Progressive `threshold_steps_ms` is explicitly rejected at client and per-call
+scope (migration pushback 24). Trigger options and raw trigger headers are
+also rejected; they are not part of the typed item settings. Rebuild the
+binding with the wrapper after this settings-schema change.
+
+The Rust-backed Python APIs exclude Cosmos user/permission management and
+`container.scripts` definition/execution APIs. Legacy comparison code is
+retained but cannot run as a fallback. Ordinary `query_items` SQL containing
+calls to deployed UDFs remains supported.
 
 The returned `driver_handle` is a string registry key, not a `CosmosClient`
 or the `CosmosDriver` itself. The private extension consistently names this

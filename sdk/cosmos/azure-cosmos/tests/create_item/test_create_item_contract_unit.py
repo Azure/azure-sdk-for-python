@@ -139,7 +139,9 @@ def test_only_body_is_positional(point_create):
     parameters = inspect.signature(point_create.proxy.create_item).parameters
     assert [name for name, value in parameters.items()
             if value.kind == inspect.Parameter.POSITIONAL_OR_KEYWORD] == ["body"]
-    for name in ("pre_trigger_include", "post_trigger_include", "indexing_directive"):
+    for name in ("pre_trigger_include", "post_trigger_include"):
+        assert name not in parameters
+    for name in ("indexing_directive",):
         assert parameters[name].kind == inspect.Parameter.KEYWORD_ONLY
     with pytest.raises(TypeError):
         point_create.call({"id": "item"}, None)

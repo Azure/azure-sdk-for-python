@@ -52,7 +52,7 @@ def test_invalid_collection_is_rejected_even_when_empty(rules):
         _prepare_fault_injection_rules(rules)
 
 
-@pytest.mark.parametrize("field", ["error_type", "hit_limt", 42])
+@pytest.mark.parametrize("field", ["error_kind", "hit_limt", 42])
 def test_unknown_rule_fields_do_not_silently_change_the_test(field):
     """A field name that is not recognized is an error, including a near miss.
 
@@ -114,6 +114,24 @@ def test_native_integer_boundaries_are_preserved_without_mutating_inputs():
     assert prepared.delay_ms == 2**64 - 1
     assert prepared.hit_limit == 2**32 - 1
     assert rule == before
+
+
+def test_connection_fault_has_no_synthetic_response():
+    rule = {"id": "connection", "operation_type": "CreateItem", "error_type": "ConnectionError"}
+    prepared, = _prepare_fault_injection_rules([rule])
+    assert prepared.error_type == "ConnectionError"
+    assert prepared.status_code is None
+    assert "status_code" not in rule
+
+
+@pytest.mark.parametrize("extra", [
+    {"status_code": 502}, {"sub_status": 1}, {"error_type": "ResponseTimeout"},
+    {"error_type": ""}, {"error_type": []}, {"error_type": True},
+])
+def test_connection_fault_rejects_ambiguous_or_unsupported_rules(extra):
+    rule = {"id": "connection", "operation_type": "CreateItem", "error_type": "ConnectionError", **extra}
+    with pytest.raises(ValueError, match="error_type"):
+        _prepare_fault_injection_rules([rule])
 
 
 def test_zero_and_false_are_values_not_missing_options():

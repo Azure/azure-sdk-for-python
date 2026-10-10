@@ -36,7 +36,8 @@ pyo3 = { version = "0.22", features = [
 # alone does not guarantee local planning: the native library must be available,
 # and the query's execution path and plan cache affect whether planning is needed.
 # Keep this feature aligned with the wheel's QueryPlanInterop packaging.
-azure_data_cosmos_driver = { workspace = true, features = ["__internal_native_query_plan", "fault_injection"] }
+# Filtered PATCH must use the service, where the condition is evaluated atomically.
+azure_data_cosmos_driver = { workspace = true, features = ["__internal_native_query_plan", "fault_injection", "preview_patch"] }
 
 # Tokio runtime. Lives here, not in the driver, because the binding is
 # what bridges Python's sync call into Rust's async world.

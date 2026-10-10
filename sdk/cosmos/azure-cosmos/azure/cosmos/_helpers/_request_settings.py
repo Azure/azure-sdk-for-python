@@ -15,13 +15,16 @@ from typing import Any, Dict, Mapping, Optional, Tuple
 
 from azure.core import MatchConditions
 
-from .._availability_strategy_config import DEFAULT_THRESHOLD_MS
+from .._availability_strategy_config import (
+    DEFAULT_THRESHOLD_MS, _validate_request_hedging_strategy, reject_rust_threshold_steps,
+)
 from .._backend.request_settings import (
     HedgingSettings,
     ItemSettings,
     QuerySettings,
     RequestSettings,
     ResourceSettings,
+    reject_trigger_header,
 )
 from .._constants import _Constants as Constants
 
@@ -230,8 +233,6 @@ _NON_WIRE_INTERNAL_OPTION_KEYS = frozenset(
 
 
 OPTION_HEADER_NAMES = {
-    "preTriggerInclude": "x-ms-documentdb-pre-trigger-include",
-    "postTriggerInclude": "x-ms-documentdb-post-trigger-include",
     "indexingDirective": "x-ms-indexing-directive",
     "maxItemCount": "x-ms-max-item-count",
     "priorityLevel": "x-ms-cosmos-priority-level",
@@ -398,8 +399,6 @@ OPTION_FIELDS = {
     "excludedLocations": ("", "excluded_locations"),
     "timeout": ("", "timeout_seconds"),
     "availabilityStrategy": ("", "hedging"),
-    "preTriggerInclude": ("item", "pre_triggers"),
-    "postTriggerInclude": ("item", "post_triggers"),
     "indexingDirective": ("item", "indexing_directive"),
     "maxIntegratedCacheStaleness": ("item", "max_staleness_ms"),
     "maxItemCount": ("query", "max_item_count"),
@@ -450,6 +449,7 @@ def build_customer_headers(
     for name, value in initial_headers.items():
         if not isinstance(name, str):
             raise TypeError("Request header names must be strings")
+        reject_trigger_header(name)
         result[name.lower()] = str(value)
     return result
 
@@ -471,6 +471,10 @@ def build_request_headers_and_settings(
         "resource": {},
     }
     for key, value in options.items():
+        if key in ("preTriggerInclude", "postTriggerInclude", "pre_trigger_include", "post_trigger_include"):
+            raise TypeError(f"{key} is not supported by the Rust-backed APIs; triggers are excluded.")
+        if isinstance(key, str):
+            reject_trigger_header(key)
         if key in ("partitionKey", "disableAutomaticIdGeneration") or (
             key in _NON_WIRE_INTERNAL_OPTION_KEYS and key != Constants.Kwargs.TIMEOUT
         ):
@@ -528,14 +532,14 @@ def build_request_headers_and_settings(
         ) and not value:
             continue
         if key == "availabilityStrategy":
+            reject_rust_threshold_steps(value)
+            value = _validate_request_hedging_strategy(value)
             if value is False:
                 value = HedgingSettings(False)
             elif value is True:
                 value = HedgingSettings(True, DEFAULT_THRESHOLD_MS)
             else:
                 value = HedgingSettings(True, getattr(value, "threshold_ms", None))
-        elif key in ("preTriggerInclude", "postTriggerInclude"):
-            value = (value,) if isinstance(value, str) else tuple(value)
         elif key == "excludedLocations":
             if isinstance(value, str):
                 raise TypeError(

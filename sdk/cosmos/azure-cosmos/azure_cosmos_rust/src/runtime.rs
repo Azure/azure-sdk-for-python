@@ -82,8 +82,8 @@ use sha2::{Digest, Sha256};
 use azure_data_cosmos_driver::{
     driver::{CosmosDriver, CosmosDriverRuntime},
     fault_injection::{
-        CustomResponseBuilder, FaultInjectionConditionBuilder, FaultInjectionResultBuilder,
-        FaultInjectionRule, FaultInjectionRuleBuilder, FaultOperationType,
+        CustomResponseBuilder, FaultInjectionConditionBuilder, FaultInjectionErrorType,
+        FaultInjectionResultBuilder, FaultInjectionRule, FaultInjectionRuleBuilder, FaultOperationType,
     },
     models::AccountReference,
     options::{
@@ -218,7 +218,8 @@ fn config_fingerprint(config: Option<&Bound<'_, PyAny>>) -> PyResult<String> {
             rules.push(serde_json::json!({
                 "id": item.getattr("id")?.extract::<String>()?,
                 "operation_type": item.getattr("operation_type")?.extract::<String>()?,
-                "status_code": item.getattr("status_code")?.extract::<u16>()?,
+                "status_code": item.getattr("status_code")?.extract::<Option<u16>>()?,
+                "error_type": get_config_opt::<String>(item, "error_type")?,
                 "sub_status": item.getattr("sub_status")?.extract::<u16>()?,
                 "container_id": item.getattr("container_id")?.extract::<Option<String>>()?,
                 "region": item.getattr("region")?.extract::<Option<String>>()?,
@@ -729,19 +730,28 @@ fn fault_rules_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Arc<FaultI
             condition = condition.with_region(Region::from(region));
         }
 
-        let status_code: u16 = item.getattr("status_code")?.extract()?;
+        let status_code: Option<u16> = item.getattr("status_code")?.extract()?;
         let sub_status: u16 = item.getattr("sub_status")?.extract()?;
-        let mut response =
-            CustomResponseBuilder::new(azure_core::http::StatusCode::from(status_code));
-        if sub_status != 0 {
-            response = response.with_sub_status(sub_status);
-        }
-
+        let error_type = get_config_opt::<String>(&item, "error_type")?;
         let delay_ms: u64 = item.getattr("delay_ms")?.extract()?;
         let probability: f32 = item.getattr("probability")?.extract()?;
-        let mut result = FaultInjectionResultBuilder::new()
-            .with_custom_response(response.build())
-            .with_probability(probability);
+        let mut result = FaultInjectionResultBuilder::new().with_probability(probability);
+        result = match (status_code, error_type.as_deref()) {
+            (Some(status), None) if (100..=599).contains(&status) => {
+                let mut response =
+                    CustomResponseBuilder::new(azure_core::http::StatusCode::from(status));
+                if sub_status != 0 {
+                    response = response.with_sub_status(sub_status);
+                }
+                result.with_custom_response(response.build())
+            }
+            (None, Some("ConnectionError")) if sub_status == 0 => {
+                result.with_error(FaultInjectionErrorType::ConnectionError)
+            }
+            _ => return Err(PyValueError::new_err(
+                "fault rule requires status_code 100..599 or error_type ConnectionError, not both; connection errors cannot have sub_status",
+            )),
+        };
         if delay_ms != 0 {
             result = result.with_delay(Duration::from_millis(delay_ms));
         }
@@ -870,6 +880,7 @@ fn client_headers_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<BTr
         if let Some(value) = get_config_opt::<PyObject>(config, "headers")? {
             for pair in value.bind(config.py()).call_method0("items")?.iter()? {
                 let (name, value) = pair?.extract::<(String, String)>()?;
+                crate::wire::settings::reject_trigger_header(&name)?;
                 headers.insert(name.to_ascii_lowercase(), value);
             }
         }
@@ -988,6 +999,15 @@ mod tests {
             assert_eq!(first, super::config_fingerprint(Some(&config)).unwrap());
             headers.set_item("x-application", "second").unwrap();
             assert_ne!(first, super::config_fingerprint(Some(&config)).unwrap());
+            for name in [
+                "X-MS-DOCUMENTDB-PRE-TRIGGER-INCLUDE",
+                "x-ms-documentdb-post-trigger-include",
+            ] {
+                headers.clear();
+                headers.set_item(name, "validateOrder").unwrap();
+                assert!(super::config_fingerprint(Some(&config)).is_err());
+                assert!(operation_options_from_config(Some(&config)).is_err());
+            }
         });
     }
 
@@ -1308,6 +1328,53 @@ class Config:
                 .expect("cached initialization failure must propagate");
             assert!(error.is_instance_of::<PyRuntimeError>(py));
             assert!(error.to_string().contains("test failure"));
+        });
+    }
+
+    #[test]
+    fn fault_connection_error_preserves_response_rules_and_cache_isolation() {
+        use super::{config_fingerprint, fault_rules_from_config, FaultInjectionErrorType};
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let module = PyModule::from_code_bound(
+                py,
+                r#"
+from types import SimpleNamespace
+rule = SimpleNamespace(
+    id="rule", operation_type="CreateItem", status_code=502, sub_status=0,
+    container_id="orders", region=None, delay_ms=2000, probability=1.0,
+    hit_limit=None, enabled=True)
+config = SimpleNamespace(fault_injection_rules=(rule,))
+"#,
+                "fault_config_test.py",
+                "fault_config_test",
+            )
+            .unwrap();
+            let config = module.getattr("config").unwrap();
+            let rule = module.getattr("rule").unwrap();
+            let before = config_fingerprint(Some(&config)).unwrap();
+            let rules = fault_rules_from_config(&config).unwrap();
+            assert!(rules[0].result().error_type().is_none());
+            assert_eq!(
+                u16::from(rules[0].result().custom_response().unwrap().status_code()),
+                502
+            );
+            rule.setattr("error_type", "ConnectionError").unwrap();
+            assert!(fault_rules_from_config(&config).is_err());
+            rule.setattr("status_code", py.None()).unwrap();
+            let rules = fault_rules_from_config(&config).unwrap();
+            assert_eq!(
+                rules[0].result().error_type(),
+                Some(FaultInjectionErrorType::ConnectionError)
+            );
+            assert!(rules[0].result().custom_response().is_none());
+            assert_eq!(rules[0].result().delay(), Some(Duration::from_secs(2)));
+            assert_ne!(before, config_fingerprint(Some(&config)).unwrap());
+            rule.setattr("sub_status", 1).unwrap();
+            assert!(fault_rules_from_config(&config).is_err());
+            rule.setattr("sub_status", 0).unwrap();
+            rule.setattr("error_type", "typo").unwrap();
+            assert!(fault_rules_from_config(&config).is_err());
         });
     }
 

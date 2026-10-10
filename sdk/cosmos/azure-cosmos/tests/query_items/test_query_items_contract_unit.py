@@ -54,6 +54,16 @@ from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponse
 from azure.cosmos.partition_key import NonePartitionKeyValue, NullPartitionKeyValue
 
 
+def test_deployed_udf_call_remains_an_ordinary_item_query(query):
+    sql = "SELECT c.id, udf.reviewBand(c.total) AS reviewBand FROM c"
+    query.pages = [[{"id": "order-42", "reviewBand": "standard"}], None]
+    assert query.collect(query.proxy.query_items(sql, partition_key="customer-17")) == [
+        {"id": "order-42", "reviewBand": "standard"},
+    ]
+    assert json.loads(query.calls[0][0].body_bytes)["query"] == sql
+    assert not query.connection.mock_calls
+
+
 @pytest.fixture(params=[False, True], ids=["sync", "async"])
 def query(request, monkeypatch):
     """Drive the Rust query path against a fake driver, once sync and once async.

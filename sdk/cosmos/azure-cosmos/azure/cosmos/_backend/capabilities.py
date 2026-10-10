@@ -13,7 +13,7 @@ not retried through the legacy path.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Mapping, Optional
 
 from . import operations as ops
 
@@ -22,6 +22,61 @@ GET_OR_CREATE_CONTAINER = "create_container_if_not_exists"
 REPLACE_THROUGHPUT = "replace_throughput"
 GET_DATABASE_THROUGHPUT = "get_database_throughput"
 GET_CONTAINER_THROUGHPUT = "get_container_throughput"
+
+
+def require_legacy_api(connection: Any, api_name: str, *, item_context: Any = None) -> None:
+    """Retain comparison-only APIs without executing them on a Rust client."""
+    if item_context is not None:
+        backend = item_context.adapter
+    else:
+        attributes = getattr(connection, "__dict__", {})
+        backend = attributes.get("_backend")
+    if backend is None or backend.name != "core-python":
+        raise NotImplementedError(
+            f"{api_name} is excluded from the Rust-backed APIs; no legacy fallback."
+        )
+
+
+def reject_unsupported_rust_arguments(
+    proxy: Any, kwargs: Mapping[str, Any], *, strategy: Any = None, headers: Any = None,
+) -> None:
+    """Reject excluded inputs before metadata, paging, or retained coordinators."""
+    context = getattr(proxy, "_item_context", None)
+    backend = context.adapter if context is not None else getattr(
+        proxy.client_connection, "__dict__", {}
+    ).get("_backend")
+    if backend is not None and backend.name == "core-python":
+        return
+    reject_rust_arguments(kwargs, strategy=strategy, headers=headers)
+
+
+def reject_rust_arguments(
+    kwargs: Mapping[str, Any], *, strategy: Any = None, headers: Any = None,
+) -> None:
+    """Validate Rust inputs without requiring a constructed client or proxy."""
+    from .._availability_strategy_config import reject_rust_threshold_steps
+    from .request_settings import reject_trigger_header
+
+    reject_rust_threshold_steps(strategy)
+    for options in (
+        kwargs, kwargs.get("request_options"), kwargs.get("feed_options"), {"initial_headers": headers},
+    ):
+        if not isinstance(options, Mapping):
+            continue
+        for name, value in options.items():
+            if name in (
+                "pre_trigger_include", "post_trigger_include", "preTriggerInclude", "postTriggerInclude",
+                "threshold_steps_ms",
+            ):
+                raise TypeError(f"{name} is not supported by the Rust-backed APIs.")
+            if isinstance(name, str):
+                reject_trigger_header(name)
+            if name in ("availability_strategy", "availabilityStrategy"):
+                reject_rust_threshold_steps(value)
+            if name in ("initial_headers", "initialHeaders", "headers") and isinstance(value, Mapping):
+                for header in value:
+                    if isinstance(header, str):
+                        reject_trigger_header(header)
 
 
 @dataclass(frozen=True)
@@ -185,7 +240,11 @@ CAPABILITIES: dict[str, OpCapability] = {
     ),
     ops.OP_IS_FEED_RANGE_SUBSET: OpCapability(
         frozenset({ops.OP_IS_FEED_RANGE_SUBSET}),
-        fallback_allowed=True,
+        unsupported_message=(
+            "is_feed_range_subset requires supported SDK-returned feed ranges "
+            "with hexadecimal bounds and Boolean inclusion flags. "
+            "The comparison will not run through legacy Python."
+        ),
     ),
     ops.OP_READ_ALL_ITEMS: OpCapability(
         frozenset({ops.OP_READ_ALL_ITEMS}),

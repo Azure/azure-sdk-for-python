@@ -26,6 +26,22 @@ You need three things on your machine:
 
 ## Getting started
 
+### Rust-backed release scope
+
+The Rust-backed APIs exclude Cosmos user and permission management, stored
+procedure definition/execution APIs, trigger definition/invocation APIs, and
+UDF definition management. These calls fail explicitly rather than running
+through legacy Python. Trigger options and headers are rejected before an
+item operation is sent; silently omitting a trigger would change the write.
+
+Ordinary item queries calling a deployed UDF, such as
+`SELECT VALUE udf.reviewBand(c.total) FROM c`, remain supported. Deploying the
+function and invoking it inside SQL are separate tasks. Legacy partitionless
+container compatibility is outside this release's scope; the driver team has
+no current implementation plans and may reconsider based on customer need.
+This does not deprecate the corresponding service capabilities or migrate
+existing data.
+
 ### Important update on Python 2.x Support
 
 New releases of this SDK won't support Python 2.x starting January 1st, 2022. Please check the [CHANGELOG](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/CHANGELOG.md) for more information.
@@ -1063,18 +1079,22 @@ Cross region hedging availability strategy improves availability and reduces lat
 
 - **Hedged Requests**: The SDK sends a parallel request to another region if the primary region does not respond within a configured delay.
 - **Configurable**: Hedging can be enabled or disabled, and the delay before sending a hedged request is tunable.
-- **ThreadPoolExecutor**: The sync CosmosClient instance will use a ThreadPoolExecutor under the hood for parallelizing requests. Users can choose whether to use the default ThreadPoolExecutor the SDK uses, or to pass in their own instance. *The async client does not need the executor since it uses asynchronous logic to parallelize requests.*
+- **Execution**: On the Rust-backed path, the Rust driver schedules the primary and one alternate. Legacy Python executor settings are not Rust hedging controls.
 
 #### Enabling Cross Region Hedging
 
 You can enable cross region hedging by passing the `availability_strategy` parameter to the `CosmosClient` or per-request. This parameter accepts:
 
-- **`True`**: Enable hedging with default values (`threshold_ms=500`, `threshold_steps_ms=100`) or override client settings to this default at the request level.
+- **`True`**: Enable hedging with `threshold_ms=500` at client scope. An item-operation override retains the client's configured threshold, or uses 500 ms when none is configured.
 - **`False`**: Explicitly disable hedging at the client or request level (overrides client-level settings)
-- **`dict`**: Enable hedging with custom values. The keys are `threshold_ms` (delay before sending a hedged request) and `threshold_steps_ms` (step interval for additional hedged requests). Missing keys will use default values.
-- **`None`**: Default value only usable at the request level. Use the client-level configurations.
+- **`dict`**: Set `threshold_ms`, the delay before an eligible alternate attempt; omission uses 500 ms. Explicit `threshold_steps_ms` is rejected on the Rust-backed APIs.
+- **`None`**: At client scope, leave hedging disabled. At item-operation scope, inherit the client strategy.
 
-Hedging will also be implicitly enabled when per-partition automatic failover is enabled, in which case the `CrossRegionHedgingStrategy` applies the default values outlined above of 500 ms for `threshold_ms` and 100 ms for `threshold_steps_ms` unless you override them via `availability_strategy`.
+These Rust-backed settings remain subject to driver environment overrides,
+service suppression and operation eligibility. PPAF alone does not override
+an explicitly disabled strategy. Eligible metadata reads use a separate
+1,500-ms threshold; item-level disabling does not disable preceding metadata
+hedging. Writes and document queries are not hedgeable.
 
 #### Client-level configuration
 
@@ -1092,7 +1112,7 @@ client = CosmosClient(
 client = CosmosClient(
     "<account-uri>",
     "<account-key>",
-    availability_strategy={"threshold_ms": 150, "threshold_steps_ms": 50}
+    availability_strategy={"threshold_ms": 150}
 )
 ```
 
@@ -1103,7 +1123,7 @@ client = CosmosClient(
 container.read_item(
     item="item_id",
     partition_key="pk_value",
-    availability_strategy={"threshold_ms": 150, "threshold_steps_ms": 50}
+    availability_strategy={"threshold_ms": 150}
 )
 
 # Enable with default values for a specific request

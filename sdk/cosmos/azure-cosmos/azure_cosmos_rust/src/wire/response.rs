@@ -1,9 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-use pyo3::exceptions::{
-    PyAttributeError, PyRuntimeError, PyRuntimeWarning, PyTypeError, PyValueError,
-};
+use pyo3::exceptions::{PyAttributeError, PyRuntimeError, PyRuntimeWarning, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyDict, PyTuple};
 use serde::{Deserialize, Serialize};
@@ -330,9 +328,6 @@ pub(super) fn tuple_from_feed_range_from_partition_key_result<'py>(
         }
         Err(FeedRangeFromPartitionKeyError::LegacyAttribute(message)) => {
             Err(PyAttributeError::new_err(message))
-        }
-        Err(FeedRangeFromPartitionKeyError::LegacyType(message)) => {
-            Err(PyTypeError::new_err(message))
         }
         Err(FeedRangeFromPartitionKeyError::Cosmos(cosmos_error)) => {
             if let Some(raw_http_error) =
@@ -1011,10 +1006,10 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn attempt_envelope_preserves_success_and_conflict_driver_records() {
+    async fn attempt_envelope_preserves_create_read_and_conflict_driver_records() {
         pyo3::prepare_freethreaded_python();
-        let (success, _, conflict) = create_read_and_conflict().await;
-        for result in [Ok(success), Err(conflict)] {
+        let (success, read, conflict) = create_read_and_conflict().await;
+        for result in [Ok(success), Ok(read), Err(conflict)] {
             let driver_response = match &result {
                 Ok(response) => response,
                 Err(error) => error.response().unwrap(),
@@ -1053,7 +1048,7 @@ mod tests {
                     .is_empty());
                 let body = response.get_item(3).unwrap().extract::<Vec<u8>>().unwrap();
                 let body: serde_json::Value = serde_json::from_slice(&body).unwrap();
-                if expected_status == 201 {
+                if matches!(expected_status, 200 | 201) {
                     assert_eq!(body["id"], "order-17");
                 }
                 let payload = envelope.get_item(1).unwrap();

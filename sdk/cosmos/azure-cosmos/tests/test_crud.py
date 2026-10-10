@@ -2067,40 +2067,41 @@ class TestCRUDOperations(unittest.TestCase):
         patched_item = created_container.patch_item(item="patch_item", partition_key=pkValue,
                                                     patch_operations=operations)
         # Verify results from patch operations
-        self.assertTrue(patched_item.get("color") is None)
-        self.assertTrue(patched_item.get("prop") is None)
+        self.assertNotIn("color", patched_item)
+        self.assertNotIn("prop", patched_item)
         self.assertEqual(patched_item.get("company"), "CosmosDB")
         self.assertEqual(patched_item.get("address").get("new_city"), "Atlanta")
         self.assertEqual(patched_item.get("number"), 10)
         self.assertEqual(patched_item.get("favorite_color"), "yellow")
 
+        stored_item = created_container.read_item("patch_item", partition_key=pkValue)
+        self.assertNotIn("color", stored_item)
+        self.assertNotIn("prop", stored_item)
+        self.assertEqual(stored_item.get("favorite_color"), "yellow")
+
         # Negative test - attempt to replace non-existent field
         operations = [{"op": "replace", "path": "/wrong_field", "value": "wrong_value"}]
-        try:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
             created_container.patch_item(item="patch_item", partition_key=pkValue, patch_operations=operations)
-        except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
+        self.assertEqual(caught.exception.status_code, StatusCodes.BAD_REQUEST)
 
         # Negative test - attempt to remove non-existent field
         operations = [{"op": "remove", "path": "/wrong_field"}]
-        try:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
             created_container.patch_item(item="patch_item", partition_key=pkValue, patch_operations=operations)
-        except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
+        self.assertEqual(caught.exception.status_code, StatusCodes.BAD_REQUEST)
 
         # Negative test - attempt to increment non-number field
         operations = [{"op": "incr", "path": "/company", "value": 3}]
-        try:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
             created_container.patch_item(item="patch_item", partition_key=pkValue, patch_operations=operations)
-        except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
+        self.assertEqual(caught.exception.status_code, StatusCodes.BAD_REQUEST)
 
         # Negative test - attempt to move from non-existent field
         operations = [{"op": "move", "from": "/wrong_field", "path": "/other_field"}]
-        try:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
             created_container.patch_item(item="patch_item", partition_key=pkValue, patch_operations=operations)
-        except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
+        self.assertEqual(caught.exception.status_code, StatusCodes.BAD_REQUEST)
 
     def test_conditional_patching(self):
         created_container = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
@@ -2130,11 +2131,14 @@ class TestCRUDOperations(unittest.TestCase):
         # Run patch operations with wrong filter
         num_false = item.get("number") + 1
         filter_predicate = "from root where root.number = " + str(num_false)
-        try:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
             created_container.patch_item(item="conditional_patch_item", partition_key=pkValue,
                                          patch_operations=operations, filter_predicate=filter_predicate)
-        except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(e.status_code, StatusCodes.PRECONDITION_FAILED)
+        self.assertEqual(caught.exception.status_code, StatusCodes.PRECONDITION_FAILED)
+        unchanged = created_container.read_item(item["id"], partition_key=pkValue)
+        self.assertEqual({key: unchanged[key] for key in item}, item)
+        self.assertNotIn("color", unchanged)
+        self.assertNotIn("favorite_color", unchanged)
 
         # Run patch operations with correct filter
         filter_predicate = "from root where root.number = " + str(item.get("number"))
@@ -2147,6 +2151,18 @@ class TestCRUDOperations(unittest.TestCase):
         self.assertEqual(patched_item.get("address").get("new_city"), "Atlanta")
         self.assertEqual(patched_item.get("number"), 10)
         self.assertEqual(patched_item.get("favorite_color"), "yellow")
+
+        expected = {
+            "id": item["id"], "pk": item["pk"], "company": "CosmosDB",
+            "address": {"city": "Redmond", "new_city": "Atlanta"},
+            "number": 10, "favorite_color": "yellow",
+        }
+        self.assertEqual({key: patched_item[key] for key in expected}, expected)
+        stored = created_container.read_item(item["id"], partition_key=pkValue)
+        self.assertEqual({key: stored[key] for key in expected}, expected)
+        for result in (patched_item, stored):
+            self.assertNotIn("color", result)
+            self.assertNotIn("prop", result)
 
     # Temporarily commenting analytical storage tests until emulator support comes.
     # def test_create_container_with_analytical_store_off(self):

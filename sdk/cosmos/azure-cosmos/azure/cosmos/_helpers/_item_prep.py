@@ -86,7 +86,9 @@ def prepare_read_item_kwargs(
     return deadline
 
 
-def build_patch_operations_payload(patch_operations: Any) -> dict[str, Any]:
+def build_patch_operations_payload(
+    patch_operations: Any, *, filter_predicate: Optional[str] = None
+) -> dict[str, Any]:
     """Build the patch body dictionary, converting increment to the service's incr."""
     if not isinstance(patch_operations, list):
         raise TypeError("patch_operations must be a list of operation dictionaries.")
@@ -99,13 +101,21 @@ def build_patch_operations_payload(patch_operations: Any) -> dict[str, Any]:
         if operation.get("op") == "increment":
             operation = {**operation, "op": "incr"}
         translated.append(operation)
-    return {"operations": translated}
+    payload: dict[str, Any] = {"operations": translated}
+    if filter_predicate is not None:
+        if not isinstance(filter_predicate, str):
+            raise TypeError("patch_item filter_predicate must be a string.")
+        payload["condition"] = filter_predicate
+    return payload
 
 
-def serialize_patch_body(patch_operations: Any, *, compact_utf8: bool = False) -> bytes:
+def serialize_patch_body(
+    patch_operations: Any, *, compact_utf8: bool = False,
+    filter_predicate: Optional[str] = None,
+) -> bytes:
     """Create body bytes before execution can give control back to the customer app."""
     return serialize_body_to_bytes(
-        build_patch_operations_payload(patch_operations),
+        build_patch_operations_payload(patch_operations, filter_predicate=filter_predicate),
         ensure_ascii=not compact_utf8,
         allow_nan=False,
     )
@@ -134,9 +144,6 @@ def prepare_patch_item_kwargs(kwargs: dict[str, Any]) -> None:
 
 def apply_patch_item_options(options: dict[str, Any]) -> None:
     """Reject unsupported guards and ambiguous header overrides before I/O."""
-    if options.get("filterPredicate") is not None:
-        raise NotImplementedError("The Rust backend does not support filtered patches.")
-    options.pop("filterPredicate", None)
     matches = []
     condition = options.get("accessCondition")
     if condition is not None:

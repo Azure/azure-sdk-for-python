@@ -223,6 +223,38 @@ def test_if_match_reaches_patch_without_replay(rust_patch, kwargs, etag):
     rust_patch.call(**kwargs)
     assert wire_headers(rust_patch.prepared)["if-match"] == etag
     assert [phase for phase, _ in rust_patch.events] == ["metadata", "patch"]
+
+
+@pytest.mark.parametrize("nested", [False, True])
+@pytest.mark.parametrize("condition", ["FROM c WHERE c.n = 1", "FROM c WHERE c.label = 'caf\u00e9'", ""])
+def test_filter_condition_is_in_patch_body_without_replay(rust_patch, nested, condition):
+    options = {"filterPredicate": condition}
+    kwargs = {"request_options": options} if nested else {"filter_predicate": condition}
+    rust_patch.call(**kwargs)
+    assert json.loads(rust_patch.prepared.body_bytes) == {
+        "operations": [{"op": "set", "path": "/n", "value": 2}],
+        "condition": condition,
+    }
+    assert options == {"filterPredicate": condition}
+    assert [phase for phase, _ in rust_patch.events] == ["metadata", "patch"]
+    assert "filterpredicate" not in wire_headers(rust_patch.prepared)
+
+
+def test_filter_and_operations_are_snapshotted_before_metadata(rust_patch):
+    operations = [{"op": "incr", "path": "/n", "value": 1}]
+    options = {"filterPredicate": "FROM c WHERE c.n = 1"}
+
+    def mutate():
+        options["filterPredicate"] = "FROM c WHERE c.n = 999"
+        operations[0]["value"] = 999
+
+    rust_patch.mutate = mutate
+    rust_patch.call(operations, request_options=options, if_match='"v1"')
+    assert json.loads(rust_patch.prepared.body_bytes) == {
+        "condition": "FROM c WHERE c.n = 1",
+        "operations": [{"op": "incr", "path": "/n", "value": 1}],
+    }
+    assert wire_headers(rust_patch.prepared)["if-match"] == '"v1"'
     rust_patch.cc.PatchItem.assert_not_called()
 
 
@@ -244,8 +276,8 @@ def test_if_match_reaches_patch_without_replay(rust_patch, kwargs, etag):
         ({"access_condition": {"type": "IfMatch", "condition": 1}}, ValueError),
         ({"if_match": '"v1"', "initial_headers": {"IF-MATCH": '"v2"'}}, ValueError),
         ({"initial_headers": {"if-match": '"v1"', "IF-MATCH": '"v2"'}}, ValueError),
-        ({"filter_predicate": "FROM c WHERE c.n = 1"}, NotImplementedError),
-        ({"request_options": {"filterPredicate": "FROM c"}}, NotImplementedError),
+        ({"filter_predicate": 1}, TypeError),
+        ({"request_options": {"filterPredicate": {"condition": "FROM c"}}}, TypeError),
         ({"response_hook": False}, TypeError),
         ({"read_timeout": 2}, NotImplementedError),
         ({"retry_write": 0}, NotImplementedError),
@@ -262,7 +294,7 @@ def test_invalid_or_unsupported_options_fail_before_io(rust_patch, kwargs, error
       values (the SDK must not silently pick a winner).
     * ``NotImplementedError`` -- the argument is valid Cosmos usage that this
       path does not support yet: any ``If-None-Match`` form, a
-      ``filter_predicate``, ``read_timeout``, ``retry_write``.
+      ``read_timeout``, ``retry_write``.
 
     The distinction matters to a customer: one says "fix your call", the
     other says "this does not work here yet". Neither may reach the service,

@@ -39,7 +39,7 @@ An operation such as database.read() requests the database's properties
 from the service backend; obtaining the DatabaseProxy does not.
 """
 
-from azure.cosmos._backend.capabilities import OperationRouting
+from azure.cosmos._backend.capabilities import OperationRouting, require_legacy_api
 
 from typing import TYPE_CHECKING, Any, Union, Optional, Mapping, Callable, overload, Literal
 
@@ -70,6 +70,7 @@ from ._helpers._database_throughput import (
     replace_database_throughput,
 )
 from ._global_secondary_index import GlobalSecondaryIndexDefinition, _normalize_gsi_container_properties
+from ._backend.capabilities import reject_unsupported_rust_arguments
 
 if TYPE_CHECKING:
     from ._backend.cosmos_backend import CosmosBackend
@@ -194,6 +195,7 @@ class DatabaseProxy(object):
         :raises NotImplementedError: A setting cannot be honored by the Rust backend.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
         """
+        reject_unsupported_rust_arguments(self, kwargs, headers=initial_headers)
         for option in ("session_token", "populate_query_metrics"):
             if option in kwargs:
                 raise TypeError("DatabaseProxy.read() does not support the '{}' keyword argument".format(option))
@@ -453,6 +455,7 @@ class DatabaseProxy(object):
                 :dedent: 0
                 :caption: Create a container with specific settings; in this case, a custom partition key:
         """
+        reject_unsupported_rust_arguments(self, kwargs)
         id, partition_key = parse_container_create_args(args, kwargs)
         validate_container_create_kwargs(kwargs)
         indexing_policy = kwargs.pop('indexing_policy', None)
@@ -738,6 +741,7 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy or tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
         """
+        reject_unsupported_rust_arguments(self, kwargs)
 
         id, partition_key = parse_container_create_args(
             args, kwargs, method_name="create_container_if_not_exists"
@@ -834,6 +838,7 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
+        reject_unsupported_rust_arguments(self, kwargs, headers=initial_headers)
         validate_container_create_kwargs(kwargs, method_name="delete_container")
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
@@ -939,6 +944,7 @@ class DatabaseProxy(object):
                 :dedent: 0
                 :caption: List all containers in the database:
         """
+        reject_unsupported_rust_arguments(self, kwargs, headers=initial_headers)
         if kwargs.pop("read_timeout", None) is not None:
             raise TypeError(
                 "list_containers() does not support the 'read_timeout' keyword argument; "
@@ -1002,6 +1008,7 @@ class DatabaseProxy(object):
         not on this call. Unsupported Rust options raise during iteration rather than
         switching to legacy Python.
         """
+        reject_unsupported_rust_arguments(self, kwargs, headers=initial_headers)
         if kwargs.pop("read_timeout", None) is not None:
             raise TypeError(
                 "query_containers() does not support the 'read_timeout' keyword argument; "
@@ -1223,6 +1230,7 @@ class DatabaseProxy(object):
                 :dedent: 0
                 :caption: Reset the TTL property on a container, and display the updated properties:
         """
+        reject_unsupported_rust_arguments(self, kwargs)
 
         container, partition_key = parse_container_create_args(
             args, kwargs, method_name="replace_container", target_parameter="container",
@@ -1300,6 +1308,9 @@ class DatabaseProxy(object):
         :returns: An Iterable of user properties (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
+        reject_unsupported_rust_arguments(self, kwargs)
+        require_legacy_api(self.client_connection, "DatabaseProxy.list_users", item_context=self._item_context)
+
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -1332,6 +1343,9 @@ class DatabaseProxy(object):
         :returns: An Iterable of user properties (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
+        reject_unsupported_rust_arguments(self, kwargs)
+        require_legacy_api(self.client_connection, "DatabaseProxy.query_users", item_context=self._item_context)
+
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -1355,6 +1369,8 @@ class DatabaseProxy(object):
         :returns: A `UserProxy` instance representing the retrieved user.
         :rtype: ~azure.cosmos.UserProxy
         """
+        require_legacy_api(self.client_connection, "DatabaseProxy.get_user_client", item_context=self._item_context)
+
         if isinstance(user, UserProxy):
             id_value = user.id
         elif isinstance(user, str):
@@ -1386,6 +1402,9 @@ class DatabaseProxy(object):
                 :dedent: 0
                 :caption: Create a database user:
         """
+        reject_unsupported_rust_arguments(self, kwargs)
+        require_legacy_api(self.client_connection, "DatabaseProxy.create_user", item_context=self._item_context)
+
         request_options = build_options(kwargs)
 
         user = self.client_connection.CreateUser(
@@ -1408,6 +1427,9 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user could not be upserted.
         :rtype: ~azure.cosmos.UserProxy
         """
+        reject_unsupported_rust_arguments(self, kwargs)
+        require_legacy_api(self.client_connection, "DatabaseProxy.upsert_user", item_context=self._item_context)
+
         request_options = build_options(kwargs)
 
         user = self.client_connection.UpsertUser(
@@ -1436,6 +1458,9 @@ class DatabaseProxy(object):
             If the replace operation failed or the user with given ID does not exist.
         :rtype: ~azure.cosmos.UserProxy
         """
+        reject_unsupported_rust_arguments(self, kwargs)
+        require_legacy_api(self.client_connection, "DatabaseProxy.replace_user", item_context=self._item_context)
+
         request_options = build_options(kwargs)
 
         replaced_user = self.client_connection.ReplaceUser(
@@ -1461,6 +1486,9 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The user does not exist in the container.
         :rtype: None
         """
+        reject_unsupported_rust_arguments(self, kwargs)
+        require_legacy_api(self.client_connection, "DatabaseProxy.delete_user", item_context=self._item_context)
+
         request_options = build_options(kwargs)
 
         self.client_connection.DeleteUser(user_link=self._get_user_link(user), options=request_options, **kwargs)
@@ -1482,6 +1510,7 @@ class DatabaseProxy(object):
             the throughput properties could not be retrieved.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
+        reject_unsupported_rust_arguments(self, kwargs)
         return get_database_throughput(
             client_connection=self.client_connection,
             database_link=self.database_link,
@@ -1507,6 +1536,7 @@ class DatabaseProxy(object):
             If no throughput properties exists for the database or if the throughput properties could not be updated.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
+        reject_unsupported_rust_arguments(self, kwargs)
         return replace_database_throughput(
             client_connection=self.client_connection,
             database_link=self.database_link,

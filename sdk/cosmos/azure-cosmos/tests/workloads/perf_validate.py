@@ -16,6 +16,7 @@ Use --run-id for a separate capture identifier. Results-container configuration 
 """
 
 import argparse
+from contextlib import contextmanager
 import math
 import glob
 import os
@@ -49,6 +50,7 @@ def _run_id_of(workload_id: str) -> str:
     return parts[-2] + "-" + parts[-1]
 
 
+@contextmanager
 def _connect():
     uri = os.environ.get("RESULTS_COSMOS_URI")
     key = os.environ.get("RESULTS_COSMOS_KEY")
@@ -61,7 +63,8 @@ def _connect():
             file=sys.stderr,
         )
         sys.exit(2)
-    return CosmosClient(uri, key).get_database_client(db).get_container_client(cont)
+    with CosmosClient(uri, key) as client:
+        yield client.get_database_client(db).get_container_client(cont)
 
 
 def _latest_run_id(container, prefix: str) -> str:
@@ -524,8 +527,11 @@ def main():
         ap.error("PERF_REPORT_INTERVAL must be numeric")
     if not math.isfinite(report_interval_s) or report_interval_s <= 0:
         ap.error("PERF_REPORT_INTERVAL must be finite and positive")
-    container = _connect()
+    with _connect() as container:
+        _run_checks(container, args, required_backends, report_interval_s, ap)
 
+
+def _run_checks(container, args, required_backends, report_interval_s, ap):
     run_id = args.run_id or _latest_run_id(container, args.prefix)
     if not run_id:
         print(f"ERROR: no {args.prefix}* runs found in the results container.", file=sys.stderr)

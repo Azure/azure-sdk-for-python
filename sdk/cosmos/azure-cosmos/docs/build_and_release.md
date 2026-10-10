@@ -140,6 +140,12 @@ driver. A **Git revision** identifies a particular source snapshot. The
 selected driver is preview version `1.0.0-beta.2`; the exact revision is recorded in the
 package-level `Cargo.toml` and `Cargo.lock`.
 
+The October 7, 2026 local rebuild uses revision
+`019eaad15d165fd18a6b18b717af2d3663684810`, matching the clean local Rust
+checkout. Both the driver and its companion macros crate resolve to this
+revision. Updating the checkout alone does not update the Python extension:
+change the dependency pin, update the lockfile, rebuild the binding, and
+install the resulting extension before running Python against the new code.
 
 For the final release, our plan calls for an approved driver version published
 on **crates.io**, the public registry from which Cargo downloads Rust source

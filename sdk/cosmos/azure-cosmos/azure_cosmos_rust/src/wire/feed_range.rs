@@ -12,9 +12,7 @@ use pyo3::types::PyTuple;
 use azure_data_cosmos_driver::{
     driver::CosmosDriver,
     error::CosmosError,
-    models::{
-        FeedRange, PartitionKey, PartitionKeyDefinition, PartitionKeyKind, PartitionKeyVersion,
-    },
+    models::{FeedRange, PartitionKey, PartitionKeyDefinition, PartitionKeyKind},
 };
 
 use super::diagnostics::BINDING_OP_COUNT;
@@ -59,7 +57,6 @@ pub(super) enum FeedRangeFromPartitionKeyError {
     Cosmos(CosmosError),
     Validation(String),
     LegacyAttribute(String),
-    LegacyType(String),
 }
 
 /// Handle empty partition-key forms whose result depends on the container definition.
@@ -69,20 +66,11 @@ pub(super) fn maybe_handle_feed_range_partition_key_special_case(
 ) -> Result<Option<FeedRangeFromPartitionKeyPayload>, FeedRangeFromPartitionKeyError> {
     match source {
         FeedRangePartitionKeySource::Standard => Ok(None),
-        FeedRangePartitionKeySource::EmptySentinel => {
-            if definition.version() == PartitionKeyVersion::V1 {
-                return Err(FeedRangeFromPartitionKeyError::LegacyType(
-                    "Unexpected type for PK component: <class 'azure.cosmos.partition_key._Empty'>"
-                        .to_string(),
-                ));
-            }
-            let epk = "00000000000000000000000000000000".to_string();
-            Ok(Some(FeedRangeFromPartitionKeyPayload {
-                min: epk.clone(),
-                max: epk,
-                is_max_inclusive: true,
-            }))
-        }
+        FeedRangePartitionKeySource::EmptySentinel => Ok(Some(FeedRangeFromPartitionKeyPayload {
+            min: String::new(),
+            max: "00".to_string(),
+            is_max_inclusive: false,
+        })),
         FeedRangePartitionKeySource::ExplicitEmptySequence => {
             if definition.kind() == PartitionKeyKind::MultiHash {
                 Ok(None)

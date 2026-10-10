@@ -4,6 +4,11 @@
 
 Set ACCOUNT_HOST and ACCOUNT_KEY, and optionally PATCH_REVIEW_OUTPUT to a new
 evidence directory. PATCH_REVIEW_SUPPLEMENTAL=1 selects numeric/trigger probes.
+PATCH_REVIEW_NONE_OPTIONS=1 selects only the synchronous original None-options
+method on both backends. The default run also includes this method and both
+integer-starting-value and fractional-starting-value integer increment probes.
+The if_none_match probes compare legacy acceptance in both version states;
+a passing legacy case does not establish enforcement of the condition.
 Known incompatibilities remain failures; this runner does not mark them xfail.
 """
 import ast
@@ -17,6 +22,7 @@ import sys
 import textwrap
 from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 import uuid
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -28,6 +34,10 @@ from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.cosmos.http_constants import StatusCodes
 from common._parity_helpers import _binding_operation_count, _rust_fallback_count
 
+
+NONE_OPTIONS_ONLY = os.environ.get("PATCH_REVIEW_NONE_OPTIONS") == "1"
+if NONE_OPTIONS_ONLY and os.environ.get("PATCH_REVIEW_SUPPLEMENTAL"):
+    raise ValueError("PATCH_REVIEW_NONE_OPTIONS and PATCH_REVIEW_SUPPLEMENTAL are mutually exclusive")
 
 OUT = Path(os.environ.get(
     "PATCH_REVIEW_OUTPUT", str(ROOT / "docs" / "V5" / "_parity_runs" / ("patch_item_" + uuid.uuid4().hex))
@@ -55,6 +65,40 @@ def copy_original(filename, names):
 
 SYNC = copy_original("test_crud.py", ["test_patch_operations", "test_conditional_patching"])
 ASYNC = copy_original("test_crud_async.py", ["test_patch_operations_async", "test_conditional_patching_async"])
+NONE_OPTIONS = copy_original("test_none_options.py", ["_create_sample_item", "test_patch_item_none_options"])
+
+
+def run_none_options(container):
+    case = unittest.TestCase()
+    case.container = container
+    case._create_sample_item = lambda: NONE_OPTIONS[0](case)
+    observation = dict(CURRENT, operation="test_patch_item_none_options")
+    REPORT["patch_calls"].append(observation)
+    original_patch, original_read = container.patch_item, container.read_item
+    fields = ("id", "pk", "value", "patched")
+
+    def observed_patch(item, **kwargs):
+        observation.update(target=item, partition_key=kwargs["partition_key"],
+                           patch_operations=kwargs["patch_operations"])
+        before = (_binding_operation_count(), _rust_fallback_count())
+        try:
+            result = original_patch(item, **kwargs)
+        finally:
+            observation["binding_delta"] = _binding_operation_count() - before[0]
+            observation["fallback_delta"] = _rust_fallback_count() - before[1]
+        observation["returned_fields"] = {key: result[key] for key in fields if key in result}
+        assert observation["fallback_delta"] == 0
+        assert observation["binding_delta"] == (1 if CURRENT["backend"] == "rust" else 0)
+        return result
+
+    def observed_read(item, **kwargs):
+        result = original_read(item, **kwargs)
+        observation["stored_fields"] = {key: result[key] for key in fields if key in result}
+        return result
+
+    with patch.object(container, "patch_item", observed_patch), patch.object(container, "read_item", observed_read):
+        NONE_OPTIONS[1](case)
+    print(json.dumps(observation), flush=True)
 
 
 async def invoke(method, *args, **kwargs):
@@ -64,31 +108,118 @@ async def invoke(method, *args, **kwargs):
 
 async def scenario(container, name):
     key = uuid.uuid4().hex
-    original = await invoke(container.create_item, {"id": key, "pk": key, "n": 5, "status": "active"})
+    array_patch = name in ("array_add", "array_set", "array_add_then_remove", "array_remove_then_add")
+    initial_item = {"id": key, "pk": key, "n": 5, "status": "active"}
+    if array_patch:
+        initial_item["labels"] = ["received", "approved"]
+    original = await invoke(container.create_item, initial_item)
     operations = [{"op": "incr", "path": "/n", "value": 1}]
     options = {}
     target = key
     expected_error = None
     expected_n = 6
+    expected_fields = None
+    if_none_match = name in ("if_none_match", "if_none_match_stale")
+    combined_filter = name in (
+        "filter_etag_current", "filter_etag_stale",
+        "filter_false_etag_current", "filter_false_etag_stale",
+    )
+    if_match = name in ("etag_current", "etag_stale") or combined_filter
+    atomic_patch = name in ("atomic_patch_control", "atomic_patch_rejection")
+    numeric_increment = name in ("integer_increment_on_integer", "integer_increment_on_fraction")
+    no_response = name in ("no_response", "no_response_rejection")
+    state_before = None
     hook_calls = []
-    if name == "integer_increment_on_fraction":
-        original = await invoke(container.replace_item, key, dict(original, n=5.5))
-        expected_n = 6.5
+    if array_patch:
+        operation = "set" if name == "array_set" else "add"
+        operations = [{"op": operation, "path": "/labels/1", "value": "reviewed"}]
+        if name in ("array_add_then_remove", "array_remove_then_add"):
+            operations.append({"op": "remove", "path": "/labels/2"})
+            if name == "array_remove_then_add":
+                operations.reverse()
+                expected_error = 400
+        state_before = await invoke(container.read_item, key, partition_key=key)
+        initial_fields = {
+            "id": key, "pk": key, "n": 5, "status": "active", "labels": ["received", "approved"],
+        }
+        assert {key: state_before.get(key) for key in initial_fields} == initial_fields, (
+            "Unexpected starting customer fields"
+        )
+        expected_n = 5
+        labels = ["received", "reviewed", "approved"] if name == "array_add" else ["received", "reviewed"]
+        if name == "array_remove_then_add":
+            labels = ["received", "approved"]
+        expected_fields = dict(initial_fields, labels=labels)
+    elif numeric_increment:
+        initial_n = 5
+        if name == "integer_increment_on_fraction":
+            initial_n = 5.5
+            original = await invoke(container.replace_item, key, dict(original, n=initial_n))
+        expected_n = initial_n + 1
+        state_before = await invoke(container.read_item, key, partition_key=key)
+        initial_fields = {"id": key, "pk": key, "n": initial_n, "status": "active"}
+        assert {key: state_before.get(key) for key in initial_fields} == initial_fields, (
+            "Unexpected starting customer fields"
+        )
+        expected_fields = dict(initial_fields, n=expected_n)
     elif name in ("pre_trigger", "post_trigger"):
         options[name + "_include"] = "auditPre" if name == "pre_trigger" else "auditPost"
-    elif name == "no_response":
+    elif no_response:
         options["no_response"] = True
+        state_before = await invoke(container.read_item, key, partition_key=key)
+        initial_fields = {"id": key, "pk": key, "n": 5, "status": "active"}
+        assert {key: state_before.get(key) for key in initial_fields} == initial_fields, (
+            "Unexpected starting customer fields"
+        )
+        assert "missing_field" not in state_before, "Invalid removal would target an existing field"
+        if name == "no_response_rejection":
+            operations = [{"op": "remove", "path": "/missing_field"}]
+            expected_error, expected_n = 400, 5
+        expected_fields = dict(initial_fields, n=expected_n)
     elif name == "session_token":
         options["session_token"] = original.get_response_headers()["x-ms-session-token"]
-    elif name == "etag_current":
+    elif if_match:
         options.update(etag=original["_etag"], match_condition=MatchConditions.IfNotModified)
-    elif name == "etag_stale":
-        await invoke(container.replace_item, key, dict(original, n=8))
-        options.update(etag=original["_etag"], match_condition=MatchConditions.IfNotModified)
-        expected_error, expected_n = 412, 8
+        changed = name in ("etag_stale", "filter_etag_stale", "filter_false_etag_stale")
+        if changed:
+            await invoke(container.replace_item, key, dict(original, n=8))
+            expected_error, expected_n = 412, 8
+        state_before = await invoke(container.read_item, key, partition_key=key)
+        assert isinstance(original["_etag"], str) and original["_etag"]
+        assert isinstance(state_before["_etag"], str) and state_before["_etag"]
+        assert (state_before["_etag"] != original["_etag"]) == changed, "Unexpected starting ETag"
+        initial_fields = {"id": key, "pk": key, "n": 8 if changed else 5, "status": "active"}
+        assert {key: state_before.get(key) for key in initial_fields} == initial_fields, (
+            "Unexpected starting customer fields"
+        )
+        if combined_filter:
+            filter_status = "cancelled" if name in (
+                "filter_false_etag_current", "filter_false_etag_stale",
+            ) else "active"
+            options["filter_predicate"] = f"FROM c WHERE c.status = '{filter_status}'"
+            if state_before["status"] != filter_status:
+                expected_error, expected_n = 412, initial_fields["n"]
+        expected_fields = dict(initial_fields, n=expected_n)
     elif name == "invalid_path":
         operations = [{"op": "incr", "path": "/absent/n", "value": 1}]
         expected_error, expected_n = 400, 5
+    elif atomic_patch:
+        operations = [
+            {"op": "incr", "path": "/n", "value": 1},
+            {"op": "set", "path": "/status", "value": "reviewed"},
+        ]
+        state_before = await invoke(container.read_item, key, partition_key=key)
+        initial_fields = {"id": key, "pk": key, "n": 5, "status": "active"}
+        assert {key: state_before.get(key) for key in initial_fields} == initial_fields, (
+            "Unexpected starting customer fields"
+        )
+        assert "missing_field" not in state_before, "Invalid final operation would remove an existing field"
+        if name == "atomic_patch_rejection":
+            operations.append({"op": "remove", "path": "/missing_field"})
+            expected_error, expected_n = 400, 5
+            expected_fields = initial_fields
+        else:
+            expected_fields = dict(initial_fields, n=6, status="reviewed")
     elif name == "filter_false":
         options["filter_predicate"] = "FROM c WHERE c.status = 'cancelled'"
         expected_error, expected_n = 412, 5
@@ -106,9 +237,34 @@ async def scenario(container, name):
             operations = [{"op": "set", "path": "/n", "value": 6}]
         expected_error, expected_n = 404, 100
     elif name == "response_hook":
+        state_before = await invoke(container.read_item, key, partition_key=key)
+        initial_fields = {"id": key, "pk": key, "n": 5, "status": "active"}
+        assert {key: state_before.get(key) for key in initial_fields} == initial_fields, (
+            "Unexpected starting customer fields"
+        )
+        expected_fields = dict(initial_fields, n=6)
         options["response_hook"] = lambda headers, body: hook_calls.append((dict(headers), dict(body)))
-    elif name == "if_none_match":
+    elif if_none_match:
         options.update(etag=original["_etag"], match_condition=MatchConditions.IfModified)
+        changed = name == "if_none_match_stale"
+        if changed:
+            await invoke(container.replace_item, key, dict(original, n=8))
+            expected_n = 9
+        state_before = await invoke(container.read_item, key, partition_key=key)
+        assert isinstance(original["_etag"], str) and original["_etag"]
+        assert isinstance(state_before["_etag"], str) and state_before["_etag"]
+        assert (state_before["_etag"] != original["_etag"]) == changed, "Unexpected starting ETag"
+        expected_fields = {"id": key, "pk": key, "n": expected_n, "status": "active"}
+        assert {key: state_before.get(key) for key in expected_fields} == dict(
+            expected_fields, n=expected_n - 1,
+        ), "Unexpected starting customer fields"
+    elif name == "ten_operations":
+        operations = [{"op": "set", "path": f"/field{i}", "value": i} for i in range(10)]
+        expected_n = 5
+        expected_fields = {
+            "id": key, "pk": key, "n": 5, "status": "active",
+            **{f"field{i}": i for i in range(10)},
+        }
     elif name == "eleven_operations":
         operations = [{"op": "set", "path": "/n", "value": n} for n in range(11)]
         expected_error, expected_n = 400, 5
@@ -129,12 +285,54 @@ async def scenario(container, name):
                        stored_keys=sorted(stored), hooks=len(hook_calls),
                        stored_stamp=stored.get("auditStamp"),
                        response_stamp=result.get("auditStamp") if result is not None else None)
+    if expected_fields is not None:
+        observation.update(
+            operation_count=len(operations),
+            returned_fields={key: result.get(key) for key in expected_fields} if result is not None else None,
+            stored_fields={key: stored.get(key) for key in expected_fields},
+        )
+    if if_none_match or if_match:
+        observation.update(
+            saved_etag=original["_etag"], before_etag=state_before["_etag"],
+            version_changed=state_before["_etag"] != original["_etag"],
+            before_fields={key: state_before[key] for key in expected_fields},
+            returned_etag=result.get("_etag") if result is not None else None,
+            stored_etag=stored.get("_etag"),
+        )
+    if combined_filter:
+        observation.update(
+            filter_predicate=options["filter_predicate"],
+            filter_matches=state_before["status"] == filter_status,
+        )
+    if atomic_patch or numeric_increment or array_patch or no_response or if_match or name == "response_hook":
+        observation.update(
+            patch_operations=operations,
+            before_fields={key: state_before[key] for key in expected_fields},
+        )
+    if atomic_patch or no_response:
+        observation.update(
+            missing_field_before="missing_field" in state_before,
+            missing_field_after="missing_field" in stored,
+        )
+    if no_response:
+        observation.update(no_response=True, returned_body=dict(result) if result is not None else None)
+    if name == "response_hook":
+        observation["hook_fields"] = [
+            {key: body[key] for key in expected_fields if key in body} for _, body in hook_calls
+        ]
     REPORT["patch_calls"].append(observation)
     print(json.dumps(observation), flush=True)
     assert target == target_before
     assert delta[1] == 0
-    if CURRENT["backend"] == "rust" and name not in ("filter_false", "filter_true", "if_none_match"):
-        assert delta[0] == 1
+    if CURRENT["backend"] == "rust":
+        expected_binding = 0 if if_none_match and isinstance(error, NotImplementedError) else 1
+        assert delta[0] == expected_binding
+    if (if_none_match or if_match or numeric_increment or array_patch or no_response) and error is not None:
+        assert observation["stored_fields"] == observation["before_fields"], (
+            "Rejected patch changed stored customer fields"
+        )
+    if (if_none_match or if_match) and error is not None:
+        assert observation["stored_etag"] == observation["before_etag"], "Rejected patch changed stored ETag"
     if expected_error is not None:
         assert isinstance(error, exceptions.CosmosHttpResponseError), f"Expected HTTP {expected_error}, got {type(error).__name__}"
         assert error.status_code == expected_error
@@ -145,8 +343,15 @@ async def scenario(container, name):
         else:
             assert result["n"] == expected_n
     assert stored["n"] == expected_n
+    if expected_fields is not None:
+        if expected_error is None and not no_response:
+            assert observation["returned_fields"] == expected_fields
+        assert observation["stored_fields"] == expected_fields
+    if atomic_patch or no_response:
+        assert not observation["missing_field_after"]
     if name == "response_hook":
-        assert len(hook_calls) == 1 and hook_calls[0][1]["n"] == 6
+        assert len(hook_calls) == 1, "Expected exactly one response-hook call"
+        assert observation["hook_fields"] == [expected_fields], "Unexpected response-hook customer fields"
     if name == "pre_trigger":
         assert stored.get("auditStamp") == "pre"
     if name == "post_trigger":
@@ -173,6 +378,10 @@ async def run_backend(backend, asynchronous, database_id):
             await client.__aenter__()
         database = client.get_database_client(database_id)
         container = database.get_container_client("orders")
+        if not asynchronous and not os.environ.get("PATCH_REVIEW_SUPPLEMENTAL"):
+            await record("test_patch_item_none_options", lambda: run_none_options(container))
+        if NONE_OPTIONS_ONLY:
+            return
         case = unittest.TestCase()
         case.databaseForTest = case.database_for_test = database
         case.configs = SimpleNamespace(TEST_MULTI_PARTITION_CONTAINER_ID="orders")
@@ -180,10 +389,16 @@ async def run_backend(backend, asynchronous, database_id):
             await record(method.__name__, lambda method=method: method(case))
         names = ("integer_increment_on_fraction", "pre_trigger", "post_trigger") if os.environ.get(
             "PATCH_REVIEW_SUPPLEMENTAL"
-        ) else ("no_response", "session_token", "etag_current", "etag_stale",
-                     "invalid_path", "filter_false", "filter_true", "stale_self", "stale_self_set",
+        ) else ("no_response", "no_response_rejection", "session_token", "etag_current", "etag_stale",
+                     "invalid_path", "atomic_patch_control", "atomic_patch_rejection",
+                     "filter_false", "filter_true", "filter_etag_current", "filter_etag_stale",
+                     "filter_false_etag_current", "filter_false_etag_stale",
+                     "stale_self", "stale_self_set",
                      "self_only", "self_different_id",
-                     "response_hook", "if_none_match", "eleven_operations")
+                     "response_hook", "if_none_match", "if_none_match_stale",
+                     "ten_operations", "eleven_operations",
+                     "integer_increment_on_integer", "integer_increment_on_fraction",
+                     "array_add", "array_set", "array_add_then_remove", "array_remove_then_add")
         for name in names:
             await record(name, lambda name=name: scenario(container, name))
     finally:
@@ -192,7 +407,7 @@ async def run_backend(backend, asynchronous, database_id):
 
 async def main():
     for backend in ("core-python", "rust"):
-        for asynchronous in (False, True):
+        for asynchronous in ((False,) if NONE_OPTIONS_ONLY else (False, True)):
             with CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="core-python") as owner:
                 database = owner.create_database("patch_review_" + uuid.uuid4().hex)
                 try:

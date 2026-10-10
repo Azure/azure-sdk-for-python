@@ -235,11 +235,9 @@ def test_mutable_inputs_are_snapshotted():
     after the settings are built. If the settings had merely kept a reference, the request
     would now carry values the caller never meant to send.
     """
-    triggers, exclusions = ["validate"], ["West US"]
-    _, settings = build_request_headers_and_settings({"preTriggerInclude": triggers, "excludedLocations": exclusions})
-    triggers.append("changed")
+    exclusions = ["West US"]
+    _, settings = build_request_headers_and_settings({"excludedLocations": exclusions})
     exclusions.clear()
-    assert settings.item.pre_triggers == ("validate",)
     assert settings.excluded_locations == ("West US",)
 
 
@@ -386,11 +384,11 @@ def test_customer_headers_and_typed_service_values_remain_separate():
     headers, settings = build_request_headers_and_settings({
         "initialHeaders": {"X-Customer": "value", "IF-MATCH": "old"},
         "accessCondition": {"type": "IfMatch", "condition": "current"},
-        "throughputBucket": 7, "preTriggerInclude": ["first", "second"],
+        "throughputBucket": 7,
         "excludedLocations": [], "responsePayloadOnWriteDisabled": False, "sessionToken": "session",
     })
     assert headers == {"x-customer": "value"}
-    assert settings.item == ItemSettings(if_match="current", pre_triggers=("first", "second"))
+    assert settings.item == ItemSettings(if_match="current")
     assert settings.throughput_bucket == 7
     assert settings.no_response is False
     assert settings.excluded_locations == ()

@@ -1,3 +1,9 @@
+> **Legacy API snapshot, not the Rust-backed release contract.** This inventory
+> retains earlier signatures and comparison-only APIs. Trigger options,
+> scripting APIs, and Cosmos user/permission APIs shown below are not supported
+> on the Rust path. See `docs\V5\api-review\API_REVIEW_BOARD.md` for the reviewed
+> release scope. Ordinary item queries invoking deployed UDFs remain supported.
+
 ```py
 namespace azure.cosmos
 

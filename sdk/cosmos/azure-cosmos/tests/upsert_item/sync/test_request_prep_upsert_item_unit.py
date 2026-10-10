@@ -235,15 +235,11 @@ def test_trigger_priority_bucket_no_response_land_as_option_keys():
         partition_key_value="a",
         container_rid=None,
         kwargs={
-            "pre_trigger_include": "validateOrder",
-            "post_trigger_include": "auditOrder",
             "priority": "High",
             "throughput_bucket": 1,
             "no_response": True,
         },
     )
-    assert wire_headers(prepared)["x-ms-documentdb-pre-trigger-include"] == "validateOrder"
-    assert wire_headers(prepared)["x-ms-documentdb-post-trigger-include"] == "auditOrder"
     assert wire_headers(prepared)["x-ms-cosmos-priority-level"] == "High"
     assert wire_headers(prepared)["x-ms-cosmos-throughput-bucket"] == '1'
     assert settings_options(prepared)["responsePayloadOnWriteDisabled"] is True
@@ -267,7 +263,7 @@ def test_compose_consumes_recognised_kwargs():
     """The option-shortcut keyword arguments the prep recognises are removed
     from the input dict, so the caller doesn't forward them again to the
     legacy path."""
-    kwargs = {"pre_trigger_include": "validateOrder", "extra_unknown": "left-alone"}
+    kwargs = {"priority": "High", "extra_unknown": "left-alone"}
     prepare_upsert_item_request(
         container_link="dbs/d/colls/c",
         body={"id": "x", "pk": "a"},
@@ -275,8 +271,7 @@ def test_compose_consumes_recognised_kwargs():
         container_rid=None,
         kwargs=kwargs,
     )
-    assert kwargs["pre_trigger_include"] == "validateOrder"
-    assert kwargs == {"pre_trigger_include": "validateOrder", "extra_unknown": "left-alone"}
+    assert kwargs == {"priority": "High", "extra_unknown": "left-alone"}
 
 
 # ---------------------------------------------------------------------------

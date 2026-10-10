@@ -29,6 +29,8 @@ from azure.cosmos import ContainerProxy
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
 from azure.cosmos.aio import ContainerProxy as AsyncContainerProxy
 from azure.cosmos._backend.contracts import BackendResponse
+from azure.cosmos._backend.partition_key_input import BindingPartitionKey, UNDEFINED_PARTITION_KEY
+from azure.cosmos.partition_key import NonePartitionKeyValue, _Undefined
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._cosmos_responses import CosmosAsyncItemPaged, CosmosItemPaged
@@ -260,6 +262,30 @@ def _container(async_client=False):
     container.container_link = "dbs/sales/colls/orders"
     container._get_properties_with_options = AsyncMock() if async_client else Mock()
     return container, backend.recording if async_client else backend
+
+
+@pytest.mark.parametrize("async_client", [False, True])
+@pytest.mark.parametrize("missing", [NonePartitionKeyValue, _Undefined(), {}])
+def test_feed_range_from_partition_key_dispatch_preserves_missing_components(async_client, missing):
+    container, recording = _container(async_client)
+    expected = {
+        "Range": {
+            "min": "11622DAA78F835834610ABE56EFF5CB5",
+            "max": "11622DAA78F835834610ABE56EFF5CB5FF",
+            "isMinInclusive": True,
+            "isMaxInclusive": False,
+        }
+    }
+    recording.response = BackendResponse(200, 0, {}, json.dumps(expected).encode())
+    result = container.feed_range_from_partition_key([missing])
+    if async_client:
+        result = asyncio.run(result)
+    assert result == expected
+    assert len(recording.requests) == 1
+    assert recording.requests[0].partition_key == BindingPartitionKey(
+        "components", (UNDEFINED_PARTITION_KEY,)
+    )
+    container._get_properties_with_options.assert_not_called()
 
 
 async def _collect_async(values):

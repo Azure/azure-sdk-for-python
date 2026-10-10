@@ -33,6 +33,7 @@ from azure.cosmos import CosmosDict
 
 from ._cosmos_client_connection_async import CosmosClientConnection as _CosmosClientConnection
 from .._base import build_options as _build_options
+from .._backend.capabilities import require_legacy_api
 from .._constants import _Constants as Constants
 from ..scripts import ScriptType
 from ..partition_key import NonePartitionKeyValue, _return_undefined_or_empty_partition_key, PartitionKeyType
@@ -44,6 +45,9 @@ class ScriptsProxy:
     """An interface to interact with stored procedures, triggers and user
     defined functions.
 
+    These definition and execution APIs are legacy-only. Calling a deployed
+    UDF from an ordinary item query is separate and remains supported.
+
     This class should not be instantiated directly. Instead, use the
     :func:`ContainerProxy.scripts` attribute.
     """
@@ -54,6 +58,7 @@ class ScriptsProxy:
         client_connection: _CosmosClientConnection,
         container_link: str
     ) -> None:
+        require_legacy_api(client_connection, "ScriptsProxy", item_context=container._item_context)
         self.client_connection = client_connection
         self.container_link = container_link
         self.container_proxy = container
