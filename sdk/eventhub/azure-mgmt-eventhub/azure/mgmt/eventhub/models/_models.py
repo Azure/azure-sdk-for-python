@@ -108,7 +108,7 @@ class ProxyResource(Resource):
     """
 
 
-class ApplicationGroup(ProxyResource):
+class ApplicationGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Application Group object.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -172,7 +172,7 @@ class ApplicationGroup(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ApplicationGroupPolicy(_Model):
+class ApplicationGroupPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Application Group policy.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -209,7 +209,7 @@ class ApplicationGroupPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationGroupProperties(_Model):
+class ApplicationGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ApplicationGroupProperties.
 
     :ivar is_enabled: Determines if Application Group is allowed to create connection with
@@ -261,7 +261,7 @@ class ApplicationGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ArmDisasterRecovery(ProxyResource):
+class ArmDisasterRecovery(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Single item in List or Get Alias(Disaster Recovery configuration) operation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -333,7 +333,7 @@ class ArmDisasterRecovery(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ArmDisasterRecoveryProperties(_Model):
+class ArmDisasterRecoveryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties required to the Create Or Update Alias(Disaster Recovery configurations).
 
     :ivar provisioning_state: Provisioning state of the Alias(Disaster Recovery configuration) -
@@ -392,7 +392,7 @@ class ArmDisasterRecoveryProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthorizationRule(ProxyResource):
+class AuthorizationRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Single item in a List or Get AuthorizationRule operation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -457,7 +457,7 @@ class AuthorizationRule(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AuthorizationRuleProperties(_Model):
+class AuthorizationRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties supplied to create or update AuthorizationRule.
 
     :ivar rights: The rights associated with the rule. Required.
@@ -487,7 +487,7 @@ class AuthorizationRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AvailableCluster(_Model):
+class AvailableCluster(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Pre-provisioned and readily available Event Hubs Cluster count per region.
 
     :ivar location: Location fo the Available Cluster.
@@ -515,7 +515,7 @@ class AvailableCluster(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AvailableClustersList(_Model):
+class AvailableClustersList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response of the List Available Clusters operation.
 
     :ivar value: The count of readily available and pre-provisioned Event Hubs Clusters per region.
@@ -545,7 +545,7 @@ class AvailableClustersList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CaptureDescription(_Model):
+class CaptureDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to configure capture description for eventhub.
 
     :ivar enabled: A value that indicates whether capture description is enabled.
@@ -617,7 +617,7 @@ class CaptureDescription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CaptureIdentity(_Model):
+class CaptureIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A value that indicates whether capture description is enabled.
 
     :ivar type: Type of Azure Active Directory Managed Identity. Known values are: "SystemAssigned"
@@ -660,7 +660,7 @@ class CaptureIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityParameter(_Model):
+class CheckNameAvailabilityParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameter supplied to check Namespace name availability operation.
 
     :ivar name: Name to check the namespace name availability. Required.
@@ -688,7 +688,7 @@ class CheckNameAvailabilityParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityResult(_Model):
+class CheckNameAvailabilityResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Result of the CheckNameAvailability operation.
 
     :ivar message: The detailed info regarding the reason associated with the Namespace.
@@ -735,7 +735,7 @@ class CheckNameAvailabilityResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Cluster(ProxyResource):
+class Cluster(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Single Event Hubs Cluster resource in List or Get operations.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -821,7 +821,7 @@ class Cluster(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ClusterProperties(_Model):
+class ClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Event Hubs Cluster properties supplied in responses in List or Get operations.
 
     :ivar created_at: The UTC time when the Event Hubs Cluster was created.
@@ -889,7 +889,7 @@ class ClusterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterQuotaConfigurationProperties(_Model):
+class ClusterQuotaConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains all settings for the cluster.
 
     :ivar settings: All possible Cluster settings - a collection of key/value paired settings which
@@ -919,7 +919,7 @@ class ClusterQuotaConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterSku(_Model):
+class ClusterSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SKU parameters particular to a cluster instance.
 
     :ivar name: Name of this SKU. Required. "Dedicated"
@@ -952,7 +952,7 @@ class ClusterSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConfidentialCompute(_Model):
+class ConfidentialCompute(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ConfidentialCompute.
 
     :ivar mode: Setting to Enable or Disable Confidential Compute. Known values are: "Disabled" and
@@ -982,7 +982,7 @@ class ConfidentialCompute(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionState(_Model):
+class ConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ConnectionState information.
 
     :ivar status: Status of the connection. Known values are: "Pending", "Approved", "Rejected",
@@ -1019,7 +1019,7 @@ class ConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConsumerGroup(ProxyResource):
+class ConsumerGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Single item in List or Get Consumer group operation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1084,7 +1084,7 @@ class ConsumerGroup(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ConsumerGroupProperties(_Model):
+class ConsumerGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Single item in List or Get Consumer group operation.
 
     :ivar created_at: Exact time the message was created.
@@ -1126,7 +1126,7 @@ class ConsumerGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Destination(_Model):
+class Destination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Capture storage details for capture description.
 
     :ivar name: Name for capture destination.
@@ -1197,7 +1197,7 @@ class Destination(_Model):
             super().__setattr__(key, value)
 
 
-class DestinationProperties(_Model):
+class DestinationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties describing the storage account, blob container and archive name format for capture
     destination.
 
@@ -1268,7 +1268,7 @@ class DestinationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EHNamespace(ProxyResource):
+class EHNamespace(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Single Namespace item in List or Get Operation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1370,7 +1370,7 @@ class EHNamespace(ProxyResource):
             super().__setattr__(key, value)
 
 
-class EHNamespaceIdContainer(_Model):
+class EHNamespaceIdContainer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The full ARM ID of an Event Hubs Namespace.
 
     :ivar id: id parameter.
@@ -1398,7 +1398,7 @@ class EHNamespaceIdContainer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EHNamespaceIdListResult(_Model):
+class EHNamespaceIdListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response of the List Namespace IDs operation.
 
     :ivar value: Result of the List Namespace IDs operation.
@@ -1428,7 +1428,7 @@ class EHNamespaceIdListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EHNamespaceProperties(_Model):
+class EHNamespaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Namespace properties supplied for create namespace operation.
 
     :ivar minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
@@ -1584,7 +1584,7 @@ class EHNamespaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Encryption(_Model):
+class Encryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to configure Encryption.
 
     :ivar key_vault_properties: Properties of KeyVault.
@@ -1674,7 +1674,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response indicates Event Hub service is not able to process the incoming request. The
     reason is provided in the error message.
 
@@ -1703,7 +1703,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Eventhub(ProxyResource):
+class Eventhub(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Single item in List or Get Event Hub operation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1780,7 +1780,7 @@ class Eventhub(ProxyResource):
             super().__setattr__(key, value)
 
 
-class EventhubProperties(_Model):
+class EventhubProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties supplied to the Create Or Update Event Hub operation.
 
     :ivar partition_ids: Current number of shards on the Event Hub.
@@ -1878,7 +1878,231 @@ class EventhubProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FailOver(_Model):
+class ExceptionWindow(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A date-specific exception to the recurring maintenance windows.
+
+    :ivar date: The UTC date on which the exception starts. Required.
+    :vartype date: ~datetime.date
+    :ivar action: Whether the exception blocks or allows upgrades. Required. Known values are:
+     "Block" and "Allow".
+    :vartype action: str or ~azure.mgmt.eventhub.models.ExceptionWindowAction
+    :ivar start_time_of_day: The UTC time of day at which the exception starts, represented as an
+     ISO 8601 duration since midnight. Required.
+    :vartype start_time_of_day: ~datetime.timedelta
+    :ivar duration_minutes: The exception duration in minutes. Allow exceptions must be between 480
+     and 1440 minutes in 60-minute increments. Block exceptions must be 1440 minutes. Required.
+    :vartype duration_minutes: int
+    """
+
+    date: datetime.date = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The UTC date on which the exception starts. Required."""
+    action: Union[str, "_models.ExceptionWindowAction"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the exception blocks or allows upgrades. Required. Known values are: \"Block\" and
+     \"Allow\"."""
+    start_time_of_day: datetime.timedelta = rest_field(
+        name="startTimeOfDay", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The UTC time of day at which the exception starts, represented as an ISO 8601 duration since
+     midnight. Required."""
+    duration_minutes: int = rest_field(
+        name="durationMinutes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The exception duration in minutes. Allow exceptions must be between 480 and 1440 minutes in
+     60-minute increments. Block exceptions must be 1440 minutes. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        date: datetime.date,
+        action: Union[str, "_models.ExceptionWindowAction"],
+        start_time_of_day: datetime.timedelta,
+        duration_minutes: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FabricShortcut(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A Microsoft Fabric shortcut attached to an Event Hub.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.eventhub.models.SystemData
+    :ivar properties: Properties of the Microsoft Fabric shortcut.
+    :vartype properties: ~azure.mgmt.eventhub.models.FabricShortcutProperties
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
+    """
+
+    properties: Optional["_models.FabricShortcutProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the Microsoft Fabric shortcut."""
+    location: Optional[str] = rest_field(visibility=["read"])
+    """The geo-location where the resource lives."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.FabricShortcutProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FabricShortcutConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Microsoft Fabric workspace and artifact configuration.
+
+    :ivar tenant_id: The Microsoft Fabric tenant ID. Required.
+    :vartype tenant_id: str
+    :ivar workspace_id: The Microsoft Fabric workspace ID. Required.
+    :vartype workspace_id: str
+    :ivar artifact_id: The Microsoft Fabric artifact ID. Required.
+    :vartype artifact_id: str
+    :ivar premium_capacity_id: The Microsoft Fabric premium capacity ID.
+    :vartype premium_capacity_id: str
+    :ivar log_analytics_resource_id: The resource ID of the Log Analytics workspace.
+    :vartype log_analytics_resource_id: str
+    :ivar workspace_name: The Microsoft Fabric workspace name.
+    :vartype workspace_name: str
+    :ivar artifact_name: The Microsoft Fabric artifact name.
+    :vartype artifact_name: str
+    """
+
+    tenant_id: str = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """The Microsoft Fabric tenant ID. Required."""
+    workspace_id: str = rest_field(name="workspaceId", visibility=["read", "create", "update", "delete", "query"])
+    """The Microsoft Fabric workspace ID. Required."""
+    artifact_id: str = rest_field(name="artifactId", visibility=["read", "create", "update", "delete", "query"])
+    """The Microsoft Fabric artifact ID. Required."""
+    premium_capacity_id: Optional[str] = rest_field(
+        name="premiumCapacityId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Microsoft Fabric premium capacity ID."""
+    log_analytics_resource_id: Optional[str] = rest_field(
+        name="logAnalyticsResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the Log Analytics workspace."""
+    workspace_name: Optional[str] = rest_field(
+        name="workspaceName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Microsoft Fabric workspace name."""
+    artifact_name: Optional[str] = rest_field(
+        name="artifactName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Microsoft Fabric artifact name."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tenant_id: str,
+        workspace_id: str,
+        artifact_id: str,
+        premium_capacity_id: Optional[str] = None,
+        log_analytics_resource_id: Optional[str] = None,
+        workspace_name: Optional[str] = None,
+        artifact_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FabricShortcutProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a Microsoft Fabric shortcut.
+
+    :ivar configuration: Microsoft Fabric workspace and artifact configuration. Required.
+    :vartype configuration: ~azure.mgmt.eventhub.models.FabricShortcutConfiguration
+    :ivar shortcut_type: The type of the shortcut. Known values are: "Entity" and "Network".
+    :vartype shortcut_type: str or ~azure.mgmt.eventhub.models.FabricShortcutType
+    :ivar shortcut_status: The current shortcut status. Only Pending can be supplied on create or
+     update. Known values are: "Pending", "Approved", and "Rejected".
+    :vartype shortcut_status: str or ~azure.mgmt.eventhub.models.FabricShortcutStatus
+    :ivar status_description: A description of the current shortcut status.
+    :vartype status_description: str
+    :ivar created_at: The UTC time when the shortcut was created.
+    :vartype created_at: ~datetime.datetime
+    :ivar modified_at: The UTC time when the shortcut was last modified.
+    :vartype modified_at: ~datetime.datetime
+    """
+
+    configuration: "_models.FabricShortcutConfiguration" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Microsoft Fabric workspace and artifact configuration. Required."""
+    shortcut_type: Optional[Union[str, "_models.FabricShortcutType"]] = rest_field(
+        name="shortcutType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of the shortcut. Known values are: \"Entity\" and \"Network\"."""
+    shortcut_status: Optional[Union[str, "_models.FabricShortcutStatus"]] = rest_field(
+        name="shortcutStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The current shortcut status. Only Pending can be supplied on create or update. Known values
+     are: \"Pending\", \"Approved\", and \"Rejected\"."""
+    status_description: Optional[str] = rest_field(name="statusDescription", visibility=["read"])
+    """A description of the current shortcut status."""
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    """The UTC time when the shortcut was created."""
+    modified_at: Optional[datetime.datetime] = rest_field(name="modifiedAt", visibility=["read"], format="rfc3339")
+    """The UTC time when the shortcut was last modified."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        configuration: "_models.FabricShortcutConfiguration",
+        shortcut_type: Optional[Union[str, "_models.FabricShortcutType"]] = None,
+        shortcut_status: Optional[Union[str, "_models.FabricShortcutStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FailOver(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FailOver.
 
     :ivar properties:
@@ -1927,7 +2151,7 @@ class FailOver(_Model):
             super().__setattr__(key, value)
 
 
-class FailOverProperties(_Model):
+class FailOverProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FailOverProperties.
 
     :ivar primary_location: Query parameter for the new primary location after failover.
@@ -1964,7 +2188,7 @@ class FailOverProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GeoDataReplicationProperties(_Model):
+class GeoDataReplicationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GeoDR Replication properties.
 
     :ivar max_replication_lag_duration_in_seconds: The maximum acceptable lag for data replication
@@ -2006,7 +2230,7 @@ class GeoDataReplicationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Identity(_Model):
+class Identity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to configure Identity for Bring your Own Keys.
 
     :ivar principal_id: ObjectId from the KeyVault.
@@ -2053,7 +2277,7 @@ class Identity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultProperties(_Model):
+class KeyVaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to configure keyVault Properties.
 
     :ivar key_name: Name of the Key from KeyVault.
@@ -2101,7 +2325,58 @@ class KeyVaultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MessageTimestampDescription(_Model):
+class MaintenanceWindow(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A recurring weekly maintenance window in UTC.
+
+    :ivar day_of_week: The UTC day of the week on which the maintenance window starts. Required.
+     Known values are: "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", and
+     "Saturday".
+    :vartype day_of_week: str or ~azure.mgmt.eventhub.models.UpgradePreferenceDayOfWeek
+    :ivar start_time_of_day: The UTC time of day at which the maintenance window starts,
+     represented as an ISO 8601 duration since midnight. Required.
+    :vartype start_time_of_day: ~datetime.timedelta
+    :ivar duration_minutes: The maintenance window duration in minutes. The value must be between
+     480 and 1440 in 60-minute increments. Required.
+    :vartype duration_minutes: int
+    """
+
+    day_of_week: Union[str, "_models.UpgradePreferenceDayOfWeek"] = rest_field(
+        name="dayOfWeek", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The UTC day of the week on which the maintenance window starts. Required. Known values are:
+     \"Sunday\", \"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", and \"Saturday\"."""
+    start_time_of_day: datetime.timedelta = rest_field(
+        name="startTimeOfDay", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The UTC time of day at which the maintenance window starts, represented as an ISO 8601 duration
+     since midnight. Required."""
+    duration_minutes: int = rest_field(
+        name="durationMinutes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maintenance window duration in minutes. The value must be between 480 and 1440 in 60-minute
+     increments. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        day_of_week: Union[str, "_models.UpgradePreferenceDayOfWeek"],
+        start_time_of_day: datetime.timedelta,
+        duration_minutes: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MessageTimestampDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of MessageTimestamp Description.
 
     :ivar timestamp_type: Denotes the type of timestamp the message will hold.Two types of
@@ -2141,7 +2416,7 @@ class MessageTimestampDescription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NamespaceReplicaLocation(_Model):
+class NamespaceReplicaLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Namespace replication properties.
 
     :ivar location_name: Azure regions where a replica of the namespace is maintained.
@@ -2191,7 +2466,7 @@ class NamespaceReplicaLocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkRuleSet(ProxyResource):
+class NetworkRuleSet(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of topic resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2262,7 +2537,7 @@ class NetworkRuleSet(ProxyResource):
             super().__setattr__(key, value)
 
 
-class NetworkRuleSetListResult(_Model):
+class NetworkRuleSetListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Paged collection of NetworkRuleSet items.
 
     :ivar value: The NetworkRuleSet items on this page. Required.
@@ -2295,7 +2570,7 @@ class NetworkRuleSetListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkRuleSetProperties(_Model):
+class NetworkRuleSetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NetworkRuleSet properties.
 
     :ivar trusted_service_access_enabled: Value that indicates whether Trusted Service Access is
@@ -2361,7 +2636,7 @@ class NetworkRuleSetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeter(_Model):
+class NetworkSecurityPerimeter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NetworkSecurityPerimeter related information.
 
     :ivar id: Fully qualified identifier of the resource.
@@ -2401,7 +2676,9 @@ class NetworkSecurityPerimeter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterConfiguration(ProxyResource):
+class NetworkSecurityPerimeterConfiguration(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Security Perimeter related configurations of a given namespace.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2488,7 +2765,9 @@ class NetworkSecurityPerimeterConfigurationList(_Model):  # pylint: disable=name
     """A collection of NetworkSecurityPerimeterConfigurations."""
 
 
-class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of NetworkSecurityPerimeterConfiguration.
 
     :ivar provisioning_state: Provisioning state of NetworkSecurityPerimeter configuration
@@ -2572,7 +2851,9 @@ class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterConfigurationPropertiesProfile(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationPropertiesProfile(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Information about current network profile.
 
     :ivar name: Name of the resource.
@@ -2614,7 +2895,9 @@ class NetworkSecurityPerimeterConfigurationPropertiesProfile(_Model):  # pylint:
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Information about resource association.
 
     :ivar name: Name of the resource association.
@@ -2651,7 +2934,7 @@ class NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation(_Model)
         super().__init__(*args, **kwargs)
 
 
-class NspAccessRule(_Model):
+class NspAccessRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information of Access Rule in Network Profile.
 
     :ivar id: Fully qualified identifier of the resource.
@@ -2693,7 +2976,7 @@ class NspAccessRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NspAccessRuleProperties(_Model):
+class NspAccessRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Access Rule.
 
     :ivar direction: Direction of Access Rule. Known values are: "Inbound" and "Outbound".
@@ -2751,7 +3034,7 @@ class NspAccessRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NspAccessRulePropertiesSubscriptionsItem(_Model):
+class NspAccessRulePropertiesSubscriptionsItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Subscription for inbound rule.
 
     :ivar id: Fully qualified identifier of subscription.
@@ -2779,7 +3062,7 @@ class NspAccessRulePropertiesSubscriptionsItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NWRuleSetIpRules(_Model):
+class NWRuleSetIpRules(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response from the List namespace operation.
 
     :ivar ip_mask: IP Mask.
@@ -2814,7 +3097,7 @@ class NWRuleSetIpRules(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NWRuleSetVirtualNetworkRules(_Model):
+class NWRuleSetVirtualNetworkRules(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response from the List namespace operation.
 
     :ivar subnet: Subnet properties.
@@ -2850,7 +3133,7 @@ class NWRuleSetVirtualNetworkRules(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Event Hub REST API operation.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -2944,7 +3227,7 @@ class OperationDisplay(_Model):
     """Localized friendly description for the operation."""
 
 
-class PlatformCapabilities(_Model):
+class PlatformCapabilities(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PlatformCapabilities.
 
     :ivar confidential_compute:
@@ -2973,7 +3256,7 @@ class PlatformCapabilities(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpoint(_Model):
+class PrivateEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PrivateEndpoint information.
 
     :ivar id: The ARM identifier for Private Endpoint.
@@ -3001,7 +3284,7 @@ class PrivateEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the PrivateEndpointConnection.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3066,7 +3349,7 @@ class PrivateEndpointConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the private endpoint connection resource.
 
     :ivar private_endpoint: The Private Endpoint resource for this Connection.
@@ -3112,7 +3395,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(_Model):
+class PrivateLinkResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information of the private link resource.
 
     :ivar properties: Properties of the private link resource.
@@ -3177,7 +3460,7 @@ class PrivateLinkResource(_Model):
             super().__setattr__(key, value)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of PrivateLinkResource.
 
     :ivar group_id: The private link resource group id.
@@ -3219,7 +3502,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourcesListResult(_Model):
+class PrivateLinkResourcesListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Paged collection of PrivateLinkResource items.
 
     :ivar value: The PrivateLinkResource items on this page. Required.
@@ -3252,7 +3535,7 @@ class PrivateLinkResourcesListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProvisioningIssue(_Model):
+class ProvisioningIssue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes Provisioning issue for given NetworkSecurityPerimeterConfiguration.
 
     :ivar name: Name of the issue.
@@ -3284,7 +3567,7 @@ class ProvisioningIssue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProvisioningIssueProperties(_Model):
+class ProvisioningIssueProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Provisioning Issue.
 
     :ivar issue_type: Type of Issue.
@@ -3317,7 +3600,7 @@ class ProvisioningIssueProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegenerateAccessKeyParameters(_Model):
+class RegenerateAccessKeyParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters supplied to the Regenerate Authorization Rule operation, specifies which key needs
     to be reset.
 
@@ -3356,7 +3639,7 @@ class RegenerateAccessKeyParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RetentionDescription(_Model):
+class RetentionDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to configure retention settings for the  eventhub.
 
     :ivar cleanup_policy: Enumerates the possible values for cleanup policy. Known values are:
@@ -3423,7 +3706,7 @@ class RetentionDescription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SchemaGroup(ProxyResource):
+class SchemaGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Single item in List or Get Schema Group operation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3494,7 +3777,7 @@ class SchemaGroup(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SchemaGroupProperties(_Model):
+class SchemaGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SchemaGroupProperties.
 
     :ivar updated_at_utc: Exact time the Schema Group was updated.
@@ -3550,7 +3833,7 @@ class SchemaGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SKU parameters supplied to the create namespace operation.
 
     :ivar name: Name of this SKU. Required. Known values are: "Basic", "Standard", and "Premium".
@@ -3596,7 +3879,7 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Subnet(_Model):
+class Subnet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties supplied for Subnet.
 
     :ivar id: Resource ID of Virtual Network Subnet.
@@ -3624,7 +3907,7 @@ class Subnet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -3691,7 +3974,9 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThrottlingPolicy(ApplicationGroupPolicy, discriminator="ThrottlingPolicy"):
+class ThrottlingPolicy(
+    ApplicationGroupPolicy, discriminator="ThrottlingPolicy"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the throttling policy.
 
     :ivar name: The Name of this policy. Required.
@@ -3744,6 +4029,135 @@ class ThrottlingPolicy(ApplicationGroupPolicy, discriminator="ThrottlingPolicy")
         self.type = ApplicationGroupPolicyType.THROTTLING_POLICY  # type: ignore
 
 
+class UpgradePreferences(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Upgrade preferences for an Event Hubs Dedicated cluster.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.eventhub.models.SystemData
+    :ivar properties: Upgrade preference properties for the Event Hubs Dedicated cluster.
+    :vartype properties: ~azure.mgmt.eventhub.models.UpgradePreferencesProperties
+    """
+
+    properties: Optional["_models.UpgradePreferencesProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Upgrade preference properties for the Event Hubs Dedicated cluster."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.UpgradePreferencesProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UpgradePreferencesProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Upgrade preference properties for an Event Hubs Dedicated cluster.
+
+    :ivar maintenance_windows: Recurring weekly maintenance windows in UTC. At least one window
+     must be supplied when preferences are created or updated. A maximum of two windows can be
+     configured, and their combined duration must be at least 16 hours per week.
+    :vartype maintenance_windows: list[~azure.mgmt.eventhub.models.MaintenanceWindow]
+    :ivar exception_windows: Date-specific exceptions to the recurring maintenance windows.
+    :vartype exception_windows: list[~azure.mgmt.eventhub.models.ExceptionWindow]
+    :ivar upgrade_status: The current cluster upgrade status.
+    :vartype upgrade_status: ~azure.mgmt.eventhub.models.UpgradeStatus
+    """
+
+    maintenance_windows: Optional[list["_models.MaintenanceWindow"]] = rest_field(
+        name="maintenanceWindows", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Recurring weekly maintenance windows in UTC. At least one window must be supplied when
+     preferences are created or updated. A maximum of two windows can be configured, and their
+     combined duration must be at least 16 hours per week."""
+    exception_windows: Optional[list["_models.ExceptionWindow"]] = rest_field(
+        name="exceptionWindows", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Date-specific exceptions to the recurring maintenance windows."""
+    upgrade_status: Optional["_models.UpgradeStatus"] = rest_field(name="upgradeStatus", visibility=["read"])
+    """The current cluster upgrade status."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        maintenance_windows: Optional[list["_models.MaintenanceWindow"]] = None,
+        exception_windows: Optional[list["_models.ExceptionWindow"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UpgradeStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The current upgrade orchestration state for the cluster.
+
+    :ivar pending_upgrade: Whether at least one deferred upgrade is waiting for the cluster.
+     Required.
+    :vartype pending_upgrade: bool
+    :ivar in_progress: Whether an upgrade-now override is currently active. Required.
+    :vartype in_progress: bool
+    :ivar completes_at: The estimated UTC time when the current upgrade will complete.
+    :vartype completes_at: ~datetime.datetime
+    """
+
+    pending_upgrade: bool = rest_field(
+        name="pendingUpgrade", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether at least one deferred upgrade is waiting for the cluster. Required."""
+    in_progress: bool = rest_field(name="inProgress", visibility=["read", "create", "update", "delete", "query"])
+    """Whether an upgrade-now override is currently active. Required."""
+    completes_at: Optional[datetime.datetime] = rest_field(
+        name="completesAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The estimated UTC time when the current upgrade will complete."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        pending_upgrade: bool,
+        in_progress: bool,
+        completes_at: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class UserAssignedIdentity(_Model):
     """Recognized Dictionary value.
 
@@ -3759,7 +4173,7 @@ class UserAssignedIdentity(_Model):
     """Client Id of user assigned identity."""
 
 
-class UserAssignedIdentityProperties(_Model):
+class UserAssignedIdentityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """UserAssignedIdentityProperties.
 
     :ivar user_assigned_identity: ARM ID of user Identity selected for encryption.

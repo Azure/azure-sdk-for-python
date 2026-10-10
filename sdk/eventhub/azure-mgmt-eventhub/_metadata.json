@@ -1,11 +1,11 @@
 {
-  "apiVersion": "2026-01-01",
+  "apiVersion": "2026-07-01-preview",
   "apiVersions": {
-    "Microsoft.EventHub": "2026-01-01"
+    "Microsoft.EventHub": "2026-07-01-preview"
   },
-  "commit": "5ae7113663e2ca8a533c234f046715f17a0f109f",
+  "commit": "b13ad902eeddef88ad574179ca21574e29f57806",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/eventhub/resource-manager/Microsoft.EventHub/Eventhub",
-  "emitterVersion": "0.63.3",
-  "httpClientPythonVersion": "^0.34.2"
+  "emitterVersion": "0.63.8",
+  "httpClientPythonVersion": "0.38.0"
 }

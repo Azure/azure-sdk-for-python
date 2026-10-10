@@ -19,6 +19,8 @@ from ._operations import EventHubsOperations  # type: ignore
 from ._operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._operations import NetworkSecurityPerimeterConfigurationsOperations  # type: ignore
 from ._operations import ConsumerGroupsOperations  # type: ignore
+from ._operations import FabricShortcutsOperations  # type: ignore
+from ._operations import UpgradePreferencesOperationsOperations  # type: ignore
 from ._operations import ConfigurationOperations  # type: ignore
 from ._operations import NamespacesOperations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
@@ -38,6 +40,8 @@ __all__ = [
     "PrivateEndpointConnectionsOperations",
     "NetworkSecurityPerimeterConfigurationsOperations",
     "ConsumerGroupsOperations",
+    "FabricShortcutsOperations",
+    "UpgradePreferencesOperationsOperations",
     "ConfigurationOperations",
     "NamespacesOperations",
     "PrivateLinkResourcesOperations",
