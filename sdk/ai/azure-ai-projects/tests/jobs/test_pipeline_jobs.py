@@ -4,8 +4,13 @@
 # ------------------------------------
 """Offline wire and response tests for Command and Pipeline jobs."""
 
+import importlib
 import json
+import os
+import re
 import runpy
+import subprocess
+import sys
 from pathlib import Path
 from typing import Any, Union
 from urllib.parse import parse_qs, urlparse
@@ -21,7 +26,7 @@ from azure.core.pipeline.transport import (
     HttpTransport,
 )
 
-from azure.ai.projects import AIProjectClient
+from azure.ai.projects import AIProjectClient, dsl
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 from azure.ai.projects.models import (
     AssetTypes,
@@ -34,6 +39,8 @@ from azure.ai.projects.models import (
     Output,
     PipelineJob,
 )
+from azure.ai.projects.operations._job_helper import _content_hash
+from azure.ai.projects._component_source import _RUNNER_NAME, _stage_component_source
 
 _ENDPOINT = "https://fake-account.services.ai.azure.com/api/projects/fake-project"
 _COMPUTE = "/subscriptions/test/resourceGroups/test/providers/Microsoft.CognitiveServices/accounts/test/computes/cpu"
@@ -669,3 +676,691 @@ async def test_jobs_async_create_get_and_list(kind: str) -> None:
         _assert_job(listed[1], "Pipeline")
 
     _assert_requests(transport.requests, kind, expected)
+
+
+def _dsl_job(monkeypatch: pytest.MonkeyPatch) -> PipelineJob:
+    monkeypatch.setenv("JOB_COMPUTE_ID", _COMPUTE)
+    monkeypatch.setenv("JOB_ENVIRONMENT_IMAGE", "example.azurecr.io/train:latest")
+    monkeypatch.setenv("JOB_NODE_UAI_RESOURCE_ID", "/subscriptions/test/identities/hello")
+    monkeypatch.setenv("JOB_INSTANCE_TYPE", "Singularity.D4_v3")
+    sample = runpy.run_path(str(Path(__file__).resolve().parents[2] / "samples" / "jobs" / "sample_pipeline_dsl.py"))
+    return sample["workflow"](text="hello")
+
+
+def _source_dsl_job(monkeypatch: pytest.MonkeyPatch) -> PipelineJob:
+    monkeypatch.setenv("JOB_COMPUTE_ID", _COMPUTE)
+    monkeypatch.setenv("JOB_ENVIRONMENT_IMAGE", "example.azurecr.io/train:latest")
+    monkeypatch.setenv("JOB_NODE_UAI_RESOURCE_ID", "/subscriptions/test/identities/hello")
+    monkeypatch.setenv("JOB_INSTANCE_TYPE", "Singularity.D4_v3")
+    sample = Path(__file__).resolve().parents[2] / "samples" / "jobs" / "pipeline_source"
+    monkeypatch.syspath_prepend(str(sample))
+    workflow = runpy.run_path(str(sample / "sample_pipeline_source.py"))["workflow"]
+    return workflow(text=" world ")
+
+
+def _dsl_code_paths(job: PipelineJob) -> dict[str, Path]:
+    assert job.jobs is not None
+    return {name: Path(node["component"]["code"]) for name, node in job.jobs.items()}
+
+
+def _assert_dsl_request(request: HttpRequest, uploaded: dict[str, str]) -> None:
+    assert request.method == "PUT"
+    assert request.headers["Foundry-Features"] == "Jobs=V1Preview"
+    assert request.headers["x-ms-foundry-job-route"] == "execution"
+    assert parse_qs(urlparse(request.url).query)["api-version"] == ["2026-01-15-preview"]
+    assert re.fullmatch(r"/api/projects/fake-project/jobs/pipeline-[0-9a-f]{32}", urlparse(request.url).path)
+    resources = {
+        "instance_count": 1,
+        "instance_type": "Singularity.D4_v3",
+        "properties": {"AISuperComputer": {"SLATier": "Premium"}},
+    }
+    identity = {"type": "managed", "msi_resource_id": "/subscriptions/test/identities/hello"}
+    assert json.loads(request.body) == {
+        "properties": {
+            "jobType": "Pipeline",
+            "displayName": "workflow",
+            "experimentName": "pipeline_samples",
+            "computeId": _COMPUTE,
+            "settings": {"default_compute": _COMPUTE, "force_rerun": True},
+            "inputs": {"text": {"jobInputType": "literal", "value": "hello"}},
+            "outputs": {"receipt": {"jobOutputType": "uri_file", "mode": "ReadWriteMount"}},
+            "jobs": {
+                "produce": {
+                    "type": "command",
+                    "component": {
+                        "name": "produce",
+                        "version": "1",
+                        "type": "command",
+                        "command": 'python component.py "${{inputs.text}}" "${{outputs.message}}"',
+                        "environment": {"image": "example.azurecr.io/train:latest"},
+                        "inputs": {"text": {"type": "string"}},
+                        "outputs": {"message": {"type": "uri_file"}},
+                        "code": uploaded["produce"],
+                    },
+                    "identity": identity,
+                    "resources": resources,
+                    "inputs": {"text": {"job_input_type": "literal", "value": "${{parent.inputs.text}}"}},
+                    "outputs": {"message": {"job_output_type": "uri_file", "mode": "ReadWriteMount"}},
+                },
+                "consume": {
+                    "type": "command",
+                    "component": {
+                        "name": "consume",
+                        "version": "1",
+                        "type": "command",
+                        "command": 'python component.py "${{inputs.message}}" "${{outputs.receipt}}"',
+                        "environment": {"image": "example.azurecr.io/train:latest"},
+                        "inputs": {"message": {"type": "uri_file"}},
+                        "outputs": {"receipt": {"type": "uri_file"}},
+                        "code": uploaded["consume"],
+                    },
+                    "identity": identity,
+                    "resources": resources,
+                    "inputs": {
+                        "message": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.jobs.produce.outputs.message}}",
+                        }
+                    },
+                    "outputs": {
+                        "receipt": {
+                            "job_output_type": "uri_file",
+                            "mode": "ReadWriteMount",
+                            "path": "${{parent.outputs.receipt}}",
+                        }
+                    },
+                },
+            },
+        }
+    }
+
+
+def test_dsl_component_bodies_execute_with_module_level_imports(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    job = _dsl_job(monkeypatch)
+    code = _dsl_code_paths(job)
+    try:
+        assert code["produce"] != code["consume"]
+        assert all(path.is_dir() for path in code.values())
+        for path in code.values():
+            script = (path / "component.py").read_text(encoding="utf-8")
+            assert "from pathlib import Path" in script
+            assert "azure.ai.projects" not in script
+
+        message = tmp_path / "message.txt"
+        receipt = tmp_path / "receipt.txt"
+        subprocess.run(
+            [sys.executable, str(code["produce"] / "component.py"), "hello", str(message)],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        subprocess.run(
+            [sys.executable, str(code["consume"] / "component.py"), str(message), str(receipt)],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        assert receipt.read_text(encoding="utf-8") == "HELLO"
+    finally:
+        for directory in job._component_code_dirs:
+            directory.cleanup()
+
+
+def test_dsl_sync_uploads_code_and_cleans_after_submission(monkeypatch: pytest.MonkeyPatch) -> None:
+    job = _dsl_job(monkeypatch)
+    paths = _dsl_code_paths(job)
+    transport = _Transport([_response("Pipeline")])
+    uploads: list[tuple[str, str]] = []
+
+    def missing_asset(*, name: str, version: str) -> DatasetVersion:
+        raise ResourceNotFoundError(f"Dataset {name}:{version} not found")
+
+    def upload_folder(*, name: str, version: str, folder: str, **kwargs: Any) -> DatasetVersion:
+        assert Path(folder).is_dir()
+        uploads.append((name, folder))
+        return _uploaded_code(name, version)
+
+    with AIProjectClient(endpoint=_ENDPOINT, credential=_Credential(), transport=transport) as client:  # type: ignore[arg-type]
+        monkeypatch.setattr(client.beta.jobs._datasets, "get", missing_asset)
+        monkeypatch.setattr(client.beta.jobs._datasets, "upload_folder", upload_folder)
+        created = client.beta.jobs.create_or_update(
+            job, experiment_name="pipeline_samples", headers={"x-ms-foundry-job-route": "execution"}
+        )
+
+    assert isinstance(created, PipelineJob)
+    assert job.experiment_name == "pipeline_samples"
+    assert len(uploads) == 2
+    assert [name.rsplit("-", 2)[-2] for name, _ in uploads] == ["produce", "consume"]
+    assert [folder for _, folder in uploads] == [str(paths["produce"]), str(paths["consume"])]
+    assert all(not path.exists() for path in paths.values())
+    assert len(transport.requests) == 1
+    code_uris = {name.rsplit("-", 2)[-2]: job.jobs[name.rsplit("-", 2)[-2]]["component"]["code"] for name, _ in uploads}
+    _assert_dsl_request(transport.requests[0], code_uris)
+
+
+@pytest.mark.asyncio
+async def test_dsl_async_uploads_code_and_cleans_after_submission(monkeypatch: pytest.MonkeyPatch) -> None:
+    job = _dsl_job(monkeypatch)
+    paths = _dsl_code_paths(job)
+    transport = _AsyncTransport([_response("Pipeline")])
+    uploads: list[tuple[str, str]] = []
+
+    async def missing_asset(*, name: str, version: str) -> DatasetVersion:
+        raise ResourceNotFoundError(f"Dataset {name}:{version} not found")
+
+    async def upload_folder(*, name: str, version: str, folder: str, **kwargs: Any) -> DatasetVersion:
+        assert Path(folder).is_dir()
+        uploads.append((name, folder))
+        return _uploaded_code(name, version)
+
+    async with AsyncAIProjectClient(
+        endpoint=_ENDPOINT, credential=_AsyncCredential(), transport=transport  # type: ignore[arg-type]
+    ) as client:
+        monkeypatch.setattr(client.beta.jobs._datasets, "get", missing_asset)
+        monkeypatch.setattr(client.beta.jobs._datasets, "upload_folder", upload_folder)
+        created = await client.beta.jobs.create_or_update(
+            job, experiment_name="pipeline_samples", headers={"x-ms-foundry-job-route": "execution"}
+        )
+
+    assert isinstance(created, PipelineJob)
+    assert len(uploads) == 2
+    assert [folder for _, folder in uploads] == [str(paths["produce"]), str(paths["consume"])]
+    assert all(not path.exists() for path in paths.values())
+    assert len(transport.requests) == 1
+    assert json.loads(transport.requests[0].body)["properties"]["experimentName"] == "pipeline_samples"
+
+
+def test_dsl_upload_failure_cleans_code_without_put(monkeypatch: pytest.MonkeyPatch) -> None:
+    job = _dsl_job(monkeypatch)
+    paths = _dsl_code_paths(job)
+    transport = _Transport([])
+    uploads: list[str] = []
+
+    def missing_asset(*, name: str, version: str) -> DatasetVersion:
+        raise ResourceNotFoundError(f"Dataset {name}:{version} not found")
+
+    def upload_folder(*, name: str, version: str, folder: str, **kwargs: Any) -> DatasetVersion:
+        uploads.append(folder)
+        if len(uploads) == 2:
+            raise RuntimeError("upload failed")
+        return _uploaded_code(name, version)
+
+    with AIProjectClient(endpoint=_ENDPOINT, credential=_Credential(), transport=transport) as client:  # type: ignore[arg-type]
+        monkeypatch.setattr(client.beta.jobs._datasets, "get", missing_asset)
+        monkeypatch.setattr(client.beta.jobs._datasets, "upload_folder", upload_folder)
+        with pytest.raises(RuntimeError, match="upload failed"):
+            client.beta.jobs.create_or_update(job)
+
+    assert len(uploads) == 2
+    assert transport.requests == []
+    assert all(not path.exists() for path in paths.values())
+
+
+@pytest.mark.asyncio
+async def test_dsl_async_upload_failure_cleans_code_without_put(monkeypatch: pytest.MonkeyPatch) -> None:
+    job = _dsl_job(monkeypatch)
+    paths = _dsl_code_paths(job)
+    transport = _AsyncTransport([])
+    uploads: list[str] = []
+
+    async def missing_asset(*, name: str, version: str) -> DatasetVersion:
+        raise ResourceNotFoundError(f"Dataset {name}:{version} not found")
+
+    async def upload_folder(*, name: str, version: str, folder: str, **kwargs: Any) -> DatasetVersion:
+        uploads.append(folder)
+        if len(uploads) == 2:
+            raise RuntimeError("upload failed")
+        return _uploaded_code(name, version)
+
+    async with AsyncAIProjectClient(
+        endpoint=_ENDPOINT, credential=_AsyncCredential(), transport=transport  # type: ignore[arg-type]
+    ) as client:
+        monkeypatch.setattr(client.beta.jobs._datasets, "get", missing_asset)
+        monkeypatch.setattr(client.beta.jobs._datasets, "upload_folder", upload_folder)
+        with pytest.raises(RuntimeError, match="upload failed"):
+            await client.beta.jobs.create_or_update(job)
+
+    assert len(uploads) == 2
+    assert transport.requests == []
+    assert all(not path.exists() for path in paths.values())
+
+
+def test_dsl_repeated_component_calls_get_distinct_nodes() -> None:
+    @dsl.component
+    def write(text: str, result: dsl.Output(type="uri_file", mode="Upload")) -> None:
+        from pathlib import Path
+
+        Path(result).write_text(text, encoding="utf-8")
+
+    @dsl.pipeline(
+        compute_id=_COMPUTE,
+        environment_image_reference="example.azurecr.io/train:latest",
+        user_assigned_identity_id="/subscriptions/test/identities/hello",
+        instance_type="Singularity.D4_v3",
+    )
+    def workflow(text: str):
+        first = write(text=text)
+        second = write(text=text)
+        return {"first": first.outputs.result, "second": second.outputs.result}
+
+    job = workflow(text="hello")
+    try:
+        assert list(job.jobs) == ["write", "write_2"]
+        assert job.jobs["write"]["outputs"]["result"]["path"] == "${{parent.outputs.first}}"
+        assert job.jobs["write_2"]["outputs"]["result"]["path"] == "${{parent.outputs.second}}"
+        assert job.jobs["write"]["outputs"]["result"]["mode"] == "Upload"
+        assert _dsl_code_paths(job)["write"] != _dsl_code_paths(job)["write_2"]
+    finally:
+        for directory in job._component_code_dirs:
+            directory.cleanup()
+
+
+def test_dsl_typed_primitives_and_remote_file_input(tmp_path: Path) -> None:
+    assert dsl.command_component is dsl.component
+
+    @dsl.component
+    def transform(
+        count: int,
+        scale: float,
+        enabled: bool,
+        source: dsl.Input(type="uri_file"),
+        result: dsl.Output(type="uri_file"),
+    ) -> None:
+        from pathlib import Path
+
+        if enabled:
+            Path(result).write_text(Path(source).read_text(encoding="utf-8") * count + str(scale), encoding="utf-8")
+
+    @dsl.pipeline(
+        compute_id=_COMPUTE,
+        environment_image_reference="example.azurecr.io/train:latest",
+        user_assigned_identity_id="/subscriptions/test/identities/hello",
+        instance_type="Singularity.D4_v3",
+    )
+    def workflow(count: int, scale: float, enabled: bool, source: dsl.Input(type="uri_file")):
+        node = transform(count=count, scale=scale, enabled=enabled, source=source)
+        return {"result": node.outputs.result}
+
+    job = workflow(
+        count=3,
+        scale=1.5,
+        enabled=True,
+        source=dsl.Input(type="uri_file", path="azureml://datastores/test/paths/input.txt"),
+    )
+    try:
+        assert job.inputs["count"] == {"jobInputType": "literal", "value": "3"}
+        assert job.inputs["scale"] == {"jobInputType": "literal", "value": "1.5"}
+        assert job.inputs["enabled"] == {"jobInputType": "literal", "value": "True"}
+        assert job.inputs["source"] == {
+            "jobInputType": "uri_file",
+            "uri": "azureml://datastores/test/paths/input.txt",
+        }
+        node = job.jobs["transform"]
+        assert node["component"]["inputs"] == {
+            "count": {"type": "integer"},
+            "scale": {"type": "number"},
+            "enabled": {"type": "boolean"},
+            "source": {"type": "uri_file"},
+        }
+        assert node["inputs"]["source"]["value"] == "${{parent.inputs.source}}"
+
+        source = tmp_path / "source.txt"
+        output = tmp_path / "output.txt"
+        source.write_text("go", encoding="utf-8")
+        subprocess.run(
+            [
+                sys.executable,
+                str(_dsl_code_paths(job)["transform"] / "component.py"),
+                "3",
+                "1.5",
+                "True",
+                str(source),
+                str(output),
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        assert output.read_text(encoding="utf-8") == "gogogo1.5"
+    finally:
+        for directory in job._component_code_dirs:
+            directory.cleanup()
+
+
+def test_dsl_rejects_unsupported_module_globals_and_outside_calls() -> None:
+    @dsl.component
+    def write_with_global(result: dsl.Output(type="uri_file")) -> None:
+        Path(result).write_text(_COMPUTE, encoding="utf-8")
+
+    @dsl.pipeline(
+        compute_id=_COMPUTE,
+        environment_image_reference="example.azurecr.io/train:latest",
+        user_assigned_identity_id="/subscriptions/test/identities/hello",
+        instance_type="Singularity.D4_v3",
+    )
+    def workflow() -> None:
+        write_with_global()
+
+    with pytest.raises(RuntimeError, match="inside a @pipeline"):
+        write_with_global()
+    with pytest.raises(ValueError, match="unsupported module globals"):
+        workflow()
+
+
+def test_dsl_source_components_run_with_helpers_imports_and_resources(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    job = _source_dsl_job(monkeypatch)
+    paths = _dsl_code_paths(job)
+    snapshot = paths["produce"]
+    try:
+        assert snapshot == paths["consume"]
+        assert len(job._component_code_dirs) == 1
+        assert (snapshot / _RUNNER_NAME).is_file()
+        assert (snapshot / "steps" / "source_pipeline_components.py").is_file()
+        assert (snapshot / "steps" / "helpers.py").is_file()
+        assert (snapshot / "steps" / "greeting.txt").read_text(encoding="utf-8").strip() == "hello"
+        assert job.jobs["produce"]["component"]["command"] == (
+            f"python {_RUNNER_NAME} steps.source_pipeline_components produce text:str,message:str "
+            '"${{inputs.text}}" "${{outputs.message}}"'
+        )
+        assert job.jobs["consume"]["inputs"]["message"]["value"] == "${{parent.jobs.produce.outputs.message}}"
+
+        source_root = Path(__file__).resolve().parents[2]
+        environment = os.environ.copy()
+        environment["PYTHONPATH"] = os.pathsep.join([str(source_root), environment.get("PYTHONPATH", "")])
+        message = tmp_path / "message.txt"
+        receipt = tmp_path / "receipt.txt"
+        subprocess.run(
+            [
+                sys.executable,
+                str(snapshot / _RUNNER_NAME),
+                "steps.source_pipeline_components",
+                "produce",
+                "text:str,message:str",
+                " world ",
+                str(message),
+            ],
+            cwd=tmp_path,
+            env=environment,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        subprocess.run(
+            [
+                sys.executable,
+                str(snapshot / _RUNNER_NAME),
+                "steps.source_pipeline_components",
+                "consume",
+                "message:str,receipt:str",
+                str(message),
+                str(receipt),
+            ],
+            cwd=tmp_path,
+            env=environment,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        assert message.read_text(encoding="utf-8") == "hello world"
+        assert receipt.read_text(encoding="utf-8") == "HELLO WORLD"
+    finally:
+        for directory in job._component_code_dirs:
+            directory.cleanup()
+
+
+def test_dsl_source_sync_uploads_shared_snapshot_once(monkeypatch: pytest.MonkeyPatch) -> None:
+    job = _source_dsl_job(monkeypatch)
+    snapshot = _dsl_code_paths(job)["produce"]
+    transport = _Transport([_response("Pipeline")])
+    uploads: list[tuple[str, str]] = []
+
+    def missing_asset(*, name: str, version: str) -> DatasetVersion:
+        raise ResourceNotFoundError(f"Dataset {name}:{version} not found")
+
+    def upload_folder(*, name: str, version: str, folder: str, **kwargs: Any) -> DatasetVersion:
+        assert (Path(folder) / "steps" / "helpers.py").is_file()
+        uploads.append((name, folder))
+        return _uploaded_code(name, version)
+
+    with AIProjectClient(endpoint=_ENDPOINT, credential=_Credential(), transport=transport) as client:  # type: ignore[arg-type]
+        monkeypatch.setattr(client.beta.jobs._datasets, "get", missing_asset)
+        monkeypatch.setattr(client.beta.jobs._datasets, "upload_folder", upload_folder)
+        client.beta.jobs.create_or_update(
+            job, experiment_name="pipeline_samples", headers={"x-ms-foundry-job-route": "execution"}
+        )
+
+    assert len(uploads) == 1
+    assert uploads[0][1] == str(snapshot)
+    assert not snapshot.exists()
+    assert len(transport.requests) == 1
+    properties = json.loads(transport.requests[0].body)["properties"]
+    assert properties["jobs"]["produce"]["component"]["code"] == properties["jobs"]["consume"]["component"]["code"]
+    assert properties["jobs"]["produce"]["component"]["code"] == job.jobs["produce"]["component"]["code"]
+    assert properties["experimentName"] == "pipeline_samples"
+
+
+@pytest.mark.asyncio
+async def test_dsl_source_async_uploads_shared_snapshot_once(monkeypatch: pytest.MonkeyPatch) -> None:
+    job = _source_dsl_job(monkeypatch)
+    snapshot = _dsl_code_paths(job)["produce"]
+    transport = _AsyncTransport([_response("Pipeline")])
+    uploads: list[str] = []
+
+    async def missing_asset(*, name: str, version: str) -> DatasetVersion:
+        raise ResourceNotFoundError(f"Dataset {name}:{version} not found")
+
+    async def upload_folder(*, name: str, version: str, folder: str, **kwargs: Any) -> DatasetVersion:
+        uploads.append(folder)
+        return _uploaded_code(name, version)
+
+    async with AsyncAIProjectClient(
+        endpoint=_ENDPOINT, credential=_AsyncCredential(), transport=transport  # type: ignore[arg-type]
+    ) as client:
+        monkeypatch.setattr(client.beta.jobs._datasets, "get", missing_asset)
+        monkeypatch.setattr(client.beta.jobs._datasets, "upload_folder", upload_folder)
+        await client.beta.jobs.create_or_update(
+            job, experiment_name="pipeline_samples", headers={"x-ms-foundry-job-route": "execution"}
+        )
+
+    assert uploads == [str(snapshot)]
+    assert not snapshot.exists()
+    assert len(transport.requests) == 1
+    properties = json.loads(transport.requests[0].body)["properties"]
+    assert properties["jobs"]["produce"]["component"]["code"] == properties["jobs"]["consume"]["component"]["code"]
+
+
+def test_dsl_source_snapshot_filters_files_before_hash_and_upload(tmp_path: Path) -> None:
+    root = tmp_path / "code"
+    nested = root / "pkg"
+    nested.mkdir(parents=True)
+    (root / ".gitignore").write_text("*.tmp\n!keep.tmp\n", encoding="utf-8")
+    (root / ".env").write_text("not-for-upload", encoding="utf-8")
+    (root / "discard.tmp").write_text("ignored", encoding="utf-8")
+    (root / "keep.tmp").write_text("included", encoding="utf-8")
+    (nested / ".gitignore").write_text("private.txt\n", encoding="utf-8")
+    (nested / "private.txt").write_text("ignored", encoding="utf-8")
+    (nested / "public.txt").write_text("included", encoding="utf-8")
+
+    snapshots = [tmp_path / "first", tmp_path / "second"]
+    snapshots[0].mkdir()
+    _stage_component_source(root, snapshots[0])
+    (root / "discard.tmp").write_text("changed", encoding="utf-8")
+    (nested / "private.txt").write_text("changed", encoding="utf-8")
+    snapshots[1].mkdir()
+    _stage_component_source(root, snapshots[1])
+
+    assert _content_hash(snapshots[0]) == _content_hash(snapshots[1])
+    assert sorted(path.relative_to(snapshots[0]).as_posix() for path in snapshots[0].rglob("*") if path.is_file()) == [
+        _RUNNER_NAME,
+        "keep.tmp",
+        "pkg/public.txt",
+    ]
+
+
+def test_dsl_source_snapshot_amlignore_overrides_gitignore_and_excludes_directories(tmp_path: Path) -> None:
+    root = tmp_path / "code"
+    root.mkdir()
+    (root / ".gitignore").write_text("keep.txt\n", encoding="utf-8")
+    (root / ".amlignore").write_text("private/\n", encoding="utf-8")
+    (root / "keep.txt").write_text("included", encoding="utf-8")
+    private = root / "private"
+    private.mkdir()
+    (private / "secret.txt").write_text("excluded", encoding="utf-8")
+    stage = tmp_path / "stage"
+    stage.mkdir()
+
+    _stage_component_source(root, stage)
+
+    assert (stage / "keep.txt").read_text(encoding="utf-8") == "included"
+    assert not (stage / "private").exists()
+    assert not (stage / ".gitignore").exists()
+    assert not (stage / ".amlignore").exists()
+
+
+def test_dsl_source_snapshot_rejects_included_symlinks(tmp_path: Path) -> None:
+    root = tmp_path / "code"
+    root.mkdir()
+    outside = tmp_path / "outside.txt"
+    outside.write_text("outside", encoding="utf-8")
+    try:
+        (root / "link.txt").symlink_to(outside)
+    except OSError:
+        pytest.skip("Symbolic links are unavailable on this host")
+    stage = tmp_path / "stage"
+    stage.mkdir()
+    with pytest.raises(ValueError, match="included symbolic link"):
+        _stage_component_source(root, stage)
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows junctions only")
+def test_dsl_source_snapshot_rejects_included_junctions(tmp_path: Path) -> None:
+    root = tmp_path / "code"
+    outside = tmp_path / "outside"
+    root.mkdir()
+    outside.mkdir()
+    link = str(root / "link").replace("'", "''")
+    target = str(outside).replace("'", "''")
+    subprocess.run(
+        [
+            "powershell.exe",
+            "-NoProfile",
+            "-NonInteractive",
+            "-Command",
+            f"New-Item -ItemType Junction -Path '{link}' -Target '{target}' | Out-Null",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    stage = tmp_path / "stage"
+    stage.mkdir()
+    with pytest.raises(ValueError, match="included junction"):
+        _stage_component_source(root, stage)
+
+
+def test_dsl_source_requires_importable_function_inside_root(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="inside its code root"):
+
+        @dsl.component(code=tmp_path)
+        def outside(result: dsl.Output(type="uri_file")) -> None:
+            Path(result).write_text("outside", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="module-level"):
+
+        @dsl.component(code=Path(__file__).resolve().parent)
+        def nested(result: dsl.Output(type="uri_file")) -> None:
+            Path(result).write_text("nested", encoding="utf-8")
+
+
+def test_dsl_source_runner_converts_primitive_ports(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    code_root = tmp_path / "code"
+    code_root.mkdir()
+    module_name = "source_numeric_component"
+    (code_root / f"{module_name}.py").write_text(
+        "from pathlib import Path\n"
+        "from azure.ai.projects.dsl import Output, component\n"
+        "@component(code='.')\n"
+        "def write(count: int, ratio: float, enabled: bool, result: Output(type='uri_file')) -> None:\n"
+        "    Path(result).write_text(f'{count}|{ratio}|{enabled}', encoding='utf-8')\n",
+        encoding="utf-8",
+    )
+    monkeypatch.syspath_prepend(str(code_root))
+    writer = importlib.import_module(module_name).write
+
+    @dsl.pipeline(
+        compute_id=_COMPUTE,
+        environment_image_reference="example.azurecr.io/train:latest",
+        user_assigned_identity_id="/subscriptions/test/identities/hello",
+        instance_type="Singularity.D4_v3",
+    )
+    def workflow():
+        return {"result": writer(count=3, ratio=1.5, enabled=True).outputs.result}
+
+    job = workflow()
+    try:
+        stage = _dsl_code_paths(job)["write"]
+        assert job.jobs["write"]["component"]["command"].startswith(
+            f"python {_RUNNER_NAME} {module_name} write count:int,ratio:float,enabled:bool,result:str "
+        )
+        environment = os.environ.copy()
+        environment["PYTHONPATH"] = os.pathsep.join(
+            [str(Path(__file__).resolve().parents[2]), environment.get("PYTHONPATH", "")]
+        )
+        result = tmp_path / "result.txt"
+        subprocess.run(
+            [
+                sys.executable,
+                str(stage / _RUNNER_NAME),
+                module_name,
+                "write",
+                "count:int,ratio:float,enabled:bool,result:str",
+                "3",
+                "1.5",
+                "True",
+                str(result),
+            ],
+            cwd=tmp_path,
+            env=environment,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        assert result.read_text(encoding="utf-8") == "3|1.5|True"
+    finally:
+        for directory in job._component_code_dirs:
+            directory.cleanup()
+
+
+def test_jobs_sync_job_only_names_are_unique() -> None:
+    job = PipelineJob(compute_id=_COMPUTE, jobs={})
+    transport = _Transport([_response("Pipeline"), _response("Pipeline")])
+    with AIProjectClient(endpoint=_ENDPOINT, credential=_Credential(), transport=transport) as client:  # type: ignore[arg-type]
+        client.beta.jobs.create_or_update(job)
+        client.beta.jobs.create_or_update(job)
+        with pytest.raises(TypeError, match="one PipelineJob"):
+            client.beta.jobs.create_or_update("missing-job")
+        with pytest.raises(TypeError, match="A job cannot be supplied"):
+            client.beta.jobs.create_or_update(job, job)
+
+    paths = [urlparse(request.url).path for request in transport.requests]
+    assert len(paths) == len(set(paths)) == 2
+    assert all(re.fullmatch(r"/api/projects/fake-project/jobs/pipeline-[0-9a-f]{32}", path) for path in paths)
+
+
+@pytest.mark.asyncio
+async def test_jobs_async_job_only_names_are_unique() -> None:
+    job = PipelineJob(compute_id=_COMPUTE, jobs={})
+    transport = _AsyncTransport([_response("Pipeline"), _response("Pipeline")])
+    async with AsyncAIProjectClient(
+        endpoint=_ENDPOINT, credential=_AsyncCredential(), transport=transport  # type: ignore[arg-type]
+    ) as client:
+        await client.beta.jobs.create_or_update(job)
+        await client.beta.jobs.create_or_update(job)
+
+    paths = [urlparse(request.url).path for request in transport.requests]
+    assert len(paths) == len(set(paths)) == 2
+    assert all(re.fullmatch(r"/api/projects/fake-project/jobs/pipeline-[0-9a-f]{32}", path) for path in paths)

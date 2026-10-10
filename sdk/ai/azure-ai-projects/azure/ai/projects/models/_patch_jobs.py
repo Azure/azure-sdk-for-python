@@ -10,6 +10,7 @@ import json
 from collections.abc import Mapping
 from os import PathLike
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import IO, Any, AnyStr, Dict, List, Optional, Union
 
 from ._models import (
@@ -138,6 +139,7 @@ class PipelineJob(_RestPipelineJob):
         self._name: Optional[str] = None
         self._id: Optional[str] = None
         self._system_data: Optional[SystemData] = None
+        self._component_code_dirs: List[TemporaryDirectory] = []
 
     @classmethod
     def _convert_jobs(cls, jobs: Dict[str, Any], default_compute: Optional[str]) -> Dict[str, Any]:
