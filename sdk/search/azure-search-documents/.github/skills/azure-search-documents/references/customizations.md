@@ -248,9 +248,11 @@ Sets `IndexDocumentsBatch.__module__ = "azure.search.documents"` so Sphinx docum
 - `._models.SearchField` as `_SearchField` (base class)
 - `._models.SearchIndexerDataSourceConnection` as `_SearchIndexerDataSourceConnection` (base class)
 - `._models.KnowledgeBase` as `_KnowledgeBase` (base class)
+- `._models.ContentUnderstandingSkill` as `_ContentUnderstandingSkill` (base class)
 - `._enums.SearchFieldDataType` as `_SearchFieldDataType`
 - `._enums.LexicalAnalyzerName`
-- Type-only imports for `DataChangeDetectionPolicy`, `DataDeletionDetectionPolicy`, `DataSourceCredentials`, `SearchIndexerDataContainer`, `SearchIndexerDataIdentity`, `SearchResourceEncryptionKey`, `SearchIndexerDataSourceType`
+- `..._utils.model_base.rest_field`
+- Type-only imports for `DataChangeDetectionPolicy`, `DataDeletionDetectionPolicy`, `DataSourceCredentials`, `SearchIndexerDataContainer`, `SearchIndexerDataIdentity`, `SearchResourceEncryptionKey`, `SearchIndexerDataSourceType`, `ContentUnderstandingSkillChunkingProperties`, `InputFieldMappingEntry`, `OutputFieldMappingEntry`, `ContentUnderstandingSkillExtractionOptions`
 
 ### Defines
 | Symbol | Type | What It Does |
@@ -258,6 +260,7 @@ Sets `IndexDocumentsBatch.__module__ = "azure.search.documents"` so Sphinx docum
 | `SearchField` | class | Adds `hidden` property (inverse of `retrievable`); accepts `hidden` kwarg |
 | `SearchIndexerDataSourceConnection` | class | Three `@overload`s (credentials / connection_string / mapping) |
 | `KnowledgeBase` | class | Placeholder subclass (entry point for future customizations) |
+| `ContentUnderstandingSkill` | class | Adds `model_name`/`model_deployment` `rest_field`s (REST `modelName`/`modelDeployment`) missing from the generated model; re-registers the `#Microsoft.Skills.Util.ContentUnderstandingSkill` discriminator so service responses deserialize to the patched class |
 | `SimpleField(...)` | function | Builder; forces `searchable=False` |
 | `SearchableField(...)` | function | Builder; auto-types to `String` / `Collection(String)` |
 | `ComplexField(...)` | function | Builder; sets type to `Complex` / `Collection(Complex)` |
@@ -280,14 +283,16 @@ SearchFieldDataType.ComplexType     = SearchFieldDataType.COMPLEX
 
 ### `__all__`
 ```python
-["KnowledgeBase", "SearchField", "SearchFieldDataType",
- "SearchIndexerDataSourceConnection", "SimpleField", "SearchableField", "ComplexField"]
+["ContentUnderstandingSkill", "KnowledgeBase", "SearchField", "SearchFieldDataType",
+ "SearchIndexerDataSourceConnection", "SearchResourceEncryptionKey",
+ "SimpleField", "SearchableField", "ComplexField"]
 ```
 
 ### After Regeneration, Verify
 - [ ] All right-hand-side UPPER_CASE enum members (`STRING`, `INT32`, `INT64`, `SINGLE`, `DOUBLE`, `BOOLEAN`, `DATE_TIME_OFFSET`, `GEOGRAPHY_POINT`, `COMPLEX`) still exist on generated `SearchFieldDataType`
-- [ ] `_SearchField`, `_SearchIndexerDataSourceConnection`, `_KnowledgeBase` base constructors unchanged
+- [ ] `_SearchField`, `_SearchIndexerDataSourceConnection`, `_KnowledgeBase`, `_ContentUnderstandingSkill` base constructors unchanged
 - [ ] `SearchField.retrievable` still exists (the `hidden` property inverts it)
+- [ ] If regeneration adds `modelName`/`modelDeployment` to the generated `ContentUnderstandingSkill`, drop the patched subclass
 - [ ] If a new generated enum value collides with a Python keyword, add an alias
 
 ---

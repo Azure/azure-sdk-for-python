@@ -2805,15 +2805,9 @@ namespace azure.search.documents.indexes.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.search.documents.indexes.models.ContentUnderstandingSkill(SearchIndexerSkill, discriminator='#Microsoft.Skills.Util.ContentUnderstandingSkill'):
-        chunking_properties: Optional[ContentUnderstandingSkillChunkingProperties]
-        context: str
-        description: str
-        extraction_options: Optional[list[Union[str, ContentUnderstandingSkillExtractionOptions]]]
-        inputs: list[InputFieldMappingEntry]
-        name: str
-        odata_type: Literal["#ContentUnderstandingSkill"]
-        outputs: list[OutputFieldMappingEntry]
+    class azure.search.documents.indexes.models.ContentUnderstandingSkill(_ContentUnderstandingSkill, discriminator='#Microsoft.Skills.Util.ContentUnderstandingSkill'):
+        model_deployment: Optional[str]
+        model_name: Optional[str]
 
         @overload
         def __init__(
@@ -2822,10 +2816,12 @@ namespace azure.search.documents.indexes.models
                 chunking_properties: Optional[ContentUnderstandingSkillChunkingProperties] = ..., 
                 context: Optional[str] = ..., 
                 description: Optional[str] = ..., 
-                extraction_options: Optional[list[Union[str, ContentUnderstandingSkillExtractionOptions]]] = ..., 
-                inputs: list[InputFieldMappingEntry], 
+                extraction_options: Optional[List[Union[str, ContentUnderstandingSkillExtractionOptions]]] = ..., 
+                inputs: List[InputFieldMappingEntry], 
+                model_deployment: Optional[str] = ..., 
+                model_name: Optional[str] = ..., 
                 name: Optional[str] = ..., 
-                outputs: list[OutputFieldMappingEntry]
+                outputs: List[OutputFieldMappingEntry]
             ) -> None: ...
 
         @overload

@@ -1,5 +1,20 @@
 # Release History
 
+## 12.1.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed `ContentUnderstandingSkill` not exposing the `model_name` and `model_deployment` properties,
+  which map to the `2026-05-01-preview` REST properties `modelName` and `modelDeployment` and enable
+  AI-generated descriptions for document-embedded images, charts, and diagrams.
+  ([#48555](https://github.com/Azure/azure-sdk-for-python/issues/48555))
+
+### Other Changes
+
 ## 12.1.0b2 (2026-08-27)
 
 ### Features Added
