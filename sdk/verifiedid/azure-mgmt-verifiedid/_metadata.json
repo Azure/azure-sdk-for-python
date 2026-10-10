@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2024-01-26-preview",
+  "apiVersions": {
+    "Microsoft.VerifiedId": "2024-01-26-preview"
+  },
+  "commit": "663934c93853cb58f6477c2e8e0f48d5eca2d770",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/verifiedid/resource-manager/Microsoft.VerifiedId/VerifiedId",
+  "emitterVersion": "0.63.9",
+  "httpClientPythonVersion": "0.38.1"
+}
