@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -34,11 +35,14 @@ def main():
         resource_group_name="testrg",
         edge_action_name="edgeAction1",
         version="version2",
-        body={"content": "UEsDBBQAAAAIAI1NzkQAAAAABQAAAA==", "name": "zippedFile"},
+        body={
+            "content": "UEsDBBQAAAAIAAAAIQAqlc+OKAAAACoAAAAOAAAAZWRnZV9hY3Rpb24uanNLK81LLsnMz1PISMxLyUkt0kgtS80r0VSoVihKLSktylMA860VarkAUEsBAhQAFAAAAAgAAAAhACqVz44oAAAAKgAAAA4AAAAAAAAAAAAAAKSBAAAAAGVkZ2VfYWN0aW9uLmpzUEsFBgAAAAABAAEAPAAAAFQAAAAAAA==",
+            "name": "edge_action.js",
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-12-01-preview/EdgeActionVersions_DeployVersionCode.json
+# x-ms-original-file: 2026-10-01/EdgeActionVersions_DeployVersionCode.json
 if __name__ == "__main__":
     main()

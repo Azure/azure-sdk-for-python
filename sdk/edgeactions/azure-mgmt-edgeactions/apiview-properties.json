@@ -66,5 +66,6 @@
         "azure.mgmt.edgeactions.aio.operations.EdgeActionExecutionFiltersOperations.begin_delete": "Microsoft.Cdn.EdgeActionExecutionFilters.delete",
         "azure.mgmt.edgeactions.operations.EdgeActionExecutionFiltersOperations.list_by_edge_action": "Microsoft.Cdn.EdgeActionExecutionFilters.listByEdgeAction",
         "azure.mgmt.edgeactions.aio.operations.EdgeActionExecutionFiltersOperations.list_by_edge_action": "Microsoft.Cdn.EdgeActionExecutionFilters.listByEdgeAction"
-    }
+    },
+    "CrossLanguageVersion": "a7fe89ea4087"
 }

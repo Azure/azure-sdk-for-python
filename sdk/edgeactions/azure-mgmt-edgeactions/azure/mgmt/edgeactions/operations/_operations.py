@@ -32,12 +32,12 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import EdgeActionsMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
+from .._validation import api_version_validation
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -51,7 +51,7 @@ def build_edge_actions_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -80,7 +80,7 @@ def build_edge_actions_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -111,7 +111,7 @@ def build_edge_actions_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -140,7 +140,7 @@ def build_edge_actions_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/edgeActions/{edgeActionName}"
     path_format_arguments = {
@@ -163,7 +163,7 @@ def build_edge_actions_list_by_resource_group_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -190,7 +190,7 @@ def build_edge_actions_list_by_subscription_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -216,7 +216,7 @@ def build_edge_action_versions_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -246,7 +246,7 @@ def build_edge_action_versions_create_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -278,7 +278,7 @@ def build_edge_action_versions_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -308,7 +308,7 @@ def build_edge_action_versions_delete_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/edgeActions/{edgeActionName}/versions/{version}"
     path_format_arguments = {
@@ -332,7 +332,7 @@ def build_edge_action_versions_list_by_edge_action_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -361,7 +361,7 @@ def build_edge_action_versions_deploy_version_code_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -393,7 +393,7 @@ def build_edge_action_versions_get_version_code_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -424,7 +424,7 @@ def build_edge_action_versions_swap_default_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/edgeActions/{edgeActionName}/versions/{version}/swapDefault"
     path_format_arguments = {
@@ -451,7 +451,7 @@ def build_edge_action_execution_filters_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -481,7 +481,7 @@ def build_edge_action_execution_filters_create_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -513,7 +513,7 @@ def build_edge_action_execution_filters_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -543,7 +543,7 @@ def build_edge_action_execution_filters_delete_request(  # pylint: disable=name-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/edgeActions/{edgeActionName}/executionFilters/{executionFilter}"
     path_format_arguments = {
@@ -567,7 +567,7 @@ def build_edge_action_execution_filters_list_by_edge_action_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -589,7 +589,7 @@ def build_edge_action_execution_filters_list_by_edge_action_request(  # pylint: 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class EdgeActionsOperations:
+class EdgeActionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -645,6 +645,7 @@ class EdgeActionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -666,7 +667,7 @@ class EdgeActionsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EdgeAction, response.json())
 
@@ -679,7 +680,7 @@ class EdgeActionsOperations:
         self,
         resource_group_name: str,
         edge_action_name: str,
-        resource: Union[_models.EdgeAction, JSON, IO[bytes]],
+        resource: Union[_models.EdgeAction, _types.EdgeAction, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -718,6 +719,7 @@ class EdgeActionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -744,7 +746,7 @@ class EdgeActionsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -784,7 +786,7 @@ class EdgeActionsOperations:
         self,
         resource_group_name: str,
         edge_action_name: str,
-        resource: JSON,
+        resource: _types.EdgeAction,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -797,7 +799,7 @@ class EdgeActionsOperations:
         :param edge_action_name: The name of the Edge Action. Required.
         :type edge_action_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.edgeactions.types.EdgeAction
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -840,7 +842,7 @@ class EdgeActionsOperations:
         self,
         resource_group_name: str,
         edge_action_name: str,
-        resource: Union[_models.EdgeAction, JSON, IO[bytes]],
+        resource: Union[_models.EdgeAction, _types.EdgeAction, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.EdgeAction]:
         """Create a EdgeAction.
@@ -850,9 +852,10 @@ class EdgeActionsOperations:
         :type resource_group_name: str
         :param edge_action_name: The name of the Edge Action. Required.
         :type edge_action_name: str
-        :param resource: Resource create parameters. Is one of the following types: EdgeAction, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.edgeactions.models.EdgeAction or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a EdgeAction type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.edgeactions.models.EdgeAction or
+         ~azure.mgmt.edgeactions.types.EdgeAction or IO[bytes]
         :return: An instance of LROPoller that returns EdgeAction. The EdgeAction is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeactions.models.EdgeAction]
@@ -910,11 +913,25 @@ class EdgeActionsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def _update_initial(
         self,
         resource_group_name: str,
         edge_action_name: str,
-        properties: Union[_models.EdgeActionUpdate, JSON, IO[bytes]],
+        properties: Union[_models.EdgeActionUpdate, _types.EdgeActionUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -953,6 +970,7 @@ class EdgeActionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -977,7 +995,7 @@ class EdgeActionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -994,7 +1012,10 @@ class EdgeActionsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.EdgeAction]:
-        """Update a EdgeAction.
+        """Updates the tags of an Edge Action. Omitted tags are preserved, an empty tags object clears all
+        tags, and supplied tags replace the entire tag collection. Null tags are rejected. Do not
+        include sku in PATCH requests; any supplied sku, including null or the existing value, is
+        rejected.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1017,12 +1038,15 @@ class EdgeActionsOperations:
         self,
         resource_group_name: str,
         edge_action_name: str,
-        properties: JSON,
+        properties: _types.EdgeActionUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.EdgeAction]:
-        """Update a EdgeAction.
+        """Updates the tags of an Edge Action. Omitted tags are preserved, an empty tags object clears all
+        tags, and supplied tags replace the entire tag collection. Null tags are rejected. Do not
+        include sku in PATCH requests; any supplied sku, including null or the existing value, is
+        rejected.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1030,7 +1054,7 @@ class EdgeActionsOperations:
         :param edge_action_name: The name of the Edge Action. Required.
         :type edge_action_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.edgeactions.types.EdgeActionUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1050,7 +1074,10 @@ class EdgeActionsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.EdgeAction]:
-        """Update a EdgeAction.
+        """Updates the tags of an Edge Action. Omitted tags are preserved, an empty tags object clears all
+        tags, and supplied tags replace the entire tag collection. Null tags are rejected. Do not
+        include sku in PATCH requests; any supplied sku, including null or the existing value, is
+        rejected.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1069,23 +1096,41 @@ class EdgeActionsOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def begin_update(
         self,
         resource_group_name: str,
         edge_action_name: str,
-        properties: Union[_models.EdgeActionUpdate, JSON, IO[bytes]],
+        properties: Union[_models.EdgeActionUpdate, _types.EdgeActionUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.EdgeAction]:
-        """Update a EdgeAction.
+        """Updates the tags of an Edge Action. Omitted tags are preserved, an empty tags object clears all
+        tags, and supplied tags replace the entire tag collection. Null tags are rejected. Do not
+        include sku in PATCH requests; any supplied sku, including null or the existing value, is
+        rejected.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param edge_action_name: The name of the Edge Action. Required.
         :type edge_action_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         EdgeActionUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.edgeactions.models.EdgeActionUpdate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a EdgeActionUpdate type or
+         a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.edgeactions.models.EdgeActionUpdate or
+         ~azure.mgmt.edgeactions.types.EdgeActionUpdate or IO[bytes]
         :return: An instance of LROPoller that returns EdgeAction. The EdgeAction is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeactions.models.EdgeAction]
@@ -1170,6 +1215,7 @@ class EdgeActionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1194,7 +1240,7 @@ class EdgeActionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1310,7 +1356,10 @@ class EdgeActionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1323,7 +1372,10 @@ class EdgeActionsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.EdgeAction], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.EdgeAction],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1397,7 +1449,10 @@ class EdgeActionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1410,7 +1465,10 @@ class EdgeActionsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.EdgeAction], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.EdgeAction],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1437,7 +1495,7 @@ class EdgeActionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class EdgeActionVersionsOperations:
+class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1498,6 +1556,7 @@ class EdgeActionVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1519,7 +1578,7 @@ class EdgeActionVersionsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EdgeActionVersion, response.json())
 
@@ -1533,7 +1592,7 @@ class EdgeActionVersionsOperations:
         resource_group_name: str,
         edge_action_name: str,
         version: str,
-        resource: Union[_models.EdgeActionVersion, JSON, IO[bytes]],
+        resource: Union[_models.EdgeActionVersion, _types.EdgeActionVersion, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1573,6 +1632,7 @@ class EdgeActionVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1599,7 +1659,7 @@ class EdgeActionVersionsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1643,7 +1703,7 @@ class EdgeActionVersionsOperations:
         resource_group_name: str,
         edge_action_name: str,
         version: str,
-        resource: JSON,
+        resource: _types.EdgeActionVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1658,7 +1718,7 @@ class EdgeActionVersionsOperations:
         :param version: The name of the Edge Action version. Required.
         :type version: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.edgeactions.types.EdgeActionVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1705,7 +1765,7 @@ class EdgeActionVersionsOperations:
         resource_group_name: str,
         edge_action_name: str,
         version: str,
-        resource: Union[_models.EdgeActionVersion, JSON, IO[bytes]],
+        resource: Union[_models.EdgeActionVersion, _types.EdgeActionVersion, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.EdgeActionVersion]:
         """Create a EdgeActionVersion.
@@ -1717,9 +1777,10 @@ class EdgeActionVersionsOperations:
         :type edge_action_name: str
         :param version: The name of the Edge Action version. Required.
         :type version: str
-        :param resource: Resource create parameters. Is one of the following types: EdgeActionVersion,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.edgeactions.models.EdgeActionVersion or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a EdgeActionVersion type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.edgeactions.models.EdgeActionVersion or
+         ~azure.mgmt.edgeactions.types.EdgeActionVersion or IO[bytes]
         :return: An instance of LROPoller that returns EdgeActionVersion. The EdgeActionVersion is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeactions.models.EdgeActionVersion]
@@ -1778,12 +1839,27 @@ class EdgeActionVersionsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_action_name",
+                "version",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def _update_initial(
         self,
         resource_group_name: str,
         edge_action_name: str,
         version: str,
-        properties: Union[_models.EdgeActionVersionUpdate, JSON, IO[bytes]],
+        properties: Union[_models.EdgeActionVersionUpdate, _types.EdgeActionVersionUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1823,6 +1899,7 @@ class EdgeActionVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1847,7 +1924,7 @@ class EdgeActionVersionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1865,7 +1942,10 @@ class EdgeActionVersionsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.EdgeActionVersion]:
-        """Update a EdgeActionVersion.
+        """Updates the tags of an Edge Action version. Omitted tags are preserved, an empty tags object
+        clears all tags, and supplied tags replace the entire tag collection. Null tags are rejected.
+        Version properties are not changed. If deploymentType or isDefaultVersion is supplied, it must
+        match the existing value; use swapDefault to change the default version.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1891,12 +1971,15 @@ class EdgeActionVersionsOperations:
         resource_group_name: str,
         edge_action_name: str,
         version: str,
-        properties: JSON,
+        properties: _types.EdgeActionVersionUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.EdgeActionVersion]:
-        """Update a EdgeActionVersion.
+        """Updates the tags of an Edge Action version. Omitted tags are preserved, an empty tags object
+        clears all tags, and supplied tags replace the entire tag collection. Null tags are rejected.
+        Version properties are not changed. If deploymentType or isDefaultVersion is supplied, it must
+        match the existing value; use swapDefault to change the default version.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1906,7 +1989,7 @@ class EdgeActionVersionsOperations:
         :param version: The name of the Edge Action version. Required.
         :type version: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.edgeactions.types.EdgeActionVersionUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1927,7 +2010,10 @@ class EdgeActionVersionsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.EdgeActionVersion]:
-        """Update a EdgeActionVersion.
+        """Updates the tags of an Edge Action version. Omitted tags are preserved, an empty tags object
+        clears all tags, and supplied tags replace the entire tag collection. Null tags are rejected.
+        Version properties are not changed. If deploymentType or isDefaultVersion is supplied, it must
+        match the existing value; use swapDefault to change the default version.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1948,15 +2034,33 @@ class EdgeActionVersionsOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_action_name",
+                "version",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def begin_update(
         self,
         resource_group_name: str,
         edge_action_name: str,
         version: str,
-        properties: Union[_models.EdgeActionVersionUpdate, JSON, IO[bytes]],
+        properties: Union[_models.EdgeActionVersionUpdate, _types.EdgeActionVersionUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.EdgeActionVersion]:
-        """Update a EdgeActionVersion.
+        """Updates the tags of an Edge Action version. Omitted tags are preserved, an empty tags object
+        clears all tags, and supplied tags replace the entire tag collection. Null tags are rejected.
+        Version properties are not changed. If deploymentType or isDefaultVersion is supplied, it must
+        match the existing value; use swapDefault to change the default version.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1965,9 +2069,10 @@ class EdgeActionVersionsOperations:
         :type edge_action_name: str
         :param version: The name of the Edge Action version. Required.
         :type version: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         EdgeActionVersionUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.edgeactions.models.EdgeActionVersionUpdate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a EdgeActionVersionUpdate
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.edgeactions.models.EdgeActionVersionUpdate or
+         ~azure.mgmt.edgeactions.types.EdgeActionVersionUpdate or IO[bytes]
         :return: An instance of LROPoller that returns EdgeActionVersion. The EdgeActionVersion is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeactions.models.EdgeActionVersion]
@@ -2056,6 +2161,7 @@ class EdgeActionVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2080,7 +2186,7 @@ class EdgeActionVersionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2206,7 +2312,10 @@ class EdgeActionVersionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2219,7 +2328,10 @@ class EdgeActionVersionsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.EdgeActionVersion], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.EdgeActionVersion],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2250,7 +2362,7 @@ class EdgeActionVersionsOperations:
         resource_group_name: str,
         edge_action_name: str,
         version: str,
-        body: Union[_models.VersionCode, JSON, IO[bytes]],
+        body: Union[_models.VersionCode, _types.VersionCode, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2290,6 +2402,7 @@ class EdgeActionVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2314,7 +2427,7 @@ class EdgeActionVersionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2359,7 +2472,7 @@ class EdgeActionVersionsOperations:
         resource_group_name: str,
         edge_action_name: str,
         version: str,
-        body: JSON,
+        body: _types.VersionCode,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2374,7 +2487,7 @@ class EdgeActionVersionsOperations:
         :param version: The name of the Edge Action version. Required.
         :type version: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.edgeactions.types.VersionCode
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2423,7 +2536,7 @@ class EdgeActionVersionsOperations:
         resource_group_name: str,
         edge_action_name: str,
         version: str,
-        body: Union[_models.VersionCode, JSON, IO[bytes]],
+        body: Union[_models.VersionCode, _types.VersionCode, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.EdgeActionVersionProperties]:
         """A long-running resource action.
@@ -2435,9 +2548,10 @@ class EdgeActionVersionsOperations:
         :type edge_action_name: str
         :param version: The name of the Edge Action version. Required.
         :type version: str
-        :param body: The content of the action request. Is one of the following types: VersionCode,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.edgeactions.models.VersionCode or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a VersionCode type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.edgeactions.models.VersionCode or
+         ~azure.mgmt.edgeactions.types.VersionCode or IO[bytes]
         :return: An instance of LROPoller that returns EdgeActionVersionProperties. The
          EdgeActionVersionProperties is compatible with MutableMapping
         :rtype:
@@ -2468,14 +2582,10 @@ class EdgeActionVersionsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.EdgeActionVersionProperties, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -2533,6 +2643,7 @@ class EdgeActionVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2557,7 +2668,7 @@ class EdgeActionVersionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2605,14 +2716,10 @@ class EdgeActionVersionsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.VersionCode, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -2670,6 +2777,7 @@ class EdgeActionVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2694,7 +2802,7 @@ class EdgeActionVersionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2766,7 +2874,7 @@ class EdgeActionVersionsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class EdgeActionExecutionFiltersOperations:
+class EdgeActionExecutionFiltersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2828,6 +2936,7 @@ class EdgeActionExecutionFiltersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2849,7 +2958,7 @@ class EdgeActionExecutionFiltersOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EdgeActionExecutionFilter, response.json())
 
@@ -2863,7 +2972,7 @@ class EdgeActionExecutionFiltersOperations:
         resource_group_name: str,
         edge_action_name: str,
         execution_filter: str,
-        resource: Union[_models.EdgeActionExecutionFilter, JSON, IO[bytes]],
+        resource: Union[_models.EdgeActionExecutionFilter, _types.EdgeActionExecutionFilter, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2903,6 +3012,7 @@ class EdgeActionExecutionFiltersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2929,7 +3039,7 @@ class EdgeActionExecutionFiltersOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2973,7 +3083,7 @@ class EdgeActionExecutionFiltersOperations:
         resource_group_name: str,
         edge_action_name: str,
         execution_filter: str,
-        resource: JSON,
+        resource: _types.EdgeActionExecutionFilter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2988,7 +3098,7 @@ class EdgeActionExecutionFiltersOperations:
         :param execution_filter: The name of the execution filter. Required.
         :type execution_filter: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.edgeactions.types.EdgeActionExecutionFilter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3035,7 +3145,7 @@ class EdgeActionExecutionFiltersOperations:
         resource_group_name: str,
         edge_action_name: str,
         execution_filter: str,
-        resource: Union[_models.EdgeActionExecutionFilter, JSON, IO[bytes]],
+        resource: Union[_models.EdgeActionExecutionFilter, _types.EdgeActionExecutionFilter, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.EdgeActionExecutionFilter]:
         """Create a EdgeActionExecutionFilter.
@@ -3047,9 +3157,10 @@ class EdgeActionExecutionFiltersOperations:
         :type edge_action_name: str
         :param execution_filter: The name of the execution filter. Required.
         :type execution_filter: str
-        :param resource: Resource create parameters. Is one of the following types:
-         EdgeActionExecutionFilter, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.edgeactions.models.EdgeActionExecutionFilter or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a EdgeActionExecutionFilter type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.edgeactions.models.EdgeActionExecutionFilter or
+         ~azure.mgmt.edgeactions.types.EdgeActionExecutionFilter or IO[bytes]
         :return: An instance of LROPoller that returns EdgeActionExecutionFilter. The
          EdgeActionExecutionFilter is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeactions.models.EdgeActionExecutionFilter]
@@ -3108,12 +3219,27 @@ class EdgeActionExecutionFiltersOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_action_name",
+                "execution_filter",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def _update_initial(
         self,
         resource_group_name: str,
         edge_action_name: str,
         execution_filter: str,
-        properties: Union[_models.EdgeActionExecutionFilterUpdate, JSON, IO[bytes]],
+        properties: Union[_models.EdgeActionExecutionFilterUpdate, _types.EdgeActionExecutionFilterUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3153,6 +3279,7 @@ class EdgeActionExecutionFiltersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3177,7 +3304,7 @@ class EdgeActionExecutionFiltersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3195,7 +3322,9 @@ class EdgeActionExecutionFiltersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.EdgeActionExecutionFilter]:
-        """Update a EdgeActionExecutionFilter.
+        """Updates the properties and tags of an Edge Action execution filter. Omitted tags are preserved,
+        an empty tags object clears all tags, and supplied tags replace the entire tag collection. Null
+        tags are rejected.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -3221,12 +3350,14 @@ class EdgeActionExecutionFiltersOperations:
         resource_group_name: str,
         edge_action_name: str,
         execution_filter: str,
-        properties: JSON,
+        properties: _types.EdgeActionExecutionFilterUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.EdgeActionExecutionFilter]:
-        """Update a EdgeActionExecutionFilter.
+        """Updates the properties and tags of an Edge Action execution filter. Omitted tags are preserved,
+        an empty tags object clears all tags, and supplied tags replace the entire tag collection. Null
+        tags are rejected.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -3236,7 +3367,7 @@ class EdgeActionExecutionFiltersOperations:
         :param execution_filter: The name of the execution filter. Required.
         :type execution_filter: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.edgeactions.types.EdgeActionExecutionFilterUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3257,7 +3388,9 @@ class EdgeActionExecutionFiltersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.EdgeActionExecutionFilter]:
-        """Update a EdgeActionExecutionFilter.
+        """Updates the properties and tags of an Edge Action execution filter. Omitted tags are preserved,
+        an empty tags object clears all tags, and supplied tags replace the entire tag collection. Null
+        tags are rejected.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -3278,15 +3411,32 @@ class EdgeActionExecutionFiltersOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_action_name",
+                "execution_filter",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def begin_update(
         self,
         resource_group_name: str,
         edge_action_name: str,
         execution_filter: str,
-        properties: Union[_models.EdgeActionExecutionFilterUpdate, JSON, IO[bytes]],
+        properties: Union[_models.EdgeActionExecutionFilterUpdate, _types.EdgeActionExecutionFilterUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.EdgeActionExecutionFilter]:
-        """Update a EdgeActionExecutionFilter.
+        """Updates the properties and tags of an Edge Action execution filter. Omitted tags are preserved,
+        an empty tags object clears all tags, and supplied tags replace the entire tag collection. Null
+        tags are rejected.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -3295,10 +3445,10 @@ class EdgeActionExecutionFiltersOperations:
         :type edge_action_name: str
         :param execution_filter: The name of the execution filter. Required.
         :type execution_filter: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         EdgeActionExecutionFilterUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.edgeactions.models.EdgeActionExecutionFilterUpdate or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a
+         EdgeActionExecutionFilterUpdate type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.edgeactions.models.EdgeActionExecutionFilterUpdate or
+         ~azure.mgmt.edgeactions.types.EdgeActionExecutionFilterUpdate or IO[bytes]
         :return: An instance of LROPoller that returns EdgeActionExecutionFilter. The
          EdgeActionExecutionFilter is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeactions.models.EdgeActionExecutionFilter]
@@ -3387,6 +3537,7 @@ class EdgeActionExecutionFiltersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3411,7 +3562,7 @@ class EdgeActionExecutionFiltersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3537,7 +3688,10 @@ class EdgeActionExecutionFiltersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3550,7 +3704,10 @@ class EdgeActionExecutionFiltersOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.EdgeActionExecutionFilter], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.EdgeActionExecutionFilter],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
