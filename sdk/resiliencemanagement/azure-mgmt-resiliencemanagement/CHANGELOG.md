@@ -58,19 +58,19 @@
   - Model `ServiceLevelResource` deleted or renamed its instance variable `service_level_objective_resource_id`
   - Model `UnifiedResilienceItemProperties` deleted or renamed its instance variable `recommendations`
   - Deleted or renamed enum value `UsagePlanType.BASIC`
-  - Deleted or renamed model `GoalAssignmentType`
+  - Deleted or renamed enum `GoalAssignmentType`
   - Deleted or renamed model `GoalTemplate`
   - Deleted or renamed model `GoalTemplateProperties`
-  - Deleted or renamed model `GoalType`
-  - Deleted or renamed model `IsoDuration`
-  - Deleted or renamed model `MembershipType`
+  - Deleted or renamed enum `GoalType`
+  - Deleted or renamed enum `IsoDuration`
+  - Deleted or renamed enum `MembershipType`
   - Deleted or renamed model `RecommendationsData`
   - Deleted or renamed model `RecommendationsHighAvailabilityData`
-  - Deleted or renamed model `RequirementSelected`
-  - Deleted or renamed model `ResilienceHealthStatus`
+  - Deleted or renamed enum `RequirementSelected`
+  - Deleted or renamed enum `ResilienceHealthStatus`
   - Deleted or renamed model `ServiceGroupMembership`
-  - Deleted or renamed model `UnifiedResilienceItemRequirementSelected`
-  - Deleted or renamed model `GoalTemplatesOperations`
+  - Deleted or renamed enum `UnifiedResilienceItemRequirementSelected`
+  - Deleted or renamed operation group `GoalTemplatesOperations`
 
 ## 1.0.0b2 (2026-09-23)
 
