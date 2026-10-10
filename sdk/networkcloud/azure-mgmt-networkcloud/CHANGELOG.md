@@ -1,5 +1,25 @@
 # Release History
 
+## 3.1.0b1 (2026-10-09)
+
+### Features Added
+
+  - Enum `AccessBridgeAllowedName` added member `EDGE_MANAGEMENT`
+  - Model `ClusterManagerPatchParameters` added property `properties`
+  - Model `ClusterManagerProperties` added property `rollout_ring`
+  - Model `ClusterProperties` added property `edge_management_service_ca_certificate`
+  - Model `SecretArchiveReference` added property `encryption_public_key`
+  - Model `SecretArchiveSettings` added property `encryption_public_key`
+  - Model `SecretArchiveSettings` added property `provider_configuration`
+  - Added model `ClusterManagerPatchProperties`
+  - Added model `CyberArkSecretArchiveProviderConfiguration`
+  - Added model `HashiCorpVaultSecretArchiveProviderConfiguration`
+  - Added enum `KeyValueVersion`
+  - Added model `OpenBaoSecretArchiveProviderConfiguration`
+  - Added model `SecretArchiveProviderConfiguration`
+  - Added enum `SecretArchiveProviderType`
+  - Added enum `VaultAuthenticationMethod`
+
 ## 3.0.0 (2026-07-20)
 
 ### Features Added

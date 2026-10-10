@@ -16,7 +16,7 @@ from azure.mgmt.networkcloud import NetworkCloudMgmtClient
     pip install azure-identity
     pip install azure-mgmt-networkcloud
 # USAGE
-    python access_bridges_create_or_update.py
+    python access_bridges_create_or_update_edge_management.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -33,7 +33,7 @@ def main():
 
     response = client.access_bridges.begin_create_or_update(
         resource_group_name="resourceGroupName",
-        access_bridge_name="Bastion",
+        access_bridge_name="EdgeManagement",
         access_bridge={
             "extendedLocation": {
                 "name": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ExtendedLocation/customLocations/clusterExtendedLocationName",
@@ -60,6 +60,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-08-01-preview/AccessBridges_CreateOrUpdate.json
+# x-ms-original-file: 2026-08-01-preview/AccessBridges_CreateOrUpdate_EdgeManagement.json
 if __name__ == "__main__":
     main()

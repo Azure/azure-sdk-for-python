@@ -191,7 +191,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -301,7 +301,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AccessBridgesOperations:
+class AccessBridgesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -330,7 +330,7 @@ class AccessBridgesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def get(
         self, resource_group_name: str, access_bridge_name: Union[str, _models.AccessBridgeAllowedName], **kwargs: Any
@@ -341,7 +341,7 @@ class AccessBridgesOperations:
          Required.
         :type resource_group_name: str
         :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
-         "PrivateVault", and "StorageDashboard". Required.
+         "PrivateVault", "StorageDashboard", and "EdgeManagement". Required.
         :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
         :return: AccessBridge. The AccessBridge is compatible with MutableMapping
         :rtype: ~azure.mgmt.networkcloud.models.AccessBridge
@@ -416,7 +416,7 @@ class AccessBridgesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -510,7 +510,7 @@ class AccessBridgesOperations:
          Required.
         :type resource_group_name: str
         :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
-         "PrivateVault", and "StorageDashboard". Required.
+         "PrivateVault", "StorageDashboard", and "EdgeManagement". Required.
         :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
         :param access_bridge: The access bridge configuration. Required.
         :type access_bridge: ~azure.mgmt.networkcloud.models.AccessBridge
@@ -539,7 +539,7 @@ class AccessBridgesOperations:
          Required.
         :type resource_group_name: str
         :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
-         "PrivateVault", and "StorageDashboard". Required.
+         "PrivateVault", "StorageDashboard", and "EdgeManagement". Required.
         :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
         :param access_bridge: The access bridge configuration. Required.
         :type access_bridge: ~azure.mgmt.networkcloud.types.AccessBridge
@@ -568,7 +568,7 @@ class AccessBridgesOperations:
          Required.
         :type resource_group_name: str
         :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
-         "PrivateVault", and "StorageDashboard". Required.
+         "PrivateVault", "StorageDashboard", and "EdgeManagement". Required.
         :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
         :param access_bridge: The access bridge configuration. Required.
         :type access_bridge: IO[bytes]
@@ -594,7 +594,7 @@ class AccessBridgesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -609,7 +609,7 @@ class AccessBridgesOperations:
          Required.
         :type resource_group_name: str
         :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
-         "PrivateVault", and "StorageDashboard". Required.
+         "PrivateVault", "StorageDashboard", and "EdgeManagement". Required.
         :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
         :param access_bridge: The access bridge configuration. Is either a AccessBridge type or a
          IO[bytes] type. Required.
@@ -686,7 +686,7 @@ class AccessBridgesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def _update_initial(
         self,
@@ -801,7 +801,7 @@ class AccessBridgesOperations:
          Required.
         :type resource_group_name: str
         :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
-         "PrivateVault", and "StorageDashboard". Required.
+         "PrivateVault", "StorageDashboard", and "EdgeManagement". Required.
         :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
         :param access_bridge_update_parameters: The request body. Default value is None.
         :type access_bridge_update_parameters:
@@ -839,7 +839,7 @@ class AccessBridgesOperations:
          Required.
         :type resource_group_name: str
         :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
-         "PrivateVault", and "StorageDashboard". Required.
+         "PrivateVault", "StorageDashboard", and "EdgeManagement". Required.
         :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
         :param access_bridge_update_parameters: The request body. Default value is None.
         :type access_bridge_update_parameters:
@@ -877,7 +877,7 @@ class AccessBridgesOperations:
          Required.
         :type resource_group_name: str
         :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
-         "PrivateVault", and "StorageDashboard". Required.
+         "PrivateVault", "StorageDashboard", and "EdgeManagement". Required.
         :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
         :param access_bridge_update_parameters: The request body. Default value is None.
         :type access_bridge_update_parameters: IO[bytes]
@@ -910,7 +910,7 @@ class AccessBridgesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def begin_update(
         self,
@@ -931,7 +931,7 @@ class AccessBridgesOperations:
          Required.
         :type resource_group_name: str
         :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
-         "PrivateVault", and "StorageDashboard". Required.
+         "PrivateVault", "StorageDashboard", and "EdgeManagement". Required.
         :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
         :param access_bridge_update_parameters: The request body. Is either a
          AccessBridgePatchParameters type or a IO[bytes] type. Default value is None.
@@ -1015,7 +1015,7 @@ class AccessBridgesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def _delete_initial(
         self,
@@ -1104,7 +1104,7 @@ class AccessBridgesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def begin_delete(
         self,
@@ -1121,7 +1121,7 @@ class AccessBridgesOperations:
          Required.
         :type resource_group_name: str
         :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
-         "PrivateVault", and "StorageDashboard". Required.
+         "PrivateVault", "StorageDashboard", and "EdgeManagement". Required.
         :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
@@ -1201,7 +1201,7 @@ class AccessBridgesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     def list_by_resource_group(
         self, resource_group_name: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
@@ -1314,7 +1314,7 @@ class AccessBridgesOperations:
     @api_version_validation(
         method_added_on="2026-01-01-preview",
         params_added_on={"2026-01-01-preview": ["api_version", "subscription_id", "top", "skip_token", "accept"]},
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     def list_by_subscription(
         self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
@@ -1420,7 +1420,7 @@ class AccessBridgesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
+class BareMetalMachinesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2980,7 +2980,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def _reimage_initial(
         self,
@@ -3161,7 +3161,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def begin_reimage(
         self,
@@ -4931,7 +4931,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         )
 
 
-class CloudServicesNetworksOperations:
+class CloudServicesNetworksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5976,7 +5976,7 @@ class CloudServicesNetworksOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ClusterManagersOperations:
+class ClusterManagersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6941,7 +6941,7 @@ class ClusterManagersOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def _update_relay_private_endpoint_connection_initial(  # pylint: disable=name-too-long
         self,
@@ -7145,7 +7145,7 @@ class ClusterManagersOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def begin_update_relay_private_endpoint_connection(  # pylint: disable=name-too-long
         self,
@@ -7240,7 +7240,7 @@ class ClusterManagersOperations:
         )
 
 
-class ClustersOperations:  # pylint: disable=too-many-public-methods
+class ClustersOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8780,7 +8780,7 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
                 "content_type",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def _inspect_initial(
         self,
@@ -8964,7 +8964,7 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
                 "content_type",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def begin_inspect(
         self,
@@ -9061,7 +9061,7 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def _rotate_credential_initial(
         self,
@@ -9236,7 +9236,7 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def begin_rotate_credential(
         self,
@@ -9826,7 +9826,7 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         )
 
 
-class KubernetesClustersOperations:
+class KubernetesClustersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11108,7 +11108,7 @@ class KubernetesClustersOperations:
         )
 
 
-class KubernetesVersionsOperations:
+class KubernetesVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11137,7 +11137,7 @@ class KubernetesVersionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def get(
         self, resource_group_name: str, kubernetes_version_name: str, **kwargs: Any
@@ -11225,7 +11225,7 @@ class KubernetesVersionsOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -11437,7 +11437,7 @@ class KubernetesVersionsOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -11539,7 +11539,7 @@ class KubernetesVersionsOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def _update_initial(
         self,
@@ -11760,7 +11760,7 @@ class KubernetesVersionsOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def begin_update(
         self,
@@ -11864,7 +11864,7 @@ class KubernetesVersionsOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def _delete_initial(
         self,
@@ -11953,7 +11953,7 @@ class KubernetesVersionsOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     async def begin_delete(
         self,
@@ -12049,7 +12049,7 @@ class KubernetesVersionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     def list_by_resource_group(
         self, resource_group_name: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
@@ -12163,7 +12163,7 @@ class KubernetesVersionsOperations:
     @api_version_validation(
         method_added_on="2026-01-01-preview",
         params_added_on={"2026-01-01-preview": ["api_version", "subscription_id", "top", "skip_token", "accept"]},
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01", "2026-08-01-preview"],
     )
     def list_by_subscription(
         self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
@@ -12270,7 +12270,7 @@ class KubernetesVersionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class L2NetworksOperations:
+class L2NetworksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13218,7 +13218,7 @@ class L2NetworksOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class L3NetworksOperations:
+class L3NetworksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14166,7 +14166,7 @@ class L3NetworksOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RackSkusOperations:
+class RackSkusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14343,7 +14343,7 @@ class RackSkusOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RacksOperations:
+class RacksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15373,7 +15373,7 @@ class RacksOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class StorageAppliancesOperations:
+class StorageAppliancesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17071,7 +17071,7 @@ class StorageAppliancesOperations:
         )
 
 
-class TrunkedNetworksOperations:
+class TrunkedNetworksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18022,7 +18022,7 @@ class TrunkedNetworksOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VirtualMachinesOperations:
+class VirtualMachinesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -19953,7 +19953,7 @@ class VirtualMachinesOperations:
         )
 
 
-class VolumesOperations:
+class VolumesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -20901,7 +20901,7 @@ class VolumesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BareMetalMachineKeySetsOperations:
+class BareMetalMachineKeySetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -21896,7 +21896,7 @@ class BareMetalMachineKeySetsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BmcKeySetsOperations:
+class BmcKeySetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -22872,7 +22872,7 @@ class BmcKeySetsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AgentPoolsOperations:
+class AgentPoolsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -23848,7 +23848,7 @@ class AgentPoolsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class KubernetesClusterFeaturesOperations:
+class KubernetesClusterFeaturesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -24848,7 +24848,7 @@ class KubernetesClusterFeaturesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ConsolesOperations:
+class ConsolesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25824,7 +25824,7 @@ class ConsolesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MetricsConfigurationsOperations:
+class MetricsConfigurationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -66,6 +66,7 @@
         "azure.mgmt.networkcloud.models.ClusterInspectParameters": "Microsoft.NetworkCloud.ClusterInspectParameters",
         "azure.mgmt.networkcloud.models.ClusterManager": "Microsoft.NetworkCloud.ClusterManager",
         "azure.mgmt.networkcloud.models.ClusterManagerPatchParameters": "Microsoft.NetworkCloud.ClusterManagerPatchParameters",
+        "azure.mgmt.networkcloud.models.ClusterManagerPatchProperties": "Microsoft.NetworkCloud.ClusterManagerPatchProperties",
         "azure.mgmt.networkcloud.models.ClusterManagerProperties": "Microsoft.NetworkCloud.ClusterManagerProperties",
         "azure.mgmt.networkcloud.models.ClusterManagerRelayConfiguration": "Microsoft.NetworkCloud.ClusterManagerRelayConfiguration",
         "azure.mgmt.networkcloud.models.ClusterManagerUpdateRelayPrivateEndpointConnectionParameters": "Microsoft.NetworkCloud.ClusterManagerUpdateRelayPrivateEndpointConnectionParameters",
@@ -91,6 +92,8 @@
         "azure.mgmt.networkcloud.models.ConsoleProperties": "Microsoft.NetworkCloud.ConsoleProperties",
         "azure.mgmt.networkcloud.models.ControlPlaneNodeConfiguration": "Microsoft.NetworkCloud.ControlPlaneNodeConfiguration",
         "azure.mgmt.networkcloud.models.ControlPlaneNodePatchConfiguration": "Microsoft.NetworkCloud.ControlPlaneNodePatchConfiguration",
+        "azure.mgmt.networkcloud.models.SecretArchiveProviderConfiguration": "Microsoft.NetworkCloud.SecretArchiveProviderConfiguration",
+        "azure.mgmt.networkcloud.models.CyberArkSecretArchiveProviderConfiguration": "Microsoft.NetworkCloud.CyberArkSecretArchiveProviderConfiguration",
         "azure.mgmt.networkcloud.models.EgressEndpoint": "Microsoft.NetworkCloud.EgressEndpoint",
         "azure.mgmt.networkcloud.models.EndpointDependency": "Microsoft.NetworkCloud.EndpointDependency",
         "azure.mgmt.networkcloud.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
@@ -102,6 +105,7 @@
         "azure.mgmt.networkcloud.models.HardwareInventory": "Microsoft.NetworkCloud.HardwareInventory",
         "azure.mgmt.networkcloud.models.HardwareInventoryNetworkInterface": "Microsoft.NetworkCloud.HardwareInventoryNetworkInterface",
         "azure.mgmt.networkcloud.models.HardwareValidationStatus": "Microsoft.NetworkCloud.HardwareValidationStatus",
+        "azure.mgmt.networkcloud.models.HashiCorpVaultSecretArchiveProviderConfiguration": "Microsoft.NetworkCloud.HashiCorpVaultSecretArchiveProviderConfiguration",
         "azure.mgmt.networkcloud.models.IdentitySelector": "Microsoft.NetworkCloud.IdentitySelector",
         "azure.mgmt.networkcloud.models.ImageRepositoryCredentials": "Microsoft.NetworkCloud.ImageRepositoryCredentials",
         "azure.mgmt.networkcloud.models.ImageRepositoryCredentialsPatch": "Microsoft.NetworkCloud.ImageRepositoryCredentialsPatch",
@@ -144,6 +148,7 @@
         "azure.mgmt.networkcloud.models.NetworkInterface": "Microsoft.NetworkCloud.NetworkInterface",
         "azure.mgmt.networkcloud.models.Nic": "Microsoft.NetworkCloud.Nic",
         "azure.mgmt.networkcloud.models.NodePoolAdministratorConfigurationPatch": "Microsoft.NetworkCloud.NodePoolAdministratorConfigurationPatch",
+        "azure.mgmt.networkcloud.models.OpenBaoSecretArchiveProviderConfiguration": "Microsoft.NetworkCloud.OpenBaoSecretArchiveProviderConfiguration",
         "azure.mgmt.networkcloud.models.Operation": "Azure.ResourceManager.CommonTypes.Operation",
         "azure.mgmt.networkcloud.models.OperationDisplay": "Azure.ResourceManager.CommonTypes.OperationDisplay",
         "azure.mgmt.networkcloud.models.OperationStatusResult": "Microsoft.NetworkCloud.OperationStatusResult",
@@ -249,6 +254,9 @@
         "azure.mgmt.networkcloud.models.ValidationThresholdGrouping": "Microsoft.NetworkCloud.ValidationThresholdGrouping",
         "azure.mgmt.networkcloud.models.ValidationThresholdType": "Microsoft.NetworkCloud.ValidationThresholdType",
         "azure.mgmt.networkcloud.models.ClusterSecretArchiveEnabled": "Microsoft.NetworkCloud.ClusterSecretArchiveEnabled",
+        "azure.mgmt.networkcloud.models.SecretArchiveProviderType": "Microsoft.NetworkCloud.SecretArchiveProviderType",
+        "azure.mgmt.networkcloud.models.KeyValueVersion": "Microsoft.NetworkCloud.KeyValueVersion",
+        "azure.mgmt.networkcloud.models.VaultAuthenticationMethod": "Microsoft.NetworkCloud.VaultAuthenticationMethod",
         "azure.mgmt.networkcloud.models.ClusterUpdateStrategyType": "Microsoft.NetworkCloud.ClusterUpdateStrategyType",
         "azure.mgmt.networkcloud.models.VulnerabilityScanningSettingsContainerScan": "Microsoft.NetworkCloud.VulnerabilityScanningSettingsContainerScan",
         "azure.mgmt.networkcloud.models.ControlImpact": "Microsoft.NetworkCloud.ControlImpact",
@@ -626,5 +634,5 @@
         "azure.mgmt.networkcloud.operations.MetricsConfigurationsOperations.list_by_cluster": "Microsoft.NetworkCloud.ClusterMetricsConfigurations.listByCluster",
         "azure.mgmt.networkcloud.aio.operations.MetricsConfigurationsOperations.list_by_cluster": "Microsoft.NetworkCloud.ClusterMetricsConfigurations.listByCluster"
     },
-    "CrossLanguageVersion": "a80fa198d8a0"
+    "CrossLanguageVersion": "1b1b428b9ac0"
 }
