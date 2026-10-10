@@ -42,6 +42,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-08-01/AzureIaasVm/ListInstantItemRecoveryOperationResult.json
+# x-ms-original-file: 2026-10-01/AzureIaasVm/ListInstantItemRecoveryOperationResult.json
 if __name__ == "__main__":
     main()

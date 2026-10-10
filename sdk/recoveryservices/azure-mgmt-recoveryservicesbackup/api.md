@@ -40,6 +40,7 @@ namespace azure.mgmt.recoveryservicesbackup
         protected_items: ProtectedItemsOperations
         protection_container_operation_results: ProtectionContainerOperationResultsOperations
         protection_container_refresh_operation_results: ProtectionContainerRefreshOperationResultsOperations
+        protection_container_refresh_operation_statuses: ProtectionContainerRefreshOperationStatusesOperations
         protection_containers: ProtectionContainersOperations
         protection_intent: ProtectionIntentOperations
         protection_policies: ProtectionPoliciesOperations
@@ -240,6 +241,7 @@ namespace azure.mgmt.recoveryservicesbackup.aio
         protected_items: ProtectedItemsOperations
         protection_container_operation_results: ProtectionContainerOperationResultsOperations
         protection_container_refresh_operation_results: ProtectionContainerRefreshOperationResultsOperations
+        protection_container_refresh_operation_statuses: ProtectionContainerRefreshOperationStatusesOperations
         protection_containers: ProtectionContainersOperations
         protection_intent: ProtectionIntentOperations
         protection_policies: ProtectionPoliciesOperations
@@ -1646,6 +1648,26 @@ namespace azure.mgmt.recoveryservicesbackup.aio.operations
             ) -> None: ...
 
 
+    class azure.mgmt.recoveryservicesbackup.aio.operations.ProtectionContainerRefreshOperationStatusesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'fabric_name', 'operation_id', 'accept']}, api_versions_list=['2026-10-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                fabric_name: str, 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> OperationStatus: ...
+
+
     class azure.mgmt.recoveryservicesbackup.aio.operations.ProtectionContainersOperations:
 
         def __init__(
@@ -1946,6 +1968,52 @@ namespace azure.mgmt.recoveryservicesbackup.aio.operations
                 *args, 
                 **kwargs
             ) -> None: ...
+
+        @overload
+        async def begin_get_rp_extended_info(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                fabric_name: str, 
+                parameters: GetRPExtendedInfoRequestResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_get_rp_extended_info(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                fabric_name: str, 
+                parameters: GetRPExtendedInfoRequestResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_get_rp_extended_info(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                fabric_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        async def begin_get_rp_extended_info_operation_result(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                fabric_name: str, 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
         async def get(
@@ -2742,6 +2810,7 @@ namespace azure.mgmt.recoveryservicesbackup.models
         create_mode: Union[str, CreateMode]
         deferred_delete_time_in_utc: datetime
         deferred_delete_time_remaining: str
+        existing_basic_vm_protection: Union[str, ExistingBasicVMProtection]
         extended_info: AzureIaaSVMProtectedItemExtendedInfo
         extended_properties: ExtendedProperties
         friendly_name: str
@@ -2780,6 +2849,7 @@ namespace azure.mgmt.recoveryservicesbackup.models
                 create_mode: Optional[Union[str, CreateMode]] = ..., 
                 deferred_delete_time_in_utc: Optional[datetime] = ..., 
                 deferred_delete_time_remaining: Optional[str] = ..., 
+                existing_basic_vm_protection: Optional[Union[str, ExistingBasicVMProtection]] = ..., 
                 extended_info: Optional[AzureIaaSVMProtectedItemExtendedInfo] = ..., 
                 extended_properties: Optional[ExtendedProperties] = ..., 
                 health_details: Optional[list[AzureIaaSVMHealthDetails]] = ..., 
@@ -2868,6 +2938,7 @@ namespace azure.mgmt.recoveryservicesbackup.models
         create_mode: Union[str, CreateMode]
         deferred_delete_time_in_utc: datetime
         deferred_delete_time_remaining: str
+        existing_basic_vm_protection: Union[str, ExistingBasicVMProtection]
         extended_info: AzureIaaSVMProtectedItemExtendedInfo
         extended_properties: ExtendedProperties
         friendly_name: str
@@ -2906,6 +2977,7 @@ namespace azure.mgmt.recoveryservicesbackup.models
                 create_mode: Optional[Union[str, CreateMode]] = ..., 
                 deferred_delete_time_in_utc: Optional[datetime] = ..., 
                 deferred_delete_time_remaining: Optional[str] = ..., 
+                existing_basic_vm_protection: Optional[Union[str, ExistingBasicVMProtection]] = ..., 
                 extended_info: Optional[AzureIaaSVMProtectedItemExtendedInfo] = ..., 
                 extended_properties: Optional[ExtendedProperties] = ..., 
                 health_details: Optional[list[AzureIaaSVMHealthDetails]] = ..., 
@@ -3083,6 +3155,7 @@ namespace azure.mgmt.recoveryservicesbackup.models
         create_mode: Union[str, CreateMode]
         deferred_delete_time_in_utc: datetime
         deferred_delete_time_remaining: str
+        existing_basic_vm_protection: Optional[Union[str, ExistingBasicVMProtection]]
         extended_info: Optional[AzureIaaSVMProtectedItemExtendedInfo]
         extended_properties: Optional[ExtendedProperties]
         friendly_name: Optional[str]
@@ -3121,6 +3194,7 @@ namespace azure.mgmt.recoveryservicesbackup.models
                 create_mode: Optional[Union[str, CreateMode]] = ..., 
                 deferred_delete_time_in_utc: Optional[datetime] = ..., 
                 deferred_delete_time_remaining: Optional[str] = ..., 
+                existing_basic_vm_protection: Optional[Union[str, ExistingBasicVMProtection]] = ..., 
                 extended_info: Optional[AzureIaaSVMProtectedItemExtendedInfo] = ..., 
                 extended_properties: Optional[ExtendedProperties] = ..., 
                 health_details: Optional[list[AzureIaaSVMHealthDetails]] = ..., 
@@ -3171,6 +3245,8 @@ namespace azure.mgmt.recoveryservicesbackup.models
 
     class azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMProtectionPolicy(ProtectionPolicy, discriminator='AzureIaasVM'):
         backup_management_type: Literal["AzureIaasVM"]
+        instant_access_duration_minutes: Optional[int]
+        instant_access_snapshot_enabled: Optional[bool]
         instant_rp_details: Optional[InstantRPAdditionalDetails]
         instant_rp_retention_range_in_days: Optional[int]
         policy_type: Optional[Union[str, IAASVMPolicyType]]
@@ -3186,6 +3262,8 @@ namespace azure.mgmt.recoveryservicesbackup.models
         def __init__(
                 self, 
                 *, 
+                instant_access_duration_minutes: Optional[int] = ..., 
+                instant_access_snapshot_enabled: Optional[bool] = ..., 
                 instant_rp_details: Optional[InstantRPAdditionalDetails] = ..., 
                 instant_rp_retention_range_in_days: Optional[int] = ..., 
                 policy_type: Optional[Union[str, IAASVMPolicyType]] = ..., 
@@ -3818,6 +3896,7 @@ namespace azure.mgmt.recoveryservicesbackup.models
         resource_guard_operation_requests: list[str]
         settings: Optional[Settings]
         sub_protection_policy: Optional[list[SubProtectionPolicy]]
+        vm_workload_policy_type: Optional[Union[str, VMWorkloadPolicyType]]
         work_load_type: Optional[Union[str, WorkloadType]]
 
         @overload
@@ -3829,6 +3908,7 @@ namespace azure.mgmt.recoveryservicesbackup.models
                 resource_guard_operation_requests: Optional[list[str]] = ..., 
                 settings: Optional[Settings] = ..., 
                 sub_protection_policy: Optional[list[SubProtectionPolicy]] = ..., 
+                vm_workload_policy_type: Optional[Union[str, VMWorkloadPolicyType]] = ..., 
                 work_load_type: Optional[Union[str, WorkloadType]] = ...
             ) -> None: ...
 
@@ -4519,12 +4599,14 @@ namespace azure.mgmt.recoveryservicesbackup.models
         last_recovery_point: datetime
         nodes_list: list[DistributedNodesInfo]
         parent_name: str
+        parent_protected_item: Optional[str]
         parent_type: str
         policy_id: str
         policy_name: str
         protected_item_data_source_id: str
         protected_item_health_status: Union[str, ProtectedItemHealthStatus]
         protected_item_type: Literal["AzureVmWorkloadSQLDatabase"]
+        protection_level: Optional[Union[str, ProtectionLevel]]
         protection_state: Union[str, ProtectionState]
         protection_status: str
         resource_guard_operation_requests: list[str]
@@ -4557,11 +4639,13 @@ namespace azure.mgmt.recoveryservicesbackup.models
                 last_recovery_point: Optional[datetime] = ..., 
                 nodes_list: Optional[list[DistributedNodesInfo]] = ..., 
                 parent_name: Optional[str] = ..., 
+                parent_protected_item: Optional[str] = ..., 
                 parent_type: Optional[str] = ..., 
                 policy_id: Optional[str] = ..., 
                 policy_name: Optional[str] = ..., 
                 protected_item_data_source_id: Optional[str] = ..., 
                 protected_item_health_status: Optional[Union[str, ProtectedItemHealthStatus]] = ..., 
+                protection_level: Optional[Union[str, ProtectionLevel]] = ..., 
                 protection_state: Optional[Union[str, ProtectionState]] = ..., 
                 resource_guard_operation_requests: Optional[list[str]] = ..., 
                 server_name: Optional[str] = ..., 
@@ -4638,6 +4722,85 @@ namespace azure.mgmt.recoveryservicesbackup.models
                 subinquireditemcount: Optional[int] = ..., 
                 subprotectableitemcount: Optional[int] = ..., 
                 workload_type: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.recoveryservicesbackup.models.AzureVmWorkloadSQLInstanceProtectedItem(AzureVmWorkloadProtectedItem, discriminator='AzureVmWorkloadSQLInstance'):
+        backup_management_type: Union[str, BackupManagementType]
+        backup_set_name: str
+        child_db_names: Optional[list[str]]
+        container_name: str
+        create_mode: Union[str, CreateMode]
+        deferred_delete_time_in_utc: datetime
+        deferred_delete_time_remaining: str
+        extended_info: AzureVmWorkloadProtectedItemExtendedInfo
+        friendly_name: str
+        instance_protection_readiness: Optional[Union[str, InstanceProtectionReadiness]]
+        is_archive_enabled: bool
+        is_deferred_delete_schedule_upcoming: bool
+        is_rehydrate: bool
+        is_scheduled_for_deferred_delete: bool
+        kpis_healths: dict[str, KPIResourceHealthDetails]
+        last_backup_error_detail: ErrorDetail
+        last_backup_status: Union[str, LastBackupStatus]
+        last_backup_time: datetime
+        last_recovery_point: datetime
+        nodes_list: list[DistributedNodesInfo]
+        parent_name: str
+        parent_type: str
+        policy_id: str
+        policy_name: str
+        protected_item_data_source_id: str
+        protected_item_health_status: Union[str, ProtectedItemHealthStatus]
+        protected_item_type: Literal["AzureVmWorkloadSQLInstance"]
+        protection_state: Union[str, ProtectionState]
+        protection_status: str
+        resource_guard_operation_requests: list[str]
+        server_name: str
+        soft_delete_retention_period_in_days: int
+        source_location: str
+        source_resource_id: str
+        source_side_scan_info: SourceSideScanInfo
+        vault_id: str
+        workload_type: Union[str, DataSourceType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                backup_set_name: Optional[str] = ..., 
+                child_db_names: Optional[list[str]] = ..., 
+                container_name: Optional[str] = ..., 
+                create_mode: Optional[Union[str, CreateMode]] = ..., 
+                deferred_delete_time_in_utc: Optional[datetime] = ..., 
+                deferred_delete_time_remaining: Optional[str] = ..., 
+                extended_info: Optional[AzureVmWorkloadProtectedItemExtendedInfo] = ..., 
+                instance_protection_readiness: Optional[Union[str, InstanceProtectionReadiness]] = ..., 
+                is_archive_enabled: Optional[bool] = ..., 
+                is_deferred_delete_schedule_upcoming: Optional[bool] = ..., 
+                is_rehydrate: Optional[bool] = ..., 
+                is_scheduled_for_deferred_delete: Optional[bool] = ..., 
+                kpis_healths: Optional[dict[str, KPIResourceHealthDetails]] = ..., 
+                last_backup_error_detail: Optional[ErrorDetail] = ..., 
+                last_backup_status: Optional[Union[str, LastBackupStatus]] = ..., 
+                last_backup_time: Optional[datetime] = ..., 
+                last_recovery_point: Optional[datetime] = ..., 
+                nodes_list: Optional[list[DistributedNodesInfo]] = ..., 
+                parent_name: Optional[str] = ..., 
+                parent_type: Optional[str] = ..., 
+                policy_id: Optional[str] = ..., 
+                policy_name: Optional[str] = ..., 
+                protected_item_data_source_id: Optional[str] = ..., 
+                protected_item_health_status: Optional[Union[str, ProtectedItemHealthStatus]] = ..., 
+                protection_state: Optional[Union[str, ProtectionState]] = ..., 
+                resource_guard_operation_requests: Optional[list[str]] = ..., 
+                server_name: Optional[str] = ..., 
+                soft_delete_retention_period_in_days: Optional[int] = ..., 
+                source_resource_id: Optional[str] = ..., 
+                source_side_scan_info: Optional[SourceSideScanInfo] = ...
             ) -> None: ...
 
         @overload
@@ -5405,13 +5568,17 @@ namespace azure.mgmt.recoveryservicesbackup.models
     class azure.mgmt.recoveryservicesbackup.models.AzureWorkloadSQLRecoveryPointExtendedInfo(_Model):
         data_directory_paths: Optional[list[SQLDataDirectory]]
         data_directory_time_in_utc: Optional[datetime]
+        included_databases: Optional[list[DatabaseInRP]]
+        snapshot_recovery_point_info: Optional[SnapshotRecoveryPointInfo]
 
         @overload
         def __init__(
                 self, 
                 *, 
                 data_directory_paths: Optional[list[SQLDataDirectory]] = ..., 
-                data_directory_time_in_utc: Optional[datetime] = ...
+                data_directory_time_in_utc: Optional[datetime] = ..., 
+                included_databases: Optional[list[DatabaseInRP]] = ..., 
+                snapshot_recovery_point_info: Optional[SnapshotRecoveryPointInfo] = ...
             ) -> None: ...
 
         @overload
@@ -6325,6 +6492,22 @@ namespace azure.mgmt.recoveryservicesbackup.models
         V_MWARE_VM = "VMwareVM"
 
 
+    class azure.mgmt.recoveryservicesbackup.models.DatabaseInRP(_Model):
+        datasource_id: Optional[str]
+        datasource_name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                datasource_id: Optional[str] = ..., 
+                datasource_name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.recoveryservicesbackup.models.Day(_Model):
         date: Optional[int]
         is_last: Optional[bool]
@@ -6389,16 +6572,48 @@ namespace azure.mgmt.recoveryservicesbackup.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.recoveryservicesbackup.models.DiskInformation(_Model):
+    class azure.mgmt.recoveryservicesbackup.models.DiskInfo(_Model):
+        disk_guid: Optional[str]
+        disk_location: Optional[str]
+        disk_number: Optional[int]
+        disk_unique_id: Optional[str]
+        friendly_name: Optional[str]
         lun: Optional[int]
-        name: Optional[str]
+        managed_disk_id: Optional[str]
+        size_in_bytes: Optional[int]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                disk_guid: Optional[str] = ..., 
+                disk_location: Optional[str] = ..., 
+                disk_number: Optional[int] = ..., 
+                disk_unique_id: Optional[str] = ..., 
+                friendly_name: Optional[str] = ..., 
                 lun: Optional[int] = ..., 
-                name: Optional[str] = ...
+                managed_disk_id: Optional[str] = ..., 
+                size_in_bytes: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.recoveryservicesbackup.models.DiskInformation(_Model):
+        disk_size_in_gb: Optional[int]
+        lun: Optional[int]
+        name: Optional[str]
+        storage_type: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                disk_size_in_gb: Optional[int] = ..., 
+                lun: Optional[int] = ..., 
+                name: Optional[str] = ..., 
+                storage_type: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -6660,6 +6875,10 @@ namespace azure.mgmt.recoveryservicesbackup.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.recoveryservicesbackup.models.ExistingBasicVMProtection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DISABLE_WITH_DELETE_RPS_NOW = "DisableWithDeleteRPsNow"
+
+
     class azure.mgmt.recoveryservicesbackup.models.ExportJobsOperationResultInfo(OperationResultInfoBase, discriminator='ExportJobsOperationResultInfo'):
         blob_sas_key: Optional[str]
         blob_url: Optional[str]
@@ -6832,6 +7051,32 @@ namespace azure.mgmt.recoveryservicesbackup.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.recoveryservicesbackup.models.FilesystemInfo(_Model):
+        access_paths: Optional[list[str]]
+        disk_info_list: Optional[list[DiskInfo]]
+        file_system_type: Optional[str]
+        is_on_storage_space: Optional[bool]
+        label: Optional[str]
+        storage_space_info: Optional[StorageSpaceInfo]
+        volume_guid: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                access_paths: Optional[list[str]] = ..., 
+                disk_info_list: Optional[list[DiskInfo]] = ..., 
+                file_system_type: Optional[str] = ..., 
+                is_on_storage_space: Optional[bool] = ..., 
+                label: Optional[str] = ..., 
+                storage_space_info: Optional[StorageSpaceInfo] = ..., 
+                volume_guid: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.recoveryservicesbackup.models.GenericContainer(ProtectionContainer, discriminator='GenericContainer'):
         backup_management_type: Union[str, BackupManagementType]
         container_type: Literal[ProtectableContainerType.GENERIC_CONTAINER]
@@ -6983,6 +7228,44 @@ namespace azure.mgmt.recoveryservicesbackup.models
                 recovery_point_type: Optional[str] = ..., 
                 threat_info: Optional[list[ThreatInfo]] = ..., 
                 threat_status: Optional[Union[str, ThreatStatus]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.recoveryservicesbackup.models.GetRPExtendedInfoRequest(_Model):
+        recovery_point_ids: list[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                recovery_point_ids: list[str]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.recoveryservicesbackup.models.GetRPExtendedInfoRequestResource(Resource):
+        e_tag: Optional[str]
+        id: str
+        location: Optional[str]
+        name: str
+        properties: GetRPExtendedInfoRequest
+        system_data: SystemData
+        tags: Optional[dict[str, str]]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                e_tag: Optional[str] = ..., 
+                location: Optional[str] = ..., 
+                properties: GetRPExtendedInfoRequest, 
+                tags: Optional[dict[str, str]] = ...
             ) -> None: ...
 
         @overload
@@ -7464,6 +7747,14 @@ namespace azure.mgmt.recoveryservicesbackup.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.recoveryservicesbackup.models.InstanceProtectionReadiness(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PARTIAL_PROTECTION = "PartialProtection"
+        PROTECTION_ERROR = "ProtectionError"
+        READY = "Ready"
+        SCHEDULE_DISABLED = "ScheduleDisabled"
+        UNKNOWN = "Unknown"
 
 
     class azure.mgmt.recoveryservicesbackup.models.InstantItemRecoveryOperationResultRequest(_Model):
@@ -8766,6 +9057,11 @@ namespace azure.mgmt.recoveryservicesbackup.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.recoveryservicesbackup.models.ProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DATABASE = "Database"
+        DATABASE_UNDER_INSTANCE = "DatabaseUnderInstance"
+
+
     class azure.mgmt.recoveryservicesbackup.models.ProtectionPolicy(_Model):
         backup_management_type: str
         protected_items_count: Optional[int]
@@ -9026,6 +9322,7 @@ namespace azure.mgmt.recoveryservicesbackup.models
     class azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ARCHIVED_RP = "ArchivedRP"
         HARDENED_RP = "HardenedRP"
+        IA_SNAPSHOT_RP = "IASnapshotRP"
         INSTANT_RP = "InstantRP"
         INVALID = "Invalid"
 
@@ -9448,7 +9745,24 @@ namespace azure.mgmt.recoveryservicesbackup.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.recoveryservicesbackup.models.SnapshotRecoveryPointInfo(_Model):
+        snapshot_resource_group: Optional[str]
+        source_filesystem_info: Optional[list[FilesystemInfo]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                snapshot_resource_group: Optional[str] = ..., 
+                source_filesystem_info: Optional[list[FilesystemInfo]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.recoveryservicesbackup.models.SnapshotRestoreParameters(_Model):
+        disks_to_detach_on_clash: Optional[list[str]]
         log_point_in_time_for_db_recovery: Optional[str]
         skip_attach_and_mount: Optional[bool]
 
@@ -9456,6 +9770,7 @@ namespace azure.mgmt.recoveryservicesbackup.models
         def __init__(
                 self, 
                 *, 
+                disks_to_detach_on_clash: Optional[list[str]] = ..., 
                 log_point_in_time_for_db_recovery: Optional[str] = ..., 
                 skip_attach_and_mount: Optional[bool] = ...
             ) -> None: ...
@@ -9505,6 +9820,26 @@ namespace azure.mgmt.recoveryservicesbackup.models
         NO_THREATS_REPORTED = "NoThreatsReported"
         SUSPICIOUS = "Suspicious"
         UNKNOWN = "Unknown"
+
+
+    class azure.mgmt.recoveryservicesbackup.models.StorageSpaceInfo(_Model):
+        storage_pool_friendly_name: Optional[str]
+        storage_pool_unique_id: Optional[str]
+        virtual_disk_friendly_name: Optional[str]
+        virtual_disk_unique_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                storage_pool_friendly_name: Optional[str] = ..., 
+                storage_pool_unique_id: Optional[str] = ..., 
+                virtual_disk_friendly_name: Optional[str] = ..., 
+                virtual_disk_unique_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.recoveryservicesbackup.models.StorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -9863,6 +10198,28 @@ namespace azure.mgmt.recoveryservicesbackup.models
                 identity_arm_id: Optional[str] = ..., 
                 identity_name: Optional[str] = ..., 
                 user_assigned_identity_properties: Optional[UserAssignedIdentityProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.recoveryservicesbackup.models.VMWorkloadPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        INVALID = "Invalid"
+        SNAPSHOT_V1 = "SnapshotV1"
+        SNAPSHOT_V2 = "SnapshotV2"
+        STREAMING = "Streaming"
+
+
+    class azure.mgmt.recoveryservicesbackup.models.ValidateAzureWorkloadRestoreOperationRequest(ValidateOperationRequest, discriminator='ValidateAzureWorkloadRestoreOperationRequest'):
+        object_type: Literal["ValidateAzureWorkloadRestoreOperationRequest"]
+        restore_request: Optional[RestoreRequest]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                restore_request: Optional[RestoreRequest] = ...
             ) -> None: ...
 
         @overload
@@ -11542,6 +11899,26 @@ namespace azure.mgmt.recoveryservicesbackup.operations
             ) -> None: ...
 
 
+    class azure.mgmt.recoveryservicesbackup.operations.ProtectionContainerRefreshOperationStatusesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'vault_name', 'fabric_name', 'operation_id', 'accept']}, api_versions_list=['2026-10-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                fabric_name: str, 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> OperationStatus: ...
+
+
     class azure.mgmt.recoveryservicesbackup.operations.ProtectionContainersOperations:
 
         def __init__(
@@ -11842,6 +12219,52 @@ namespace azure.mgmt.recoveryservicesbackup.operations
                 *args, 
                 **kwargs
             ) -> None: ...
+
+        @overload
+        def begin_get_rp_extended_info(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                fabric_name: str, 
+                parameters: GetRPExtendedInfoRequestResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_get_rp_extended_info(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                fabric_name: str, 
+                parameters: GetRPExtendedInfoRequestResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_get_rp_extended_info(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                fabric_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        def begin_get_rp_extended_info_operation_result(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                fabric_name: str, 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
 
         @distributed_trace
         def get(
@@ -12426,6 +12849,7 @@ namespace azure.mgmt.recoveryservicesbackup.types
         key "createMode": Union[str, CreateMode]
         key "deferredDeleteTimeInUTC": str
         key "deferredDeleteTimeRemaining": str
+        key "existingBasicVMProtection": Union[str, ExistingBasicVMProtection]
         key "extendedInfo": ForwardRef('AzureIaaSVMProtectedItemExtendedInfo', module='types')
         key "extendedProperties": ForwardRef('ExtendedProperties', module='types')
         key "friendlyName": str
@@ -12457,6 +12881,7 @@ namespace azure.mgmt.recoveryservicesbackup.types
         createMode: Union[str, CreateMode]
         deferredDeleteTimeInUTC: str
         deferredDeleteTimeRemaining: str
+        existingBasicVMProtection: Union[str, ExistingBasicVMProtection]
         extendedInfo: AzureIaaSVMProtectedItemExtendedInfo
         extendedProperties: ExtendedProperties
         friendlyName: str
@@ -12517,6 +12942,7 @@ namespace azure.mgmt.recoveryservicesbackup.types
         key "createMode": Union[str, CreateMode]
         key "deferredDeleteTimeInUTC": str
         key "deferredDeleteTimeRemaining": str
+        key "existingBasicVMProtection": Union[str, ExistingBasicVMProtection]
         key "extendedInfo": ForwardRef('AzureIaaSVMProtectedItemExtendedInfo', module='types')
         key "extendedProperties": ForwardRef('ExtendedProperties', module='types')
         key "friendlyName": str
@@ -12548,6 +12974,7 @@ namespace azure.mgmt.recoveryservicesbackup.types
         createMode: Union[str, CreateMode]
         deferredDeleteTimeInUTC: str
         deferredDeleteTimeRemaining: str
+        existingBasicVMProtection: Union[str, ExistingBasicVMProtection]
         extendedInfo: AzureIaaSVMProtectedItemExtendedInfo
         extendedProperties: ExtendedProperties
         friendlyName: str
@@ -12605,6 +13032,8 @@ namespace azure.mgmt.recoveryservicesbackup.types
 
     class azure.mgmt.recoveryservicesbackup.types.AzureIaaSVMProtectionPolicy(TypedDict, total=False):
         key "backupManagementType": Required[Literal["AzureIaasVM"]]
+        key "instantAccessDurationMinutes": int
+        key "instantAccessSnapshotEnabled": bool
         key "instantRPDetails": ForwardRef('InstantRPAdditionalDetails', module='types')
         key "instantRpRetentionRangeInDays": int
         key "policyType": Union[str, IAASVMPolicyType]
@@ -12614,6 +13043,8 @@ namespace azure.mgmt.recoveryservicesbackup.types
         key "snapshotConsistencyType": Union[str, IaasVMSnapshotConsistencyType]
         key "timeZone": str
         backupManagementType: Literal[AzureIaasVM]
+        instantAccessDurationMinutes: int
+        instantAccessSnapshotEnabled: bool
         instantRPDetails: InstantRPAdditionalDetails
         instantRpRetentionRangeInDays: int
         policyType: Union[str, IAASVMPolicyType]
@@ -12854,6 +13285,7 @@ namespace azure.mgmt.recoveryservicesbackup.types
         key "makePolicyConsistent": bool
         key "protectedItemsCount": int
         key "settings": ForwardRef('Settings', module='types')
+        key "vmWorkloadPolicyType": Union[str, VMWorkloadPolicyType]
         key "workLoadType": Union[str, WorkloadType]
         backupManagementType: Literal[AzureWorkload]
         makePolicyConsistent: bool
@@ -12861,6 +13293,7 @@ namespace azure.mgmt.recoveryservicesbackup.types
         resourceGuardOperationRequests: list[str]
         settings: Settings
         subProtectionPolicy: list[SubProtectionPolicy]
+        vmWorkloadPolicyType: Union[str, VMWorkloadPolicyType]
         workLoadType: Union[str, WorkloadType]
 
 
@@ -13092,12 +13525,14 @@ namespace azure.mgmt.recoveryservicesbackup.types
         key "lastBackupTime": str
         key "lastRecoveryPoint": str
         key "parentName": str
+        key "parentProtectedItem": str
         key "parentType": str
         key "policyId": str
         key "policyName": str
         key "protectedItemDataSourceId": str
         key "protectedItemHealthStatus": Union[str, ProtectedItemHealthStatus]
         key "protectedItemType": Required[Literal["AzureVmWorkloadSQLDatabase"]]
+        key "protectionLevel": Union[str, ProtectionLevel]
         key "protectionState": Union[str, ProtectionState]
         key "protectionStatus": str
         key "serverName": str
@@ -13126,12 +13561,87 @@ namespace azure.mgmt.recoveryservicesbackup.types
         lastRecoveryPoint: str
         nodesList: list[DistributedNodesInfo]
         parentName: str
+        parentProtectedItem: str
         parentType: str
         policyId: str
         policyName: str
         protectedItemDataSourceId: str
         protectedItemHealthStatus: Union[str, ProtectedItemHealthStatus]
         protectedItemType: Literal[AzureVmWorkloadSQLDatabase]
+        protectionLevel: Union[str, ProtectionLevel]
+        protectionState: Union[str, ProtectionState]
+        protectionStatus: str
+        resourceGuardOperationRequests: list[str]
+        serverName: str
+        softDeleteRetentionPeriodInDays: int
+        sourceLocation: str
+        sourceResourceId: str
+        sourceSideScanInfo: SourceSideScanInfo
+        vaultId: str
+        workloadType: Union[str, DataSourceType]
+
+
+    class azure.mgmt.recoveryservicesbackup.types.AzureVmWorkloadSQLInstanceProtectedItem(TypedDict, total=False):
+        key "backupManagementType": Union[str, BackupManagementType]
+        key "backupSetName": str
+        key "containerName": str
+        key "createMode": Union[str, CreateMode]
+        key "deferredDeleteTimeInUTC": str
+        key "deferredDeleteTimeRemaining": str
+        key "extendedInfo": ForwardRef('AzureVmWorkloadProtectedItemExtendedInfo', module='types')
+        key "friendlyName": str
+        key "instanceProtectionReadiness": Union[str, InstanceProtectionReadiness]
+        key "isArchiveEnabled": bool
+        key "isDeferredDeleteScheduleUpcoming": bool
+        key "isRehydrate": bool
+        key "isScheduledForDeferredDelete": bool
+        key "lastBackupErrorDetail": ForwardRef('ErrorDetail', module='types')
+        key "lastBackupStatus": Union[str, LastBackupStatus]
+        key "lastBackupTime": str
+        key "lastRecoveryPoint": str
+        key "parentName": str
+        key "parentType": str
+        key "policyId": str
+        key "policyName": str
+        key "protectedItemDataSourceId": str
+        key "protectedItemHealthStatus": Union[str, ProtectedItemHealthStatus]
+        key "protectedItemType": Required[Literal["AzureVmWorkloadSQLInstance"]]
+        key "protectionState": Union[str, ProtectionState]
+        key "protectionStatus": str
+        key "serverName": str
+        key "softDeleteRetentionPeriodInDays": int
+        key "sourceLocation": str
+        key "sourceResourceId": str
+        key "sourceSideScanInfo": ForwardRef('SourceSideScanInfo', module='types')
+        key "vaultId": str
+        key "workloadType": Union[str, DataSourceType]
+        backupManagementType: Union[str, BackupManagementType]
+        backupSetName: str
+        childDBNames: list[str]
+        containerName: str
+        createMode: Union[str, CreateMode]
+        deferredDeleteTimeInUTC: str
+        deferredDeleteTimeRemaining: str
+        extendedInfo: AzureVmWorkloadProtectedItemExtendedInfo
+        friendlyName: str
+        instanceProtectionReadiness: Union[str, InstanceProtectionReadiness]
+        isArchiveEnabled: bool
+        isDeferredDeleteScheduleUpcoming: bool
+        isRehydrate: bool
+        isScheduledForDeferredDelete: bool
+        kpisHealths: dict[str, KPIResourceHealthDetails]
+        lastBackupErrorDetail: ErrorDetail
+        lastBackupStatus: Union[str, LastBackupStatus]
+        lastBackupTime: str
+        lastRecoveryPoint: str
+        nodesList: list[DistributedNodesInfo]
+        parentName: str
+        parentType: str
+        policyId: str
+        policyName: str
+        protectedItemDataSourceId: str
+        protectedItemHealthStatus: Union[str, ProtectedItemHealthStatus]
+        protectedItemType: Literal[AzureVmWorkloadSQLInstance]
         protectionState: Union[str, ProtectionState]
         protectionStatus: str
         resourceGuardOperationRequests: list[str]
@@ -13833,6 +14343,29 @@ namespace azure.mgmt.recoveryservicesbackup.types
         resourceGuardOperationRequests: list[str]
         subProtectionPolicy: list[SubProtectionPolicy]
         timeZone: str
+
+
+    class azure.mgmt.recoveryservicesbackup.types.GetRPExtendedInfoRequest(TypedDict, total=False):
+        key "recoveryPointIds": Required[list[str]]
+        recoveryPointIds: list[str]
+
+
+    class azure.mgmt.recoveryservicesbackup.types.GetRPExtendedInfoRequestResource(Resource):
+        key "eTag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": Required[GetRPExtendedInfoRequest]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        eTag: str
+        id: str
+        location: str
+        name: str
+        properties: GetRPExtendedInfoRequest
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
 
 
     class azure.mgmt.recoveryservicesbackup.types.HourlySchedule(TypedDict, total=False):
@@ -14583,6 +15116,7 @@ namespace azure.mgmt.recoveryservicesbackup.types
     class azure.mgmt.recoveryservicesbackup.types.SnapshotRestoreParameters(TypedDict, total=False):
         key "logPointInTimeForDBRecovery": str
         key "skipAttachAndMount": bool
+        disksToDetachOnClash: list[str]
         logPointInTimeForDBRecovery: str
         skipAttachAndMount: bool
 
@@ -14691,14 +15225,14 @@ namespace azure.mgmt.recoveryservicesbackup.types
         userAssignedIdentityProperties: UserAssignedIdentityProperties
 
 
-    class azure.mgmt.recoveryservicesbackup.types.ValidateIaasVMRestoreOperationRequest(TypedDict, total=False):
-        key "objectType": Required[Literal["ValidateIaasVMRestoreOperationRequest"]]
+    class azure.mgmt.recoveryservicesbackup.types.ValidateAzureWorkloadRestoreOperationRequest(TypedDict, total=False):
+        key "objectType": Required[Literal["ValidateAzureWorkloadRestoreOperationRequest"]]
         key "restoreRequest": ForwardRef('RestoreRequest', module='types')
-        objectType: Literal[ValidateIaasVMRestoreOperationRequest]
+        objectType: Literal[ValidateAzureWorkloadRestoreOperationRequest]
         restoreRequest: RestoreRequest
 
 
-    class azure.mgmt.recoveryservicesbackup.types.ValidateOperationRequest(TypedDict, total=False):
+    class azure.mgmt.recoveryservicesbackup.types.ValidateIaasVMRestoreOperationRequest(TypedDict, total=False):
         key "objectType": Required[Literal["ValidateIaasVMRestoreOperationRequest"]]
         key "restoreRequest": ForwardRef('RestoreRequest', module='types')
         objectType: Literal[ValidateIaasVMRestoreOperationRequest]

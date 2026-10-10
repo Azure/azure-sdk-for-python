@@ -838,8 +838,9 @@ class ProtectedItem(_Model):  # pylint: disable=docstring-keyword-should-match-k
     AzureFileshareProtectedItem, AzureIaaSVMProtectedItem, AzureVmWorkloadProtectedItem,
     AzureVmWorkloadSAPAseDatabaseProtectedItem, AzureVmWorkloadSAPHanaDBInstanceProtectedItem,
     AzureVmWorkloadSAPHanaDatabaseProtectedItem, AzureVmWorkloadSQLDatabaseProtectedItem,
-    DPMProtectedItem, GenericProtectedItem, MabFileFolderProtectedItem,
-    AzureIaaSClassicComputeVMProtectedItem, AzureIaaSComputeVMProtectedItem, AzureSqlProtectedItem
+    AzureVmWorkloadSQLInstanceProtectedItem, DPMProtectedItem, GenericProtectedItem,
+    MabFileFolderProtectedItem, AzureIaaSClassicComputeVMProtectedItem,
+    AzureIaaSComputeVMProtectedItem, AzureSqlProtectedItem
 
     :ivar protected_item_type: backup item type. Required. Default value is None.
     :vartype protected_item_type: str
@@ -2094,6 +2095,10 @@ class AzureIaaSVMProtectedItem(
      ~azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMProtectedItemExtendedInfo
     :ivar extended_properties: Extended Properties for Azure IaasVM Backup.
     :vartype extended_properties: ~azure.mgmt.recoveryservicesbackup.models.ExtendedProperties
+    :ivar existing_basic_vm_protection: Specifies how existing Basic VM protection is handled when
+     configuring protection. "DisableWithDeleteRPsNow"
+    :vartype existing_basic_vm_protection: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ExistingBasicVMProtection
     :ivar policy_type: Type of the policy used for protection.
     :vartype policy_type: str
     """
@@ -2143,6 +2148,11 @@ class AzureIaaSVMProtectedItem(
         name="extendedProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """Extended Properties for Azure IaasVM Backup."""
+    existing_basic_vm_protection: Optional[Union[str, "_models.ExistingBasicVMProtection"]] = rest_field(
+        name="existingBasicVMProtection", visibility=["create", "update"]
+    )
+    """Specifies how existing Basic VM protection is handled when configuring protection.
+     \"DisableWithDeleteRPsNow\""""
     policy_type: Optional[str] = rest_field(name="policyType", visibility=["read"])
     """Type of the policy used for protection."""
 
@@ -2173,6 +2183,7 @@ class AzureIaaSVMProtectedItem(
         last_backup_status: Optional[str] = None,
         extended_info: Optional["_models.AzureIaaSVMProtectedItemExtendedInfo"] = None,
         extended_properties: Optional["_models.ExtendedProperties"] = None,
+        existing_basic_vm_protection: Optional[Union[str, "_models.ExistingBasicVMProtection"]] = None,
     ) -> None: ...
 
     @overload
@@ -2275,6 +2286,10 @@ class AzureIaaSClassicComputeVMProtectedItem(
      ~azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMProtectedItemExtendedInfo
     :ivar extended_properties: Extended Properties for Azure IaasVM Backup.
     :vartype extended_properties: ~azure.mgmt.recoveryservicesbackup.models.ExtendedProperties
+    :ivar existing_basic_vm_protection: Specifies how existing Basic VM protection is handled when
+     configuring protection. "DisableWithDeleteRPsNow"
+    :vartype existing_basic_vm_protection: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ExistingBasicVMProtection
     :ivar policy_type: Type of the policy used for protection.
     :vartype policy_type: str
     :ivar protected_item_type: backup item type. Required. Default value is
@@ -2312,6 +2327,7 @@ class AzureIaaSClassicComputeVMProtectedItem(
         last_backup_status: Optional[str] = None,
         extended_info: Optional["_models.AzureIaaSVMProtectedItemExtendedInfo"] = None,
         extended_properties: Optional["_models.ExtendedProperties"] = None,
+        existing_basic_vm_protection: Optional[Union[str, "_models.ExistingBasicVMProtection"]] = None,
     ) -> None: ...
 
     @overload
@@ -2539,6 +2555,10 @@ class AzureIaaSComputeVMProtectedItem(
      ~azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMProtectedItemExtendedInfo
     :ivar extended_properties: Extended Properties for Azure IaasVM Backup.
     :vartype extended_properties: ~azure.mgmt.recoveryservicesbackup.models.ExtendedProperties
+    :ivar existing_basic_vm_protection: Specifies how existing Basic VM protection is handled when
+     configuring protection. "DisableWithDeleteRPsNow"
+    :vartype existing_basic_vm_protection: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ExistingBasicVMProtection
     :ivar policy_type: Type of the policy used for protection.
     :vartype policy_type: str
     :ivar protected_item_type: backup item type. Required. Default value is
@@ -2576,6 +2596,7 @@ class AzureIaaSComputeVMProtectedItem(
         last_backup_status: Optional[str] = None,
         extended_info: Optional["_models.AzureIaaSVMProtectedItemExtendedInfo"] = None,
         extended_properties: Optional["_models.ExtendedProperties"] = None,
+        existing_basic_vm_protection: Optional[Union[str, "_models.ExistingBasicVMProtection"]] = None,
     ) -> None: ...
 
     @overload
@@ -3173,6 +3194,14 @@ class AzureIaaSVMProtectionPolicy(
     :vartype tiering_policy: dict[str, ~azure.mgmt.recoveryservicesbackup.models.TieringPolicy]
     :ivar instant_rp_retention_range_in_days: Instant RP retention policy range in days.
     :vartype instant_rp_retention_range_in_days: int
+    :ivar instant_access_snapshot_enabled: Specifies whether Instant Access snapshot is enabled for
+     the policy. If false or omitted, instantAccessDurationMinutes is ignored and no Instant Access
+     snapshot is retained.
+    :vartype instant_access_snapshot_enabled: bool
+    :ivar instant_access_duration_minutes: Duration in minutes for which the Instant Access
+     snapshot is retained, when instantAccessSnapshotEnabled is true. Must be between 60 and 300
+     minutes; defaults to 300 minutes if not specified.
+    :vartype instant_access_duration_minutes: int
     :ivar time_zone: TimeZone optional input as string. For example: TimeZone = "Pacific Standard
      Time".
     :vartype time_zone: str
@@ -3207,6 +3236,17 @@ class AzureIaaSVMProtectionPolicy(
         name="instantRpRetentionRangeInDays", visibility=["read", "create", "update", "delete", "query"]
     )
     """Instant RP retention policy range in days."""
+    instant_access_snapshot_enabled: Optional[bool] = rest_field(
+        name="instantAccessSnapshotEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies whether Instant Access snapshot is enabled for the policy. If false or omitted,
+     instantAccessDurationMinutes is ignored and no Instant Access snapshot is retained."""
+    instant_access_duration_minutes: Optional[int] = rest_field(
+        name="instantAccessDurationMinutes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Duration in minutes for which the Instant Access snapshot is retained, when
+     instantAccessSnapshotEnabled is true. Must be between 60 and 300 minutes; defaults to 300
+     minutes if not specified."""
     time_zone: Optional[str] = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
     """TimeZone optional input as string. For example: TimeZone = \"Pacific Standard Time\"."""
     policy_type: Optional[Union[str, "_models.IAASVMPolicyType"]] = rest_field(
@@ -3232,6 +3272,8 @@ class AzureIaaSVMProtectionPolicy(
         retention_policy: Optional["_models.RetentionPolicy"] = None,
         tiering_policy: Optional[dict[str, "_models.TieringPolicy"]] = None,
         instant_rp_retention_range_in_days: Optional[int] = None,
+        instant_access_snapshot_enabled: Optional[bool] = None,
+        instant_access_duration_minutes: Optional[int] = None,
         time_zone: Optional[str] = None,
         policy_type: Optional[Union[str, "_models.IAASVMPolicyType"]] = None,
         snapshot_consistency_type: Optional[Union[str, "_models.IaasVMSnapshotConsistencyType"]] = None,
@@ -4872,7 +4914,8 @@ class AzureVmWorkloadProtectedItem(
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureVmWorkloadSAPAseDatabaseProtectedItem, AzureVmWorkloadSAPHanaDBInstanceProtectedItem,
-    AzureVmWorkloadSAPHanaDatabaseProtectedItem, AzureVmWorkloadSQLDatabaseProtectedItem
+    AzureVmWorkloadSAPHanaDatabaseProtectedItem, AzureVmWorkloadSQLDatabaseProtectedItem,
+    AzureVmWorkloadSQLInstanceProtectedItem
 
     :ivar backup_management_type: Type of backup management for the backed up item. Known values
      are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
@@ -5169,6 +5212,10 @@ class AzureVmWorkloadProtectionPolicy(
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
      "SAPAseDatabase", and "SAPHanaDBInstance".
     :vartype work_load_type: str or ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
+    :ivar vm_workload_policy_type: Type of the protection policy. Known values are: "Invalid",
+     "SnapshotV1", "SnapshotV2", and "Streaming".
+    :vartype vm_workload_policy_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.VMWorkloadPolicyType
     :ivar settings: Common settings for the backup management.
     :vartype settings: ~azure.mgmt.recoveryservicesbackup.models.Settings
     :ivar sub_protection_policy: List of sub-protection policies which includes schedule and
@@ -5189,6 +5236,11 @@ class AzureVmWorkloadProtectionPolicy(
      \"FileFolder\", \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\",
      \"SystemState\", \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\",
      \"SAPHanaDatabase\", \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+    vm_workload_policy_type: Optional[Union[str, "_models.VMWorkloadPolicyType"]] = rest_field(
+        name="vmWorkloadPolicyType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of the protection policy. Known values are: \"Invalid\", \"SnapshotV1\", \"SnapshotV2\",
+     and \"Streaming\"."""
     settings: Optional["_models.Settings"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Common settings for the backup management."""
     sub_protection_policy: Optional[list["_models.SubProtectionPolicy"]] = rest_field(
@@ -5210,6 +5262,7 @@ class AzureVmWorkloadProtectionPolicy(
         protected_items_count: Optional[int] = None,
         resource_guard_operation_requests: Optional[list[str]] = None,
         work_load_type: Optional[Union[str, "_models.WorkloadType"]] = None,
+        vm_workload_policy_type: Optional[Union[str, "_models.VMWorkloadPolicyType"]] = None,
         settings: Optional["_models.Settings"] = None,
         sub_protection_policy: Optional[list["_models.SubProtectionPolicy"]] = None,
         make_policy_consistent: Optional[bool] = None,
@@ -6598,11 +6651,27 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
      specific types in the polymorphic chain of types. Required. Default value is
      "AzureVmWorkloadSQLDatabase".
     :vartype protected_item_type: str
+    :ivar parent_protected_item: Name of the parent protected item (e.g., SQL Instance name) when
+     this database is protected as part of a parent.
+    :vartype parent_protected_item: str
+    :ivar protection_level: Protection type in case protected as part of a parent. Known values
+     are: "Database" and "DatabaseUnderInstance".
+    :vartype protection_level: str or ~azure.mgmt.recoveryservicesbackup.models.ProtectionLevel
     """
 
     protected_item_type: Literal["AzureVmWorkloadSQLDatabase"] = rest_discriminator(name="protectedItemType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """This property will be used as the discriminator for deciding the specific types in the
      polymorphic chain of types. Required. Default value is \"AzureVmWorkloadSQLDatabase\"."""
+    parent_protected_item: Optional[str] = rest_field(
+        name="parentProtectedItem", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the parent protected item (e.g., SQL Instance name) when this database is protected as
+     part of a parent."""
+    protection_level: Optional[Union[str, "_models.ProtectionLevel"]] = rest_field(
+        name="protectionLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Protection type in case protected as part of a parent. Known values are: \"Database\" and
+     \"DatabaseUnderInstance\"."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -6636,6 +6705,8 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
         extended_info: Optional["_models.AzureVmWorkloadProtectedItemExtendedInfo"] = None,
         kpis_healths: Optional[dict[str, "_models.KPIResourceHealthDetails"]] = None,
         nodes_list: Optional[list["_models.DistributedNodesInfo"]] = None,
+        parent_protected_item: Optional[str] = None,
+        protection_level: Optional[Union[str, "_models.ProtectionLevel"]] = None,
     ) -> None: ...
 
     @overload
@@ -6778,6 +6849,173 @@ class AzureVmWorkloadSQLInstanceProtectableItem(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.protectable_item_type = "SQLInstance"  # type: ignore
+
+
+class AzureVmWorkloadSQLInstanceProtectedItem(
+    AzureVmWorkloadProtectedItem, discriminator="AzureVmWorkloadSQLInstance"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Azure VM workload-specific protected item representing SQL Instance.
+
+    :ivar backup_management_type: Type of backup management for the backed up item. Known values
+     are: "Invalid", "AzureIaasVM", "MAB", "DPM", "AzureBackupServer", "AzureSql", "AzureStorage",
+     "AzureWorkload", and "DefaultBackup".
+    :vartype backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
+    :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
+     "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
+     "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
+     "SAPAseDatabase", and "SAPHanaDBInstance".
+    :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
+    :ivar container_name: Unique name of container.
+    :vartype container_name: str
+    :ivar source_resource_id: ARM ID of the resource to be backed up.
+    :vartype source_resource_id: str
+    :ivar policy_id: ID of the backup policy with which this item is backed up.
+    :vartype policy_id: str
+    :ivar last_recovery_point: Timestamp when the last (latest) backup copy was created for this
+     backup item.
+    :vartype last_recovery_point: ~datetime.datetime
+    :ivar backup_set_name: Name of the backup set the backup item belongs to.
+    :vartype backup_set_name: str
+    :ivar create_mode: Create mode to indicate recovery of existing soft deleted data source or
+     creation of new data source. Known values are: "Invalid", "Default", and "Recover".
+    :vartype create_mode: str or ~azure.mgmt.recoveryservicesbackup.models.CreateMode
+    :ivar deferred_delete_time_in_utc: Time for deferred deletion in UTC.
+    :vartype deferred_delete_time_in_utc: ~datetime.datetime
+    :ivar is_scheduled_for_deferred_delete: Flag to identify whether the DS is scheduled for
+     deferred delete.
+    :vartype is_scheduled_for_deferred_delete: bool
+    :ivar deferred_delete_time_remaining: Time remaining before the DS marked for deferred delete
+     is permanently deleted.
+    :vartype deferred_delete_time_remaining: str
+    :ivar is_deferred_delete_schedule_upcoming: Flag to identify whether the deferred deleted DS is
+     to be purged soon.
+    :vartype is_deferred_delete_schedule_upcoming: bool
+    :ivar is_rehydrate: Flag to identify that deferred deleted DS is to be moved into Pause state.
+    :vartype is_rehydrate: bool
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
+    :ivar is_archive_enabled: Flag to identify whether datasource is protected in archive.
+    :vartype is_archive_enabled: bool
+    :ivar policy_name: Name of the policy used for protection.
+    :vartype policy_name: str
+    :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
+    :vartype soft_delete_retention_period_in_days: int
+    :ivar source_location: Source location of the protected item datasource.
+    :vartype source_location: str
+    :ivar vault_id: ID of the vault which protects this item.
+    :vartype vault_id: str
+    :ivar source_side_scan_info: Source side threat information.
+    :vartype source_side_scan_info: ~azure.mgmt.recoveryservicesbackup.models.SourceSideScanInfo
+    :ivar friendly_name: Friendly name of the DB represented by this backup item.
+    :vartype friendly_name: str
+    :ivar server_name: Host/Cluster Name for instance or AG.
+    :vartype server_name: str
+    :ivar parent_name: Parent name of the DB such as Instance or Availability Group.
+    :vartype parent_name: str
+    :ivar parent_type: Parent type of protected item, example: for a DB, standalone server or
+     distributed.
+    :vartype parent_type: str
+    :ivar protection_status: Backup status of this backup item.
+    :vartype protection_status: str
+    :ivar protection_state: Backup state of this backup item. Known values are: "Invalid",
+     "IRPending", "Protected", "ProtectionError", "ProtectionStopped", "ProtectionPaused", and
+     "BackupsSuspended".
+    :vartype protection_state: str or ~azure.mgmt.recoveryservicesbackup.models.ProtectionState
+    :ivar last_backup_status: Last backup operation status. Possible values: Healthy, Unhealthy.
+     Known values are: "Invalid", "Healthy", "Unhealthy", and "IRPending".
+    :vartype last_backup_status: str or ~azure.mgmt.recoveryservicesbackup.models.LastBackupStatus
+    :ivar last_backup_time: Timestamp of the last backup operation on this backup item.
+    :vartype last_backup_time: ~datetime.datetime
+    :ivar last_backup_error_detail: Error details in last backup.
+    :vartype last_backup_error_detail: ~azure.mgmt.recoveryservicesbackup.models.ErrorDetail
+    :ivar protected_item_data_source_id: Data ID of the protected item.
+    :vartype protected_item_data_source_id: str
+    :ivar protected_item_health_status: Health status of the backup item, evaluated based on last
+     heartbeat received. Known values are: "Invalid", "Healthy", "Unhealthy", "NotReachable", and
+     "IRPending".
+    :vartype protected_item_health_status: str or
+     ~azure.mgmt.recoveryservicesbackup.models.ProtectedItemHealthStatus
+    :ivar extended_info: Additional information for this backup item.
+    :vartype extended_info:
+     ~azure.mgmt.recoveryservicesbackup.models.AzureVmWorkloadProtectedItemExtendedInfo
+    :ivar kpis_healths: Health details of different KPIs.
+    :vartype kpis_healths: dict[str,
+     ~azure.mgmt.recoveryservicesbackup.models.KPIResourceHealthDetails]
+    :ivar nodes_list: List of the nodes in case of distributed container.
+    :vartype nodes_list: list[~azure.mgmt.recoveryservicesbackup.models.DistributedNodesInfo]
+    :ivar protected_item_type: This property will be used as the discriminator for deciding the
+     specific types in the polymorphic chain of types. Required. Default value is
+     "AzureVmWorkloadSQLInstance".
+    :vartype protected_item_type: str
+    :ivar child_db_names: Name of Child Dbs protected under this parent.
+    :vartype child_db_names: list[str]
+    :ivar instance_protection_readiness: The state of instance protection. Known values are:
+     "Unknown", "Ready", "ScheduleDisabled", "PartialProtection", and "ProtectionError".
+    :vartype instance_protection_readiness: str or
+     ~azure.mgmt.recoveryservicesbackup.models.InstanceProtectionReadiness
+    """
+
+    protected_item_type: Literal["AzureVmWorkloadSQLInstance"] = rest_discriminator(name="protectedItemType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """This property will be used as the discriminator for deciding the specific types in the
+     polymorphic chain of types. Required. Default value is \"AzureVmWorkloadSQLInstance\"."""
+    child_db_names: Optional[list[str]] = rest_field(
+        name="childDBNames", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of Child Dbs protected under this parent."""
+    instance_protection_readiness: Optional[Union[str, "_models.InstanceProtectionReadiness"]] = rest_field(
+        name="instanceProtectionReadiness", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The state of instance protection. Known values are: \"Unknown\", \"Ready\",
+     \"ScheduleDisabled\", \"PartialProtection\", and \"ProtectionError\"."""
+
+    @overload
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        container_name: Optional[str] = None,
+        source_resource_id: Optional[str] = None,
+        policy_id: Optional[str] = None,
+        last_recovery_point: Optional[datetime.datetime] = None,
+        backup_set_name: Optional[str] = None,
+        create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
+        deferred_delete_time_in_utc: Optional[datetime.datetime] = None,
+        is_scheduled_for_deferred_delete: Optional[bool] = None,
+        deferred_delete_time_remaining: Optional[str] = None,
+        is_deferred_delete_schedule_upcoming: Optional[bool] = None,
+        is_rehydrate: Optional[bool] = None,
+        resource_guard_operation_requests: Optional[list[str]] = None,
+        is_archive_enabled: Optional[bool] = None,
+        policy_name: Optional[str] = None,
+        soft_delete_retention_period_in_days: Optional[int] = None,
+        source_side_scan_info: Optional["_models.SourceSideScanInfo"] = None,
+        server_name: Optional[str] = None,
+        parent_name: Optional[str] = None,
+        parent_type: Optional[str] = None,
+        protection_state: Optional[Union[str, "_models.ProtectionState"]] = None,
+        last_backup_status: Optional[Union[str, "_models.LastBackupStatus"]] = None,
+        last_backup_time: Optional[datetime.datetime] = None,
+        last_backup_error_detail: Optional["_models.ErrorDetail"] = None,
+        protected_item_data_source_id: Optional[str] = None,
+        protected_item_health_status: Optional[Union[str, "_models.ProtectedItemHealthStatus"]] = None,
+        extended_info: Optional["_models.AzureVmWorkloadProtectedItemExtendedInfo"] = None,
+        kpis_healths: Optional[dict[str, "_models.KPIResourceHealthDetails"]] = None,
+        nodes_list: Optional[list["_models.DistributedNodesInfo"]] = None,
+        child_db_names: Optional[list[str]] = None,
+        instance_protection_readiness: Optional[Union[str, "_models.InstanceProtectionReadiness"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.protected_item_type = "AzureVmWorkloadSQLInstance"  # type: ignore
 
 
 class AzureVmWorkloadSQLInstanceWorkloadItem(
@@ -8716,6 +8954,11 @@ class AzureWorkloadSQLRecoveryPointExtendedInfo(
     :vartype data_directory_time_in_utc: ~datetime.datetime
     :ivar data_directory_paths: List of data directory paths during restore operation.
     :vartype data_directory_paths: list[~azure.mgmt.recoveryservicesbackup.models.SQLDataDirectory]
+    :ivar included_databases: List of databases included in recovery point.
+    :vartype included_databases: list[~azure.mgmt.recoveryservicesbackup.models.DatabaseInRP]
+    :ivar snapshot_recovery_point_info: Detailed info of snapshot restore point.
+    :vartype snapshot_recovery_point_info:
+     ~azure.mgmt.recoveryservicesbackup.models.SnapshotRecoveryPointInfo
     """
 
     data_directory_time_in_utc: Optional[datetime.datetime] = rest_field(
@@ -8726,6 +8969,14 @@ class AzureWorkloadSQLRecoveryPointExtendedInfo(
         name="dataDirectoryPaths", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of data directory paths during restore operation."""
+    included_databases: Optional[list["_models.DatabaseInRP"]] = rest_field(
+        name="includedDatabases", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of databases included in recovery point."""
+    snapshot_recovery_point_info: Optional["_models.SnapshotRecoveryPointInfo"] = rest_field(
+        name="snapshotRecoveryPointInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detailed info of snapshot restore point."""
 
     @overload
     def __init__(
@@ -8733,6 +8984,8 @@ class AzureWorkloadSQLRecoveryPointExtendedInfo(
         *,
         data_directory_time_in_utc: Optional[datetime.datetime] = None,
         data_directory_paths: Optional[list["_models.SQLDataDirectory"]] = None,
+        included_databases: Optional[list["_models.DatabaseInRP"]] = None,
+        snapshot_recovery_point_info: Optional["_models.SnapshotRecoveryPointInfo"] = None,
     ) -> None: ...
 
     @overload
@@ -10247,6 +10500,43 @@ class DailySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-k
         super().__init__(*args, **kwargs)
 
 
+class DatabaseInRP(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Database included in RP.
+
+    :ivar datasource_id: Datasource Id for the database.
+    :vartype datasource_id: str
+    :ivar datasource_name: Datasource name for the database.
+    :vartype datasource_name: str
+    """
+
+    datasource_id: Optional[str] = rest_field(
+        name="datasourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Datasource Id for the database."""
+    datasource_name: Optional[str] = rest_field(
+        name="datasourceName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Datasource name for the database."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        datasource_id: Optional[str] = None,
+        datasource_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class DataDiskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data disk details.
 
@@ -10436,6 +10726,83 @@ class DiskExclusionProperties(_Model):  # pylint: disable=docstring-keyword-shou
         super().__init__(*args, **kwargs)
 
 
+class DiskInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Metadata for a physical disk that backs a filesystem volume or Storage Spaces pool. Unlike
+    DiskInformation, this model describes storage topology; DiskInformation only identifies disks
+    included in or excluded from a virtual machine recovery point.
+
+    :ivar disk_number: Disk number.
+    :vartype disk_number: int
+    :ivar disk_unique_id: Unique ID of the disk.
+    :vartype disk_unique_id: str
+    :ivar disk_guid: GUID of the disk.
+    :vartype disk_guid: str
+    :ivar disk_location: Location of the disk.
+    :vartype disk_location: str
+    :ivar size_in_bytes: Size of the disk in bytes.
+    :vartype size_in_bytes: int
+    :ivar friendly_name: Friendly name of the disk.
+    :vartype friendly_name: str
+    :ivar lun: LUN of the disk.
+    :vartype lun: int
+    :ivar managed_disk_id: ARM ID of the managed disk.
+    :vartype managed_disk_id: str
+    """
+
+    disk_number: Optional[int] = rest_field(
+        name="diskNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Disk number."""
+    disk_unique_id: Optional[str] = rest_field(
+        name="diskUniqueId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unique ID of the disk."""
+    disk_guid: Optional[str] = rest_field(name="diskGuid", visibility=["read", "create", "update", "delete", "query"])
+    """GUID of the disk."""
+    disk_location: Optional[str] = rest_field(
+        name="diskLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Location of the disk."""
+    size_in_bytes: Optional[int] = rest_field(
+        name="sizeInBytes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Size of the disk in bytes."""
+    friendly_name: Optional[str] = rest_field(
+        name="friendlyName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Friendly name of the disk."""
+    lun: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """LUN of the disk."""
+    managed_disk_id: Optional[str] = rest_field(
+        name="managedDiskId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM ID of the managed disk."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        disk_number: Optional[int] = None,
+        disk_unique_id: Optional[str] = None,
+        disk_guid: Optional[str] = None,
+        disk_location: Optional[str] = None,
+        size_in_bytes: Optional[int] = None,
+        friendly_name: Optional[str] = None,
+        lun: Optional[int] = None,
+        managed_disk_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class DiskInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disk information.
 
@@ -10443,10 +10810,22 @@ class DiskInformation(_Model):  # pylint: disable=docstring-keyword-should-match
     :vartype lun: int
     :ivar name:
     :vartype name: str
+    :ivar disk_size_in_gb: Size of the disk in GB.
+    :vartype disk_size_in_gb: int
+    :ivar storage_type: Storage type of the disk.
+    :vartype storage_type: str
     """
 
     lun: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    disk_size_in_gb: Optional[int] = rest_field(
+        name="diskSizeInGb", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Size of the disk in GB."""
+    storage_type: Optional[str] = rest_field(
+        name="storageType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Storage type of the disk."""
 
     @overload
     def __init__(
@@ -10454,6 +10833,8 @@ class DiskInformation(_Model):  # pylint: disable=docstring-keyword-should-match
         *,
         lun: Optional[int] = None,
         name: Optional[str] = None,
+        disk_size_in_gb: Optional[int] = None,
+        storage_type: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -11400,11 +11781,11 @@ class FetchTieringCostInfoRequest(_Model):  # pylint: disable=docstring-keyword-
     FetchTieringCostSavingsInfoForProtectedItemRequest, FetchTieringCostSavingsInfoForVaultRequest
 
     :ivar source_tier_type: Source tier for the request. Required. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype source_tier_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierType
     :ivar target_tier_type: target tier for the request. Required. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype target_tier_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierType
     :ivar object_type: This property will be used as the discriminator for deciding the specific
@@ -11417,12 +11798,12 @@ class FetchTieringCostInfoRequest(_Model):  # pylint: disable=docstring-keyword-
         name="sourceTierType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Source tier for the request. Required. Known values are: \"Invalid\", \"InstantRP\",
-     \"HardenedRP\", and \"ArchivedRP\"."""
+     \"HardenedRP\", \"ArchivedRP\", and \"IASnapshotRP\"."""
     target_tier_type: Union[str, "_models.RecoveryPointTierType"] = rest_field(
         name="targetTierType", visibility=["read", "create", "update", "delete", "query"]
     )
     """target tier for the request. Required. Known values are: \"Invalid\", \"InstantRP\",
-     \"HardenedRP\", and \"ArchivedRP\"."""
+     \"HardenedRP\", \"ArchivedRP\", and \"IASnapshotRP\"."""
     object_type: str = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])
     """This property will be used as the discriminator for deciding the specific types in the
      polymorphic chain of types. Required. Default value is None."""
@@ -11453,11 +11834,11 @@ class FetchTieringCostInfoForRehydrationRequest(
     """Request parameters for fetching cost info of rehydration.
 
     :ivar source_tier_type: Source tier for the request. Required. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype source_tier_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierType
     :ivar target_tier_type: target tier for the request. Required. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype target_tier_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierType
     :ivar container_name: Name of the protected item container. Required.
@@ -11526,11 +11907,11 @@ class FetchTieringCostSavingsInfoForPolicyRequest(
     """Request parameters for tiering cost info for policy.
 
     :ivar source_tier_type: Source tier for the request. Required. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype source_tier_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierType
     :ivar target_tier_type: target tier for the request. Required. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype target_tier_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierType
     :ivar policy_name: Name of the backup policy for which the cost savings information is
@@ -11576,11 +11957,11 @@ class FetchTieringCostSavingsInfoForProtectedItemRequest(
     """Request parameters for tiering cost info for protected item.
 
     :ivar source_tier_type: Source tier for the request. Required. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype source_tier_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierType
     :ivar target_tier_type: target tier for the request. Required. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype target_tier_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierType
     :ivar container_name: Name of the protected item container. Required.
@@ -11632,11 +12013,11 @@ class FetchTieringCostSavingsInfoForVaultRequest(
     """Request parameters for tiering cost info for vault.
 
     :ivar source_tier_type: Source tier for the request. Required. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype source_tier_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierType
     :ivar target_tier_type: target tier for the request. Required. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype target_tier_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierType
     :ivar object_type: This property will be used as the discriminator for deciding the specific
@@ -11668,6 +12049,76 @@ class FetchTieringCostSavingsInfoForVaultRequest(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.object_type = "FetchTieringCostSavingsInfoForVaultRequest"  # type: ignore
+
+
+class FilesystemInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Per volume filesystem metadata captured on the VM.
+
+    :ivar volume_guid: Volume GUID path.
+    :vartype volume_guid: str
+    :ivar file_system_type: Filesystem type (NTFS / ReFS / etc.).
+    :vartype file_system_type: str
+    :ivar label: Volume label.
+    :vartype label: str
+    :ivar access_paths: Drive letters / mount points pointing at this volume.
+    :vartype access_paths: list[str]
+    :ivar is_on_storage_space: True when this volume sits on a Windows Storage Spaces virtual disk.
+    :vartype is_on_storage_space: bool
+    :ivar storage_space_info: Storage Spaces pool / virtual-disk identifiers.
+    :vartype storage_space_info: ~azure.mgmt.recoveryservicesbackup.models.StorageSpaceInfo
+    :ivar disk_info_list: Physical disks that back this volume (or the storage pool).
+    :vartype disk_info_list: list[~azure.mgmt.recoveryservicesbackup.models.DiskInfo]
+    """
+
+    volume_guid: Optional[str] = rest_field(
+        name="volumeGuid", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Volume GUID path."""
+    file_system_type: Optional[str] = rest_field(
+        name="fileSystemType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Filesystem type (NTFS / ReFS / etc.)."""
+    label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Volume label."""
+    access_paths: Optional[list[str]] = rest_field(
+        name="accessPaths", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Drive letters / mount points pointing at this volume."""
+    is_on_storage_space: Optional[bool] = rest_field(
+        name="isOnStorageSpace", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """True when this volume sits on a Windows Storage Spaces virtual disk."""
+    storage_space_info: Optional["_models.StorageSpaceInfo"] = rest_field(
+        name="storageSpaceInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Storage Spaces pool / virtual-disk identifiers."""
+    disk_info_list: Optional[list["_models.DiskInfo"]] = rest_field(
+        name="diskInfoList", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Physical disks that back this volume (or the storage pool)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        volume_guid: Optional[str] = None,
+        file_system_type: Optional[str] = None,
+        label: Optional[str] = None,
+        access_paths: Optional[list[str]] = None,
+        is_on_storage_space: Optional[bool] = None,
+        storage_space_info: Optional["_models.StorageSpaceInfo"] = None,
+        disk_info_list: Optional[list["_models.DiskInfo"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class GenericContainer(
@@ -12068,6 +12519,95 @@ class GenericRecoveryPoint(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.object_type = "GenericRecoveryPoint"  # type: ignore
+
+
+class GetRPExtendedInfoRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request for fetching the additional details of a recovery point.
+
+    :ivar recovery_point_ids: ARM id of the recovery point whose additional details are to be
+     fetched. Exactly one recovery point id can be specified. Required.
+    :vartype recovery_point_ids: list[str]
+    """
+
+    recovery_point_ids: list[str] = rest_field(
+        name="recoveryPointIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM id of the recovery point whose additional details are to be fetched. Exactly one recovery
+     point id can be specified. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        recovery_point_ids: list[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GetRPExtendedInfoRequestResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request for fetching the additional details of a recovery point, wrapped in a resource
+    envelope.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicesbackup.models.SystemData
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar e_tag: Optional ETag.
+    :vartype e_tag: str
+    :ivar properties: GetRPExtendedInfoRequestResource properties. Required.
+    :vartype properties: ~azure.mgmt.recoveryservicesbackup.models.GetRPExtendedInfoRequest
+    """
+
+    location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource location."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read", "create", "update", "delete", "query"])
+    """Optional ETag."""
+    properties: "_models.GetRPExtendedInfoRequest" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """GetRPExtendedInfoRequestResource properties. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: "_models.GetRPExtendedInfoRequest",
+        location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+        e_tag: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class HourlySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -14270,11 +14810,11 @@ class MoveRPAcrossTiersRequest(_Model):  # pylint: disable=docstring-keyword-sho
     :ivar object_type: Gets the class type.
     :vartype object_type: str
     :ivar source_tier_type: Source tier from where RP needs to be moved. Known values are:
-     "Invalid", "InstantRP", "HardenedRP", and "ArchivedRP".
+     "Invalid", "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype source_tier_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierType
     :ivar target_tier_type: Target tier where RP needs to be moved. Known values are: "Invalid",
-     "InstantRP", "HardenedRP", and "ArchivedRP".
+     "InstantRP", "HardenedRP", "ArchivedRP", and "IASnapshotRP".
     :vartype target_tier_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierType
     """
@@ -14287,12 +14827,12 @@ class MoveRPAcrossTiersRequest(_Model):  # pylint: disable=docstring-keyword-sho
         name="sourceTierType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Source tier from where RP needs to be moved. Known values are: \"Invalid\", \"InstantRP\",
-     \"HardenedRP\", and \"ArchivedRP\"."""
+     \"HardenedRP\", \"ArchivedRP\", and \"IASnapshotRP\"."""
     target_tier_type: Optional[Union[str, "_models.RecoveryPointTierType"]] = rest_field(
         name="targetTierType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Target tier where RP needs to be moved. Known values are: \"Invalid\", \"InstantRP\",
-     \"HardenedRP\", and \"ArchivedRP\"."""
+     \"HardenedRP\", \"ArchivedRP\", and \"IASnapshotRP\"."""
 
     @overload
     def __init__(
@@ -15942,7 +16482,7 @@ class RecoveryPointTierInformation(_Model):  # pylint: disable=docstring-keyword
     """Recovery point tier information.
 
     :ivar type: Recovery point tier type. Known values are: "Invalid", "InstantRP", "HardenedRP",
-     and "ArchivedRP".
+     "ArchivedRP", and "IASnapshotRP".
     :vartype type: str or ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierType
     :ivar status: Recovery point tier status. Known values are: "Invalid", "Valid", "Disabled",
      "Deleted", and "Rehydrated".
@@ -15954,8 +16494,8 @@ class RecoveryPointTierInformation(_Model):  # pylint: disable=docstring-keyword
     type: Optional[Union[str, "_models.RecoveryPointTierType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Recovery point tier type. Known values are: \"Invalid\", \"InstantRP\", \"HardenedRP\", and
-     \"ArchivedRP\"."""
+    """Recovery point tier type. Known values are: \"Invalid\", \"InstantRP\", \"HardenedRP\",
+     \"ArchivedRP\", and \"IASnapshotRP\"."""
     status: Optional[Union[str, "_models.RecoveryPointTierStatus"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -15994,7 +16534,7 @@ class RecoveryPointTierInformationV2(
     :ivar extended_info: Recovery point tier status.
     :vartype extended_info: dict[str, str]
     :ivar type: Recovery point tier type. Known values are: "Invalid", "InstantRP", "HardenedRP",
-     and "ArchivedRP".
+     "ArchivedRP", and "IASnapshotRP".
     :vartype type: str or ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointTierType
     :ivar status: Recovery point tier status. Known values are: "Invalid", "Valid", "Disabled",
      "Deleted", and "Rehydrated".
@@ -16661,6 +17201,43 @@ class SnapshotBackupAdditionalDetails(_Model):  # pylint: disable=docstring-keyw
         super().__init__(*args, **kwargs)
 
 
+class SnapshotRecoveryPointInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Extended info class details for workload snapshot.
+
+    :ivar snapshot_resource_group: Resource Group of snapshot restore point.
+    :vartype snapshot_resource_group: str
+    :ivar source_filesystem_info: Per volume filesystem metadata captured on the VM.
+    :vartype source_filesystem_info: list[~azure.mgmt.recoveryservicesbackup.models.FilesystemInfo]
+    """
+
+    snapshot_resource_group: Optional[str] = rest_field(
+        name="snapshotResourceGroup", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource Group of snapshot restore point."""
+    source_filesystem_info: Optional[list["_models.FilesystemInfo"]] = rest_field(
+        name="sourceFilesystemInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Per volume filesystem metadata captured on the VM."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        snapshot_resource_group: Optional[str] = None,
+        source_filesystem_info: Optional[list["_models.FilesystemInfo"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SnapshotRestoreParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Encapsulates information regarding snapshot recovery for SAP Hana.
 
@@ -16668,6 +17245,9 @@ class SnapshotRestoreParameters(_Model):  # pylint: disable=docstring-keyword-sh
     :vartype skip_attach_and_mount: bool
     :ivar log_point_in_time_for_db_recovery:
     :vartype log_point_in_time_for_db_recovery: str
+    :ivar disks_to_detach_on_clash: List of disk ARM IDs the customer should detach in case of
+     filesystem clash.
+    :vartype disks_to_detach_on_clash: list[str]
     """
 
     skip_attach_and_mount: Optional[bool] = rest_field(
@@ -16676,6 +17256,10 @@ class SnapshotRestoreParameters(_Model):  # pylint: disable=docstring-keyword-sh
     log_point_in_time_for_db_recovery: Optional[str] = rest_field(
         name="logPointInTimeForDBRecovery", visibility=["read", "create", "update", "delete", "query"]
     )
+    disks_to_detach_on_clash: Optional[list[str]] = rest_field(
+        name="disksToDetachOnClash", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of disk ARM IDs the customer should detach in case of filesystem clash."""
 
     @overload
     def __init__(
@@ -16683,6 +17267,7 @@ class SnapshotRestoreParameters(_Model):  # pylint: disable=docstring-keyword-sh
         *,
         skip_attach_and_mount: Optional[bool] = None,
         log_point_in_time_for_db_recovery: Optional[str] = None,
+        disks_to_detach_on_clash: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -16820,6 +17405,57 @@ class SQLDataDirectoryMapping(_Model):  # pylint: disable=docstring-keyword-shou
         source_logical_name: Optional[str] = None,
         source_path: Optional[str] = None,
         target_path: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StorageSpaceInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Identifiers for a Windows Storage Spaces pool and its virtual disk.
+
+    :ivar storage_pool_unique_id: Unique ID of the storage pool.
+    :vartype storage_pool_unique_id: str
+    :ivar storage_pool_friendly_name: Friendly name of the storage pool.
+    :vartype storage_pool_friendly_name: str
+    :ivar virtual_disk_unique_id: Unique ID of the virtual disk.
+    :vartype virtual_disk_unique_id: str
+    :ivar virtual_disk_friendly_name: Friendly name of the virtual disk.
+    :vartype virtual_disk_friendly_name: str
+    """
+
+    storage_pool_unique_id: Optional[str] = rest_field(
+        name="storagePoolUniqueId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unique ID of the storage pool."""
+    storage_pool_friendly_name: Optional[str] = rest_field(
+        name="storagePoolFriendlyName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Friendly name of the storage pool."""
+    virtual_disk_unique_id: Optional[str] = rest_field(
+        name="virtualDiskUniqueId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unique ID of the virtual disk."""
+    virtual_disk_friendly_name: Optional[str] = rest_field(
+        name="virtualDiskFriendlyName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Friendly name of the virtual disk."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        storage_pool_unique_id: Optional[str] = None,
+        storage_pool_friendly_name: Optional[str] = None,
+        virtual_disk_unique_id: Optional[str] = None,
+        virtual_disk_friendly_name: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -17631,7 +18267,8 @@ class ValidateOperationRequest(_Model):  # pylint: disable=docstring-keyword-sho
     """Base class for validate operation request.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ValidateIaasVMRestoreOperationRequest, ValidateRestoreOperationRequest
+    ValidateAzureWorkloadRestoreOperationRequest, ValidateIaasVMRestoreOperationRequest,
+    ValidateRestoreOperationRequest
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required. Default value is None.
@@ -17659,6 +18296,49 @@ class ValidateOperationRequest(_Model):  # pylint: disable=docstring-keyword-sho
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ValidateAzureWorkloadRestoreOperationRequest(
+    ValidateOperationRequest, discriminator="ValidateAzureWorkloadRestoreOperationRequest"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Restore validation request for Azure Workload backups. This subtype provides the distinct
+    objectType discriminator used for Azure Workload (SQL/HANA/SAP ASE/AnyDatabase) restore
+    validation.
+
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required. Default value is
+     "ValidateAzureWorkloadRestoreOperationRequest".
+    :vartype object_type: str
+    :ivar restore_request: Sets restore request to be validated.
+    :vartype restore_request: ~azure.mgmt.recoveryservicesbackup.models.RestoreRequest
+    """
+
+    object_type: Literal["ValidateAzureWorkloadRestoreOperationRequest"] = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """This property will be used as the discriminator for deciding the specific types in the
+     polymorphic chain of types. Required. Default value is
+     \"ValidateAzureWorkloadRestoreOperationRequest\"."""
+    restore_request: Optional["_models.RestoreRequest"] = rest_field(
+        name="restoreRequest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Sets restore request to be validated."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        restore_request: Optional["_models.RestoreRequest"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object_type = "ValidateAzureWorkloadRestoreOperationRequest"  # type: ignore
 
 
 class ValidateRestoreOperationRequest(

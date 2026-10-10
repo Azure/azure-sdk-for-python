@@ -46,3 +46,45 @@ class TestRecoveryServicesBackupRecoveryPointsOperations(AzureMgmtRecordedTestCa
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_recovery_points_begin_get_rp_extended_info(self, resource_group):
+        response = self.client.recovery_points.begin_get_rp_extended_info(
+            resource_group_name=resource_group.name,
+            vault_name="str",
+            fabric_name="str",
+            parameters={
+                "properties": {"recoveryPointIds": ["str"]},
+                "eTag": "str",
+                "id": "str",
+                "location": "str",
+                "name": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "tags": {"str": "str"},
+                "type": "str",
+            },
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_recovery_points_begin_get_rp_extended_info_operation_result(self, resource_group):
+        response = self.client.recovery_points.begin_get_rp_extended_info_operation_result(
+            resource_group_name=resource_group.name,
+            vault_name="str",
+            fabric_name="str",
+            operation_id="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...

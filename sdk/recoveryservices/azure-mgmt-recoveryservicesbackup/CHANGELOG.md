@@ -1,5 +1,41 @@
 # Release History
 
+## 11.2.0 (2026-10-08)
+
+### Features Added
+
+  - Client `RecoveryServicesBackupClient` added operation group `protection_container_refresh_operation_statuses`
+  - Model `AzureIaaSClassicComputeVMProtectedItem` added property `existing_basic_vm_protection`
+  - Model `AzureIaaSComputeVMProtectedItem` added property `existing_basic_vm_protection`
+  - Model `AzureIaaSVMProtectedItem` added property `existing_basic_vm_protection`
+  - Model `AzureIaaSVMProtectionPolicy` added property `instant_access_duration_minutes`
+  - Model `AzureIaaSVMProtectionPolicy` added property `instant_access_snapshot_enabled`
+  - Model `AzureVmWorkloadProtectionPolicy` added property `vm_workload_policy_type`
+  - Model `AzureVmWorkloadSQLDatabaseProtectedItem` added property `parent_protected_item`
+  - Model `AzureVmWorkloadSQLDatabaseProtectedItem` added property `protection_level`
+  - Model `AzureWorkloadSQLRecoveryPointExtendedInfo` added property `included_databases`
+  - Model `AzureWorkloadSQLRecoveryPointExtendedInfo` added property `snapshot_recovery_point_info`
+  - Model `DiskInformation` added property `disk_size_in_gb`
+  - Model `DiskInformation` added property `storage_type`
+  - Enum `RecoveryPointTierType` added member `IA_SNAPSHOT_RP`
+  - Model `SnapshotRestoreParameters` added property `disks_to_detach_on_clash`
+  - Added model `AzureVmWorkloadSQLInstanceProtectedItem`
+  - Added model `DatabaseInRP`
+  - Added model `DiskInfo`
+  - Added enum `ExistingBasicVMProtection`
+  - Added model `FilesystemInfo`
+  - Added model `GetRPExtendedInfoRequest`
+  - Added model `GetRPExtendedInfoRequestResource`
+  - Added enum `InstanceProtectionReadiness`
+  - Added enum `ProtectionLevel`
+  - Added model `SnapshotRecoveryPointInfo`
+  - Added model `StorageSpaceInfo`
+  - Added enum `VMWorkloadPolicyType`
+  - Added model `ValidateAzureWorkloadRestoreOperationRequest`
+  - Operation group `RecoveryPointsOperations` added method `begin_get_rp_extended_info`
+  - Operation group `RecoveryPointsOperations` added method `begin_get_rp_extended_info_operation_result`
+  - Added operation group `ProtectionContainerRefreshOperationStatusesOperations`
+
 ## 11.1.0 (2026-08-31)
 
 ### Features Added
