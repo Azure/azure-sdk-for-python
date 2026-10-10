@@ -21,12 +21,36 @@ class AbusePenaltyAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
     INTERNAL = "Internal"
     """Actions are for internal-only APIs."""
+
+
+class AdapterDeploymentOperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Lifecycle operation states reported by an adapter deployment."""
+
+    ACCEPTED = "Accepted"
+    """The operation was accepted."""
+    RUNNING = "Running"
+    """The operation is running."""
+    SUCCEEDED = "Succeeded"
+    """The operation completed successfully."""
+    FAILED = "Failed"
+    """The operation failed."""
+
+
+class AdapterDeploymentOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Lifecycle operation types reported by an adapter deployment."""
+
+    CREATE = "Create"
+    """Creates the adapter deployment."""
+    UPDATE = "Update"
+    """Re-targets the adapter deployment."""
+    DELETE = "Delete"
+    """Deletes the adapter deployment."""
 
 
 class AgentDeploymentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -450,6 +474,8 @@ class ConnectionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """GENERIC_REST."""
     REMOTE_TOOL = "RemoteTool"
     """REMOTE_TOOL."""
+    OPEN_API = "OpenAPI"
+    """Connection to an endpoint described by an OpenAPI specification."""
     AMAZON_MWS = "AmazonMws"
     """AMAZON_MWS."""
     CONCUR = "Concur"
@@ -570,6 +596,69 @@ class ContentLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEDIUM."""
     HIGH = "High"
     """HIGH."""
+
+
+class CostControlDimensionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Cost control counter dimensions, including Custom retained for legacy read compatibility."""
+
+    AGENT = "Agent"
+    """Consumption is partitioned by the stable Foundry agent ID."""
+    IDENTITY = "Identity"
+    """Consumption is partitioned by the authenticated principal object ID."""
+    SESSION = "Session"
+    """Consumption is partitioned by the Foundry session ID."""
+    PROJECT = "Project"
+    """Consumption is partitioned by the Foundry project resource ID."""
+    ACCOUNT = "Account"
+    """Consumption is partitioned by the owning Cognitive Services account."""
+    CUSTOM = "Custom"
+    """Legacy read-only dimension using ``CostControlDimension.Attribute``. New Custom counter
+    authoring is reserved for future support."""
+
+
+class CostControlPeriod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Calendar-aligned UTC renewal periods, including legacy values retained for read compatibility."""
+
+    MINUTE = "Minute"
+    """Legacy read-only period renewing at the start of the next UTC minute."""
+    HOUR = "Hour"
+    """Legacy read-only period renewing at the start of the next UTC hour."""
+    DAY = "Day"
+    """Renews daily at 00:00 UTC."""
+    WEEK = "Week"
+    """Renews Monday at 00:00 UTC."""
+    MONTH = "Month"
+    """Renews on the first day of each month at 00:00 UTC."""
+    YEAR = "Year"
+    """Legacy read-only period renewing January 1 at 00:00 UTC."""
+
+
+class CostControlThresholdAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported actions when a threshold is reached."""
+
+    AUDIT = "Audit"
+    """Legacy read-only action retained to deserialize existing definitions without changing their
+    semantics."""
+    ALERT = "Alert"
+    """Emits a customer-facing alert without blocking requests."""
+    BLOCK = "Block"
+    """Blocks the request without emitting a customer-facing alert."""
+
+
+class CostControlThresholdType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported threshold value interpretations."""
+
+    PERCENTAGE = "Percentage"
+    """The value is a percentage of the configured rule amount."""
+    ABSOLUTE = "Absolute"
+    """The value is expressed in the rule's unit."""
+
+
+class CostControlUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported unit for cost control amounts and thresholds."""
+
+    USD = "Usd"
+    """Estimated cost in United States dollars."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -892,7 +981,7 @@ class NspAccessRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"
@@ -998,6 +1087,81 @@ class QuotaUsageStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """UNKNOWN."""
 
 
+class RaiAcsHarmCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Harm categories supported by the Unified Moderate text profile."""
+
+    HATE = "Hate"
+    """Hate-related content."""
+    SELF_HARM = "SelfHarm"
+    """Self-harm-related content."""
+    SEXUAL = "Sexual"
+    """Sexual content."""
+    VIOLENCE = "Violence"
+    """Violent content."""
+    PROMPT_INJECTION = "PromptInjection"
+    """Prompt-injection content."""
+    PROTECTED_MATERIAL_TEXT = "ProtectedMaterialText"
+    """Protected text material."""
+    PROTECTED_MATERIAL_CODE = "ProtectedMaterialCode"
+    """Protected source-code material."""
+
+
+class RaiAcsModerationSubjectFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The representation sent to Azure AI Content Safety moderation capabilities."""
+
+    TEXT = "text"
+    """Moderates the selected policy target as text."""
+    CANONICAL_JSON = "canonical_json"
+    """Moderates the canonical JSON representation of the selected policy target."""
+
+
+class RaiAcsPolicyDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The policy language supported by the Azure AI Content Safety Unified Moderate host profile."""
+
+    REGO = "rego"
+    """A policy evaluated by Rego."""
+
+
+class RaiAcsPolicyTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Canonical policy targets supported by the Azure AI Content Safety Unified Moderate host
+    profile.
+    """
+
+    INPUT = "$snap.input"
+    """Selects the incoming user input."""
+    OUTPUT = "$snap.output"
+    """Selects the assistant output."""
+    TOOL_ARGUMENTS = "$snap.tool_call.args"
+    """Selects tool-call arguments."""
+    TOOL_RESULT = "$snap.tool_result.value"
+    """Selects a tool result."""
+
+
+class RaiAcsPolicyTargetKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Canonical target kinds supported by the Azure AI Content Safety Unified Moderate host profile."""
+
+    USER_INPUT = "user_input"
+    """The target contains user input."""
+    ASSISTANT_OUTPUT = "assistant_output"
+    """The target contains assistant output."""
+    TOOL_ARGUMENTS = "tool_args"
+    """The target contains tool-call arguments."""
+    TOOL_RESULT = "tool_result"
+    """The target contains a tool result."""
+
+
+class RaiAcsToolNameSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Snapshot paths for selecting a tool catalog entry. The listed values are recognized by the
+    Azure AI Content Safety Unified Moderate host profile; other values are allowed for forward
+    compatibility.
+    """
+
+    TOOL_CALL_NAME = "$snap.tool_call.name"
+    """Selects the tool-call name from the canonical snapshot root."""
+    TOOL_CALL_NAME_ALIAS = "$.tool_call.name"
+    """Selects the tool-call name through the snapshot-root alias."""
+
+
 class RaiActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The action types to apply to the content filters."""
 
@@ -1091,6 +1255,15 @@ class RaiPolicyContentSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """POST_RUN."""
 
 
+class RaiPolicyFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The public representation used by a RAI policy body."""
+
+    CONTENT_FILTERS = "ContentFilters"
+    """A legacy content-filter policy."""
+    ACS = "ACS"
+    """An Agent Control Specification policy."""
+
+
 class RaiPolicyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Rai policy mode. The enum value mapping is as below: Default = 0, Deferred=1, Blocking=2,
     Asynchronous_filter =3. Please use 'Asynchronous_filter' after 2025-06-01. It is the same as
@@ -1114,6 +1287,15 @@ class RaiPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """USER_MANAGED."""
     SYSTEM_MANAGED = "SystemManaged"
     """SYSTEM_MANAGED."""
+
+
+class RaiRegoEncoding(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The transport encoding of reusable Rego source."""
+
+    NONE = "None"
+    """The Rego property contains plain UTF-8 source."""
+    BASE64 = "Base64"
+    """The Rego property contains Base64-encoded UTF-8 source."""
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1313,3 +1495,41 @@ class VmPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Regular VM priority."""
     SPOT = "Spot"
     """Spot VM priority."""
+
+
+class WorkbenchProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of a workbench resource, independent of runtime lifecycle status."""
+
+    CREATING = "Creating"
+    """The workbench resource is being created."""
+    SUCCEEDED = "Succeeded"
+    """The workbench resource has been provisioned."""
+    FAILED = "Failed"
+    """Provisioning of the workbench resource failed."""
+    CANCELED = "Canceled"
+    """Provisioning of the workbench resource was canceled."""
+
+
+class WorkbenchStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Runtime lifecycle status of a workbench."""
+
+    UNKNOWN = "Unknown"
+    """The runtime status is unknown."""
+    CREATING = "Creating"
+    """The runtime is being created."""
+    STARTING = "Starting"
+    """The runtime is starting."""
+    RUNNING = "Running"
+    """The runtime is running."""
+    STOPPING = "Stopping"
+    """The runtime is stopping."""
+    STOPPED = "Stopped"
+    """The runtime is stopped."""
+    RESTARTING = "Restarting"
+    """The runtime is restarting."""
+    UPDATING = "Updating"
+    """The runtime is being updated."""
+    DELETING = "Deleting"
+    """The runtime is being deleted."""
+    FAILED = "Failed"
+    """The runtime has failed."""
