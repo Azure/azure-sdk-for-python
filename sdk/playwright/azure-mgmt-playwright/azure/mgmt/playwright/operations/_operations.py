@@ -32,14 +32,13 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import PlaywrightMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -50,7 +49,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +70,7 @@ def build_playwright_workspaces_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +99,7 @@ def build_playwright_workspaces_create_or_update_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -131,7 +130,7 @@ def build_playwright_workspaces_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +159,7 @@ def build_playwright_workspaces_delete_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.LoadTestService/playwrightWorkspaces/{playwrightWorkspaceName}"
     path_format_arguments = {
@@ -183,7 +182,7 @@ def build_playwright_workspaces_list_by_resource_group_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -210,7 +209,7 @@ def build_playwright_workspaces_list_by_subscription_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -237,7 +236,7 @@ def build_playwright_workspaces_check_name_availability_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -265,7 +264,7 @@ def build_playwright_quotas_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -293,7 +292,7 @@ def build_playwright_quotas_list_by_subscription_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -324,7 +323,7 @@ def build_playwright_workspace_quotas_get_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -353,7 +352,7 @@ def build_playwright_workspace_quotas_list_by_playwright_workspace_request(  # p
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -375,7 +374,7 @@ def build_playwright_workspace_quotas_list_by_playwright_workspace_request(  # p
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -439,7 +438,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -482,7 +484,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class PlaywrightWorkspacesOperations:
+class PlaywrightWorkspacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -575,7 +577,7 @@ class PlaywrightWorkspacesOperations:
         self,
         resource_group_name: str,
         playwright_workspace_name: str,
-        resource: Union[_models.PlaywrightWorkspace, JSON, IO[bytes]],
+        resource: Union[_models.PlaywrightWorkspace, _types.PlaywrightWorkspace, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -681,7 +683,7 @@ class PlaywrightWorkspacesOperations:
         self,
         resource_group_name: str,
         playwright_workspace_name: str,
-        resource: JSON,
+        resource: _types.PlaywrightWorkspace,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -694,7 +696,7 @@ class PlaywrightWorkspacesOperations:
         :param playwright_workspace_name: The name of the PlaywrightWorkspace. Required.
         :type playwright_workspace_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.playwright.types.PlaywrightWorkspace
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -737,7 +739,7 @@ class PlaywrightWorkspacesOperations:
         self,
         resource_group_name: str,
         playwright_workspace_name: str,
-        resource: Union[_models.PlaywrightWorkspace, JSON, IO[bytes]],
+        resource: Union[_models.PlaywrightWorkspace, _types.PlaywrightWorkspace, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.PlaywrightWorkspace]:
         """Create a PlaywrightWorkspace.
@@ -747,9 +749,10 @@ class PlaywrightWorkspacesOperations:
         :type resource_group_name: str
         :param playwright_workspace_name: The name of the PlaywrightWorkspace. Required.
         :type playwright_workspace_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         PlaywrightWorkspace, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.playwright.models.PlaywrightWorkspace or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a PlaywrightWorkspace type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.playwright.models.PlaywrightWorkspace or
+         ~azure.mgmt.playwright.types.PlaywrightWorkspace or IO[bytes]
         :return: An instance of LROPoller that returns PlaywrightWorkspace. The PlaywrightWorkspace is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.playwright.models.PlaywrightWorkspace]
@@ -839,7 +842,7 @@ class PlaywrightWorkspacesOperations:
         self,
         resource_group_name: str,
         playwright_workspace_name: str,
-        properties: JSON,
+        properties: _types.PlaywrightWorkspaceUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -852,7 +855,7 @@ class PlaywrightWorkspacesOperations:
         :param playwright_workspace_name: The name of the PlaywrightWorkspace. Required.
         :type playwright_workspace_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.playwright.types.PlaywrightWorkspaceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -893,7 +896,7 @@ class PlaywrightWorkspacesOperations:
         self,
         resource_group_name: str,
         playwright_workspace_name: str,
-        properties: Union[_models.PlaywrightWorkspaceUpdate, JSON, IO[bytes]],
+        properties: Union[_models.PlaywrightWorkspaceUpdate, _types.PlaywrightWorkspaceUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.PlaywrightWorkspace:
         """Updates a Playwright workspace resource synchronously.
@@ -903,9 +906,10 @@ class PlaywrightWorkspacesOperations:
         :type resource_group_name: str
         :param playwright_workspace_name: The name of the PlaywrightWorkspace. Required.
         :type playwright_workspace_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         PlaywrightWorkspaceUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.playwright.models.PlaywrightWorkspaceUpdate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a PlaywrightWorkspaceUpdate
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.playwright.models.PlaywrightWorkspaceUpdate or
+         ~azure.mgmt.playwright.types.PlaywrightWorkspaceUpdate or IO[bytes]
         :return: PlaywrightWorkspace. The PlaywrightWorkspace is compatible with MutableMapping
         :rtype: ~azure.mgmt.playwright.models.PlaywrightWorkspace
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1149,7 +1153,10 @@ class PlaywrightWorkspacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1239,7 +1246,10 @@ class PlaywrightWorkspacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1300,12 +1310,12 @@ class PlaywrightWorkspacesOperations:
 
     @overload
     def check_name_availability(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.CheckNameAvailabilityRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
         """Checks if a Playwright workspace name is available globally.
 
         :param body: The CheckAvailability request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.playwright.types.CheckNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1334,13 +1344,16 @@ class PlaywrightWorkspacesOperations:
 
     @distributed_trace
     def check_name_availability(
-        self, body: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        body: Union[_models.CheckNameAvailabilityRequest, _types.CheckNameAvailabilityRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
         """Checks if a Playwright workspace name is available globally.
 
-        :param body: The CheckAvailability request. Is one of the following types:
-         CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.playwright.models.CheckNameAvailabilityRequest or JSON or IO[bytes]
+        :param body: The CheckAvailability request. Is either a CheckNameAvailabilityRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.playwright.models.CheckNameAvailabilityRequest or
+         ~azure.mgmt.playwright.types.CheckNameAvailabilityRequest or IO[bytes]
         :return: CheckNameAvailabilityResponse. The CheckNameAvailabilityResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.playwright.models.CheckNameAvailabilityResponse
@@ -1412,7 +1425,7 @@ class PlaywrightWorkspacesOperations:
         return deserialized  # type: ignore
 
 
-class PlaywrightQuotasOperations:
+class PlaywrightQuotasOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1551,7 +1564,10 @@ class PlaywrightQuotasOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1594,7 +1610,7 @@ class PlaywrightQuotasOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PlaywrightWorkspaceQuotasOperations:
+class PlaywrightWorkspaceQuotasOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1748,7 +1764,10 @@ class PlaywrightWorkspaceQuotasOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
