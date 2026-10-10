@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +15,7 @@ from azure.mgmt.iothub import IotHubClient
     pip install azure-identity
     pip install azure-mgmt-iothub
 # USAGE
-    python create_or_replace_io_thub_with_device_registry.py
+    python create_or_replace_io_thub_with_mqtt_v5.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -43,10 +42,7 @@ def main():
                     "feedback": {"lockDurationAsIso8601": "PT1M", "maxDeliveryCount": 10, "ttlAsIso8601": "PT1H"},
                     "maxDeliveryCount": 10,
                 },
-                "deviceRegistry": {
-                    "identityResourceId": "/subscriptions/ae24ff83-d2ca-4fc8-9717-05dae4bba489/resourceGroups/myResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testIdentity",
-                    "namespaceResourceId": "/subscriptions/ae24ff83-d2ca-4fc8-9717-05dae4bba489/resourceGroups/myResourceGroup/providers/Microsoft.DeviceRegistry/namespaces/testNamespace",
-                },
+                "connectionProfile": "MqttV5",
                 "enableDataResidency": True,
                 "enableFileUploadNotifications": False,
                 "eventHubEndpoints": {"events": {"partitionCount": 2, "retentionTimeInDays": 1}},
@@ -61,6 +57,14 @@ def main():
                     }
                 },
                 "minTlsVersion": "1.2",
+                "mqttV5Settings": {
+                    "topicGroups": [
+                        {
+                            "topicGroupId": "myTopicGroup",
+                            "topicTemplates": ["mytopics/telemetry/temperature/*", "mytopics/telemetry/humidity/*"],
+                        }
+                    ]
+                },
                 "networkRuleSets": {
                     "applyToBuiltInEventHubEndpoint": True,
                     "defaultAction": "Deny",
@@ -73,7 +77,6 @@ def main():
                 "routing": {
                     "endpoints": {
                         "eventHubs": [],
-                        "eventStreams": [],
                         "serviceBusQueues": [],
                         "serviceBusTopics": [],
                         "storageContainers": [],
@@ -98,6 +101,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/CreateOrReplace_IoTHub_With_DeviceRegistry.json
+# x-ms-original-file: 2026-10-01-preview/CreateOrReplace_IoTHub_With_MqttV5.json
 if __name__ == "__main__":
     main()

@@ -15,7 +15,7 @@ from azure.mgmt.iothub import IotHubClient
     pip install azure-identity
     pip install azure-mgmt-iothub
 # USAGE
-    python create_or_replace_certificates_with_device_registry_policy.py
+    python get_iot_hub_with_device_registry.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,15 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.certificates.create_or_update(
+    response = client.iot_hub_resource.get(
         resource_group_name="myResourceGroup",
         resource_name="testHub",
-        certificate_name="cert",
-        certificate_description={"properties": {"certificate": "############################################"}},
     )
     print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/CreateOrReplace_Certificates_With_DeviceRegistryPolicy.json
+# x-ms-original-file: 2026-10-01-preview/Get_IotHub_With_DeviceRegistry.json
 if __name__ == "__main__":
     main()
