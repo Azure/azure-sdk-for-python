@@ -28,7 +28,6 @@
 
 ### Breaking Changes
 
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Deleted or renamed client operation group `ResilienceManagementClient.goal_templates`
   - Model `DrillResourceProperties` deleted or renamed its instance variable `active_physical_zones`
   - Model `DrillResourceProperties` deleted or renamed its instance variable `advisor_ha_recommendation_id`
@@ -36,7 +35,6 @@
   - Model `DrillResourceProperties` deleted or renamed its instance variable `recovery_physical_zones`
   - Model `GoalAssignmentProperties` deleted or renamed its instance variable `goal_assignment_type`
   - Model `GoalAssignmentProperties` deleted or renamed its instance variable `goal_template_id`
-  - `GoalAssignmentProperties.require_zonal_resiliency` is now required.
   - Model `GoalResourceProperties` deleted or renamed its instance variable `disaster_recovery_attestation_status`
   - Model `GoalResourceProperties` deleted or renamed its instance variable `disaster_recovery_goal_participation`
   - Model `GoalResourceProperties` deleted or renamed its instance variable `exclusion_reason_for_disaster_recovery_goals`
@@ -57,19 +55,20 @@
   - Model `HealthModelMonitoringProperties` deleted or renamed its instance variable `discovery_rule_id`
   - Model `ServiceLevelResource` deleted or renamed its instance variable `service_level_objective_resource_id`
   - Model `UnifiedResilienceItemProperties` deleted or renamed its instance variable `recommendations`
+  - `GoalAssignmentProperties.require_zonal_resiliency` is now required.
   - Deleted or renamed enum value `UsagePlanType.BASIC`
-  - Deleted or renamed enum `GoalAssignmentType`
+  - Deleted or renamed model `GoalAssignmentType`
   - Deleted or renamed model `GoalTemplate`
   - Deleted or renamed model `GoalTemplateProperties`
-  - Deleted or renamed enum `GoalType`
-  - Deleted or renamed enum `IsoDuration`
-  - Deleted or renamed enum `MembershipType`
+  - Deleted or renamed model `GoalType`
+  - Deleted or renamed model `IsoDuration`
+  - Deleted or renamed model `MembershipType`
   - Deleted or renamed model `RecommendationsData`
   - Deleted or renamed model `RecommendationsHighAvailabilityData`
-  - Deleted or renamed enum `RequirementSelected`
-  - Deleted or renamed enum `ResilienceHealthStatus`
+  - Deleted or renamed model `RequirementSelected`
+  - Deleted or renamed model `ResilienceHealthStatus`
   - Deleted or renamed model `ServiceGroupMembership`
-  - Deleted or renamed enum `UnifiedResilienceItemRequirementSelected`
+  - Deleted or renamed model `UnifiedResilienceItemRequirementSelected`
   - Deleted or renamed operation group `GoalTemplatesOperations`
 
 ## 1.0.0b2 (2026-09-23)
