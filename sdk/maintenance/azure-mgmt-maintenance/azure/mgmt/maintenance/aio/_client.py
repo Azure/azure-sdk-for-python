@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,7 +31,7 @@ from .operations import (
     MaintenanceConfigurationsOperations,
     Operations,
     PublicMaintenanceConfigurationsOperations,
-    ScheduledEventOperations,
+    ScheduledEventsOperations,
     UpdatesOperations,
 )
 
@@ -44,7 +45,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class MaintenanceManagementClient:  # pylint: disable=too-many-instance-attributes
+class MaintenanceManagementClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Azure Maintenance Management Client.
 
     :ivar operations: Operations operations
@@ -76,8 +77,8 @@ class MaintenanceManagementClient:  # pylint: disable=too-many-instance-attribut
      ConfigurationAssignmentsWithinSubscriptionOperations operations
     :vartype configuration_assignments_within_subscription:
      azure.mgmt.maintenance.aio.operations.ConfigurationAssignmentsWithinSubscriptionOperations
-    :ivar scheduled_event: ScheduledEventOperations operations
-    :vartype scheduled_event: azure.mgmt.maintenance.aio.operations.ScheduledEventOperations
+    :ivar scheduled_events: ScheduledEventsOperations operations
+    :vartype scheduled_events: azure.mgmt.maintenance.aio.operations.ScheduledEventsOperations
     :ivar apply_update_for_resource_group: ApplyUpdateForResourceGroupOperations operations
     :vartype apply_update_for_resource_group:
      azure.mgmt.maintenance.aio.operations.ApplyUpdateForResourceGroupOperations
@@ -93,7 +94,7 @@ class MaintenanceManagementClient:  # pylint: disable=too-many-instance-attribut
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2023-10-01-preview" and None. Default value is None. If not set, the operation's default API
+     "2025-10-01-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -171,7 +172,9 @@ class MaintenanceManagementClient:  # pylint: disable=too-many-instance-attribut
         self.configuration_assignments_within_subscription = ConfigurationAssignmentsWithinSubscriptionOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.scheduled_event = ScheduledEventOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.scheduled_events = ScheduledEventsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.apply_update_for_resource_group = ApplyUpdateForResourceGroupOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
