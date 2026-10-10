@@ -32,6 +32,7 @@ from .base_polling import (
     OperationFailed,
     _SansIOLROBasePolling,
     _raise_if_bad_http_status_and_method,
+    _warn_on_cross_host_poll_target,
 )
 from ._async_poller import AsyncPollingMethod
 from ..pipeline._tools import is_rest
@@ -154,6 +155,7 @@ class AsyncLROBasePolling(
         """
         if self._path_format_arguments:
             status_link = self._client.format_url(status_link, **self._path_format_arguments)
+        _warn_on_cross_host_poll_target(self._initial_response.http_response.request.url, status_link)
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = self._get_request_id()
