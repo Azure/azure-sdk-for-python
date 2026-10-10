@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b3 (Unreleased)
+
+### Other Changes
+
+- Updated the package to validate the signed-binary release pipeline.
+
 ## 1.0.0b2 (2026-09-24)
 
 ### Other Changes
