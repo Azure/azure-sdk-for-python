@@ -913,7 +913,11 @@ class _BaggageLogRecordProcessor:
                 attrs[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
 
             bag_session = _otel_baggage.get_baggage(_BAGGAGE_SESSION_ID, context=ctx)
-            resolved_session = bag_session or self.session_id
+            resolved_session = (
+                bag_session
+                or _config.resolve_session_id()
+                or self.session_id
+            )
             if resolved_session and _ATTR_SESSION_ID not in attrs:
                 attrs[_ATTR_SESSION_ID] = resolved_session
         except Exception:  # pylint: disable=broad-except
