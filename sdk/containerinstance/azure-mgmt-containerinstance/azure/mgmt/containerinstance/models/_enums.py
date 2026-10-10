@@ -10,6 +10,23 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AiAgentsGroupProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of an AiAgentsGroup resource."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+    UPDATING = "Updating"
+    """The resource is being updated."""
+    DELETING = "Deleting"
+    """The resource is being deleted."""
+    ACCEPTED = "Accepted"
+    """The resource provisioning request was accepted but not yet started."""
+
+
 class AzureFileShareAccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Access tier for specific share. GpV2 account can choose between TransactionOptimized (default),
     Hot, and Cool. FileStorage account can choose Premium. Learn more at:
@@ -245,23 +262,6 @@ class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SystemAssigned, UserAssigned."""
     NONE = "None"
     """None."""
-
-
-class SandboxGroupProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state of a SandboxGroup resource."""
-
-    SUCCEEDED = "Succeeded"
-    """Resource has been created."""
-    FAILED = "Failed"
-    """Resource creation failed."""
-    CANCELED = "Canceled"
-    """Resource creation was canceled."""
-    UPDATING = "Updating"
-    """The resource is being updated."""
-    DELETING = "Deleting"
-    """The resource is being deleted."""
-    ACCEPTED = "Accepted"
-    """The resource provisioning request was accepted but not yet started."""
 
 
 class Scheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -67,6 +67,7 @@ class TestContainerInstanceManagementNGroupsOperations(AzureMgmtRecordedTestCase
                                             "readOnly": bool,
                                             "storageAccountKey": "str",
                                             "storageAccountKeyReference": "str",
+                                            "userAssignedIdentityClientId": "str",
                                         },
                                     }
                                 ],
@@ -158,6 +159,7 @@ class TestContainerInstanceManagementNGroupsOperations(AzureMgmtRecordedTestCase
                                             "readOnly": bool,
                                             "storageAccountKey": "str",
                                             "storageAccountKeyReference": "str",
+                                            "userAssignedIdentityClientId": "str",
                                         },
                                     }
                                 ],
