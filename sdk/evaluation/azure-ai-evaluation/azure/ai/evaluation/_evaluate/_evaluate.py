@@ -1146,9 +1146,7 @@ def _build_internal_log_attributes(
 
     passed = event_data.get("passed")
     if isinstance(passed, bool):
-        internal_log_attributes["microsoft.gen_ai.evaluation.passed"] = str(
-            passed
-        ).lower()
+        internal_log_attributes["microsoft.gen_ai.evaluation.passed"] = str(passed).lower()
 
     # Add testing criteria details if present
     testing_criteria_name = event_data.get("name")
