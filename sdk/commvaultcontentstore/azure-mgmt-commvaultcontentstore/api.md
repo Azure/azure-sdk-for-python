@@ -97,7 +97,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
                 self, 
                 resource_group_name: str, 
                 cloud_account_name: str, 
-                resource: JSON, 
+                resource: CloudAccount, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -138,7 +138,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
                 self, 
                 resource_group_name: str, 
                 cloud_account_name: str, 
-                body: JSON, 
+                body: SaaSData, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -160,7 +160,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
                 self, 
                 resource_group_name: str, 
                 cloud_account_name: str, 
-                properties: CloudAccountUpdate, 
+                properties: CloudAccount, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -171,7 +171,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
                 self, 
                 resource_group_name: str, 
                 cloud_account_name: str, 
-                properties: JSON, 
+                properties: CloudAccount, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -197,7 +197,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
             ) -> CloudAccount: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'accept']}, api_versions_list=['2026-06-02-preview', '2026-07-01-preview', '2026-07-03-preview'])
+        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'accept']}, api_versions_list=['2026-06-02-preview', '2026-07-01-preview', '2026-07-03-preview', '2026-08-01-preview'])
         async def latest_linked_saa_s(
                 self, 
                 resource_group_name: str, 
@@ -254,7 +254,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
                 resource_group_name: str, 
                 cloud_account_name: str, 
                 plan_name: str, 
-                resource: JSON, 
+                resource: CommvaultPlan, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -319,7 +319,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
         @overload
         async def count_by_protection_groups(
                 self, 
-                body: JSON, 
+                body: CountProtectedItemsRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -392,7 +392,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
                 cloud_account_name: str, 
                 protection_group_name: str, 
                 protected_item_name: str, 
-                request: JSON, 
+                request: RestoreProtectionItemRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -438,7 +438,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
                 resource_group_name: str, 
                 cloud_account_name: str, 
                 protection_group_name: str, 
-                request: JSON, 
+                request: BackupProtectionGroupRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -474,7 +474,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
                 resource_group_name: str, 
                 cloud_account_name: str, 
                 protection_group_name: str, 
-                resource: JSON, 
+                resource: ProtectionGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -519,7 +519,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
                 resource_group_name: str, 
                 cloud_account_name: str, 
                 protection_group_name: str, 
-                request: JSON, 
+                request: StopBackupProtectionGroupRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -572,7 +572,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
                 resource_group_name: str, 
                 cloud_account_name: str, 
                 protection_group_name: str, 
-                request: JSON, 
+                request: RestoreProtectionItemRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -591,7 +591,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
             ) -> RestoreProtectionItemResponse: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'protection_group_name']}, api_versions_list=['2026-03-01-preview', '2026-05-01-preview', '2026-06-01-preview', '2026-06-02-preview', '2026-07-01-preview', '2026-07-03-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'protection_group_name']}, api_versions_list=['2026-03-01-preview', '2026-05-01-preview', '2026-06-01-preview', '2026-06-02-preview', '2026-07-01-preview', '2026-07-03-preview', '2026-08-01-preview'])
         async def resume_backup(
                 self, 
                 resource_group_name: str, 
@@ -625,7 +625,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
                 self, 
                 resource_group_name: str, 
                 cloud_account_name: str, 
-                resource: JSON, 
+                resource: RoleMapping, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -643,7 +643,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
             ) -> RoleMapping: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name']}, api_versions_list=['2026-07-03-preview'])
+        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name']}, api_versions_list=['2026-07-03-preview', '2026-08-01-preview'])
         async def delete(
                 self, 
                 resource_group_name: str, 
@@ -652,7 +652,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'accept']}, api_versions_list=['2026-07-03-preview'])
+        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'accept']}, api_versions_list=['2026-07-03-preview', '2026-08-01-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -661,7 +661,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
             ) -> RoleMapping: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'accept']}, api_versions_list=['2026-07-03-preview'])
+        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'accept']}, api_versions_list=['2026-07-03-preview', '2026-08-01-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -690,7 +690,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
         @overload
         async def begin_activate_resource(
                 self, 
-                body: JSON, 
+                body: ActivateSaaSParameterRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -732,7 +732,7 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
                 resource_group_name: str, 
                 cloud_account_name: str, 
                 storage_name: str, 
-                resource: JSON, 
+                resource: Storage, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -760,6 +760,26 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'storage_name', 'accept']}, api_versions_list=['2026-07-03-preview', '2026-08-01-preview'])
+        async def disable_compliance_lock(
+                self, 
+                resource_group_name: str, 
+                cloud_account_name: str, 
+                storage_name: str, 
+                **kwargs: Any
+            ) -> Storage: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'storage_name', 'accept']}, api_versions_list=['2026-07-03-preview', '2026-08-01-preview'])
+        async def enable_compliance_lock(
+                self, 
+                resource_group_name: str, 
+                cloud_account_name: str, 
+                storage_name: str, 
+                **kwargs: Any
+            ) -> Storage: ...
+
+        @distributed_trace_async
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -776,6 +796,16 @@ namespace azure.mgmt.commvaultcontentstore.aio.operations
                 **kwargs: Any
             ) -> AsyncItemPaged[Storage]: ...
 
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'storage_name', 'accept']}, api_versions_list=['2026-07-03-preview', '2026-08-01-preview'])
+        async def refresh(
+                self, 
+                resource_group_name: str, 
+                cloud_account_name: str, 
+                storage_name: str, 
+                **kwargs: Any
+            ) -> Storage: ...
+
 
 namespace azure.mgmt.commvaultcontentstore.models
 
@@ -784,13 +814,35 @@ namespace azure.mgmt.commvaultcontentstore.models
 
 
     class azure.mgmt.commvaultcontentstore.models.ActivateSaaSParameterRequest(_Model):
-        saa_s_guid: str
+        activate_saa_s_request_param: Optional[ActivateSaaSRequestParam]
+        publisher_id: Optional[str]
+        saas_guid: str
 
         @overload
         def __init__(
                 self, 
                 *, 
-                saa_s_guid: str
+                activate_saa_s_request_param: Optional[ActivateSaaSRequestParam] = ..., 
+                publisher_id: Optional[str] = ..., 
+                saas_guid: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.commvaultcontentstore.models.ActivateSaaSRequestParam(_Model):
+        company: Optional[CompanyProfile]
+        saas_resource_id: Optional[str]
+        user: Optional[UserDetails]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                company: Optional[CompanyProfile] = ..., 
+                saas_resource_id: Optional[str] = ..., 
+                user: Optional[UserDetails] = ...
             ) -> None: ...
 
         @overload
@@ -890,10 +942,10 @@ namespace azure.mgmt.commvaultcontentstore.models
 
 
     class azure.mgmt.commvaultcontentstore.models.CloudAccountProperties(_Model):
-        backup_admin_on_cca_create: Optional[EntityInfo]
+        company: Optional[CompanyProfile]
         marketplace: MarketplaceDetails
-        multi_person_authorization_on_cca_create: Optional[EntityInfo]
         provisioning_state: Optional[Union[str, ResourceProvisioningState]]
+        role_assignments_on_cca_create: Optional[list[RoleAssignment]]
         sso_url: Optional[str]
         user: UserDetails
 
@@ -901,44 +953,10 @@ namespace azure.mgmt.commvaultcontentstore.models
         def __init__(
                 self, 
                 *, 
-                backup_admin_on_cca_create: Optional[EntityInfo] = ..., 
+                company: Optional[CompanyProfile] = ..., 
                 marketplace: MarketplaceDetails, 
-                multi_person_authorization_on_cca_create: Optional[EntityInfo] = ..., 
+                role_assignments_on_cca_create: Optional[list[RoleAssignment]] = ..., 
                 user: UserDetails
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.commvaultcontentstore.models.CloudAccountUpdate(_Model):
-        identity: Optional[ManagedServiceIdentity]
-        properties: Optional[CloudAccountUpdateProperties]
-        tags: Optional[dict[str, str]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                identity: Optional[ManagedServiceIdentity] = ..., 
-                properties: Optional[CloudAccountUpdateProperties] = ..., 
-                tags: Optional[dict[str, str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.commvaultcontentstore.models.CloudAccountUpdateProperties(_Model):
-        marketplace: Optional[MarketplaceDetails]
-        user: Optional[UserDetails]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                marketplace: Optional[MarketplaceDetails] = ..., 
-                user: Optional[UserDetails] = ...
             ) -> None: ...
 
         @overload
@@ -961,6 +979,40 @@ namespace azure.mgmt.commvaultcontentstore.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.commvaultcontentstore.models.CompanyProfile(_Model):
+        city: Optional[str]
+        company_name: Optional[str]
+        country: Optional[str]
+        job_title: Optional[str]
+        postal_code: Optional[str]
+        state: Optional[str]
+        street: Optional[str]
+        website: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                city: Optional[str] = ..., 
+                company_name: Optional[str] = ..., 
+                country: Optional[str] = ..., 
+                job_title: Optional[str] = ..., 
+                postal_code: Optional[str] = ..., 
+                state: Optional[str] = ..., 
+                street: Optional[str] = ..., 
+                website: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.commvaultcontentstore.models.ComplianceLockStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DISABLED = "Disabled"
+        DISABLEMENT_PENDING = "DisablementPending"
+        ENABLED = "Enabled"
 
 
     class azure.mgmt.commvaultcontentstore.models.CountProtectedItemsRequest(_Model):
@@ -1306,10 +1358,10 @@ namespace azure.mgmt.commvaultcontentstore.models
     class azure.mgmt.commvaultcontentstore.models.ProtectionGroupProperties(_Model):
         backup_activity_status: Optional[str]
         data_source_type: Literal["AzureVM"]
-        last_back_up_time: Optional[int]
-        number_of_protected_items: Optional[int]
+        last_back_up_time: int
+        number_of_protected_items: int
         plan: str
-        protection_status: Optional[Union[str, ProtectionStatus]]
+        protection_status: Union[str, ProtectionStatus]
         provisioning_state: Optional[Union[str, ResourceProvisioningState]]
         resources: ProtectionGroupResources
 
@@ -1441,15 +1493,15 @@ namespace azure.mgmt.commvaultcontentstore.models
 
 
     class azure.mgmt.commvaultcontentstore.models.RoleAssignment(_Model):
-        entities: Optional[list[EntityInfo]]
-        role_name: Optional[Union[str, RoleName]]
+        entities: list[EntityInfo]
+        role_name: Union[str, RoleName]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                entities: Optional[list[EntityInfo]] = ..., 
-                role_name: Optional[Union[str, RoleName]] = ...
+                entities: list[EntityInfo], 
+                role_name: Union[str, RoleName]
             ) -> None: ...
 
         @overload
@@ -1657,6 +1709,7 @@ namespace azure.mgmt.commvaultcontentstore.models
 
     class azure.mgmt.commvaultcontentstore.models.StorageProperties(_Model):
         class_property: Union[str, StorageClassType]
+        compliance_lock_status: Optional[Union[str, ComplianceLockStatus]]
         location: str
         provisioning_state: Optional[Union[str, ResourceProvisioningState]]
         storage_type: Union[str, StorageType]
@@ -1877,7 +1930,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
                 self, 
                 resource_group_name: str, 
                 cloud_account_name: str, 
-                resource: JSON, 
+                resource: CloudAccount, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1918,7 +1971,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
                 self, 
                 resource_group_name: str, 
                 cloud_account_name: str, 
-                body: JSON, 
+                body: SaaSData, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1940,7 +1993,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
                 self, 
                 resource_group_name: str, 
                 cloud_account_name: str, 
-                properties: CloudAccountUpdate, 
+                properties: CloudAccount, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1951,7 +2004,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
                 self, 
                 resource_group_name: str, 
                 cloud_account_name: str, 
-                properties: JSON, 
+                properties: CloudAccount, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1977,7 +2030,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
             ) -> CloudAccount: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'accept']}, api_versions_list=['2026-06-02-preview', '2026-07-01-preview', '2026-07-03-preview'])
+        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'accept']}, api_versions_list=['2026-06-02-preview', '2026-07-01-preview', '2026-07-03-preview', '2026-08-01-preview'])
         def latest_linked_saa_s(
                 self, 
                 resource_group_name: str, 
@@ -2034,7 +2087,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
                 resource_group_name: str, 
                 cloud_account_name: str, 
                 plan_name: str, 
-                resource: JSON, 
+                resource: CommvaultPlan, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2099,7 +2152,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
         @overload
         def count_by_protection_groups(
                 self, 
-                body: JSON, 
+                body: CountProtectedItemsRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2172,7 +2225,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
                 cloud_account_name: str, 
                 protection_group_name: str, 
                 protected_item_name: str, 
-                request: JSON, 
+                request: RestoreProtectionItemRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2218,7 +2271,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
                 resource_group_name: str, 
                 cloud_account_name: str, 
                 protection_group_name: str, 
-                request: JSON, 
+                request: BackupProtectionGroupRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2254,7 +2307,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
                 resource_group_name: str, 
                 cloud_account_name: str, 
                 protection_group_name: str, 
-                resource: JSON, 
+                resource: ProtectionGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2299,7 +2352,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
                 resource_group_name: str, 
                 cloud_account_name: str, 
                 protection_group_name: str, 
-                request: JSON, 
+                request: StopBackupProtectionGroupRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2352,7 +2405,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
                 resource_group_name: str, 
                 cloud_account_name: str, 
                 protection_group_name: str, 
-                request: JSON, 
+                request: RestoreProtectionItemRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2371,7 +2424,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
             ) -> RestoreProtectionItemResponse: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'protection_group_name']}, api_versions_list=['2026-03-01-preview', '2026-05-01-preview', '2026-06-01-preview', '2026-06-02-preview', '2026-07-01-preview', '2026-07-03-preview'])
+        @api_version_validation(method_added_on='2026-03-01-preview', params_added_on={'2026-03-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'protection_group_name']}, api_versions_list=['2026-03-01-preview', '2026-05-01-preview', '2026-06-01-preview', '2026-06-02-preview', '2026-07-01-preview', '2026-07-03-preview', '2026-08-01-preview'])
         def resume_backup(
                 self, 
                 resource_group_name: str, 
@@ -2405,7 +2458,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
                 self, 
                 resource_group_name: str, 
                 cloud_account_name: str, 
-                resource: JSON, 
+                resource: RoleMapping, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2423,7 +2476,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
             ) -> RoleMapping: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name']}, api_versions_list=['2026-07-03-preview'])
+        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name']}, api_versions_list=['2026-07-03-preview', '2026-08-01-preview'])
         def delete(
                 self, 
                 resource_group_name: str, 
@@ -2432,7 +2485,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'accept']}, api_versions_list=['2026-07-03-preview'])
+        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'accept']}, api_versions_list=['2026-07-03-preview', '2026-08-01-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -2441,7 +2494,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
             ) -> RoleMapping: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'accept']}, api_versions_list=['2026-07-03-preview'])
+        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'accept']}, api_versions_list=['2026-07-03-preview', '2026-08-01-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -2470,7 +2523,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
         @overload
         def begin_activate_resource(
                 self, 
-                body: JSON, 
+                body: ActivateSaaSParameterRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2512,7 +2565,7 @@ namespace azure.mgmt.commvaultcontentstore.operations
                 resource_group_name: str, 
                 cloud_account_name: str, 
                 storage_name: str, 
-                resource: JSON, 
+                resource: Storage, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2540,6 +2593,26 @@ namespace azure.mgmt.commvaultcontentstore.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'storage_name', 'accept']}, api_versions_list=['2026-07-03-preview', '2026-08-01-preview'])
+        def disable_compliance_lock(
+                self, 
+                resource_group_name: str, 
+                cloud_account_name: str, 
+                storage_name: str, 
+                **kwargs: Any
+            ) -> Storage: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'storage_name', 'accept']}, api_versions_list=['2026-07-03-preview', '2026-08-01-preview'])
+        def enable_compliance_lock(
+                self, 
+                resource_group_name: str, 
+                cloud_account_name: str, 
+                storage_name: str, 
+                **kwargs: Any
+            ) -> Storage: ...
+
+        @distributed_trace
         def get(
                 self, 
                 resource_group_name: str, 
@@ -2555,6 +2628,479 @@ namespace azure.mgmt.commvaultcontentstore.operations
                 cloud_account_name: str, 
                 **kwargs: Any
             ) -> ItemPaged[Storage]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-03-preview', params_added_on={'2026-07-03-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cloud_account_name', 'storage_name', 'accept']}, api_versions_list=['2026-07-03-preview', '2026-08-01-preview'])
+        def refresh(
+                self, 
+                resource_group_name: str, 
+                cloud_account_name: str, 
+                storage_name: str, 
+                **kwargs: Any
+            ) -> Storage: ...
+
+
+namespace azure.mgmt.commvaultcontentstore.types
+
+    class azure.mgmt.commvaultcontentstore.types.ActivateSaaSParameterRequest(TypedDict, total=False):
+        key "activateSaaSRequestParam": ForwardRef('ActivateSaaSRequestParam', module='types')
+        key "publisherId": str
+        key "saasGuid": Required[str]
+        activateSaaSRequestParam: ActivateSaaSRequestParam
+        publisherId: str
+        saasGuid: str
+
+
+    class azure.mgmt.commvaultcontentstore.types.ActivateSaaSRequestParam(TypedDict, total=False):
+        key "company": ForwardRef('CompanyProfile', module='types')
+        key "saasResourceId": str
+        key "user": ForwardRef('UserDetails', module='types')
+        company: CompanyProfile
+        saasResourceId: str
+        user: UserDetails
+
+
+    class azure.mgmt.commvaultcontentstore.types.BackupOptions(TypedDict, total=False):
+        key "backupCopyImmediately": Required[bool]
+        key "backupLevel": Union[str, BackupLevel]
+        key "jobDescription": Required[str]
+        key "notifyUserOnJobCompletion": Required[bool]
+        key "runSnapShotBackup": Required[bool]
+        backupCopyImmediately: bool
+        backupLevel: Union[str, BackupLevel]
+        jobDescription: str
+        notifyUserOnJobCompletion: bool
+        runSnapShotBackup: bool
+
+
+    class azure.mgmt.commvaultcontentstore.types.BackupProtectionGroupRequest(TypedDict, total=False):
+        key "backupOptions": Required[BackupOptions]
+        key "vmList": Required[list[VmListItem]]
+        backupOptions: BackupOptions
+        vmList: list[VmListItem]
+
+
+    class azure.mgmt.commvaultcontentstore.types.CloudAccount(TrackedResource):
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('CloudAccountProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: CloudAccountProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.commvaultcontentstore.types.CloudAccountProperties(TypedDict, total=False):
+        key "company": ForwardRef('CompanyProfile', module='types')
+        key "marketplace": Required[MarketplaceDetails]
+        key "provisioningState": Union[str, ResourceProvisioningState]
+        key "ssoUrl": str
+        key "user": Required[UserDetails]
+        company: CompanyProfile
+        marketplace: MarketplaceDetails
+        provisioningState: Union[str, ResourceProvisioningState]
+        roleAssignmentsOnCcaCreate: list[RoleAssignment]
+        ssoUrl: str
+        user: UserDetails
+
+
+    class azure.mgmt.commvaultcontentstore.types.CommvaultPlan(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('PlanProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: PlanProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.commvaultcontentstore.types.CompanyProfile(TypedDict, total=False):
+        key "city": str
+        key "companyName": str
+        key "country": str
+        key "jobTitle": str
+        key "postalCode": str
+        key "state": str
+        key "street": str
+        key "website": str
+        city: str
+        companyName: str
+        country: str
+        jobTitle: str
+        postalCode: str
+        state: str
+        street: str
+        website: str
+
+
+    class azure.mgmt.commvaultcontentstore.types.CountProtectedItemsRequest(TypedDict, total=False):
+        key "resourceIds": Required[list[str]]
+        resourceIds: list[str]
+
+
+    class azure.mgmt.commvaultcontentstore.types.EntityInfo(TypedDict, total=False):
+        key "displayName": str
+        key "entityType": Union[str, EntityType]
+        key "id": str
+        displayName: str
+        entityType: Union[str, EntityType]
+        id: str
+
+
+    class azure.mgmt.commvaultcontentstore.types.ExtendedRetentionTime(TypedDict, total=False):
+        key "backupRuleType": Union[str, BackupRuleType]
+        key "retentionPeriod": int
+        key "retentionTime": Union[str, RetentionTime]
+        backupRuleType: Union[str, BackupRuleType]
+        retentionPeriod: int
+        retentionTime: Union[str, RetentionTime]
+
+
+    class azure.mgmt.commvaultcontentstore.types.ManagedServiceIdentity(TypedDict, total=False):
+        key "principalId": str
+        key "tenantId": str
+        key "type": Required[Union[str, ManagedServiceIdentityType]]
+        principalId: str
+        tenantId: str
+        type: Union[str, ManagedServiceIdentityType]
+        userAssignedIdentities: dict[str, UserAssignedIdentity]
+
+
+    class azure.mgmt.commvaultcontentstore.types.MarketplaceDetails(TypedDict, total=False):
+        key "offerDetails": Required[OfferDetails]
+        key "saasResourceId": str
+        key "subscriptionId": str
+        key "subscriptionStatus": Union[str, MarketplaceSubscriptionStatus]
+        offerDetails: OfferDetails
+        saasResourceId: str
+        subscriptionId: str
+        subscriptionStatus: Union[str, MarketplaceSubscriptionStatus]
+
+
+    class azure.mgmt.commvaultcontentstore.types.OfferDetails(TypedDict, total=False):
+        key "offerId": Required[str]
+        key "planId": str
+        key "planName": str
+        key "publisherId": Required[str]
+        key "termId": str
+        key "termUnit": str
+        offerId: str
+        planId: str
+        planName: str
+        publisherId: str
+        termId: str
+        termUnit: str
+
+
+    class azure.mgmt.commvaultcontentstore.types.PlanProperties(TypedDict, total=False):
+        key "location": Required[str]
+        key "provisioningState": Union[str, ResourceProvisioningState]
+        key "retention": ForwardRef('Retention', module='types')
+        key "storagePlans": Required[list[StoragePlan]]
+        location: str
+        provisioningState: Union[str, ResourceProvisioningState]
+        retention: Retention
+        schedules: list[Schedule]
+        storagePlans: list[StoragePlan]
+
+
+    class azure.mgmt.commvaultcontentstore.types.ProtectionGroup(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ProtectionGroupProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ProtectionGroupProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.commvaultcontentstore.types.ProtectionGroupProperties(TypedDict, total=False):
+        key "backupActivityStatus": str
+        key "dataSourceType": Required[Literal["AzureVM"]]
+        key "lastBackUpTime": Required[int]
+        key "numberOfProtectedItems": Required[int]
+        key "plan": Required[str]
+        key "protectionStatus": Required[Union[str, ProtectionStatus]]
+        key "provisioningState": Union[str, ResourceProvisioningState]
+        key "resources": Required[ProtectionGroupResources]
+        backupActivityStatus: str
+        dataSourceType: Literal[AzureVM]
+        lastBackUpTime: int
+        numberOfProtectedItems: int
+        plan: str
+        protectionStatus: Union[str, ProtectionStatus]
+        provisioningState: Union[str, ResourceProvisioningState]
+        resources: ProtectionGroupResources
+
+
+    class azure.mgmt.commvaultcontentstore.types.ProtectionGroupResources(TypedDict, total=False):
+        key "matchRules": ForwardRef('ProtectionGroupResourcesMatchRules', module='types')
+        manual: list[str]
+        matchRules: ProtectionGroupResourcesMatchRules
+
+
+    class azure.mgmt.commvaultcontentstore.types.ProtectionGroupResourcesMatchRules(TypedDict, total=False):
+        key "matchType": Required[Union[str, MatchType]]
+        key "rules": Required[list[Rule]]
+        matchType: Union[str, MatchType]
+        rules: list[Rule]
+
+
+    class azure.mgmt.commvaultcontentstore.types.ProxyResource(Resource):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.commvaultcontentstore.types.Resource(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.commvaultcontentstore.types.RestoreProtectionItemRequest(TypedDict, total=False):
+        key "inPlaceRestore": Required[bool]
+        key "restoreType": Union[str, RestoreType]
+        key "toTime": str
+        key "vmDestinationInfo": Required[VmDestinationInfo]
+        inPlaceRestore: bool
+        restoreType: Union[str, RestoreType]
+        toTime: str
+        vmDestinationInfo: VmDestinationInfo
+
+
+    class azure.mgmt.commvaultcontentstore.types.Retention(TypedDict, total=False):
+        key "numberOfSnapshots": int
+        numberOfSnapshots: int
+
+
+    class azure.mgmt.commvaultcontentstore.types.RoleAssignment(TypedDict, total=False):
+        key "entities": Required[list[EntityInfo]]
+        key "roleName": Required[Union[str, RoleName]]
+        entities: list[EntityInfo]
+        roleName: Union[str, RoleName]
+
+
+    class azure.mgmt.commvaultcontentstore.types.RoleMapping(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RoleMappingProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: RoleMappingProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.commvaultcontentstore.types.RoleMappingProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, ResourceProvisioningState]
+        provisioningState: Union[str, ResourceProvisioningState]
+        roles: list[RoleAssignment]
+
+
+    class azure.mgmt.commvaultcontentstore.types.Rule(TypedDict, total=False):
+        key "operator": Required[Union[str, Operator]]
+        key "property": Required[Union[str, RuleProperty]]
+        key "value": Required[str]
+        operator: Union[str, Operator]
+        property: Union[str, RuleProperty]
+        value: str
+
+
+    class azure.mgmt.commvaultcontentstore.types.SaaSData(TypedDict, total=False):
+        key "saaSResourceId": str
+        saaSResourceId: str
+
+
+    class azure.mgmt.commvaultcontentstore.types.Schedule(TypedDict, total=False):
+        key "backupType": Required[Union[str, BackUpType]]
+        key "dayOfMonth": int
+        key "dayOfWeek": Union[str, DayOfWeek]
+        key "frequency": Union[str, Frequency]
+        key "monthOfYear": Union[str, MonthOfYear]
+        key "runsEvery": int
+        key "time": str
+        key "timeZone": str
+        key "weekOfMonth": Union[str, WeekOfMonth]
+        backupType: Union[str, BackUpType]
+        dayOfMonth: int
+        dayOfWeek: Union[str, DayOfWeek]
+        frequency: Union[str, Frequency]
+        monthOfYear: Union[str, MonthOfYear]
+        runsEvery: int
+        time: str
+        timeZone: str
+        weekOfMonth: Union[str, WeekOfMonth]
+        weeklyDays: list[Union[str, WeeklyDays]]
+
+
+    class azure.mgmt.commvaultcontentstore.types.StopBackupProtectionGroupRequest(TypedDict, total=False):
+        key "comment": str
+        key "reason": Required[str]
+        comment: str
+        reason: str
+
+
+    class azure.mgmt.commvaultcontentstore.types.Storage(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('StorageProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: StorageProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.commvaultcontentstore.types.StoragePlan(TypedDict, total=False):
+        key "backupRuleType": Union[str, BackupRuleType]
+        key "copyName": str
+        key "copyPrecedence": int
+        key "name": Required[str]
+        key "retentionPeriod": int
+        key "retentionTime": Union[str, RetentionTime]
+        key "storagePoolId": str
+        backupRuleType: Union[str, BackupRuleType]
+        copyName: str
+        copyPrecedence: int
+        extendedRetention: list[ExtendedRetentionTime]
+        name: str
+        retentionPeriod: int
+        retentionTime: Union[str, RetentionTime]
+        storagePoolId: str
+
+
+    class azure.mgmt.commvaultcontentstore.types.StorageProperties(TypedDict):
+        key "class": Required[Union[str, StorageClassType]]
+        key "complianceLockStatus": Union[str, ComplianceLockStatus]
+        key "location": Required[str]
+        key "provisioningState": Union[str, ResourceProvisioningState]
+        key "storageType": Required[Union[str, StorageType]]
+        key "vendor": Required[Union[str, Vendor]]
+        class: Union[str, StorageClassType]
+        complianceLockStatus: Union[str, ComplianceLockStatus]
+        location: str
+        provisioningState: Union[str, ResourceProvisioningState]
+        storageType: Union[str, StorageType]
+        vendor: Union[str, Vendor]
+
+
+    class azure.mgmt.commvaultcontentstore.types.SystemData(TypedDict, total=False):
+        key "createdAt": str
+        key "createdBy": str
+        key "createdByType": Union[str, CreatedByType]
+        key "lastModifiedAt": str
+        key "lastModifiedBy": str
+        key "lastModifiedByType": Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
+
+
+    class azure.mgmt.commvaultcontentstore.types.TrackedResource(Resource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.commvaultcontentstore.types.UserAssignedIdentity(TypedDict, total=False):
+        key "clientId": str
+        key "principalId": str
+        clientId: str
+        principalId: str
+
+
+    class azure.mgmt.commvaultcontentstore.types.UserDetails(TypedDict, total=False):
+        key "emailAddress": str
+        key "firstName": str
+        key "lastName": str
+        key "phoneNumber": str
+        key "upn": str
+        emailAddress: str
+        firstName: str
+        lastName: str
+        phoneNumber: str
+        upn: str
+
+
+    class azure.mgmt.commvaultcontentstore.types.VmDestinationInfo(TypedDict, total=False):
+        key "vmInfoList": Required[list[VmInfo]]
+        vmInfoList: list[VmInfo]
+
+
+    class azure.mgmt.commvaultcontentstore.types.VmInfo(TypedDict, total=False):
+        key "attachAndSwapOsDisk": bool
+        key "name": str
+        key "networkId": str
+        key "powerOnVmAfterRestore": bool
+        key "region": str
+        key "resourceGroup": str
+        key "sourceVmGuid": Required[str]
+        key "storageAccountId": Required[str]
+        key "subnetId": str
+        key "targetVmGuid": str
+        attachAndSwapOsDisk: bool
+        name: str
+        networkId: str
+        powerOnVmAfterRestore: bool
+        region: str
+        resourceGroup: str
+        sourceVmGuid: str
+        storageAccountId: str
+        subnetId: str
+        targetVmGuid: str
+        vmtags: list[VmTag]
+
+
+    class azure.mgmt.commvaultcontentstore.types.VmListItem(TypedDict, total=False):
+        key "vmGuid": Required[str]
+        vmGuid: str
+
+
+    class azure.mgmt.commvaultcontentstore.types.VmTag(TypedDict, total=False):
+        key "name": Required[str]
+        key "value": Required[str]
+        name: str
+        value: str
 
 
 ```

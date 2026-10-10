@@ -32,7 +32,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import CommvaultContentStoreMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -40,7 +40,6 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -51,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +71,7 @@ def build_cloud_accounts_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,7 +100,7 @@ def build_cloud_accounts_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -132,7 +131,7 @@ def build_cloud_accounts_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -161,7 +160,7 @@ def build_cloud_accounts_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Commvault.ContentStore/cloudAccounts/{cloudAccountName}"
     path_format_arguments = {
@@ -184,7 +183,7 @@ def build_cloud_accounts_list_by_resource_group_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -211,7 +210,7 @@ def build_cloud_accounts_list_by_subscription_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -238,7 +237,7 @@ def build_cloud_accounts_link_saa_s_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -268,7 +267,7 @@ def build_cloud_accounts_latest_linked_saa_s_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -297,7 +296,7 @@ def build_saa_soperation_group_activate_resource_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -325,7 +324,7 @@ def build_storages_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -355,7 +354,7 @@ def build_storages_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -385,7 +384,7 @@ def build_storages_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Commvault.ContentStore/cloudAccounts/{cloudAccountName}/storages/{storageName}"
     path_format_arguments = {
@@ -409,7 +408,7 @@ def build_storages_list_by_cloud_account_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -431,13 +430,100 @@ def build_storages_list_by_cloud_account_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_storages_enable_compliance_lock_request(  # pylint: disable=name-too-long
+    resource_group_name: str, cloud_account_name: str, storage_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Commvault.ContentStore/cloudAccounts/{cloudAccountName}/storages/{storageName}/enableComplianceLock"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "cloudAccountName": _SERIALIZER.url("cloud_account_name", cloud_account_name, "str"),
+        "storageName": _SERIALIZER.url("storage_name", storage_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_storages_disable_compliance_lock_request(  # pylint: disable=name-too-long
+    resource_group_name: str, cloud_account_name: str, storage_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Commvault.ContentStore/cloudAccounts/{cloudAccountName}/storages/{storageName}/disableComplianceLock"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "cloudAccountName": _SERIALIZER.url("cloud_account_name", cloud_account_name, "str"),
+        "storageName": _SERIALIZER.url("storage_name", storage_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_storages_refresh_request(
+    resource_group_name: str, cloud_account_name: str, storage_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Commvault.ContentStore/cloudAccounts/{cloudAccountName}/storages/{storageName}/refresh"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "cloudAccountName": _SERIALIZER.url("cloud_account_name", cloud_account_name, "str"),
+        "storageName": _SERIALIZER.url("storage_name", storage_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_plans_get_request(
     resource_group_name: str, cloud_account_name: str, plan_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -467,7 +553,7 @@ def build_plans_create_orupdate_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -497,7 +583,7 @@ def build_plans_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Commvault.ContentStore/cloudAccounts/{cloudAccountName}/plans/{planName}"
     path_format_arguments = {
@@ -521,7 +607,7 @@ def build_plans_list_by_cloud_account_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -549,7 +635,7 @@ def build_protection_groups_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -579,7 +665,7 @@ def build_protection_groups_create_orupdate_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -609,7 +695,7 @@ def build_protection_groups_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Commvault.ContentStore/cloudAccounts/{cloudAccountName}/protectionGroups/{protectionGroupName}"
     path_format_arguments = {
@@ -633,7 +719,7 @@ def build_protection_groups_list_by_cloud_account_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -662,7 +748,7 @@ def build_protection_groups_stop_backup_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Commvault.ContentStore/cloudAccounts/{cloudAccountName}/protectionGroups/{protectionGroupName}/stopBackup"
     path_format_arguments = {
@@ -691,7 +777,7 @@ def build_protection_groups_restore_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -721,7 +807,7 @@ def build_protection_groups_resume_backup_request(  # pylint: disable=name-too-l
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Commvault.ContentStore/cloudAccounts/{cloudAccountName}/protectionGroups/{protectionGroupName}/resumeBackup"
     path_format_arguments = {
@@ -746,7 +832,7 @@ def build_protection_groups_backup_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -782,7 +868,7 @@ def build_protected_items_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -812,7 +898,7 @@ def build_protected_items_list_by_protection_group_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -846,7 +932,7 @@ def build_protected_items_get_restore_points_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -882,7 +968,7 @@ def build_protected_items_restore_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -915,7 +1001,7 @@ def build_protected_items_operation_group_count_by_protection_groups_request(  #
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -938,7 +1024,7 @@ def build_role_mappings_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -967,7 +1053,7 @@ def build_role_mappings_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -996,7 +1082,7 @@ def build_role_mappings_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Commvault.ContentStore/cloudAccounts/{cloudAccountName}/roleMappings/default"
     path_format_arguments = {
@@ -1019,7 +1105,7 @@ def build_role_mappings_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-03-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1041,7 +1127,7 @@ def build_role_mappings_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1153,7 +1239,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class CloudAccountsOperations:
+class CloudAccountsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1246,7 +1332,7 @@ class CloudAccountsOperations:
         self,
         resource_group_name: str,
         cloud_account_name: str,
-        resource: Union[_models.CloudAccount, JSON, IO[bytes]],
+        resource: Union[_models.CloudAccount, _types.CloudAccount, IO[bytes]],
         **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1352,7 +1438,7 @@ class CloudAccountsOperations:
         self,
         resource_group_name: str,
         cloud_account_name: str,
-        resource: JSON,
+        resource: _types.CloudAccount,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -1365,7 +1451,7 @@ class CloudAccountsOperations:
         :param cloud_account_name: Name of the Cloud Account resource. Required.
         :type cloud_account_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.commvaultcontentstore.types.CloudAccount
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1408,7 +1494,7 @@ class CloudAccountsOperations:
         self,
         resource_group_name: str,
         cloud_account_name: str,
-        resource: Union[_models.CloudAccount, JSON, IO[bytes]],
+        resource: Union[_models.CloudAccount, _types.CloudAccount, IO[bytes]],
         **kwargs: Any,
     ) -> LROPoller[_models.CloudAccount]:
         """Create a CloudAccount.
@@ -1418,9 +1504,10 @@ class CloudAccountsOperations:
         :type resource_group_name: str
         :param cloud_account_name: Name of the Cloud Account resource. Required.
         :type cloud_account_name: str
-        :param resource: Resource create parameters. Is one of the following types: CloudAccount, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.commvaultcontentstore.models.CloudAccount or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a CloudAccount type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.commvaultcontentstore.models.CloudAccount or
+         ~azure.mgmt.commvaultcontentstore.types.CloudAccount or IO[bytes]
         :return: An instance of LROPoller that returns CloudAccount. The CloudAccount is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.commvaultcontentstore.models.CloudAccount]
@@ -1482,7 +1569,7 @@ class CloudAccountsOperations:
         self,
         resource_group_name: str,
         cloud_account_name: str,
-        properties: Union[_models.CloudAccountUpdate, JSON, IO[bytes]],
+        properties: Union[_models.CloudAccount, _types.CloudAccount, IO[bytes]],
         **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1558,7 +1645,7 @@ class CloudAccountsOperations:
         self,
         resource_group_name: str,
         cloud_account_name: str,
-        properties: _models.CloudAccountUpdate,
+        properties: _models.CloudAccount,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -1571,7 +1658,7 @@ class CloudAccountsOperations:
         :param cloud_account_name: Name of the Cloud Account resource. Required.
         :type cloud_account_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.commvaultcontentstore.models.CloudAccountUpdate
+        :type properties: ~azure.mgmt.commvaultcontentstore.models.CloudAccount
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1586,7 +1673,7 @@ class CloudAccountsOperations:
         self,
         resource_group_name: str,
         cloud_account_name: str,
-        properties: JSON,
+        properties: _types.CloudAccount,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -1599,7 +1686,7 @@ class CloudAccountsOperations:
         :param cloud_account_name: Name of the Cloud Account resource. Required.
         :type cloud_account_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.commvaultcontentstore.types.CloudAccount
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1642,7 +1729,7 @@ class CloudAccountsOperations:
         self,
         resource_group_name: str,
         cloud_account_name: str,
-        properties: Union[_models.CloudAccountUpdate, JSON, IO[bytes]],
+        properties: Union[_models.CloudAccount, _types.CloudAccount, IO[bytes]],
         **kwargs: Any,
     ) -> LROPoller[_models.CloudAccount]:
         """Update a CloudAccount.
@@ -1652,10 +1739,10 @@ class CloudAccountsOperations:
         :type resource_group_name: str
         :param cloud_account_name: Name of the Cloud Account resource. Required.
         :type cloud_account_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         CloudAccountUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.commvaultcontentstore.models.CloudAccountUpdate or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a CloudAccount type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.commvaultcontentstore.models.CloudAccount or
+         ~azure.mgmt.commvaultcontentstore.types.CloudAccount or IO[bytes]
         :return: An instance of LROPoller that returns CloudAccount. The CloudAccount is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.commvaultcontentstore.models.CloudAccount]
@@ -2031,13 +2118,13 @@ class CloudAccountsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview", "2026-07-01-preview", "2026-07-03-preview"],
+        api_versions_list=["2026-06-02-preview", "2026-07-01-preview", "2026-07-03-preview", "2026-08-01-preview"],
     )
     def _link_saa_s_initial(
         self,
         resource_group_name: str,
         cloud_account_name: str,
-        body: Union[_models.SaaSData, JSON, IO[bytes]],
+        body: Union[_models.SaaSData, _types.SaaSData, IO[bytes]],
         **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2146,7 +2233,7 @@ class CloudAccountsOperations:
         self,
         resource_group_name: str,
         cloud_account_name: str,
-        body: JSON,
+        body: _types.SaaSData,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -2161,7 +2248,7 @@ class CloudAccountsOperations:
         :param cloud_account_name: Name of the Cloud Account resource. Required.
         :type cloud_account_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.commvaultcontentstore.types.SaaSData
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2214,13 +2301,13 @@ class CloudAccountsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview", "2026-07-01-preview", "2026-07-03-preview"],
+        api_versions_list=["2026-06-02-preview", "2026-07-01-preview", "2026-07-03-preview", "2026-08-01-preview"],
     )
     def begin_link_saa_s(
         self,
         resource_group_name: str,
         cloud_account_name: str,
-        body: Union[_models.SaaSData, JSON, IO[bytes]],
+        body: Union[_models.SaaSData, _types.SaaSData, IO[bytes]],
         **kwargs: Any,
     ) -> LROPoller[_models.CloudAccount]:
         """Links a new SaaS to the cloud account.
@@ -2232,9 +2319,10 @@ class CloudAccountsOperations:
         :type resource_group_name: str
         :param cloud_account_name: Name of the Cloud Account resource. Required.
         :type cloud_account_name: str
-        :param body: The content of the action request. Is one of the following types: SaaSData, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.commvaultcontentstore.models.SaaSData or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a SaaSData type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.commvaultcontentstore.models.SaaSData or
+         ~azure.mgmt.commvaultcontentstore.types.SaaSData or IO[bytes]
         :return: An instance of LROPoller that returns CloudAccount. The CloudAccount is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.commvaultcontentstore.models.CloudAccount]
@@ -2311,7 +2399,7 @@ class CloudAccountsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview", "2026-07-01-preview", "2026-07-03-preview"],
+        api_versions_list=["2026-06-02-preview", "2026-07-01-preview", "2026-07-03-preview", "2026-08-01-preview"],
     )
     def latest_linked_saa_s(
         self, resource_group_name: str, cloud_account_name: str, **kwargs: Any
@@ -2386,7 +2474,7 @@ class CloudAccountsOperations:
         return deserialized  # type: ignore
 
 
-class SaaSOperationGroupOperations:
+class SaaSOperationGroupOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2408,10 +2496,12 @@ class SaaSOperationGroupOperations:
     @api_version_validation(
         method_added_on="2026-06-02-preview",
         params_added_on={"2026-06-02-preview": ["api_version", "subscription_id", "content_type", "accept"]},
-        api_versions_list=["2026-06-02-preview", "2026-07-01-preview", "2026-07-03-preview"],
+        api_versions_list=["2026-06-02-preview", "2026-07-01-preview", "2026-07-03-preview", "2026-08-01-preview"],
     )
     def _activate_resource_initial(
-        self, body: Union[_models.ActivateSaaSParameterRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        body: Union[_models.ActivateSaaSParameterRequest, _types.ActivateSaaSParameterRequest, IO[bytes]],
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2499,12 +2589,12 @@ class SaaSOperationGroupOperations:
 
     @overload
     def begin_activate_resource(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.ActivateSaaSParameterRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.SaaSResourceDetailsResponse]:
         """Resolve the token to get the SaaS resource ID and activate the SaaS resource.
 
         :param body: The request body. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.commvaultcontentstore.types.ActivateSaaSParameterRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2537,17 +2627,19 @@ class SaaSOperationGroupOperations:
     @api_version_validation(
         method_added_on="2026-06-02-preview",
         params_added_on={"2026-06-02-preview": ["api_version", "subscription_id", "content_type", "accept"]},
-        api_versions_list=["2026-06-02-preview", "2026-07-01-preview", "2026-07-03-preview"],
+        api_versions_list=["2026-06-02-preview", "2026-07-01-preview", "2026-07-03-preview", "2026-08-01-preview"],
     )
     def begin_activate_resource(
-        self, body: Union[_models.ActivateSaaSParameterRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        body: Union[_models.ActivateSaaSParameterRequest, _types.ActivateSaaSParameterRequest, IO[bytes]],
+        **kwargs: Any,
     ) -> LROPoller[_models.SaaSResourceDetailsResponse]:
         """Resolve the token to get the SaaS resource ID and activate the SaaS resource.
 
-        :param body: The request body. Is one of the following types: ActivateSaaSParameterRequest,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.commvaultcontentstore.models.ActivateSaaSParameterRequest or JSON or
-         IO[bytes]
+        :param body: The request body. Is either a ActivateSaaSParameterRequest type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.commvaultcontentstore.models.ActivateSaaSParameterRequest or
+         ~azure.mgmt.commvaultcontentstore.types.ActivateSaaSParameterRequest or IO[bytes]
         :return: An instance of LROPoller that returns SaaSResourceDetailsResponse. The
          SaaSResourceDetailsResponse is compatible with MutableMapping
         :rtype:
@@ -2600,7 +2692,7 @@ class SaaSOperationGroupOperations:
         )
 
 
-class StoragesOperations:
+class StoragesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2699,7 +2791,7 @@ class StoragesOperations:
         resource_group_name: str,
         cloud_account_name: str,
         storage_name: str,
-        resource: Union[_models.Storage, JSON, IO[bytes]],
+        resource: Union[_models.Storage, _types.Storage, IO[bytes]],
         **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2810,7 +2902,7 @@ class StoragesOperations:
         resource_group_name: str,
         cloud_account_name: str,
         storage_name: str,
-        resource: JSON,
+        resource: _types.Storage,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -2825,7 +2917,7 @@ class StoragesOperations:
         :param storage_name: Name of the Storage resource. Required.
         :type storage_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.commvaultcontentstore.types.Storage
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2872,7 +2964,7 @@ class StoragesOperations:
         resource_group_name: str,
         cloud_account_name: str,
         storage_name: str,
-        resource: Union[_models.Storage, JSON, IO[bytes]],
+        resource: Union[_models.Storage, _types.Storage, IO[bytes]],
         **kwargs: Any,
     ) -> LROPoller[_models.Storage]:
         """Create a Storage.
@@ -2884,9 +2976,10 @@ class StoragesOperations:
         :type cloud_account_name: str
         :param storage_name: Name of the Storage resource. Required.
         :type storage_name: str
-        :param resource: Resource create parameters. Is one of the following types: Storage, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.commvaultcontentstore.models.Storage or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Storage type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.commvaultcontentstore.models.Storage or
+         ~azure.mgmt.commvaultcontentstore.types.Storage or IO[bytes]
         :return: An instance of LROPoller that returns Storage. The Storage is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.commvaultcontentstore.models.Storage]
@@ -3171,8 +3264,279 @@ class StoragesOperations:
 
         return ItemPaged(get_next, extract_data)
 
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-03-preview",
+        params_added_on={
+            "2026-07-03-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cloud_account_name",
+                "storage_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview"],
+    )
+    def enable_compliance_lock(
+        self, resource_group_name: str, cloud_account_name: str, storage_name: str, **kwargs: Any
+    ) -> _models.Storage:
+        """Enable compliance lock on the storage. Synchronous operation.
 
-class PlansOperations:
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cloud_account_name: Name of the Cloud Account resource. Required.
+        :type cloud_account_name: str
+        :param storage_name: Name of the Storage resource. Required.
+        :type storage_name: str
+        :return: Storage. The Storage is compatible with MutableMapping
+        :rtype: ~azure.mgmt.commvaultcontentstore.models.Storage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Storage] = kwargs.pop("cls", None)
+
+        _request = build_storages_enable_compliance_lock_request(
+            resource_group_name=resource_group_name,
+            cloud_account_name=cloud_account_name,
+            storage_name=storage_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Storage, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-03-preview",
+        params_added_on={
+            "2026-07-03-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cloud_account_name",
+                "storage_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview"],
+    )
+    def disable_compliance_lock(
+        self, resource_group_name: str, cloud_account_name: str, storage_name: str, **kwargs: Any
+    ) -> _models.Storage:
+        """Disable compliance lock on the storage. Initiates an out-of-band multi-person authorization
+        (MPA) email approval workflow on the partner side. The storage compliance lock status
+        transitions to 'DisablementPending' immediately; once the MPA approval completes, the status
+        becomes 'Disabled' (observable via the refresh action).
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cloud_account_name: Name of the Cloud Account resource. Required.
+        :type cloud_account_name: str
+        :param storage_name: Name of the Storage resource. Required.
+        :type storage_name: str
+        :return: Storage. The Storage is compatible with MutableMapping
+        :rtype: ~azure.mgmt.commvaultcontentstore.models.Storage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Storage] = kwargs.pop("cls", None)
+
+        _request = build_storages_disable_compliance_lock_request(
+            resource_group_name=resource_group_name,
+            cloud_account_name=cloud_account_name,
+            storage_name=storage_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Storage, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-03-preview",
+        params_added_on={
+            "2026-07-03-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cloud_account_name",
+                "storage_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview"],
+    )
+    def refresh(
+        self, resource_group_name: str, cloud_account_name: str, storage_name: str, **kwargs: Any
+    ) -> _models.Storage:
+        """Refresh storage state from partner. Fetches latest compliance lock status from Commvault and
+        updates the ARM resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cloud_account_name: Name of the Cloud Account resource. Required.
+        :type cloud_account_name: str
+        :param storage_name: Name of the Storage resource. Required.
+        :type storage_name: str
+        :return: Storage. The Storage is compatible with MutableMapping
+        :rtype: ~azure.mgmt.commvaultcontentstore.models.Storage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Storage] = kwargs.pop("cls", None)
+
+        _request = build_storages_refresh_request(
+            resource_group_name=resource_group_name,
+            cloud_account_name=cloud_account_name,
+            storage_name=storage_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Storage, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class PlansOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3271,7 +3635,7 @@ class PlansOperations:
         resource_group_name: str,
         cloud_account_name: str,
         plan_name: str,
-        resource: Union[_models.CommvaultPlan, JSON, IO[bytes]],
+        resource: Union[_models.CommvaultPlan, _types.CommvaultPlan, IO[bytes]],
         **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3382,7 +3746,7 @@ class PlansOperations:
         resource_group_name: str,
         cloud_account_name: str,
         plan_name: str,
-        resource: JSON,
+        resource: _types.CommvaultPlan,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -3397,7 +3761,7 @@ class PlansOperations:
         :param plan_name: Name of the Plan resource. Required.
         :type plan_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.commvaultcontentstore.types.CommvaultPlan
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3444,7 +3808,7 @@ class PlansOperations:
         resource_group_name: str,
         cloud_account_name: str,
         plan_name: str,
-        resource: Union[_models.CommvaultPlan, JSON, IO[bytes]],
+        resource: Union[_models.CommvaultPlan, _types.CommvaultPlan, IO[bytes]],
         **kwargs: Any,
     ) -> LROPoller[_models.CommvaultPlan]:
         """Create a CommvaultPlan.
@@ -3456,9 +3820,10 @@ class PlansOperations:
         :type cloud_account_name: str
         :param plan_name: Name of the Plan resource. Required.
         :type plan_name: str
-        :param resource: Resource create parameters. Is one of the following types: CommvaultPlan,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.commvaultcontentstore.models.CommvaultPlan or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a CommvaultPlan type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.commvaultcontentstore.models.CommvaultPlan or
+         ~azure.mgmt.commvaultcontentstore.types.CommvaultPlan or IO[bytes]
         :return: An instance of LROPoller that returns CommvaultPlan. The CommvaultPlan is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.commvaultcontentstore.models.CommvaultPlan]
@@ -3744,7 +4109,7 @@ class PlansOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ProtectionGroupsOperations:
+class ProtectionGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3843,7 +4208,7 @@ class ProtectionGroupsOperations:
         resource_group_name: str,
         cloud_account_name: str,
         protection_group_name: str,
-        resource: Union[_models.ProtectionGroup, JSON, IO[bytes]],
+        resource: Union[_models.ProtectionGroup, _types.ProtectionGroup, IO[bytes]],
         **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3954,7 +4319,7 @@ class ProtectionGroupsOperations:
         resource_group_name: str,
         cloud_account_name: str,
         protection_group_name: str,
-        resource: JSON,
+        resource: _types.ProtectionGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -3969,7 +4334,7 @@ class ProtectionGroupsOperations:
         :param protection_group_name: Name of the ProtectionGroup resource. Required.
         :type protection_group_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.commvaultcontentstore.types.ProtectionGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4016,7 +4381,7 @@ class ProtectionGroupsOperations:
         resource_group_name: str,
         cloud_account_name: str,
         protection_group_name: str,
-        resource: Union[_models.ProtectionGroup, JSON, IO[bytes]],
+        resource: Union[_models.ProtectionGroup, _types.ProtectionGroup, IO[bytes]],
         **kwargs: Any,
     ) -> LROPoller[_models.ProtectionGroup]:
         """Create a ProtectionGroup.
@@ -4028,9 +4393,10 @@ class ProtectionGroupsOperations:
         :type cloud_account_name: str
         :param protection_group_name: Name of the ProtectionGroup resource. Required.
         :type protection_group_name: str
-        :param resource: Resource create parameters. Is one of the following types: ProtectionGroup,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.commvaultcontentstore.models.ProtectionGroup or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a ProtectionGroup type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.commvaultcontentstore.models.ProtectionGroup or
+         ~azure.mgmt.commvaultcontentstore.types.ProtectionGroup or IO[bytes]
         :return: An instance of LROPoller that returns ProtectionGroup. The ProtectionGroup is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.commvaultcontentstore.models.ProtectionGroup]
@@ -4320,7 +4686,7 @@ class ProtectionGroupsOperations:
         resource_group_name: str,
         cloud_account_name: str,
         protection_group_name: str,
-        request: Union[_models.StopBackupProtectionGroupRequest, JSON, IO[bytes]],
+        request: Union[_models.StopBackupProtectionGroupRequest, _types.StopBackupProtectionGroupRequest, IO[bytes]],
         **kwargs: Any,
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4428,7 +4794,7 @@ class ProtectionGroupsOperations:
         resource_group_name: str,
         cloud_account_name: str,
         protection_group_name: str,
-        request: JSON,
+        request: _types.StopBackupProtectionGroupRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -4443,7 +4809,7 @@ class ProtectionGroupsOperations:
         :param protection_group_name: Name of the ProtectionGroup resource. Required.
         :type protection_group_name: str
         :param request: The body type of the operation request. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.commvaultcontentstore.types.StopBackupProtectionGroupRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4488,7 +4854,7 @@ class ProtectionGroupsOperations:
         resource_group_name: str,
         cloud_account_name: str,
         protection_group_name: str,
-        request: Union[_models.StopBackupProtectionGroupRequest, JSON, IO[bytes]],
+        request: Union[_models.StopBackupProtectionGroupRequest, _types.StopBackupProtectionGroupRequest, IO[bytes]],
         **kwargs: Any,
     ) -> LROPoller[None]:
         """Stop Backup for a Protection Group.
@@ -4500,10 +4866,10 @@ class ProtectionGroupsOperations:
         :type cloud_account_name: str
         :param protection_group_name: Name of the ProtectionGroup resource. Required.
         :type protection_group_name: str
-        :param request: The body type of the operation request. Is one of the following types:
-         StopBackupProtectionGroupRequest, JSON, IO[bytes] Required.
+        :param request: The body type of the operation request. Is either a
+         StopBackupProtectionGroupRequest type or a IO[bytes] type. Required.
         :type request: ~azure.mgmt.commvaultcontentstore.models.StopBackupProtectionGroupRequest or
-         JSON or IO[bytes]
+         ~azure.mgmt.commvaultcontentstore.types.StopBackupProtectionGroupRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4593,7 +4959,7 @@ class ProtectionGroupsOperations:
         resource_group_name: str,
         cloud_account_name: str,
         protection_group_name: str,
-        request: JSON,
+        request: _types.RestoreProtectionItemRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -4608,7 +4974,7 @@ class ProtectionGroupsOperations:
         :param protection_group_name: Name of the ProtectionGroup resource. Required.
         :type protection_group_name: str
         :param request: The body type of the operation request. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.commvaultcontentstore.types.RestoreProtectionItemRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4671,6 +5037,7 @@ class ProtectionGroupsOperations:
             "2026-06-02-preview",
             "2026-07-01-preview",
             "2026-07-03-preview",
+            "2026-08-01-preview",
         ],
     )
     def restore(
@@ -4678,7 +5045,7 @@ class ProtectionGroupsOperations:
         resource_group_name: str,
         cloud_account_name: str,
         protection_group_name: str,
-        request: Union[_models.RestoreProtectionItemRequest, JSON, IO[bytes]],
+        request: Union[_models.RestoreProtectionItemRequest, _types.RestoreProtectionItemRequest, IO[bytes]],
         **kwargs: Any,
     ) -> _models.RestoreProtectionItemResponse:
         """Restore resource for a protected items in given protection group.
@@ -4690,10 +5057,10 @@ class ProtectionGroupsOperations:
         :type cloud_account_name: str
         :param protection_group_name: Name of the ProtectionGroup resource. Required.
         :type protection_group_name: str
-        :param request: The body type of the operation request. Is one of the following types:
-         RestoreProtectionItemRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.commvaultcontentstore.models.RestoreProtectionItemRequest or JSON or
-         IO[bytes]
+        :param request: The body type of the operation request. Is either a
+         RestoreProtectionItemRequest type or a IO[bytes] type. Required.
+        :type request: ~azure.mgmt.commvaultcontentstore.models.RestoreProtectionItemRequest or
+         ~azure.mgmt.commvaultcontentstore.types.RestoreProtectionItemRequest or IO[bytes]
         :return: RestoreProtectionItemResponse. The RestoreProtectionItemResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.commvaultcontentstore.models.RestoreProtectionItemResponse
@@ -4786,6 +5153,7 @@ class ProtectionGroupsOperations:
             "2026-06-02-preview",
             "2026-07-01-preview",
             "2026-07-03-preview",
+            "2026-08-01-preview",
         ],
     )
     def resume_backup(  # pylint: disable=inconsistent-return-statements
@@ -4886,7 +5254,7 @@ class ProtectionGroupsOperations:
         resource_group_name: str,
         cloud_account_name: str,
         protection_group_name: str,
-        request: JSON,
+        request: _types.BackupProtectionGroupRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -4901,7 +5269,7 @@ class ProtectionGroupsOperations:
         :param protection_group_name: Name of the ProtectionGroup resource. Required.
         :type protection_group_name: str
         :param request: The body type of the operation request. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.commvaultcontentstore.types.BackupProtectionGroupRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4962,6 +5330,7 @@ class ProtectionGroupsOperations:
             "2026-06-02-preview",
             "2026-07-01-preview",
             "2026-07-03-preview",
+            "2026-08-01-preview",
         ],
     )
     def backup(
@@ -4969,7 +5338,7 @@ class ProtectionGroupsOperations:
         resource_group_name: str,
         cloud_account_name: str,
         protection_group_name: str,
-        request: Union[_models.BackupProtectionGroupRequest, JSON, IO[bytes]],
+        request: Union[_models.BackupProtectionGroupRequest, _types.BackupProtectionGroupRequest, IO[bytes]],
         **kwargs: Any,
     ) -> _models.BackupProtectionGroupResponse:
         """Ad-hoc backup of protected items resource in given protection group.
@@ -4981,10 +5350,10 @@ class ProtectionGroupsOperations:
         :type cloud_account_name: str
         :param protection_group_name: Name of the ProtectionGroup resource. Required.
         :type protection_group_name: str
-        :param request: The body type of the operation request. Is one of the following types:
-         BackupProtectionGroupRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.commvaultcontentstore.models.BackupProtectionGroupRequest or JSON or
-         IO[bytes]
+        :param request: The body type of the operation request. Is either a
+         BackupProtectionGroupRequest type or a IO[bytes] type. Required.
+        :type request: ~azure.mgmt.commvaultcontentstore.models.BackupProtectionGroupRequest or
+         ~azure.mgmt.commvaultcontentstore.types.BackupProtectionGroupRequest or IO[bytes]
         :return: BackupProtectionGroupResponse. The BackupProtectionGroupResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.commvaultcontentstore.models.BackupProtectionGroupResponse
@@ -5059,7 +5428,7 @@ class ProtectionGroupsOperations:
         return deserialized  # type: ignore
 
 
-class ProtectedItemsOperations:
+class ProtectedItemsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5399,7 +5768,7 @@ class ProtectedItemsOperations:
         cloud_account_name: str,
         protection_group_name: str,
         protected_item_name: str,
-        request: JSON,
+        request: _types.RestoreProtectionItemRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -5419,7 +5788,7 @@ class ProtectedItemsOperations:
          case of Vm it will be vmGuid. Required.
         :type protected_item_name: str
         :param request: The body type of the operation request. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.commvaultcontentstore.types.RestoreProtectionItemRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5473,7 +5842,7 @@ class ProtectedItemsOperations:
         cloud_account_name: str,
         protection_group_name: str,
         protected_item_name: str,
-        request: Union[_models.RestoreProtectionItemRequest, JSON, IO[bytes]],
+        request: Union[_models.RestoreProtectionItemRequest, _types.RestoreProtectionItemRequest, IO[bytes]],
         **kwargs: Any,
     ) -> _models.RestoreProtectionItemResponse:
         """Restore resource for a protected item.
@@ -5490,10 +5859,10 @@ class ProtectedItemsOperations:
          etc; and name is mandatory in Azure Typespec, hence using name parameter for id in Commvault In
          case of Vm it will be vmGuid. Required.
         :type protected_item_name: str
-        :param request: The body type of the operation request. Is one of the following types:
-         RestoreProtectionItemRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.commvaultcontentstore.models.RestoreProtectionItemRequest or JSON or
-         IO[bytes]
+        :param request: The body type of the operation request. Is either a
+         RestoreProtectionItemRequest type or a IO[bytes] type. Required.
+        :type request: ~azure.mgmt.commvaultcontentstore.models.RestoreProtectionItemRequest or
+         ~azure.mgmt.commvaultcontentstore.types.RestoreProtectionItemRequest or IO[bytes]
         :return: RestoreProtectionItemResponse. The RestoreProtectionItemResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.commvaultcontentstore.models.RestoreProtectionItemResponse
@@ -5569,7 +5938,7 @@ class ProtectedItemsOperations:
         return deserialized  # type: ignore
 
 
-class ProtectedItemsOperationGroupOperations:
+class ProtectedItemsOperationGroupOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5607,12 +5976,12 @@ class ProtectedItemsOperationGroupOperations:
 
     @overload
     def count_by_protection_groups(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.CountProtectedItemsRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CountProtectedItemsResponse:
         """Gets the count of protected items for provided CCA resource IDs across subscriptions.
 
         :param body: The request body. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.commvaultcontentstore.types.CountProtectedItemsRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5643,17 +6012,19 @@ class ProtectedItemsOperationGroupOperations:
     @api_version_validation(
         method_added_on="2026-07-01-preview",
         params_added_on={"2026-07-01-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2026-07-01-preview", "2026-07-03-preview"],
+        api_versions_list=["2026-07-01-preview", "2026-07-03-preview", "2026-08-01-preview"],
     )
     def count_by_protection_groups(
-        self, body: Union[_models.CountProtectedItemsRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        body: Union[_models.CountProtectedItemsRequest, _types.CountProtectedItemsRequest, IO[bytes]],
+        **kwargs: Any,
     ) -> _models.CountProtectedItemsResponse:
         """Gets the count of protected items for provided CCA resource IDs across subscriptions.
 
-        :param body: The request body. Is one of the following types: CountProtectedItemsRequest, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.commvaultcontentstore.models.CountProtectedItemsRequest or JSON or
-         IO[bytes]
+        :param body: The request body. Is either a CountProtectedItemsRequest type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.commvaultcontentstore.models.CountProtectedItemsRequest or
+         ~azure.mgmt.commvaultcontentstore.types.CountProtectedItemsRequest or IO[bytes]
         :return: CountProtectedItemsResponse. The CountProtectedItemsResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.commvaultcontentstore.models.CountProtectedItemsResponse
@@ -5724,7 +6095,7 @@ class ProtectedItemsOperationGroupOperations:
         return deserialized  # type: ignore
 
 
-class RoleMappingsOperations:
+class RoleMappingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5755,7 +6126,7 @@ class RoleMappingsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-03-preview"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview"],
     )
     def get(self, resource_group_name: str, cloud_account_name: str, **kwargs: Any) -> _models.RoleMapping:
         """Get a RoleMapping.
@@ -5858,7 +6229,7 @@ class RoleMappingsOperations:
         self,
         resource_group_name: str,
         cloud_account_name: str,
-        resource: JSON,
+        resource: _types.RoleMapping,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -5871,7 +6242,7 @@ class RoleMappingsOperations:
         :param cloud_account_name: Name of the Cloud Account resource. Required.
         :type cloud_account_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.commvaultcontentstore.types.RoleMapping
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5920,13 +6291,13 @@ class RoleMappingsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-03-preview"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview"],
     )
     def create_or_update(
         self,
         resource_group_name: str,
         cloud_account_name: str,
-        resource: Union[_models.RoleMapping, JSON, IO[bytes]],
+        resource: Union[_models.RoleMapping, _types.RoleMapping, IO[bytes]],
         **kwargs: Any,
     ) -> _models.RoleMapping:
         """Create a RoleMapping.
@@ -5936,9 +6307,10 @@ class RoleMappingsOperations:
         :type resource_group_name: str
         :param cloud_account_name: Name of the Cloud Account resource. Required.
         :type cloud_account_name: str
-        :param resource: Resource create parameters. Is one of the following types: RoleMapping, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.commvaultcontentstore.models.RoleMapping or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a RoleMapping type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.commvaultcontentstore.models.RoleMapping or
+         ~azure.mgmt.commvaultcontentstore.types.RoleMapping or IO[bytes]
         :return: RoleMapping. The RoleMapping is compatible with MutableMapping
         :rtype: ~azure.mgmt.commvaultcontentstore.models.RoleMapping
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6016,7 +6388,7 @@ class RoleMappingsOperations:
         params_added_on={
             "2026-07-03-preview": ["api_version", "subscription_id", "resource_group_name", "cloud_account_name"]
         },
-        api_versions_list=["2026-07-03-preview"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview"],
     )
     def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, cloud_account_name: str, **kwargs: Any
@@ -6088,7 +6460,7 @@ class RoleMappingsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-03-preview"],
+        api_versions_list=["2026-07-03-preview", "2026-08-01-preview"],
     )
     def list(
         self, resource_group_name: str, cloud_account_name: str, **kwargs: Any
