@@ -28,6 +28,7 @@
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Deleted or renamed client operation group `ResilienceManagementClient.goal_templates`
   - Model `DrillResourceProperties` deleted or renamed its instance variable `active_physical_zones`
   - Model `DrillResourceProperties` deleted or renamed its instance variable `advisor_ha_recommendation_id`
