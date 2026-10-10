@@ -277,8 +277,8 @@ class TestDeviceRegistryMgmtNamespaceDiscoveredAssetsOperations(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_namespace_discovered_assets_list_by_resource_group(self, resource_group):
-        response = self.client.namespace_discovered_assets.list_by_resource_group(
+    def test_namespace_discovered_assets_list_by_namespace(self, resource_group):
+        response = self.client.namespace_discovered_assets.list_by_namespace(
             resource_group_name=resource_group.name,
             namespace_name="str",
         )
