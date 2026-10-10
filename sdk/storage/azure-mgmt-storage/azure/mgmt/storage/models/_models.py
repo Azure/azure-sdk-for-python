@@ -12,7 +12,14 @@ import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
-from ._enums import StorageConnectorAuthType, StorageConnectorConnectionType, StorageConnectorSourceType
+from ._enums import (
+    BlobAccessPointConnectionType,
+    BlobAccessPointRemoteAuthType,
+    BlobAccessPointSourceType,
+    StorageConnectorAuthType,
+    StorageConnectorConnectionType,
+    StorageConnectorSourceType,
+)
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -580,6 +587,9 @@ class AdvancedPlatformMetricsRuleProperties(_Model):  # pylint: disable=docstrin
     :ivar last_modified_time: Gets the last modification date and time of the advanced platform
      metrics rule in UTC.
     :vartype last_modified_time: ~datetime.datetime
+    :ivar metrics_to_emit: The metrics requested by the caller. If omitted in a create or update
+     request, the service enables all metrics supported by the selected rule type.
+    :vartype metrics_to_emit: list[str or ~azure.mgmt.storage.models.MetricsEmitted]
     :ivar metrics_emitted: The metrics emitted by the rule. Metrics are mapped according to the
      rule type from RuleTypeProperty. Rule type to metrics mapping: ContainerLevelCapacityMetrics =>
      {ContainerUsedSize, ContainerBlobCount}.
@@ -599,6 +609,11 @@ class AdvancedPlatformMetricsRuleProperties(_Model):  # pylint: disable=docstrin
         name="lastModifiedTime", visibility=["read"], format="rfc3339"
     )
     """Gets the last modification date and time of the advanced platform metrics rule in UTC."""
+    metrics_to_emit: Optional[list[Union[str, "_models.MetricsEmitted"]]] = rest_field(
+        name="metricsToEmit", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The metrics requested by the caller. If omitted in a create or update request, the service
+     enables all metrics supported by the selected rule type."""
     metrics_emitted: Optional[list[Union[str, "_models.MetricsEmitted"]]] = rest_field(
         name="metricsEmitted", visibility=["read"]
     )
@@ -616,6 +631,7 @@ class AdvancedPlatformMetricsRuleProperties(_Model):  # pylint: disable=docstrin
         *,
         enabled: bool,
         rule_config: "_models.AdvancedPlatformMetricsRuleConfig",
+        metrics_to_emit: Optional[list[Union[str, "_models.MetricsEmitted"]]] = None,
     ) -> None: ...
 
     @overload
@@ -713,6 +729,1613 @@ class AzureFilesIdentityBasedAuthentication(_Model):  # pylint: disable=docstrin
         super().__init__(*args, **kwargs)
 
 
+class BlobAccessPointRemoteAuthProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Authentication properties for a non-Azure S3-compatible source.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    BlobAccessPointAccessKeyAuthProperties
+
+    :ivar auth_type: The authentication type. This value determines the remaining shape of the
+     authentication object. Required. "AccessKey"
+    :vartype auth_type: str or ~azure.mgmt.storage.models.BlobAccessPointRemoteAuthType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    auth_type: str = rest_discriminator(name="authType", visibility=["read", "create", "update", "delete", "query"])
+    """The authentication type. This value determines the remaining shape of the authentication
+     object. Required. \"AccessKey\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        auth_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobAccessPointAccessKeyAuthProperties(
+    BlobAccessPointRemoteAuthProperties, discriminator="AccessKey"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """S3 access-key authentication properties.
+
+    :ivar auth_type: Required. Authenticate with an S3 access key and secret access key.
+    :vartype auth_type: str or ~azure.mgmt.storage.models.ACCESS_KEY
+    :ivar access_key_id: The access key ID. Required.
+    :vartype access_key_id: str
+    :ivar secret_access_key: The secret access key. This value is never returned by read or list
+     operations. Required.
+    :vartype secret_access_key: str
+    :ivar signing_region: The region used by the request-signing algorithm. Defaults to 'us-east-1'
+     when not specified.
+    :vartype signing_region: str
+    :ivar host_override: The host used when computing request signatures. The endpoint host is used
+     by default.
+    :vartype host_override: str
+    """
+
+    auth_type: Literal[BlobAccessPointRemoteAuthType.ACCESS_KEY] = rest_discriminator(name="authType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Authenticate with an S3 access key and secret access key."""
+    access_key_id: str = rest_field(name="accessKeyId", visibility=["read", "create", "update", "delete", "query"])
+    """The access key ID. Required."""
+    secret_access_key: str = rest_field(name="secretAccessKey", visibility=["create", "update"])
+    """The secret access key. This value is never returned by read or list operations. Required."""
+    signing_region: Optional[str] = rest_field(
+        name="signingRegion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The region used by the request-signing algorithm. Defaults to 'us-east-1' when not specified."""
+    host_override: Optional[str] = rest_field(
+        name="hostOverride", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The host used when computing request signatures. The endpoint host is used by default."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        access_key_id: str,
+        secret_access_key: str,
+        signing_region: Optional[str] = None,
+        host_override: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.auth_type = BlobAccessPointRemoteAuthType.ACCESS_KEY  # type: ignore
+
+
+class BlobAccessPointRemoteAuthPropertiesUpdate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Authentication properties for a non-Azure S3-compatible source.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    BlobAccessPointAccessKeyAuthPropertiesUpdate
+
+    :ivar auth_type: The authentication type. This value determines the remaining shape of the
+     authentication object. Required. "AccessKey"
+    :vartype auth_type: str or ~azure.mgmt.storage.models.BlobAccessPointRemoteAuthType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    auth_type: str = rest_discriminator(name="authType", visibility=["read", "create", "update", "delete", "query"])
+    """The authentication type. This value determines the remaining shape of the authentication
+     object. Required. \"AccessKey\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        auth_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobAccessPointAccessKeyAuthPropertiesUpdate(
+    BlobAccessPointRemoteAuthPropertiesUpdate, discriminator="AccessKey"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """S3 access-key authentication properties.
+
+    :ivar auth_type: Required. Authenticate with an S3 access key and secret access key.
+    :vartype auth_type: str or ~azure.mgmt.storage.models.ACCESS_KEY
+    :ivar access_key_id: The access key ID.
+    :vartype access_key_id: str
+    :ivar secret_access_key: The secret access key. This value is never returned by read or list
+     operations.
+    :vartype secret_access_key: str
+    :ivar signing_region: The region used by the request-signing algorithm. Defaults to 'us-east-1'
+     when not specified.
+    :vartype signing_region: str
+    :ivar host_override: The host used when computing request signatures. The endpoint host is used
+     by default.
+    :vartype host_override: str
+    """
+
+    auth_type: Literal[BlobAccessPointRemoteAuthType.ACCESS_KEY] = rest_discriminator(name="authType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Authenticate with an S3 access key and secret access key."""
+    access_key_id: Optional[str] = rest_field(
+        name="accessKeyId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The access key ID."""
+    secret_access_key: Optional[str] = rest_field(name="secretAccessKey", visibility=["create", "update"])
+    """The secret access key. This value is never returned by read or list operations."""
+    signing_region: Optional[str] = rest_field(
+        name="signingRegion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The region used by the request-signing algorithm. Defaults to 'us-east-1' when not specified."""
+    host_override: Optional[str] = rest_field(
+        name="hostOverride", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The host used when computing request signatures. The endpoint host is used by default."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        access_key_id: Optional[str] = None,
+        secret_access_key: Optional[str] = None,
+        signing_region: Optional[str] = None,
+        host_override: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.auth_type = BlobAccessPointRemoteAuthType.ACCESS_KEY  # type: ignore
+
+
+class BlobAccessPointSourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Information about the data source exposed through a Blob Access Point.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    BlobAccessPointAzureNetAppFilesSourceProperties, BlobAccessPointCommvaultSourceProperties,
+    BlobAccessPointDellOneFsSourceProperties, BlobAccessPointNasuniSourceProperties,
+    BlobAccessPointNetAppOntapSourceProperties, BlobAccessPointQumuloSourceProperties,
+    BlobAccessPointGenericS3SourceProperties
+
+    :ivar source_type: The source type. This value determines the remaining shape of the source
+     object. Required. Known values are: "NetAppOntap", "AzureNetAppFiles", "DellOneFs", "Qumulo",
+     "Commvault", "Nasuni", and "S3Compatible".
+    :vartype source_type: str or ~azure.mgmt.storage.models.BlobAccessPointSourceType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    source_type: str = rest_discriminator(name="sourceType", visibility=["read", "create", "update", "delete", "query"])
+    """The source type. This value determines the remaining shape of the source object. Required.
+     Known values are: \"NetAppOntap\", \"AzureNetAppFiles\", \"DellOneFs\", \"Qumulo\",
+     \"Commvault\", \"Nasuni\", and \"S3Compatible\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobAccessPointAzureNetAppFilesSourceProperties(
+    BlobAccessPointSourceProperties, discriminator="AzureNetAppFiles"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """An Azure NetApp Files backing source.
+
+    :ivar source_type: Required. Azure NetApp Files.
+    :vartype source_type: str or ~azure.mgmt.storage.models.AZURE_NET_APP_FILES
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards. Required.
+    :vartype connection: ~azure.mgmt.storage.models.BlobAccessPointConnectionProperties
+    :ivar auth: Details for authenticating to the backing data source. Required.
+    :vartype auth: ~azure.mgmt.storage.models.BlobAccessPointRemoteAuthProperties
+    """
+
+    source_type: Literal[BlobAccessPointSourceType.AZURE_NET_APP_FILES] = rest_discriminator(name="sourceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Azure NetApp Files."""
+    connection: "_models.BlobAccessPointConnectionProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards.
+     Required."""
+    auth: "_models.BlobAccessPointRemoteAuthProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for authenticating to the backing data source. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection: "_models.BlobAccessPointConnectionProperties",
+        auth: "_models.BlobAccessPointRemoteAuthProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.source_type = BlobAccessPointSourceType.AZURE_NET_APP_FILES  # type: ignore
+
+
+class BlobAccessPointSourcePropertiesUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Information about the data source exposed through a Blob Access Point.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    BlobAccessPointAzureNetAppFilesSourcePropertiesUpdate,
+    BlobAccessPointCommvaultSourcePropertiesUpdate, BlobAccessPointDellOneFsSourcePropertiesUpdate,
+    BlobAccessPointNasuniSourcePropertiesUpdate, BlobAccessPointNetAppOntapSourcePropertiesUpdate,
+    BlobAccessPointQumuloSourcePropertiesUpdate, BlobAccessPointGenericS3SourcePropertiesUpdate
+
+    :ivar source_type: The source type. This value determines the remaining shape of the source
+     object. Required. Known values are: "NetAppOntap", "AzureNetAppFiles", "DellOneFs", "Qumulo",
+     "Commvault", "Nasuni", and "S3Compatible".
+    :vartype source_type: str or ~azure.mgmt.storage.models.BlobAccessPointSourceType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    source_type: str = rest_discriminator(name="sourceType", visibility=["read", "create", "update", "delete", "query"])
+    """The source type. This value determines the remaining shape of the source object. Required.
+     Known values are: \"NetAppOntap\", \"AzureNetAppFiles\", \"DellOneFs\", \"Qumulo\",
+     \"Commvault\", \"Nasuni\", and \"S3Compatible\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobAccessPointAzureNetAppFilesSourcePropertiesUpdate(
+    BlobAccessPointSourcePropertiesUpdate, discriminator="AzureNetAppFiles"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """An Azure NetApp Files backing source.
+
+    :ivar source_type: Required. Azure NetApp Files.
+    :vartype source_type: str or ~azure.mgmt.storage.models.AZURE_NET_APP_FILES
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards.
+    :vartype connection: ~azure.mgmt.storage.models.BlobAccessPointConnectionPropertiesUpdate
+    :ivar auth: Details for authenticating to the backing data source.
+    :vartype auth: ~azure.mgmt.storage.models.BlobAccessPointRemoteAuthPropertiesUpdate
+    """
+
+    source_type: Literal[BlobAccessPointSourceType.AZURE_NET_APP_FILES] = rest_discriminator(name="sourceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Azure NetApp Files."""
+    connection: Optional["_models.BlobAccessPointConnectionPropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards."""
+    auth: Optional["_models.BlobAccessPointRemoteAuthPropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for authenticating to the backing data source."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection: Optional["_models.BlobAccessPointConnectionPropertiesUpdate"] = None,
+        auth: Optional["_models.BlobAccessPointRemoteAuthPropertiesUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.source_type = BlobAccessPointSourceType.AZURE_NET_APP_FILES  # type: ignore
+
+
+class BlobAccessPointCommvaultSourceProperties(
+    BlobAccessPointSourceProperties, discriminator="Commvault"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A Commvault backing source.
+
+    :ivar source_type: Required. Commvault S3-compatible data source.
+    :vartype source_type: str or ~azure.mgmt.storage.models.COMMVAULT
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards. Required.
+    :vartype connection: ~azure.mgmt.storage.models.BlobAccessPointConnectionProperties
+    :ivar auth: Details for authenticating to the backing data source. Required.
+    :vartype auth: ~azure.mgmt.storage.models.BlobAccessPointRemoteAuthProperties
+    """
+
+    source_type: Literal[BlobAccessPointSourceType.COMMVAULT] = rest_discriminator(name="sourceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Commvault S3-compatible data source."""
+    connection: "_models.BlobAccessPointConnectionProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards.
+     Required."""
+    auth: "_models.BlobAccessPointRemoteAuthProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for authenticating to the backing data source. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection: "_models.BlobAccessPointConnectionProperties",
+        auth: "_models.BlobAccessPointRemoteAuthProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.source_type = BlobAccessPointSourceType.COMMVAULT  # type: ignore
+
+
+class BlobAccessPointCommvaultSourcePropertiesUpdate(
+    BlobAccessPointSourcePropertiesUpdate, discriminator="Commvault"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A Commvault backing source.
+
+    :ivar source_type: Required. Commvault S3-compatible data source.
+    :vartype source_type: str or ~azure.mgmt.storage.models.COMMVAULT
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards.
+    :vartype connection: ~azure.mgmt.storage.models.BlobAccessPointConnectionPropertiesUpdate
+    :ivar auth: Details for authenticating to the backing data source.
+    :vartype auth: ~azure.mgmt.storage.models.BlobAccessPointRemoteAuthPropertiesUpdate
+    """
+
+    source_type: Literal[BlobAccessPointSourceType.COMMVAULT] = rest_discriminator(name="sourceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Commvault S3-compatible data source."""
+    connection: Optional["_models.BlobAccessPointConnectionPropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards."""
+    auth: Optional["_models.BlobAccessPointRemoteAuthPropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for authenticating to the backing data source."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection: Optional["_models.BlobAccessPointConnectionPropertiesUpdate"] = None,
+        auth: Optional["_models.BlobAccessPointRemoteAuthPropertiesUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.source_type = BlobAccessPointSourceType.COMMVAULT  # type: ignore
+
+
+class TrackedResource(ResourceAutoGenerated):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Tracked Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    location: str = rest_field(visibility=["read", "create"])
+    """The geo-location where the resource lives. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobAccessPointConfiguration(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A BlobAccessPointConfiguration is a tracked Azure resource modeled as a sub-resource of a
+    Storage Account.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storage.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource. Required.
+    :vartype properties: ~azure.mgmt.storage.models.BlobAccessPointConfigurationProperties
+    """
+
+    properties: "_models.BlobAccessPointConfigurationProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        properties: "_models.BlobAccessPointConfigurationProperties",
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobAccessPointConfigurationConnection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Blob Access Point configuration associated with a blob container.
+
+    :ivar blob_access_point_configuration_name: Name of the Blob Access Point Configuration to
+     connect to.
+    :vartype blob_access_point_configuration_name: str
+    :ivar blob_access_point_configuration_unique_id: System-generated unique identifier of the Blob
+     Access Point Configuration to connect to. If not provided on create, the service looks up and
+     persists the current unique id.
+    :vartype blob_access_point_configuration_unique_id: str
+    """
+
+    blob_access_point_configuration_name: Optional[str] = rest_field(
+        name="blobAccessPointConfigurationName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the Blob Access Point Configuration to connect to."""
+    blob_access_point_configuration_unique_id: Optional[str] = rest_field(
+        name="blobAccessPointConfigurationUniqueId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """System-generated unique identifier of the Blob Access Point Configuration to connect to. If not
+     provided on create, the service looks up and persists the current unique id."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        blob_access_point_configuration_name: Optional[str] = None,
+        blob_access_point_configuration_unique_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobAccessPointConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Details of a Blob Access Point configuration.
+
+    :ivar unique_id: The system-generated unique identifier of the configuration.
+    :vartype unique_id: str
+    :ivar state: The configuration state. A configuration is created in the Active state when this
+     value is not specified. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.mgmt.storage.models.BlobAccessPointConfigurationState
+    :ivar description: An arbitrary description of the Blob Access Point configuration.
+    :vartype description: str
+    :ivar last_connection_test_status: The status of the most recent connection test. Known values
+     are: "Succeeded" and "Failed".
+    :vartype last_connection_test_status: str or
+     ~azure.mgmt.storage.models.BlobAccessPointConnectionTestStatus
+    :ivar last_connection_test_timestamp: The timestamp of the most recent connection test.
+    :vartype last_connection_test_timestamp: ~datetime.datetime
+    :ivar last_connection_test_error_message: The normalized and redacted error from the most
+     recent failed connection test.
+    :vartype last_connection_test_error_message: str
+    :ivar source: Information about the backing data source. Required.
+    :vartype source: ~azure.mgmt.storage.models.BlobAccessPointSourceProperties
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.storage.models.ResourceProvisioningState
+    """
+
+    unique_id: Optional[str] = rest_field(name="uniqueId", visibility=["read"])
+    """The system-generated unique identifier of the configuration."""
+    state: Optional[Union[str, "_models.BlobAccessPointConfigurationState"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The configuration state. A configuration is created in the Active state when this value is not
+     specified. Known values are: \"Active\" and \"Inactive\"."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An arbitrary description of the Blob Access Point configuration."""
+    last_connection_test_status: Optional[Union[str, "_models.BlobAccessPointConnectionTestStatus"]] = rest_field(
+        name="lastConnectionTestStatus", visibility=["read"]
+    )
+    """The status of the most recent connection test. Known values are: \"Succeeded\" and \"Failed\"."""
+    last_connection_test_timestamp: Optional[datetime.datetime] = rest_field(
+        name="lastConnectionTestTimestamp", visibility=["read"], format="rfc3339"
+    )
+    """The timestamp of the most recent connection test."""
+    last_connection_test_error_message: Optional[str] = rest_field(
+        name="lastConnectionTestErrorMessage", visibility=["read"]
+    )
+    """The normalized and redacted error from the most recent failed connection test."""
+    source: "_models.BlobAccessPointSourceProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Information about the backing data source. Required."""
+    provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source: "_models.BlobAccessPointSourceProperties",
+        state: Optional[Union[str, "_models.BlobAccessPointConfigurationState"]] = None,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobAccessPointConfigurationPropertiesUpdate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Details of a Blob Access Point configuration.
+
+    :ivar state: The configuration state. A configuration is created in the Active state when this
+     value is not specified. Known values are: "Active" and "Inactive".
+    :vartype state: str or ~azure.mgmt.storage.models.BlobAccessPointConfigurationState
+    :ivar description: An arbitrary description of the Blob Access Point configuration.
+    :vartype description: str
+    :ivar source: Information about the backing data source.
+    :vartype source: ~azure.mgmt.storage.models.BlobAccessPointSourcePropertiesUpdate
+    """
+
+    state: Optional[Union[str, "_models.BlobAccessPointConfigurationState"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The configuration state. A configuration is created in the Active state when this value is not
+     specified. Known values are: \"Active\" and \"Inactive\"."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An arbitrary description of the Blob Access Point configuration."""
+    source: Optional["_models.BlobAccessPointSourcePropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Information about the backing data source."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.BlobAccessPointConfigurationState"]] = None,
+        description: Optional[str] = None,
+        source: Optional["_models.BlobAccessPointSourcePropertiesUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobAccessPointConfigurationUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A BlobAccessPointConfiguration is a tracked Azure resource modeled as a sub-resource of a
+    Storage Account.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.storage.models.BlobAccessPointConfigurationPropertiesUpdate
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.BlobAccessPointConfigurationPropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.BlobAccessPointConfigurationPropertiesUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobAccessPointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Details for connecting to a backing data source.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    BlobAccessPointEndpointConnectionProperties, BlobAccessPointPrivateLinkConnectionProperties
+
+    :ivar connection_type: The connection type. This value determines the remaining shape of the
+     connection object. Required. Known values are: "Endpoint" and "PrivateLink".
+    :vartype connection_type: str or ~azure.mgmt.storage.models.BlobAccessPointConnectionType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    connection_type: str = rest_discriminator(
+        name="connectionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The connection type. This value determines the remaining shape of the connection object.
+     Required. Known values are: \"Endpoint\" and \"PrivateLink\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobAccessPointConnectionPropertiesUpdate(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Details for connecting to a backing data source.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    BlobAccessPointEndpointConnectionPropertiesUpdate,
+    BlobAccessPointPrivateLinkConnectionPropertiesUpdate
+
+    :ivar connection_type: The connection type. This value determines the remaining shape of the
+     connection object. Required. Known values are: "Endpoint" and "PrivateLink".
+    :vartype connection_type: str or ~azure.mgmt.storage.models.BlobAccessPointConnectionType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    connection_type: str = rest_discriminator(
+        name="connectionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The connection type. This value determines the remaining shape of the connection object.
+     Required. Known values are: \"Endpoint\" and \"PrivateLink\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobAccessPointConnectionTestRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The request used to test an existing Blob Access Point configuration.
+
+    :ivar unique_id: The system-generated unique identifier of the Blob Access Point configuration,
+     as returned by a read operation. This value must match the configuration named in the request
+     path, and is required so that a configuration which was deleted and recreated under the same
+     name is not tested by mistake. Required.
+    :vartype unique_id: str
+    """
+
+    unique_id: str = rest_field(name="uniqueId", visibility=["read", "create", "update", "delete", "query"])
+    """The system-generated unique identifier of the Blob Access Point configuration, as returned by a
+     read operation. This value must match the configuration named in the request path, and is
+     required so that a configuration which was deleted and recreated under the same name is not
+     tested by mistake. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        unique_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobAccessPointConnectionTestResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The result of testing a Blob Access Point configuration connection.
+
+    :ivar method_name: The name of the request attempted against the backing data source. Required.
+    :vartype method_name: str
+    :ivar error_message: A normalized and redacted error message received from the backing data
+     source. This value is empty when the connection test succeeds.
+    :vartype error_message: str
+    :ivar request_id: The request ID associated with the request sent to the backing data source
+     for validation. Required.
+    :vartype request_id: str
+    """
+
+    method_name: str = rest_field(name="methodName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the request attempted against the backing data source. Required."""
+    error_message: Optional[str] = rest_field(
+        name="errorMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A normalized and redacted error message received from the backing data source. This value is
+     empty when the connection test succeeds."""
+    request_id: str = rest_field(name="requestId", visibility=["read", "create", "update", "delete", "query"])
+    """The request ID associated with the request sent to the backing data source for validation.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        method_name: str,
+        request_id: str,
+        error_message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobAccessPointDellOneFsSourceProperties(
+    BlobAccessPointSourceProperties, discriminator="DellOneFs"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A Dell OneFS backing source.
+
+    :ivar source_type: Required. Dell OneFS.
+    :vartype source_type: str or ~azure.mgmt.storage.models.DELL_ONE_FS
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards. Required.
+    :vartype connection: ~azure.mgmt.storage.models.BlobAccessPointConnectionProperties
+    :ivar auth: Details for authenticating to the backing data source. Required.
+    :vartype auth: ~azure.mgmt.storage.models.BlobAccessPointRemoteAuthProperties
+    """
+
+    source_type: Literal[BlobAccessPointSourceType.DELL_ONE_FS] = rest_discriminator(name="sourceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Dell OneFS."""
+    connection: "_models.BlobAccessPointConnectionProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards.
+     Required."""
+    auth: "_models.BlobAccessPointRemoteAuthProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for authenticating to the backing data source. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection: "_models.BlobAccessPointConnectionProperties",
+        auth: "_models.BlobAccessPointRemoteAuthProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.source_type = BlobAccessPointSourceType.DELL_ONE_FS  # type: ignore
+
+
+class BlobAccessPointDellOneFsSourcePropertiesUpdate(
+    BlobAccessPointSourcePropertiesUpdate, discriminator="DellOneFs"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A Dell OneFS backing source.
+
+    :ivar source_type: Required. Dell OneFS.
+    :vartype source_type: str or ~azure.mgmt.storage.models.DELL_ONE_FS
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards.
+    :vartype connection: ~azure.mgmt.storage.models.BlobAccessPointConnectionPropertiesUpdate
+    :ivar auth: Details for authenticating to the backing data source.
+    :vartype auth: ~azure.mgmt.storage.models.BlobAccessPointRemoteAuthPropertiesUpdate
+    """
+
+    source_type: Literal[BlobAccessPointSourceType.DELL_ONE_FS] = rest_discriminator(name="sourceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Dell OneFS."""
+    connection: Optional["_models.BlobAccessPointConnectionPropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards."""
+    auth: Optional["_models.BlobAccessPointRemoteAuthPropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for authenticating to the backing data source."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection: Optional["_models.BlobAccessPointConnectionPropertiesUpdate"] = None,
+        auth: Optional["_models.BlobAccessPointRemoteAuthPropertiesUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.source_type = BlobAccessPointSourceType.DELL_ONE_FS  # type: ignore
+
+
+class BlobAccessPointEndpointConnectionProperties(
+    BlobAccessPointConnectionProperties, discriminator="Endpoint"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A direct endpoint connection.
+
+    :ivar connection_type: Required. Connect directly to a public or otherwise routable endpoint.
+    :vartype connection_type: str or ~azure.mgmt.storage.models.ENDPOINT
+    :ivar endpoint: The backing endpoint, including its protocol, host, optional port, and optional
+     path. Required.
+    :vartype endpoint: str
+    :ivar tls_verification: TLS certificate verification behavior. Defaults to Perform when not
+     specified. Known values are: "Perform" and "Skip".
+    :vartype tls_verification: str or ~azure.mgmt.storage.models.BlobAccessPointTlsVerification
+    """
+
+    connection_type: Literal[BlobAccessPointConnectionType.ENDPOINT] = rest_discriminator(name="connectionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Connect directly to a public or otherwise routable endpoint."""
+    endpoint: str = rest_field(visibility=["read", "create"])
+    """The backing endpoint, including its protocol, host, optional port, and optional path. Required."""
+    tls_verification: Optional[Union[str, "_models.BlobAccessPointTlsVerification"]] = rest_field(
+        name="tlsVerification", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """TLS certificate verification behavior. Defaults to Perform when not specified. Known values
+     are: \"Perform\" and \"Skip\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        endpoint: str,
+        tls_verification: Optional[Union[str, "_models.BlobAccessPointTlsVerification"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.connection_type = BlobAccessPointConnectionType.ENDPOINT  # type: ignore
+
+
+class BlobAccessPointEndpointConnectionPropertiesUpdate(
+    BlobAccessPointConnectionPropertiesUpdate, discriminator="Endpoint"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A direct endpoint connection.
+
+    :ivar connection_type: Required. Connect directly to a public or otherwise routable endpoint.
+    :vartype connection_type: str or ~azure.mgmt.storage.models.ENDPOINT
+    :ivar tls_verification: TLS certificate verification behavior. Defaults to Perform when not
+     specified. Known values are: "Perform" and "Skip".
+    :vartype tls_verification: str or ~azure.mgmt.storage.models.BlobAccessPointTlsVerification
+    """
+
+    connection_type: Literal[BlobAccessPointConnectionType.ENDPOINT] = rest_discriminator(name="connectionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Connect directly to a public or otherwise routable endpoint."""
+    tls_verification: Optional[Union[str, "_models.BlobAccessPointTlsVerification"]] = rest_field(
+        name="tlsVerification", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """TLS certificate verification behavior. Defaults to Perform when not specified. Known values
+     are: \"Perform\" and \"Skip\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tls_verification: Optional[Union[str, "_models.BlobAccessPointTlsVerification"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.connection_type = BlobAccessPointConnectionType.ENDPOINT  # type: ignore
+
+
+class BlobAccessPointGenericS3SourceProperties(
+    BlobAccessPointSourceProperties, discriminator="S3Compatible"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Another S3-compatible backing source.
+
+    :ivar source_type: Required. Another S3-compatible data source.
+    :vartype source_type: str or ~azure.mgmt.storage.models.S3_COMPATIBLE
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards. Required.
+    :vartype connection: ~azure.mgmt.storage.models.BlobAccessPointConnectionProperties
+    :ivar auth: Details for authenticating to the backing data source. Required.
+    :vartype auth: ~azure.mgmt.storage.models.BlobAccessPointRemoteAuthProperties
+    """
+
+    source_type: Literal[BlobAccessPointSourceType.S3_COMPATIBLE] = rest_discriminator(name="sourceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Another S3-compatible data source."""
+    connection: "_models.BlobAccessPointConnectionProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards.
+     Required."""
+    auth: "_models.BlobAccessPointRemoteAuthProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for authenticating to the backing data source. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection: "_models.BlobAccessPointConnectionProperties",
+        auth: "_models.BlobAccessPointRemoteAuthProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.source_type = BlobAccessPointSourceType.S3_COMPATIBLE  # type: ignore
+
+
+class BlobAccessPointGenericS3SourcePropertiesUpdate(
+    BlobAccessPointSourcePropertiesUpdate, discriminator="S3Compatible"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Another S3-compatible backing source.
+
+    :ivar source_type: Required. Another S3-compatible data source.
+    :vartype source_type: str or ~azure.mgmt.storage.models.S3_COMPATIBLE
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards.
+    :vartype connection: ~azure.mgmt.storage.models.BlobAccessPointConnectionPropertiesUpdate
+    :ivar auth: Details for authenticating to the backing data source.
+    :vartype auth: ~azure.mgmt.storage.models.BlobAccessPointRemoteAuthPropertiesUpdate
+    """
+
+    source_type: Literal[BlobAccessPointSourceType.S3_COMPATIBLE] = rest_discriminator(name="sourceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Another S3-compatible data source."""
+    connection: Optional["_models.BlobAccessPointConnectionPropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards."""
+    auth: Optional["_models.BlobAccessPointRemoteAuthPropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for authenticating to the backing data source."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection: Optional["_models.BlobAccessPointConnectionPropertiesUpdate"] = None,
+        auth: Optional["_models.BlobAccessPointRemoteAuthPropertiesUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.source_type = BlobAccessPointSourceType.S3_COMPATIBLE  # type: ignore
+
+
+class BlobAccessPointNasuniSourceProperties(
+    BlobAccessPointSourceProperties, discriminator="Nasuni"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A Nasuni backing source.
+
+    :ivar source_type: Required. Nasuni S3-compatible data source.
+    :vartype source_type: str or ~azure.mgmt.storage.models.NASUNI
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards. Required.
+    :vartype connection: ~azure.mgmt.storage.models.BlobAccessPointConnectionProperties
+    :ivar auth: Details for authenticating to the backing data source. Required.
+    :vartype auth: ~azure.mgmt.storage.models.BlobAccessPointRemoteAuthProperties
+    """
+
+    source_type: Literal[BlobAccessPointSourceType.NASUNI] = rest_discriminator(name="sourceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Nasuni S3-compatible data source."""
+    connection: "_models.BlobAccessPointConnectionProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards.
+     Required."""
+    auth: "_models.BlobAccessPointRemoteAuthProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for authenticating to the backing data source. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection: "_models.BlobAccessPointConnectionProperties",
+        auth: "_models.BlobAccessPointRemoteAuthProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.source_type = BlobAccessPointSourceType.NASUNI  # type: ignore
+
+
+class BlobAccessPointNasuniSourcePropertiesUpdate(
+    BlobAccessPointSourcePropertiesUpdate, discriminator="Nasuni"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A Nasuni backing source.
+
+    :ivar source_type: Required. Nasuni S3-compatible data source.
+    :vartype source_type: str or ~azure.mgmt.storage.models.NASUNI
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards.
+    :vartype connection: ~azure.mgmt.storage.models.BlobAccessPointConnectionPropertiesUpdate
+    :ivar auth: Details for authenticating to the backing data source.
+    :vartype auth: ~azure.mgmt.storage.models.BlobAccessPointRemoteAuthPropertiesUpdate
+    """
+
+    source_type: Literal[BlobAccessPointSourceType.NASUNI] = rest_discriminator(name="sourceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Nasuni S3-compatible data source."""
+    connection: Optional["_models.BlobAccessPointConnectionPropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards."""
+    auth: Optional["_models.BlobAccessPointRemoteAuthPropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for authenticating to the backing data source."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection: Optional["_models.BlobAccessPointConnectionPropertiesUpdate"] = None,
+        auth: Optional["_models.BlobAccessPointRemoteAuthPropertiesUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.source_type = BlobAccessPointSourceType.NASUNI  # type: ignore
+
+
+class BlobAccessPointNetAppOntapSourceProperties(
+    BlobAccessPointSourceProperties, discriminator="NetAppOntap"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A NetApp ONTAP backing source.
+
+    :ivar source_type: Required. NetApp ONTAP.
+    :vartype source_type: str or ~azure.mgmt.storage.models.NET_APP_ONTAP
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards. Required.
+    :vartype connection: ~azure.mgmt.storage.models.BlobAccessPointConnectionProperties
+    :ivar auth: Details for authenticating to the backing data source. Required.
+    :vartype auth: ~azure.mgmt.storage.models.BlobAccessPointRemoteAuthProperties
+    """
+
+    source_type: Literal[BlobAccessPointSourceType.NET_APP_ONTAP] = rest_discriminator(name="sourceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. NetApp ONTAP."""
+    connection: "_models.BlobAccessPointConnectionProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards.
+     Required."""
+    auth: "_models.BlobAccessPointRemoteAuthProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for authenticating to the backing data source. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection: "_models.BlobAccessPointConnectionProperties",
+        auth: "_models.BlobAccessPointRemoteAuthProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.source_type = BlobAccessPointSourceType.NET_APP_ONTAP  # type: ignore
+
+
+class BlobAccessPointNetAppOntapSourcePropertiesUpdate(
+    BlobAccessPointSourcePropertiesUpdate, discriminator="NetAppOntap"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A NetApp ONTAP backing source.
+
+    :ivar source_type: Required. NetApp ONTAP.
+    :vartype source_type: str or ~azure.mgmt.storage.models.NET_APP_ONTAP
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards.
+    :vartype connection: ~azure.mgmt.storage.models.BlobAccessPointConnectionPropertiesUpdate
+    :ivar auth: Details for authenticating to the backing data source.
+    :vartype auth: ~azure.mgmt.storage.models.BlobAccessPointRemoteAuthPropertiesUpdate
+    """
+
+    source_type: Literal[BlobAccessPointSourceType.NET_APP_ONTAP] = rest_discriminator(name="sourceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. NetApp ONTAP."""
+    connection: Optional["_models.BlobAccessPointConnectionPropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards."""
+    auth: Optional["_models.BlobAccessPointRemoteAuthPropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for authenticating to the backing data source."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection: Optional["_models.BlobAccessPointConnectionPropertiesUpdate"] = None,
+        auth: Optional["_models.BlobAccessPointRemoteAuthPropertiesUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.source_type = BlobAccessPointSourceType.NET_APP_ONTAP  # type: ignore
+
+
+class BlobAccessPointPrivateLinkConnectionProperties(
+    BlobAccessPointConnectionProperties, discriminator="PrivateLink"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A connection established through Azure Private Link.
+
+    :ivar connection_type: Required. Connect through Azure Private Link.
+    :vartype connection_type: str or ~azure.mgmt.storage.models.PRIVATE_LINK
+    :ivar private_link_id_type: Indicates that privateLinkId contains an Azure resource ID.
+     Required. "ResourceId"
+    :vartype private_link_id_type: str or
+     ~azure.mgmt.storage.models.BlobAccessPointPrivateLinkIdType
+    :ivar private_link_id: The Azure resource ID of the backing Private Link service. Required.
+    :vartype private_link_id: str
+    :ivar private_link_group_id: The Private Link group ID, when required by the backing resource.
+    :vartype private_link_group_id: str
+    :ivar private_link_location: The Azure region in which the private endpoint is provisioned.
+     Required.
+    :vartype private_link_location: str
+    :ivar request_message: The connection request message sent to the Private Link owner. Required.
+    :vartype request_message: str
+    :ivar endpoint: The backing endpoint as seen by the target of the Private Link. Required.
+    :vartype endpoint: str
+    :ivar tls_verification: TLS certificate verification behavior. Defaults to Perform when not
+     specified. Known values are: "Perform" and "Skip".
+    :vartype tls_verification: str or ~azure.mgmt.storage.models.BlobAccessPointTlsVerification
+    :ivar private_endpoint_name: The name of the private endpoint created by Azure Storage.
+    :vartype private_endpoint_name: str
+    """
+
+    connection_type: Literal[BlobAccessPointConnectionType.PRIVATE_LINK] = rest_discriminator(name="connectionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Connect through Azure Private Link."""
+    private_link_id_type: Union[str, "_models.BlobAccessPointPrivateLinkIdType"] = rest_field(
+        name="privateLinkIdType", visibility=["read", "create"]
+    )
+    """Indicates that privateLinkId contains an Azure resource ID. Required. \"ResourceId\""""
+    private_link_id: str = rest_field(name="privateLinkId", visibility=["read", "create"])
+    """The Azure resource ID of the backing Private Link service. Required."""
+    private_link_group_id: Optional[str] = rest_field(name="privateLinkGroupId", visibility=["read", "create"])
+    """The Private Link group ID, when required by the backing resource."""
+    private_link_location: str = rest_field(name="privateLinkLocation", visibility=["read", "create"])
+    """The Azure region in which the private endpoint is provisioned. Required."""
+    request_message: str = rest_field(name="requestMessage", visibility=["read", "create"])
+    """The connection request message sent to the Private Link owner. Required."""
+    endpoint: str = rest_field(visibility=["read", "create"])
+    """The backing endpoint as seen by the target of the Private Link. Required."""
+    tls_verification: Optional[Union[str, "_models.BlobAccessPointTlsVerification"]] = rest_field(
+        name="tlsVerification", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """TLS certificate verification behavior. Defaults to Perform when not specified. Known values
+     are: \"Perform\" and \"Skip\"."""
+    private_endpoint_name: Optional[str] = rest_field(name="privateEndpointName", visibility=["read"])
+    """The name of the private endpoint created by Azure Storage."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        private_link_id_type: Union[str, "_models.BlobAccessPointPrivateLinkIdType"],
+        private_link_id: str,
+        private_link_location: str,
+        request_message: str,
+        endpoint: str,
+        private_link_group_id: Optional[str] = None,
+        tls_verification: Optional[Union[str, "_models.BlobAccessPointTlsVerification"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.connection_type = BlobAccessPointConnectionType.PRIVATE_LINK  # type: ignore
+
+
+class BlobAccessPointPrivateLinkConnectionPropertiesUpdate(
+    BlobAccessPointConnectionPropertiesUpdate, discriminator="PrivateLink"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A connection established through Azure Private Link.
+
+    :ivar connection_type: Required. Connect through Azure Private Link.
+    :vartype connection_type: str or ~azure.mgmt.storage.models.PRIVATE_LINK
+    :ivar tls_verification: TLS certificate verification behavior. Defaults to Perform when not
+     specified. Known values are: "Perform" and "Skip".
+    :vartype tls_verification: str or ~azure.mgmt.storage.models.BlobAccessPointTlsVerification
+    """
+
+    connection_type: Literal[BlobAccessPointConnectionType.PRIVATE_LINK] = rest_discriminator(name="connectionType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Connect through Azure Private Link."""
+    tls_verification: Optional[Union[str, "_models.BlobAccessPointTlsVerification"]] = rest_field(
+        name="tlsVerification", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """TLS certificate verification behavior. Defaults to Perform when not specified. Known values
+     are: \"Perform\" and \"Skip\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tls_verification: Optional[Union[str, "_models.BlobAccessPointTlsVerification"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.connection_type = BlobAccessPointConnectionType.PRIVATE_LINK  # type: ignore
+
+
+class BlobAccessPointProposedConnectionTestRequest(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The request used to test a proposed Blob Access Point configuration.
+
+    :ivar source: Information about the backing data source whose connection is tested. Required.
+    :vartype source: ~azure.mgmt.storage.models.BlobAccessPointSourceProperties
+    """
+
+    source: "_models.BlobAccessPointSourceProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Information about the backing data source whose connection is tested. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source: "_models.BlobAccessPointSourceProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobAccessPointQumuloSourceProperties(
+    BlobAccessPointSourceProperties, discriminator="Qumulo"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A Qumulo backing source.
+
+    :ivar source_type: Required. Qumulo S3-compatible data source.
+    :vartype source_type: str or ~azure.mgmt.storage.models.QUMULO
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards. Required.
+    :vartype connection: ~azure.mgmt.storage.models.BlobAccessPointConnectionProperties
+    :ivar auth: Details for authenticating to the backing data source. Required.
+    :vartype auth: ~azure.mgmt.storage.models.BlobAccessPointRemoteAuthProperties
+    """
+
+    source_type: Literal[BlobAccessPointSourceType.QUMULO] = rest_discriminator(name="sourceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Qumulo S3-compatible data source."""
+    connection: "_models.BlobAccessPointConnectionProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards.
+     Required."""
+    auth: "_models.BlobAccessPointRemoteAuthProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for authenticating to the backing data source. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection: "_models.BlobAccessPointConnectionProperties",
+        auth: "_models.BlobAccessPointRemoteAuthProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.source_type = BlobAccessPointSourceType.QUMULO  # type: ignore
+
+
+class BlobAccessPointQumuloSourcePropertiesUpdate(
+    BlobAccessPointSourcePropertiesUpdate, discriminator="Qumulo"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """A Qumulo backing source.
+
+    :ivar source_type: Required. Qumulo S3-compatible data source.
+    :vartype source_type: str or ~azure.mgmt.storage.models.QUMULO
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards.
+    :vartype connection: ~azure.mgmt.storage.models.BlobAccessPointConnectionPropertiesUpdate
+    :ivar auth: Details for authenticating to the backing data source.
+    :vartype auth: ~azure.mgmt.storage.models.BlobAccessPointRemoteAuthPropertiesUpdate
+    """
+
+    source_type: Literal[BlobAccessPointSourceType.QUMULO] = rest_discriminator(name="sourceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Qumulo S3-compatible data source."""
+    connection: Optional["_models.BlobAccessPointConnectionPropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards."""
+    auth: Optional["_models.BlobAccessPointRemoteAuthPropertiesUpdate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details for authenticating to the backing data source."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection: Optional["_models.BlobAccessPointConnectionPropertiesUpdate"] = None,
+        auth: Optional["_models.BlobAccessPointRemoteAuthPropertiesUpdate"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.source_type = BlobAccessPointSourceType.QUMULO  # type: ignore
+
+
 class BlobContainer(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the blob container, including Id, resource name, resource type, Etag.
 
@@ -760,6 +2383,7 @@ class BlobContainer(ProxyResource):  # pylint: disable=docstring-keyword-should-
         "immutable_storage_with_versioning",
         "enable_nfs_v3_root_squash",
         "enable_nfs_v3_all_squash",
+        "blob_access_point_configuration",
     ]
 
     @overload
@@ -1662,50 +3286,6 @@ class CloudErrorBody(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(ResourceAutoGenerated):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Tracked Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.storage.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-    location: str = rest_field(visibility=["read", "create"])
-    """The geo-location where the resource lives. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class Connector(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Connector is a tracked ARM resource modeled as a sub-resource of a Storage Account.
 
@@ -1892,6 +3472,12 @@ class ContainerProperties(_Model):  # pylint: disable=docstring-keyword-should-m
     :vartype enable_nfs_v3_root_squash: bool
     :ivar enable_nfs_v3_all_squash: Enable NFSv3 all squash on blob container.
     :vartype enable_nfs_v3_all_squash: bool
+    :ivar blob_access_point_configuration: Configuration that attaches this container to a Blob
+     Access Point. If set, the container is a read-only virtual container whose read/list requests
+     are forwarded to the connected backing data store. Cannot be changed, removed, or added after
+     container creation.
+    :vartype blob_access_point_configuration:
+     ~azure.mgmt.storage.models.BlobAccessPointConfigurationConnection
     """
 
     version: Optional[str] = rest_field(visibility=["read"])
@@ -1960,6 +3546,12 @@ class ContainerProperties(_Model):  # pylint: disable=docstring-keyword-should-m
         name="enableNfsV3AllSquash", visibility=["read", "create", "update", "delete", "query"]
     )
     """Enable NFSv3 all squash on blob container."""
+    blob_access_point_configuration: Optional["_models.BlobAccessPointConfigurationConnection"] = rest_field(
+        name="blobAccessPointConfiguration", visibility=["read", "create"]
+    )
+    """Configuration that attaches this container to a Blob Access Point. If set, the container is a
+     read-only virtual container whose read/list requests are forwarded to the connected backing
+     data store. Cannot be changed, removed, or added after container creation."""
 
     @overload
     def __init__(
@@ -1972,6 +3564,7 @@ class ContainerProperties(_Model):  # pylint: disable=docstring-keyword-should-m
         immutable_storage_with_versioning: Optional["_models.ImmutableStorageWithVersioning"] = None,
         enable_nfs_v3_root_squash: Optional[bool] = None,
         enable_nfs_v3_all_squash: Optional[bool] = None,
+        blob_access_point_configuration: Optional["_models.BlobAccessPointConfigurationConnection"] = None,
     ) -> None: ...
 
     @overload
@@ -2037,6 +3630,76 @@ class ContextCache(TrackedResource):  # pylint: disable=docstring-keyword-should
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ContextCacheCheckNameAvailabilityParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The parameters used to check the availability of the context cache resource name.
+
+    :ivar name: The name of the context cache resource to check for availability. Required.
+    :vartype name: str
+    :ivar type: The type of the context cache resource to check for availability. Required. Default
+     value is "Microsoft.Storage/contextCaches".
+    :vartype type: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the context cache resource to check for availability. Required."""
+    type: Literal["Microsoft.Storage/contextCaches"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of the context cache resource to check for availability. Required. Default value is
+     \"Microsoft.Storage/contextCaches\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["Microsoft.Storage/contextCaches"] = "Microsoft.Storage/contextCaches"
+
+
+class ContextCacheCheckNameAvailabilityResult(_Model):
+    """The result of the context cache name availability check.
+
+    :ivar name_available: A boolean value that indicates whether the context cache name is
+     available to use. If true, the name is available. If false, the name has already been taken or
+     is invalid and cannot be used. Required.
+    :vartype name_available: bool
+    :ivar reason: The reason why the context cache name is not available. The Reason element is
+     only returned if NameAvailable is false. Known values are: "AlreadyExists" and
+     "ContextCacheNameInvalid".
+    :vartype reason: str or
+     ~azure.mgmt.storage.models.ContextCacheCheckNameAvailabilityFailureReason
+    :ivar message: The error message providing additional information about the context cache name
+     availability check failure.
+    :vartype message: str
+    """
+
+    name_available: bool = rest_field(name="nameAvailable", visibility=["read"])
+    """A boolean value that indicates whether the context cache name is available to use. If true, the
+     name is available. If false, the name has already been taken or is invalid and cannot be used.
+     Required."""
+    reason: Optional[Union[str, "_models.ContextCacheCheckNameAvailabilityFailureReason"]] = rest_field(
+        visibility=["read"]
+    )
+    """The reason why the context cache name is not available. The Reason element is only returned if
+     NameAvailable is false. Known values are: \"AlreadyExists\" and \"ContextCacheNameInvalid\"."""
+    message: Optional[str] = rest_field(visibility=["read"])
+    """The error message providing additional information about the context cache name availability
+     check failure."""
 
 
 class ContextCacheContainer(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -5758,6 +7421,7 @@ class ListContainerItem(AzureEntityResource):  # pylint: disable=docstring-keywo
         "immutable_storage_with_versioning",
         "enable_nfs_v3_root_squash",
         "enable_nfs_v3_all_squash",
+        "blob_access_point_configuration",
     ]
 
     @overload
@@ -7341,6 +9005,8 @@ class NspAccessRuleProperties(_Model):  # pylint: disable=docstring-keyword-shou
     :vartype network_security_perimeters: list[~azure.mgmt.storage.models.NetworkSecurityPerimeter]
     :ivar fully_qualified_domain_names: FQDN for outbound rules.
     :vartype fully_qualified_domain_names: list[str]
+    :ivar service_tags: Service Tags for inbound rules.
+    :vartype service_tags: list[str]
     """
 
     direction: Optional[Union[str, "_models.NspAccessRuleDirection"]] = rest_field(
@@ -7363,6 +9029,10 @@ class NspAccessRuleProperties(_Model):  # pylint: disable=docstring-keyword-shou
         name="fullyQualifiedDomainNames", visibility=["read"]
     )
     """FQDN for outbound rules."""
+    service_tags: Optional[list[str]] = rest_field(
+        name="serviceTags", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Service Tags for inbound rules."""
 
     @overload
     def __init__(
@@ -7371,6 +9041,7 @@ class NspAccessRuleProperties(_Model):  # pylint: disable=docstring-keyword-shou
         direction: Optional[Union[str, "_models.NspAccessRuleDirection"]] = None,
         address_prefixes: Optional[list[str]] = None,
         subscriptions: Optional[list["_models.NspAccessRulePropertiesSubscriptionsItem"]] = None,
+        service_tags: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -9441,6 +11112,7 @@ class StorageAccount(TrackedResource):  # pylint: disable=docstring-keyword-shou
         "secondary_endpoints",
         "encryption",
         "access_tier",
+        "turbo_tier",
         "azure_files_identity_based_authentication",
         "enable_https_traffic_only",
         "network_rule_set",
@@ -9628,6 +11300,7 @@ class StorageAccountCreateParameters(_Model):  # pylint: disable=docstring-keywo
         "encryption",
         "network_rule_set",
         "access_tier",
+        "turbo_tier",
         "azure_files_identity_based_authentication",
         "enable_https_traffic_only",
         "is_sftp_enabled",
@@ -10068,6 +11741,8 @@ class StorageAccountProperties(_Model):  # pylint: disable=docstring-keyword-sho
      storage account type and it cannot be changed for the premium block blobs storage account type.
      Known values are: "Hot", "Cool", "Premium", "Cold", and "Smart".
     :vartype access_tier: str or ~azure.mgmt.storage.models.AccessTier
+    :ivar turbo_tier: Configures Turbo Tier for the storage account.
+    :vartype turbo_tier: ~azure.mgmt.storage.models.TurboTier
     :ivar azure_files_identity_based_authentication: Provides the identity based authentication
      settings for Azure Files.
     :vartype azure_files_identity_based_authentication:
@@ -10220,6 +11895,10 @@ class StorageAccountProperties(_Model):  # pylint: disable=docstring-keyword-sho
      The 'Premium' access tier is the default value for premium block blobs storage account type and
      it cannot be changed for the premium block blobs storage account type. Known values are:
      \"Hot\", \"Cool\", \"Premium\", \"Cold\", and \"Smart\"."""
+    turbo_tier: Optional["_models.TurboTier"] = rest_field(
+        name="turboTier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configures Turbo Tier for the storage account."""
     azure_files_identity_based_authentication: Optional["_models.AzureFilesIdentityBasedAuthentication"] = rest_field(
         name="azureFilesIdentityBasedAuthentication", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10363,6 +12042,7 @@ class StorageAccountProperties(_Model):  # pylint: disable=docstring-keyword-sho
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
+        turbo_tier: Optional["_models.TurboTier"] = None,
         azure_files_identity_based_authentication: Optional["_models.AzureFilesIdentityBasedAuthentication"] = None,
         enable_https_traffic_only: Optional[bool] = None,
         is_sftp_enabled: Optional[bool] = None,
@@ -10429,6 +12109,8 @@ class StorageAccountPropertiesCreateParameters(_Model):  # pylint: disable=docst
      storage account type and it cannot be changed for the premium block blobs storage account type.
      Known values are: "Hot", "Cool", "Premium", "Cold", and "Smart".
     :vartype access_tier: str or ~azure.mgmt.storage.models.AccessTier
+    :ivar turbo_tier: Configures Turbo Tier for the storage account.
+    :vartype turbo_tier: ~azure.mgmt.storage.models.TurboTier
     :ivar azure_files_identity_based_authentication: Provides the identity based authentication
      settings for Azure Files.
     :vartype azure_files_identity_based_authentication:
@@ -10539,6 +12221,10 @@ class StorageAccountPropertiesCreateParameters(_Model):  # pylint: disable=docst
      The 'Premium' access tier is the default value for premium block blobs storage account type and
      it cannot be changed for the premium block blobs storage account type. Known values are:
      \"Hot\", \"Cool\", \"Premium\", \"Cold\", and \"Smart\"."""
+    turbo_tier: Optional["_models.TurboTier"] = rest_field(
+        name="turboTier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configures Turbo Tier for the storage account."""
     azure_files_identity_based_authentication: Optional["_models.AzureFilesIdentityBasedAuthentication"] = rest_field(
         name="azureFilesIdentityBasedAuthentication", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10654,6 +12340,7 @@ class StorageAccountPropertiesCreateParameters(_Model):  # pylint: disable=docst
         encryption: Optional["_models.Encryption"] = None,
         network_rule_set: Optional["_models.NetworkRuleSet"] = None,
         access_tier: Optional[Union[str, "_models.AccessTier"]] = None,
+        turbo_tier: Optional["_models.TurboTier"] = None,
         azure_files_identity_based_authentication: Optional["_models.AzureFilesIdentityBasedAuthentication"] = None,
         enable_https_traffic_only: Optional[bool] = None,
         is_sftp_enabled: Optional[bool] = None,
@@ -10707,6 +12394,8 @@ class StorageAccountPropertiesUpdateParameters(_Model):  # pylint: disable=docst
      storage account type and it cannot be changed for the premium block blobs storage account type.
      Known values are: "Hot", "Cool", "Premium", "Cold", and "Smart".
     :vartype access_tier: str or ~azure.mgmt.storage.models.AccessTier
+    :ivar turbo_tier: Configures Turbo Tier for the storage account.
+    :vartype turbo_tier: ~azure.mgmt.storage.models.TurboTier
     :ivar azure_files_identity_based_authentication: Provides the identity based authentication
      settings for Azure Files.
     :vartype azure_files_identity_based_authentication:
@@ -10808,6 +12497,10 @@ class StorageAccountPropertiesUpdateParameters(_Model):  # pylint: disable=docst
      The 'Premium' access tier is the default value for premium block blobs storage account type and
      it cannot be changed for the premium block blobs storage account type. Known values are:
      \"Hot\", \"Cool\", \"Premium\", \"Cold\", and \"Smart\"."""
+    turbo_tier: Optional["_models.TurboTier"] = rest_field(
+        name="turboTier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configures Turbo Tier for the storage account."""
     azure_files_identity_based_authentication: Optional["_models.AzureFilesIdentityBasedAuthentication"] = rest_field(
         name="azureFilesIdentityBasedAuthentication", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10925,6 +12618,7 @@ class StorageAccountPropertiesUpdateParameters(_Model):  # pylint: disable=docst
         sas_policy: Optional["_models.SasPolicy"] = None,
         key_policy: Optional["_models.KeyPolicy"] = None,
         access_tier: Optional[Union[str, "_models.AccessTier"]] = None,
+        turbo_tier: Optional["_models.TurboTier"] = None,
         azure_files_identity_based_authentication: Optional["_models.AzureFilesIdentityBasedAuthentication"] = None,
         enable_https_traffic_only: Optional[bool] = None,
         is_sftp_enabled: Optional[bool] = None,
@@ -11150,6 +12844,7 @@ class StorageAccountUpdateParameters(_Model):  # pylint: disable=docstring-keywo
         "sas_policy",
         "key_policy",
         "access_tier",
+        "turbo_tier",
         "azure_files_identity_based_authentication",
         "enable_https_traffic_only",
         "is_sftp_enabled",
@@ -11359,6 +13054,9 @@ class StorageDataCollaborationPolicyProperties(_Model):  # pylint: disable=docst
     :ivar allow_storage_connectors: Indicates whether storage connectors are allowed to created or
      managed on the storage account.
     :vartype allow_storage_connectors: bool
+    :ivar allow_blob_access_points: Indicates whether Blob Access Point configurations are allowed
+     to be created or managed on the storage account.
+    :vartype allow_blob_access_points: bool
     :ivar allow_storage_data_shares: Indicates whether data shares are allowed to be created or
      managed on the storage account.
     :vartype allow_storage_data_shares: bool
@@ -11371,6 +13069,11 @@ class StorageDataCollaborationPolicyProperties(_Model):  # pylint: disable=docst
         name="allowStorageConnectors", visibility=["read", "create", "update", "delete", "query"]
     )
     """Indicates whether storage connectors are allowed to created or managed on the storage account."""
+    allow_blob_access_points: Optional[bool] = rest_field(
+        name="allowBlobAccessPoints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether Blob Access Point configurations are allowed to be created or managed on the
+     storage account."""
     allow_storage_data_shares: Optional[bool] = rest_field(
         name="allowStorageDataShares", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -11385,6 +13088,7 @@ class StorageDataCollaborationPolicyProperties(_Model):  # pylint: disable=docst
         self,
         *,
         allow_storage_connectors: Optional[bool] = None,
+        allow_blob_access_points: Optional[bool] = None,
         allow_storage_data_shares: Optional[bool] = None,
         allow_cross_tenant_data_sharing: Optional[bool] = None,
     ) -> None: ...
@@ -12803,6 +14507,47 @@ class TriggerParametersUpdate(_Model):  # pylint: disable=docstring-keyword-shou
         interval_unit: Optional[Union[str, "_models.IntervalUnit"]] = None,
         end_by: Optional[datetime.datetime] = None,
         start_on: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TurboTier(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configures Turbo Tier for a storage account.
+
+    :ivar status: Indicates whether Turbo Tier is enabled or disabled. Known values are: "Enabled"
+     and "Disabled".
+    :vartype status: str or ~azure.mgmt.storage.models.TurboTierStatus
+    :ivar target_percent: The target fill percentage used for placement. The valid range is 10 to
+     100. When status is Enabled and this property is omitted, the default value is 20.
+    :vartype target_percent: int
+    """
+
+    status: Optional[Union[str, "_models.TurboTierStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether Turbo Tier is enabled or disabled. Known values are: \"Enabled\" and
+     \"Disabled\"."""
+    target_percent: Optional[int] = rest_field(
+        name="targetPercent", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target fill percentage used for placement. The valid range is 10 to 100. When status is
+     Enabled and this property is omitted, the default value is 20."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "_models.TurboTierStatus"]] = None,
+        target_percent: Optional[int] = None,
     ) -> None: ...
 
     @overload

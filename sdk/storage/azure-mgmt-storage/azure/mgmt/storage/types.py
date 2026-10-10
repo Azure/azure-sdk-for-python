@@ -10,7 +10,14 @@
 from typing import Any, Literal, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
-from .models._enums import StorageConnectorAuthType, StorageConnectorConnectionType, StorageConnectorSourceType
+from .models._enums import (
+    BlobAccessPointConnectionType,
+    BlobAccessPointRemoteAuthType,
+    BlobAccessPointSourceType,
+    StorageConnectorAuthType,
+    StorageConnectorConnectionType,
+    StorageConnectorSourceType,
+)
 
 if TYPE_CHECKING:
     from .models import (
@@ -22,6 +29,10 @@ if TYPE_CHECKING:
         AiProvider,
         AllowedCopyScope,
         AllowedMethods,
+        BlobAccessPointConfigurationState,
+        BlobAccessPointConnectionTestStatus,
+        BlobAccessPointPrivateLinkIdType,
+        BlobAccessPointTlsVerification,
         Bypass,
         ContextCacheAccountKind,
         ContextCacheProvisioningState,
@@ -67,6 +78,7 @@ if TYPE_CHECKING:
         PrivateEndpointServiceConnectionStatus,
         PublicAccess,
         PublicNetworkAccess,
+        ResourceProvisioningState,
         RootSquashType,
         RoutingChoice,
         RuleType,
@@ -85,6 +97,7 @@ if TYPE_CHECKING:
         StorageDataShareAccessPolicyPermission,
         StorageTaskAssignmentProvisioningState,
         TriggerType,
+        TurboTierStatus,
         ZonePlacementPolicy,
     )
 
@@ -386,6 +399,9 @@ class AdvancedPlatformMetricsRuleProperties(TypedDict, total=False):
     :ivar lastModifiedTime: Gets the last modification date and time of the advanced platform
      metrics rule in UTC.
     :vartype lastModifiedTime: str
+    :ivar metricsToEmit: The metrics requested by the caller. If omitted in a create or update
+     request, the service enables all metrics supported by the selected rule type.
+    :vartype metricsToEmit: list[Union[str, "MetricsEmitted"]]
     :ivar metricsEmitted: The metrics emitted by the rule. Metrics are mapped according to the rule
      type from RuleTypeProperty. Rule type to metrics mapping: ContainerLevelCapacityMetrics =>
      {ContainerUsedSize, ContainerBlobCount}.
@@ -401,6 +417,9 @@ class AdvancedPlatformMetricsRuleProperties(TypedDict, total=False):
     """A boolean flag which enables the advanced platform metrics rule. Required."""
     lastModifiedTime: str
     """Gets the last modification date and time of the advanced platform metrics rule in UTC."""
+    metricsToEmit: list[Union[str, "MetricsEmitted"]]
+    """The metrics requested by the caller. If omitted in a create or update request, the service
+     enables all metrics supported by the selected rule type."""
     metricsEmitted: list[Union[str, "MetricsEmitted"]]
     """The metrics emitted by the rule. Metrics are mapped according to the rule type from
      RuleTypeProperty. Rule type to metrics mapping: ContainerLevelCapacityMetrics =>
@@ -440,6 +459,666 @@ class AzureFilesIdentityBasedAuthentication(TypedDict, total=False):
      \"StorageFileDataSmbShareContributor\", and \"StorageFileDataSmbShareElevatedContributor\"."""
     smbOAuthSettings: "SmbOAuthSettings"
     """Required for Managed Identities access using OAuth over SMB."""
+
+
+class BlobAccessPointAccessKeyAuthProperties(TypedDict, total=False):
+    """S3 access-key authentication properties.
+
+    :ivar authType: Required. Authenticate with an S3 access key and secret access key.
+    :vartype authType: Literal[BlobAccessPointRemoteAuthType.ACCESS_KEY]
+    :ivar accessKeyId: The access key ID. Required.
+    :vartype accessKeyId: str
+    :ivar secretAccessKey: The secret access key. This value is never returned by read or list
+     operations. Required.
+    :vartype secretAccessKey: str
+    :ivar signingRegion: The region used by the request-signing algorithm. Defaults to 'us-east-1'
+     when not specified.
+    :vartype signingRegion: str
+    :ivar hostOverride: The host used when computing request signatures. The endpoint host is used
+     by default.
+    :vartype hostOverride: str
+    """
+
+    authType: Required[Literal[BlobAccessPointRemoteAuthType.ACCESS_KEY]]
+    """Required. Authenticate with an S3 access key and secret access key."""
+    accessKeyId: Required[str]
+    """The access key ID. Required."""
+    secretAccessKey: Required[str]
+    """The secret access key. This value is never returned by read or list operations. Required."""
+    signingRegion: str
+    """The region used by the request-signing algorithm. Defaults to 'us-east-1' when not specified."""
+    hostOverride: str
+    """The host used when computing request signatures. The endpoint host is used by default."""
+
+
+class BlobAccessPointAccessKeyAuthPropertiesUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """S3 access-key authentication properties.
+
+    :ivar authType: Required. Authenticate with an S3 access key and secret access key.
+    :vartype authType: Literal[BlobAccessPointRemoteAuthType.ACCESS_KEY]
+    :ivar accessKeyId: The access key ID.
+    :vartype accessKeyId: str
+    :ivar secretAccessKey: The secret access key. This value is never returned by read or list
+     operations.
+    :vartype secretAccessKey: str
+    :ivar signingRegion: The region used by the request-signing algorithm. Defaults to 'us-east-1'
+     when not specified.
+    :vartype signingRegion: str
+    :ivar hostOverride: The host used when computing request signatures. The endpoint host is used
+     by default.
+    :vartype hostOverride: str
+    """
+
+    authType: Required[Literal[BlobAccessPointRemoteAuthType.ACCESS_KEY]]
+    """Required. Authenticate with an S3 access key and secret access key."""
+    accessKeyId: str
+    """The access key ID."""
+    secretAccessKey: str
+    """The secret access key. This value is never returned by read or list operations."""
+    signingRegion: str
+    """The region used by the request-signing algorithm. Defaults to 'us-east-1' when not specified."""
+    hostOverride: str
+    """The host used when computing request signatures. The endpoint host is used by default."""
+
+
+class BlobAccessPointAzureNetAppFilesSourceProperties(TypedDict, total=False):  # pylint: disable=name-too-long
+    """An Azure NetApp Files backing source.
+
+    :ivar sourceType: Required. Azure NetApp Files.
+    :vartype sourceType: Literal[BlobAccessPointSourceType.AZURE_NET_APP_FILES]
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards. Required.
+    :vartype connection: "BlobAccessPointConnectionProperties"
+    :ivar auth: Details for authenticating to the backing data source. Required.
+    :vartype auth: "BlobAccessPointRemoteAuthProperties"
+    """
+
+    sourceType: Required[Literal[BlobAccessPointSourceType.AZURE_NET_APP_FILES]]
+    """Required. Azure NetApp Files."""
+    connection: Required["BlobAccessPointConnectionProperties"]
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards.
+     Required."""
+    auth: Required["BlobAccessPointRemoteAuthProperties"]
+    """Details for authenticating to the backing data source. Required."""
+
+
+class BlobAccessPointAzureNetAppFilesSourcePropertiesUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """An Azure NetApp Files backing source.
+
+    :ivar sourceType: Required. Azure NetApp Files.
+    :vartype sourceType: Literal[BlobAccessPointSourceType.AZURE_NET_APP_FILES]
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards.
+    :vartype connection: "BlobAccessPointConnectionPropertiesUpdate"
+    :ivar auth: Details for authenticating to the backing data source.
+    :vartype auth: "BlobAccessPointRemoteAuthPropertiesUpdate"
+    """
+
+    sourceType: Required[Literal[BlobAccessPointSourceType.AZURE_NET_APP_FILES]]
+    """Required. Azure NetApp Files."""
+    connection: "BlobAccessPointConnectionPropertiesUpdate"
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards."""
+    auth: "BlobAccessPointRemoteAuthPropertiesUpdate"
+    """Details for authenticating to the backing data source."""
+
+
+class BlobAccessPointCommvaultSourceProperties(TypedDict, total=False):
+    """A Commvault backing source.
+
+    :ivar sourceType: Required. Commvault S3-compatible data source.
+    :vartype sourceType: Literal[BlobAccessPointSourceType.COMMVAULT]
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards. Required.
+    :vartype connection: "BlobAccessPointConnectionProperties"
+    :ivar auth: Details for authenticating to the backing data source. Required.
+    :vartype auth: "BlobAccessPointRemoteAuthProperties"
+    """
+
+    sourceType: Required[Literal[BlobAccessPointSourceType.COMMVAULT]]
+    """Required. Commvault S3-compatible data source."""
+    connection: Required["BlobAccessPointConnectionProperties"]
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards.
+     Required."""
+    auth: Required["BlobAccessPointRemoteAuthProperties"]
+    """Details for authenticating to the backing data source. Required."""
+
+
+class BlobAccessPointCommvaultSourcePropertiesUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A Commvault backing source.
+
+    :ivar sourceType: Required. Commvault S3-compatible data source.
+    :vartype sourceType: Literal[BlobAccessPointSourceType.COMMVAULT]
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards.
+    :vartype connection: "BlobAccessPointConnectionPropertiesUpdate"
+    :ivar auth: Details for authenticating to the backing data source.
+    :vartype auth: "BlobAccessPointRemoteAuthPropertiesUpdate"
+    """
+
+    sourceType: Required[Literal[BlobAccessPointSourceType.COMMVAULT]]
+    """Required. Commvault S3-compatible data source."""
+    connection: "BlobAccessPointConnectionPropertiesUpdate"
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards."""
+    auth: "BlobAccessPointRemoteAuthPropertiesUpdate"
+    """Details for authenticating to the backing data source."""
+
+
+class TrackedResource(ResourceAutoGenerated):
+    """Tracked Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    tags: dict[str, str]
+    """Resource tags."""
+    location: Required[str]
+    """The geo-location where the resource lives. Required."""
+
+
+class BlobAccessPointConfiguration(TrackedResource):
+    """A BlobAccessPointConfiguration is a tracked Azure resource modeled as a sub-resource of a
+    Storage Account.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource. Required.
+    :vartype properties: "BlobAccessPointConfigurationProperties"
+    """
+
+    properties: Required["BlobAccessPointConfigurationProperties"]
+    """The resource-specific properties for this resource. Required."""
+
+
+class BlobAccessPointConfigurationConnection(TypedDict, total=False):
+    """Blob Access Point configuration associated with a blob container.
+
+    :ivar blobAccessPointConfigurationName: Name of the Blob Access Point Configuration to connect
+     to.
+    :vartype blobAccessPointConfigurationName: str
+    :ivar blobAccessPointConfigurationUniqueId: System-generated unique identifier of the Blob
+     Access Point Configuration to connect to. If not provided on create, the service looks up and
+     persists the current unique id.
+    :vartype blobAccessPointConfigurationUniqueId: str
+    """
+
+    blobAccessPointConfigurationName: str
+    """Name of the Blob Access Point Configuration to connect to."""
+    blobAccessPointConfigurationUniqueId: str
+    """System-generated unique identifier of the Blob Access Point Configuration to connect to. If not
+     provided on create, the service looks up and persists the current unique id."""
+
+
+class BlobAccessPointConfigurationProperties(TypedDict, total=False):
+    """Details of a Blob Access Point configuration.
+
+    :ivar uniqueId: The system-generated unique identifier of the configuration.
+    :vartype uniqueId: str
+    :ivar state: The configuration state. A configuration is created in the Active state when this
+     value is not specified. Known values are: "Active" and "Inactive".
+    :vartype state: Union[str, "BlobAccessPointConfigurationState"]
+    :ivar description: An arbitrary description of the Blob Access Point configuration.
+    :vartype description: str
+    :ivar lastConnectionTestStatus: The status of the most recent connection test. Known values
+     are: "Succeeded" and "Failed".
+    :vartype lastConnectionTestStatus: Union[str, "BlobAccessPointConnectionTestStatus"]
+    :ivar lastConnectionTestTimestamp: The timestamp of the most recent connection test.
+    :vartype lastConnectionTestTimestamp: str
+    :ivar lastConnectionTestErrorMessage: The normalized and redacted error from the most recent
+     failed connection test.
+    :vartype lastConnectionTestErrorMessage: str
+    :ivar source: Information about the backing data source. Required.
+    :vartype source: "BlobAccessPointSourceProperties"
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
+     "Failed", and "Canceled".
+    :vartype provisioningState: Union[str, "ResourceProvisioningState"]
+    """
+
+    uniqueId: str
+    """The system-generated unique identifier of the configuration."""
+    state: Union[str, "BlobAccessPointConfigurationState"]
+    """The configuration state. A configuration is created in the Active state when this value is not
+     specified. Known values are: \"Active\" and \"Inactive\"."""
+    description: str
+    """An arbitrary description of the Blob Access Point configuration."""
+    lastConnectionTestStatus: Union[str, "BlobAccessPointConnectionTestStatus"]
+    """The status of the most recent connection test. Known values are: \"Succeeded\" and \"Failed\"."""
+    lastConnectionTestTimestamp: str
+    """The timestamp of the most recent connection test."""
+    lastConnectionTestErrorMessage: str
+    """The normalized and redacted error from the most recent failed connection test."""
+    source: Required["BlobAccessPointSourceProperties"]
+    """Information about the backing data source. Required."""
+    provisioningState: Union[str, "ResourceProvisioningState"]
+    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", and
+     \"Canceled\"."""
+
+
+class BlobAccessPointConfigurationPropertiesUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Details of a Blob Access Point configuration.
+
+    :ivar state: The configuration state. A configuration is created in the Active state when this
+     value is not specified. Known values are: "Active" and "Inactive".
+    :vartype state: Union[str, "BlobAccessPointConfigurationState"]
+    :ivar description: An arbitrary description of the Blob Access Point configuration.
+    :vartype description: str
+    :ivar source: Information about the backing data source.
+    :vartype source: "BlobAccessPointSourcePropertiesUpdate"
+    """
+
+    state: Union[str, "BlobAccessPointConfigurationState"]
+    """The configuration state. A configuration is created in the Active state when this value is not
+     specified. Known values are: \"Active\" and \"Inactive\"."""
+    description: str
+    """An arbitrary description of the Blob Access Point configuration."""
+    source: "BlobAccessPointSourcePropertiesUpdate"
+    """Information about the backing data source."""
+
+
+class BlobAccessPointConfigurationUpdate(TypedDict, total=False):
+    """A BlobAccessPointConfiguration is a tracked Azure resource modeled as a sub-resource of a
+    Storage Account.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "BlobAccessPointConfigurationPropertiesUpdate"
+    """
+
+    tags: dict[str, str]
+    """Resource tags."""
+    properties: "BlobAccessPointConfigurationPropertiesUpdate"
+    """The resource-specific properties for this resource."""
+
+
+class BlobAccessPointConnectionTestRequest(TypedDict, total=False):
+    """The request used to test an existing Blob Access Point configuration.
+
+    :ivar uniqueId: The system-generated unique identifier of the Blob Access Point configuration,
+     as returned by a read operation. This value must match the configuration named in the request
+     path, and is required so that a configuration which was deleted and recreated under the same
+     name is not tested by mistake. Required.
+    :vartype uniqueId: str
+    """
+
+    uniqueId: Required[str]
+    """The system-generated unique identifier of the Blob Access Point configuration, as returned by a
+     read operation. This value must match the configuration named in the request path, and is
+     required so that a configuration which was deleted and recreated under the same name is not
+     tested by mistake. Required."""
+
+
+class BlobAccessPointDellOneFsSourceProperties(TypedDict, total=False):
+    """A Dell OneFS backing source.
+
+    :ivar sourceType: Required. Dell OneFS.
+    :vartype sourceType: Literal[BlobAccessPointSourceType.DELL_ONE_FS]
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards. Required.
+    :vartype connection: "BlobAccessPointConnectionProperties"
+    :ivar auth: Details for authenticating to the backing data source. Required.
+    :vartype auth: "BlobAccessPointRemoteAuthProperties"
+    """
+
+    sourceType: Required[Literal[BlobAccessPointSourceType.DELL_ONE_FS]]
+    """Required. Dell OneFS."""
+    connection: Required["BlobAccessPointConnectionProperties"]
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards.
+     Required."""
+    auth: Required["BlobAccessPointRemoteAuthProperties"]
+    """Details for authenticating to the backing data source. Required."""
+
+
+class BlobAccessPointDellOneFsSourcePropertiesUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A Dell OneFS backing source.
+
+    :ivar sourceType: Required. Dell OneFS.
+    :vartype sourceType: Literal[BlobAccessPointSourceType.DELL_ONE_FS]
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards.
+    :vartype connection: "BlobAccessPointConnectionPropertiesUpdate"
+    :ivar auth: Details for authenticating to the backing data source.
+    :vartype auth: "BlobAccessPointRemoteAuthPropertiesUpdate"
+    """
+
+    sourceType: Required[Literal[BlobAccessPointSourceType.DELL_ONE_FS]]
+    """Required. Dell OneFS."""
+    connection: "BlobAccessPointConnectionPropertiesUpdate"
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards."""
+    auth: "BlobAccessPointRemoteAuthPropertiesUpdate"
+    """Details for authenticating to the backing data source."""
+
+
+class BlobAccessPointEndpointConnectionProperties(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A direct endpoint connection.
+
+    :ivar connectionType: Required. Connect directly to a public or otherwise routable endpoint.
+    :vartype connectionType: Literal[BlobAccessPointConnectionType.ENDPOINT]
+    :ivar endpoint: The backing endpoint, including its protocol, host, optional port, and optional
+     path. Required.
+    :vartype endpoint: str
+    :ivar tlsVerification: TLS certificate verification behavior. Defaults to Perform when not
+     specified. Known values are: "Perform" and "Skip".
+    :vartype tlsVerification: Union[str, "BlobAccessPointTlsVerification"]
+    """
+
+    connectionType: Required[Literal[BlobAccessPointConnectionType.ENDPOINT]]
+    """Required. Connect directly to a public or otherwise routable endpoint."""
+    endpoint: Required[str]
+    """The backing endpoint, including its protocol, host, optional port, and optional path. Required."""
+    tlsVerification: Union[str, "BlobAccessPointTlsVerification"]
+    """TLS certificate verification behavior. Defaults to Perform when not specified. Known values
+     are: \"Perform\" and \"Skip\"."""
+
+
+class BlobAccessPointEndpointConnectionPropertiesUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A direct endpoint connection.
+
+    :ivar connectionType: Required. Connect directly to a public or otherwise routable endpoint.
+    :vartype connectionType: Literal[BlobAccessPointConnectionType.ENDPOINT]
+    :ivar tlsVerification: TLS certificate verification behavior. Defaults to Perform when not
+     specified. Known values are: "Perform" and "Skip".
+    :vartype tlsVerification: Union[str, "BlobAccessPointTlsVerification"]
+    """
+
+    connectionType: Required[Literal[BlobAccessPointConnectionType.ENDPOINT]]
+    """Required. Connect directly to a public or otherwise routable endpoint."""
+    tlsVerification: Union[str, "BlobAccessPointTlsVerification"]
+    """TLS certificate verification behavior. Defaults to Perform when not specified. Known values
+     are: \"Perform\" and \"Skip\"."""
+
+
+class BlobAccessPointGenericS3SourceProperties(TypedDict, total=False):
+    """Another S3-compatible backing source.
+
+    :ivar sourceType: Required. Another S3-compatible data source.
+    :vartype sourceType: Literal[BlobAccessPointSourceType.S3_COMPATIBLE]
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards. Required.
+    :vartype connection: "BlobAccessPointConnectionProperties"
+    :ivar auth: Details for authenticating to the backing data source. Required.
+    :vartype auth: "BlobAccessPointRemoteAuthProperties"
+    """
+
+    sourceType: Required[Literal[BlobAccessPointSourceType.S3_COMPATIBLE]]
+    """Required. Another S3-compatible data source."""
+    connection: Required["BlobAccessPointConnectionProperties"]
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards.
+     Required."""
+    auth: Required["BlobAccessPointRemoteAuthProperties"]
+    """Details for authenticating to the backing data source. Required."""
+
+
+class BlobAccessPointGenericS3SourcePropertiesUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Another S3-compatible backing source.
+
+    :ivar sourceType: Required. Another S3-compatible data source.
+    :vartype sourceType: Literal[BlobAccessPointSourceType.S3_COMPATIBLE]
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards.
+    :vartype connection: "BlobAccessPointConnectionPropertiesUpdate"
+    :ivar auth: Details for authenticating to the backing data source.
+    :vartype auth: "BlobAccessPointRemoteAuthPropertiesUpdate"
+    """
+
+    sourceType: Required[Literal[BlobAccessPointSourceType.S3_COMPATIBLE]]
+    """Required. Another S3-compatible data source."""
+    connection: "BlobAccessPointConnectionPropertiesUpdate"
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards."""
+    auth: "BlobAccessPointRemoteAuthPropertiesUpdate"
+    """Details for authenticating to the backing data source."""
+
+
+class BlobAccessPointNasuniSourceProperties(TypedDict, total=False):
+    """A Nasuni backing source.
+
+    :ivar sourceType: Required. Nasuni S3-compatible data source.
+    :vartype sourceType: Literal[BlobAccessPointSourceType.NASUNI]
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards. Required.
+    :vartype connection: "BlobAccessPointConnectionProperties"
+    :ivar auth: Details for authenticating to the backing data source. Required.
+    :vartype auth: "BlobAccessPointRemoteAuthProperties"
+    """
+
+    sourceType: Required[Literal[BlobAccessPointSourceType.NASUNI]]
+    """Required. Nasuni S3-compatible data source."""
+    connection: Required["BlobAccessPointConnectionProperties"]
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards.
+     Required."""
+    auth: Required["BlobAccessPointRemoteAuthProperties"]
+    """Details for authenticating to the backing data source. Required."""
+
+
+class BlobAccessPointNasuniSourcePropertiesUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A Nasuni backing source.
+
+    :ivar sourceType: Required. Nasuni S3-compatible data source.
+    :vartype sourceType: Literal[BlobAccessPointSourceType.NASUNI]
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards.
+    :vartype connection: "BlobAccessPointConnectionPropertiesUpdate"
+    :ivar auth: Details for authenticating to the backing data source.
+    :vartype auth: "BlobAccessPointRemoteAuthPropertiesUpdate"
+    """
+
+    sourceType: Required[Literal[BlobAccessPointSourceType.NASUNI]]
+    """Required. Nasuni S3-compatible data source."""
+    connection: "BlobAccessPointConnectionPropertiesUpdate"
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards."""
+    auth: "BlobAccessPointRemoteAuthPropertiesUpdate"
+    """Details for authenticating to the backing data source."""
+
+
+class BlobAccessPointNetAppOntapSourceProperties(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A NetApp ONTAP backing source.
+
+    :ivar sourceType: Required. NetApp ONTAP.
+    :vartype sourceType: Literal[BlobAccessPointSourceType.NET_APP_ONTAP]
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards. Required.
+    :vartype connection: "BlobAccessPointConnectionProperties"
+    :ivar auth: Details for authenticating to the backing data source. Required.
+    :vartype auth: "BlobAccessPointRemoteAuthProperties"
+    """
+
+    sourceType: Required[Literal[BlobAccessPointSourceType.NET_APP_ONTAP]]
+    """Required. NetApp ONTAP."""
+    connection: Required["BlobAccessPointConnectionProperties"]
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards.
+     Required."""
+    auth: Required["BlobAccessPointRemoteAuthProperties"]
+    """Details for authenticating to the backing data source. Required."""
+
+
+class BlobAccessPointNetAppOntapSourcePropertiesUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A NetApp ONTAP backing source.
+
+    :ivar sourceType: Required. NetApp ONTAP.
+    :vartype sourceType: Literal[BlobAccessPointSourceType.NET_APP_ONTAP]
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards.
+    :vartype connection: "BlobAccessPointConnectionPropertiesUpdate"
+    :ivar auth: Details for authenticating to the backing data source.
+    :vartype auth: "BlobAccessPointRemoteAuthPropertiesUpdate"
+    """
+
+    sourceType: Required[Literal[BlobAccessPointSourceType.NET_APP_ONTAP]]
+    """Required. NetApp ONTAP."""
+    connection: "BlobAccessPointConnectionPropertiesUpdate"
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards."""
+    auth: "BlobAccessPointRemoteAuthPropertiesUpdate"
+    """Details for authenticating to the backing data source."""
+
+
+class BlobAccessPointPrivateLinkConnectionProperties(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A connection established through Azure Private Link.
+
+    :ivar connectionType: Required. Connect through Azure Private Link.
+    :vartype connectionType: Literal[BlobAccessPointConnectionType.PRIVATE_LINK]
+    :ivar privateLinkIdType: Indicates that privateLinkId contains an Azure resource ID. Required.
+     "ResourceId"
+    :vartype privateLinkIdType: Union[str, "BlobAccessPointPrivateLinkIdType"]
+    :ivar privateLinkId: The Azure resource ID of the backing Private Link service. Required.
+    :vartype privateLinkId: str
+    :ivar privateLinkGroupId: The Private Link group ID, when required by the backing resource.
+    :vartype privateLinkGroupId: str
+    :ivar privateLinkLocation: The Azure region in which the private endpoint is provisioned.
+     Required.
+    :vartype privateLinkLocation: str
+    :ivar requestMessage: The connection request message sent to the Private Link owner. Required.
+    :vartype requestMessage: str
+    :ivar endpoint: The backing endpoint as seen by the target of the Private Link. Required.
+    :vartype endpoint: str
+    :ivar tlsVerification: TLS certificate verification behavior. Defaults to Perform when not
+     specified. Known values are: "Perform" and "Skip".
+    :vartype tlsVerification: Union[str, "BlobAccessPointTlsVerification"]
+    :ivar privateEndpointName: The name of the private endpoint created by Azure Storage.
+    :vartype privateEndpointName: str
+    """
+
+    connectionType: Required[Literal[BlobAccessPointConnectionType.PRIVATE_LINK]]
+    """Required. Connect through Azure Private Link."""
+    privateLinkIdType: Required[Union[str, "BlobAccessPointPrivateLinkIdType"]]
+    """Indicates that privateLinkId contains an Azure resource ID. Required. \"ResourceId\""""
+    privateLinkId: Required[str]
+    """The Azure resource ID of the backing Private Link service. Required."""
+    privateLinkGroupId: str
+    """The Private Link group ID, when required by the backing resource."""
+    privateLinkLocation: Required[str]
+    """The Azure region in which the private endpoint is provisioned. Required."""
+    requestMessage: Required[str]
+    """The connection request message sent to the Private Link owner. Required."""
+    endpoint: Required[str]
+    """The backing endpoint as seen by the target of the Private Link. Required."""
+    tlsVerification: Union[str, "BlobAccessPointTlsVerification"]
+    """TLS certificate verification behavior. Defaults to Perform when not specified. Known values
+     are: \"Perform\" and \"Skip\"."""
+    privateEndpointName: str
+    """The name of the private endpoint created by Azure Storage."""
+
+
+class BlobAccessPointPrivateLinkConnectionPropertiesUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A connection established through Azure Private Link.
+
+    :ivar connectionType: Required. Connect through Azure Private Link.
+    :vartype connectionType: Literal[BlobAccessPointConnectionType.PRIVATE_LINK]
+    :ivar tlsVerification: TLS certificate verification behavior. Defaults to Perform when not
+     specified. Known values are: "Perform" and "Skip".
+    :vartype tlsVerification: Union[str, "BlobAccessPointTlsVerification"]
+    """
+
+    connectionType: Required[Literal[BlobAccessPointConnectionType.PRIVATE_LINK]]
+    """Required. Connect through Azure Private Link."""
+    tlsVerification: Union[str, "BlobAccessPointTlsVerification"]
+    """TLS certificate verification behavior. Defaults to Perform when not specified. Known values
+     are: \"Perform\" and \"Skip\"."""
+
+
+class BlobAccessPointProposedConnectionTestRequest(TypedDict, total=False):  # pylint: disable=name-too-long
+    """The request used to test a proposed Blob Access Point configuration.
+
+    :ivar source: Information about the backing data source whose connection is tested. Required.
+    :vartype source: "BlobAccessPointSourceProperties"
+    """
+
+    source: Required["BlobAccessPointSourceProperties"]
+    """Information about the backing data source whose connection is tested. Required."""
+
+
+class BlobAccessPointQumuloSourceProperties(TypedDict, total=False):
+    """A Qumulo backing source.
+
+    :ivar sourceType: Required. Qumulo S3-compatible data source.
+    :vartype sourceType: Literal[BlobAccessPointSourceType.QUMULO]
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards. Required.
+    :vartype connection: "BlobAccessPointConnectionProperties"
+    :ivar auth: Details for authenticating to the backing data source. Required.
+    :vartype auth: "BlobAccessPointRemoteAuthProperties"
+    """
+
+    sourceType: Required[Literal[BlobAccessPointSourceType.QUMULO]]
+    """Required. Qumulo S3-compatible data source."""
+    connection: Required["BlobAccessPointConnectionProperties"]
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards.
+     Required."""
+    auth: Required["BlobAccessPointRemoteAuthProperties"]
+    """Details for authenticating to the backing data source. Required."""
+
+
+class BlobAccessPointQumuloSourcePropertiesUpdate(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A Qumulo backing source.
+
+    :ivar sourceType: Required. Qumulo S3-compatible data source.
+    :vartype sourceType: Literal[BlobAccessPointSourceType.QUMULO]
+    :ivar connection: Details for connecting to the backing data source. The connection target is
+     fixed when the configuration is created; only the TLS verification behavior can be changed
+     afterwards.
+    :vartype connection: "BlobAccessPointConnectionPropertiesUpdate"
+    :ivar auth: Details for authenticating to the backing data source.
+    :vartype auth: "BlobAccessPointRemoteAuthPropertiesUpdate"
+    """
+
+    sourceType: Required[Literal[BlobAccessPointSourceType.QUMULO]]
+    """Required. Qumulo S3-compatible data source."""
+    connection: "BlobAccessPointConnectionPropertiesUpdate"
+    """Details for connecting to the backing data source. The connection target is fixed when the
+     configuration is created; only the TLS verification behavior can be changed afterwards."""
+    auth: "BlobAccessPointRemoteAuthPropertiesUpdate"
+    """Details for authenticating to the backing data source."""
 
 
 class BlobContainer(ProxyResource):
@@ -836,32 +1515,6 @@ class ChangeFeed(TypedDict, total=False):
      feed."""
 
 
-class TrackedResource(ResourceAutoGenerated):
-    """Tracked Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    tags: dict[str, str]
-    """Resource tags."""
-    location: Required[str]
-    """The geo-location where the resource lives. Required."""
-
-
 class Connector(TrackedResource):
     """A Connector is a tracked ARM resource modeled as a sub-resource of a Storage Account.
 
@@ -989,6 +1642,11 @@ class ContainerProperties(TypedDict, total=False):
     :vartype enableNfsV3RootSquash: bool
     :ivar enableNfsV3AllSquash: Enable NFSv3 all squash on blob container.
     :vartype enableNfsV3AllSquash: bool
+    :ivar blobAccessPointConfiguration: Configuration that attaches this container to a Blob Access
+     Point. If set, the container is a read-only virtual container whose read/list requests are
+     forwarded to the connected backing data store. Cannot be changed, removed, or added after
+     container creation.
+    :vartype blobAccessPointConfiguration: "BlobAccessPointConfigurationConnection"
     """
 
     version: str
@@ -1039,6 +1697,10 @@ class ContainerProperties(TypedDict, total=False):
     """Enable NFSv3 root squash on blob container."""
     enableNfsV3AllSquash: bool
     """Enable NFSv3 all squash on blob container."""
+    blobAccessPointConfiguration: "BlobAccessPointConfigurationConnection"
+    """Configuration that attaches this container to a Blob Access Point. If set, the container is a
+     read-only virtual container whose read/list requests are forwarded to the connected backing
+     data store. Cannot be changed, removed, or added after container creation."""
 
 
 class ContextCache(TrackedResource):
@@ -1069,6 +1731,23 @@ class ContextCache(TrackedResource):
     """The resource-specific properties for this resource. Required."""
     identity: "ManagedServiceIdentity"
     """The managed service identities assigned to this resource."""
+
+
+class ContextCacheCheckNameAvailabilityParameters(TypedDict, total=False):  # pylint: disable=name-too-long
+    """The parameters used to check the availability of the context cache resource name.
+
+    :ivar name: The name of the context cache resource to check for availability. Required.
+    :vartype name: str
+    :ivar type: The type of the context cache resource to check for availability. Required. Default
+     value is "Microsoft.Storage/contextCaches".
+    :vartype type: Literal["Microsoft.Storage/contextCaches"]
+    """
+
+    name: Required[str]
+    """The name of the context cache resource to check for availability. Required."""
+    type: Required[Literal["Microsoft.Storage/contextCaches"]]
+    """The type of the context cache resource to check for availability. Required. Default value is
+     \"Microsoft.Storage/contextCaches\"."""
 
 
 class ContextCacheContainer(ProxyResource):
@@ -3801,6 +4480,8 @@ class StorageAccountPropertiesCreateParameters(TypedDict, total=False):
      storage account type and it cannot be changed for the premium block blobs storage account type.
      Known values are: "Hot", "Cool", "Premium", "Cold", and "Smart".
     :vartype accessTier: Union[str, "AccessTier"]
+    :ivar turboTier: Configures Turbo Tier for the storage account.
+    :vartype turboTier: "TurboTier"
     :ivar azureFilesIdentityBasedAuthentication: Provides the identity based authentication
      settings for Azure Files.
     :vartype azureFilesIdentityBasedAuthentication: "AzureFilesIdentityBasedAuthentication"
@@ -3892,6 +4573,8 @@ class StorageAccountPropertiesCreateParameters(TypedDict, total=False):
      The 'Premium' access tier is the default value for premium block blobs storage account type and
      it cannot be changed for the premium block blobs storage account type. Known values are:
      \"Hot\", \"Cool\", \"Premium\", \"Cold\", and \"Smart\"."""
+    turboTier: "TurboTier"
+    """Configures Turbo Tier for the storage account."""
     azureFilesIdentityBasedAuthentication: "AzureFilesIdentityBasedAuthentication"
     """Provides the identity based authentication settings for Azure Files."""
     supportsHttpsTrafficOnly: bool
@@ -3973,6 +4656,8 @@ class StorageAccountPropertiesUpdateParameters(TypedDict, total=False):
      storage account type and it cannot be changed for the premium block blobs storage account type.
      Known values are: "Hot", "Cool", "Premium", "Cold", and "Smart".
     :vartype accessTier: Union[str, "AccessTier"]
+    :ivar turboTier: Configures Turbo Tier for the storage account.
+    :vartype turboTier: "TurboTier"
     :ivar azureFilesIdentityBasedAuthentication: Provides the identity based authentication
      settings for Azure Files.
     :vartype azureFilesIdentityBasedAuthentication: "AzureFilesIdentityBasedAuthentication"
@@ -4061,6 +4746,8 @@ class StorageAccountPropertiesUpdateParameters(TypedDict, total=False):
      The 'Premium' access tier is the default value for premium block blobs storage account type and
      it cannot be changed for the premium block blobs storage account type. Known values are:
      \"Hot\", \"Cool\", \"Premium\", \"Cold\", and \"Smart\"."""
+    turboTier: "TurboTier"
+    """Configures Turbo Tier for the storage account."""
     azureFilesIdentityBasedAuthentication: "AzureFilesIdentityBasedAuthentication"
     """Provides the identity based authentication settings for Azure Files."""
     supportsHttpsTrafficOnly: bool
@@ -4301,6 +4988,9 @@ class StorageDataCollaborationPolicyProperties(TypedDict, total=False):
     :ivar allowStorageConnectors: Indicates whether storage connectors are allowed to created or
      managed on the storage account.
     :vartype allowStorageConnectors: bool
+    :ivar allowBlobAccessPoints: Indicates whether Blob Access Point configurations are allowed to
+     be created or managed on the storage account.
+    :vartype allowBlobAccessPoints: bool
     :ivar allowStorageDataShares: Indicates whether data shares are allowed to be created or
      managed on the storage account.
     :vartype allowStorageDataShares: bool
@@ -4311,6 +5001,9 @@ class StorageDataCollaborationPolicyProperties(TypedDict, total=False):
 
     allowStorageConnectors: bool
     """Indicates whether storage connectors are allowed to created or managed on the storage account."""
+    allowBlobAccessPoints: bool
+    """Indicates whether Blob Access Point configurations are allowed to be created or managed on the
+     storage account."""
     allowStorageDataShares: bool
     """Indicates whether data shares are allowed to be created or managed on the storage account."""
     allowCrossTenantDataSharing: bool
@@ -5052,6 +5745,25 @@ class TriggerParametersUpdate(TypedDict, total=False):
      'OnSchedule'."""
 
 
+class TurboTier(TypedDict, total=False):
+    """Configures Turbo Tier for a storage account.
+
+    :ivar status: Indicates whether Turbo Tier is enabled or disabled. Known values are: "Enabled"
+     and "Disabled".
+    :vartype status: Union[str, "TurboTierStatus"]
+    :ivar targetPercent: The target fill percentage used for placement. The valid range is 10 to
+     100. When status is Enabled and this property is omitted, the default value is 20.
+    :vartype targetPercent: int
+    """
+
+    status: Union[str, "TurboTierStatus"]
+    """Indicates whether Turbo Tier is enabled or disabled. Known values are: \"Enabled\" and
+     \"Disabled\"."""
+    targetPercent: int
+    """The target fill percentage used for placement. The valid range is 10 to 100. When status is
+     Enabled and this property is omitted, the default value is 20."""
+
+
 class UpdateHistoryProperty(TypedDict, total=False):
     """An update history of the ImmutabilityPolicy of a blob container.
 
@@ -5152,6 +5864,32 @@ class VirtualNetworkRule(TypedDict, total=False):
      \"Succeeded\", \"Failed\", and \"NetworkSourceDeleted\"."""
 
 
+BlobAccessPointRemoteAuthProperties = Union[BlobAccessPointAccessKeyAuthProperties]
+BlobAccessPointRemoteAuthPropertiesUpdate = Union[BlobAccessPointAccessKeyAuthPropertiesUpdate]
+BlobAccessPointSourceProperties = Union[
+    BlobAccessPointAzureNetAppFilesSourceProperties,
+    BlobAccessPointCommvaultSourceProperties,
+    BlobAccessPointDellOneFsSourceProperties,
+    BlobAccessPointNasuniSourceProperties,
+    BlobAccessPointNetAppOntapSourceProperties,
+    BlobAccessPointQumuloSourceProperties,
+    BlobAccessPointGenericS3SourceProperties,
+]
+BlobAccessPointSourcePropertiesUpdate = Union[
+    BlobAccessPointAzureNetAppFilesSourcePropertiesUpdate,
+    BlobAccessPointCommvaultSourcePropertiesUpdate,
+    BlobAccessPointDellOneFsSourcePropertiesUpdate,
+    BlobAccessPointNasuniSourcePropertiesUpdate,
+    BlobAccessPointNetAppOntapSourcePropertiesUpdate,
+    BlobAccessPointQumuloSourcePropertiesUpdate,
+    BlobAccessPointGenericS3SourcePropertiesUpdate,
+]
+BlobAccessPointConnectionProperties = Union[
+    BlobAccessPointEndpointConnectionProperties, BlobAccessPointPrivateLinkConnectionProperties
+]
+BlobAccessPointConnectionPropertiesUpdate = Union[
+    BlobAccessPointEndpointConnectionPropertiesUpdate, BlobAccessPointPrivateLinkConnectionPropertiesUpdate
+]
 StorageConnectorConnection = Union[DataShareConnection]
 StorageConnectorSource = Union[DataShareSource]
 StorageConnectorSourceUpdate = Union[DataShareSourceUpdate]
