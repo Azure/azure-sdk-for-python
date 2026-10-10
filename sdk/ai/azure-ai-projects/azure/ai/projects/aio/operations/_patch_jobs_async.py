@@ -243,7 +243,13 @@ class JobsOperations(_GeneratedJobsOps):
         await self._resolve_input_paths(name, job)
 
     async def _resolve_pipeline_code(self, name: str, job: PipelineJob) -> None:
-        """Resolve local code folders on inline command nodes to dataset asset URIs."""
+        """Resolve local code folders on inline command nodes to dataset asset URIs.
+
+        :param name: Name of the pipeline job.
+        :type name: str
+        :param job: Pipeline job containing inline command nodes.
+        :type job: ~azure.ai.projects.models.PipelineJob
+        """
         try:
             resolved_code: Dict[str, str] = {}
             for node_name, node in (job.jobs or {}).items():

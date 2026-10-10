@@ -200,12 +200,7 @@ class _PipelineContext:
                 serialized = f"${{{{parent.jobs.{value.node}.outputs.{value.name}}}}}"
             elif port.type == AssetTypes.URI_FILE:
                 raise TypeError(f"Component input '{port.name}' needs a pipeline input or node file output.")
-            elif (
-                (port.conversion == "int" and type(value) is int)
-                or (port.conversion == "float" and type(value) is float)
-                or (port.conversion == "bool" and type(value) is bool)
-                or (port.conversion == "str" and type(value) is str)
-            ):
+            elif type(value) in _PRIMITIVES and _PRIMITIVES[type(value)][1] == port.conversion:
                 serialized = str(value)
             else:
                 raise TypeError(f"Component input '{port.name}' has an incompatible primitive value.")
@@ -224,6 +219,7 @@ class _PipelineContext:
         else:
             shared_code_dir = self.code_dirs_by_root.get(source.root)
             if shared_code_dir is None:
+                # pylint: disable-next=consider-using-with
                 code_dir = TemporaryDirectory(prefix="foundry-component-source-")
                 self.code_dirs.append(code_dir)
                 self.code_dirs_by_root[source.root] = code_dir
@@ -253,7 +249,7 @@ class _PipelineContext:
             inputs=bound_inputs,
             outputs={port.name: _JobOutput(type=port.type, asset_name=port.name, mode=port.mode) for port in outputs},
         )
-        node = PipelineJob._command_node(name, job, self.compute_id)
+        node = PipelineJob._command_node(name, job, self.compute_id)  # pylint: disable=protected-access
         for port in inputs:
             if port.type != AssetTypes.URI_FILE:
                 node["component"]["inputs"][port.name]["type"] = port.type
@@ -290,6 +286,13 @@ def component(
     With ``code``, snapshot that directory and import the original module at runtime.
     Otherwise, package the function body as a standalone script. Code-backed components
     require the authoring SDK and their other imports in the container image.
+
+    :param func: The Python function to decorate, or None to create a decorator.
+    :type func: callable or None
+    :keyword code: Source directory to include with the component.
+    :paramtype code: str or os.PathLike or None
+    :return: A callable that adds the function as a pipeline node.
+    :rtype: callable
     """
 
     def decorate(source_func: Callable[..., Any]) -> Callable[..., SimpleNamespace]:
@@ -331,6 +334,17 @@ def pipeline(
     """Decorate a pipeline builder; calling it returns a native Foundry PipelineJob.
 
     Compute, image, identity, and instance type are inherited by each command node.
+
+    :keyword compute_id: Compute resource ID inherited by the pipeline nodes.
+    :paramtype compute_id: str
+    :keyword environment_image_reference: Container image inherited by the pipeline nodes.
+    :paramtype environment_image_reference: str
+    :keyword user_assigned_identity_id: Identity resource ID inherited by the pipeline nodes.
+    :paramtype user_assigned_identity_id: str
+    :keyword instance_type: Instance type inherited by the pipeline nodes.
+    :paramtype instance_type: str
+    :return: A decorator for a pipeline builder function.
+    :rtype: callable
     """
 
     def decorate(func: Callable[..., Any]) -> Callable[..., PipelineJob]:
@@ -361,7 +375,7 @@ def pipeline(
                         )
                     job_inputs[name] = value
                     port_type: str = AssetTypes.URI_FILE
-                elif annotation in _PRIMITIVES and type(value) is annotation:
+                elif annotation in _PRIMITIVES and type(value) is annotation:  # pylint: disable=unidiomatic-typecheck
                     job_inputs[name] = Input(type=AssetTypes.LITERAL, value=str(value))
                     port_type = _PRIMITIVES[annotation][0]
                 else:
@@ -398,7 +412,7 @@ def pipeline(
                     outputs=job_outputs,
                     jobs=context.jobs,
                 )
-                job._component_code_dirs = context.code_dirs
+                job._component_code_dirs = context.code_dirs  # pylint: disable=protected-access
                 return job
             finally:
                 if job is None:

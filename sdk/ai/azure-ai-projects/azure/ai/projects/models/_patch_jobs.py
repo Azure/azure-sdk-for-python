@@ -239,7 +239,7 @@ class PipelineJob(_RestPipelineJob):
                     f"Pipeline node '{name}' cannot convert resource fields {sorted(unsupported_resources)}; "
                     "use a raw graph node for these fields."
                 )
-            resources = {}
+            resources: Dict[str, Any] = {}
             if job.resources.instance_count is not None:
                 resources["instance_count"] = job.resources.instance_count
             if job.resources.instance_type is not None:

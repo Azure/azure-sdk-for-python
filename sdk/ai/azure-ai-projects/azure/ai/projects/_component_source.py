@@ -22,9 +22,15 @@ _EXCLUDED_DIRECTORIES = frozenset((".git", ".venv", "__pycache__"))
 
 
 def _is_link(path: Path) -> bool:
-    """Detect symlinks and Windows junctions before copying any source files."""
+    """Detect symlinks and Windows junctions before copying any source files.
+
+    :param path: Path to inspect.
+    :type path: ~pathlib.Path
+    :return: Whether the path is a symlink or junction.
+    :rtype: bool
+    """
     return path.is_symlink() or (
-        os.name == "nt" and bool(path.lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT)
+        os.name == "nt" and bool(getattr(path.lstat(), "st_file_attributes") & stat.FILE_ATTRIBUTE_REPARSE_POINT)
     )
 
 
