@@ -109,8 +109,9 @@ class PipelineJob(_RestPipelineJob):
     """A pipeline job with graph nodes, inputs, and outputs.
 
     When constructing a pipeline, ``jobs`` accepts raw graph node dictionaries
-    or :class:`CommandJob` instances with literal inputs. Command jobs are
-    converted to inline command nodes; use raw dictionaries for other features.
+    or :class:`CommandJob` instances with value-bound inputs, code, and outputs.
+    Command jobs are converted to inline command nodes; use raw dictionaries
+    for other features.
 
     :ivar name: The name of the job. Read-only; populated after the job is created.
     :vartype name: str or None
@@ -152,7 +153,9 @@ class PipelineJob(_RestPipelineJob):
             "command",
             "environmentImageReference",
             "computeId",
+            "codeId",
             "inputs",
+            "outputs",
             "resources",
             "userAssignedIdentityId",
         }
@@ -170,18 +173,38 @@ class PipelineJob(_RestPipelineJob):
             )
 
         inputs: Dict[str, Any] = {}
+        component_inputs: Dict[str, Any] = {}
         for input_name, job_input in (job.inputs or {}).items():
             if (
                 not isinstance(job_input, Input)
-                or job_input.type != "literal"
+                or job_input.type not in ("literal", "uri_file")
                 or job_input.value is None
                 or set(job_input.as_dict()) - {"jobInputType", "value"}
             ):
                 raise ValueError(
                     f"Pipeline node '{name}' cannot convert input '{input_name}'; "
-                    "only literal CommandJob inputs are supported. Use a raw graph node for other inputs."
+                    "only value-bound literal and uri_file CommandJob inputs are supported. "
+                    "Use a raw graph node for other inputs."
                 )
             inputs[input_name] = {"job_input_type": "literal", "value": job_input.value}
+            component_inputs[input_name] = {"type": "string" if job_input.type == "literal" else job_input.type}
+
+        outputs: Dict[str, Any] = {}
+        component_outputs: Dict[str, Any] = {}
+        for output_name, job_output in (job.outputs or {}).items():
+            if not isinstance(job_output, Output) or set(job_output.as_dict()) - {
+                "jobOutputType",
+                "assetName",
+                "mode",
+            }:
+                raise ValueError(
+                    f"Pipeline node '{name}' cannot convert output '{output_name}'; "
+                    "use a raw graph node for other output fields."
+                )
+            component_outputs[output_name] = {"type": job_output.type}
+            outputs[output_name] = {"job_output_type": job_output.type}
+            if job_output.mode is not None:
+                outputs[output_name]["mode"] = job_output.mode
 
         node: Dict[str, Any] = {
             "type": "command",
@@ -191,12 +214,14 @@ class PipelineJob(_RestPipelineJob):
                 "type": "command",
                 "command": job.command,
                 "environment": {"image": job.environment_image_reference},
-                "inputs": {input_name: {"type": "string"} for input_name in inputs},
-                "outputs": {},
+                "inputs": component_inputs,
+                "outputs": component_outputs,
             },
             "inputs": inputs,
-            "outputs": {},
+            "outputs": outputs,
         }
+        if job.code is not None:
+            node["component"]["code"] = job.code
         if job.user_assigned_identity_id is not None:
             node["identity"] = {"type": "managed", "msi_resource_id": job.user_assigned_identity_id}
 
