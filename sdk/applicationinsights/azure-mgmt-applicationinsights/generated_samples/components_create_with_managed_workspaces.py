@@ -15,7 +15,7 @@ from azure.mgmt.applicationinsights import ApplicationInsightsManagementClient
     pip install azure-identity
     pip install azure-mgmt-applicationinsights
 # USAGE
-    python components_purge_status.py
+    python components_create_with_managed_workspaces.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,23 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.components.get_purge_status(
-        resource_group_name="OIAutoRest5123",
-        resource_name="aztest5048",
-        purge_id="purge-970318e7-b859-4edb-8903-83b1b54d0b74",
+    response = client.components.create_or_update(
+        resource_group_name="my-resource-group",
+        resource_name="my-component",
+        insight_properties={
+            "kind": "web",
+            "location": "South Central US",
+            "properties": {
+                "Application_Type": "web",
+                "AzureMonitorWorkspaceIngestionMode": "Enabled",
+                "Flow_Type": "Bluefield",
+                "Request_Source": "rest",
+            },
+        },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-01-23-preview/ComponentsPurgeStatus.json
+# x-ms-original-file: 2025-01-23-preview/ComponentsCreateWithManagedWorkspaces.json
 if __name__ == "__main__":
     main()

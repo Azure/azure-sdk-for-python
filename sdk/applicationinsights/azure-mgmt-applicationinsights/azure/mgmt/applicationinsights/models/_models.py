@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Annotation(_Model):
+class Annotation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Annotation associated with an application insights resource.
 
     :ivar annotation_name: Name of annotation.
@@ -78,7 +78,7 @@ class Annotation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnnotationError(_Model):
+class AnnotationError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error associated with trying to create annotation with Id that already exist.
 
     :ivar code: Error detail code and explanation.
@@ -116,7 +116,7 @@ class AnnotationError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class APIKeyRequest(_Model):
+class APIKeyRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Application Insights component API Key creation request definition.
 
     :ivar name: The name of the API Key.
@@ -158,7 +158,7 @@ class APIKeyRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ComponentsResource(_Model):
+class ComponentsResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An azure resource object.
 
     :ivar id: Azure resource Id.
@@ -203,7 +203,7 @@ class ComponentsResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationInsightsComponent(ComponentsResource):
+class ApplicationInsightsComponent(ComponentsResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Application Insights component definition.
 
     :ivar id: Azure resource Id.
@@ -264,6 +264,12 @@ class ApplicationInsightsComponent(ComponentsResource):
         "ingestion_mode",
         "disable_local_auth",
         "force_customer_storage_for_profiler",
+        "azure_monitor_workspace_resource_id",
+        "azure_monitor_workspace_ingestion_mode",
+        "data_collection_rule_resource_id",
+        "otlp_metrics_endpoint",
+        "otlp_logs_endpoint",
+        "otlp_traces_endpoint",
     ]
 
     @overload
@@ -306,7 +312,9 @@ class ApplicationInsightsComponent(ComponentsResource):
             super().__setattr__(key, value)
 
 
-class ApplicationInsightsComponentAnalyticsItem(_Model):  # pylint: disable=name-too-long
+class ApplicationInsightsComponentAnalyticsItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties that define an Analytics item that is associated to an Application Insights
     component.
 
@@ -388,7 +396,9 @@ class ApplicationInsightsComponentAnalyticsItem(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ApplicationInsightsComponentAnalyticsItemProperties(_Model):  # pylint: disable=name-too-long
+class ApplicationInsightsComponentAnalyticsItemProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """A set of properties that can be defined in the context of a specific item type. Each type may
     have its own properties.
 
@@ -419,7 +429,7 @@ class ApplicationInsightsComponentAnalyticsItemProperties(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class ApplicationInsightsComponentAPIKey(_Model):
+class ApplicationInsightsComponentAPIKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties that define an API key of an Application Insights Component.
 
     :ivar id: The unique ID of the API key inside an Application Insights component. It is auto
@@ -492,7 +502,9 @@ class ApplicationInsightsComponentAvailableFeatures(_Model):  # pylint: disable=
     """A list of Application Insights component feature."""
 
 
-class ApplicationInsightsComponentBillingFeatures(_Model):  # pylint: disable=name-too-long
+class ApplicationInsightsComponentBillingFeatures(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """An Application Insights component billing features.
 
     :ivar data_volume_cap: An Application Insights component daily data volume cap.
@@ -532,7 +544,9 @@ class ApplicationInsightsComponentBillingFeatures(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class ApplicationInsightsComponentDataVolumeCap(_Model):  # pylint: disable=name-too-long
+class ApplicationInsightsComponentDataVolumeCap(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """An Application Insights component daily data volume cap.
 
     :ivar cap: Daily data volume cap in GB.
@@ -590,7 +604,9 @@ class ApplicationInsightsComponentDataVolumeCap(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ApplicationInsightsComponentExportConfiguration(_Model):  # pylint: disable=name-too-long
+class ApplicationInsightsComponentExportConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties that define a Continuous Export configuration.
 
     :ivar export_id: The unique ID of the export configuration inside an Application Insights
@@ -713,7 +729,9 @@ class ApplicationInsightsComponentExportConfiguration(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class ApplicationInsightsComponentExportRequest(_Model):  # pylint: disable=name-too-long
+class ApplicationInsightsComponentExportRequest(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """An Application Insights component Continuous Export configuration request definition.
 
     :ivar record_types: The document types to be exported, as comma separated values. Allowed
@@ -805,7 +823,7 @@ class ApplicationInsightsComponentExportRequest(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ApplicationInsightsComponentFavorite(_Model):
+class ApplicationInsightsComponentFavorite(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties that define a favorite that is associated to an Application Insights component.
 
     :ivar name: The user-defined name of the favorite.
@@ -1044,7 +1062,9 @@ class ApplicationInsightsComponentFeatureCapability(_Model):  # pylint: disable=
     """The meter rate of the meter."""
 
 
-class ApplicationInsightsComponentProactiveDetectionConfiguration(_Model):  # pylint: disable=name-too-long
+class ApplicationInsightsComponentProactiveDetectionConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties that define a ProactiveDetection configuration.
 
     :ivar name: The rule name.
@@ -1113,7 +1133,7 @@ class ApplicationInsightsComponentProactiveDetectionConfiguration(_Model):  # py
 
 class ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions(
     _Model
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Static definitions of the ProactiveDetection configuration rule (same values for all
     components).
 
@@ -1188,7 +1208,7 @@ class ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions
         super().__init__(*args, **kwargs)
 
 
-class ApplicationInsightsComponentProperties(_Model):
+class ApplicationInsightsComponentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties that define an Application Insights component resource.
 
     :ivar application_id: The unique ID of your application. This field mirrors the 'Name' field
@@ -1263,6 +1283,27 @@ class ApplicationInsightsComponentProperties(_Model):
     :ivar force_customer_storage_for_profiler: Force users to create their own storage account for
      profiler and debugger.
     :vartype force_customer_storage_for_profiler: bool
+    :ivar azure_monitor_workspace_resource_id: Resource Id of the Azure Monitor workspace which the
+     OpenTelemetry data will be ingested to.
+    :vartype azure_monitor_workspace_resource_id: str
+    :ivar azure_monitor_workspace_ingestion_mode: Indicates the state of the OpenTelemetry
+     ingestion into the linked Azure Monitor workspace. Clients may set this to ``NotOptedIn`` or
+     ``Enabled``; ``Disabled`` is set only by the service when the link to the Azure Monitor
+     workspace is broken. Known values are: "NotOptedIn", "Enabled", and "Disabled".
+    :vartype azure_monitor_workspace_ingestion_mode: str or
+     ~azure.mgmt.applicationinsights.models.AzureMonitorWorkspaceIngestionMode
+    :ivar data_collection_rule_resource_id: Resource Id of the data collection rule that routes the
+     OpenTelemetry data ingested through the OTLP endpoints of this component.
+    :vartype data_collection_rule_resource_id: str
+    :ivar otlp_metrics_endpoint: The OTLP endpoint to which OpenTelemetry metrics for this
+     component are sent.
+    :vartype otlp_metrics_endpoint: str
+    :ivar otlp_logs_endpoint: The OTLP endpoint to which OpenTelemetry logs for this component are
+     sent.
+    :vartype otlp_logs_endpoint: str
+    :ivar otlp_traces_endpoint: The OTLP endpoint to which OpenTelemetry traces for this component
+     are sent.
+    :vartype otlp_traces_endpoint: str
     """
 
     application_id: Optional[str] = rest_field(name="ApplicationId", visibility=["read"])
@@ -1361,9 +1402,33 @@ class ApplicationInsightsComponentProperties(_Model):
         name="ForceCustomerStorageForProfiler", visibility=["read", "create", "update", "delete", "query"]
     )
     """Force users to create their own storage account for profiler and debugger."""
+    azure_monitor_workspace_resource_id: Optional[str] = rest_field(
+        name="AzureMonitorWorkspaceResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource Id of the Azure Monitor workspace which the OpenTelemetry data will be ingested to."""
+    azure_monitor_workspace_ingestion_mode: Optional[Union[str, "_models.AzureMonitorWorkspaceIngestionMode"]] = (
+        rest_field(
+            name="AzureMonitorWorkspaceIngestionMode", visibility=["read", "create", "update", "delete", "query"]
+        )
+    )
+    """Indicates the state of the OpenTelemetry ingestion into the linked Azure Monitor workspace.
+     Clients may set this to ``NotOptedIn`` or ``Enabled``; ``Disabled`` is set only by the service
+     when the link to the Azure Monitor workspace is broken. Known values are: \"NotOptedIn\",
+     \"Enabled\", and \"Disabled\"."""
+    data_collection_rule_resource_id: Optional[str] = rest_field(
+        name="DataCollectionRuleResourceId", visibility=["read"]
+    )
+    """Resource Id of the data collection rule that routes the OpenTelemetry data ingested through the
+     OTLP endpoints of this component."""
+    otlp_metrics_endpoint: Optional[str] = rest_field(name="OTLPMetricsEndpoint", visibility=["read"])
+    """The OTLP endpoint to which OpenTelemetry metrics for this component are sent."""
+    otlp_logs_endpoint: Optional[str] = rest_field(name="OTLPLogsEndpoint", visibility=["read"])
+    """The OTLP endpoint to which OpenTelemetry logs for this component are sent."""
+    otlp_traces_endpoint: Optional[str] = rest_field(name="OTLPTracesEndpoint", visibility=["read"])
+    """The OTLP endpoint to which OpenTelemetry traces for this component are sent."""
 
     @overload
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         application_type: Union[str, "_models.ApplicationType"],
@@ -1380,6 +1445,10 @@ class ApplicationInsightsComponentProperties(_Model):
         ingestion_mode: Optional[Union[str, "_models.IngestionMode"]] = None,
         disable_local_auth: Optional[bool] = None,
         force_customer_storage_for_profiler: Optional[bool] = None,
+        azure_monitor_workspace_resource_id: Optional[str] = None,
+        azure_monitor_workspace_ingestion_mode: Optional[
+            Union[str, "_models.AzureMonitorWorkspaceIngestionMode"]
+        ] = None,
     ) -> None: ...
 
     @overload
@@ -1474,7 +1543,7 @@ class ProxyResource(Resource):
     """
 
 
-class ComponentLinkedStorageAccounts(ProxyResource):
+class ComponentLinkedStorageAccounts(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Application Insights component linked storage accounts.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1535,7 +1604,7 @@ class ComponentLinkedStorageAccounts(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ComponentLinkedStorageAccountsPatch(_Model):
+class ComponentLinkedStorageAccountsPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Application Insights component linked storage accounts patch.
 
     :ivar properties: The properties of the linked storage accounts.
@@ -1585,7 +1654,7 @@ class ComponentLinkedStorageAccountsPatch(_Model):
             super().__setattr__(key, value)
 
 
-class ComponentPurgeBody(_Model):
+class ComponentPurgeBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the body of a purge request for an App Insights component.
 
     :ivar table: Table from which to purge data. Required.
@@ -1622,7 +1691,7 @@ class ComponentPurgeBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ComponentPurgeBodyFilters(_Model):
+class ComponentPurgeBodyFilters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User-defined filters to return data which will be purged from the table.
 
     :ivar column: The column of the table over which the given query should run.
@@ -1672,7 +1741,7 @@ class ComponentPurgeBodyFilters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ComponentPurgeResponse(_Model):
+class ComponentPurgeResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response containing operationId for a specific purge action.
 
     :ivar operation_id: Id to use when querying for status for a particular purge operation.
@@ -1701,7 +1770,7 @@ class ComponentPurgeResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ComponentPurgeStatusResponse(_Model):
+class ComponentPurgeStatusResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response containing status for a specific purge operation.
 
     :ivar status: Status of the operation represented by the requested Id. Required. Known values
@@ -1731,7 +1800,7 @@ class ComponentPurgeStatusResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1775,7 +1844,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class DeletedWorkbookResource(TrackedResource):
+class DeletedWorkbookResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An azure resource object.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1827,7 +1896,7 @@ class DeletedWorkbookResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class DeletedWorkbook(DeletedWorkbookResource):
+class DeletedWorkbook(DeletedWorkbookResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A workbook definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1912,7 +1981,7 @@ class DeletedWorkbook(DeletedWorkbookResource):
             super().__setattr__(key, value)
 
 
-class DeletedWorkbookError(_Model):
+class DeletedWorkbookError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error details.
@@ -1972,7 +2041,7 @@ class DeletedWorkbookInnerErrorTrace(_Model):
     """detailed error trace."""
 
 
-class DeletedWorkbookProperties(_Model):
+class DeletedWorkbookProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties that contain a workbook.
 
     :ivar display_name: The user-defined name (display name) of the workbook. Required.
@@ -2054,7 +2123,7 @@ class DeletedWorkbookProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorFieldContract(_Model):
+class ErrorFieldContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error Field contract.
 
     :ivar code: Property level error code.
@@ -2092,7 +2161,7 @@ class ErrorFieldContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response indicates Insights service is not able to process the incoming request. The
     reason is provided in the error message.
 
@@ -2133,7 +2202,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorResponseComponents(_Model):
+class ErrorResponseComponents(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ErrorResponseComponents.
 
     :ivar error: Error response indicates Insights service is not able to process the incoming
@@ -2181,7 +2250,7 @@ class ErrorResponseComponentsError(_Model):
     """Error message indicating why the operation failed."""
 
 
-class ErrorResponseLinkedStorage(_Model):
+class ErrorResponseLinkedStorage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ErrorResponseLinkedStorage.
 
     :ivar error: Error response indicates Insights service is not able to process the incoming
@@ -2229,7 +2298,7 @@ class ErrorResponseLinkedStorageError(_Model):
     """Error message indicating why the operation failed."""
 
 
-class HeaderField(_Model):
+class HeaderField(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A header to add to the WebTest.
 
     :ivar header_field_name: The name of the header.
@@ -2266,7 +2335,7 @@ class HeaderField(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InnerError(_Model):
+class InnerError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Inner error.
 
     :ivar diagnosticcontext: Provides correlation for request.
@@ -2301,7 +2370,7 @@ class InnerError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinkedStorageAccountsProperties(_Model):
+class LinkedStorageAccountsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Application Insights component linked storage account.
 
     :ivar linked_storage_account: Linked storage account resource ID.
@@ -2342,7 +2411,7 @@ class LiveTokenResponse(_Model):
     """JWT token for accessing live metrics stream data."""
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -2394,7 +2463,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Workbooks REST API operation.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -2429,7 +2498,7 @@ class Operation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_Model):
+class OperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object that represents the operation.
 
     :ivar provider: Service provider: Microsoft.Insights.
@@ -2467,7 +2536,7 @@ class OperationDisplay(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkScopedResource(_Model):
+class PrivateLinkScopedResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The private link scope resource reference.
 
     :ivar resource_id: The full resource Id of the private link scope resource.
@@ -2502,7 +2571,7 @@ class PrivateLinkScopedResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -2569,7 +2638,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagsResource(_Model):
+class TagsResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A container holding only the Tags for a resource, allowing the user to update the tags on a
     WebTest instance.
 
@@ -2613,7 +2682,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class WebtestsResource(_Model):
+class WebtestsResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An azure resource object.
 
     :ivar id: Azure resource Id.
@@ -2658,7 +2727,7 @@ class WebtestsResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebTest(WebtestsResource):
+class WebTest(WebtestsResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Application Insights WebTest definition.
 
     :ivar id: Azure resource Id.
@@ -2743,7 +2812,7 @@ class WebTest(WebtestsResource):
             super().__setattr__(key, value)
 
 
-class WebTestGeolocation(_Model):
+class WebTestGeolocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Geo-physical location to run a WebTest from. You must specify one or more locations for the
     test to run from.
 
@@ -2772,7 +2841,7 @@ class WebTestGeolocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebTestProperties(_Model):
+class WebTestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata describing a web test for an Azure resource.
 
     :ivar synthetic_monitor_id: Unique ID of this WebTest. This is typically the same value as the
@@ -2885,7 +2954,7 @@ class WebTestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebTestPropertiesConfiguration(_Model):
+class WebTestPropertiesConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An XML configuration specification for a WebTest.
 
     :ivar web_test: The XML specification of a WebTest to run against an application.
@@ -2913,7 +2982,7 @@ class WebTestPropertiesConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebTestPropertiesRequest(_Model):
+class WebTestPropertiesRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The collection of request properties.
 
     :ivar request_url: Url location to test.
@@ -2976,7 +3045,7 @@ class WebTestPropertiesRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebTestPropertiesValidationRules(_Model):
+class WebTestPropertiesValidationRules(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The collection of validation rule properties.
 
     :ivar content_validation: The collection of content validation properties.
@@ -3036,7 +3105,9 @@ class WebTestPropertiesValidationRules(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebTestPropertiesValidationRulesContentValidation(_Model):  # pylint: disable=name-too-long
+class WebTestPropertiesValidationRulesContentValidation(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The collection of content validation properties.
 
     :ivar content_match: Content to look for in the return of the WebTest.  Must not be null or
@@ -3083,7 +3154,7 @@ class WebTestPropertiesValidationRulesContentValidation(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class Workbook(TrackedResource):
+class Workbook(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A workbook definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3181,7 +3252,7 @@ class Workbook(TrackedResource):
             super().__setattr__(key, value)
 
 
-class WorkbookError(_Model):
+class WorkbookError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error details.
@@ -3241,7 +3312,7 @@ class WorkbookInnerErrorTrace(_Model):
     """detailed error trace."""
 
 
-class WorkbookProperties(_Model):
+class WorkbookProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties that contain a workbook.
 
     :ivar display_name: The user-defined name (display name) of the workbook. Required.
@@ -3323,7 +3394,7 @@ class WorkbookProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkbookPropertiesUpdateParameters(_Model):
+class WorkbookPropertiesUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties that contain a workbook for PATCH operation.
 
     :ivar display_name: The user-defined name (display name) of the workbook.
@@ -3382,7 +3453,7 @@ class WorkbookPropertiesUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkbookResourceIdentity(ManagedServiceIdentity):
+class WorkbookResourceIdentity(ManagedServiceIdentity):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity used for BYOS.
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -3418,7 +3489,7 @@ class WorkbookResourceIdentity(ManagedServiceIdentity):
         super().__init__(*args, **kwargs)
 
 
-class WorkbookTemplate(TrackedResource):
+class WorkbookTemplate(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Application Insights workbook template definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3485,7 +3556,7 @@ class WorkbookTemplate(TrackedResource):
             super().__setattr__(key, value)
 
 
-class WorkbookTemplateError(_Model):
+class WorkbookTemplateError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error message that will indicate why the operation failed.
 
     :ivar error: Error message object that will indicate why the operation failed.
@@ -3515,7 +3586,7 @@ class WorkbookTemplateError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkbookTemplateErrorBody(_Model):
+class WorkbookTemplateErrorBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error message body that will indicate why the operation failed.
 
     :ivar code: Service-defined error code. This code serves as a sub-status for the HTTP error
@@ -3558,7 +3629,7 @@ class WorkbookTemplateErrorBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkbookTemplateErrorFieldContract(_Model):
+class WorkbookTemplateErrorFieldContract(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error Field contract.
 
     :ivar code: Property level error code.
@@ -3596,7 +3667,7 @@ class WorkbookTemplateErrorFieldContract(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkbookTemplateGallery(_Model):
+class WorkbookTemplateGallery(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Gallery information for a workbook template.
 
     :ivar name: Name of the workbook template in the gallery.
@@ -3646,7 +3717,7 @@ class WorkbookTemplateGallery(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkbookTemplateLocalizedGallery(_Model):
+class WorkbookTemplateLocalizedGallery(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Localized template data and gallery information.
 
     :ivar template_data: Valid JSON object containing workbook template payload.
@@ -3683,7 +3754,7 @@ class WorkbookTemplateLocalizedGallery(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkbookTemplateProperties(_Model):
+class WorkbookTemplateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties that contain a workbook template.
 
     :ivar priority: Priority of the template. Determines which template to open when a workbook
@@ -3740,7 +3811,7 @@ class WorkbookTemplateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkbookTemplateUpdateParameters(_Model):
+class WorkbookTemplateUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters that can be provided when updating workbook template.
 
     :ivar tags: Resource tags.
@@ -3795,7 +3866,7 @@ class WorkbookTemplateUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class WorkbookUpdateParameters(_Model):
+class WorkbookUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters that can be provided when updating workbook properties properties.
 
     :ivar kind: The kind of workbook. Only valid value is shared. "shared"
@@ -3857,7 +3928,7 @@ class WorkbookUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class WorkItemConfiguration(_Model):
+class WorkItemConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Work item configuration associated with an application insights resource.
 
     :ivar connector_id: Connector identifier where work item is created.
@@ -3913,7 +3984,7 @@ class WorkItemConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkItemConfigurationError(_Model):
+class WorkItemConfigurationError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error associated with trying to get work item configuration or configurations.
 
     :ivar code: Error detail code and explanation.
@@ -3951,7 +4022,7 @@ class WorkItemConfigurationError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkItemCreateConfiguration(_Model):
+class WorkItemCreateConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Work item configuration creation payload.
 
     :ivar connector_id: Unique connector id.

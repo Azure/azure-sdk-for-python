@@ -99,6 +99,7 @@ from ._models import (  # type: ignore
 
 from ._enums import (  # type: ignore
     ApplicationType,
+    AzureMonitorWorkspaceIngestionMode,
     CategoryType,
     CreatedByType,
     FavoriteSourceType,
@@ -205,6 +206,7 @@ __all__ = [
     "WorkbookTemplateUpdateParameters",
     "WorkbookUpdateParameters",
     "ApplicationType",
+    "AzureMonitorWorkspaceIngestionMode",
     "CategoryType",
     "CreatedByType",
     "FavoriteSourceType",
