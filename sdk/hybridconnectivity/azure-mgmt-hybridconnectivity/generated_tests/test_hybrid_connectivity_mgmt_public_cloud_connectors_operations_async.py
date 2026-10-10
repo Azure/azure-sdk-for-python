@@ -40,15 +40,26 @@ class TestHybridConnectivityMgmtPublicCloudConnectorsOperationsAsync(AzureMgmtRe
                 resource={
                     "location": "str",
                     "id": "str",
+                    "kind": "str",
                     "name": "str",
                     "properties": {
+                        "hostType": "str",
                         "awsCloudProfile": {
                             "accountId": "str",
                             "excludedAccounts": ["str"],
                             "isOrganizationalAccount": bool,
                         },
-                        "hostType": "str",
                         "connectorPrimaryIdentifier": "str",
+                        "gcpCloudProfile": {
+                            "organizationProperties": {
+                                "managementProjectId": "str",
+                                "managementProjectNumber": "str",
+                                "organizationId": "str",
+                                "excludedFolderIds": ["str"],
+                                "excludedProjectNumbers": ["str"],
+                            },
+                            "projectProperties": {"projectId": "str", "projectNumber": "str"},
+                        },
                         "provisioningState": "str",
                     },
                     "systemData": {
@@ -77,7 +88,12 @@ class TestHybridConnectivityMgmtPublicCloudConnectorsOperationsAsync(AzureMgmtRe
             properties={
                 "id": "str",
                 "name": "str",
-                "properties": {"awsCloudProfile": {"excludedAccounts": ["str"]}},
+                "properties": {
+                    "awsCloudProfile": {"excludedAccounts": ["str"]},
+                    "gcpCloudProfile": {
+                        "organizationProperties": {"excludedFolderIds": ["str"], "excludedProjectNumbers": ["str"]}
+                    },
+                },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
