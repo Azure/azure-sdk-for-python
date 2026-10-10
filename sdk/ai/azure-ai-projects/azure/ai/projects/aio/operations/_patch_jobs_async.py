@@ -245,13 +245,17 @@ class JobsOperations(_GeneratedJobsOps):
     async def _resolve_pipeline_code(self, name: str, job: PipelineJob) -> None:
         """Resolve local code folders on inline command nodes to dataset asset URIs."""
         try:
+            resolved_code: Dict[str, str] = {}
             for node_name, node in (job.jobs or {}).items():
                 if not isinstance(node, dict) or node.get("type") != "command":
                     continue
                 component = node.get("component")
                 if not isinstance(component, dict) or not isinstance(component.get("code"), str):
                     continue
-                component["code"] = await self._resolve_asset_uri(component["code"], f"{name}-{node_name}-code")
+                code = component["code"]
+                if code not in resolved_code:
+                    resolved_code[code] = await self._resolve_asset_uri(code, f"{name}-{node_name}-code")
+                component["code"] = resolved_code[code]
         finally:
             for directory in job._component_code_dirs:
                 directory.cleanup()

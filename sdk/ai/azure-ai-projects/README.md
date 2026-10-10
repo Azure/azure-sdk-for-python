@@ -195,6 +195,20 @@ third-party modules must already exist in the container image. This native Found
 does not accept an unmodified `azure.ai.ml.dsl` PipelineJob or provide full Azure ML component
 registration and environment features; local pipeline file inputs are not supported.
 
+For helpers and local modules, use `@component(code="..")` to opt into a source-backed Code
+snapshot. The path is relative to the file defining the component; it must include that file
+and the top-level Python package to import. The runtime imports the original module and invokes
+its undecorated function, so module globals, sibling Python files, and resources inside that
+root are available. Define components in import-safe modules separate from submission-time
+configuration. The selected image must contain a compatible `azure-ai-projects` version and
+any other imported Python packages; the snapshot does not install dependencies or capture
+closure values. Shared code roots are uploaded once per pipeline submission.
+The snapshot honors `.amlignore` (or `.gitignore` when no `.amlignore` exists) in each directory,
+always omits `.env` files and common Python/Git artifacts, and rejects included symlinks.
+Review the code root before submitting: only files not excluded by these rules are uploaded.
+See the [multi-file source-backed sample](samples/jobs/pipeline_source/README.md) for this
+layout; the original single-file sample retains its standalone, SDK-free execution mode.
+
 ### Hosted agents (preview)
 
 Hosted agents let you run your own containerized agent runtime while using Microsoft Foundry for managed hosting and scaling.
