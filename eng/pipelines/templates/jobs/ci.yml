@@ -244,6 +244,7 @@ jobs:
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
       parameters:
         ContinueOnError: false
+        NpmConfigUserConfig: $(Agent.TempDirectory)/cspell.npmrc
 
     - task: DownloadPipelineArtifact@2
       condition: succeededOrFailed()
