@@ -54,6 +54,7 @@ class TestLogAnalyticsManagementWorkspacesOperations(AzureMgmtRecordedTestCase):
                     "features": {
                         "associations": ["str"],
                         "clusterResourceId": "str",
+                        "dataAuthorizationMode": bool,
                         "disableLocalAuth": bool,
                         "enableDataExport": bool,
                         "enableLogAccessUsingOnlyResourcePermissions": bool,
@@ -121,6 +122,7 @@ class TestLogAnalyticsManagementWorkspacesOperations(AzureMgmtRecordedTestCase):
                     "features": {
                         "associations": ["str"],
                         "clusterResourceId": "str",
+                        "dataAuthorizationMode": bool,
                         "disableLocalAuth": bool,
                         "enableDataExport": bool,
                         "enableLogAccessUsingOnlyResourcePermissions": bool,

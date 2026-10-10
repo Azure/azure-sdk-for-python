@@ -41,3 +41,15 @@ class TestLogAnalyticsManagementWorkspacePurgeOperations(AzureMgmtRecordedTestCa
 
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_workspace_purge_begin_purge_lake_data(self, resource_group):
+        response = self.client.workspace_purge.begin_purge_lake_data(
+            resource_group_name=resource_group.name,
+            workspace_name="str",
+            body={"table": "str", "timeRange": {"endTime": "2020-02-20 00:00:00", "startTime": "2020-02-20 00:00:00"}},
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
