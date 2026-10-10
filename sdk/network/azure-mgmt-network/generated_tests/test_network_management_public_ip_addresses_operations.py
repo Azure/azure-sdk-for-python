@@ -29,7 +29,7 @@ class TestNetworkManagementPublicIPAddressesOperations(AzureMgmtRecordedTestCase
             network_interface_name="str",
             ip_configuration_name="str",
             public_ip_address_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -44,7 +44,7 @@ class TestNetworkManagementPublicIPAddressesOperations(AzureMgmtRecordedTestCase
             role_instance_name="str",
             network_interface_name="str",
             ip_configuration_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -87,7 +87,7 @@ class TestNetworkManagementPublicIPAddressesOperations(AzureMgmtRecordedTestCase
         response = self.client.public_ip_addresses.get(
             resource_group_name=resource_group.name,
             public_ip_address_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1981,7 +1981,7 @@ class TestNetworkManagementPublicIPAddressesOperations(AzureMgmtRecordedTestCase
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -1994,7 +1994,7 @@ class TestNetworkManagementPublicIPAddressesOperations(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             public_ip_address_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2006,7 +2006,7 @@ class TestNetworkManagementPublicIPAddressesOperations(AzureMgmtRecordedTestCase
         response = self.client.public_ip_addresses.begin_delete(
             resource_group_name=resource_group.name,
             public_ip_address_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2017,7 +2017,7 @@ class TestNetworkManagementPublicIPAddressesOperations(AzureMgmtRecordedTestCase
     def test_public_ip_addresses_list(self, resource_group):
         response = self.client.public_ip_addresses.list(
             resource_group_name=resource_group.name,
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2027,7 +2027,7 @@ class TestNetworkManagementPublicIPAddressesOperations(AzureMgmtRecordedTestCase
     @recorded_by_proxy
     def test_public_ip_addresses_list_all(self, resource_group):
         response = self.client.public_ip_addresses.list_all(
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2039,7 +2039,7 @@ class TestNetworkManagementPublicIPAddressesOperations(AzureMgmtRecordedTestCase
         response = self.client.public_ip_addresses.begin_ddos_protection_status(
             resource_group_name=resource_group.name,
             public_ip_address_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2052,7 +2052,7 @@ class TestNetworkManagementPublicIPAddressesOperations(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             public_ip_address_name="str",
             parameters={"isRollback": "str"},
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2065,7 +2065,7 @@ class TestNetworkManagementPublicIPAddressesOperations(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             public_ip_address_name="str",
             parameters={"publicIpArmId": "str"},
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2077,7 +2077,7 @@ class TestNetworkManagementPublicIPAddressesOperations(AzureMgmtRecordedTestCase
         response = self.client.public_ip_addresses.list_cloud_service_public_ip_addresses(
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
