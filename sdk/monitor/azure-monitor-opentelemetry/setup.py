@@ -94,7 +94,7 @@ setup(
         "opentelemetry-instrumentation-urllib3>=0.66b0,<0.67b0",
         "opentelemetry-instrumentation-logging>=0.66b0,<0.67b0",
         "opentelemetry-instrumentation-httpx>=0.66b0,<0.67b0",
-        "opentelemetry-resource-detector-azure<1.0.0,>=0.2.0",
+        "opentelemetry-resource-detector-azure<1.0.0,>=0.3.0",
     ],
     entry_points={
         "opentelemetry_distro": [

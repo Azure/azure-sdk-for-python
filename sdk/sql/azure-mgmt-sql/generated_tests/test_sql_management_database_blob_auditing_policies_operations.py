@@ -49,6 +49,7 @@ class TestSqlManagementDatabaseBlobAuditingPoliciesOperations(AzureMgmtRecordedT
                     "isManagedIdentityInUse": bool,
                     "isStorageSecondaryKeyInUse": bool,
                     "queueDelayMs": 0,
+                    "requiredFields": ["str"],
                     "retentionDays": 0,
                     "storageAccountAccessKey": "str",
                     "storageAccountSubscriptionId": "str",

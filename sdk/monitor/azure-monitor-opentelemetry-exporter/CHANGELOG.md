@@ -1,5 +1,15 @@
 # Release History
 
+## 1.0.0b59 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0b58 (2026-10-07)
 
 ### Features Added
@@ -11,9 +21,6 @@
   (`db.system.name`, `db.query.text`, `db.operation.name`, `db.namespace`) when
   mapping `CLIENT` spans to `RemoteDependencyData`
   ([#48979](https://github.com/Azure/azure-sdk-for-python/pull/48979))
-
-### Other Changes
-- Update the OpenTelemetry API and SDK dependencies to 1.45.
 
 ## 1.0.0b57 (2026-09-02)
 
