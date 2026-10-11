@@ -16,7 +16,7 @@
 
 ### Bugs Fixed
 
-- Fixed content harm annotation responses containing a bare numeric score of `0` (no harm) being parsed as `NaN` instead of a score of `0` with `Very low` severity.
+- Fixed content harm annotation responses containing a bare numeric score of `0` (no harm) being parsed as `NaN` instead of a score of `0` with `Very low` severity. Boolean values are no longer treated as bare numeric scores.
 - Retained known earlier-turn Decision usage and model metadata when an asynchronous split evaluation is cancelled directly, while preserving `CancelledError` and existing callback cancellation behavior.
 - Rejected non-JSON-safe native answer provenance with typed errors that retain known usage, without validating unused scores on applicability skips.
 - Accepted explicit numeric zero in zero-inclusive shared Prompty score ranges while keeping missing, invalid and boolean grades on the typed error path. Missing-score fallbacks cannot manufacture a ranged grade.
