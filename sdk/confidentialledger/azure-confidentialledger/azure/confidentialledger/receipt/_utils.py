@@ -29,6 +29,7 @@ def _convert_dict_to_camel_case(dictionary: Dict[str, Any]) -> Dict[str, Any]:
     :param dict[str, any] dictionary: The dictionary to convert to camel case.
     :return: The dictionary with keys converted to camel case.
     :rtype: dict[str, any]
+    :raises ValueError: If two keys of a dictionary are converted to the same camel case key.
     """
 
     new_dictionary: Dict[str, Any] = {}
@@ -37,6 +38,10 @@ def _convert_dict_to_camel_case(dictionary: Dict[str, Any]) -> Dict[str, Any]:
     for key, value in dictionary.items():
         # Convert the key to camel case
         camel_case_key = _to_camel_case(key)
+
+        # Reject a key that converts to the same name as a previous key
+        if camel_case_key in new_dictionary:
+            raise ValueError(f"Duplicate key after normalization: {camel_case_key}")
 
         # If the value is a dictionary, apply algorithm recursively
         if isinstance(value, dict):

@@ -1,10 +1,10 @@
 # Release History
 
-## 2.0.0 (2026-06-15)
+## 2.0.0b4 (2026-10-09)
 
 ### Features Added
 
-- Stable release of the Azure Confidential Ledger client library based on API version `2026-02-23`.
+- Updated to API version `2026-02-23`.
 - Added user-defined functions support including `create_user_defined_endpoint`, `get_user_defined_endpoint`, and related operations.
 - Added user-defined roles support including `create_user_defined_role`, `update_user_defined_role`, `get_user_defined_role`, and `delete_user_defined_role`.
 - Added `create_or_update_ledger_user`, `delete_ledger_user`, `get_ledger_user`, and `list_ledger_users` operations.
@@ -15,6 +15,10 @@
 - Removed the `azure.confidentialledger.certificate` namespace and the `ConfidentialLedgerCertificateClient`. Use the `azure-confidentialledger-certificate` package to access this client.
 - Changed the input parameter on `create_user_defined_role` and `update_user_defined_role` from a list of roles to a `Roles` model.
 - `get_user_defined_role()` returns a `Roles` model instead of a list of roles.
+
+### Bugs Fixed
+
+- Hardened receipt dictionary normalization.
 
 ## 2.0.0b3 (2026-06-05)
 

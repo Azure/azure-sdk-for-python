@@ -72,7 +72,7 @@ def test_receipt_verification_with_invalid_leaf_components_throws_exception(
 ):
     # Create a receipt with invalid leaf components
     receipt = get_test_valid_receipt_1_dict()
-    receipt["leafComponents"] = input_leaf_components
+    receipt["leaf_components"] = input_leaf_components
 
     # Check that verify_receipt throws ValueError
     with pytest.raises(
@@ -240,7 +240,7 @@ def test_receipt_verification_with_unknown_leaf_components_throws_exception(
 ):
     # Create a receipt with unknown leaf components
     receipt = get_test_valid_receipt_1_dict()
-    receipt["leafComponents"] = input_leaf_components
+    receipt["leaf_components"] = input_leaf_components
 
     # Check that verify_receipt throws ValueError
     with pytest.raises(
@@ -361,3 +361,80 @@ def test_receipt_verification_with_invalid_application_claims_throws_exception(
         ValueError,
     ):
         verify_receipt(input_receipt, input_service_cert, application_claims=input_claims)
+
+
+@pytest.mark.parametrize("duplicate_key_first", [True, False])
+@pytest.mark.parametrize("duplicate_key", ["leafComponents", "leaf__components"])
+def test_receipt_duplicate_normalized_keys_rejected(duplicate_key, duplicate_key_first):
+    # Create a receipt that provides the leaf components under both a snake case key
+    # and a second key that converts to the same name, with each key order
+    receipt = get_test_valid_receipt_1_dict()
+    duplicate = {duplicate_key: get_test_valid_receipt_2_dict()["leafComponents"]}
+    receipt = {**duplicate, **receipt} if duplicate_key_first else {**receipt, **duplicate}
+
+    # Check that verify_receipt throws ValueError
+    with pytest.raises(ValueError, match="Duplicate key after normalization: leafComponents"):
+        verify_receipt(receipt, get_test_valid_service_certificate_1())
+
+
+@pytest.mark.parametrize("duplicate_key_first", [True, False])
+@pytest.mark.parametrize(
+    "snake_case_key,camel_case_key",
+    [("commit_evidence", "commitEvidence"), ("claims_digest", "claimsDigest")],
+)
+def test_receipt_nested_duplicate_normalized_keys_rejected(snake_case_key, camel_case_key, duplicate_key_first):
+    # Create a receipt that provides a leaf components field under both a snake case
+    # and a camel case key, with each key order
+    receipt = get_test_valid_receipt_1_dict()
+    leaf_components = receipt["leaf_components"]
+    assert snake_case_key in leaf_components
+    duplicate = {camel_case_key: "duplicate_value"}
+    receipt["leaf_components"] = (
+        {**duplicate, **leaf_components} if duplicate_key_first else {**leaf_components, **duplicate}
+    )
+
+    # Check that verify_receipt throws ValueError
+    with pytest.raises(ValueError, match=f"Duplicate key after normalization: {camel_case_key}"):
+        verify_receipt(receipt, get_test_valid_service_certificate_1())
+
+
+def test_receipt_duplicate_normalized_keys_in_list_rejected():
+    # Create a receipt with a list that contains a dictionary with duplicate normalized keys
+    receipt = get_test_valid_receipt_1_dict()
+    receipt["extra_items"] = [{"some_key": 1, "someKey": 2}]
+
+    # Check that verify_receipt throws ValueError
+    with pytest.raises(ValueError, match="Duplicate key after normalization: someKey"):
+        verify_receipt(receipt, get_test_valid_service_certificate_1())
+
+
+@pytest.mark.parametrize("duplicate_key_first", [True, False])
+def test_receipt_proof_element_duplicate_normalized_keys_rejected(duplicate_key_first):
+    # Create a receipt with a proof element that provides the left hash under both
+    # "left" and "left_", with each key order
+    receipt = get_test_valid_receipt_1_dict()
+    element = receipt["proof"][0]
+    duplicate = {"left_": get_test_valid_receipt_2_dict()["proof"][0]["left"]}
+    receipt["proof"][0] = {**duplicate, **element} if duplicate_key_first else {**element, **duplicate}
+
+    # Check that verify_receipt throws ValueError
+    with pytest.raises(ValueError, match="Duplicate key after normalization: left"):
+        verify_receipt(receipt, get_test_valid_service_certificate_1())
+
+
+def test_receipt_verification_with_mixed_key_styles_returns_successfully():
+    # Create a valid receipt that uses snake case and camel case keys for different fields
+    receipt = get_test_valid_receipt_1_dict()
+    receipt["nodeId"] = receipt.pop("node_id")
+    leaf_components = receipt["leaf_components"]
+    receipt["leaf_components"] = {
+        "claimsDigest": leaf_components["claims_digest"],
+        "commit_evidence": leaf_components["commit_evidence"],
+        "writeSetDigest": leaf_components["write_set_digest"],
+    }
+
+    # Check that verify_receipt does not throw any exception
+    try:
+        verify_receipt(receipt, get_test_valid_service_certificate_1())
+    except Exception as e:
+        pytest.fail(f"verify_receipt threw an exception with a valid receipt using mixed key styles {e}")
