@@ -245,6 +245,29 @@ def test_bearer_policy_optionally_enforces_https(http_request):
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_rejects_backslash_authority(http_request):
+    """A backslash in the URL authority must be rejected before a bearer token is attached"""
+
+    credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=AccessToken("***", 42)))
+    pipeline = Pipeline(transport=Mock(), policies=[BearerTokenCredentialPolicy(credential, "scope")])
+
+    policy = BearerTokenCredentialPolicy(credential, "scope")
+    for url in ("https://good-host\\@attacker.example/path", "https://attacker.example\\.good-host/path"):
+        with pytest.raises(ValueError):
+            pipeline.run(http_request("GET", url))
+        # the authority is rejected even when https enforcement is opted out of
+        with pytest.raises(ValueError):
+            pipeline.run(http_request("GET", url), enforce_https=False)
+        # authorize_request attaches a token directly, so it must reject the authority too
+        request = PipelineRequest(http_request("GET", url), PipelineContext(None))
+        with pytest.raises(ValueError):
+            policy.authorize_request(request, "scope")
+        assert "Authorization" not in request.http_request.headers
+
+    credential.get_token.assert_not_called()
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_bearer_policy_preserves_enforce_https_opt_out(http_request):
     """The policy should use request context to preserve an opt out from https enforcement"""
 

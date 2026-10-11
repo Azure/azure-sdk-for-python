@@ -11,7 +11,7 @@ from ...credentials import AccessTokenInfo, TokenRequestOptions
 from ..pipeline import PipelineRequest, PipelineResponse
 from ..pipeline._tools_async import await_result
 from ._base_async import AsyncHTTPPolicy
-from ._authentication import _enforce_https
+from ._authentication import _enforce_https, _enforce_safe_authority
 from ...rest import AsyncHttpResponse, HttpRequest
 from ...exceptions import HttpResponseError
 from ...utils._utils import get_running_async_lock
@@ -91,6 +91,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         :param ~corehttp.runtime.pipeline.PipelineRequest request: the request
         :param str scopes: required scopes of authentication
         """
+        _enforce_safe_authority(request.http_request.url)
         options: TokenRequestOptions = {}
         # Loop through all the keyword arguments and check if they are part of the TokenRequestOptions.
         for key in list(kwargs.keys()):
