@@ -1,14 +1,5 @@
 # Release History
 
-## 2.3.0b1 (Unreleased)
-
-### Bugs Fixed
-
-- Added the mandatory `microsoft.foundry = "True"` attribute to every exported
-  OpenTelemetry span and log record. The AgentServer processors override
-  conflicting values for this marker while leaving `gen_ai.provider.name`
-  unchanged.
-
 ## 2.2.0 (2026-09-23)
 
 ### Other Changes

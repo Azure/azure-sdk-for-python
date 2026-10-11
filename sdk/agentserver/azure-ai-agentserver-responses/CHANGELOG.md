@@ -4,8 +4,6 @@
 
 ### Bugs Fixed
 
-- Added the mandatory `microsoft.foundry = "True"` tag to Responses
-  OpenTelemetry span attributes and lifecycle span tags.
 - Partition local in-memory and file-backed responses, items, history, and
   conversation indexes by the platform user key, keeping anonymous local state
   separate.
