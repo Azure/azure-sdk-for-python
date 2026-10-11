@@ -6,6 +6,7 @@ import contextlib
 import logging
 import os
 import signal
+import threading
 import urllib.parse
 from collections.abc import (  # pylint: disable=import-error
     AsyncGenerator,
@@ -23,6 +24,7 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 
 from . import _config, _tracing
 from ._middleware import InboundRequestLoggingMiddleware
+from ._observability_startup import resolve_observability_startup_mode
 from ._request_id import RequestIdMiddleware as _RequestIdMiddleware
 from ._server_version import build_server_version
 from ._types import MiddlewareFactory, P
@@ -259,17 +261,47 @@ class AgentServerHost(Starlette):
         _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string
         _env_val = os.environ.get("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "true")
         _sensitive_data = _env_val.lower() not in ("false", "0")
+        _observability_thread: Optional[threading.Thread] = None
+        _observability_error: list[Exception] = []
+        self._observability_startup_mode = "disabled"
         if configure_observability is not None:
-            try:
-                configure_observability(
-                    connection_string=_conn_str,
-                    log_level=log_level,
-                    enable_sensitive_data=_sensitive_data,
+            self._observability_startup_mode, _observability_reason = resolve_observability_startup_mode(
+                configure_observability is _tracing.configure_observability
+            )
+            if self._observability_startup_mode == "concurrent":
+                _tracing._configure_console_logging(log_level)  # pylint: disable=protected-access
+
+                def _configure_tracing() -> None:
+                    try:
+                        _tracing._configure_tracing(  # pylint: disable=protected-access
+                            connection_string=_conn_str,
+                            enable_sensitive_data=_sensitive_data,
+                        )
+                    except Exception as exc:  # pylint: disable=broad-exception-caught
+                        _observability_error.append(exc)
+
+                _observability_thread = threading.Thread(
+                    target=_configure_tracing,
+                    name="agentserver-observability",
+                    daemon=True,
                 )
-            except ValueError:
-                raise  # invalid log_level etc. — user should fix their config
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning("Failed to initialize observability; continuing without it.", exc_info=True)
+                _observability_thread.start()
+            else:
+                try:
+                    configure_observability(
+                        connection_string=_conn_str,
+                        log_level=log_level,
+                        enable_sensitive_data=_sensitive_data,
+                    )
+                except ValueError:
+                    raise  # invalid log_level etc. — user should fix their config
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning("Failed to initialize observability; continuing without it.", exc_info=True)
+            logger.info(
+                "Observability startup mode: %s (%s)",
+                self._observability_startup_mode,
+                _observability_reason,
+            )
 
         # Access logging ---------------------------------------------------
         self._access_log: Optional[logging.Logger] = logger if access_log is _SENTINEL_ACCESS_LOG else access_log
@@ -281,6 +313,17 @@ class AgentServerHost(Starlette):
         # Build lifespan context manager
         @contextlib.asynccontextmanager
         async def _lifespan(_app: Starlette) -> AsyncGenerator[None, None]:  # noqa: RUF029
+            if _observability_thread is not None:
+                _observability_thread.join()
+                if _observability_error:
+                    error = _observability_error[0]
+                    if isinstance(error, ValueError):
+                        raise error
+                    logger.warning(
+                        "Failed to initialize observability; continuing without it.",
+                        exc_info=(type(error), error, error.__traceback__),
+                    )
+            logger.info("Observability startup active mode: %s", self._observability_startup_mode)
             logger.info("AgentServerHost started")
 
             # --- Startup configuration logging ---

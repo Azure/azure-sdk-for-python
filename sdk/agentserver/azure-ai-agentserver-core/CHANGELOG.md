@@ -1,5 +1,17 @@
 # Release History
 
+## 2.2.1 (Unreleased)
+
+### Features Added
+
+- Added automatic concurrent observability initialization for free-threaded
+  Python processes with at least two effective CPUs. Standard Python,
+  free-threaded processes with less than two CPUs, and custom observability
+  callbacks retain the existing synchronous startup path. Set
+  `AGENTSERVER_OBSERVABILITY_STARTUP=sync` to force legacy behavior, or provide
+  `AGENTSERVER_CPU_LIMIT` when the hosting platform's CPU quota cannot be
+  discovered from cgroups.
+
 ## 2.2.0 (2026-09-23)
 
 ### Other Changes
