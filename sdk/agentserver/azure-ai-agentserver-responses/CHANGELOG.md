@@ -1,5 +1,12 @@
 # Release History
 
+## 2.3.0b3 (Unreleased)
+
+### Bugs Fixed
+
+- Added the mandatory `microsoft.foundry = "True"` tag to Responses
+  OpenTelemetry span attributes and lifecycle span tags.
+
 ## 2.3.0b2 (2026-09-30)
 
 ### Bugs Fixed
