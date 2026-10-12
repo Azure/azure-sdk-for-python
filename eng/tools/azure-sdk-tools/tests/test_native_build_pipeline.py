@@ -23,13 +23,9 @@ from ci_tools.parsing.parse_functions import get_pyproject_dict
 REPO_ROOT = Path(__file__).resolve().parents[4]
 TEMPLATES = REPO_ROOT / "eng" / "pipelines" / "templates"
 RUST_FIXTURE = REPO_ROOT / "sdk" / "template" / "azure-template-three"
-GENERIC_PR_EXCLUSION_SCRIPT = (
-    REPO_ROOT / "eng" / "scripts" / "Exclude-RustTemplateFixtureFromGenericPR.ps1"
-)
+GENERIC_PR_EXCLUSION_SCRIPT = REPO_ROOT / "eng" / "scripts" / "Exclude-RustTemplateFixtureFromGenericPR.ps1"
 RUST_GATE = "${{ if parameters.InstallMsRustToolchain }}"
-RUST_TOOLCHAIN_FEED = (
-    "https://pkgs.dev.azure.com/azure-sdk/_packaging/azure-sdk-for-rust-org-test/nuget/v3/index.json"
-)
+RUST_TOOLCHAIN_FEED = "https://pkgs.dev.azure.com/azure-sdk/_packaging/azure-sdk-for-rust-org-test/nuget/v3/index.json"
 RUST_PARAMETERS = (
     "InstallMsRustToolchain",
     "MsRustWorkingDirectory",
@@ -72,9 +68,10 @@ def test_rust_support_is_disabled_by_default_and_forwarded():
         assert defaults["MsRustAdditionalTargets"] == ""
 
     installer = load_template("steps/install-msrust-toolchain.yml")
-    assert next(
-        parameter["default"] for parameter in installer["parameters"] if parameter["name"] == "ToolchainFeed"
-    ) == ""
+    assert (
+        next(parameter["default"] for parameter in installer["parameters"] if parameter["name"] == "ToolchainFeed")
+        == ""
+    )
 
     build_stage = next(stage for stage in archetype["extends"]["parameters"]["stages"] if stage.get("stage") == "Build")
     forwarded = build_stage["jobs"][0]["parameters"]
@@ -246,9 +243,7 @@ def test_rust_template_is_always_on_and_uses_cosmos_prototype_settings():
     parameters = pipeline["extends"]["parameters"]
     assert "BuildTargetingString" not in parameters
     assert parameters["InstallMsRustToolchain"] is True
-    assert parameters["MsRustWorkingDirectory"] == (
-        "$(Build.SourcesDirectory)/sdk/template/azure-template-three"
-    )
+    assert parameters["MsRustWorkingDirectory"] == ("$(Build.SourcesDirectory)/sdk/template/azure-template-three")
     assert parameters["MsRustToolchainFeed"] == RUST_TOOLCHAIN_FEED
     assert parameters["MsRustAdditionalTargets"] == "aarch64-pc-windows-msvc"
     assert "variables" not in pipeline
@@ -336,15 +331,14 @@ def test_generic_pr_exclusion_applies_to_preselected_matrix_batches(tmp_path, ta
     assert not (tmp_path / "azure-template-three.json").exists()
     assert (tmp_path / "azure-cosmos.json").exists()
 
+
 def test_generic_pr_exclusion_precedes_target_resolution_and_matrix_generation():
     targeting = load_template("steps/resolve-package-targeting.yml")["steps"]
     assert all("Filter-RustTemplateFixture.ps1" not in step.get("pwsh", "") for step in targeting)
 
     build = load_template("steps/build-package-artifacts.yml")["steps"]
     filter_index = next(
-        index
-        for index, step in enumerate(build)
-        if "${{ if eq(parameters.ServiceDirectory, 'auto') }}" in step
+        index for index, step in enumerate(build) if "${{ if eq(parameters.ServiceDirectory, 'auto') }}" in step
     )
     filter_step = build[filter_index]["${{ if eq(parameters.ServiceDirectory, 'auto') }}"][0]
     assert "Exclude-RustTemplateFixtureFromGenericPR.ps1" in filter_step["pwsh"]

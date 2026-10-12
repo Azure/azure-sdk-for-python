@@ -118,7 +118,9 @@ version = "unchanged"
     version_file = version_dir / "_version.py"
     version_file.write_text('VERSION = "1.0.0b1"\n')
     set_version_py(str(pyproject), "1.0.0b12345")
-    assert pyproject.read_text() == """[build-system]
+    assert (
+        pyproject.read_text()
+        == """[build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
@@ -132,6 +134,7 @@ dependencies = []
 [tool.example]
 version = "unchanged"
 """
+    )
     assert version_file.read_text() == 'VERSION = "1.0.0b12345"\n'
     assert ParsedSetup.from_path(str(package_dir)).version == "1.0.0b12345"
 

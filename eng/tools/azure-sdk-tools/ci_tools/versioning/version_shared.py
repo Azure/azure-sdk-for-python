@@ -112,13 +112,10 @@ def set_version_py(setup_path, new_version):
             next_section = re.search(r"(?m)^\[", pyproject_contents[project_section.end() :])
             project_end = project_section.end() + next_section.start() if next_section else len(pyproject_contents)
             project_contents = pyproject_contents[project_section.end() : project_end]
-            version_pattern = re.compile(
-                r"(?m)^(\s*version\s*=\s*)([\"'])([^\"'\r\n]+)(\2)([^\r\n]*)(\r?\n|$)"
-            )
+            version_pattern = re.compile(r"(?m)^(\s*version\s*=\s*)([\"'])([^\"'\r\n]+)(\2)([^\r\n]*)(\r?\n|$)")
             replaced_project_contents, replacements = version_pattern.subn(
                 lambda match: (
-                    f"{match.group(1)}{match.group(2)}{new_version}"
-                    f"{match.group(4)}{match.group(5)}{match.group(6)}"
+                    f"{match.group(1)}{match.group(2)}{new_version}" f"{match.group(4)}{match.group(5)}{match.group(6)}"
                 ),
                 project_contents,
                 count=1,
