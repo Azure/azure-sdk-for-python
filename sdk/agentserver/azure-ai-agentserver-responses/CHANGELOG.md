@@ -1,5 +1,22 @@
 # Release History
 
+## 2.4.0b1 (Unreleased)
+
+### Bugs Fixed
+
+- Partition local in-memory and file-backed responses, items, history, and
+  conversation indexes by the platform user key, keeping anonymous local state
+  separate.
+
+### Breaking Changes
+
+- `FileResponseStore` now persists data under user-scoped
+  `partitions-v1/{anonymous|user-hash}` directories. Existing files in the
+  previous shared layout remain unchanged but are not read or migrated
+  automatically, because their user ownership cannot be established safely.
+  Back up and explicitly migrate any required local data into the correct
+  partition only after independently verifying its ownership.
+
 ## 2.3.0 (2026-10-05)
 
 ### Bugs Fixed
