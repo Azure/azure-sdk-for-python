@@ -398,10 +398,19 @@ def test_receipt_nested_duplicate_normalized_keys_rejected(snake_case_key, camel
         verify_receipt(receipt, get_test_valid_service_certificate_1())
 
 
-def test_receipt_duplicate_normalized_keys_in_list_rejected():
-    # Create a receipt with a list that contains a dictionary with duplicate normalized keys
+@pytest.mark.parametrize(
+    "extra_items",
+    [
+        [{"some_key": 1, "someKey": 2}],
+        [[{"some_key": 1, "someKey": 2}]],
+        [[{"someKey": 2, "some_key": 1}]],
+    ],
+)
+def test_receipt_duplicate_normalized_keys_in_list_rejected(extra_items):
+    # Create a receipt with a list that contains a dictionary with duplicate normalized keys,
+    # directly or inside a nested list
     receipt = get_test_valid_receipt_1_dict()
-    receipt["extra_items"] = [{"some_key": 1, "someKey": 2}]
+    receipt["extra_items"] = extra_items
 
     # Check that verify_receipt throws ValueError
     with pytest.raises(ValueError, match="Duplicate key after normalization: someKey"):
