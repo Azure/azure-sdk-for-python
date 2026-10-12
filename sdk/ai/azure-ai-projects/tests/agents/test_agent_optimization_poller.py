@@ -78,15 +78,11 @@ def _operation_for_cancellation(*, is_async: bool = False):
         _job_response("cancelled", is_async=is_async),
     ]
     if is_async:
-        operation._create_optimization_job_initial = AsyncMock(  # pylint: disable=protected-access
-            return_value=initial
-        )
+        operation._create_optimization_job_initial = AsyncMock(return_value=initial)  # pylint: disable=protected-access
         operation._client.send_request = AsyncMock(side_effect=responses)  # pylint: disable=protected-access
         operation._client._pipeline._transport.sleep = AsyncMock()  # pylint: disable=protected-access
     else:
-        operation._create_optimization_job_initial = MagicMock(  # pylint: disable=protected-access
-            return_value=initial
-        )
+        operation._create_optimization_job_initial = MagicMock(return_value=initial)  # pylint: disable=protected-access
         operation._client.send_request = MagicMock(side_effect=responses)  # pylint: disable=protected-access
     return operation
 
