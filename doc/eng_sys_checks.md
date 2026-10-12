@@ -75,7 +75,7 @@ All build definitions allow choice at queue time as to which checks actually run
 3. Before clicking `run` against `main` or your target commit, click `Variables` and add a variable of name `ChecksOverride`. The value should be a comma separated list of checks that you want to run in the test phase.
 4. Once it's set, run the build!
 
-The screenshot above narrows the default PR build set (`whl`, `sdist`, `mindependency`) to a specific subset.
+The screenshot above narrows the default PR build set (`whl`, `sdist`) to a specific subset.
 
 ![res/queue_time_variable.png](res/queue_time_variable.png)
 
@@ -240,12 +240,13 @@ The canonical definition of which install-and-test checks run in each mode lives
 |---|---|---|---|
 | `whl` | ✓ | ✓ | ✓ |
 | `sdist` | ✓ | ✓ | ✓ |
-| `mindependency` | ✓ | ✓ | ✓ |
 | `import_all` | — | ✓ | ✓ |
 | `whl_no_aio` | — | ✓ | ✓ |
 | `latestdependency` | — | ✓ | ✓ |
 | `devtest` | — | ✓ | — |
 | `regression` | — | ✓ | — |
+
+> **Note:** `mindependency` is temporarily disabled in both the PR and full build sets pending CFS onboarding; see [issue #48346](https://github.com/Azure/azure-sdk-for-python/issues/48346).
 
 Static analysis checks always run against **Python 3.10** (configured via `PythonVersion` in `eng/pipelines/templates/variables/globals.yml`).
 
@@ -457,6 +458,8 @@ azpysdk sdist .
 #### mindependency
 
 <a name="mindependency"></a>
+
+> **Note:** This check is temporarily disabled in CI pending CFS onboarding; see [issue #48346](https://github.com/Azure/azure-sdk-for-python/issues/48346). It can still be run locally.
 
 For each Azure SDK dependency declared in `pyproject.toml` (or `setup.py` for legacy packages; dev-only requirements are excluded), this check resolves the **oldest** published version available on PyPI that satisfies the requirement range, installs it in place of the in-repo dev version, and then runs the full test suite. This confirms that the package works across the full declared version range — not just against the latest release.
 

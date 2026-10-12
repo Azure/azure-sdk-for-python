@@ -17,7 +17,7 @@ Here's how to get started:
 >>> response
 <HttpResponse: 200 OK, Content-Type: text/plain>
 >>> response.raise_for_status()
->>> response.text
+>>> response.text()
 'Happy to see you!'
 ```
 
@@ -137,7 +137,7 @@ For more advanced scenarios, you can also create your own [`HttpRequest`][azure_
 Let's make the same request as we do in our [previous example](#use-our-request-builders)
 
 ```python
-from azure.example.core.rest import HttpRequest
+from azure.core.rest import HttpRequest
 
 # this URL is relative to the endpoint we passed our client
 request = HttpRequest("POST", "/helloWorld",
@@ -252,7 +252,7 @@ with DefaultAzureCredential() as credential:
 
 ### Errors
 
-All errors thrown by `.raise_for_error()` are [exceptions defined in `azure-core`][azure_core_exceptions].
+All errors thrown by `.raise_for_status()` are [exceptions defined in `azure-core`][azure_core_exceptions].
 
 ### Logging
 
@@ -295,7 +295,7 @@ You can file issues [here][issues] in our repo.
 [azure_core_http_request]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html#azure.core.rest.HttpRequest
 [azure_core_http_response]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html#azure.core.rest.HttpResponse
 [azure_core_async_http_response]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html#azure.core.rest.AsyncHttpResponse
-[azure_core_raise_for_status]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html#azure.core.rest.AsyncHttpResponse.raise_for_status
+[azure_core_raise_for_status]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html#azure.core.rest.HttpResponse.raise_for_status
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/

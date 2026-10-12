@@ -33,6 +33,9 @@ The following checks are available via the `azpysdk` entrypoint.
 |`optional`| Invokes 'optional' requirements for a given package. | `azpysdk optional .` |
 |`devtest`| Tests a package against dependencies installed from a dev index. | `azpysdk devtest .` |
 |`update_snippet`| Updates README code snippets from sample files. | `azpysdk update_snippet .` |
+|`mindependency`| Resolves and tests against the oldest allowed version of each declared dependency. | `azpysdk mindependency .` |
+|`latestdependency`| Resolves and tests against the latest available version of each declared dependency. | `azpysdk latestdependency .` |
+|`changelog`| Validates that a changelog entry exists for the package's current version and follows the required format. | `azpysdk changelog .` |
 
 ## Common arguments
 
