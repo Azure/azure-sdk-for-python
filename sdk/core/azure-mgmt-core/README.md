@@ -22,10 +22,12 @@ with a missing-policy-token hint, the policy invokes your provider and replays
 the operation once with the returned token. The provider uses a separate Policy
 client, without the external-evaluation policy, to avoid recursion.
 
-Install the management package for your resource, `azure-identity`, and a version
+Install `azure-mgmt-storage`, `azure-identity`, and a version
 of `azure-mgmt-resource-policy` that exposes `policy_tokens.acquire`. The example
-uses the Resources client; another ARM client supporting `per_call_policies` can
-be configured the same way.
+uses a Storage client for the guarded operation and a separate Policy client for
+token acquisition. Other ARM clients supporting `per_call_policies` can be
+configured the same way. Set `AZURE_SUBSCRIPTION_ID`, `AZURE_RESOURCE_GROUP`, and
+`AZURE_STORAGE_ACCOUNT_NAME` to identify an existing storage account.
 
 ### Synchronous SDK user
 
@@ -36,9 +38,11 @@ import os
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.core.policies import ExternalEvaluationPolicy, PolicyTokenRequestContext
 from azure.mgmt.resource.policy import PolicyClient
-from azure.mgmt.resource.resources import ResourceManagementClient
+from azure.mgmt.storage import StorageManagementClient
 
 subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+resource_group_name = os.environ["AZURE_RESOURCE_GROUP"]
+storage_account_name = os.environ["AZURE_STORAGE_ACCOUNT_NAME"]
 
 with DefaultAzureCredential() as credential:
     # The provider client uses the same credential and ARM cloud/endpoint as the
@@ -53,18 +57,21 @@ with DefaultAzureCredential() as credential:
                 permit_redirects=False,
             )
 
-        with ResourceManagementClient(
+        with StorageManagementClient(
             credential,
             subscription_id,
             per_call_policies=[ExternalEvaluationPolicy(acquire_policy_token)],
-        ) as resource_client:
+        ) as storage_client:
             # Call ordinary SDK operations. If this scope has an external-
             # evaluation policy, acquisition and replay happen in the pipeline.
-            group = resource_client.resource_groups.create_or_update(
-                "external-evaluation-example",
-                {"location": "westus2"},
+            account = storage_client.storage_accounts.get_properties(
+                resource_group_name, storage_account_name
             )
-            print(group.name)
+            tags = {**(account.tags or {}), "external-evaluation-example": "enabled"}
+            updated_account = storage_client.storage_accounts.update(
+                resource_group_name, storage_account_name, {"tags": tags}
+            )
+            print(updated_account.name)
 ```
 
 ### Asynchronous SDK user
@@ -76,10 +83,12 @@ import os
 from azure.identity.aio import DefaultAzureCredential
 from azure.mgmt.core.policies import AsyncExternalEvaluationPolicy, PolicyTokenRequestContext
 from azure.mgmt.resource.policy.aio import PolicyClient
-from azure.mgmt.resource.resources.aio import ResourceManagementClient
+from azure.mgmt.storage.aio import StorageManagementClient
 
-async def create_resource_group():
+async def update_storage_account_tags():
     subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+    resource_group_name = os.environ["AZURE_RESOURCE_GROUP"]
+    storage_account_name = os.environ["AZURE_STORAGE_ACCOUNT_NAME"]
     async with DefaultAzureCredential() as credential:
         async with PolicyClient(credential, subscription_id, api_version="2025-11-01") as token_client:
             async def acquire_policy_token(context: PolicyTokenRequestContext):
@@ -91,16 +100,19 @@ async def create_resource_group():
                     permit_redirects=False,
                 )
 
-            async with ResourceManagementClient(
+            async with StorageManagementClient(
                 credential,
                 subscription_id,
                 per_call_policies=[AsyncExternalEvaluationPolicy(acquire_policy_token)],
-            ) as resource_client:
-                group = await resource_client.resource_groups.create_or_update(
-                    "external-evaluation-example",
-                    {"location": "westus2"},
+            ) as storage_client:
+                account = await storage_client.storage_accounts.get_properties(
+                    resource_group_name, storage_account_name
                 )
-                print(group.name)
+                tags = {**(account.tags or {}), "external-evaluation-example": "enabled"}
+                updated_account = await storage_client.storage_accounts.update(
+                    resource_group_name, storage_account_name, {"tags": tags}
+                )
+                print(updated_account.name)
 ```
 
 The helper embeds the original serialized JSON directly in `operation.content`;

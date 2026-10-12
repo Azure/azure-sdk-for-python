@@ -462,7 +462,7 @@ def test_context_is_immutable_and_envelope_escapes_uri():
 def test_generated_policy_client_provider_and_opt_in(retry_acquisition, caplog):
     # Exercise the README adapter when the adjacent policy package is available.
     policy_module = pytest.importorskip("azure.mgmt.resource.policy")
-    resource_module = pytest.importorskip("azure.mgmt.resource.resources")
+    storage_module = pytest.importorskip("azure.mgmt.storage")
     caplog.set_level("DEBUG")
     session = Mock(spec=requests.Session)
     calls = []
@@ -475,12 +475,14 @@ def test_generated_policy_client_provider_and_opt_in(retry_acquisition, caplog):
             data = data.encode("utf-8")
         headers = dict(kwargs["headers"])
         calls.append((method, url, data, headers, kwargs))
-        if "/acquirePolicyToken?" in url:
+        if method == "GET":
+            status, payload = 200, {"name": "probestorage", "tags": {"existing": "preserved"}}
+        elif "/acquirePolicyToken?" in url:
             assert kwargs["allow_redirects"] is False
             acquisition_count = sum("/acquirePolicyToken?" in call[1] for call in calls)
             status, payload = (503, {}) if retry_acquisition and acquisition_count == 1 else (200, acquisition_result())
         elif HEADER in headers:
-            status, payload = 200, {"name": "probe", "location": "westus2"}
+            status, payload = 200, {"name": "probestorage", "tags": json.loads(data)["tags"]}
         else:
             status, payload = 403, DENIAL
         response = requests.Response()
@@ -512,7 +514,7 @@ def test_generated_policy_client_provider_and_opt_in(retry_acquisition, caplog):
             permit_redirects=False,
         )
 
-    guarded_client = resource_module.ResourceManagementClient(
+    guarded_client = storage_module.StorageManagementClient(
         credential,
         SUBSCRIPTION,
         transport=RequestsTransport(session=session, session_owner=False),
@@ -520,12 +522,20 @@ def test_generated_policy_client_provider_and_opt_in(retry_acquisition, caplog):
         logging_enable=True,
     )
     try:
-        group = guarded_client.resource_groups.create_or_update("probe", {"location": "westus2"})
-        assert group.name == "probe"
-        assert len(calls) == (4 if retry_acquisition else 3)
-        body = calls[0][2]
+        account = guarded_client.storage_accounts.get_properties("probe-rg", "probestorage")
+        tags = {**(account.tags or {}), "external-evaluation-example": "enabled"}
+        updated_account = guarded_client.storage_accounts.update("probe-rg", "probestorage", {"tags": tags})
+        assert updated_account.name == "probestorage"
+        assert updated_account.tags == {"existing": "preserved", "external-evaluation-example": "enabled"}
+        assert len(calls) == (5 if retry_acquisition else 4)
+        assert calls[0][0] == "GET"
+        assert calls[1][0] == calls[-1][0] == "PATCH"
+        assert all(
+            "/providers/Microsoft.Storage/storageAccounts/probestorage" in call[1] for call in (calls[1], calls[-1])
+        )
+        body = calls[1][2]
         assert calls[-1][2] == body
-        assert all(b',"content":' + body in call[2] for call in calls[1:-1])
+        assert all(b',"content":' + body in call[2] for call in calls[2:-1])
         assert calls[-1][3][HEADER] == TOKEN
         assert TOKEN not in caplog.text
     finally:
@@ -535,7 +545,7 @@ def test_generated_policy_client_provider_and_opt_in(retry_acquisition, caplog):
 
 def test_generated_async_user_example(caplog):
     policy_module = pytest.importorskip("azure.mgmt.resource.policy.aio")
-    resource_module = pytest.importorskip("azure.mgmt.resource.resources.aio")
+    storage_module = pytest.importorskip("azure.mgmt.storage.aio")
     caplog.set_level("DEBUG")
     calls = []
 
@@ -548,10 +558,12 @@ def test_generated_async_user_example(caplog):
                 body = body.encode("utf-8")
             headers = dict(request.headers)
             calls.append((request.method, request.url, body, headers))
-            if "/acquirePolicyToken?" in request.url:
+            if request.method == "GET":
+                status, payload = 200, {"name": "probestorage", "tags": {"existing": "preserved"}}
+            elif "/acquirePolicyToken?" in request.url:
                 status, payload = 200, acquisition_result()
             elif HEADER in headers:
-                status, payload = 200, {"name": "probe", "location": "westus2"}
+                status, payload = 200, {"name": "probestorage", "tags": json.loads(body)["tags"]}
             else:
                 status, payload = 403, DENIAL
             response = AsyncMock(spec=RestAsyncHttpResponse)
@@ -582,19 +594,26 @@ def test_generated_async_user_example(caplog):
                     io.BytesIO(context.get_request_body()), logging_enable=False, permit_redirects=False
                 )
 
-            async with resource_module.ResourceManagementClient(
+            async with storage_module.StorageManagementClient(
                 credential,
                 SUBSCRIPTION,
                 transport=GeneratedAsyncTransport([]),
                 per_call_policies=[AsyncExternalEvaluationPolicy(provider)],
                 logging_enable=True,
-            ) as resource_client:
-                group = await resource_client.resource_groups.create_or_update("probe", {"location": "westus2"})
-                assert group.name == "probe"
+            ) as storage_client:
+                account = await storage_client.storage_accounts.get_properties("probe-rg", "probestorage")
+                tags = {**(account.tags or {}), "external-evaluation-example": "enabled"}
+                updated_account = await storage_client.storage_accounts.update(
+                    "probe-rg", "probestorage", {"tags": tags}
+                )
+                assert updated_account.name == "probestorage"
+                assert updated_account.tags == {"existing": "preserved", "external-evaluation-example": "enabled"}
 
     asyncio.run(example())
-    assert len(calls) == 3
-    assert calls[0][2] == calls[2][2]
-    assert b',"content":' + calls[0][2] in calls[1][2]
-    assert calls[2][3][HEADER] == TOKEN
+    assert len(calls) == 4
+    assert [call[0] for call in calls] == ["GET", "PATCH", "POST", "PATCH"]
+    assert "/providers/Microsoft.Storage/storageAccounts/probestorage" in calls[1][1]
+    assert calls[1][2] == calls[3][2]
+    assert b',"content":' + calls[1][2] in calls[2][2]
+    assert calls[3][3][HEADER] == TOKEN
     assert TOKEN not in caplog.text
