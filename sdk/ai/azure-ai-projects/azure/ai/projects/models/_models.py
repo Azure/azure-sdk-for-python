@@ -12377,6 +12377,10 @@ class HostedAgentDefinition(
     :ivar session_configuration: Optional session defaults (for example, the idle timeout) applied
      to sessions created for this agent version.
     :vartype session_configuration: ~azure.ai.projects.models.SessionConfiguration
+    :ivar enable_memory_snapshot: Whether this agent version uses memory snapshots. Sessions for a
+     snapshot-enabled version start from a snapshot of the agent's initialized process rather than
+     starting the process from its image. Defaults to false.
+    :vartype enable_memory_snapshot: bool
     """
 
     kind: Literal[AgentKind.HOSTED] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -12413,6 +12417,10 @@ class HostedAgentDefinition(
     )
     """Optional session defaults (for example, the idle timeout) applied to sessions created for this
      agent version."""
+    enable_memory_snapshot: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether this agent version uses memory snapshots. Sessions for a snapshot-enabled version start
+     from a snapshot of the agent's initialized process rather than starting the process from its
+     image. Defaults to false."""
 
     @overload
     def __init__(
@@ -12427,6 +12435,7 @@ class HostedAgentDefinition(
         code_configuration: Optional["_models.CodeConfiguration"] = None,
         telemetry_config: Optional["_models.TelemetryConfig"] = None,
         session_configuration: Optional["_models.SessionConfiguration"] = None,
+        enable_memory_snapshot: Optional[bool] = None,
     ) -> None: ...
 
     @overload
