@@ -76,6 +76,7 @@ class FabricSparkCompute(Compute):
             environment_id=details.environment_id,
             pool_id=details.pool_id,
             pool_name=details.pool_name,
+            # pylint: disable=protected-access
             identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
             created_on=prop.created_on,
             modified_on=prop.modified_on,
@@ -94,6 +95,7 @@ class FabricSparkCompute(Compute):
             name=self.name,
             location=self.location,
             tags=self.tags,
+            # pylint: disable=protected-access
             identity=self.identity._to_compute_rest_object() if self.identity else None,
             properties=FabricSpark(
                 description=self.description,
