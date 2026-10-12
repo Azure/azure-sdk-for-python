@@ -27,7 +27,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models2, types as _types_models2
+from ... import models as _models2
 from .... import models as _models3
 from ...._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ...._utils.streaming_base import AsyncStream, _read_sse_response_async, _update_sse_request_headers
@@ -39,6 +39,7 @@ from ..._operations._operations import (
 )
 from .._configuration import KnowledgeBaseRetrievalClientConfiguration
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -82,7 +83,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     @overload
     async def retrieve(
         self,
-        retrieval_request: _types_models2.KnowledgeBaseRetrievalRequest,
+        retrieval_request: JSON,
         *,
         query_source_authorization: Optional[str] = None,
         query_work_iq_source_authorization: Optional[str] = None,
@@ -92,8 +93,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         """KnowledgeBase retrieves relevant data from backing stores.
 
         :param retrieval_request: The retrieval request to process. Required.
-        :type retrieval_request:
-         ~azure.search.documents.knowledgebases.types.KnowledgeBaseRetrievalRequest
+        :type retrieval_request: JSON
         :keyword query_source_authorization: Token identifying the user for which the query is being
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
@@ -152,9 +152,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     )
     async def retrieve(
         self,
-        retrieval_request: Union[
-            _models2.KnowledgeBaseRetrievalRequest, _types_models2.KnowledgeBaseRetrievalRequest, IO[bytes]
-        ],
+        retrieval_request: Union[_models2.KnowledgeBaseRetrievalRequest, JSON, IO[bytes]],
         *,
         query_source_authorization: Optional[str] = None,
         query_work_iq_source_authorization: Optional[str] = None,
@@ -162,11 +160,11 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     ) -> _models2.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
-        :param retrieval_request: The retrieval request to process. Is either a
-         KnowledgeBaseRetrievalRequest type or a IO[bytes] type. Required.
+        :param retrieval_request: The retrieval request to process. Is one of the following types:
+         KnowledgeBaseRetrievalRequest, JSON, IO[bytes] Required.
         :type retrieval_request:
-         ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest or
-         ~azure.search.documents.knowledgebases.types.KnowledgeBaseRetrievalRequest or IO[bytes]
+         ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest or JSON or
+         IO[bytes]
         :keyword query_source_authorization: Token identifying the user for which the query is being
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
@@ -309,7 +307,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     @overload
     async def retrieve_stream(
         self,
-        retrieval_request: _types_models2.KnowledgeBaseRetrievalRequest,
+        retrieval_request: JSON,
         *,
         query_source_authorization: Optional[str] = None,
         query_work_iq_source_authorization: Optional[str] = None,
@@ -337,8 +335,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         complete response body as a single JSON document.
 
         :param retrieval_request: The retrieval request to process. Required.
-        :type retrieval_request:
-         ~azure.search.documents.knowledgebases.types.KnowledgeBaseRetrievalRequest
+        :type retrieval_request: JSON
         :keyword query_source_authorization: Token identifying the user for which the query is being
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
@@ -441,9 +438,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     )
     async def retrieve_stream(
         self,
-        retrieval_request: Union[
-            _models2.KnowledgeBaseRetrievalRequest, _types_models2.KnowledgeBaseRetrievalRequest, IO[bytes]
-        ],
+        retrieval_request: Union[_models2.KnowledgeBaseRetrievalRequest, JSON, IO[bytes]],
         *,
         query_source_authorization: Optional[str] = None,
         query_work_iq_source_authorization: Optional[str] = None,
@@ -469,11 +464,11 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         clients may expose the raw response without typed event parsing. Do not deserialize the
         complete response body as a single JSON document.
 
-        :param retrieval_request: The retrieval request to process. Is either a
-         KnowledgeBaseRetrievalRequest type or a IO[bytes] type. Required.
+        :param retrieval_request: The retrieval request to process. Is one of the following types:
+         KnowledgeBaseRetrievalRequest, JSON, IO[bytes] Required.
         :type retrieval_request:
-         ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest or
-         ~azure.search.documents.knowledgebases.types.KnowledgeBaseRetrievalRequest or IO[bytes]
+         ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest or JSON or
+         IO[bytes]
         :keyword query_source_authorization: Token identifying the user for which the query is being
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.

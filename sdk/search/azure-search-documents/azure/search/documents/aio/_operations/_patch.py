@@ -190,7 +190,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         :param batch: A batch of document operations to perform.
         :type batch: ~azure.search.documents.models.IndexDocumentsBatch
         :return: List of IndexingResult
-        :rtype: list[~azure.search.documents.types.IndexingResult]
+        :rtype: list[~azure.search.documents.models.IndexingResult]
 
         :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
         """

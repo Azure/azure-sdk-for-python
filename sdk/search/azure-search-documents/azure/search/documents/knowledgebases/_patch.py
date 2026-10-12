@@ -42,6 +42,7 @@ class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient):
             kwargs.setdefault("credential_scopes", [audience.rstrip("/") + "/.default"])
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
+
 __all__: list[str] = [
     "KnowledgeBaseRetrievalClient",
 ]

@@ -166,7 +166,7 @@ class SearchIndexingBufferedSender:
     def actions(self) -> List[IndexAction]:
         """The list of currently index actions in queue to index.
 
-        :rtype: list[~azure.search.documents.types.IndexAction]
+        :rtype: list[~azure.search.documents.models.IndexAction]
         """
         return self._index_documents_batch.actions if self._index_documents_batch.actions else []
 
@@ -328,7 +328,7 @@ class SearchIndexingBufferedSender:
         :param batch: A batch of document operations to perform.
         :type batch: IndexDocumentsBatch
         :return: Indexing result of each action in the batch.
-        :rtype: list[~azure.search.documents.types.IndexingResult]
+        :rtype: list[~azure.search.documents.models.IndexingResult]
         :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
         """
         return self._index_documents_actions(actions=batch.actions if batch.actions else [], **kwargs)
