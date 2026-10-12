@@ -47,7 +47,7 @@ def get_statsbeat_configuration_callback(settings: Dict[str, str]):
     # Check if SDK stats should be enabled based on configuration
     sdk_stats_enabled = evaluate_feature(_ONE_SETTINGS_FEATURE_SDK_STATS, settings)
     if sdk_stats_enabled is False:
-        # Disable statsbeat only when explicitly configured.
+        # Only an explicit OneSettings disable overrides the built-in enabled default.
         manager.shutdown()
         return
 
@@ -56,7 +56,8 @@ def get_statsbeat_configuration_callback(settings: Dict[str, str]):
     # It will only be None if never initialized
     if not current_config:
         return
-    # Get updated config from settings
+    # Get updated config from settings. Missing or invalid connection string configuration falls back
+    # to the current built-in Breeze connection string in StatsbeatConfig.from_config.
     updated_config = StatsbeatConfig.from_config(current_config, settings)
     if updated_config:
         manager.initialize(updated_config)
