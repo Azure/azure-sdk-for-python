@@ -16,7 +16,7 @@
 
 ### Breaking Changes
 
-  - Model `ActivateSaaSParameterRequest` deleted or renamed its instance variable `saa_s_guid`
+  - Model `ActivateSaaSParameterRequest` renamed its instance variable `saa_s_guid` to `saas_guid`
   - Model `CloudAccountProperties` deleted or renamed its instance variable `backup_admin_on_cca_create`
   - Model `CloudAccountProperties` deleted or renamed its instance variable `multi_person_authorization_on_cca_create`
   - `ProtectionGroupProperties.last_back_up_time` is now required.
