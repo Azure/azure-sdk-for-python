@@ -1047,6 +1047,7 @@ chain record itself does not carry the per-turn diagnostic.
 | `cancel_requested` | boolean | Resilient cancel signal; set on steering append; cleared after drain when pending is empty. |
 | `drain_in_progress` | boolean | True between the start of a drain PATCH and the next turn-start; protects against partial drain on crash. |
 | `active_input` | any JSON value OR ref | The single input being drained (mirror copy used by the race-recovery contract). Cleared at suspend / terminal. |
+| `active_ack_id` | opaque string or null | Internal acknowledgment ID for `active_input`. Written in the same drain PATCH and cleared with `active_input`; lets a committed drain reconcile after a lost response. |
 
 Older task records may omit `pending_ack_ids`; those queued slots are treated
 as untagged. Workers handling the same chain concurrently must all understand
@@ -3047,6 +3048,7 @@ Phase 1 — "Drain start" PATCH (atomic across payload + attachments):
      else:
         active_input_value = next_entry
   8. steering['active_input']      = active_input_value
+     steering['active_ack_id']     = next_ack_id
   9. steering['pending_inputs']    = pending
      steering['pending_ack_ids']   = remaining IDs
  10. steering['drain_in_progress'] = True
@@ -3071,7 +3073,9 @@ Phase 1 — "Drain start" PATCH (atomic across payload + attachments):
       Recovery from a crash BETWEEN Phase 1 and Phase 3 reads
       steering['active_input'] as the source of truth for the input,
       via the race-recovery contract.
-      No output co-clear is needed — the framework does not write
+       A retry that re-reads `drain_in_progress=true` MUST also reuse
+       `active_ack_id` and MUST NOT consume another pending queue entry.
+       No output co-clear is needed — the framework does not write
       payload['output'] / output attachments on any transition.]
 
 Phase 2 — Handler re-entry (in-memory only):

@@ -1129,6 +1129,117 @@ class TestSteeringCrossProcessDrainRecovery:
         await manager.startup()
         return manager, mgr_mod
 
+    @staticmethod
+    def _commit_then_conflict_provider(delegate):
+        from azure.ai.agentserver.core.tasks._client import TransportClassifiedError
+
+        class DrainCommitThenConflictProvider:
+            def __init__(self):
+                self._delegate = delegate
+                self._armed = True
+                self.drain_conflicts = 0
+
+            async def create(self, request):
+                return await self._delegate.create(request)
+
+            async def get(self, task_id):
+                return await self._delegate.get(task_id)
+
+            async def list(self, **kwargs):
+                return await self._delegate.list(**kwargs)
+
+            async def delete(self, task_id, *, force=False, cascade=False):
+                await self._delegate.delete(task_id, force=force, cascade=cascade)
+
+            async def update(self, task_id, patch):
+                payload = getattr(patch, "payload", None) or {}
+                steering = payload.get("steering") or {}
+                is_drain = steering.get("drain_in_progress") is True
+                if self._armed and is_drain:
+                    self._armed = False
+                    self.drain_conflicts += 1
+                    await self._delegate.update(task_id, patch)
+                    raise TransportClassifiedError(
+                        status=412,
+                        classification="conflict",
+                        message="response retry observed the committed drain etag",
+                    )
+                return await self._delegate.update(task_id, patch)
+
+        return DrainCommitThenConflictProvider()
+
+    @pytest.mark.asyncio
+    async def test_committed_single_slot_drain_conflict_binds_accepted_future(self, tmp_path):
+        from azure.ai.agentserver.core.tasks._local_provider import LocalFileTaskProvider
+
+        provider = self._commit_then_conflict_provider(LocalFileTaskProvider(Path(str(tmp_path))))
+        manager, mgr_mod = await self._setup_manager(provider)
+        gate = asyncio.Event()
+        started = asyncio.Event()
+        seen: list[str] = []
+        try:
+
+            @multi_turn_task(name="chat", steerable=True)
+            async def chat(ctx: TaskContext[dict]) -> dict:
+                message = ctx.input["msg"]
+                seen.append(message)
+                if message == "A":
+                    started.set()
+                    await gate.wait()
+                return {"msg": message}
+
+            run_a = await chat.start(task_id="t1", input={"msg": "A"})
+            await asyncio.wait_for(started.wait(), timeout=5.0)
+            run_b = await chat.start(task_id="t1", input={"msg": "B"})
+            gate.set()
+
+            assert await asyncio.wait_for(run_a.result(), timeout=5.0) == {"msg": "A"}
+            assert await asyncio.wait_for(run_b.result(), timeout=5.0) == {"msg": "B"}
+            assert provider.drain_conflicts == 1
+            assert seen == ["A", "B"]
+            assert not manager._pending_steering_futures.get("t1")
+        finally:
+            gate.set()
+            await manager.shutdown()
+            mgr_mod._manager = None
+
+    @pytest.mark.asyncio
+    async def test_committed_multi_slot_drain_conflict_does_not_skip_queue_head(self, tmp_path):
+        from azure.ai.agentserver.core.tasks._local_provider import LocalFileTaskProvider
+
+        provider = self._commit_then_conflict_provider(LocalFileTaskProvider(Path(str(tmp_path))))
+        manager, mgr_mod = await self._setup_manager(provider)
+        gate = asyncio.Event()
+        started = asyncio.Event()
+        seen: list[str] = []
+        try:
+
+            @multi_turn_task(name="chat", steerable=True)
+            async def chat(ctx: TaskContext[dict]) -> dict:
+                message = ctx.input["msg"]
+                seen.append(message)
+                if message == "A":
+                    started.set()
+                    await gate.wait()
+                return {"msg": message}
+
+            run_a = await chat.start(task_id="t1", input={"msg": "A"})
+            await asyncio.wait_for(started.wait(), timeout=5.0)
+            run_b = await chat.start(task_id="t1", input={"msg": "B"})
+            run_c = await chat.start(task_id="t1", input={"msg": "C"})
+            gate.set()
+
+            assert await asyncio.wait_for(run_a.result(), timeout=5.0) == {"msg": "A"}
+            assert await asyncio.wait_for(run_b.result(), timeout=5.0) == {"msg": "B"}
+            assert await asyncio.wait_for(run_c.result(), timeout=5.0) == {"msg": "C"}
+            assert provider.drain_conflicts == 1
+            assert seen == ["A", "B", "C"]
+            assert not manager._pending_steering_futures.get("t1")
+        finally:
+            gate.set()
+            await manager.shutdown()
+            mgr_mod._manager = None
+
     @pytest.mark.asyncio
     async def test_drain_recovers_from_cross_process_conflict(self, tmp_path):
         from azure.ai.agentserver.core.tasks._local_provider import LocalFileTaskProvider

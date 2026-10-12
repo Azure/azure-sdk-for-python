@@ -2369,81 +2369,96 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             payload = dict(task_info.payload) if task_info.payload else {}
             steering = dict(payload.get("steering", {}))
             pending = list(steering.get("pending_inputs", []))
-
-            if not pending:
-                return None
-
-            pending_ack_ids = _steering_pending_ack_ids(steering, len(pending))
-            next_ack_id = pending_ack_ids.pop(0)
-            # Pop the next input from the queue.: the entry may be
-            # either a raw inline value (≤ 20 KiB at append) or a ref slot
-            # pointing into ``task_info.attachments``. Resolve uniformly via
-            # ``_read_input_value``; if it was a ref, the same drain PATCH
-            # MUST also delete the attachment (C-9 /).
-            next_entry = pending.pop(0)
-            attachments_patch: dict[str, Any] = {}
-            if _is_ref(next_entry):
-                attachments_patch[_ref_key(next_entry)] = None
-            next_input_raw = _read_input_value(next_entry, task_info.attachments)
-
-            # Update steering state. (: previous_input is
-            # no longer mirrored into _steering; only the active input + queue
-            # state need to survive a crash mid-drain.)
-            steering["active_input"] = next_input_raw
-            steering["pending_inputs"] = pending
-            steering["pending_ack_ids"] = pending_ack_ids
-            #   SOT: internal
-            # _steering["generation"] writes removed. The drain transition
-            # IS the generation advance — no separate counter needed.
-            steering["cancel_requested"] = len(pending) > 0
-            steering["drain_in_progress"] = True
-            #: the steering drain re-entry is a NEW
-            # turn-start boundary — write a fresh _turn_started_at so the
-            # respawned watchdog computes a full per-turn budget.
-            payload[_TURN_STARTED_AT_KEY] = _utc_now_iso()
-            payload["steering"] = steering
-            # SOT §11/§20: the framework does not write payload["output"];
-            # no clear is needed at the drain transition.
-
-            try:
-                etag = getattr(task_info, "etag", None) or None
-                # Spec 031 (hosted re-test finding) — the multi-turn turn that
-                # just ended already wrote ``status="suspended"`` (see
-                # ``_handle_multi_turn_success``). The drain starts a NEW turn,
-                # so it MUST transition the record back to ``in_progress`` in
-                # this same PATCH. This is also REQUIRED for the lease-extension
-                # piggyback to be valid: the hosted task store rejects lease
-                # *renewal* on a non-in_progress task ("lease renewal is only
-                # supported for in_progress tasks"), but ACCEPTS lease params as
-                # part of a suspended→in_progress *claim*. Without the status
-                # flip the drain PATCH 409s and the steered turn never runs.
-                await self._provider_update_lock_held(
-                    task_id,
-                    TaskPatchRequest(
-                        status="in_progress",
-                        payload=payload,
-                        attachments=attachments_patch,
-                        if_match=etag,
-                        **self._lease_ext_kwargs(task_id),
-                    ),
-                )
-                # Spec 031 / FR-002 — the drain consumed the head; the steered
-                # turn's live backlog is the remaining ``pending``. Keep
-                # ``ctx.pending_input_count`` in sync for the new turn.
+            committed_drain = steering.get("drain_in_progress") is True and "active_input" in steering
+            if committed_drain:
+                # A prior Phase-1 PATCH may have committed before its response
+                # was lost and replayed as 412. Its active slot is already
+                # removed from pending, so reconcile that durable identity
+                # instead of consuming the next queue head.
+                next_input_raw = steering["active_input"]
+                next_ack_id = steering.get("active_ack_id")
+                if next_ack_id is not None and not isinstance(next_ack_id, str):
+                    raise ValueError("Invalid steering active_ack_id")
+                _steering_pending_ack_ids(steering, len(pending))
                 active_now = self._active_tasks.get(task_id)
                 if active_now is not None:
                     active_now._pending_input_count = len(pending)
-            except _HostedConflict as exc:
-                translated = _translate_hosted_conflict(exc, task_id=task_id)
-                if translated is not None:
-                    raise translated from exc
-                drain_conflict = exc
-            except (EtagConflict, ValueError, TransportClassifiedError) as exc:
-                if isinstance(exc, TransportClassifiedError) and getattr(exc, "classification", None) != "conflict":
-                    raise
-                if isinstance(exc, ValueError) and "etag" not in str(exc).lower():
-                    raise
-                drain_conflict = exc
+            else:
+                if not pending:
+                    return None
+
+                pending_ack_ids = _steering_pending_ack_ids(steering, len(pending))
+                next_ack_id = pending_ack_ids.pop(0)
+                # Pop the next input from the queue.: the entry may be
+                # either a raw inline value (≤ 20 KiB at append) or a ref slot
+                # pointing into ``task_info.attachments``. Resolve uniformly via
+                # ``_read_input_value``; if it was a ref, the same drain PATCH
+                # MUST also delete the attachment (C-9 /).
+                next_entry = pending.pop(0)
+                attachments_patch: dict[str, Any] = {}
+                if _is_ref(next_entry):
+                    attachments_patch[_ref_key(next_entry)] = None
+                next_input_raw = _read_input_value(next_entry, task_info.attachments)
+
+                # Update steering state. (: previous_input is
+                # no longer mirrored into _steering; only the active input + queue
+                # state need to survive a crash mid-drain.)
+                steering["active_input"] = next_input_raw
+                steering["active_ack_id"] = next_ack_id
+                steering["pending_inputs"] = pending
+                steering["pending_ack_ids"] = pending_ack_ids
+                #   SOT: internal
+                # _steering["generation"] writes removed. The drain transition
+                # IS the generation advance — no separate counter needed.
+                steering["cancel_requested"] = len(pending) > 0
+                steering["drain_in_progress"] = True
+                #: the steering drain re-entry is a NEW
+                # turn-start boundary — write a fresh _turn_started_at so the
+                # respawned watchdog computes a full per-turn budget.
+                payload[_TURN_STARTED_AT_KEY] = _utc_now_iso()
+                payload["steering"] = steering
+                # SOT §11/§20: the framework does not write payload["output"];
+                # no clear is needed at the drain transition.
+
+                try:
+                    etag = getattr(task_info, "etag", None) or None
+                    # Spec 031 (hosted re-test finding) — the multi-turn turn that
+                    # just ended already wrote ``status="suspended"`` (see
+                    # ``_handle_multi_turn_success``). The drain starts a NEW turn,
+                    # so it MUST transition the record back to ``in_progress`` in
+                    # this same PATCH. This is also REQUIRED for the lease-extension
+                    # piggyback to be valid: the hosted task store rejects lease
+                    # *renewal* on a non-in_progress task ("lease renewal is only
+                    # supported for in_progress tasks"), but ACCEPTS lease params as
+                    # part of a suspended→in_progress *claim*. Without the status
+                    # flip the drain PATCH 409s and the steered turn never runs.
+                    await self._provider_update_lock_held(
+                        task_id,
+                        TaskPatchRequest(
+                            status="in_progress",
+                            payload=payload,
+                            attachments=attachments_patch,
+                            if_match=etag,
+                            **self._lease_ext_kwargs(task_id),
+                        ),
+                    )
+                    # Spec 031 / FR-002 — the drain consumed the head; the steered
+                    # turn's live backlog is the remaining ``pending``. Keep
+                    # ``ctx.pending_input_count`` in sync for the new turn.
+                    active_now = self._active_tasks.get(task_id)
+                    if active_now is not None:
+                        active_now._pending_input_count = len(pending)
+                except _HostedConflict as exc:
+                    translated = _translate_hosted_conflict(exc, task_id=task_id)
+                    if translated is not None:
+                        raise translated from exc
+                    drain_conflict = exc
+                except (EtagConflict, ValueError, TransportClassifiedError) as exc:
+                    if isinstance(exc, TransportClassifiedError) and getattr(exc, "classification", None) != "conflict":
+                        raise
+                    if isinstance(exc, ValueError) and "etag" not in str(exc).lower():
+                        raise
+                    drain_conflict = exc
 
         # Lock released — a genuine (cross-process) conflict retries here,
         # re-reading the NEW state under a fresh lock acquisition. Bounded so
@@ -2601,6 +2616,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             if existing_steering:
                 steering_patch = dict(existing_steering)
                 steering_patch["active_input"] = None
+                steering_patch["active_ack_id"] = None
             existing_input_slot = task_info.payload.get("input")
             if _is_ref(existing_input_slot):
                 attachments_patch[_ref_key(existing_input_slot)] = None
@@ -2740,6 +2756,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             if existing_steering:
                 steering_patch = dict(existing_steering)
                 steering_patch["active_input"] = None
+                steering_patch["active_ack_id"] = None
             existing_input_slot = task_info.payload.get("input")
             if _is_ref(existing_input_slot):
                 attachments_patch[_ref_key(existing_input_slot)] = None
