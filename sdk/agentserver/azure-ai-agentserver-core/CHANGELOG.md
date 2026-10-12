@@ -1,6 +1,6 @@
 # Release History
 
-## 2.3.0 (Unreleased)
+## 2.3.0b1 (Unreleased)
 
 ### Other Changes
 
