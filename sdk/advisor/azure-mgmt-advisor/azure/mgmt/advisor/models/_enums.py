@@ -174,6 +174,15 @@ class RecommendationDismissReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """OTHER."""
 
 
+class RecommendationListMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The mode used to retrieve recommendations."""
+
+    ALL = "all"
+    """Returns all recommendations."""
+    CONTEXTUAL = "contextual"
+    """Returns prioritized subset of recommendations ordered descending by their criticality score."""
+
+
 class RecommendationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state of the Recommendation applicable from v2026-02-01-preview."""
 

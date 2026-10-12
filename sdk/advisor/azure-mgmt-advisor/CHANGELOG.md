@@ -1,5 +1,23 @@
 # Release History
 
+## 10.0.0b3 (2026-10-12)
+
+### Features Added
+
+  - Model `RecommendationProperties` added property `criticality`
+  - Model `RecommendationProperties` added property `criticality_score`
+  - Model `RecommendationProperties` added property `savings`
+  - Model `RecommendationProperties` added property `score_changed_at`
+  - Model `RecommendationProperties` added property `service_group_id`
+  - Added enum `RecommendationListMode`
+  - Added model `ResourceRecommendationSavings`
+  - Added model `ResourceRecommendationSavingsDetails`
+  - Model `RecommendationMetadataOperations` added parameter `filter` in method `list`
+  - Model `RecommendationsOperations` added parameter `mode` in method `list`
+  - Model `RecommendationsOperations` added method `get_by_service_group`
+  - Model `RecommendationsOperations` added method `list_by_service_group`
+  - Model `RecommendationsOperations` added method `update_by_service_group`
+
 ## 10.0.0b2 (2026-07-07)
 
 ### Features Added
