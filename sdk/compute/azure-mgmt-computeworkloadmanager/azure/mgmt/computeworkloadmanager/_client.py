@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import WorkloadManagerClientConfiguration
+from ._configuration import ComputeWorkloadManagerMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     CapabilitiesOperations,
@@ -36,8 +36,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class WorkloadManagerClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """WorkloadManagerClient.
+class ComputeWorkloadManagerMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """ComputeWorkloadManagerMgmtClient.
 
     :ivar workload_spaces: WorkloadSpacesOperations operations
     :vartype workload_spaces: azure.mgmt.computeworkloadmanager.operations.WorkloadSpacesOperations
@@ -81,7 +81,7 @@ class WorkloadManagerClient:  # pylint: disable=docstring-keyword-should-match-k
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = WorkloadManagerClientConfiguration(
+        self._config = ComputeWorkloadManagerMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

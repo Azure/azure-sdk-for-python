@@ -37,31 +37,6 @@ def main():
         resource={
             "identity": {"type": "None", "userAssignedIdentities": {}},
             "properties": {
-                "attentionReason": {
-                    "chaosResource": "Exists",
-                    "chaosResourceCreationFailureReasons": ["cjqkzeqcktfqcpmdwoloqb"],
-                    "chaosResourceUserMsi": "Exists",
-                    "drillMonitoringErrors": [
-                        {"code": "14123903", "message": "Unable to assign Monitoring RBAC on target resource."}
-                    ],
-                    "drillMonitoringResources": "Exists",
-                    "drillRbacOnChaosResource": "Set",
-                    "drillRbacOnMonitoringResources": "Set",
-                    "drillRbacOnRecoveryPlan": "Set",
-                    "drillUserMsi": "Exists",
-                    "includedResourceInDrill": "Exists",
-                    "missingRequiredResourceProviders": ["Microsoft.Chaos", "Microsoft.Automation"],
-                    "monitoringRbacOnDrillResources": "Set",
-                    "rbacNeededForDrillOnChaosResource": ["zabszxqjflfjgifyrtttvdpipw"],
-                    "rbacNeededForDrillOnDrillMonitoringResources": ["lyffvljvuhwvxcuzyzlyo"],
-                    "rbacNeededForDrillOnDrillResources": ["sajsgcweakvzfunxfzzxe"],
-                    "rbacNeededForDrillOnRecoveryPlan": ["ayfyepziwdyxuwuexlamaadey"],
-                    "rbacOnTargetResources": "Set",
-                    "recoveryPlanAndDrillResourcesState": "InSync",
-                    "roReadiness": "UnderEdit",
-                    "runbookFaultRbacOnTargets": "Set",
-                    "serviceGroupAndDrillResourcesState": "InSync",
-                },
                 "chaosResourceProperties": {
                     "chaosResourceIdentityForFaults": {
                         "type": "UserAssigned",
@@ -80,8 +55,14 @@ def main():
                 "drillType": "DrillProperties",
                 "executionReadinessState": "Ready",
                 "executionState": "NotRunning",
+                "healthModelMonitoringProperties": {
+                    "discoveryRuleId": "/subscriptions/4e88bed3-114f-443d-9975-28f64122ec5e/resourceGroups/contoso-health/providers/Microsoft.CloudHealth/healthmodels/contoso-payments-hm/discoveryrules/payments-frontend-rule",
+                    "identity": {
+                        "type": "UserAssigned",
+                        "userAssignedIdentity": "/subscriptions/4e88bed3-114f-443d-9975-28f64122ec5e/resourcegroups/resourceGroup1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uami1",
+                    },
+                },
                 "lastRunProperties": {"lastRunAttestation": "Success", "lastRunState": "NotStarted"},
-                "managedOnBehalfOfConfiguration": {},
                 "monitoringProperties": {
                     "identity": {
                         "type": "UserAssigned",
@@ -95,6 +76,22 @@ def main():
                         "userAssignedIdentity": "/subscriptions/4e88bed3-114f-443d-9975-28f64122ec5e/resourcegroups/resourceGroup1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uami1",
                     }
                 },
+                "sliMonitoringProperties": {
+                    "identity": {
+                        "type": "UserAssigned",
+                        "userAssignedIdentity": "/subscriptions/4e88bed3-114f-443d-9975-28f64122ec5e/resourcegroups/resourceGroup1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uami1",
+                    },
+                    "slis": [
+                        {
+                            "sliId": "/providers/Microsoft.Management/serviceGroups/sampleServiceGroupName/providers/Microsoft.Monitor/slis/checkout-availability",
+                            "type": "Availability",
+                        },
+                        {
+                            "sliId": "/providers/Microsoft.Management/serviceGroups/sampleServiceGroupName/providers/Microsoft.Monitor/slis/checkout-latency",
+                            "type": "Latency",
+                        },
+                    ],
+                },
                 "systemMetadata": {"initialConfig": "Pending"},
             },
         },
@@ -102,6 +99,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/Drills_Create_MaximumSet_Gen.json
+# x-ms-original-file: 2026-08-31-preview/Drills_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

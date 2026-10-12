@@ -59,7 +59,7 @@ from ...operations._operations import (
     build_workload_spaces_list_by_subscription_request,
     build_workload_spaces_update_request,
 )
-from .._configuration import WorkloadManagerClientConfiguration
+from .._configuration import ComputeWorkloadManagerMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -71,14 +71,16 @@ class WorkloadSpacesOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.computeworkloadmanager.aio.WorkloadManagerClient`'s
+        :class:`~azure.mgmt.computeworkloadmanager.aio.ComputeWorkloadManagerMgmtClient`'s
         :attr:`workload_spaces` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: WorkloadManagerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeWorkloadManagerMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -955,14 +957,16 @@ class RuntimeBindingsOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.computeworkloadmanager.aio.WorkloadManagerClient`'s
+        :class:`~azure.mgmt.computeworkloadmanager.aio.ComputeWorkloadManagerMgmtClient`'s
         :attr:`runtime_bindings` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: WorkloadManagerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeWorkloadManagerMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1791,14 +1795,16 @@ class RuntimeLinksOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.computeworkloadmanager.aio.WorkloadManagerClient`'s
+        :class:`~azure.mgmt.computeworkloadmanager.aio.ComputeWorkloadManagerMgmtClient`'s
         :attr:`runtime_links` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: WorkloadManagerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeWorkloadManagerMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2627,14 +2633,16 @@ class CapabilitiesOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.computeworkloadmanager.aio.WorkloadManagerClient`'s
+        :class:`~azure.mgmt.computeworkloadmanager.aio.ComputeWorkloadManagerMgmtClient`'s
         :attr:`capabilities` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: WorkloadManagerClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeWorkloadManagerMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

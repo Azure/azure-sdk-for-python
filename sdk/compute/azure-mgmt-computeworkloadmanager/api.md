@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.computeworkloadmanager
 
-    class azure.mgmt.computeworkloadmanager.WorkloadManagerClient: implements ContextManager 
+    class azure.mgmt.computeworkloadmanager.ComputeWorkloadManagerMgmtClient: implements ContextManager 
         capabilities: CapabilitiesOperations
         runtime_bindings: RuntimeBindingsOperations
         runtime_links: RuntimeLinksOperations
@@ -32,7 +32,7 @@ namespace azure.mgmt.computeworkloadmanager
 
 namespace azure.mgmt.computeworkloadmanager.aio
 
-    class azure.mgmt.computeworkloadmanager.aio.WorkloadManagerClient: implements AsyncContextManager 
+    class azure.mgmt.computeworkloadmanager.aio.ComputeWorkloadManagerMgmtClient: implements AsyncContextManager 
         capabilities: CapabilitiesOperations
         runtime_bindings: RuntimeBindingsOperations
         runtime_links: RuntimeLinksOperations

@@ -12,6 +12,14 @@ pip install azure-ai-agentserver-responses
 
 This automatically installs `azure-ai-agentserver-core` as a dependency.
 
+The snapshot task integration requires Core `2.3.0b1` or later. For ordinary
+non-snapshot/local startup, set `FOUNDRY_MEMORY_SNAPSHOT_ENABLED=false` when
+resilient tasks are enabled. Capture/snapshot startup defers task initialization
+until the after-restore hook. Intentional opt-out still uses the non-durable
+path; an enabled but uninitialized runtime does not silently fall back.
+See the [task snapshot design](../azure-ai-agentserver-core/docs/memory-snapshot-task-integration.md)
+for compatibility requirements and unresolved startup-submission options.
+
 ### Prerequisites
 
 - Python 3.10 or later
@@ -132,6 +140,27 @@ The SDK automatically handles all combinations of `stream` and `background` flag
 - **Streaming** — Pipe events as SSE in real-time, cancel on client disconnect
 - **Background** — Return immediately, handler runs in the background
 - **Streaming + Background** — SSE while connected, handler continues after disconnect
+
+### Telemetry flushing
+
+`AGENTSERVER_FLUSH_MODE` controls per-request telemetry flushing independently
+of the response's `background` flag:
+
+| Value | Behavior |
+|---|---|
+| `background` (default) | Schedule a background flush without awaiting export. |
+| `async` | Await export off the event loop before completing the request. |
+| `sync` | Flush synchronously, blocking the event loop. |
+
+Values are case-insensitive and whitespace is ignored. Unset, empty, or invalid
+values use `background`; each distinct invalid value logs a warning once.
+Streaming requests dispatch one flush after stream cleanup and before HTTP
+completion.
+
+Background flushing requires the platform to allow the process to keep running
+long enough to drain telemetry before suspension or shutdown. If that window
+is unavailable, set `AGENTSERVER_FLUSH_MODE=async` to retain request-awaited
+flushing. Response completion alone does not guarantee telemetry delivery.
 
 ### Response lifecycle
 

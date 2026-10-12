@@ -21,6 +21,16 @@ from azure.ai.agentserver.core import (
     reset_request_context,
     set_request_context,
 )
+from azure.ai.agentserver.core.tasks._lease import derive_lease_owner
+from azure.ai.agentserver.core.tasks._manager import TaskManager, set_task_manager
+
+
+@pytest.fixture(autouse=True)
+def restore_process_environment():
+    captured_environment = dict(os.environ)
+    yield
+    os.environ.clear()
+    os.environ.update(captured_environment)
 
 
 def _after_restore_payload(
@@ -386,14 +396,82 @@ async def test_subclass_after_restore_failure_rolls_back_and_retries(
         assert os.environ["FOUNDRY_AGENT_SESSION_ID"] == "captured-session"
         assert agent.config.session_id == "captured-session"
 
+        different_session = await lifecycle_client.post(
+            "/_agent/after-restore",
+            json=_after_restore_payload(
+                session_id="different-session",
+                restore_id="restore-2",
+            ),
+        )
         retried = await lifecycle_client.post(
             "/_agent/after-restore",
             json=_after_restore_payload(session_id="restored-session"),
         )
 
     assert failed.status_code == 500
+    assert different_session.status_code == 409
+    assert different_session.json()["error"]["code"] == "session_mismatch"
     assert retried.status_code == 200
     assert events == ["subclass", "subclass", "application"]
+
+
+@pytest.mark.asyncio
+async def test_after_restore_rehydrates_task_manager_session_state_and_rolls_back(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("FOUNDRY_AGENT_NAME", "test-agent")
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "captured-session")
+    agent = AgentServerHost()
+    task_manager = TaskManager(config=agent.config, provider=mock.Mock())
+    set_task_manager(task_manager)
+    captured_instance_id = task_manager._instance_id  # pylint: disable=protected-access
+    restored_instance_ids: list[str] = []
+    callback_count = 0
+
+    @agent.after_restore_handler
+    async def after_restore(context: AgentSessionContext) -> None:
+        nonlocal callback_count
+        callback_count += 1
+        assert task_manager._lease_owner == derive_lease_owner(  # pylint: disable=protected-access
+            "test-agent",
+            context.session_id,
+        )
+        restored_instance_ids.append(
+            task_manager._instance_id  # pylint: disable=protected-access
+        )
+        if callback_count == 1:
+            raise RuntimeError("restore failed")
+
+    try:
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=agent),
+            base_url="http://testserver",
+        ) as lifecycle_client:
+            failed = await lifecycle_client.post(
+                "/_agent/after-restore",
+                json=_after_restore_payload(session_id="restored-session"),
+            )
+
+            assert failed.status_code == 500
+            assert task_manager._lease_owner == derive_lease_owner(  # pylint: disable=protected-access
+                "test-agent",
+                "captured-session",
+            )
+
+            retried = await lifecycle_client.post(
+                "/_agent/after-restore",
+                json=_after_restore_payload(session_id="restored-session"),
+            )
+    finally:
+        set_task_manager(None)
+
+    assert retried.status_code == 200
+    assert task_manager._lease_owner == derive_lease_owner(  # pylint: disable=protected-access
+        "test-agent",
+        "restored-session",
+    )
+    assert restored_instance_ids[0] != captured_instance_id
+    assert restored_instance_ids == [restored_instance_ids[0]] * 2
 
 
 @pytest.mark.asyncio
@@ -535,15 +613,74 @@ async def test_after_restore_resets_omitted_overrides_to_captured_values(
             "/_agent/after-restore",
             json=_after_restore_payload(restore_id="restore-2"),
         )
+        os.environ["ADDED_VALUE"] = "application-change"
+        third = await lifecycle_client.post(
+            "/_agent/after-restore",
+            json=_after_restore_payload(restore_id="restore-3"),
+        )
 
     assert first.status_code == 200
     assert second.status_code == 200
+    assert third.status_code == 200
     assert observed == [
         ("first-restore", "added"),
+        ("captured", None),
         ("captured", None),
     ]
     assert os.environ["CAPTURED_VALUE"] == "captured"
     assert "ADDED_VALUE" not in os.environ
+
+
+@pytest.mark.asyncio
+async def test_before_snapshot_refreshes_environment_baseline(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("UPDATED_VALUE", "captured")
+    monkeypatch.setenv("REMOVED_VALUE", "captured")
+    agent = AgentServerHost()
+    observed: list[tuple[str, str | None]] = []
+
+    @agent.before_snapshot_handler
+    async def before_snapshot() -> None:
+        os.environ.pop("REMOVED_VALUE")
+
+    @agent.after_restore_handler
+    async def after_restore(context: AgentSessionContext) -> None:
+        del context
+        observed.append(
+            (
+                os.environ["UPDATED_VALUE"],
+                os.environ.get("REMOVED_VALUE"),
+            )
+        )
+
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=agent),
+        base_url="http://testserver",
+    ) as lifecycle_client:
+        first = await lifecycle_client.post(
+            "/_agent/after-restore",
+            json=_after_restore_payload(
+                restore_id="restore-1",
+                overrides={
+                    "UPDATED_VALUE": "snapshot-value",
+                    "REMOVED_VALUE": "restored-value",
+                },
+            ),
+        )
+        before = await lifecycle_client.post("/_agent/before-snapshot", json={})
+        second = await lifecycle_client.post(
+            "/_agent/after-restore",
+            json=_after_restore_payload(restore_id="restore-2"),
+        )
+
+    assert first.status_code == 200
+    assert before.status_code == 200
+    assert second.status_code == 200
+    assert observed == [
+        ("snapshot-value", "restored-value"),
+        ("snapshot-value", None),
+    ]
 
 
 @pytest.mark.asyncio
@@ -599,11 +736,11 @@ async def test_after_restore_retry_and_new_materialization_are_idempotent(
 ) -> None:
     monkeypatch.delenv("FOUNDRY_AGENT_SESSION_ID", raising=False)
     agent = AgentServerHost()
-    restore_ids: list[str] = []
+    restores: list[tuple[str, str]] = []
 
     @agent.after_restore_handler
     async def after_restore(context: AgentSessionContext) -> None:
-        restore_ids.append(context.restore_id)
+        restores.append((context.restore_id, os.environ["RESTORE_VALUE"]))
 
     async with httpx.AsyncClient(
         transport=httpx.ASGITransport(app=agent),
@@ -611,21 +748,42 @@ async def test_after_restore_retry_and_new_materialization_are_idempotent(
     ) as lifecycle_client:
         first = await lifecycle_client.post(
             "/_agent/after-restore",
-            json=_after_restore_payload(restore_id="restore-1"),
+            json=_after_restore_payload(
+                restore_id="restore-1",
+                overrides={"RESTORE_VALUE": "first"},
+            ),
         )
         retry = await lifecycle_client.post(
             "/_agent/after-restore",
-            json=_after_restore_payload(restore_id="restore-1"),
+            json=_after_restore_payload(
+                restore_id="restore-1",
+                overrides={"RESTORE_VALUE": "first"},
+            ),
         )
         later_restore = await lifecycle_client.post(
             "/_agent/after-restore",
-            json=_after_restore_payload(restore_id="restore-2"),
+            json=_after_restore_payload(
+                restore_id="restore-2",
+                overrides={"RESTORE_VALUE": "second"},
+            ),
+        )
+        delayed_retry = await lifecycle_client.post(
+            "/_agent/after-restore",
+            json=_after_restore_payload(
+                restore_id="restore-1",
+                overrides={"RESTORE_VALUE": "first"},
+            ),
         )
 
     assert first.status_code == 200
     assert retry.status_code == 200
     assert later_restore.status_code == 200
-    assert restore_ids == ["restore-1", "restore-2"]
+    assert delayed_retry.status_code == 200
+    assert restores == [
+        ("restore-1", "first"),
+        ("restore-2", "second"),
+    ]
+    assert os.environ["RESTORE_VALUE"] == "second"
 
 
 @pytest.mark.asyncio
@@ -739,6 +897,60 @@ async def test_after_restore_failure_is_sanitized_and_rolls_back(
     assert os.environ["FOUNDRY_AGENT_SESSION_ID"] == "captured-session"
     assert os.environ["RESTORED_VALUE"] == "captured-value"
     assert agent.config.session_id == "captured-session"
+
+
+@pytest.mark.asyncio
+async def test_after_restore_cancellation_rolls_back_and_can_be_retried(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "captured-session")
+    monkeypatch.setenv("RESTORED_VALUE", "captured-value")
+    agent = AgentServerHost()
+    callback_started = asyncio.Event()
+    callback_count = 0
+
+    @agent.after_restore_handler
+    async def after_restore(context: AgentSessionContext) -> None:
+        nonlocal callback_count
+        callback_count += 1
+        assert os.environ["FOUNDRY_AGENT_SESSION_ID"] == context.session_id
+        assert os.environ["RESTORED_VALUE"] == "restored-value"
+        if callback_count == 1:
+            callback_started.set()
+            await asyncio.Event().wait()
+
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=agent),
+        base_url="http://testserver",
+    ) as lifecycle_client:
+        request_task = asyncio.create_task(
+            lifecycle_client.post(
+                "/_agent/after-restore",
+                json=_after_restore_payload(
+                    session_id="restored-session",
+                    overrides={"RESTORED_VALUE": "restored-value"},
+                ),
+            )
+        )
+        await callback_started.wait()
+        request_task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await request_task
+
+        assert os.environ["FOUNDRY_AGENT_SESSION_ID"] == "captured-session"
+        assert os.environ["RESTORED_VALUE"] == "captured-value"
+        assert agent.config.session_id == "captured-session"
+
+        retried = await lifecycle_client.post(
+            "/_agent/after-restore",
+            json=_after_restore_payload(
+                session_id="restored-session",
+                overrides={"RESTORED_VALUE": "restored-value"},
+            ),
+        )
+
+    assert retried.status_code == 200
+    assert callback_count == 2
 
 
 @pytest.mark.asyncio

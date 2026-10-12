@@ -63,6 +63,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-06-02-preview/JWTAuthenticators_Create_Or_Update_CustomCABundle.json
+# x-ms-original-file: 2026-07-02-preview/JWTAuthenticators_Create_Or_Update_CustomCABundle.json
 if __name__ == "__main__":
     main()

@@ -3554,6 +3554,83 @@ class TestUpdateMetricValuePreservesExplicitPassed:
         assert results[0]["label"] == "Pass"
 
 
+@pytest.mark.unittest
+class TestEvaluationPerTurnNotRoutedToScalar:
+    """Tests for the root-cause fix: per-turn breakdown columns (``evaluation_per_turn.*``)
+    must NOT be suffix-routed into scalar AOAI result fields.
+
+    Multi-turn (conversation-level) evaluators such as retrieval aggregate per-turn results,
+    producing both a top-level scalar metric (e.g. ``retrieval_total_tokens``) and a flattened
+    per-turn breakdown column (``evaluation_per_turn.retrieval_total_tokens``) whose value is a
+    *list*. The latter ends with ``_total_tokens`` and previously got routed into the scalar
+    ``sample.usage.total_tokens`` slot, double-writing over the real scalar and crashing the
+    converter with ``TypeError: float() argument must be a string or a real number, not 'list'``.
+    """
+
+    @staticmethod
+    def _extract(metrics):
+        return _extract_metric_values(
+            criteria_name="retrieval",
+            criteria_type="azure_ai_evaluator",
+            metrics=metrics,
+            expected_metrics=["retrieval"],
+            logger=logging.getLogger("test"),
+        )
+
+    def test_per_turn_token_list_does_not_reach_usage(self):
+        """The per-turn token list must be dropped from scalar routing (no crash, no list in usage)."""
+        metrics = {
+            "score": 4.0,
+            "retrieval_total_tokens": 300,
+            "evaluation_per_turn.retrieval_total_tokens": [100, 200],
+        }
+        result = self._extract(metrics)
+        usage = result["retrieval"]["sample"]["usage"]
+        # Scalar top-level value populates usage; per-turn list is not present anywhere in usage.
+        assert usage["total_tokens"] == 300
+        assert [100, 200] not in usage.values()
+
+    def test_scalar_token_survives_regardless_of_order(self):
+        """Whichever order the columns iterate, the scalar (not the per-turn list) wins usage."""
+        metrics = {
+            "evaluation_per_turn.retrieval_total_tokens": [100, 200],
+            "retrieval_total_tokens": 300,
+        }
+        result = self._extract(metrics)
+        assert result["retrieval"]["sample"]["usage"]["total_tokens"] == 300
+
+    def test_per_turn_prompt_and_completion_tokens_skipped(self):
+        """All *_tokens per-turn breakdowns are skipped, only scalars reach usage."""
+        metrics = {
+            "retrieval_prompt_tokens": 12,
+            "retrieval_completion_tokens": 8,
+            "evaluation_per_turn.retrieval_prompt_tokens": [5, 7],
+            "evaluation_per_turn.retrieval_completion_tokens": [3, 5],
+        }
+        result = self._extract(metrics)
+        usage = result["retrieval"]["sample"]["usage"]
+        assert usage["prompt_tokens"] == 12
+        assert usage["completion_tokens"] == 8
+
+    def test_per_turn_score_does_not_clobber_scalar_score(self):
+        """A per-turn score list must not overwrite the scalar score."""
+        metrics = {
+            "score": 4.0,
+            "evaluation_per_turn.retrieval_score": [3, 5],
+        }
+        result = self._extract(metrics)
+        assert result["retrieval"]["score"] == 4.0
+
+    def test_per_turn_columns_absent_when_no_scalar(self):
+        """With only per-turn columns present, nothing is routed (no spurious scalar metric)."""
+        metrics = {
+            "evaluation_per_turn.retrieval_total_tokens": [100, 200],
+        }
+        result = self._extract(metrics)
+        # No usable scalar metric was produced from the per-turn-only input.
+        assert "retrieval" not in result or "sample" not in result.get("retrieval", {})
+
+
 @pytest.mark.skipif(MISSING_OPENTELEMETRY, reason="This test requires the opentelemetry package")
 class TestEmitEvalResultShutdown:
     """Tests that emit_eval_result_events_to_app_insights shuts down the LoggerProvider."""

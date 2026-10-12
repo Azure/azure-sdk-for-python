@@ -87,5 +87,5 @@
         "azure.mgmt.computeworkloadmanager.operations.CapabilitiesOperations.list_by_workload_space": "Microsoft.Compute.WorkloadManager.Capabilities.listByWorkloadSpace",
         "azure.mgmt.computeworkloadmanager.aio.operations.CapabilitiesOperations.list_by_workload_space": "Microsoft.Compute.WorkloadManager.Capabilities.listByWorkloadSpace"
     },
-    "CrossLanguageVersion": "2d4bf8d917c9"
+    "CrossLanguageVersion": "de785070106c"
 }
