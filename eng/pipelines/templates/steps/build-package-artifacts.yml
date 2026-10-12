@@ -137,7 +137,7 @@ steps:
         WorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
         ${{ if eq(parameters.ArtifactSuffix, 'windows') }}:
           AdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
-        Condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
+        Condition: and(succeeded(), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))
 
   # Windows: cibuildwheel fetches CPython from api.nuget.org, which is blocked.
   # Pre-provision the interpreters from the Azure DevOps NuGet feed into the

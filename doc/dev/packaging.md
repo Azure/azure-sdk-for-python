@@ -152,6 +152,10 @@ or a `[tool.cibuildwheel]` table in `pyproject.toml`. The latter supports
 non-setuptools backends, including Maturin/PyO3. The package owns its wheel
 matrix, backend requirements, and native build hooks.
 
+For these packages, `sdk_build_package --package_type sdist` builds only the
+source distribution with build isolation, which installs the backend declared
+in `[build-system].requires` without invoking `cibuildwheel`.
+
 Set `signBinaries: true` on the package's artifact entry in the service `ci.yml`
 to enable Windows and macOS wheel builds and the existing binary-signing release
 path. The platform resolver uses this artifact property, not package names.
@@ -179,7 +183,8 @@ provides the internal Rust toolchain. No prototype test feed is selected by
 default. The working directory must contain `rust-toolchain.toml`.
 The installer refuses to overwrite an existing Cargo configuration in its
 `CARGO_HOME`; provide a clean build environment.
-Rust installation is disabled by default and applies only to wheel-build jobs.
+Rust installation is disabled by default and applies only to wheel-build jobs
+that target an artifact with `signBinaries: true`, including on Linux.
 Opted-in jobs have a 240-minute timeout and a 210-minute package-build timeout;
 other jobs keep their existing limits.
 

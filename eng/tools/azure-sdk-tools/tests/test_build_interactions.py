@@ -62,8 +62,10 @@ def build_commands(monkeypatch):
         ("setup_py_project_def", '\n[tool.cibuildwheel]\nbuild = "cp310-*"\n', True),
     ],
 )
-@pytest.mark.parametrize("enable_sdist", [False, True])
-def test_create_package_build_routing(tmp_path, build_commands, scenario, cibuildwheel_config, compiled, enable_sdist):
+@pytest.mark.parametrize("enable_wheel,enable_sdist", [(True, False), (True, True), (False, True)])
+def test_create_package_build_routing(
+    tmp_path, build_commands, scenario, cibuildwheel_config, compiled, enable_wheel, enable_sdist
+):
     package = tmp_path / "package"
     shutil.copytree(os.path.join(integration_folder, "scenarios", scenario), package)
     if cibuildwheel_config:
@@ -73,40 +75,53 @@ def test_create_package_build_routing(tmp_path, build_commands, scenario, cibuil
         pyproject.write_text(contents + cibuildwheel_config)
 
     destination = tmp_path / "dist"
-    create_package(str(package), str(destination), enable_sdist=enable_sdist)
+    create_package(str(package), str(destination), enable_wheel=enable_wheel, enable_sdist=enable_sdist)
 
     commands = [command for command, _ in build_commands]
     cibuildwheel_command = [sys.executable, "-m", "cibuildwheel", "--output-dir", str(destination)]
-    assert (cibuildwheel_command in commands) is compiled
+    assert (cibuildwheel_command in commands) is (compiled and enable_wheel)
     assert all(options["cwd"] == str(package) for _, options in build_commands)
     assert all(options["check"] for command, options in build_commands if "pip" not in command)
     if compiled and scenario.startswith("pyproject"):
-        assert commands == [cibuildwheel_command] + (
+        assert commands == ([cibuildwheel_command] if enable_wheel else []) + (
             [[sys.executable, "-m", "build", "-s", "-o", str(destination)]] if enable_sdist else []
         )
     elif not compiled and scenario.startswith("pyproject"):
+        build_flags = "-nsw" if enable_wheel and enable_sdist else "-nw" if enable_wheel else "-ns"
         assert commands[-1] == [
             sys.executable,
             "-m",
             "build",
-            "-nsw" if enable_sdist else "-nw",
+            build_flags,
             "-o",
             str(destination),
         ]
-    elif not compiled:
-        assert commands[0] == [sys.executable, "setup.py", "bdist_wheel", "-d", str(destination)]
+    else:
+        expected_commands = []
+        if enable_wheel:
+            expected_commands.append(
+                cibuildwheel_command
+                if compiled
+                else [sys.executable, "setup.py", "bdist_wheel", "-d", str(destination)]
+            )
+        if enable_sdist:
+            expected_commands.append([sys.executable, "setup.py", "sdist", "-d", str(destination)])
+        assert commands == expected_commands
 
 
 def test_sdist_only_does_not_invoke_cibuildwheel(tmp_path, build_commands):
     package = tmp_path / "package"
     shutil.copytree(os.path.join(integration_folder, "scenarios", "pyproject_project_def"), package)
-    with (package / "pyproject.toml").open("a") as stream:
-        stream.write('\n[tool.cibuildwheel]\nbuild = "cp310-*"\n')
+    pyproject = package / "pyproject.toml"
+    contents = pyproject.read_text().replace("setuptools.build_meta", "maturin")
+    contents = contents.replace('requires = ["setuptools>=61.0.0", "wheel"]', 'requires = ["maturin"]')
+    pyproject.write_text(contents + '\n[tool.cibuildwheel]\nbuild = "cp310-*"\n')
 
-    create_package(str(package), str(tmp_path / "dist"), enable_wheel=False)
+    destination = tmp_path / "dist"
+    create_package(str(package), str(destination), enable_wheel=False)
 
-    assert all("cibuildwheel" not in command for command, _ in build_commands)
-    assert "-ns" in build_commands[-1][0]
+    assert [command for command, _ in build_commands] == [[sys.executable, "-m", "build", "-s", "-o", str(destination)]]
+    assert build_commands[0][1]["check"] is True
 
 
 def test_cibuildwheel_failure_propagates(tmp_path, monkeypatch):

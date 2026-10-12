@@ -243,16 +243,17 @@ def create_package(
 
     if setup_parsed.is_pyproject:
         # when building with pyproject, check if package has compiled extensions
-        if enable_wheel and is_compiled:
-            # Use cibuildwheel for compiled extensions (respects [tool.cibuildwheel] config)
-            run_logged(
-                [sys.executable, "-m", "cibuildwheel", "--output-dir", dist],
-                cwd=setup_parsed.folder,
-                check=True,
-                should_stream_to_console=should_log_build_output,
-            )
+        if is_compiled:
+            if enable_wheel:
+                # Use cibuildwheel for compiled extensions (respects [tool.cibuildwheel] config)
+                run_logged(
+                    [sys.executable, "-m", "cibuildwheel", "--output-dir", dist],
+                    cwd=setup_parsed.folder,
+                    check=True,
+                    should_stream_to_console=should_log_build_output,
+                )
             if enable_sdist:
-                # Build sdist separately with python -m build
+                # Build isolation installs package-specific backends such as Maturin.
                 run_logged(
                     [sys.executable, "-m", "build", "-s", "-o", dist],
                     cwd=setup_parsed.folder,

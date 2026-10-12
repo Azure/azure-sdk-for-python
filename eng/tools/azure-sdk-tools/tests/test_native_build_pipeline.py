@@ -74,6 +74,7 @@ def test_rust_credentials_and_target_setup_are_opt_in():
     build = load_template("steps/build-package-artifacts.yml")
     install = next(step[RUST_GATE][0] for step in build["steps"] if RUST_GATE in step)
     assert install["template"].endswith("install-msrust-toolchain.yml")
+    assert install["parameters"]["Condition"] == "and(succeeded(), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))"
     assert install["parameters"]["ToolchainFeed"] == "${{ parameters.MsRustToolchainFeed }}"
     assert install["parameters"]["${{ if eq(parameters.ArtifactSuffix, 'windows') }}"] == {
         "AdditionalTargets": "${{ parameters.MsRustAdditionalTargets }}"
