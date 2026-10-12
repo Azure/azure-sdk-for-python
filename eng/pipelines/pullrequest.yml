@@ -33,3 +33,5 @@ extends:
     # As such, the pullrequest pipeline itself will not invoke the cosmos tests, but the triggered `python - cosmos - ci` public build WILL.
     ExcludePaths:
       - sdk/cosmos/
+      # Template CI validates the Rust fixture; generic PR builds do not enable its Rust toolchain setup.
+      - sdk/template/azure-template-three/

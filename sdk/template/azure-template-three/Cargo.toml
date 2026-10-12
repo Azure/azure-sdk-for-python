@@ -1,0 +1,17 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+[package]
+name = "azure_template_three"
+version = "1.0.0"
+edition = "2021"
+rust-version = "1.75"
+license = "MIT"
+publish = false
+
+[lib]
+name = "_rust"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.22", features = ["extension-module", "abi3-py310", "generate-import-lib"] }

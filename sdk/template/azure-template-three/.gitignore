@@ -1,0 +1,3 @@
+/target/
+/azure/template/three/*.so
+/azure/template/three/*.pyd
