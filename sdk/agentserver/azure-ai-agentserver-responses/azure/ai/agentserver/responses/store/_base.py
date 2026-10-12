@@ -51,8 +51,9 @@ class ResponseProviderProtocol(Protocol):
 
     Every operation accepts an optional ``context`` parameter (S-018).
     Implementations MUST use it to partition data in multi-tenant
-    deployments.  When ``None``, the provider operates without tenant
-    scoping (suitable for local development).
+    deployments. Providers supporting anonymous local development must keep
+    unkeyed state separate from named users' state; ``None`` must not bypass
+    partitioning.
     """
 
     async def create_response(
@@ -171,11 +172,11 @@ class ResponseProviderProtocol(Protocol):
         :type previous_response_id: str | None
         :param conversation_id: Optional conversation ID to scope history lookup.
         :type conversation_id: str | None
-        :param limit: Maximum number of history item IDs to return.
+        :param limit: Maximum number of history item IDs to return, or -1 for all items.
         :type limit: int
         :keyword context: Platform context for multi-tenant partitioning.
         :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
-        :returns: A list of history item IDs within the given scope.
+        :returns: An ordered list of unique history item IDs within the given scope.
         :rtype: list[str]
         """
         ...

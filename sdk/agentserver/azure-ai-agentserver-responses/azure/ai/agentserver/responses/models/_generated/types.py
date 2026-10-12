@@ -9694,14 +9694,13 @@ if TYPE_CHECKING:
 
         :ivar cached_tokens: Required.
         :vartype cached_tokens: int
-        :ivar cache_write_tokens: Required.
+        :ivar cache_write_tokens:
         :vartype cache_write_tokens: int
         """
 
         cached_tokens: Required[int]
         """Required."""
-        cache_write_tokens: Required[int]
-        """Required."""
+        cache_write_tokens: int
 
 
     class ResponseUsageOutputTokensDetails(TypedDict, total=False):
@@ -21038,16 +21037,15 @@ else:
 
             :ivar cached_tokens: Required.
             :vartype cached_tokens: int
-            :ivar cache_write_tokens: Required.
+            :ivar cache_write_tokens:
             :vartype cache_write_tokens: int
             """
             cached_tokens: Required[int]
             'Required.'
-            cache_write_tokens: Required[int]
-            'Required.'
+            cache_write_tokens: int
         ResponseUsageInputTokensDetails.__qualname__ = 'ResponseUsageInputTokensDetails'
         if _version_info < (3, 13):
-            ResponseUsageInputTokensDetails.__doc__ = 'ResponseUsageInputTokensDetails.\n\n    :ivar cached_tokens: Required.\n    :vartype cached_tokens: int\n    :ivar cache_write_tokens: Required.\n    :vartype cache_write_tokens: int\n    '
+            ResponseUsageInputTokensDetails.__doc__ = 'ResponseUsageInputTokensDetails.\n\n    :ivar cached_tokens: Required.\n    :vartype cached_tokens: int\n    :ivar cache_write_tokens:\n    :vartype cache_write_tokens: int\n    '
         return ResponseUsageInputTokensDetails
 
     def _make_ResponseUsageOutputTokensDetails():

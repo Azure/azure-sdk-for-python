@@ -11,10 +11,9 @@ import pytest
 
 from devtools_testutils import (
     AzureRecordedTestCase,
-    EnvironmentVariableLoader,
+    PowerShellPreparer,
 )
 from devtools_testutils.aio import recorded_by_proxy_async
-from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics.aio import TextAnalysisClient
 from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
@@ -24,30 +23,38 @@ from azure.ai.textanalytics.models import (
     AbstractiveSummarizationOperationResult,
     AbstractiveSummaryActionResult,
     AbstractiveSummary,
+    AnalyzeTextOperationState,
     SummaryContext,
 )
 
+
+def deserialize_job_state(pipeline_response, _, __):
+    return AnalyzeTextOperationState(pipeline_response.http_response.json())
+
+
 TextAnalysisPreparer = functools.partial(
-    EnvironmentVariableLoader,
+    PowerShellPreparer,
     "text_analysis",
     text_analysis_endpoint="https://Sanitized.cognitiveservices.azure.com/",
-    text_analysis_key="fake_key",
 )
 
 
 class TestTextAnalysisAsync(AzureRecordedTestCase):
-    def create_client(self, endpoint: str, key: str) -> TextAnalysisClient:
-        return TextAnalysisClient(endpoint, AzureKeyCredential(key))
+    def create_client(self, endpoint: str) -> TextAnalysisClient:
+        credential = self.get_credential(TextAnalysisClient, is_async=True)
+        return self.create_client_from_credential(
+            TextAnalysisClient,
+            credential=credential,
+            endpoint=endpoint,
+        )
 
 
 class TestTextAnalysisCaseAsync(TestTextAnalysisAsync):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_abstract_summary_async(
-        self, text_analysis_endpoint, text_analysis_key
-    ):
-        async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:
+    async def test_abstract_summary_async(self, text_analysis_endpoint):
+        async with self.create_client(text_analysis_endpoint) as client:
             text_a = (
                 "Windows 365 was in the works before COVID-19 sent companies around the world on a scramble to secure "
                 "solutions to support employees suddenly forced to work from home, but “what really put the "
@@ -97,45 +104,44 @@ class TestTextAnalysisCaseAsync(TestTextAnalysisAsync):
                         name="AbsractiveSummarizationOperationActionSample",
                     )
                 ],
+                cls=deserialize_job_state,
             )
 
             assert poller is not None
 
-            paged_actions = await poller.result()
-            details = poller.details
-            assert "operation_id" in details
-            assert details.get("status") is not None
-            assert paged_actions is not None
+            job_state = await poller.result()
+            assert job_state is not None
+            assert job_state.job_id is not None
+            assert job_state.status is not None
 
             found_abstractive = False
 
-            async for actions_page in paged_actions:
-                # Page container holding job results
-                assert isinstance(actions_page, TextActions)
-                assert actions_page.items_property is not None  # wire: "items"
+            actions = job_state.actions
+            assert isinstance(actions, TextActions)
+            assert actions.items_property is not None  # wire: "items"
 
-                for op_result in actions_page.items_property:
-                    if isinstance(op_result, AbstractiveSummarizationOperationResult):
-                        found_abstractive = True
-                        result = op_result.results
-                        assert result is not None
-                        assert result.documents is not None
+            for op_result in actions.items_property:
+                if isinstance(op_result, AbstractiveSummarizationOperationResult):
+                    found_abstractive = True
+                    result = op_result.results
+                    assert result is not None
+                    assert result.documents is not None
 
-                        for doc in result.documents:
-                            assert isinstance(doc, AbstractiveSummaryActionResult)
-                            assert doc.id is not None
-                            assert doc.summaries is not None
+                    for doc in result.documents:
+                        assert isinstance(doc, AbstractiveSummaryActionResult)
+                        assert doc.id is not None
+                        assert doc.summaries is not None
 
-                            for summary in doc.summaries:
-                                assert isinstance(summary, AbstractiveSummary)
-                                assert summary.text is not None
+                        for summary in doc.summaries:
+                            assert isinstance(summary, AbstractiveSummary)
+                            assert summary.text is not None
 
-                                # contexts may be optional
-                                if summary.contexts is not None:
-                                    for ctx in summary.contexts:
-                                        assert isinstance(ctx, SummaryContext)
-                                        assert ctx.offset is not None
-                                        assert ctx.length is not None
+                            # contexts may be optional
+                            if summary.contexts is not None:
+                                for ctx in summary.contexts:
+                                    assert isinstance(ctx, SummaryContext)
+                                    assert ctx.offset is not None
+                                    assert ctx.length is not None
 
             assert (
                 found_abstractive

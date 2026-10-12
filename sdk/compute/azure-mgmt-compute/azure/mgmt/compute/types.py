@@ -71,6 +71,7 @@ if TYPE_CHECKING:
         LinuxVMGuestPatchAutomaticByPlatformRebootSetting,
         LinuxVMGuestPatchMode,
         MaintenanceOperationResultCodeTypes,
+        MetadataType,
         Mode,
         Modes,
         NetworkAccessPolicy,
@@ -107,6 +108,7 @@ if TYPE_CHECKING:
         ResourceIdentityType,
         RestorePointEncryptionType,
         ScriptShellTypes,
+        SecretsProvisioningComponentName,
         SecurityEncryptionTypes,
         SecurityTypes,
         SettingNames,
@@ -1586,16 +1588,39 @@ class DataDiskImageEncryption(DiskImageEncryption):
     :ivar diskEncryptionSetId: A relative URI containing the resource ID of the disk encryption
      set.
     :vartype diskEncryptionSetId: str
+    :ivar securityProfile: This property specifies the security profile of a data disk image.
+    :vartype securityProfile: "DataDiskImageSecurityProfile"
     :ivar lun: This property specifies the logical unit number of the data disk. This value is used
      to identify data disks within the Virtual Machine and therefore must be unique for each data
      disk attached to the Virtual Machine. Required.
     :vartype lun: int
     """
 
+    securityProfile: "DataDiskImageSecurityProfile"
+    """This property specifies the security profile of a data disk image."""
     lun: Required[int]
     """This property specifies the logical unit number of the data disk. This value is used to
      identify data disks within the Virtual Machine and therefore must be unique for each data disk
      attached to the Virtual Machine. Required."""
+
+
+class DataDiskImageSecurityProfile(TypedDict, total=False):
+    """Contains security profile for a DataDisk image.
+
+    :ivar confidentialVMEncryptionType: confidential VM encryption types. Known values are:
+     "EncryptedVMGuestStateOnlyWithPmk", "EncryptedWithPmk", "EncryptedWithCmk", "NonPersistedTPM",
+     and "DataDiskEncryptedWithCmk".
+    :vartype confidentialVMEncryptionType: Union[str, "ConfidentialVMEncryptionType"]
+    :ivar secureVMDiskEncryptionSetId: secure VM disk encryption set id.
+    :vartype secureVMDiskEncryptionSetId: str
+    """
+
+    confidentialVMEncryptionType: Union[str, "ConfidentialVMEncryptionType"]
+    """confidential VM encryption types. Known values are: \"EncryptedVMGuestStateOnlyWithPmk\",
+     \"EncryptedWithPmk\", \"EncryptedWithCmk\", \"NonPersistedTPM\", and
+     \"DataDiskEncryptedWithCmk\"."""
+    secureVMDiskEncryptionSetId: str
+    """secure VM disk encryption set id."""
 
 
 class DataDisksToAttach(TypedDict, total=False):
@@ -3932,6 +3957,9 @@ class GalleryImageVersionProperties(TypedDict, total=False):
     :vartype restore: bool
     :ivar validationsProfile: This is the validations profile of a Gallery Image Version.
     :vartype validationsProfile: "ValidationsProfile"
+    :ivar imageMetadataProfiles: The image metadata profiles associated with the gallery image
+     version.
+    :vartype imageMetadataProfiles: list["ImageMetadataProfile"]
     """
 
     publishingProfile: "GalleryImageVersionPublishingProfile"
@@ -3951,6 +3979,8 @@ class GalleryImageVersionProperties(TypedDict, total=False):
     """Indicates if this is a soft-delete resource restoration request."""
     validationsProfile: "ValidationsProfile"
     """This is the validations profile of a Gallery Image Version."""
+    imageMetadataProfiles: list["ImageMetadataProfile"]
+    """The image metadata profiles associated with the gallery image version."""
 
 
 class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase):
@@ -4987,6 +5017,34 @@ class ImageDiskReference(TypedDict, total=False):
      data disks in the image to use. For OS disks, this field is null."""
 
 
+class ImageMetadataProfile(TypedDict, total=False):
+    """Describes the metadata profile of an image.
+
+    :ivar type: The type of metadata. Required. Known values are:
+     "SecretsProvisioningImageMetadata" and "UserProvidedSecretsProvisioningMetadata".
+    :vartype type: Union[str, "MetadataType"]
+    :ivar publicMetadataList: The list of public metadata key-value pairs. Contains non-sensitive
+     image capability metadata such as supported OS, component names, and versions. No secret
+     material is emitted in this list.
+    :vartype publicMetadataList: list["MetadataKeyValue"]
+    :ivar internalMetadataList: The list of internal metadata key-value pairs. Contains
+     non-sensitive service-internal metadata for diagnostics and tracking. No secret material is
+     emitted in this list.
+    :vartype internalMetadataList: list["MetadataKeyValue"]
+    """
+
+    type: Required[Union[str, "MetadataType"]]
+    """The type of metadata. Required. Known values are: \"SecretsProvisioningImageMetadata\" and
+     \"UserProvidedSecretsProvisioningMetadata\"."""
+    publicMetadataList: list["MetadataKeyValue"]
+    """The list of public metadata key-value pairs. Contains non-sensitive image capability metadata
+     such as supported OS, component names, and versions. No secret material is emitted in this
+     list."""
+    internalMetadataList: list["MetadataKeyValue"]
+    """The list of internal metadata key-value pairs. Contains non-sensitive service-internal metadata
+     for diagnostics and tracking. No secret material is emitted in this list."""
+
+
 class ImageOSDisk(ImageDisk):
     """Describes an Operating System disk.
 
@@ -5194,10 +5252,16 @@ class ImageVersionSecurityProfile(TypedDict, total=False):
 
     :ivar uefiSettings: Contains UEFI settings for the image version.
     :vartype uefiSettings: "GalleryImageVersionUefiSettings"
+    :ivar secretsProvisioningSettings: Specifies the secrets provisioning settings for the gallery
+     image version. Used on create or update to configure secrets provisioning.
+    :vartype secretsProvisioningSettings: "SecretsProvisioningSettings"
     """
 
     uefiSettings: "GalleryImageVersionUefiSettings"
     """Contains UEFI settings for the image version."""
+    secretsProvisioningSettings: "SecretsProvisioningSettings"
+    """Specifies the secrets provisioning settings for the gallery image version. Used on create or
+     update to configure secrets provisioning."""
 
 
 class ImmutabilityPolicy(TypedDict, total=False):
@@ -5912,6 +5976,30 @@ class MaxInstancePercentPerZonePolicy(TypedDict, total=False):
      virtual machine scale set."""
 
 
+class MetadataKeyValue(TypedDict, total=False):
+    """Describes a key-value pair for image metadata.
+
+    :ivar metadataKey: The metadata key. Known keys emitted by the service include
+     'Linux.AzureSecretsProvisioning.Enabled', 'OS.Name', and '{componentName}.Version' (e.g.,
+     'AzureGuestAgent.Version'). All values are non-sensitive configuration; no secrets,
+     credentials, or cryptographic material transit this field. Required.
+    :vartype metadataKey: str
+    :ivar metadataValue: The metadata value. Contains non-sensitive configuration such as
+     capability flags ('true'/'false'), OS names ('Linux', 'Windows'), and version strings (e.g.,
+     '1.0.0').
+    :vartype metadataValue: str
+    """
+
+    metadataKey: Required[str]
+    """The metadata key. Known keys emitted by the service include
+     'Linux.AzureSecretsProvisioning.Enabled', 'OS.Name', and '{componentName}.Version' (e.g.,
+     'AzureGuestAgent.Version'). All values are non-sensitive configuration; no secrets,
+     credentials, or cryptographic material transit this field. Required."""
+    metadataValue: str
+    """The metadata value. Contains non-sensitive configuration such as capability flags
+     ('true'/'false'), OS names ('Linux', 'Windows'), and version strings (e.g., '1.0.0')."""
+
+
 class MigrateToVirtualMachineScaleSetInput(TypedDict, total=False):
     """Describes the Virtual Machine Scale Set to migrate from Availability Set.
 
@@ -6189,8 +6277,8 @@ class OSDiskImageSecurityProfile(TypedDict, total=False):
     """Contains security profile for an OS disk image.
 
     :ivar confidentialVMEncryptionType: confidential VM encryption types. Known values are:
-     "EncryptedVMGuestStateOnlyWithPmk", "EncryptedWithPmk", "EncryptedWithCmk", and
-     "NonPersistedTPM".
+     "EncryptedVMGuestStateOnlyWithPmk", "EncryptedWithPmk", "EncryptedWithCmk", "NonPersistedTPM",
+     and "DataDiskEncryptedWithCmk".
     :vartype confidentialVMEncryptionType: Union[str, "ConfidentialVMEncryptionType"]
     :ivar secureVMDiskEncryptionSetId: secure VM disk encryption set id.
     :vartype secureVMDiskEncryptionSetId: str
@@ -6198,7 +6286,8 @@ class OSDiskImageSecurityProfile(TypedDict, total=False):
 
     confidentialVMEncryptionType: Union[str, "ConfidentialVMEncryptionType"]
     """confidential VM encryption types. Known values are: \"EncryptedVMGuestStateOnlyWithPmk\",
-     \"EncryptedWithPmk\", \"EncryptedWithCmk\", and \"NonPersistedTPM\"."""
+     \"EncryptedWithPmk\", \"EncryptedWithCmk\", \"NonPersistedTPM\", and
+     \"DataDiskEncryptedWithCmk\"."""
     secureVMDiskEncryptionSetId: str
     """secure VM disk encryption set id."""
 
@@ -7723,6 +7812,42 @@ class ScriptSource(TypedDict, total=False):
      script for its execution."""
 
 
+class SecretsProvisioningComponent(TypedDict, total=False):
+    """Describes a component involved in secrets provisioning.
+
+    :ivar name: The name of the component. Known values are: "OS", "CloudInit", "AzureGuestAgent",
+     and "SecretsProvisioningLibrary".
+    :vartype name: Union[str, "SecretsProvisioningComponentName"]
+    :ivar version: The version of the component.
+    :vartype version: str
+    """
+
+    name: Union[str, "SecretsProvisioningComponentName"]
+    """The name of the component. Known values are: \"OS\", \"CloudInit\", \"AzureGuestAgent\", and
+     \"SecretsProvisioningLibrary\"."""
+    version: str
+    """The version of the component."""
+
+
+class SecretsProvisioningSettings(TypedDict, total=False):
+    """Describes the secrets provisioning settings for a gallery image version.
+
+    :ivar isSupported: Specifies whether the image version supports secrets provisioning.
+    :vartype isSupported: bool
+    :ivar osName: The name of the operating system (e.g., "mariner").
+    :vartype osName: str
+    :ivar components: The list of component versions involved in secrets provisioning.
+    :vartype components: list["SecretsProvisioningComponent"]
+    """
+
+    isSupported: bool
+    """Specifies whether the image version supports secrets provisioning."""
+    osName: str
+    """The name of the operating system (e.g., \"mariner\")."""
+    components: list["SecretsProvisioningComponent"]
+    """The list of component versions involved in secrets provisioning."""
+
+
 class SecurityPostureReference(TypedDict, total=False):
     """Specifies the security posture to be used in the scale set. Minimum api-version: 2023-03-01.
 
@@ -8289,11 +8414,26 @@ class SoftDeletePolicy(TypedDict, total=False):
     :ivar isSoftDeleteEnabled: Enables soft-deletion for resources in this gallery, allowing them
      to be recovered within retention time.
     :vartype isSoftDeleteEnabled: bool
+    :ivar retentionPeriodInDays: The retention period in days for a soft-deleted resource. After
+     this period elapses, the soft-deleted gallery image version transitions to a simulated
+     hard-deleted state.
+    :vartype retentionPeriodInDays: int
+    :ivar gracePeriodInDays: The grace period in days for a simulated hard-deleted resource. During
+     this period the gallery image version is unusable but can still be recovered if required. After
+     this period elapses, the gallery image version is permanently (hard) deleted.
+    :vartype gracePeriodInDays: int
     """
 
     isSoftDeleteEnabled: bool
     """Enables soft-deletion for resources in this gallery, allowing them to be recovered within
      retention time."""
+    retentionPeriodInDays: int
+    """The retention period in days for a soft-deleted resource. After this period elapses, the
+     soft-deleted gallery image version transitions to a simulated hard-deleted state."""
+    gracePeriodInDays: int
+    """The grace period in days for a simulated hard-deleted resource. During this period the gallery
+     image version is unusable but can still be recovered if required. After this period elapses,
+     the gallery image version is permanently (hard) deleted."""
 
 
 class SourceVault(TypedDict, total=False):

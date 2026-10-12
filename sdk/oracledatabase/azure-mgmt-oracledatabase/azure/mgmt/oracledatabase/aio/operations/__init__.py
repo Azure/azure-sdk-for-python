@@ -38,6 +38,10 @@ from ._operations import NetworkAnchorsOperations  # type: ignore
 from ._operations import ResourceAnchorsOperations  # type: ignore
 from ._operations import DbSystemsOperations  # type: ignore
 from ._operations import DbVersionsOperations  # type: ignore
+from ._operations import DatabaseEditionsOperations  # type: ignore
+from ._operations import DatabaseSystemShapeResourcesOperations  # type: ignore
+from ._operations import GoldenGateConnectionsOperations  # type: ignore
+from ._operations import GoldenGateDeploymentsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -70,6 +74,10 @@ __all__ = [
     "ResourceAnchorsOperations",
     "DbSystemsOperations",
     "DbVersionsOperations",
+    "DatabaseEditionsOperations",
+    "DatabaseSystemShapeResourcesOperations",
+    "GoldenGateConnectionsOperations",
+    "GoldenGateDeploymentsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

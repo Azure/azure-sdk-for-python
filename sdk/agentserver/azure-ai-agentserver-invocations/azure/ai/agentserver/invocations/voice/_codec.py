@@ -275,15 +275,7 @@ def encode_outbound_message(message: OutboundVoiceMessage) -> str:
         )
         _put_optional_string(payload, "message", message.message)
     elif isinstance(message, ResponseCreated):
-        payload["response_id"] = _validate_prefixed_identifier_value(message.response_id, "response_id", "r_")
-        if message.in_reply_to is not None:
-            payload["in_reply_to"] = _validate_input_prefix(message.in_reply_to)
-            if message.admission_timeout_ms is not None or message.supersede_key is not None:
-                raise ValueError("reply response.created cannot contain proactive admission controls")
-        else:
-            if message.admission_timeout_ms is not None:
-                payload["admission_timeout_ms"] = _validate_admission_timeout_ms(message.admission_timeout_ms)
-            _put_optional_string(payload, "supersede_key", message.supersede_key, non_empty=True)
+        _put_response_created_fields(payload, message)
     elif isinstance(message, ResponseNone):
         payload["in_reply_to"] = _validate_input_prefix(message.in_reply_to)
         _put_optional_string(payload, "reason", message.reason)
@@ -343,6 +335,27 @@ def encode_outbound_message(message: OutboundVoiceMessage) -> str:
     if encoded_size > MAX_FRAME_BYTES:
         raise ValueError("Voice message exceeds the maximum encoded frame size")
     return frame
+
+
+def _put_response_created_fields(payload: dict[str, Any], message: ResponseCreated) -> None:
+    """Validate response admission fields without owning response lifecycle state.
+
+    :param payload: Outbound frame fields to populate.
+    :type payload: dict[str, Any]
+    :param message: Response creation message to validate.
+    :type message: ResponseCreated
+    :return: None.
+    :rtype: None
+    """
+    payload["response_id"] = _validate_prefixed_identifier_value(message.response_id, "response_id", "r_")
+    if message.in_reply_to is not None:
+        payload["in_reply_to"] = _validate_input_prefix(message.in_reply_to)
+        if message.admission_timeout_ms is not None or message.supersede_key is not None:
+            raise ValueError("reply response.created cannot contain proactive admission controls")
+        return
+    if message.admission_timeout_ms is not None:
+        payload["admission_timeout_ms"] = _validate_admission_timeout_ms(message.admission_timeout_ms)
+    _put_optional_string(payload, "supersede_key", message.supersede_key, non_empty=True)
 
 
 def _parse_session_start(payload: Mapping[str, Any], common: Mapping[str, str]) -> SessionStart:
