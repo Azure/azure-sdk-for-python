@@ -1017,7 +1017,7 @@ class AgentServerHost(Starlette):
 
         :param request: The incoming Starlette request.
         :type request: Request
-        :return: 200 OK response.
+        :return: The registered handler's response, or the default 200 OK response.
         :rtype: Response
         """
         if self._readiness_fn is not None:
