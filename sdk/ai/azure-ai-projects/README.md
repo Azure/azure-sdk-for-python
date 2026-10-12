@@ -195,6 +195,35 @@ The table below lists the operation groups supported by the client library, with
 | Toolboxes | [Curate intent-based toolbox in Foundry](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox?pivots=python) | `samples/hosted_agents/`, `samples/toolboxes/` |
 | Voice agents (preview) | | `samples/agents/voice/` |
 
+### Voice Agent realtime transport (preview)
+
+Select the connection transport with the optional `transport` keyword. The SDK constructs the wire
+query internally; callers do not need to put the transport in `extra_query`. Omitting the option
+preserves the service's default WebSocket behavior.
+
+```python
+from azure.ai.projects.models import VoiceAgentTransport
+
+with project_client.beta.voice_agents.realtime.connect(
+    agent_name="my-voice-agent",
+    transport=VoiceAgentTransport.WEBSOCKET,
+) as connection:
+    print("Voice Agent connection is ready.")
+```
+
+The asynchronous client uses the same keyword:
+
+```python
+async with async_project_client.beta.voice_agents.realtime.connect(
+    agent_name="my-voice-agent",
+    transport=VoiceAgentTransport.WEBSOCKET,
+) as connection:
+    print("Voice Agent connection is ready.")
+```
+
+`VoiceAgentTransport.WEBRTC` selects WebRTC signaling over the WebSocket. The application must manage
+the peer connection, media, and SDP offer/answer exchange using `rtc.call.sdp.create` and
+`rtc.call.sdp.created` events. Selecting this value does not automatically create a WebRTC media client.
 
 ## Client-side tracing
 

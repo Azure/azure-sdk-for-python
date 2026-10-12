@@ -654,6 +654,7 @@ namespace azure.ai.projects.aio.operations
                 extra_headers: Optional[Mapping[str, str]] = ..., 
                 extra_query: Optional[Mapping[str, str]] = ..., 
                 structured_inputs: Optional[Mapping[str, Any]] = ..., 
+                transport: Optional[Union[str, VoiceAgentTransport]] = ...,
                 **kwargs: Any
             ) -> AsyncBetaRealtimeConnectionManager: ...
 
@@ -698,6 +699,7 @@ namespace azure.ai.projects.aio.operations
                 extra_headers: Optional[Mapping[str, str]] = ..., 
                 extra_query: Optional[Mapping[str, str]] = ..., 
                 structured_inputs: Optional[Mapping[str, Any]] = ..., 
+                transport: Optional[Union[str, VoiceAgentTransport]] = ...,
                 **kwargs: Any
             ) -> None: ...
 
@@ -18878,6 +18880,7 @@ namespace azure.ai.projects.operations
                 extra_headers: Optional[Mapping[str, str]] = ..., 
                 extra_query: Optional[Mapping[str, str]] = ..., 
                 structured_inputs: Optional[Mapping[str, Any]] = ..., 
+                transport: Optional[Union[str, VoiceAgentTransport]] = ...,
                 **kwargs: Any
             ) -> BetaRealtimeConnectionManager: ...
 
@@ -18922,6 +18925,7 @@ namespace azure.ai.projects.operations
                 extra_headers: Optional[Mapping[str, str]] = ..., 
                 extra_query: Optional[Mapping[str, str]] = ..., 
                 structured_inputs: Optional[Mapping[str, Any]] = ..., 
+                transport: Optional[Union[str, VoiceAgentTransport]] = ...,
                 **kwargs: Any
             ) -> None: ...
 

@@ -134,8 +134,8 @@ with (
 
         # Deleting a conversation removes it and all of its responses, items, and audio.
         # This is destructive, so it is shown but not run by default. Uncomment to enable.
-        # deleted = conversations.delete(agent_name, conversation_id)
-        # print(f"Deleted conversation {deleted.id}: deleted={deleted.deleted}")
+        # conversations.delete(agent_name, conversation_id)
+        # print(f"Deleted conversation {conversation_id}")
     except HttpResponseError as e:
         # 404 typically means the conversation was not persisted (agent ran with `store=False`).
         print(f"Service responded with an error: {e.status_code} {e.reason}")
