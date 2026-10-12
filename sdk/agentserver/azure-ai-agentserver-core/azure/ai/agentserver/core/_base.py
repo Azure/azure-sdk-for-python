@@ -45,6 +45,8 @@ _HEALTHY_BODY = b'{"status":"healthy"}'
 _NOT_SET = "(not set)"
 _BEFORE_SNAPSHOT_PATH = "/_agent/before-snapshot"
 _AFTER_RESTORE_PATH = "/_agent/after-restore"
+_BEFORE_SNAPSHOT_ALIAS_PATH = "/_before_snapshot"
+_AFTER_RESTORE_ALIAS_PATH = "/_after_restore"
 _SESSION_ID_ENV = "FOUNDRY_AGENT_SESSION_ID"
 _SESSION_GUID_ENV = "FOUNDRY_AGENT_SESSION_GUID"
 _MISSING_ENV = object()
@@ -472,6 +474,18 @@ class AgentServerHost(Starlette):
                 _after_restore_route,
                 methods=["POST"],
                 name="after_restore",
+            ),
+            Route(
+                _BEFORE_SNAPSHOT_ALIAS_PATH,
+                _before_snapshot_route,
+                methods=["POST"],
+                name="before_snapshot_alias",
+            ),
+            Route(
+                _AFTER_RESTORE_ALIAS_PATH,
+                _after_restore_route,
+                methods=["POST"],
+                name="after_restore_alias",
             ),
         ]
         all_routes.extend(routes or [])

@@ -154,12 +154,13 @@ async def on_shutdown():
 ### Memory snapshot lifecycle handlers
 
 The host always registers the private platform routes
-`POST /_agent/before-snapshot` and `POST /_agent/after-restore`. They are
-always processed by the framework, including restore validation and
-environment and configuration hydration. Registering application handlers is
-optional; when absent, only the application callbacks are skipped. Use the
-hooks to release connections that must not be copied into a memory snapshot
-and rebuild them for the restored session:
+`POST /_agent/before-snapshot` and `POST /_agent/after-restore`, with equivalent
+aliases at `POST /_before_snapshot` and `POST /_after_restore`. All four routes
+are processed by the framework, including restore validation and environment
+and configuration hydration. Registering application handlers is optional;
+when absent, only the application callbacks are skipped. Use the hooks to
+release connections that must not be copied into a memory snapshot and rebuild
+them for the restored session:
 
 ```python
 from azure.ai.agentserver.core import AgentServerHost, AgentSessionContext

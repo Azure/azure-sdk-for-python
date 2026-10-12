@@ -49,12 +49,21 @@ def _after_restore_payload(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("before_path", "after_path"),
+    [
+        ("/_agent/before-snapshot", "/_agent/after-restore"),
+        ("/_before_snapshot", "/_after_restore"),
+    ],
+)
 async def test_default_lifecycle_handlers_are_successful_noops(
     client: httpx.AsyncClient,
+    before_path: str,
+    after_path: str,
 ) -> None:
-    before_response = await client.post("/_agent/before-snapshot", json={})
+    before_response = await client.post(before_path, json={})
     after_response = await client.post(
-        "/_agent/after-restore",
+        after_path,
         json=_after_restore_payload(),
     )
 
@@ -67,9 +76,20 @@ async def test_default_lifecycle_handlers_are_successful_noops(
 
 
 @pytest.mark.asyncio
-async def test_lifecycle_routes_only_accept_post(client: httpx.AsyncClient) -> None:
-    assert (await client.get("/_agent/before-snapshot")).status_code == 405
-    assert (await client.get("/_agent/after-restore")).status_code == 405
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/_agent/before-snapshot",
+        "/_agent/after-restore",
+        "/_before_snapshot",
+        "/_after_restore",
+    ],
+)
+async def test_lifecycle_routes_only_accept_post(
+    client: httpx.AsyncClient,
+    path: str,
+) -> None:
+    assert (await client.get(path)).status_code == 405
 
 
 @pytest.mark.asyncio
@@ -1024,14 +1044,21 @@ async def test_lifecycle_hooks_are_serialized(monkeypatch: pytest.MonkeyPatch) -
 
 
 @pytest.mark.asyncio
-async def test_reserved_lifecycle_route_cannot_be_shadowed() -> None:
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/_agent/before-snapshot",
+        "/_before_snapshot",
+    ],
+)
+async def test_reserved_lifecycle_route_cannot_be_shadowed(path: str) -> None:
     async def shadowed_route(_request):
         return JSONResponse({"shadowed": True}, status_code=418)
 
     agent = AgentServerHost(
         routes=[
             Route(
-                "/_agent/before-snapshot",
+                path,
                 shadowed_route,
                 methods=["POST"],
             )
@@ -1042,7 +1069,7 @@ async def test_reserved_lifecycle_route_cannot_be_shadowed() -> None:
         transport=httpx.ASGITransport(app=agent),
         base_url="http://testserver",
     ) as lifecycle_client:
-        response = await lifecycle_client.post("/_agent/before-snapshot", json={})
+        response = await lifecycle_client.post(path, json={})
 
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
@@ -1091,9 +1118,11 @@ def test_lifecycle_decorators_return_original_functions() -> None:
 def test_lifecycle_routes_are_registered_before_user_routes() -> None:
     agent = AgentServerHost()
 
-    assert [route.path for route in agent.routes[:2]] == [
+    assert [route.path for route in agent.routes[:4]] == [
         "/_agent/before-snapshot",
         "/_agent/after-restore",
+        "/_before_snapshot",
+        "/_after_restore",
     ]
 
 

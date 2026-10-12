@@ -8,8 +8,9 @@
   `GET /readiness` response with application-specific readiness logic. When no
   handler is registered, the existing healthy response remains unchanged.
 - Added the private `POST /_agent/before-snapshot` and
-  `POST /_agent/after-restore` lifecycle endpoints for safely capturing and
-  restoring hosted agent processes. Applications can register
+  `POST /_agent/after-restore` lifecycle endpoints, with equivalent
+  `POST /_before_snapshot` and `POST /_after_restore` aliases, for safely
+  capturing and restoring hosted agent processes. Applications can register
   `before_snapshot_handler` and `after_restore_handler` callbacks; lifecycle
   calls are serialized and idempotent, and restored session environment
   overrides are applied before the after-restore callback runs. Protocol
