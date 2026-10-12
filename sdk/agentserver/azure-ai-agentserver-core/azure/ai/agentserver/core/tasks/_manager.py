@@ -2467,6 +2467,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             # no longer mirrored into _steering; only the active input + queue
             # state need to survive a crash mid-drain.)
             steering["active_input"] = next_input_raw
+            steering["active_ack_id"] = next_ack_id
             steering["pending_inputs"] = pending
             steering["pending_ack_ids"] = pending_ack_ids
             #   SOT: internal
@@ -2678,6 +2679,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             if existing_steering:
                 steering_patch = dict(existing_steering)
                 steering_patch["active_input"] = None
+                steering_patch["active_ack_id"] = None
             existing_input_slot = task_info.payload.get("input")
             if _is_ref(existing_input_slot):
                 attachments_patch[_ref_key(existing_input_slot)] = None
@@ -2817,6 +2819,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             if existing_steering:
                 steering_patch = dict(existing_steering)
                 steering_patch["active_input"] = None
+                steering_patch["active_ack_id"] = None
             existing_input_slot = task_info.payload.get("input")
             if _is_ref(existing_input_slot):
                 attachments_patch[_ref_key(existing_input_slot)] = None
