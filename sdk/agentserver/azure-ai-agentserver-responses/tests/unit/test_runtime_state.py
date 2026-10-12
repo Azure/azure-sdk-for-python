@@ -200,12 +200,67 @@ async def test_publication_cannot_replace_scoped_deletion_ownership_or_clear_its
         await state.mark_deleted("shared", "owner")
     replacement = _make_execution("shared", user_id_key="owner", status="in_progress")
     assert not await state.add(replacement, expected_record=owner)
-    assert not await state.add(owner)
+    assert await state.add(owner) is (not retained and not marked_deleted)
     assert not await state.add_pending(replacement)
     assert await state.get("shared", "owner") is owner
     assert await state.get("shared", "other") is foreign
     assert await state.is_deleted("shared", "owner") is marked_deleted
     assert not await state.try_evict("shared", "owner")
+
+
+@pytest.mark.parametrize("phase", ["classification", "cleanup", "cleanup-retry"])
+@pytest.mark.parametrize(
+    "publication",
+    ["exact", "same-context", "foreign-context", "contextless-replacement", "contextless-exact", "wrong-predecessor"],
+)
+async def test_delete_classification_allows_only_current_execution_until_cleanup_retains_ownership(phase, publication):
+    state = _RuntimeState()
+    owner = _make_execution("shared", user_id_key="owner", status="in_progress")
+    if publication != "contextless-exact":
+        owner.response_context = ResponseContext(response_id="shared", mode_flags=owner.mode_flags)
+    assert await state.reserve("shared", "owner", publication_context=owner.response_context)
+    assert await state.add(owner)
+    foreign = _make_execution("shared", user_id_key="other", status="completed")
+    assert await state.add(foreign)
+    assert await state.begin_deletion("shared", "owner")
+    if phase != "classification":
+        assert await state.retain_for_deletion(owner)
+        if phase == "cleanup-retry":
+            await state.end_deletion("shared", "owner")
+    candidate = owner
+    if publication not in ("exact", "contextless-exact"):
+        candidate = _make_execution("shared", user_id_key="owner", status="completed")
+        if publication in ("same-context", "wrong-predecessor"):
+            candidate.response_context = owner.response_context
+        elif publication == "foreign-context":
+            candidate.response_context = ResponseContext(response_id="shared", mode_flags=candidate.mode_flags)
+    predecessor = _make_execution("shared", user_id_key="owner") if publication == "wrong-predecessor" else owner
+    allowed = phase == "classification" and publication in ("exact", "same-context", "contextless-exact")
+    assert await state.add(candidate, expected_record=predecessor) is allowed
+    current = candidate if allowed else owner
+    assert await state.get("shared", "owner") is current
+    assert await state.get("shared", "other") is foreign
+    assert not await state.reserve("shared", "owner")
+    assert not await state.add_pending(_make_execution("shared", user_id_key="owner"))
+    assert not await state.try_evict("shared", "owner")
+    if allowed:
+        if candidate is not owner:
+            assert not await state.retain_for_deletion(owner)
+            assert await state.get("shared", "owner") is candidate
+        assert await state.retain_for_deletion(current)
+        assert not await state.add(current)
+        assert await state.get("shared", "owner") is current
+
+
+async def test_delete_classification_without_published_owner_cannot_admit_execution():
+    state = _RuntimeState()
+    assert await state.begin_deletion("shared", "owner")
+    candidate = _make_execution("shared", user_id_key="owner", status="completed")
+    candidate.response_context = ResponseContext(response_id="shared", mode_flags=candidate.mode_flags)
+    assert not await state.add(candidate)
+    assert not await state.add_pending(candidate)
+    assert not await state.reserve("shared", "owner")
+    assert await state.get("shared", "owner") is None
 
 
 @pytest.mark.asyncio

@@ -223,7 +223,13 @@ class _RuntimeState:
                         )
                     )
                 )
-                or key in self._deletions
+                or (
+                    key in self._deletions
+                    and (
+                        existing is None
+                        or (existing is not record and (context is None or context is not existing.response_context))
+                    )
+                )
                 or key in self._retained_deletions
                 or (key in self._deleted_response_ids and key not in self._publication_contexts)
                 or (reserved_context is not None and context is not reserved_context)

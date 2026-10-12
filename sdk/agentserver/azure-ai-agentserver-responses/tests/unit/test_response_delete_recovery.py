@@ -26,7 +26,12 @@ from azure.ai.agentserver.core.tasks._exceptions_internal import _HostedConflict
 from azure.ai.agentserver.core.tasks._local_provider import LocalFileTaskProvider
 from azure.ai.agentserver.core.tasks._manager import TaskManager, _SCHEMA_VERSION, _SCHEMA_VERSION_KEY, set_task_manager
 from azure.ai.agentserver.core.tasks._models import TaskCreateRequest, TaskInfo, TaskPatchRequest
-from azure.ai.agentserver.responses import PlatformContext, ResponsesAgentServerHost, ResponsesServerOptions
+from azure.ai.agentserver.responses import (
+    PlatformContext,
+    ResponseContext,
+    ResponsesAgentServerHost,
+    ResponsesServerOptions,
+)
 from azure.ai.agentserver.responses.hosting import _response_task_lifecycle as lifecycle
 from azure.ai.agentserver.responses.hosting import _resilient_orchestrator as resilience
 from azure.ai.agentserver.responses.hosting._resilient_input import ResilientResponseInput, RuntimeRefs
@@ -1443,6 +1448,173 @@ async def test_orphan_reclamation_holds_scoped_admission_until_file_cleanup_fini
         await host._endpoint._runtime_state.release_reservation(RESPONSE_ID, "other")
 
 
+@pytest.mark.parametrize("stream,background", [(False, False), (False, True), (True, False), (True, True)])
+@pytest.mark.parametrize("outcome", ["completed", "failed"])
+@pytest.mark.parametrize("file_backed", [False, True])
+async def test_rejected_delete_classification_does_not_interrupt_terminal_publication_or_persistence(
+    registry, task_store, monkeypatch, tmp_path, stream, background, outcome, file_backed
+):
+    host = _host()
+    if file_backed:
+        host = ResponsesAgentServerHost(
+            options=ResponsesServerOptions(resilient_background=False),
+            store=FileResponseStore(storage_dir=tmp_path / "responses"),
+        )
+    entered = asyncio.Event()
+    finish = asyncio.Event()
+    classified = asyncio.Event()
+    release_delete = asyncio.Event()
+    statuses = []
+
+    async def handler(request, context, cancellation_signal):
+        events = ResponseEventStream(response_id=context.response_id, model="m")
+        yield events.emit_created()
+        yield events.emit_in_progress()
+        entered.set()
+        await finish.wait()
+        if outcome == "failed":
+            raise RuntimeError("handler failure after creation")
+        yield events.emit_completed()
+
+    host.response_handler(handler)
+    endpoint = host._endpoint
+    state = endpoint._runtime_state
+    original_delete = endpoint._handle_reserved_delete
+
+    async def paused_classification(*args, **kwargs):
+        response = await original_delete(*args, **kwargs)
+        statuses.append(response.status_code)
+        classified.set()
+        await release_delete.wait()
+        return response
+
+    monkeypatch.setattr(endpoint, "_handle_reserved_delete", paused_classification)
+    foreign = _execution(user="other")
+    assert await state.add(foreign)
+    creating = asyncio.create_task(endpoint.handle_create(_request(background=background, stream=stream)))
+    sending = None
+    deleting = None
+    producer = None
+    messages = []
+
+    async def send(message):
+        messages.append(message)
+
+    try:
+        if stream:
+            response = await asyncio.wait_for(creating, 2)
+            assert response.status_code == 200
+            sending = asyncio.create_task(response.stream_response(send))
+        await asyncio.wait_for(entered.wait(), 2)
+        original = await state.get(RESPONSE_ID, "owner")
+        assert original is not None
+        producer = original.execution_task
+        assert producer is not None
+        deleting = asyncio.create_task(endpoint.handle_delete(_delete_request()))
+        await asyncio.wait_for(classified.wait(), 2)
+        assert statuses == [400 if background else 404]
+        assert ("owner", RESPONSE_ID) in state._deletions
+        assert not await state.is_retained_for_deletion(RESPONSE_ID, "owner")
+        unrelated = _cached_refs(host, _params()).record
+        assert unrelated is not None
+        assert not await state.add(unrelated, expected_record=original)
+        assert not await state.reserve(RESPONSE_ID, "owner")
+        finish.set()
+        await asyncio.wait_for(asyncio.shield(producer), 2)
+        response = await asyncio.wait_for(creating, 2)
+        assert response.status_code == 200
+        if sending is not None:
+            await asyncio.wait_for(sending, 2)
+            body = b"".join(message.get("body", b"") for message in messages)
+            assert f'"type":"response.{outcome}"'.encode() in body.replace(b" ", b"")
+        elif not background:
+            assert json.loads(response.body)["status"] == outcome
+        stored = await endpoint._provider.get_response(RESPONSE_ID, context=PlatformContext(user_id_key="owner"))
+        assert stored["status"] == outcome
+        current = await state.get(RESPONSE_ID, "owner")
+        assert current is not None and current.status == outcome
+        assert current.response_context is original.response_context
+        assert await state.get(RESPONSE_ID, "other") is foreign
+        assert not await state.try_evict(RESPONSE_ID, "owner")
+        get = await endpoint.handle_get(_get_request())
+        assert get.status_code == 200
+        assert json.loads(get.body)["status"] == outcome
+        release_delete.set()
+        assert (await asyncio.wait_for(deleting, 2)).status_code == statuses[0]
+        assert ("owner", RESPONSE_ID) not in state._deletions
+        assert not await state.is_deleted(RESPONSE_ID, "owner")
+        assert state._reservations == set()
+        assert resilience._RUNTIME_REFS == {}
+        if file_backed:
+            restarted_store = FileResponseStore(storage_dir=tmp_path / "responses")
+            assert (await restarted_store.get_response(RESPONSE_ID, context=PlatformContext(user_id_key="owner")))[
+                "status"
+            ] == outcome
+    finally:
+        finish.set()
+        release_delete.set()
+        tasks = [task for task in (creating, sending, deleting, producer) if task is not None]
+        for task in tasks:
+            if not task.done():
+                task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+        await registry.delete(derive_lifecycle_id(RESPONSE_ID, "owner"))
+
+
+@pytest.mark.parametrize("outcome", ["completed", "failed"])
+async def test_inline_sync_terminal_replacement_preserves_current_execution_during_delete_classification(
+    registry, outcome
+):
+    host = _host()
+
+    async def handler(request, context, cancellation_signal):
+        events = ResponseEventStream(response_id=context.response_id, model="m")
+        yield events.emit_created()
+        if outcome == "failed":
+            raise RuntimeError("handler failure after creation")
+        yield events.emit_completed()
+
+    host.response_handler(handler)
+    params = _params()
+    params["request"] = {**params["request"], "stream": False, "background": False}
+    refs = _cached_refs(host, params)
+    original, context = refs.record, refs.context
+    assert original is not None and context is not None
+    state = host._endpoint._runtime_state
+    assert await state.reserve(RESPONSE_ID, "owner", publication_context=context)
+    assert await state.add(original)
+    assert await state.begin_deletion(RESPONSE_ID, "owner")
+    ctx = _ExecutionContext(
+        response_id=RESPONSE_ID,
+        agent_reference={},
+        model="m",
+        store=True,
+        background=False,
+        stream=False,
+        input_items=[],
+        previous_response_id=None,
+        conversation_id=None,
+        cancellation_signal=asyncio.Event(),
+        span=CreateSpan(name="responses.test", tags={"response.id": RESPONSE_ID}),
+        parsed=CreateResponse(params["request"]),
+        context=context,
+        user_id="owner",
+    )
+    response = await host._endpoint._orchestrator._run_sync_inner(ctx, _PipelineState())
+    assert response["status"] == outcome
+    current = await state.get(RESPONSE_ID, "owner")
+    assert current is not None and current is not original
+    assert current.response_context is context
+    assert current.status == outcome
+    assert (await host._endpoint._provider.get_response(RESPONSE_ID, context=context.platform_context))[
+        "status"
+    ] == outcome
+    assert not await state.retain_for_deletion(original)
+    assert await state.get(RESPONSE_ID, "owner") is current
+    await state.end_deletion(RESPONSE_ID, "owner")
+    await state.release_reservation(RESPONSE_ID, "owner")
+
+
 @pytest.mark.parametrize("runtime_record", [False, True])
 @pytest.mark.parametrize("outcome", ["success", "error", "cancel"])
 async def test_publication_during_provider_delete_preserves_exact_owner_and_retry(
@@ -1458,7 +1630,8 @@ async def test_publication_during_provider_delete_preserves_exact_owner_and_retr
     await provider.create_response(_snapshot(), [], None, context=PlatformContext(user_id_key="owner"))
     original = _execution()
     if runtime_record:
-        assert await state.reserve(RESPONSE_ID, "owner")
+        original.response_context = ResponseContext(response_id=RESPONSE_ID, mode_flags=original.mode_flags)
+        assert await state.reserve(RESPONSE_ID, "owner", publication_context=original.response_context)
         assert await state.add(original)
     foreign = _execution(user="other")
     assert await state.add(foreign)
@@ -1482,6 +1655,7 @@ async def test_publication_during_provider_delete_preserves_exact_owner_and_retr
         if runtime_record:
             assert retained is original
         late = _execution(status="in_progress")
+        late.response_context = retained.response_context
         assert not await state.add(late, expected_record=retained)
         assert not await state.add(retained)
         assert not await state.add_pending(late)
@@ -1502,6 +1676,8 @@ async def test_publication_during_provider_delete_preserves_exact_owner_and_retr
         else:
             assert await state.get(RESPONSE_ID, "owner") is retained
             assert not await state.is_deleted(RESPONSE_ID, "owner")
+            assert not await state.add(retained)
+            assert not await state.add(late, expected_record=retained)
             monkeypatch.setattr(provider, "delete_response", delete)
             assert (await host._endpoint.handle_delete(_delete_request())).status_code == 200
         assert await state.get(RESPONSE_ID, "other") is foreign

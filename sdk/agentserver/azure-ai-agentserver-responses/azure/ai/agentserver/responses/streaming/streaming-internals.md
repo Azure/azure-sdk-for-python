@@ -108,6 +108,15 @@ listing page. Providers perform complete no-limit enumeration and retain control
 of their continuation cursors. A failed or incomplete scan never proves absence
 of an owner or permits DELETE to complete.
 
+The provisional DELETE reservation excludes fresh admission, unrelated
+publication, and eviction while visibility and status are checked. The current
+execution's exact record or same non-null request context may still finalize
+during these checks: a rejected in-flight DELETE must not suppress terminal
+events or persistence. Once DELETE retains the exact authorized record for
+cleanup, all execution publication is rejected, including that owning context.
+If finalization replaces the record before cleanup retains it, the old record
+cannot claim the replacement and DELETE must retry.
+
 DELETE retains exact caller-scoped ownership until replay and response-provider
 cleanup succeed, including across cleanup errors and cancellation. Before
 removing backing state, it conditionally fences that response's lifecycle input

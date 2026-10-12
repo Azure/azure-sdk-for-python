@@ -17,7 +17,10 @@
   back to anonymous storage. Fail the response only with independently proven
   original task references and current-input/deletion guards; otherwise settle
   only the malformed input and leave response, replay, and references untouched.
-- Reject runtime publication during active or retained DELETE cleanup, and bind
+- Allow only the current execution's exact record or request context to finalize
+  while DELETE checks eligibility, so rejected in-flight DELETE requests cannot
+  suppress terminal SSE events or response persistence.
+- Reject runtime publication once DELETE retains cleanup ownership, and bind
   fresh admission to its exact request context so late callbacks cannot replace
   a successor or clear a completed deletion marker.
 - Partition local in-memory and file-backed responses, items, history, and
