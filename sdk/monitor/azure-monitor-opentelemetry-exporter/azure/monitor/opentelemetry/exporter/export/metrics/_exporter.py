@@ -125,9 +125,8 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         try:
             result = self._transmit(envelopes)
             self._handle_transmit_from_storage(envelopes, result)
-            export_result = _get_metric_export_result(result)
-            return export_result
-        except Exception as ex:  # pylint: disable=broad-except
+            return _get_metric_export_result(result)
+        except Exception:  # pylint: disable=broad-except
             _logger.exception("Exception occurred while exporting the data.")  # pylint: disable=C4769
             return _get_metric_export_result(ExportResult.FAILED_NOT_RETRYABLE)
 

@@ -136,7 +136,6 @@ class _ConfigurationWorker:
             # Shutdown requested during startup delay
             return
 
-        initial_configuration_complete = False
         while not self._shutdown_event.is_set():
             try:
                 # Fetch configuration WITHOUT holding _lock: this performs blocking network I/O and
@@ -151,9 +150,5 @@ class _ConfigurationWorker:
                 logger.debug("Configuration refresh failed: %s", ex)
                 # Use current interval on error
                 interval = self.get_refresh_interval_s()
-            finally:
-                if not initial_configuration_complete:
-                    self._configuration_manager.complete_initial_configuration()
-                    initial_configuration_complete = True
 
             self._shutdown_event.wait(interval)

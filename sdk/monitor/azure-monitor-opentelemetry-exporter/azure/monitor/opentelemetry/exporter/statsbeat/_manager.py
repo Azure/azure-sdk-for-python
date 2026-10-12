@@ -355,13 +355,16 @@ class StatsbeatManager(metaclass=Singleton):
 
     def _reconfigure(self, new_config: StatsbeatConfig) -> bool:
         # Internal reconfiguration method.
-        if self._warmup_timer:
-            self._warmup_timer.cancel()
-            self._warmup_timer = None
-
-        # Shut down the old pipeline without flushing it. A destination change must not send
-        # accumulated SDK Stats to the previous destination immediately before switching.
+        # Shutdown current instance with timeout
         if self._meter_provider:
+            try:
+                # Force flush before shutdown to ensure data is sent
+                self._meter_provider.force_flush(timeout_millis=5000)
+            except Exception as e:  # pylint: disable=broad-except
+                logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                    "Failed to flush meter provider during reconfiguration: %s", e
+                )
+
             try:
                 self._meter_provider.shutdown(timeout_millis=5000)
             except Exception as e:  # pylint: disable=broad-except

@@ -600,8 +600,6 @@ class TestStatsbeatManager(unittest.TestCase):
         self.manager._config = old_config
         mock_old_meter_provider = Mock()
         self.manager._meter_provider = mock_old_meter_provider
-        mock_warmup_timer = Mock()
-        self.manager._warmup_timer = mock_warmup_timer
 
         # Mock new components
         mock_exporter = Mock()
@@ -626,14 +624,13 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertTrue(self.manager._initialized)
         self.assertEqual(self.manager._config, new_config)
 
-        # Destination changes must not flush accumulated metrics to the old endpoint.
-        mock_old_meter_provider.force_flush.assert_not_called()
+        # Verify old meter provider was shutdown
+        mock_old_meter_provider.force_flush.assert_called_once()
         mock_old_meter_provider.shutdown.assert_called_once()
-        mock_warmup_timer.cancel.assert_called_once()
 
     @patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
-    def test_reconfigure_shutdown_failure(self, mock_meter_provider_class):
-        """Test reconfiguration continues when the old provider cannot shut down cleanly."""
+    def test_reconfigure_flush_failure(self, mock_meter_provider_class):
+        """Test reconfiguration failure."""
         # Mock initialized state
         old_config = self._create_valid_config()
         self.manager._initialized = True
@@ -641,7 +638,7 @@ class TestStatsbeatManager(unittest.TestCase):
         mock_old_meter_provider = Mock()
         self.manager._meter_provider = mock_old_meter_provider
 
-        mock_old_meter_provider.shutdown.side_effect = Exception("Reconfigure error")
+        mock_meter_provider_class.force_flush.side_effect = Exception("Reconfigure error")
 
         new_config = StatsbeatConfig(
             endpoint="https://eastus-1.in.applicationinsights.azure.com/",
@@ -652,10 +649,9 @@ class TestStatsbeatManager(unittest.TestCase):
 
         result = self.manager._reconfigure(new_config)
 
-        # We still reinitialize the manager state even on shutdown failure.
+        # We still reinitialize the manager state even on flush/shutdown failure
         self.assertTrue(result)
         self.assertTrue(self.manager._initialized)
-        mock_old_meter_provider.force_flush.assert_not_called()
 
     def test_get_current_config_not_initialized(self):
         """Test get_current_config when not initialized."""

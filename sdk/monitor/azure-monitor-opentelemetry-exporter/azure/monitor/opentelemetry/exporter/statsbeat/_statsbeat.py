@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import logging
-from functools import partial
 from typing import Dict, TYPE_CHECKING
 
 from azure.monitor.opentelemetry.exporter.statsbeat._manager import (
@@ -23,31 +22,15 @@ logger = logging.getLogger(__name__)
 def collect_statsbeat_metrics(exporter: "BaseExporter") -> None:  # pyright: ignore
     config = StatsbeatConfig.from_exporter(exporter)
     if config:
-        config_manager = get_configuration_manager()
-        if config_manager and config_manager.is_initialized():
-            config_manager.register_callback(get_statsbeat_configuration_callback)
-            config_manager.register_initial_configuration_callback(
-                partial(_initialize_statsbeat_from_initial_configuration, config)
-            )
-        else:
-            get_statsbeat_manager().initialize(config)
-
-
-def _initialize_statsbeat_from_initial_configuration(
-    base_config: StatsbeatConfig, settings: Dict[str, str]
-) -> None:
-    """Initialize SDK Stats after the first OneSettings request attempt."""
-    manager = get_statsbeat_manager()
-    if settings:
-        sdk_stats_enabled = evaluate_feature(_ONE_SETTINGS_FEATURE_SDK_STATS, settings)
-        if sdk_stats_enabled is False:
-            return
-        config = StatsbeatConfig.from_config(base_config, settings)
-    else:
-        config = base_config
-
-    if config:
-        manager.initialize(config)
+        manager = get_statsbeat_manager()
+        initialized = manager.initialize(config)
+        if initialized:
+            # Register the callback that will be invoked on configuration changes to statsbeat
+            # Is a NoOp if _ConfigurationManager not initialized
+            config_manager = get_configuration_manager()
+            # config_manager would be `None` if control plane is disabled
+            if config_manager:
+                config_manager.register_callback(get_statsbeat_configuration_callback)
 
 
 def get_statsbeat_configuration_callback(settings: Dict[str, str]):
@@ -64,7 +47,7 @@ def get_statsbeat_configuration_callback(settings: Dict[str, str]):
     # Check if SDK stats should be enabled based on configuration
     sdk_stats_enabled = evaluate_feature(_ONE_SETTINGS_FEATURE_SDK_STATS, settings)
     if sdk_stats_enabled is False:
-        # Only an explicit OneSettings disable overrides the built-in enabled default.
+        # Disable statsbeat only when explicitly configured.
         manager.shutdown()
         return
 
@@ -73,8 +56,7 @@ def get_statsbeat_configuration_callback(settings: Dict[str, str]):
     # It will only be None if never initialized
     if not current_config:
         return
-    # Get updated config from settings. Missing or invalid connection string configuration falls back
-    # to the current built-in Breeze connection string in StatsbeatConfig.from_config.
+    # Get updated config from settings
     updated_config = StatsbeatConfig.from_config(current_config, settings)
     if updated_config:
         manager.initialize(updated_config)
