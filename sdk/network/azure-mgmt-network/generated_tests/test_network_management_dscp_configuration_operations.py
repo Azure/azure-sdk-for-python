@@ -25,7 +25,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
         response = self.client.dscp_configuration.get(
             resource_group_name=resource_group.name,
             dscp_configuration_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7916,7 +7916,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7928,7 +7928,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
         response = self.client.dscp_configuration.begin_delete(
             resource_group_name=resource_group.name,
             dscp_configuration_name="str",
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7939,7 +7939,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
     def test_dscp_configuration_list(self, resource_group):
         response = self.client.dscp_configuration.list(
             resource_group_name=resource_group.name,
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7949,7 +7949,7 @@ class TestNetworkManagementDscpConfigurationOperations(AzureMgmtRecordedTestCase
     @recorded_by_proxy
     def test_dscp_configuration_list_all(self, resource_group):
         response = self.client.dscp_configuration.list_all(
-            api_version="2026-01-01",
+            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

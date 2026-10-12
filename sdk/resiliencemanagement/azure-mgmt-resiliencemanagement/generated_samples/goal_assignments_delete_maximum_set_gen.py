@@ -31,11 +31,11 @@ def main():
     )
 
     client.goal_assignments.begin_delete(
-        service_group_name="sg1",
-        goal_assignment_name="ga1",
+        service_group_name="production-sg",
+        goal_assignment_name="zonal-resiliency-goal",
     ).result()
 
 
-# x-ms-original-file: 2026-08-31-preview/GoalAssignments_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2026-10-01/GoalAssignments_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.resiliencemanagement import ResilienceManagementClient
+from azure.mgmt.network import NetworkManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-resiliencemanagement
+    pip install azure-mgmt-network
 # USAGE
-    python goal_templates_delete_minimum_set_gen.py
+    python virtual_network_appliance_capabilities_create_or_update_plipforwarders.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,17 +25,20 @@ from azure.mgmt.resiliencemanagement import ResilienceManagementClient
 
 
 def main():
-    client = ResilienceManagementClient(
+    client = NetworkManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.goal_templates.begin_delete(
-        service_group_name="sg1",
-        goal_template_name="gt1",
+    response = client.virtual_network_appliance_capabilities.begin_create_or_update(
+        resource_group_name="rg1",
+        virtual_network_appliance_name="test-vna",
+        capability_name="pl-ipforwarders",
+        parameters={"kind": "PLIPForwarders", "properties": {"ipVersion": "IPv6"}},
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-08-31-preview/GoalTemplates_Delete_MinimumSet_Gen.json
+# x-ms-original-file: 2026-03-01/VirtualNetworkApplianceCapabilities_CreateOrUpdate_PLIPForwarders.json
 if __name__ == "__main__":
     main()

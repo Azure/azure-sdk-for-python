@@ -62,8 +62,11 @@ themselves to apply these overrides.
 - **`azure-ai-projects-emit-from-typespec` Step 1g (install dev dependencies):** do not rerun
   `python -m pip install -r dev_requirements.txt`. `copilot-setup-steps.yml` already installed it
   for this branch during the setup phase, while it still had full network access. Rerunning it
-  live would make pip refetch the direct HTTPS wheel URL it contains even though the package is
-  already installed, and that host is not reachable from this firewalled session.
+  live only wastes time on repeated failed connections to `pypi.org`, which is not reachable from
+  this firewalled session (only the Azure SDK package feed on `pkgs.dev.azure.com` is). `azpysdk`
+  checks reinstall `dev_requirements.txt` themselves against that feed, so every requirement in
+  it must resolve by package name. Never add a direct wheel URL to it: pip re-downloads those on
+  every install, even when the package is already installed, and `azpysdk` then fails.
 - **`azure-ai-projects-emit-from-typespec` Step 2a (topic branch):** do not create a new topic
   branch. Proceed as if the user selected option 3, "Emit to current branch".
 - **`azure-ai-projects-emit-from-typespec` Step 2b (TypeSpec source):** proceed as if the user
@@ -98,6 +101,19 @@ themselves to apply these overrides.
   the overridden commands above) run exactly as written, including its own STOP conditions.
   Still perform Step 4's `git fetch`, but skip its `git switch -c <topic-branch> ...` command
   since there is no new topic branch to create.
+- **`azure-ai-projects-author-samples` Step 5 and `azure-ai-projects-author-tests` Step 3
+  (validation commands):** `azpysdk pylint .` runs as written, but two other commands behave
+  differently here than in CI, so run these variants instead:
+  - `python -m black --check --config ../../../eng/black-pyproject.toml <paths>`. Without the
+    repository's black configuration (120 columns), black falls back to its 88-column default and
+    reports most existing files as needing reformatting. Never reformat code with black's defaults.
+  - `PIP_NO_INPUT=1 azpysdk mypy --isolate .`, instead of `azpysdk mypy .`. CI runs mypy isolated.
+    In this session's shared `.venv`, mypy sees the installed `openai` package's real types and
+    reports hundreds of errors in existing samples that CI never sees. `--isolate` builds a
+    separate environment (under `.venv/`) from the Azure SDK package feed, which is reachable from
+    this session, and leaves the shared `.venv` untouched. If that environment cannot be created
+    (for example `401 Unauthorized` for a package file the feed has not cached), the command has
+    failed: stop and report it instead of retrying or falling back to the non-isolated form.
 - **`azure-ai-projects-update-changelog` Step 2 (fetch the latest released version):** do not
   call the PyPI JSON API; `pypi.org` is not reachable from this firewalled session. Derive
   `LATEST_PYPI_VERSION` instead from the same release tags this skill's own Step 4 already
