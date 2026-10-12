@@ -32,6 +32,9 @@ TIMEOUT_SAMPLES = {
 }
 """
 TIMEOUT_SAMPLES = {
+    "azure-ai-agentserver-core": {
+        "readiness_handler_sample.py": 10,
+    },
     "azure-eventgrid": {
         "consume_cloud_events_from_storage_queue.py": (10),
     },
