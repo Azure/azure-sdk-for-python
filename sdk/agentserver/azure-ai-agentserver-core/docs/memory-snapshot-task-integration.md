@@ -249,7 +249,9 @@ Registering decorated definitions is supported. Explicitly calling `.start()`
 or `.run()` before the deferred manager exists is not automatically queued,
 and restore does not rerun already completed `__main__`/lifespan statements.
 
-Two possible follow-ups remain unselected:
+Two possible approaches are documented below. Option B is now being evaluated
+in a separate controlled prototype; this PR's base implementation does not
+automatically acquire that prototype's API or release guarantees.
 
 ### Option A: explicit session-start callback
 
@@ -269,15 +271,167 @@ in the snapshot. It computes inputs from the real session and uses normal
 task submission semantics. Customers must move launch statements into it.
 It must be distinct from the existing pre-activation dependency callback.
 
+#### Execution order and customer migration
+
+```text
+Capture:
+  declare decorated functions
+  register session-start callback
+  warm process without invoking the callback
+  capture both function references
+
+Cold startup / restore:
+  bind real session and prepare dependencies
+  initialize TaskManager and perform existing recovery
+  invoke session-start callback
+  finish initialization without waiting for LRA completion
+```
+
+The task definition stays in imports or main construction. The actual
+`.start()` statements move into the callback. An unchanged capture-time
+submission still fails; the callback does not intercept it, rerun `__main__`,
+or serialize its arguments.
+
+The callback context needs the current session and, for restore, the
+materialization ID. Cold initialization has no platform restore ID. Inputs
+can therefore be computed from current session identity rather than retaining
+capture-time placeholder values.
+
+The existing `after_restore_handler` prepares dependencies before recovery.
+It must not be reordered to serve as this new callback, because recovered
+handlers can already be executing by the time the post-task callback runs.
+
+#### Results, failure, and repetition
+
+Await `.start()` only until submission is accepted. A result-dependent
+sequence should execute in a launched durable orchestration rather than block
+the restore hook on long-running completion.
+
+Successful same-materialization callbacks can be deduplicated by restore ID;
+an in-flight retry waits for the lifecycle lock. Failure before completion
+permits another callback attempt. External effects of a partially executed
+callback are not transactional.
+
+A fresh golden clone invokes the callback again. Its author must reconcile
+already-recovered jobs and any durable completion marker before creating
+another copy. The callback alone is not a once-per-logical-session job system.
+Resilience enablement remains independent; registration must not silently
+turn on a disabled task subsystem.
+
+#### Benefits and costs
+
+The contract is explicit, uses normal task handles after initialization, and
+computes session-correct inputs. The cost is author migration and a new API.
+It does not preserve arbitrary existing startup launch statements unchanged.
+The callback alternative remains unselected and is not included in the
+registry prototype.
+
 ### Option B: startup launch-intent registry
 
-During an explicitly identified capture-startup phase, record each supported
-non-blocking submission with task identity/options, frozen input, call identity
-policy, and ordering. Create no task record or lease during capture.
+Keep existing launch-only code:
 
-After task initialization/recovery, reconcile those intentions and submit
-appropriate work through the normal task path. This needs an honest deferred
-handle/receipt contract, not `None` or a falsely running task.
+```python
+run = await startup_work.start(input={"index": "catalog"})
+# Do not await run.result() to complete capture-time startup.
+```
+
+Intercept the call before TaskManager lookup or task-store access. Recording
+the intention requires no session, task record, lease, result future, or
+execution worker. The caller receives an explicitly deferred receipt and
+startup can continue.
+
+#### Collection boundary
+
+The prototype installs an owned registry at host construction. Collection is
+allowed only while absent/true mode intentionally defers the runtime, resilience
+is enabled, no manager is installed, and capture startup enrollment remains
+open. Before-snapshot freezes enrollment. After-restore also freezes it before
+dependency preparation.
+
+HTTP/WebSocket request execution is excluded through an ASGI request boundary.
+Missing-manager requests must not become queued startup work. Resilience
+opt-out, invalid inputs, cold-mode calls before manager initialization, and
+calls made before there is an owning host retain explicit failure behavior.
+Once the manager exists, `.start()` takes the ordinary path.
+
+A composed lifespan that submits work after entering the original SDK
+lifespan is a supported test placement: cold mode has a real manager, whereas
+capture mode enrolls the same statement without executing its body.
+
+#### Recorded data
+
+Record each call separately, not just each method:
+
+| Field | Purpose |
+|---|---|
+| Intention ID | Stable identity for this captured launch |
+| Function reference and declared options | Preserve the actual handler and per-call task options |
+| Frozen input and input type | Preserve submitted values and reconstruct supported typed input |
+| Explicit task ID or automatic-ID policy | Keep caller identity or bind it after session assignment |
+| Input ID and input precondition | Preserve chain semantics |
+| Submission order | Retain launch order, not completion order |
+
+Freeze JSON-compatible inputs at enrollment, including model serialization.
+Reject nonportable live objects/nonfinite values rather than retaining mutable
+references or silently changing them. Keep session-dependent behavior inside
+the task body or explicitly redesign its input; freezing an absent session ID
+does not make it correct after restoration.
+
+Captured functions/options remain process references. This is not a second
+storage backend or a serialization of arbitrary Python resources.
+
+#### Deferred receipt
+
+The prototype uses a distinct `DeferredTaskRun`, rather than pretending an
+already running `TaskRun` exists:
+
+| Operation | Before activation | After binding |
+|---|---|---|
+| `is_deferred` | True | False |
+| `intent_id` | Available, immutable | Same intention identity |
+| `task_id` | Explicit requested ID, or None for automatic ID | Actual submitted task ID |
+| `input_id` | Requested value or None | Accepted run's input ID |
+| `result()` / awaiting receipt | Explicit initialization error; never wait for capture to finish | Delegate to actual run |
+| `cancel()` | Cancel enrollment without task-store access | Delegate to actual run |
+
+Normal `TaskRun` keeps its existing shape and execution semantics, with an
+`is_deferred=False` observation. The prototype widens `.start()`'s annotated
+return to include the deferred receipt only for the newly supported case.
+That API/type shape needs review; it is not a claim of release compatibility.
+
+#### Activation and recovery
+
+```text
+Real-session binding and dependency preparation
+  -> provide captured startup definitions/options to the manager
+  -> initialize manager; immediately recover eligible persisted tasks
+  -> reconcile each recorded intention
+  -> bind receipt to recovered run or submit through ordinary .start()
+  -> finish restore without waiting for task completion
+```
+
+Automatic task IDs are derived from the captured intention and actual
+agent/session, so separate sessions do not collide and replacement of the
+same session can reconcile its original task. Explicit IDs are preserved;
+conflicts with unrelated records fail, rather than silently attaching.
+
+The prototype persists an internal intention marker with normal task creation.
+Initial/inline recovery uses that marker to recover the captured handler,
+input type, and options. Recovered run handles are retained through startup
+reconciliation even if a short one-shot task finishes and deletes its record
+before the registry is drained. Otherwise recovery followed by replay could
+start it twice in the same materialization.
+
+Accepted intentions are checkpointed by runtime/materialization. Same-ID
+retries do not resubmit valid accepted work; an unfinished drain retries
+remaining work. Runtime disposal invalidates acceptance, not the historical
+fact that a receipt already represented a submitted run. Partial submission
+failure follows the existing worker cleanup/configuration rollback path.
+
+No change to worker timing, task storage backend, lease fencing, or immediate
+best-effort discovery policy is required.
+
+#### Limits and rollout
 
 It cannot transparently complete startup that requires:
 
@@ -291,6 +445,21 @@ and capture. The same issue applies to `.start()` followed by `.result()`.
 Inputs tied to session identity/live resources need restore-time rebinding.
 An unawaited coroutine has not submitted anything to record.
 
+The registry only preserves launch intentions that actually execute the
+supported submission path before enrollment freezes. It does not replay all
+startup Python statements, supply capture-time task results, or repair missing
+dependencies of an immediately recovered task.
+
+Cancellation before capture can remain part of the template. Cancellation or
+completion that happens later in a session is not written back into the golden
+registry. Applications needing permanent logical-session cancellation or
+once-only effects must persist and reconcile that state externally.
+
+The advantage is preserving existing non-blocking startup launches without a
+new callback. Costs include the deferred receipt contract, collection boundary,
+input/identity policy, and explicit replay reconciliation. Testing must cover
+actual startup calls, not merely decorator registration.
+
 ### Shared duplicate-launch concern
 
 Both options must specify per-materialization versus once-per-logical-session
@@ -300,7 +469,9 @@ Stable task IDs help, but one-shot records are deleted at terminal exit.
 Once-per-session guarantees need durable reconciliation or application
 idempotency; neither option provides generic exactly-once execution.
 
-Neither option is implemented/tested in this change.
+Option A remains a proposal. Option B's separate prototype must be reported
+with its own local/hosted evidence before it is proposed for release or folded
+into the base implementation.
 
 ## Persistence boundaries and limitations
 
