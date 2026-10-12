@@ -504,9 +504,9 @@ Stable task IDs help, but one-shot records are deleted at terminal exit.
 Once-per-session guarantees need durable reconciliation or application
 idempotency; neither option provides generic exactly-once execution.
 
-Option A remains a proposal. Option B's separate prototype must be reported
-with its own local/hosted evidence before it is proposed for release or folded
-into the base implementation.
+Option A remains a proposal. Option B's separate restore-scoped prototype now
+has its own local and hosted evidence below. It is not yet included in this
+PR's base implementation or proposed as a released API.
 
 ## Persistence boundaries and limitations
 
@@ -536,7 +536,7 @@ typed-input behavior is not broadened or redesigned.
 | Independent sessions/concurrent tasks | Controlled hosted owner/worker/lease observations |
 | Cancellation | Controlled hosted terminal cancellation, no task resurrection during observation |
 | Natural idle/resume | Controlled hosted test: 120-second policy; after six quiet minutes, same session/capture with a new restore ID and worker, followed by renewed leases and completion |
-| Customer startup submissions (Q3) | Deferred; options above only |
+| Customer startup submissions (Q3), Option B | Separate prototype: real decorated startup submission deferred in capture, activated/reconciled after restore; verified with actual task leases |
 
 The controlled hosted test runs the existing resilient streaming sample.
 A test-only wrapper exits the process with code 137 after a committed
@@ -554,3 +554,38 @@ exact suspension timestamp or a guarantee of suspension at exactly 120 seconds.
 
 These observations do not replace CI, public rollout qualification, or an
 unobserved scenario.
+
+### Separate Option B prototype qualification
+
+The fixed registry prototype passed 220 selected local/package tests and nine
+controlled hosted cases. The hosted sample executes a real decorated startup
+task through a composed ordinary lifespan, not a session-start callback:
+
+| Case | Observation |
+|---|---|
+| Cold startup | Original non-snapshot task creation and lease behavior |
+| Absent-flag capture/restoration | Deferred intention/no runtime at capture; real leased launch after SDK activation |
+| Completed startup followed by natural idle | New restore ID and fresh startup task ID, without the prior create409/hook500 |
+| Crash while startup is unfinished | Original task ID retained, fencing generation increments, saved progress resumes |
+| Crash after startup completes | New materialization creates fresh startup work with a new automatic ID |
+| Checkpoint2 crash after startup completes | Original response resumes at phase3; fresh startup work completes |
+| Independent sessions and concurrent responses | Session-scoped identities, one manager/startup job and independent leases |
+| Response cancellation | Target response stays cancelled without resurrecting or cancelling the independent startup job |
+| Literal true SDK flag | Set in a separate controlled image; capture defers and restored work leases normally |
+
+Task-store observations establish actual lease acquisition/renewal, worker
+identity and fencing. Capture/restore logs establish materialization ordering.
+Crash runs prohibit request-driven recovery before independent task-store
+reclaim evidence. The idle run closes logs, waits six quiet minutes after all
+initial work completes, then invokes the same session once; exact suspension
+time is not inferred.
+
+The previous registry version failed after completed task deletion because it
+reused the same automatic ID. Including an available restore ID for **fresh**
+work resolved that hosted conflict while preserving unfinished-task recovery.
+Application completion state is not a generic exactly-once guarantee.
+
+Explicit caller IDs, same-restore failure/retry, and fault-injected discovery
+failure are covered by the local suite, not separate hosted fault runs.
+Setting true in the image does not prove automatic platform flag injection or
+support for a reserved agent-definition environment override.
