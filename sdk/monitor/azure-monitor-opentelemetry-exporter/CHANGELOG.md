@@ -15,6 +15,10 @@
   request fails or returns no valid SDK Stats connection string.
   ([#49072](https://github.com/Azure/azure-sdk-for-python/pull/49072))
 
+- Use OneSettings to route SDK Stats with the configured default or EU connection string, while retaining the
+  existing Breeze connection string when the setting is missing or invalid.
+  ([#49072](https://github.com/Azure/azure-sdk-for-python/pull/49072))
+
 ### Breaking Changes
 
 ### Bugs Fixed

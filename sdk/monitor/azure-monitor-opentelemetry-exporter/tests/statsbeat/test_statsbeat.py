@@ -208,7 +208,7 @@ class TestStatsbeat(unittest.TestCase):
         _statsbeat.get_statsbeat_configuration_callback(settings)
 
         # Assert
-        mock_evaluate_feature.assert_called_once()
+        mock_evaluate_feature.assert_called_once_with("FEATURE_SDKSTATS", settings)
         mock_get_manager.assert_called_once()
         mock_manager_instance.get_current_config.assert_called_once()
         mock_statsbeat_config_cls.from_config.assert_called_once_with(current_config, settings)
