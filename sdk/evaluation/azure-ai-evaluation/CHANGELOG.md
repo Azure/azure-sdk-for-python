@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added shared model runners and evaluation strategies for asset evaluators using decision models in Microsoft Foundry.
+
 ### Breaking Changes
 
 ### Bugs Fixed
