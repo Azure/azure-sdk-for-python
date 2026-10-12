@@ -15,6 +15,7 @@ from azure.ai.ml.entities import (
     AmlCompute,
     Compute,
     ComputeInstance,
+    FabricSparkCompute,
     KubernetesCompute,
     ManagedIdentityConfiguration,
     SynapseSparkCompute,
@@ -31,6 +32,113 @@ def _to_wire(rest_obj):
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
 class TestComputeEntity:
+    def test_fabric_spark_yaml_and_attach_body(self):
+        data = {
+            "type": "fabricspark",
+            "name": "fabricpoc01",
+            "fabric_workspace_id": "workspace-id",
+            "lakehouse_id": "lakehouse-id",
+            "environment_id": "environment-id",
+            "pool_id": "pool-id",
+            "identity": {"type": "system_assigned"},
+        }
+        compute = Compute._load(data)
+        assert isinstance(compute, FabricSparkCompute)
+        assert compute._to_dict() == data
+
+        body = _to_wire(compute._to_rest_object())
+        assert body["identity"]["type"] == "SystemAssigned"
+        assert body["properties"]["computeType"] == "FabricSpark"
+        assert body["properties"]["properties"] == {
+            "fabricWorkspaceId": "workspace-id",
+            "lakehouseId": "lakehouse-id",
+            "environmentId": "environment-id",
+            "poolId": "pool-id",
+        }
+
+    @pytest.mark.parametrize("missing_id", ["fabric_workspace_id", "lakehouse_id", "environment_id", "pool_id"])
+    def test_fabric_spark_requires_target_ids(self, missing_id):
+        from marshmallow import ValidationError
+
+        data = {
+            "type": "fabricspark",
+            "name": "fabricpoc01",
+            "fabric_workspace_id": "workspace-id",
+            "lakehouse_id": "lakehouse-id",
+            "environment_id": "environment-id",
+            "pool_id": "pool-id",
+        }
+        del data[missing_id]
+        with pytest.raises(ValidationError):
+            Compute._load(data)
+
+    @pytest.mark.parametrize(
+        "identity",
+        [
+            {"type": "SystemAssigned", "principalId": "compute-principal", "tenantId": "tenant"},
+            {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id": {}
+                },
+            },
+            {
+                "type": "SystemAssigned,UserAssigned",
+                "principalId": "compute-principal",
+                "userAssignedIdentities": {
+                    "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id": {}
+                },
+            },
+        ],
+    )
+    def test_fabric_spark_arm_response_round_trip(self, identity):
+        response = {
+            "id": "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.MachineLearningServices/workspaces/ws/computes/fabricpoc01",
+            "name": "fabricpoc01",
+            "location": "eastus2euap",
+            "identity": identity,
+            "properties": {
+                "computeType": "FabricSpark",
+                "description": "Custom pool",
+                "isAttachedCompute": True,
+                "disableLocalAuth": False,
+                "modifiedOn": "2026-10-12T18:58:17Z",
+                "provisioningState": "Succeeded",
+                "properties": {
+                    "fabricWorkspaceId": "workspace-id",
+                    "lakehouseId": "lakehouse-id",
+                    "environmentId": "environment-id",
+                    "poolId": "pool-id",
+                    "poolName": "CustomPool",
+                },
+            },
+        }
+        result = Compute._from_rest_object(ComputeResource(response))
+        assert isinstance(result, FabricSparkCompute)
+        assert result.name == "fabricpoc01"
+        assert result.id == response["id"]
+        assert result.location == "eastus2euap"
+        assert result.provisioning_state == "Succeeded"
+        assert result.is_attached_compute is True
+        assert result._to_dict()["is_attached_compute"] is True
+        assert result._to_dict()["disable_local_auth"] is False
+        assert "modified_on" in result._to_dict()
+        if identity.get("principalId"):
+            assert result._to_dict()["identity"]["principal_id"] == identity["principalId"]
+        assert result.description == "Custom pool"
+        assert result.pool_name == "CustomPool"
+        assert (result.fabric_workspace_id, result.lakehouse_id, result.environment_id, result.pool_id) == (
+            "workspace-id",
+            "lakehouse-id",
+            "environment-id",
+            "pool-id",
+        )
+        assert result.identity.principal_id == identity.get("principalId")
+        assert result.identity.type.replace("_", "").lower() == identity["type"].lower()
+        body = _to_wire(result._to_rest_object())
+        assert body["properties"]["properties"]["poolId"] == "pool-id"
+        assert "poolName" not in body["properties"]["properties"]
+
     def test_compute_from_rest(self):
         with open("tests/test_configs/compute/compute-kubernetes.yaml", "r") as f:
             data = yaml.safe_load(f)

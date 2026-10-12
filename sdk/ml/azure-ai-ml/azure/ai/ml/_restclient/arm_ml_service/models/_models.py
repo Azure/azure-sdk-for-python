@@ -751,6 +751,64 @@ class Compute(_Model):
         super().__init__(*args, **kwargs)
 
 
+class FabricSparkProperties(_Model):
+    """An existing Fabric workspace, Lakehouse, published Environment, and custom Spark pool."""
+
+    fabric_workspace_id: str = rest_field(
+        name="fabricWorkspaceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    lakehouse_id: str = rest_field(name="lakehouseId", visibility=["read", "create", "update", "delete", "query"])
+    environment_id: str = rest_field(name="environmentId", visibility=["read", "create", "update", "delete", "query"])
+    pool_id: str = rest_field(name="poolId", visibility=["read", "create", "update", "delete", "query"])
+    pool_name: Optional[str] = rest_field(name="poolName", visibility=["read"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        fabric_workspace_id: str,
+        lakehouse_id: str,
+        environment_id: str,
+        pool_id: str,
+        pool_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FabricSpark(Compute, discriminator="FabricSpark"):
+    """An attached Fabric custom Spark pool."""
+
+    properties: Optional["_models.FabricSparkProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    compute_type: Literal[ComputeType.FABRIC_SPARK] = rest_discriminator(
+        name="computeType", visibility=["read", "create", "update", "delete", "query"]
+    )  # type: ignore
+
+    @overload
+    def __init__(
+        self,
+        *,
+        compute_location: Optional[str] = None,
+        description: Optional[str] = None,
+        resource_id: Optional[str] = None,
+        disable_local_auth: Optional[bool] = None,
+        properties: Optional["_models.FabricSparkProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.compute_type = ComputeType.FABRIC_SPARK  # type: ignore
+
+
 class AKS(Compute, discriminator="AKS"):
     """A Machine Learning compute based on AKS.
 

@@ -425,6 +425,8 @@ class ComputeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DATA_LAKE_ANALYTICS."""
     SYNAPSE_SPARK = "SynapseSpark"
     """SYNAPSE_SPARK."""
+    FABRIC_SPARK = "FabricSpark"
+    """FABRIC_SPARK."""
 
 
 class ComputeWeekDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
