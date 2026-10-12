@@ -2,6 +2,24 @@
 
 ## 2.9.0 (Unreleased)
 
+### Features Added
+
+* Added optional `HostedAgentDefinition.enable_memory_snapshot` to start hosted-agent sessions from a snapshot of the agent's initialized process.
+* Added preview `VoiceAgentTransport` enum with `WEBSOCKET` and `WEBRTC` values.
+
+### Breaking Changes
+
+All breaking changes affect preview APIs.
+
+Breaking changes in preview classes:
+
+* Renamed `CreateTeamsPhoneExtensionTelephonyBindingRequest`, `TeamsPhoneExtensionTelephonyBinding`, and `TeamsPhoneExtensionTelephonyBindingListItem` to `CreateTeamsPhoneExtensibilityTelephonyBindingRequest`, `TeamsPhoneExtensibilityTelephonyBinding`, and `TeamsPhoneExtensibilityTelephonyBindingListItem`, respectively.
+* Renamed `TEAMS_PHONE_EXTENSION` to `TEAMS_PHONE_EXTENSIBILITY` in `TelephonyProvider` and `TelephonyCallLifecycleEventSource`; the wire value changed from `teams_phone_extension` to `teams_phone_extensibility`.
+
+### Bugs Fixed
+
+* Fixed Agent Optimization polling to recognize the service's `cancelled` status as terminal while preserving that spelling in the poller's public `status()` result.
+
 ### Sample updates
 
 * Updated Voice Agent samples to use `FOUNDRY_VOICE_AGENT_MODEL` for model configuration, retaining `FOUNDRY_VOICE_MODEL` as a deprecated fallback in `sample_voice_agent_with_tools.py`.
