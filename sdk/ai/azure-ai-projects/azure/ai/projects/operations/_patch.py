@@ -10,6 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from functools import wraps
 import inspect
+import sys
 from typing import Any, Callable, List
 from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _BETA_OPERATION_FEATURE_HEADERS, _has_header_case_insensitive
 from .._realtime import (
@@ -29,6 +30,15 @@ from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
 from ._patch_models import BetaModelsOperations
+from ._patch_rle import (
+    OpenEnvClient,
+    OpenEnvInstance,
+    OpenEnvWebSocket,
+    RLEOperations,
+    RLEQuotaExceededError,
+    RLEInstanceAcquireTimeoutError,
+    RLERolloutError,
+)
 from ._operations import (
     BetaEvaluationTaxonomiesOperations,
     BetaInsightsOperations,
@@ -40,6 +50,13 @@ from ._operations import (
     BetaVoiceAgentsConversationsOperations,
     BetaVoiceAgentsOperations as GeneratedBetaVoiceAgentsOperations,
     BetaVoiceAgentsTelephonyOperations,
+)
+
+_RLE_GENERATED_OPERATION_NAMES = (
+    "RLEnvironmentsOperations",
+    "RLEInstanceGroupsOperations",
+    "RLEInstancesOperations",
+    "RLEInstanceRuntimeOperations",
 )
 
 
@@ -228,6 +245,13 @@ __all__: List[str] = [
     "BetaRealtimeConnection",
     "BetaRealtimeConnectionManager",
     "ServerEvent",
+    "OpenEnvClient",
+    "OpenEnvInstance",
+    "OpenEnvWebSocket",
+    "RLEOperations",
+    "RLEQuotaExceededError",
+    "RLEInstanceAcquireTimeoutError",
+    "RLERolloutError",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
@@ -239,3 +263,9 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+    operations_module = sys.modules[__package__]
+    operations_module.__all__[:] = [
+        name for name in operations_module.__all__ if name not in _RLE_GENERATED_OPERATION_NAMES
+    ]
+    for name in _RLE_GENERATED_OPERATION_NAMES:
+        operations_module.__dict__.pop(name, None)

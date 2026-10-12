@@ -119,6 +119,9 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         super().__init__(endpoint=endpoint, credential=credential, allow_preview=allow_preview, **kwargs)
 
+        if not allow_preview and hasattr(self, "rle"):
+            del self.rle
+
         self.telemetry = TelemetryOperations(self)  # type: ignore
 
     def _get_openai_api_key(self, kwargs: dict):
@@ -346,7 +349,9 @@ class _OpenAILoggingTransport(httpx2.AsyncHTTPTransport):
             _openai_transport_logger.debug("Body: [Content exists]")
 
 
-__all__: List[str] = ["AIProjectClient"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "AIProjectClient",
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

@@ -25,6 +25,7 @@ from .operations import (
     EvaluationRulesOperations,
     EvaluatorsOperations,
     IndexesOperations,
+    RLEOperations,
     ToolboxesOperations,
 )
 
@@ -116,6 +117,7 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring
         self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.rle = RLEOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluators = EvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.toolboxes = ToolboxesOperations(self._client, self._config, self._serialize, self._deserialize)
 

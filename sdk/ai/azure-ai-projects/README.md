@@ -40,6 +40,7 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 * **Manage memory stores (preview)** for Agent conversations, using `.beta.memory_stores` operations.
 * **Register and manage local AI model weights (preview)** using `.beta.models` operations.
 * **Run Red Team scans (preview)** to identify risks associated with your generative AI application, using `.beta.red_teams` operations.
+* **Use Reinforcement Learning Environments (RLE) (preview)** through `.rle` with `allow_preview=True` to create, manage, and run hosted environments, including text and binary OpenEnv WebSocket interactions.
 * **Create and manage routines (preview)** that execute triggered actions based on configured conditions, using `.beta.routines` operations.
 * **Manage skills (preview)** as reusable capabilities that can be included in toolboxes and agents, using `.beta.skills` operations.
 
@@ -188,6 +189,7 @@ The table below lists the operation groups supported by the client library, with
 | Memory stores (preview) | [What is memory?](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-memory?tabs=conversational-agent) | `samples/memories/` |
 | Models (preview) | | `samples/models/` |
 | Red teams (preview) | | `samples/red_team/` |
+| Reinforcement Learning Environments (RLE) (preview) | | `samples/rle/` |
 | Responses | [Responses API](https://platform.openai.com/docs/api-reference/responses) | `samples/responses/` |
 | Routines (preview) | [Routines overview](https://learn.microsoft.com/azure/foundry/agents/concepts/routines) | `samples/hosted_agents/` |
 | Sessions | [Manage hosted sessions](https://learn.microsoft.com/azure/foundry/agents/how-to/manage-hosted-sessions?pivots=python) | `samples/hosted_agents/` |

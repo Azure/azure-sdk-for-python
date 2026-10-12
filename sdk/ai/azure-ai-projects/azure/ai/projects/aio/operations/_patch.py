@@ -8,6 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+import sys
 from typing import Any, List
 from ._patch_agents_async import AgentsOperations, BetaAgentsOperations
 from ._patch_agent_insights_async import BetaAgentInsightMonitorsOperations
@@ -18,6 +19,12 @@ from ._patch_telemetry_async import TelemetryOperations
 from ._patch_connections_async import ConnectionsOperations
 from ._patch_memories_async import BetaMemoryStoresOperations
 from ._patch_models_async import BetaModelsOperations
+from ._patch_rle_async import (
+    AsyncOpenEnvClient,
+    AsyncOpenEnvInstance,
+    AsyncOpenEnvWebSocket,
+    RLEOperations,
+)
 from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
 from .._realtime import (
     AsyncBetaRealtime,
@@ -38,6 +45,13 @@ from ._operations import (
     BetaVoiceAgentsConversationsOperations,
     BetaVoiceAgentsOperations as GeneratedBetaVoiceAgentsOperations,
     BetaVoiceAgentsTelephonyOperations,
+)
+
+_RLE_GENERATED_OPERATION_NAMES = (
+    "RLEnvironmentsOperations",
+    "RLEInstanceGroupsOperations",
+    "RLEInstancesOperations",
+    "RLEInstanceRuntimeOperations",
 )
 
 
@@ -127,6 +141,9 @@ __all__: List[str] = [
     "AsyncBetaRealtime",
     "AsyncBetaRealtimeConnection",
     "AsyncBetaRealtimeConnectionManager",
+    "AsyncOpenEnvClient",
+    "AsyncOpenEnvInstance",
+    "AsyncOpenEnvWebSocket",
     "BetaAgentInsightMonitorsOperations",
     "BetaAgentsOperations",
     "BetaEvaluationTaxonomiesOperations",
@@ -148,6 +165,7 @@ __all__: List[str] = [
     "EvaluatorsOperations",
     "EvaluationRulesOperations",
     "ServerEvent",
+    "RLEOperations",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
@@ -159,3 +177,9 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+    operations_module = sys.modules[__package__]
+    operations_module.__all__[:] = [
+        name for name in operations_module.__all__ if name not in _RLE_GENERATED_OPERATION_NAMES
+    ]
+    for name in _RLE_GENERATED_OPERATION_NAMES:
+        operations_module.__dict__.pop(name, None)

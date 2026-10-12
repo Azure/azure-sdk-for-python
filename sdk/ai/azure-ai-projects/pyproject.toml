@@ -37,6 +37,7 @@ dependencies = [
     "azure-identity>=1.15.0",
     "openai>=3.0.0",
     "azure-storage-blob>=12.15.0",
+    "websockets>=14.0",
 ]
 dynamic = [
 "version", "readme"
