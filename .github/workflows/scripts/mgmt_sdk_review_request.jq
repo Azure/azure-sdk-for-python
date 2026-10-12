@@ -1,3 +1,5 @@
+# cspell:ignore tojson
+
 def envelope:
   {request: ({operation: $operation, draft: .} | tojson)};
 
