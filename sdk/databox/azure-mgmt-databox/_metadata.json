@@ -3,9 +3,9 @@
   "apiVersions": {
     "Microsoft.DataBox": "2025-07-01"
   },
-  "commit": "801a60cdad2669e8f824fedfbabbfe7f7093b940",
+  "commit": "53fc8d667c2b484f58c938166b1cd146e69467c5",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/databox/resource-manager/Microsoft.DataBox/DataBox",
-  "emitterVersion": "0.63.3",
-  "httpClientPythonVersion": "^0.34.2"
+  "emitterVersion": "0.63.9",
+  "httpClientPythonVersion": "0.38.1"
 }

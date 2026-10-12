@@ -24,7 +24,6 @@ if TYPE_CHECKING:
         CopyStatus,
         CreatedByType,
         CustomerResolutionCode,
-        DataAccountType,
         DataCenterCode,
         DelayNotificationStatus,
         DoubleEncryption,
@@ -38,7 +37,6 @@ if TYPE_CHECKING:
         PortalDelayErrorCode,
         ReverseShippingDetailsEditStatus,
         ReverseTransportPreferenceEditStatus,
-        SkuName,
         StageName,
         StageStatus,
         TransferConfigurationType,
@@ -65,9 +63,9 @@ class AdditionalErrorInfo(TypedDict, total=False):
 class AvailableSkuRequest(TypedDict, total=False):
     """The filters for showing the available skus.
 
-    :ivar transfer_type: Type of the transfer. Required. Known values are: "ImportToAzure" and
+    :ivar transferType: Type of the transfer. Required. Known values are: "ImportToAzure" and
      "ExportFromAzure".
-    :vartype transfer_type: Union[str, "TransferType"]
+    :vartype transferType: Union[str, "TransferType"]
     :ivar country: ISO country code. Country for hardware shipment. For codes check:
      `https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements
      <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements>`_.
@@ -78,8 +76,8 @@ class AvailableSkuRequest(TypedDict, total=False):
      <https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01>`_.
      Required.
     :vartype location: str
-    :ivar sku_names: Sku Names to filter for available skus.
-    :vartype sku_names: list[Union[str, "SkuName"]]
+    :ivar skuNames: Sku Names to filter for available skus.
+    :vartype skuNames: list[Union[str, "SkuName"]]
     """
 
     transferType: Required[Union[str, "TransferType"]]
@@ -101,12 +99,12 @@ class AvailableSkuRequest(TypedDict, total=False):
 class AzureFileFilterDetails(TypedDict, total=False):
     """Filter details to transfer Azure files.
 
-    :ivar file_prefix_list: Prefix list of the Azure files to be transferred.
-    :vartype file_prefix_list: list[str]
-    :ivar file_path_list: List of full path of the files to be transferred.
-    :vartype file_path_list: list[str]
-    :ivar file_share_list: List of file shares to be transferred.
-    :vartype file_share_list: list[str]
+    :ivar filePrefixList: Prefix list of the Azure files to be transferred.
+    :vartype filePrefixList: list[str]
+    :ivar filePathList: List of full path of the files to be transferred.
+    :vartype filePathList: list[str]
+    :ivar fileShareList: List of file shares to be transferred.
+    :vartype fileShareList: list[str]
     """
 
     filePrefixList: list[str]
@@ -120,12 +118,12 @@ class AzureFileFilterDetails(TypedDict, total=False):
 class BlobFilterDetails(TypedDict, total=False):
     """Filter details to transfer Azure Blobs.
 
-    :ivar blob_prefix_list: Prefix list of the Azure blobs to be transferred.
-    :vartype blob_prefix_list: list[str]
-    :ivar blob_path_list: List of full path of the blobs to be transferred.
-    :vartype blob_path_list: list[str]
-    :ivar container_list: List of blob containers to be transferred.
-    :vartype container_list: list[str]
+    :ivar blobPrefixList: Prefix list of the Azure blobs to be transferred.
+    :vartype blobPrefixList: list[str]
+    :ivar blobPathList: List of full path of the blobs to be transferred.
+    :vartype blobPathList: list[str]
+    :ivar containerList: List of blob containers to be transferred.
+    :vartype containerList: list[str]
     """
 
     blobPrefixList: list[str]
@@ -150,8 +148,8 @@ class CancellationReason(TypedDict, total=False):
 class CloudError(TypedDict, total=False):
     """Provides additional information about an http error response.
 
-    :ivar additional_info: Gets or sets additional error info.
-    :vartype additional_info: list["AdditionalErrorInfo"]
+    :ivar additionalInfo: Gets or sets additional error info.
+    :vartype additionalInfo: list["AdditionalErrorInfo"]
     :ivar code: Error code.
     :vartype code: str
     :ivar details: Gets or sets details for the error.
@@ -177,18 +175,18 @@ class CloudError(TypedDict, total=False):
 class ContactDetails(TypedDict, total=False):
     """Contact Details.
 
-    :ivar contact_name: Contact name of the person. Required.
-    :vartype contact_name: str
+    :ivar contactName: Contact name of the person. Required.
+    :vartype contactName: str
     :ivar phone: Phone number of the contact person. Required.
     :vartype phone: str
-    :ivar phone_extension: Phone extension number of the contact person.
-    :vartype phone_extension: str
+    :ivar phoneExtension: Phone extension number of the contact person.
+    :vartype phoneExtension: str
     :ivar mobile: Mobile number of the contact person.
     :vartype mobile: str
-    :ivar email_list: List of Email-ids to be notified about job progress. Required.
-    :vartype email_list: list[str]
-    :ivar notification_preference: Notification preference for a job stage.
-    :vartype notification_preference: list["NotificationPreference"]
+    :ivar emailList: List of Email-ids to be notified about job progress. Required.
+    :vartype emailList: list[str]
+    :ivar notificationPreference: Notification preference for a job stage.
+    :vartype notificationPreference: list["NotificationPreference"]
     """
 
     contactName: Required[str]
@@ -208,12 +206,12 @@ class ContactDetails(TypedDict, total=False):
 class ContactInfo(TypedDict, total=False):
     """Contact Info.
 
-    :ivar contact_name: Contact name of the person. Required.
-    :vartype contact_name: str
+    :ivar contactName: Contact name of the person. Required.
+    :vartype contactName: str
     :ivar phone: Phone number of the contact person. Required.
     :vartype phone: str
-    :ivar phone_extension: Phone extension number of the contact person.
-    :vartype phone_extension: str
+    :ivar phoneExtension: Phone extension number of the contact person.
+    :vartype phoneExtension: str
     :ivar mobile: Mobile number of the contact person.
     :vartype mobile: str
     """
@@ -231,43 +229,42 @@ class ContactInfo(TypedDict, total=False):
 class CopyProgress(TypedDict, total=False):
     """Copy progress.
 
-    :ivar storage_account_name: Name of the storage account. This will be empty for data account
+    :ivar storageAccountName: Name of the storage account. This will be empty for data account
      types other than storage account.
-    :vartype storage_account_name: str
-    :ivar transfer_type: Transfer type of data. Known values are: "ImportToAzure" and
+    :vartype storageAccountName: str
+    :ivar transferType: Transfer type of data. Known values are: "ImportToAzure" and
      "ExportFromAzure".
-    :vartype transfer_type: Union[str, "TransferType"]
-    :ivar data_account_type: Data Account Type. Known values are: "StorageAccount" and
-     "ManagedDisk".
-    :vartype data_account_type: Union[str, "DataAccountType"]
-    :ivar account_id: Id of the account where the data needs to be uploaded.
-    :vartype account_id: str
-    :ivar bytes_processed: To indicate bytes transferred.
-    :vartype bytes_processed: int
-    :ivar total_bytes_to_process: Total amount of data to be processed by the job.
-    :vartype total_bytes_to_process: int
-    :ivar files_processed: Number of files processed.
-    :vartype files_processed: int
-    :ivar total_files_to_process: Total files to process.
-    :vartype total_files_to_process: int
-    :ivar invalid_files_processed: Number of files not adhering to azure naming conventions which
+    :vartype transferType: Union[str, "TransferType"]
+    :ivar dataAccountType: Data Account Type. Known values are: "StorageAccount" and "ManagedDisk".
+    :vartype dataAccountType: Union[str, "DataAccountType"]
+    :ivar accountId: Id of the account where the data needs to be uploaded.
+    :vartype accountId: str
+    :ivar bytesProcessed: To indicate bytes transferred.
+    :vartype bytesProcessed: int
+    :ivar totalBytesToProcess: Total amount of data to be processed by the job.
+    :vartype totalBytesToProcess: int
+    :ivar filesProcessed: Number of files processed.
+    :vartype filesProcessed: int
+    :ivar totalFilesToProcess: Total files to process.
+    :vartype totalFilesToProcess: int
+    :ivar invalidFilesProcessed: Number of files not adhering to azure naming conventions which
      were processed by automatic renaming.
-    :vartype invalid_files_processed: int
-    :ivar invalid_file_bytes_uploaded: Total amount of data not adhering to azure naming
-     conventions which were processed by automatic renaming.
-    :vartype invalid_file_bytes_uploaded: int
-    :ivar renamed_container_count: Number of folders not adhering to azure naming conventions which
+    :vartype invalidFilesProcessed: int
+    :ivar invalidFileBytesUploaded: Total amount of data not adhering to azure naming conventions
+     which were processed by automatic renaming.
+    :vartype invalidFileBytesUploaded: int
+    :ivar renamedContainerCount: Number of folders not adhering to azure naming conventions which
      were processed by automatic renaming.
-    :vartype renamed_container_count: int
-    :ivar files_errored_out: Number of files which could not be copied.
-    :vartype files_errored_out: int
-    :ivar directories_errored_out: To indicate directories errored out in the job.
-    :vartype directories_errored_out: int
-    :ivar invalid_directories_processed: To indicate directories renamed.
-    :vartype invalid_directories_processed: int
-    :ivar is_enumeration_in_progress: To indicate if enumeration of data is in progress. Until this
-     is true, the TotalBytesToProcess may not be valid.
-    :vartype is_enumeration_in_progress: bool
+    :vartype renamedContainerCount: int
+    :ivar filesErroredOut: Number of files which could not be copied.
+    :vartype filesErroredOut: int
+    :ivar directoriesErroredOut: To indicate directories errored out in the job.
+    :vartype directoriesErroredOut: int
+    :ivar invalidDirectoriesProcessed: To indicate directories renamed.
+    :vartype invalidDirectoriesProcessed: int
+    :ivar isEnumerationInProgress: To indicate if enumeration of data is in progress. Until this is
+     true, the TotalBytesToProcess may not be valid.
+    :vartype isEnumerationInProgress: bool
     :ivar error: Error, if any, in the stage.
     :vartype error: "CloudError"
     :ivar actions: Available actions on the job.
@@ -318,12 +315,12 @@ class CopyProgress(TypedDict, total=False):
 class CreateJobValidations(TypedDict, total=False):
     """It does all pre-job creation validations.
 
-    :ivar individual_request_details: List of request details contain validationType and its
-     request as key and value respectively. Required.
-    :vartype individual_request_details: list["ValidationInputRequest"]
-    :ivar validation_category: Identify the nature of validation. Required. Default value is
+    :ivar individualRequestDetails: List of request details contain validationType and its request
+     as key and value respectively. Required.
+    :vartype individualRequestDetails: list["ValidationInputRequest"]
+    :ivar validationCategory: Identify the nature of validation. Required. Default value is
      "JobCreationValidation".
-    :vartype validation_category: Literal["JobCreationValidation"]
+    :vartype validationCategory: Literal["JobCreationValidation"]
     """
 
     individualRequestDetails: Required[list["ValidationInputRequest"]]
@@ -336,17 +333,17 @@ class CreateJobValidations(TypedDict, total=False):
 class CreateOrderLimitForSubscriptionValidationRequest(TypedDict, total=False):  # pylint: disable=name-too-long
     """Request to validate create order limit for current subscription.
 
-    :ivar device_type: Device type to be used for the job. Required. Known values are: "DataBox",
+    :ivar deviceType: Device type to be used for the job. Required. Known values are: "DataBox",
      "DataBoxDisk", "DataBoxHeavy", and "DataBoxCustomerDisk".
-    :vartype device_type: Union[str, "SkuName"]
+    :vartype deviceType: Union[str, "SkuName"]
     :ivar model: The customer friendly name of the combination of version and capacity of the
      device. This field is necessary only at the time of ordering the newer generation device i.e.
      AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
      "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
     :vartype model: Union[str, "ModelName"]
-    :ivar validation_type: Identifies the type of validation request. Required. Identify request
-     and response of create order limit for subscription validation.
-    :vartype validation_type: Literal[ValidationInputDiscriminator.VALIDATE_CREATE_ORDER_LIMIT]
+    :ivar validationType: Identifies the type of validation request. Required. Identify request and
+     response of create order limit for subscription validation.
+    :vartype validationType: Literal[ValidationInputDiscriminator.VALIDATE_CREATE_ORDER_LIMIT]
     """
 
     deviceType: Required[Union[str, "SkuName"]]
@@ -365,15 +362,15 @@ class CreateOrderLimitForSubscriptionValidationRequest(TypedDict, total=False): 
 class DataBoxAccountCopyLogDetails(TypedDict, total=False):
     """Copy log details for a storage account of a DataBox job.
 
-    :ivar account_name: Account name.
-    :vartype account_name: str
-    :ivar copy_log_link: Link for copy logs.
-    :vartype copy_log_link: str
-    :ivar copy_verbose_log_link: Link for copy verbose logs. This will be set only when
+    :ivar accountName: Account name.
+    :vartype accountName: str
+    :ivar copyLogLink: Link for copy logs.
+    :vartype copyLogLink: str
+    :ivar copyVerboseLogLink: Link for copy verbose logs. This will be set only when
      LogCollectionLevel is set to Verbose.
-    :vartype copy_verbose_log_link: str
-    :ivar copy_log_details_type: Indicates the type of job details. Required. Data Box orders.
-    :vartype copy_log_details_type: Literal[ClassDiscriminator.DATA_BOX]
+    :vartype copyVerboseLogLink: str
+    :ivar copyLogDetailsType: Indicates the type of job details. Required. Data Box orders.
+    :vartype copyLogDetailsType: Literal[ClassDiscriminator.DATA_BOX]
     """
 
     accountName: str
@@ -389,15 +386,15 @@ class DataBoxAccountCopyLogDetails(TypedDict, total=False):
 class DataBoxCustomerDiskCopyLogDetails(TypedDict, total=False):
     """Copy Log Details for customer disk.
 
-    :ivar serial_number: Disk Serial Number.
-    :vartype serial_number: str
-    :ivar error_log_link: Link for copy error logs.
-    :vartype error_log_link: str
-    :ivar verbose_log_link: Link for copy verbose logs.
-    :vartype verbose_log_link: str
-    :ivar copy_log_details_type: Indicates the type of job details. Required. Data Box Customer
-     Disk orders.
-    :vartype copy_log_details_type: Literal[ClassDiscriminator.DATA_BOX_CUSTOMER_DISK]
+    :ivar serialNumber: Disk Serial Number.
+    :vartype serialNumber: str
+    :ivar errorLogLink: Link for copy error logs.
+    :vartype errorLogLink: str
+    :ivar verboseLogLink: Link for copy verbose logs.
+    :vartype verboseLogLink: str
+    :ivar copyLogDetailsType: Indicates the type of job details. Required. Data Box Customer Disk
+     orders.
+    :vartype copyLogDetailsType: Literal[ClassDiscriminator.DATA_BOX_CUSTOMER_DISK]
     """
 
     serialNumber: str
@@ -413,55 +410,54 @@ class DataBoxCustomerDiskCopyLogDetails(TypedDict, total=False):
 class DataBoxCustomerDiskCopyProgress(CopyProgress):
     """DataBox CustomerDisk Copy Progress.
 
-    :ivar storage_account_name: Name of the storage account. This will be empty for data account
+    :ivar storageAccountName: Name of the storage account. This will be empty for data account
      types other than storage account.
-    :vartype storage_account_name: str
-    :ivar transfer_type: Transfer type of data. Known values are: "ImportToAzure" and
+    :vartype storageAccountName: str
+    :ivar transferType: Transfer type of data. Known values are: "ImportToAzure" and
      "ExportFromAzure".
-    :vartype transfer_type: Union[str, "TransferType"]
-    :ivar data_account_type: Data Account Type. Known values are: "StorageAccount" and
-     "ManagedDisk".
-    :vartype data_account_type: Union[str, "DataAccountType"]
-    :ivar account_id: Id of the account where the data needs to be uploaded.
-    :vartype account_id: str
-    :ivar bytes_processed: To indicate bytes transferred.
-    :vartype bytes_processed: int
-    :ivar total_bytes_to_process: Total amount of data to be processed by the job.
-    :vartype total_bytes_to_process: int
-    :ivar files_processed: Number of files processed.
-    :vartype files_processed: int
-    :ivar total_files_to_process: Total files to process.
-    :vartype total_files_to_process: int
-    :ivar invalid_files_processed: Number of files not adhering to azure naming conventions which
+    :vartype transferType: Union[str, "TransferType"]
+    :ivar dataAccountType: Data Account Type. Known values are: "StorageAccount" and "ManagedDisk".
+    :vartype dataAccountType: Union[str, "DataAccountType"]
+    :ivar accountId: Id of the account where the data needs to be uploaded.
+    :vartype accountId: str
+    :ivar bytesProcessed: To indicate bytes transferred.
+    :vartype bytesProcessed: int
+    :ivar totalBytesToProcess: Total amount of data to be processed by the job.
+    :vartype totalBytesToProcess: int
+    :ivar filesProcessed: Number of files processed.
+    :vartype filesProcessed: int
+    :ivar totalFilesToProcess: Total files to process.
+    :vartype totalFilesToProcess: int
+    :ivar invalidFilesProcessed: Number of files not adhering to azure naming conventions which
      were processed by automatic renaming.
-    :vartype invalid_files_processed: int
-    :ivar invalid_file_bytes_uploaded: Total amount of data not adhering to azure naming
-     conventions which were processed by automatic renaming.
-    :vartype invalid_file_bytes_uploaded: int
-    :ivar renamed_container_count: Number of folders not adhering to azure naming conventions which
+    :vartype invalidFilesProcessed: int
+    :ivar invalidFileBytesUploaded: Total amount of data not adhering to azure naming conventions
+     which were processed by automatic renaming.
+    :vartype invalidFileBytesUploaded: int
+    :ivar renamedContainerCount: Number of folders not adhering to azure naming conventions which
      were processed by automatic renaming.
-    :vartype renamed_container_count: int
-    :ivar files_errored_out: Number of files which could not be copied.
-    :vartype files_errored_out: int
-    :ivar directories_errored_out: To indicate directories errored out in the job.
-    :vartype directories_errored_out: int
-    :ivar invalid_directories_processed: To indicate directories renamed.
-    :vartype invalid_directories_processed: int
-    :ivar is_enumeration_in_progress: To indicate if enumeration of data is in progress. Until this
-     is true, the TotalBytesToProcess may not be valid.
-    :vartype is_enumeration_in_progress: bool
+    :vartype renamedContainerCount: int
+    :ivar filesErroredOut: Number of files which could not be copied.
+    :vartype filesErroredOut: int
+    :ivar directoriesErroredOut: To indicate directories errored out in the job.
+    :vartype directoriesErroredOut: int
+    :ivar invalidDirectoriesProcessed: To indicate directories renamed.
+    :vartype invalidDirectoriesProcessed: int
+    :ivar isEnumerationInProgress: To indicate if enumeration of data is in progress. Until this is
+     true, the TotalBytesToProcess may not be valid.
+    :vartype isEnumerationInProgress: bool
     :ivar error: Error, if any, in the stage.
     :vartype error: "CloudError"
     :ivar actions: Available actions on the job.
     :vartype actions: list[Union[str, "CustomerResolutionCode"]]
-    :ivar serial_number: Disk Serial Number.
-    :vartype serial_number: str
-    :ivar copy_status: The Status of the copy. Known values are: "NotStarted", "InProgress",
+    :ivar serialNumber: Disk Serial Number.
+    :vartype serialNumber: str
+    :ivar copyStatus: The Status of the copy. Known values are: "NotStarted", "InProgress",
      "Completed", "CompletedWithErrors", "Failed", "NotReturned", "HardwareError",
      "DeviceFormatted", "DeviceMetadataModified", "StorageAccountNotAccessible", "UnsupportedData",
      "DriveNotReceived", "UnsupportedDrive", "OtherServiceError", "OtherUserError",
      "DriveNotDetected", "DriveCorrupted", and "MetadataFilesModifiedOrRemoved".
-    :vartype copy_status: Union[str, "CopyStatus"]
+    :vartype copyStatus: Union[str, "CopyStatus"]
     """
 
     serialNumber: str
@@ -477,70 +473,69 @@ class DataBoxCustomerDiskCopyProgress(CopyProgress):
 class DataBoxCustomerDiskJobDetails(TypedDict, total=False):
     """Customer disk job details.
 
-    :ivar job_stages: List of stages that run in the job.
-    :vartype job_stages: list["JobStages"]
-    :ivar contact_details: Contact details for notification and shipping. Required.
-    :vartype contact_details: "ContactDetails"
-    :ivar shipping_address: Shipping address of the customer.
-    :vartype shipping_address: "ShippingAddress"
-    :ivar delivery_package: Delivery package shipping details.
-    :vartype delivery_package: "PackageShippingDetails"
-    :ivar return_package: Return package shipping details.
-    :vartype return_package: "PackageShippingDetails"
-    :ivar data_import_details: Details of the data to be imported into azure.
-    :vartype data_import_details: list["DataImportDetails"]
-    :ivar data_export_details: Details of the data to be exported from azure.
-    :vartype data_export_details: list["DataExportDetails"]
+    :ivar jobStages: List of stages that run in the job.
+    :vartype jobStages: list["JobStages"]
+    :ivar contactDetails: Contact details for notification and shipping. Required.
+    :vartype contactDetails: "ContactDetails"
+    :ivar shippingAddress: Shipping address of the customer.
+    :vartype shippingAddress: "ShippingAddress"
+    :ivar deliveryPackage: Delivery package shipping details.
+    :vartype deliveryPackage: "PackageShippingDetails"
+    :ivar returnPackage: Return package shipping details.
+    :vartype returnPackage: "PackageShippingDetails"
+    :ivar dataImportDetails: Details of the data to be imported into azure.
+    :vartype dataImportDetails: list["DataImportDetails"]
+    :ivar dataExportDetails: Details of the data to be exported from azure.
+    :vartype dataExportDetails: list["DataExportDetails"]
     :ivar preferences: Preferences for the order.
     :vartype preferences: "Preferences"
-    :ivar reverse_shipping_details: Optional Reverse Shipping details for order.
-    :vartype reverse_shipping_details: "ReverseShippingDetails"
-    :ivar copy_log_details: List of copy log details.
-    :vartype copy_log_details: list["CopyLogDetails"]
-    :ivar reverse_shipment_label_sas_key: Shared access key to download the return shipment label.
-    :vartype reverse_shipment_label_sas_key: str
-    :ivar chain_of_custody_sas_key: Shared access key to download the chain of custody logs.
-    :vartype chain_of_custody_sas_key: str
-    :ivar device_erasure_details: Holds device data erasure details.
-    :vartype device_erasure_details: "DeviceErasureDetails"
-    :ivar key_encryption_key: Details about which key encryption type is being used.
-    :vartype key_encryption_key: "KeyEncryptionKey"
-    :ivar expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
-     transferred in this job, in terabytes.
-    :vartype expected_data_size_in_tera_bytes: int
+    :ivar reverseShippingDetails: Optional Reverse Shipping details for order.
+    :vartype reverseShippingDetails: "ReverseShippingDetails"
+    :ivar copyLogDetails: List of copy log details.
+    :vartype copyLogDetails: list["CopyLogDetails"]
+    :ivar reverseShipmentLabelSasKey: Shared access key to download the return shipment label.
+    :vartype reverseShipmentLabelSasKey: str
+    :ivar chainOfCustodySasKey: Shared access key to download the chain of custody logs.
+    :vartype chainOfCustodySasKey: str
+    :ivar deviceErasureDetails: Holds device data erasure details.
+    :vartype deviceErasureDetails: "DeviceErasureDetails"
+    :ivar keyEncryptionKey: Details about which key encryption type is being used.
+    :vartype keyEncryptionKey: "KeyEncryptionKey"
+    :ivar expectedDataSizeInTeraBytes: The expected size of the data, which needs to be transferred
+     in this job, in terabytes.
+    :vartype expectedDataSizeInTeraBytes: int
     :ivar actions: Available actions on the job.
     :vartype actions: list[Union[str, "CustomerResolutionCode"]]
-    :ivar last_mitigation_action_on_job: Last mitigation action performed on the job.
-    :vartype last_mitigation_action_on_job: "LastMitigationActionOnJob"
-    :ivar datacenter_address: Datacenter address to ship to, for the given sku and storage
-     location.
-    :vartype datacenter_address: "DatacenterAddressResponse"
-    :ivar data_center_code: DataCenter code. Known values are: "Invalid", "BY2", "BY1", "ORK70",
+    :ivar lastMitigationActionOnJob: Last mitigation action performed on the job.
+    :vartype lastMitigationActionOnJob: "LastMitigationActionOnJob"
+    :ivar datacenterAddress: Datacenter address to ship to, for the given sku and storage location.
+    :vartype datacenterAddress: "DatacenterAddressResponse"
+    :ivar dataCenterCode: DataCenter code. Known values are: "Invalid", "BY2", "BY1", "ORK70",
      "AM2", "AMS20", "BY21", "BY24", "MWH01", "AMS06", "SSE90", "SYD03", "SYD23", "CBR20", "YTO20",
      "CWL20", "LON24", "BOM01", "BL20", "BL7", "SEL20", "TYO01", "BN1", "SN5", "CYS04", "TYO22",
      "YTO21", "YQB20", "FRA22", "MAA01", "CPQ02", "CPQ20", "SIN20", "HKG20", "SG2", "MEL23",
      "SEL21", "OSA20", "SHA03", "BJB", "JNB22", "JNB21", "MNZ21", "SN8", "AUH20", "ZRH20", "PUS20",
      "AdHoc", "CH1", "DSM05", "DUB07", "PNQ01", "SVG20", "OSA02", "OSA22", "PAR22", "BN7", "SN6",
      "BJS20", "BL24", "IDC5", "TYO23", "NTG20", "DXB23", "DSM11", "AMS25", "CPQ21", and "OSA23".
-    :vartype data_center_code: Union[str, "DataCenterCode"]
-    :ivar import_disk_details_collection: Contains the map of disk serial number to the disk
-     details for import jobs.
-    :vartype import_disk_details_collection: dict[str, "ImportDiskDetails"]
-    :ivar export_disk_details_collection: Contains the map of disk serial number to the disk
-     details for export jobs.
-    :vartype export_disk_details_collection: dict[str, "ExportDiskDetails"]
-    :ivar copy_progress: Copy progress per disk.
-    :vartype copy_progress: list["DataBoxCustomerDiskCopyProgress"]
-    :ivar deliver_to_dc_package_details: Delivery package shipping details.
-    :vartype deliver_to_dc_package_details: "PackageCarrierInfo"
-    :ivar return_to_customer_package_details: Return package shipping details. Required.
-    :vartype return_to_customer_package_details: "PackageCarrierDetails"
-    :ivar enable_manifest_backup: Flag to indicate if disk manifest should be backed-up in the
+    :vartype dataCenterCode: Union[str, "DataCenterCode"]
+    :ivar importDiskDetailsCollection: Contains the map of disk serial number to the disk details
+     for import jobs.
+    :vartype importDiskDetailsCollection: dict[str, "ImportDiskDetails"]
+    :ivar exportDiskDetailsCollection: Contains the map of disk serial number to the disk details
+     for export jobs.
+    :vartype exportDiskDetailsCollection: dict[str, "ExportDiskDetails"]
+    :ivar copyProgress: Copy progress per disk.
+    :vartype copyProgress: list["DataBoxCustomerDiskCopyProgress"]
+    :ivar deliverToDcPackageDetails: Delivery package shipping details.
+    :vartype deliverToDcPackageDetails: "PackageCarrierInfo"
+    :ivar returnToCustomerPackageDetails: Return package shipping details. Required.
+    :vartype returnToCustomerPackageDetails: "PackageCarrierDetails"
+    :ivar enableManifestBackup: Flag to indicate if disk manifest should be backed-up in the
      Storage Account.
-    :vartype enable_manifest_backup: bool
-    :ivar job_details_type: Indicates the type of job details. Required. Data Box Customer Disk
+    :vartype enableManifestBackup: bool
+    :ivar jobDetailsType: Indicates the type of job details. Required. Data Box Customer Disk
      orders.
-    :vartype job_details_type: Literal[ClassDiscriminator.DATA_BOX_CUSTOMER_DISK]
+    :vartype jobDetailsType: Literal[ClassDiscriminator.DATA_BOX_CUSTOMER_DISK]
     """
 
     jobStages: list["JobStages"]
@@ -608,14 +603,14 @@ class DataBoxCustomerDiskJobDetails(TypedDict, total=False):
 class DataBoxDiskCopyLogDetails(TypedDict, total=False):
     """Copy Log Details for a disk.
 
-    :ivar disk_serial_number: Disk Serial Number.
-    :vartype disk_serial_number: str
-    :ivar error_log_link: Link for copy error logs.
-    :vartype error_log_link: str
-    :ivar verbose_log_link: Link for copy verbose logs.
-    :vartype verbose_log_link: str
-    :ivar copy_log_details_type: Indicates the type of job details. Required. Data Box Disk orders.
-    :vartype copy_log_details_type: Literal[ClassDiscriminator.DATA_BOX_DISK]
+    :ivar diskSerialNumber: Disk Serial Number.
+    :vartype diskSerialNumber: str
+    :ivar errorLogLink: Link for copy error logs.
+    :vartype errorLogLink: str
+    :ivar verboseLogLink: Link for copy verbose logs.
+    :vartype verboseLogLink: str
+    :ivar copyLogDetailsType: Indicates the type of job details. Required. Data Box Disk orders.
+    :vartype copyLogDetailsType: Literal[ClassDiscriminator.DATA_BOX_DISK]
     """
 
     diskSerialNumber: str
@@ -631,12 +626,12 @@ class DataBoxDiskCopyLogDetails(TypedDict, total=False):
 class DataBoxDiskCopyProgress(TypedDict, total=False):
     """DataBox Disk Copy Progress.
 
-    :ivar serial_number: The serial number of the disk.
-    :vartype serial_number: str
-    :ivar bytes_copied: Bytes copied during the copy of disk.
-    :vartype bytes_copied: int
-    :ivar percent_complete: Indicates the percentage completed for the copy of the disk.
-    :vartype percent_complete: int
+    :ivar serialNumber: The serial number of the disk.
+    :vartype serialNumber: str
+    :ivar bytesCopied: Bytes copied during the copy of disk.
+    :vartype bytesCopied: int
+    :ivar percentComplete: Indicates the percentage completed for the copy of the disk.
+    :vartype percentComplete: int
     :ivar status: The Status of the copy. Known values are: "NotStarted", "InProgress",
      "Completed", "CompletedWithErrors", "Failed", "NotReturned", "HardwareError",
      "DeviceFormatted", "DeviceMetadataModified", "StorageAccountNotAccessible", "UnsupportedData",
@@ -670,17 +665,17 @@ class DataBoxDiskCopyProgress(TypedDict, total=False):
 class DataBoxDiskGranularCopyLogDetails(TypedDict, total=False):
     """Granular Copy Log Details for customer disk.
 
-    :ivar serial_number: Disk Serial Number.
-    :vartype serial_number: str
-    :ivar account_id: Account id.
-    :vartype account_id: str
-    :ivar error_log_link: Link for copy error logs.
-    :vartype error_log_link: str
-    :ivar verbose_log_link: Link for copy verbose logs.
-    :vartype verbose_log_link: str
-    :ivar copy_log_details_type: Indicates the type of job details. Required. Data Box Customer
-     Disk orders.
-    :vartype copy_log_details_type: Literal[ClassDiscriminator.DATA_BOX_CUSTOMER_DISK]
+    :ivar serialNumber: Disk Serial Number.
+    :vartype serialNumber: str
+    :ivar accountId: Account id.
+    :vartype accountId: str
+    :ivar errorLogLink: Link for copy error logs.
+    :vartype errorLogLink: str
+    :ivar verboseLogLink: Link for copy verbose logs.
+    :vartype verboseLogLink: str
+    :ivar copyLogDetailsType: Indicates the type of job details. Required. Data Box Customer Disk
+     orders.
+    :vartype copyLogDetailsType: Literal[ClassDiscriminator.DATA_BOX_CUSTOMER_DISK]
     """
 
     serialNumber: str
@@ -698,43 +693,42 @@ class DataBoxDiskGranularCopyLogDetails(TypedDict, total=False):
 class GranularCopyProgress(TypedDict, total=False):
     """Granular Copy progress.
 
-    :ivar storage_account_name: Name of the storage account. This will be empty for data account
+    :ivar storageAccountName: Name of the storage account. This will be empty for data account
      types other than storage account.
-    :vartype storage_account_name: str
-    :ivar transfer_type: Transfer type of data. Known values are: "ImportToAzure" and
+    :vartype storageAccountName: str
+    :ivar transferType: Transfer type of data. Known values are: "ImportToAzure" and
      "ExportFromAzure".
-    :vartype transfer_type: Union[str, "TransferType"]
-    :ivar data_account_type: Data Account Type. Known values are: "StorageAccount" and
-     "ManagedDisk".
-    :vartype data_account_type: Union[str, "DataAccountType"]
-    :ivar account_id: Id of the account where the data needs to be uploaded.
-    :vartype account_id: str
-    :ivar bytes_processed: To indicate bytes transferred.
-    :vartype bytes_processed: int
-    :ivar total_bytes_to_process: Total amount of data to be processed by the job.
-    :vartype total_bytes_to_process: int
-    :ivar files_processed: Number of files processed.
-    :vartype files_processed: int
-    :ivar total_files_to_process: Total files to process.
-    :vartype total_files_to_process: int
-    :ivar invalid_files_processed: Number of files not adhering to azure naming conventions which
+    :vartype transferType: Union[str, "TransferType"]
+    :ivar dataAccountType: Data Account Type. Known values are: "StorageAccount" and "ManagedDisk".
+    :vartype dataAccountType: Union[str, "DataAccountType"]
+    :ivar accountId: Id of the account where the data needs to be uploaded.
+    :vartype accountId: str
+    :ivar bytesProcessed: To indicate bytes transferred.
+    :vartype bytesProcessed: int
+    :ivar totalBytesToProcess: Total amount of data to be processed by the job.
+    :vartype totalBytesToProcess: int
+    :ivar filesProcessed: Number of files processed.
+    :vartype filesProcessed: int
+    :ivar totalFilesToProcess: Total files to process.
+    :vartype totalFilesToProcess: int
+    :ivar invalidFilesProcessed: Number of files not adhering to azure naming conventions which
      were processed by automatic renaming.
-    :vartype invalid_files_processed: int
-    :ivar invalid_file_bytes_uploaded: Total amount of data not adhering to azure naming
-     conventions which were processed by automatic renaming.
-    :vartype invalid_file_bytes_uploaded: int
-    :ivar renamed_container_count: Number of folders not adhering to azure naming conventions which
+    :vartype invalidFilesProcessed: int
+    :ivar invalidFileBytesUploaded: Total amount of data not adhering to azure naming conventions
+     which were processed by automatic renaming.
+    :vartype invalidFileBytesUploaded: int
+    :ivar renamedContainerCount: Number of folders not adhering to azure naming conventions which
      were processed by automatic renaming.
-    :vartype renamed_container_count: int
-    :ivar files_errored_out: Number of files which could not be copied.
-    :vartype files_errored_out: int
-    :ivar directories_errored_out: To indicate directories errored out in the job.
-    :vartype directories_errored_out: int
-    :ivar invalid_directories_processed: To indicate directories renamed.
-    :vartype invalid_directories_processed: int
-    :ivar is_enumeration_in_progress: To indicate if enumeration of data is in progress. Until this
-     is true, the TotalBytesToProcess may not be valid.
-    :vartype is_enumeration_in_progress: bool
+    :vartype renamedContainerCount: int
+    :ivar filesErroredOut: Number of files which could not be copied.
+    :vartype filesErroredOut: int
+    :ivar directoriesErroredOut: To indicate directories errored out in the job.
+    :vartype directoriesErroredOut: int
+    :ivar invalidDirectoriesProcessed: To indicate directories renamed.
+    :vartype invalidDirectoriesProcessed: int
+    :ivar isEnumerationInProgress: To indicate if enumeration of data is in progress. Until this is
+     true, the TotalBytesToProcess may not be valid.
+    :vartype isEnumerationInProgress: bool
     :ivar error: Error, if any, in the stage.
     :vartype error: "CloudError"
     :ivar actions: Available actions on the job.
@@ -785,55 +779,54 @@ class GranularCopyProgress(TypedDict, total=False):
 class DataBoxDiskGranularCopyProgress(GranularCopyProgress):
     """DataBox Disk Granular Copy Progress.
 
-    :ivar storage_account_name: Name of the storage account. This will be empty for data account
+    :ivar storageAccountName: Name of the storage account. This will be empty for data account
      types other than storage account.
-    :vartype storage_account_name: str
-    :ivar transfer_type: Transfer type of data. Known values are: "ImportToAzure" and
+    :vartype storageAccountName: str
+    :ivar transferType: Transfer type of data. Known values are: "ImportToAzure" and
      "ExportFromAzure".
-    :vartype transfer_type: Union[str, "TransferType"]
-    :ivar data_account_type: Data Account Type. Known values are: "StorageAccount" and
-     "ManagedDisk".
-    :vartype data_account_type: Union[str, "DataAccountType"]
-    :ivar account_id: Id of the account where the data needs to be uploaded.
-    :vartype account_id: str
-    :ivar bytes_processed: To indicate bytes transferred.
-    :vartype bytes_processed: int
-    :ivar total_bytes_to_process: Total amount of data to be processed by the job.
-    :vartype total_bytes_to_process: int
-    :ivar files_processed: Number of files processed.
-    :vartype files_processed: int
-    :ivar total_files_to_process: Total files to process.
-    :vartype total_files_to_process: int
-    :ivar invalid_files_processed: Number of files not adhering to azure naming conventions which
+    :vartype transferType: Union[str, "TransferType"]
+    :ivar dataAccountType: Data Account Type. Known values are: "StorageAccount" and "ManagedDisk".
+    :vartype dataAccountType: Union[str, "DataAccountType"]
+    :ivar accountId: Id of the account where the data needs to be uploaded.
+    :vartype accountId: str
+    :ivar bytesProcessed: To indicate bytes transferred.
+    :vartype bytesProcessed: int
+    :ivar totalBytesToProcess: Total amount of data to be processed by the job.
+    :vartype totalBytesToProcess: int
+    :ivar filesProcessed: Number of files processed.
+    :vartype filesProcessed: int
+    :ivar totalFilesToProcess: Total files to process.
+    :vartype totalFilesToProcess: int
+    :ivar invalidFilesProcessed: Number of files not adhering to azure naming conventions which
      were processed by automatic renaming.
-    :vartype invalid_files_processed: int
-    :ivar invalid_file_bytes_uploaded: Total amount of data not adhering to azure naming
-     conventions which were processed by automatic renaming.
-    :vartype invalid_file_bytes_uploaded: int
-    :ivar renamed_container_count: Number of folders not adhering to azure naming conventions which
+    :vartype invalidFilesProcessed: int
+    :ivar invalidFileBytesUploaded: Total amount of data not adhering to azure naming conventions
+     which were processed by automatic renaming.
+    :vartype invalidFileBytesUploaded: int
+    :ivar renamedContainerCount: Number of folders not adhering to azure naming conventions which
      were processed by automatic renaming.
-    :vartype renamed_container_count: int
-    :ivar files_errored_out: Number of files which could not be copied.
-    :vartype files_errored_out: int
-    :ivar directories_errored_out: To indicate directories errored out in the job.
-    :vartype directories_errored_out: int
-    :ivar invalid_directories_processed: To indicate directories renamed.
-    :vartype invalid_directories_processed: int
-    :ivar is_enumeration_in_progress: To indicate if enumeration of data is in progress. Until this
-     is true, the TotalBytesToProcess may not be valid.
-    :vartype is_enumeration_in_progress: bool
+    :vartype renamedContainerCount: int
+    :ivar filesErroredOut: Number of files which could not be copied.
+    :vartype filesErroredOut: int
+    :ivar directoriesErroredOut: To indicate directories errored out in the job.
+    :vartype directoriesErroredOut: int
+    :ivar invalidDirectoriesProcessed: To indicate directories renamed.
+    :vartype invalidDirectoriesProcessed: int
+    :ivar isEnumerationInProgress: To indicate if enumeration of data is in progress. Until this is
+     true, the TotalBytesToProcess may not be valid.
+    :vartype isEnumerationInProgress: bool
     :ivar error: Error, if any, in the stage.
     :vartype error: "CloudError"
     :ivar actions: Available actions on the job.
     :vartype actions: list[Union[str, "CustomerResolutionCode"]]
-    :ivar serial_number: Disk Serial Number.
-    :vartype serial_number: str
-    :ivar copy_status: The Status of the copy. Known values are: "NotStarted", "InProgress",
+    :ivar serialNumber: Disk Serial Number.
+    :vartype serialNumber: str
+    :ivar copyStatus: The Status of the copy. Known values are: "NotStarted", "InProgress",
      "Completed", "CompletedWithErrors", "Failed", "NotReturned", "HardwareError",
      "DeviceFormatted", "DeviceMetadataModified", "StorageAccountNotAccessible", "UnsupportedData",
      "DriveNotReceived", "UnsupportedDrive", "OtherServiceError", "OtherUserError",
      "DriveNotDetected", "DriveCorrupted", and "MetadataFilesModifiedOrRemoved".
-    :vartype copy_status: Union[str, "CopyStatus"]
+    :vartype copyStatus: Union[str, "CopyStatus"]
     """
 
     serialNumber: str
@@ -849,69 +842,68 @@ class DataBoxDiskGranularCopyProgress(GranularCopyProgress):
 class DataBoxDiskJobDetails(TypedDict, total=False):
     """DataBox Disk Job Details.
 
-    :ivar job_stages: List of stages that run in the job.
-    :vartype job_stages: list["JobStages"]
-    :ivar contact_details: Contact details for notification and shipping. Required.
-    :vartype contact_details: "ContactDetails"
-    :ivar shipping_address: Shipping address of the customer.
-    :vartype shipping_address: "ShippingAddress"
-    :ivar delivery_package: Delivery package shipping details.
-    :vartype delivery_package: "PackageShippingDetails"
-    :ivar return_package: Return package shipping details.
-    :vartype return_package: "PackageShippingDetails"
-    :ivar data_import_details: Details of the data to be imported into azure.
-    :vartype data_import_details: list["DataImportDetails"]
-    :ivar data_export_details: Details of the data to be exported from azure.
-    :vartype data_export_details: list["DataExportDetails"]
+    :ivar jobStages: List of stages that run in the job.
+    :vartype jobStages: list["JobStages"]
+    :ivar contactDetails: Contact details for notification and shipping. Required.
+    :vartype contactDetails: "ContactDetails"
+    :ivar shippingAddress: Shipping address of the customer.
+    :vartype shippingAddress: "ShippingAddress"
+    :ivar deliveryPackage: Delivery package shipping details.
+    :vartype deliveryPackage: "PackageShippingDetails"
+    :ivar returnPackage: Return package shipping details.
+    :vartype returnPackage: "PackageShippingDetails"
+    :ivar dataImportDetails: Details of the data to be imported into azure.
+    :vartype dataImportDetails: list["DataImportDetails"]
+    :ivar dataExportDetails: Details of the data to be exported from azure.
+    :vartype dataExportDetails: list["DataExportDetails"]
     :ivar preferences: Preferences for the order.
     :vartype preferences: "Preferences"
-    :ivar reverse_shipping_details: Optional Reverse Shipping details for order.
-    :vartype reverse_shipping_details: "ReverseShippingDetails"
-    :ivar copy_log_details: List of copy log details.
-    :vartype copy_log_details: list["CopyLogDetails"]
-    :ivar reverse_shipment_label_sas_key: Shared access key to download the return shipment label.
-    :vartype reverse_shipment_label_sas_key: str
-    :ivar chain_of_custody_sas_key: Shared access key to download the chain of custody logs.
-    :vartype chain_of_custody_sas_key: str
-    :ivar device_erasure_details: Holds device data erasure details.
-    :vartype device_erasure_details: "DeviceErasureDetails"
-    :ivar key_encryption_key: Details about which key encryption type is being used.
-    :vartype key_encryption_key: "KeyEncryptionKey"
-    :ivar expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
-     transferred in this job, in terabytes.
-    :vartype expected_data_size_in_tera_bytes: int
+    :ivar reverseShippingDetails: Optional Reverse Shipping details for order.
+    :vartype reverseShippingDetails: "ReverseShippingDetails"
+    :ivar copyLogDetails: List of copy log details.
+    :vartype copyLogDetails: list["CopyLogDetails"]
+    :ivar reverseShipmentLabelSasKey: Shared access key to download the return shipment label.
+    :vartype reverseShipmentLabelSasKey: str
+    :ivar chainOfCustodySasKey: Shared access key to download the chain of custody logs.
+    :vartype chainOfCustodySasKey: str
+    :ivar deviceErasureDetails: Holds device data erasure details.
+    :vartype deviceErasureDetails: "DeviceErasureDetails"
+    :ivar keyEncryptionKey: Details about which key encryption type is being used.
+    :vartype keyEncryptionKey: "KeyEncryptionKey"
+    :ivar expectedDataSizeInTeraBytes: The expected size of the data, which needs to be transferred
+     in this job, in terabytes.
+    :vartype expectedDataSizeInTeraBytes: int
     :ivar actions: Available actions on the job.
     :vartype actions: list[Union[str, "CustomerResolutionCode"]]
-    :ivar last_mitigation_action_on_job: Last mitigation action performed on the job.
-    :vartype last_mitigation_action_on_job: "LastMitigationActionOnJob"
-    :ivar datacenter_address: Datacenter address to ship to, for the given sku and storage
-     location.
-    :vartype datacenter_address: "DatacenterAddressResponse"
-    :ivar data_center_code: DataCenter code. Known values are: "Invalid", "BY2", "BY1", "ORK70",
+    :ivar lastMitigationActionOnJob: Last mitigation action performed on the job.
+    :vartype lastMitigationActionOnJob: "LastMitigationActionOnJob"
+    :ivar datacenterAddress: Datacenter address to ship to, for the given sku and storage location.
+    :vartype datacenterAddress: "DatacenterAddressResponse"
+    :ivar dataCenterCode: DataCenter code. Known values are: "Invalid", "BY2", "BY1", "ORK70",
      "AM2", "AMS20", "BY21", "BY24", "MWH01", "AMS06", "SSE90", "SYD03", "SYD23", "CBR20", "YTO20",
      "CWL20", "LON24", "BOM01", "BL20", "BL7", "SEL20", "TYO01", "BN1", "SN5", "CYS04", "TYO22",
      "YTO21", "YQB20", "FRA22", "MAA01", "CPQ02", "CPQ20", "SIN20", "HKG20", "SG2", "MEL23",
      "SEL21", "OSA20", "SHA03", "BJB", "JNB22", "JNB21", "MNZ21", "SN8", "AUH20", "ZRH20", "PUS20",
      "AdHoc", "CH1", "DSM05", "DUB07", "PNQ01", "SVG20", "OSA02", "OSA22", "PAR22", "BN7", "SN6",
      "BJS20", "BL24", "IDC5", "TYO23", "NTG20", "DXB23", "DSM11", "AMS25", "CPQ21", and "OSA23".
-    :vartype data_center_code: Union[str, "DataCenterCode"]
-    :ivar preferred_disks: User preference on what size disks are needed for the job. The map is
+    :vartype dataCenterCode: Union[str, "DataCenterCode"]
+    :ivar preferredDisks: User preference on what size disks are needed for the job. The map is
      from the disk size in TB to the count. Eg. {2,5} means 5 disks of 2 TB size. Key is string but
      will be checked against an int.
-    :vartype preferred_disks: dict[str, int]
-    :ivar copy_progress: Copy progress per disk.
-    :vartype copy_progress: list["DataBoxDiskCopyProgress"]
-    :ivar granular_copy_progress: Copy progress per disk.
-    :vartype granular_copy_progress: list["DataBoxDiskGranularCopyProgress"]
-    :ivar granular_copy_log_details: Copy progress per disk.
-    :vartype granular_copy_log_details: list["DataBoxDiskGranularCopyLogDetails"]
-    :ivar disks_and_size_details: Contains the map of disk serial number to the disk size being
-     used for the job. Is returned only after the disks are shipped to the customer.
-    :vartype disks_and_size_details: dict[str, int]
+    :vartype preferredDisks: dict[str, int]
+    :ivar copyProgress: Copy progress per disk.
+    :vartype copyProgress: list["DataBoxDiskCopyProgress"]
+    :ivar granularCopyProgress: Copy progress per disk.
+    :vartype granularCopyProgress: list["DataBoxDiskGranularCopyProgress"]
+    :ivar granularCopyLogDetails: Copy progress per disk.
+    :vartype granularCopyLogDetails: list["DataBoxDiskGranularCopyLogDetails"]
+    :ivar disksAndSizeDetails: Contains the map of disk serial number to the disk size being used
+     for the job. Is returned only after the disks are shipped to the customer.
+    :vartype disksAndSizeDetails: dict[str, int]
     :ivar passkey: User entered passkey for DataBox Disk job.
     :vartype passkey: str
-    :ivar job_details_type: Indicates the type of job details. Required. Data Box Disk orders.
-    :vartype job_details_type: Literal[ClassDiscriminator.DATA_BOX_DISK]
+    :ivar jobDetailsType: Indicates the type of job details. Required. Data Box Disk orders.
+    :vartype jobDetailsType: Literal[ClassDiscriminator.DATA_BOX_DISK]
     """
 
     jobStages: list["JobStages"]
@@ -982,16 +974,15 @@ class DataBoxDiskJobDetails(TypedDict, total=False):
 class DataBoxHeavyAccountCopyLogDetails(TypedDict, total=False):
     """Copy log details for a storage account for Databox heavy.
 
-    :ivar account_name: Account name.
-    :vartype account_name: str
-    :ivar copy_log_link: Link for copy logs.
-    :vartype copy_log_link: list[str]
-    :ivar copy_verbose_log_link: Link for copy verbose logs. This will be set only when the
+    :ivar accountName: Account name.
+    :vartype accountName: str
+    :ivar copyLogLink: Link for copy logs.
+    :vartype copyLogLink: list[str]
+    :ivar copyVerboseLogLink: Link for copy verbose logs. This will be set only when the
      LogCollectionLevel is set to verbose.
-    :vartype copy_verbose_log_link: list[str]
-    :ivar copy_log_details_type: Indicates the type of job details. Required. Data Box Heavy
-     orders.
-    :vartype copy_log_details_type: Literal[ClassDiscriminator.DATA_BOX_HEAVY]
+    :vartype copyVerboseLogLink: list[str]
+    :ivar copyLogDetailsType: Indicates the type of job details. Required. Data Box Heavy orders.
+    :vartype copyLogDetailsType: Literal[ClassDiscriminator.DATA_BOX_HEAVY]
     """
 
     accountName: str
@@ -1008,63 +999,62 @@ class DataBoxHeavyAccountCopyLogDetails(TypedDict, total=False):
 class DataBoxHeavyJobDetails(TypedDict, total=False):
     """Databox Heavy Device Job Details.
 
-    :ivar job_stages: List of stages that run in the job.
-    :vartype job_stages: list["JobStages"]
-    :ivar contact_details: Contact details for notification and shipping. Required.
-    :vartype contact_details: "ContactDetails"
-    :ivar shipping_address: Shipping address of the customer.
-    :vartype shipping_address: "ShippingAddress"
-    :ivar delivery_package: Delivery package shipping details.
-    :vartype delivery_package: "PackageShippingDetails"
-    :ivar return_package: Return package shipping details.
-    :vartype return_package: "PackageShippingDetails"
-    :ivar data_import_details: Details of the data to be imported into azure.
-    :vartype data_import_details: list["DataImportDetails"]
-    :ivar data_export_details: Details of the data to be exported from azure.
-    :vartype data_export_details: list["DataExportDetails"]
+    :ivar jobStages: List of stages that run in the job.
+    :vartype jobStages: list["JobStages"]
+    :ivar contactDetails: Contact details for notification and shipping. Required.
+    :vartype contactDetails: "ContactDetails"
+    :ivar shippingAddress: Shipping address of the customer.
+    :vartype shippingAddress: "ShippingAddress"
+    :ivar deliveryPackage: Delivery package shipping details.
+    :vartype deliveryPackage: "PackageShippingDetails"
+    :ivar returnPackage: Return package shipping details.
+    :vartype returnPackage: "PackageShippingDetails"
+    :ivar dataImportDetails: Details of the data to be imported into azure.
+    :vartype dataImportDetails: list["DataImportDetails"]
+    :ivar dataExportDetails: Details of the data to be exported from azure.
+    :vartype dataExportDetails: list["DataExportDetails"]
     :ivar preferences: Preferences for the order.
     :vartype preferences: "Preferences"
-    :ivar reverse_shipping_details: Optional Reverse Shipping details for order.
-    :vartype reverse_shipping_details: "ReverseShippingDetails"
-    :ivar copy_log_details: List of copy log details.
-    :vartype copy_log_details: list["CopyLogDetails"]
-    :ivar reverse_shipment_label_sas_key: Shared access key to download the return shipment label.
-    :vartype reverse_shipment_label_sas_key: str
-    :ivar chain_of_custody_sas_key: Shared access key to download the chain of custody logs.
-    :vartype chain_of_custody_sas_key: str
-    :ivar device_erasure_details: Holds device data erasure details.
-    :vartype device_erasure_details: "DeviceErasureDetails"
-    :ivar key_encryption_key: Details about which key encryption type is being used.
-    :vartype key_encryption_key: "KeyEncryptionKey"
-    :ivar expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
-     transferred in this job, in terabytes.
-    :vartype expected_data_size_in_tera_bytes: int
+    :ivar reverseShippingDetails: Optional Reverse Shipping details for order.
+    :vartype reverseShippingDetails: "ReverseShippingDetails"
+    :ivar copyLogDetails: List of copy log details.
+    :vartype copyLogDetails: list["CopyLogDetails"]
+    :ivar reverseShipmentLabelSasKey: Shared access key to download the return shipment label.
+    :vartype reverseShipmentLabelSasKey: str
+    :ivar chainOfCustodySasKey: Shared access key to download the chain of custody logs.
+    :vartype chainOfCustodySasKey: str
+    :ivar deviceErasureDetails: Holds device data erasure details.
+    :vartype deviceErasureDetails: "DeviceErasureDetails"
+    :ivar keyEncryptionKey: Details about which key encryption type is being used.
+    :vartype keyEncryptionKey: "KeyEncryptionKey"
+    :ivar expectedDataSizeInTeraBytes: The expected size of the data, which needs to be transferred
+     in this job, in terabytes.
+    :vartype expectedDataSizeInTeraBytes: int
     :ivar actions: Available actions on the job.
     :vartype actions: list[Union[str, "CustomerResolutionCode"]]
-    :ivar last_mitigation_action_on_job: Last mitigation action performed on the job.
-    :vartype last_mitigation_action_on_job: "LastMitigationActionOnJob"
-    :ivar datacenter_address: Datacenter address to ship to, for the given sku and storage
-     location.
-    :vartype datacenter_address: "DatacenterAddressResponse"
-    :ivar data_center_code: DataCenter code. Known values are: "Invalid", "BY2", "BY1", "ORK70",
+    :ivar lastMitigationActionOnJob: Last mitigation action performed on the job.
+    :vartype lastMitigationActionOnJob: "LastMitigationActionOnJob"
+    :ivar datacenterAddress: Datacenter address to ship to, for the given sku and storage location.
+    :vartype datacenterAddress: "DatacenterAddressResponse"
+    :ivar dataCenterCode: DataCenter code. Known values are: "Invalid", "BY2", "BY1", "ORK70",
      "AM2", "AMS20", "BY21", "BY24", "MWH01", "AMS06", "SSE90", "SYD03", "SYD23", "CBR20", "YTO20",
      "CWL20", "LON24", "BOM01", "BL20", "BL7", "SEL20", "TYO01", "BN1", "SN5", "CYS04", "TYO22",
      "YTO21", "YQB20", "FRA22", "MAA01", "CPQ02", "CPQ20", "SIN20", "HKG20", "SG2", "MEL23",
      "SEL21", "OSA20", "SHA03", "BJB", "JNB22", "JNB21", "MNZ21", "SN8", "AUH20", "ZRH20", "PUS20",
      "AdHoc", "CH1", "DSM05", "DUB07", "PNQ01", "SVG20", "OSA02", "OSA22", "PAR22", "BN7", "SN6",
      "BJS20", "BL24", "IDC5", "TYO23", "NTG20", "DXB23", "DSM11", "AMS25", "CPQ21", and "OSA23".
-    :vartype data_center_code: Union[str, "DataCenterCode"]
-    :ivar copy_progress: Copy progress per account.
-    :vartype copy_progress: list["CopyProgress"]
-    :ivar device_password: Set Device password for unlocking Databox Heavy. Should not be passed
-     for TransferType:ExportFromAzure jobs. If this is not passed, the service will generate
-     password itself. This will not be returned in Get Call. Password Requirements :  Password must
-     be minimum of 12 and maximum of 64 characters. Password must have at least one uppercase
-     alphabet, one number and one special character. Password cannot have the following characters :
-     IilLoO0 Password can have only alphabets, numbers and these characters : @#\\-$%^!+=;:_()]+.
-    :vartype device_password: str
-    :ivar job_details_type: Indicates the type of job details. Required. Data Box Heavy orders.
-    :vartype job_details_type: Literal[ClassDiscriminator.DATA_BOX_HEAVY]
+    :vartype dataCenterCode: Union[str, "DataCenterCode"]
+    :ivar copyProgress: Copy progress per account.
+    :vartype copyProgress: list["CopyProgress"]
+    :ivar devicePassword: Set Device password for unlocking Databox Heavy. Should not be passed for
+     TransferType:ExportFromAzure jobs. If this is not passed, the service will generate password
+     itself. This will not be returned in Get Call. Password Requirements :  Password must be
+     minimum of 12 and maximum of 64 characters. Password must have at least one uppercase alphabet,
+     one number and one special character. Password cannot have the following characters : IilLoO0
+     Password can have only alphabets, numbers and these characters : @#\\-$%^!+=;:_()]+.
+    :vartype devicePassword: str
+    :ivar jobDetailsType: Indicates the type of job details. Required. Data Box Heavy orders.
+    :vartype jobDetailsType: Literal[ClassDiscriminator.DATA_BOX_HEAVY]
     """
 
     jobStages: list["JobStages"]
@@ -1129,63 +1119,62 @@ class DataBoxHeavyJobDetails(TypedDict, total=False):
 class DataBoxJobDetails(TypedDict, total=False):
     """Databox Job Details.
 
-    :ivar job_stages: List of stages that run in the job.
-    :vartype job_stages: list["JobStages"]
-    :ivar contact_details: Contact details for notification and shipping. Required.
-    :vartype contact_details: "ContactDetails"
-    :ivar shipping_address: Shipping address of the customer.
-    :vartype shipping_address: "ShippingAddress"
-    :ivar delivery_package: Delivery package shipping details.
-    :vartype delivery_package: "PackageShippingDetails"
-    :ivar return_package: Return package shipping details.
-    :vartype return_package: "PackageShippingDetails"
-    :ivar data_import_details: Details of the data to be imported into azure.
-    :vartype data_import_details: list["DataImportDetails"]
-    :ivar data_export_details: Details of the data to be exported from azure.
-    :vartype data_export_details: list["DataExportDetails"]
+    :ivar jobStages: List of stages that run in the job.
+    :vartype jobStages: list["JobStages"]
+    :ivar contactDetails: Contact details for notification and shipping. Required.
+    :vartype contactDetails: "ContactDetails"
+    :ivar shippingAddress: Shipping address of the customer.
+    :vartype shippingAddress: "ShippingAddress"
+    :ivar deliveryPackage: Delivery package shipping details.
+    :vartype deliveryPackage: "PackageShippingDetails"
+    :ivar returnPackage: Return package shipping details.
+    :vartype returnPackage: "PackageShippingDetails"
+    :ivar dataImportDetails: Details of the data to be imported into azure.
+    :vartype dataImportDetails: list["DataImportDetails"]
+    :ivar dataExportDetails: Details of the data to be exported from azure.
+    :vartype dataExportDetails: list["DataExportDetails"]
     :ivar preferences: Preferences for the order.
     :vartype preferences: "Preferences"
-    :ivar reverse_shipping_details: Optional Reverse Shipping details for order.
-    :vartype reverse_shipping_details: "ReverseShippingDetails"
-    :ivar copy_log_details: List of copy log details.
-    :vartype copy_log_details: list["CopyLogDetails"]
-    :ivar reverse_shipment_label_sas_key: Shared access key to download the return shipment label.
-    :vartype reverse_shipment_label_sas_key: str
-    :ivar chain_of_custody_sas_key: Shared access key to download the chain of custody logs.
-    :vartype chain_of_custody_sas_key: str
-    :ivar device_erasure_details: Holds device data erasure details.
-    :vartype device_erasure_details: "DeviceErasureDetails"
-    :ivar key_encryption_key: Details about which key encryption type is being used.
-    :vartype key_encryption_key: "KeyEncryptionKey"
-    :ivar expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
-     transferred in this job, in terabytes.
-    :vartype expected_data_size_in_tera_bytes: int
+    :ivar reverseShippingDetails: Optional Reverse Shipping details for order.
+    :vartype reverseShippingDetails: "ReverseShippingDetails"
+    :ivar copyLogDetails: List of copy log details.
+    :vartype copyLogDetails: list["CopyLogDetails"]
+    :ivar reverseShipmentLabelSasKey: Shared access key to download the return shipment label.
+    :vartype reverseShipmentLabelSasKey: str
+    :ivar chainOfCustodySasKey: Shared access key to download the chain of custody logs.
+    :vartype chainOfCustodySasKey: str
+    :ivar deviceErasureDetails: Holds device data erasure details.
+    :vartype deviceErasureDetails: "DeviceErasureDetails"
+    :ivar keyEncryptionKey: Details about which key encryption type is being used.
+    :vartype keyEncryptionKey: "KeyEncryptionKey"
+    :ivar expectedDataSizeInTeraBytes: The expected size of the data, which needs to be transferred
+     in this job, in terabytes.
+    :vartype expectedDataSizeInTeraBytes: int
     :ivar actions: Available actions on the job.
     :vartype actions: list[Union[str, "CustomerResolutionCode"]]
-    :ivar last_mitigation_action_on_job: Last mitigation action performed on the job.
-    :vartype last_mitigation_action_on_job: "LastMitigationActionOnJob"
-    :ivar datacenter_address: Datacenter address to ship to, for the given sku and storage
-     location.
-    :vartype datacenter_address: "DatacenterAddressResponse"
-    :ivar data_center_code: DataCenter code. Known values are: "Invalid", "BY2", "BY1", "ORK70",
+    :ivar lastMitigationActionOnJob: Last mitigation action performed on the job.
+    :vartype lastMitigationActionOnJob: "LastMitigationActionOnJob"
+    :ivar datacenterAddress: Datacenter address to ship to, for the given sku and storage location.
+    :vartype datacenterAddress: "DatacenterAddressResponse"
+    :ivar dataCenterCode: DataCenter code. Known values are: "Invalid", "BY2", "BY1", "ORK70",
      "AM2", "AMS20", "BY21", "BY24", "MWH01", "AMS06", "SSE90", "SYD03", "SYD23", "CBR20", "YTO20",
      "CWL20", "LON24", "BOM01", "BL20", "BL7", "SEL20", "TYO01", "BN1", "SN5", "CYS04", "TYO22",
      "YTO21", "YQB20", "FRA22", "MAA01", "CPQ02", "CPQ20", "SIN20", "HKG20", "SG2", "MEL23",
      "SEL21", "OSA20", "SHA03", "BJB", "JNB22", "JNB21", "MNZ21", "SN8", "AUH20", "ZRH20", "PUS20",
      "AdHoc", "CH1", "DSM05", "DUB07", "PNQ01", "SVG20", "OSA02", "OSA22", "PAR22", "BN7", "SN6",
      "BJS20", "BL24", "IDC5", "TYO23", "NTG20", "DXB23", "DSM11", "AMS25", "CPQ21", and "OSA23".
-    :vartype data_center_code: Union[str, "DataCenterCode"]
-    :ivar copy_progress: Copy progress per storage account.
-    :vartype copy_progress: list["CopyProgress"]
-    :ivar device_password: Set Device password for unlocking Databox. Should not be passed for
+    :vartype dataCenterCode: Union[str, "DataCenterCode"]
+    :ivar copyProgress: Copy progress per storage account.
+    :vartype copyProgress: list["CopyProgress"]
+    :ivar devicePassword: Set Device password for unlocking Databox. Should not be passed for
      TransferType:ExportFromAzure jobs. If this is not passed, the service will generate password
      itself. This will not be returned in Get Call. Password Requirements :  Password must be
      minimum of 12 and maximum of 64 characters. Password must have at least one uppercase alphabet,
      one number and one special character. Password cannot have the following characters : IilLoO0
      Password can have only alphabets, numbers and these characters : @#\\-$%^!+=;:_()]+.
-    :vartype device_password: str
-    :ivar job_details_type: Indicates the type of job details. Required. Data Box orders.
-    :vartype job_details_type: Literal[ClassDiscriminator.DATA_BOX]
+    :vartype devicePassword: str
+    :ivar jobDetailsType: Indicates the type of job details. Required. Data Box orders.
+    :vartype jobDetailsType: Literal[ClassDiscriminator.DATA_BOX]
     """
 
     jobStages: list["JobStages"]
@@ -1250,11 +1239,11 @@ class DataBoxJobDetails(TypedDict, total=False):
 class DataBoxScheduleAvailabilityRequest(TypedDict, total=False):
     """Request body to get the availability for scheduling data box orders orders.
 
-    :ivar storage_location: Location for data transfer. For locations check:
+    :ivar storageLocation: Location for data transfer. For locations check:
      `https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01
      <https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01>`_.
      Required.
-    :vartype storage_location: str
+    :vartype storageLocation: str
     :ivar country: Country in which storage location should be supported.
     :vartype country: str
     :ivar model: The customer friendly name of the combination of version and capacity of the
@@ -1262,8 +1251,8 @@ class DataBoxScheduleAvailabilityRequest(TypedDict, total=False):
      AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
      "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
     :vartype model: Union[str, "ModelName"]
-    :ivar sku_name: Sku Name for which the order is to be scheduled. Required. Data Box.
-    :vartype sku_name: Literal[SkuName.DATA_BOX]
+    :ivar skuName: Sku Name for which the order is to be scheduled. Required. Data Box.
+    :vartype skuName: Literal[SkuName.DATA_BOX]
     """
 
     storageLocation: Required[str]
@@ -1285,15 +1274,15 @@ class DataBoxScheduleAvailabilityRequest(TypedDict, total=False):
 class DatacenterAddressInstructionResponse(TypedDict, total=False):
     """Datacenter instruction for given storage location.
 
-    :ivar supported_carriers_for_return_shipment: List of supported carriers for return shipment.
-    :vartype supported_carriers_for_return_shipment: list[str]
-    :ivar data_center_azure_location: Azure Location where the Data Center serves primarily.
-    :vartype data_center_azure_location: str
-    :ivar communication_instruction: Data center communication instruction.
-    :vartype communication_instruction: str
-    :ivar datacenter_address_type: Data center address type. Required. Data center address
+    :ivar supportedCarriersForReturnShipment: List of supported carriers for return shipment.
+    :vartype supportedCarriersForReturnShipment: list[str]
+    :ivar dataCenterAzureLocation: Azure Location where the Data Center serves primarily.
+    :vartype dataCenterAzureLocation: str
+    :ivar communicationInstruction: Data center communication instruction.
+    :vartype communicationInstruction: str
+    :ivar datacenterAddressType: Data center address type. Required. Data center address
      instruction.
-    :vartype datacenter_address_type: Literal[DatacenterAddressType.DATACENTER_ADDRESS_INSTRUCTION]
+    :vartype datacenterAddressType: Literal[DatacenterAddressType.DATACENTER_ADDRESS_INSTRUCTION]
     """
 
     supportedCarriersForReturnShipment: list[str]
@@ -1309,12 +1298,12 @@ class DatacenterAddressInstructionResponse(TypedDict, total=False):
 class DatacenterAddressLocationResponse(TypedDict, total=False):
     """Datacenter address for given storage location.
 
-    :ivar supported_carriers_for_return_shipment: List of supported carriers for return shipment.
-    :vartype supported_carriers_for_return_shipment: list[str]
-    :ivar data_center_azure_location: Azure Location where the Data Center serves primarily.
-    :vartype data_center_azure_location: str
-    :ivar contact_person_name: Contact person name.
-    :vartype contact_person_name: str
+    :ivar supportedCarriersForReturnShipment: List of supported carriers for return shipment.
+    :vartype supportedCarriersForReturnShipment: list[str]
+    :ivar dataCenterAzureLocation: Azure Location where the Data Center serves primarily.
+    :vartype dataCenterAzureLocation: str
+    :ivar contactPersonName: Contact person name.
+    :vartype contactPersonName: str
     :ivar company: Company name.
     :vartype company: str
     :ivar street1: Street address line 1.
@@ -1333,15 +1322,14 @@ class DatacenterAddressLocationResponse(TypedDict, total=False):
     :vartype country: str
     :ivar phone: Phone number.
     :vartype phone: str
-    :ivar phone_extension: Phone extension.
-    :vartype phone_extension: str
-    :ivar address_type: Address type.
-    :vartype address_type: str
-    :ivar additional_shipping_information: Special instruction for shipping.
-    :vartype additional_shipping_information: str
-    :ivar datacenter_address_type: Data center address type. Required. Data center address
-     location.
-    :vartype datacenter_address_type: Literal[DatacenterAddressType.DATACENTER_ADDRESS_LOCATION]
+    :ivar phoneExtension: Phone extension.
+    :vartype phoneExtension: str
+    :ivar addressType: Address type.
+    :vartype addressType: str
+    :ivar additionalShippingInformation: Special instruction for shipping.
+    :vartype additionalShippingInformation: str
+    :ivar datacenterAddressType: Data center address type. Required. Data center address location.
+    :vartype datacenterAddressType: Literal[DatacenterAddressType.DATACENTER_ADDRESS_LOCATION]
     """
 
     supportedCarriersForReturnShipment: list[str]
@@ -1381,14 +1369,14 @@ class DatacenterAddressLocationResponse(TypedDict, total=False):
 class DatacenterAddressRequest(TypedDict, total=False):
     """Request body to get the datacenter address.
 
-    :ivar storage_location: Storage location. For locations check:
+    :ivar storageLocation: Storage location. For locations check:
      `https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01
      <https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01>`_.
      Required.
-    :vartype storage_location: str
-    :ivar sku_name: Sku Name for which the data center address requested. Required. Known values
+    :vartype storageLocation: str
+    :ivar skuName: Sku Name for which the data center address requested. Required. Known values
      are: "DataBox", "DataBoxDisk", "DataBoxHeavy", and "DataBoxCustomerDisk".
-    :vartype sku_name: Union[str, "SkuName"]
+    :vartype skuName: Union[str, "SkuName"]
     :ivar model: The customer friendly name of the combination of version and capacity of the
      device. This field is necessary only at the time of ordering the newer generation device i.e.
      AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
@@ -1414,13 +1402,13 @@ class DatacenterAddressRequest(TypedDict, total=False):
 class DataExportDetails(TypedDict, total=False):
     """Details of the data to be used for exporting data from azure.
 
-    :ivar transfer_configuration: Configuration for the data transfer. Required.
-    :vartype transfer_configuration: "TransferConfiguration"
-    :ivar log_collection_level: Level of the logs to be collected. Known values are: "Error" and
+    :ivar transferConfiguration: Configuration for the data transfer. Required.
+    :vartype transferConfiguration: "TransferConfiguration"
+    :ivar logCollectionLevel: Level of the logs to be collected. Known values are: "Error" and
      "Verbose".
-    :vartype log_collection_level: Union[str, "LogCollectionLevel"]
-    :ivar account_details: Account details of the data to be transferred. Required.
-    :vartype account_details: "DataAccountDetails"
+    :vartype logCollectionLevel: Union[str, "LogCollectionLevel"]
+    :ivar accountDetails: Account details of the data to be transferred. Required.
+    :vartype accountDetails: "DataAccountDetails"
     """
 
     transferConfiguration: Required["TransferConfiguration"]
@@ -1434,11 +1422,11 @@ class DataExportDetails(TypedDict, total=False):
 class DataImportDetails(TypedDict, total=False):
     """Details of the data to be used for importing data to azure.
 
-    :ivar account_details: Account details of the data to be transferred. Required.
-    :vartype account_details: "DataAccountDetails"
-    :ivar log_collection_level: Level of the logs to be collected. Known values are: "Error" and
+    :ivar accountDetails: Account details of the data to be transferred. Required.
+    :vartype accountDetails: "DataAccountDetails"
+    :ivar logCollectionLevel: Level of the logs to be collected. Known values are: "Error" and
      "Verbose".
-    :vartype log_collection_level: Union[str, "LogCollectionLevel"]
+    :vartype logCollectionLevel: Union[str, "LogCollectionLevel"]
     """
 
     accountDetails: Required["DataAccountDetails"]
@@ -1450,24 +1438,24 @@ class DataImportDetails(TypedDict, total=False):
 class DataTransferDetailsValidationRequest(TypedDict, total=False):
     """Request to validate export and import data details.
 
-    :ivar data_export_details: List of DataTransfer details to be used to export data from azure.
-    :vartype data_export_details: list["DataExportDetails"]
-    :ivar data_import_details: List of DataTransfer details to be used to import data to azure.
-    :vartype data_import_details: list["DataImportDetails"]
-    :ivar device_type: Device type. Required. Known values are: "DataBox", "DataBoxDisk",
+    :ivar dataExportDetails: List of DataTransfer details to be used to export data from azure.
+    :vartype dataExportDetails: list["DataExportDetails"]
+    :ivar dataImportDetails: List of DataTransfer details to be used to import data to azure.
+    :vartype dataImportDetails: list["DataImportDetails"]
+    :ivar deviceType: Device type. Required. Known values are: "DataBox", "DataBoxDisk",
      "DataBoxHeavy", and "DataBoxCustomerDisk".
-    :vartype device_type: Union[str, "SkuName"]
-    :ivar transfer_type: Type of the transfer. Required. Known values are: "ImportToAzure" and
+    :vartype deviceType: Union[str, "SkuName"]
+    :ivar transferType: Type of the transfer. Required. Known values are: "ImportToAzure" and
      "ExportFromAzure".
-    :vartype transfer_type: Union[str, "TransferType"]
+    :vartype transferType: Union[str, "TransferType"]
     :ivar model: The customer friendly name of the combination of version and capacity of the
      device. This field is necessary only at the time of ordering the newer generation device i.e.
      AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
      "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
     :vartype model: Union[str, "ModelName"]
-    :ivar validation_type: Identifies the type of validation request. Required. Identify request
-     and response of data transfer details validation.
-    :vartype validation_type: Literal[ValidationInputDiscriminator.VALIDATE_DATA_TRANSFER_DETAILS]
+    :ivar validationType: Identifies the type of validation request. Required. Identify request and
+     response of data transfer details validation.
+    :vartype validationType: Literal[ValidationInputDiscriminator.VALIDATE_DATA_TRANSFER_DETAILS]
     """
 
     dataExportDetails: list["DataExportDetails"]
@@ -1492,9 +1480,9 @@ class DataTransferDetailsValidationRequest(TypedDict, total=False):
 class DeviceCapabilityRequest(TypedDict, total=False):
     """Request body to get the device capabilities for given sku.
 
-    :ivar sku_name: Type of the device. Known values are: "DataBox", "DataBoxDisk", "DataBoxHeavy",
+    :ivar skuName: Type of the device. Known values are: "DataBox", "DataBoxDisk", "DataBoxHeavy",
      and "DataBoxCustomerDisk".
-    :vartype sku_name: Union[str, "SkuName"]
+    :vartype skuName: Union[str, "SkuName"]
     :ivar model: The customer friendly name of the combination of version and capacity of the
      device. This field is necessary only at the time of ordering the newer generation device i.e.
      AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
@@ -1516,18 +1504,18 @@ class DeviceErasureDetails(TypedDict, total=False):
     """Device erasure details with erasure completion status, secure erasure sas key and
     erasureordestructionlog sas key.
 
-    :ivar device_erasure_status: Holds the device erasure completion status. Known values are:
+    :ivar deviceErasureStatus: Holds the device erasure completion status. Known values are:
      "None", "InProgress", "Succeeded", "Failed", "Cancelled", "Cancelling", "SucceededWithErrors",
      "WaitingForCustomerAction", "SucceededWithWarnings", "WaitingForCustomerActionForKek",
      "WaitingForCustomerActionForCleanUp", "CustomerActionPerformedForCleanUp", and
      "CustomerActionPerformed".
-    :vartype device_erasure_status: Union[str, "StageStatus"]
-    :ivar erasure_or_destruction_certificate_sas_key: Shared access key to download cleanup or
+    :vartype deviceErasureStatus: Union[str, "StageStatus"]
+    :ivar erasureOrDestructionCertificateSasKey: Shared access key to download cleanup or
      destruction certificate for device.
-    :vartype erasure_or_destruction_certificate_sas_key: str
-    :ivar secure_erasure_certificate_sas_key: Shared access key to download secure erasure
-     certificate for the device.
-    :vartype secure_erasure_certificate_sas_key: str
+    :vartype erasureOrDestructionCertificateSasKey: str
+    :ivar secureErasureCertificateSasKey: Shared access key to download secure erasure certificate
+     for the device.
+    :vartype secureErasureCertificateSasKey: str
     """
 
     deviceErasureStatus: Union[str, "StageStatus"]
@@ -1545,11 +1533,11 @@ class DeviceErasureDetails(TypedDict, total=False):
 class DiskScheduleAvailabilityRequest(TypedDict, total=False):
     """Request body to get the availability for scheduling disk orders.
 
-    :ivar storage_location: Location for data transfer. For locations check:
+    :ivar storageLocation: Location for data transfer. For locations check:
      `https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01
      <https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01>`_.
      Required.
-    :vartype storage_location: str
+    :vartype storageLocation: str
     :ivar country: Country in which storage location should be supported.
     :vartype country: str
     :ivar model: The customer friendly name of the combination of version and capacity of the
@@ -1557,11 +1545,11 @@ class DiskScheduleAvailabilityRequest(TypedDict, total=False):
      AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
      "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
     :vartype model: Union[str, "ModelName"]
-    :ivar expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
-     transferred in this job, in terabytes. Required.
-    :vartype expected_data_size_in_tera_bytes: int
-    :ivar sku_name: Sku Name for which the order is to be scheduled. Required. Data Box Disk.
-    :vartype sku_name: Literal[SkuName.DATA_BOX_DISK]
+    :ivar expectedDataSizeInTeraBytes: The expected size of the data, which needs to be transferred
+     in this job, in terabytes. Required.
+    :vartype expectedDataSizeInTeraBytes: int
+    :ivar skuName: Sku Name for which the order is to be scheduled. Required. Data Box Disk.
+    :vartype skuName: Literal[SkuName.DATA_BOX_DISK]
     """
 
     storageLocation: Required[str]
@@ -1586,12 +1574,12 @@ class DiskScheduleAvailabilityRequest(TypedDict, total=False):
 class EncryptionPreferences(TypedDict, total=False):
     """Preferences related to the Encryption.
 
-    :ivar double_encryption: Defines secondary layer of software-based encryption enablement. Known
+    :ivar doubleEncryption: Defines secondary layer of software-based encryption enablement. Known
      values are: "Enabled" and "Disabled".
-    :vartype double_encryption: Union[str, "DoubleEncryption"]
-    :ivar hardware_encryption: Defines Hardware level encryption (Only for disk). Known values are:
+    :vartype doubleEncryption: Union[str, "DoubleEncryption"]
+    :ivar hardwareEncryption: Defines Hardware level encryption (Only for disk). Known values are:
      "Enabled" and "Disabled".
-    :vartype hardware_encryption: Union[str, "HardwareEncryption"]
+    :vartype hardwareEncryption: Union[str, "HardwareEncryption"]
     """
 
     doubleEncryption: Union[str, "DoubleEncryption"]
@@ -1605,13 +1593,13 @@ class EncryptionPreferences(TypedDict, total=False):
 class ExportDiskDetails(TypedDict, total=False):
     """Export disk details.
 
-    :ivar manifest_file: The relative path of the manifest file on the disk.
-    :vartype manifest_file: str
-    :ivar manifest_hash: The Base16-encoded MD5 hash of the manifest file on the disk.
-    :vartype manifest_hash: str
-    :ivar backup_manifest_cloud_path: Path to backed up manifest, only returned if
+    :ivar manifestFile: The relative path of the manifest file on the disk.
+    :vartype manifestFile: str
+    :ivar manifestHash: The Base16-encoded MD5 hash of the manifest file on the disk.
+    :vartype manifestHash: str
+    :ivar backupManifestCloudPath: Path to backed up manifest, only returned if
      enableManifestBackup is true.
-    :vartype backup_manifest_cloud_path: str
+    :vartype backupManifestCloudPath: str
     """
 
     manifestFile: str
@@ -1625,12 +1613,12 @@ class ExportDiskDetails(TypedDict, total=False):
 class FilterFileDetails(TypedDict, total=False):
     """Details of the filter files to be used for data transfer.
 
-    :ivar filter_file_type: Type of the filter file. Required. Known values are: "AzureBlob" and
+    :ivar filterFileType: Type of the filter file. Required. Known values are: "AzureBlob" and
      "AzureFile".
-    :vartype filter_file_type: Union[str, "FilterFileType"]
-    :ivar filter_file_path: Path of the file that contains the details of all items to transfer.
+    :vartype filterFileType: Union[str, "FilterFileType"]
+    :ivar filterFilePath: Path of the file that contains the details of all items to transfer.
      Required.
-    :vartype filter_file_path: str
+    :vartype filterFilePath: str
     """
 
     filterFileType: Required[Union[str, "FilterFileType"]]
@@ -1642,11 +1630,11 @@ class FilterFileDetails(TypedDict, total=False):
 class HeavyScheduleAvailabilityRequest(TypedDict, total=False):
     """Request body to get the availability for scheduling heavy orders.
 
-    :ivar storage_location: Location for data transfer. For locations check:
+    :ivar storageLocation: Location for data transfer. For locations check:
      `https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01
      <https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01>`_.
      Required.
-    :vartype storage_location: str
+    :vartype storageLocation: str
     :ivar country: Country in which storage location should be supported.
     :vartype country: str
     :ivar model: The customer friendly name of the combination of version and capacity of the
@@ -1654,8 +1642,8 @@ class HeavyScheduleAvailabilityRequest(TypedDict, total=False):
      AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
      "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
     :vartype model: Union[str, "ModelName"]
-    :ivar sku_name: Sku Name for which the order is to be scheduled. Required. Data Box Heavy.
-    :vartype sku_name: Literal[SkuName.DATA_BOX_HEAVY]
+    :ivar skuName: Sku Name for which the order is to be scheduled. Required. Data Box Heavy.
+    :vartype skuName: Literal[SkuName.DATA_BOX_HEAVY]
     """
 
     storageLocation: Required[str]
@@ -1679,8 +1667,8 @@ class IdentityProperties(TypedDict, total=False):
 
     :ivar type: Managed service identity type.
     :vartype type: str
-    :ivar user_assigned: User assigned identity properties.
-    :vartype user_assigned: "UserAssignedProperties"
+    :ivar userAssigned: User assigned identity properties.
+    :vartype userAssigned: "UserAssignedProperties"
     """
 
     type: str
@@ -1692,15 +1680,15 @@ class IdentityProperties(TypedDict, total=False):
 class ImportDiskDetails(TypedDict, total=False):
     """Import disk details.
 
-    :ivar manifest_file: The relative path of the manifest file on the disk. Required.
-    :vartype manifest_file: str
-    :ivar manifest_hash: The Base16-encoded MD5 hash of the manifest file on the disk. Required.
-    :vartype manifest_hash: str
-    :ivar bit_locker_key: BitLocker key used to encrypt the disk. Required.
-    :vartype bit_locker_key: str
-    :ivar backup_manifest_cloud_path: Path to backed up manifest, only returned if
+    :ivar manifestFile: The relative path of the manifest file on the disk. Required.
+    :vartype manifestFile: str
+    :ivar manifestHash: The Base16-encoded MD5 hash of the manifest file on the disk. Required.
+    :vartype manifestHash: str
+    :ivar bitLockerKey: BitLocker key used to encrypt the disk. Required.
+    :vartype bitLockerKey: str
+    :ivar backupManifestCloudPath: Path to backed up manifest, only returned if
      enableManifestBackup is true.
-    :vartype backup_manifest_cloud_path: str
+    :vartype backupManifestCloudPath: str
     """
 
     manifestFile: Required[str]
@@ -1718,15 +1706,15 @@ class JobDelayDetails(TypedDict, total=False):
 
     :ivar status: Status of notification. Known values are: "Active" and "Resolved".
     :vartype status: Union[str, "DelayNotificationStatus"]
-    :ivar error_code: Delay Error code. Known values are: "InternalIssueDelay",
+    :ivar errorCode: Delay Error code. Known values are: "InternalIssueDelay",
      "ActiveOrderLimitBreachedDelay", "HighDemandDelay", and "LargeNumberOfFilesDelay".
-    :vartype error_code: Union[str, "PortalDelayErrorCode"]
+    :vartype errorCode: Union[str, "PortalDelayErrorCode"]
     :ivar description: Description of the delay.
     :vartype description: str
-    :ivar start_time: Timestamp when the delay notification was created.
-    :vartype start_time: str
-    :ivar resolution_time: Timestamp when the delay notification was resolved.
-    :vartype resolution_time: str
+    :ivar startTime: Timestamp when the delay notification was created.
+    :vartype startTime: str
+    :ivar resolutionTime: Timestamp when the delay notification was resolved.
+    :vartype resolutionTime: str
     """
 
     status: Union[str, "DelayNotificationStatus"]
@@ -1745,8 +1733,8 @@ class JobDelayDetails(TypedDict, total=False):
 class JobDeliveryInfo(TypedDict, total=False):
     """Additional delivery info.
 
-    :ivar scheduled_date_time: Scheduled date time.
-    :vartype scheduled_date_time: str
+    :ivar scheduledDateTime: Scheduled date time.
+    :vartype scheduledDateTime: str
     """
 
     scheduledDateTime: str
@@ -1756,24 +1744,23 @@ class JobDeliveryInfo(TypedDict, total=False):
 class JobProperties(TypedDict, total=False):
     """Job Properties.
 
-    :ivar transfer_type: Type of the data transfer. Required. Known values are: "ImportToAzure" and
+    :ivar transferType: Type of the data transfer. Required. Known values are: "ImportToAzure" and
      "ExportFromAzure".
-    :vartype transfer_type: Union[str, "TransferType"]
-    :ivar is_cancellable: Describes whether the job is cancellable or not.
-    :vartype is_cancellable: bool
-    :ivar is_deletable: Describes whether the job is deletable or not.
-    :vartype is_deletable: bool
-    :ivar is_shipping_address_editable: Describes whether the shipping address is editable or not.
-    :vartype is_shipping_address_editable: bool
-    :ivar reverse_shipping_details_update: The Editable status for Reverse Shipping Address and
+    :vartype transferType: Union[str, "TransferType"]
+    :ivar isCancellable: Describes whether the job is cancellable or not.
+    :vartype isCancellable: bool
+    :ivar isDeletable: Describes whether the job is deletable or not.
+    :vartype isDeletable: bool
+    :ivar isShippingAddressEditable: Describes whether the shipping address is editable or not.
+    :vartype isShippingAddressEditable: bool
+    :ivar reverseShippingDetailsUpdate: The Editable status for Reverse Shipping Address and
      Contact Info. Known values are: "Enabled", "Disabled", and "NotSupported".
-    :vartype reverse_shipping_details_update: Union[str, "ReverseShippingDetailsEditStatus"]
-    :ivar reverse_transport_preference_update: The Editable status for Reverse Transport
-     preferences. Known values are: "Enabled", "Disabled", and "NotSupported".
-    :vartype reverse_transport_preference_update: Union[str,
-     "ReverseTransportPreferenceEditStatus"]
-    :ivar is_prepare_to_ship_enabled: Is Prepare To Ship Enabled on this job.
-    :vartype is_prepare_to_ship_enabled: bool
+    :vartype reverseShippingDetailsUpdate: Union[str, "ReverseShippingDetailsEditStatus"]
+    :ivar reverseTransportPreferenceUpdate: The Editable status for Reverse Transport preferences.
+     Known values are: "Enabled", "Disabled", and "NotSupported".
+    :vartype reverseTransportPreferenceUpdate: Union[str, "ReverseTransportPreferenceEditStatus"]
+    :ivar isPrepareToShipEnabled: Is Prepare To Ship Enabled on this job.
+    :vartype isPrepareToShipEnabled: bool
     :ivar status: Name of the stage which is in progress. Known values are: "DeviceOrdered",
      "DevicePrepared", "Dispatched", "Delivered", "PickedUp", "AtAzureDC", "DataCopy", "Completed",
      "CompletedWithErrors", "Cancelled", "Failed_IssueReportedAtCustomer",
@@ -1781,29 +1768,29 @@ class JobProperties(TypedDict, total=False):
      "ReadyToDispatchFromAzureDC", "ReadyToReceiveAtAzureDC", "Created", "ShippedToAzureDC",
      "AwaitingShipmentDetails", "PreparingToShipFromAzureDC", and "ShippedToCustomer".
     :vartype status: Union[str, "StageName"]
-    :ivar delayed_stage: Name of the stage where delay might be present. Known values are:
+    :ivar delayedStage: Name of the stage where delay might be present. Known values are:
      "DeviceOrdered", "DevicePrepared", "Dispatched", "Delivered", "PickedUp", "AtAzureDC",
      "DataCopy", "Completed", "CompletedWithErrors", "Cancelled", "Failed_IssueReportedAtCustomer",
      "Failed_IssueDetectedAtAzureDC", "Aborted", "CompletedWithWarnings",
      "ReadyToDispatchFromAzureDC", "ReadyToReceiveAtAzureDC", "Created", "ShippedToAzureDC",
      "AwaitingShipmentDetails", "PreparingToShipFromAzureDC", and "ShippedToCustomer".
-    :vartype delayed_stage: Union[str, "StageName"]
-    :ivar start_time: Time at which the job was started in UTC ISO 8601 format.
-    :vartype start_time: str
+    :vartype delayedStage: Union[str, "StageName"]
+    :ivar startTime: Time at which the job was started in UTC ISO 8601 format.
+    :vartype startTime: str
     :ivar error: Top level error for the job.
     :vartype error: "CloudError"
     :ivar details: Details of a job run. This field will only be sent for expand details filter.
     :vartype details: "JobDetails"
-    :ivar cancellation_reason: Reason for cancellation.
-    :vartype cancellation_reason: str
-    :ivar delivery_type: Delivery type of Job. Known values are: "NonScheduled" and "Scheduled".
-    :vartype delivery_type: Union[str, "JobDeliveryType"]
-    :ivar delivery_info: Delivery Info of Job.
-    :vartype delivery_info: "JobDeliveryInfo"
-    :ivar is_cancellable_without_fee: Flag to indicate cancellation of scheduled job.
-    :vartype is_cancellable_without_fee: bool
-    :ivar all_devices_lost: Flag to indicate if all devices associated with the job are lost.
-    :vartype all_devices_lost: bool
+    :ivar cancellationReason: Reason for cancellation.
+    :vartype cancellationReason: str
+    :ivar deliveryType: Delivery type of Job. Known values are: "NonScheduled" and "Scheduled".
+    :vartype deliveryType: Union[str, "JobDeliveryType"]
+    :ivar deliveryInfo: Delivery Info of Job.
+    :vartype deliveryInfo: "JobDeliveryInfo"
+    :ivar isCancellableWithoutFee: Flag to indicate cancellation of scheduled job.
+    :vartype isCancellableWithoutFee: bool
+    :ivar allDevicesLost: Flag to indicate if all devices associated with the job are lost.
+    :vartype allDevicesLost: bool
     """
 
     transferType: Required[Union[str, "TransferType"]]
@@ -1866,9 +1853,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -1894,9 +1881,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1920,9 +1907,9 @@ class JobResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1967,27 +1954,27 @@ class JobResourceUpdateParameter(TypedDict, total=False):
 class JobStages(TypedDict, total=False):
     """Job stages.
 
-    :ivar stage_name: Name of the job stage. Known values are: "DeviceOrdered", "DevicePrepared",
+    :ivar stageName: Name of the job stage. Known values are: "DeviceOrdered", "DevicePrepared",
      "Dispatched", "Delivered", "PickedUp", "AtAzureDC", "DataCopy", "Completed",
      "CompletedWithErrors", "Cancelled", "Failed_IssueReportedAtCustomer",
      "Failed_IssueDetectedAtAzureDC", "Aborted", "CompletedWithWarnings",
      "ReadyToDispatchFromAzureDC", "ReadyToReceiveAtAzureDC", "Created", "ShippedToAzureDC",
      "AwaitingShipmentDetails", "PreparingToShipFromAzureDC", and "ShippedToCustomer".
-    :vartype stage_name: Union[str, "StageName"]
-    :ivar display_name: Display name of the job stage.
-    :vartype display_name: str
-    :ivar stage_status: Status of the job stage. Known values are: "None", "InProgress",
+    :vartype stageName: Union[str, "StageName"]
+    :ivar displayName: Display name of the job stage.
+    :vartype displayName: str
+    :ivar stageStatus: Status of the job stage. Known values are: "None", "InProgress",
      "Succeeded", "Failed", "Cancelled", "Cancelling", "SucceededWithErrors",
      "WaitingForCustomerAction", "SucceededWithWarnings", "WaitingForCustomerActionForKek",
      "WaitingForCustomerActionForCleanUp", "CustomerActionPerformedForCleanUp", and
      "CustomerActionPerformed".
-    :vartype stage_status: Union[str, "StageStatus"]
-    :ivar stage_time: Time for the job stage in UTC ISO 8601 format.
-    :vartype stage_time: str
-    :ivar job_stage_details: Job Stage Details.
-    :vartype job_stage_details: Any
-    :ivar delay_information: Delay information for the job stages.
-    :vartype delay_information: list["JobDelayDetails"]
+    :vartype stageStatus: Union[str, "StageStatus"]
+    :ivar stageTime: Time for the job stage in UTC ISO 8601 format.
+    :vartype stageTime: str
+    :ivar jobStageDetails: Job Stage Details.
+    :vartype jobStageDetails: Any
+    :ivar delayInformation: Delay information for the job stages.
+    :vartype delayInformation: list["JobDelayDetails"]
     """
 
     stageName: Union[str, "StageName"]
@@ -2016,16 +2003,16 @@ class JobStages(TypedDict, total=False):
 class KeyEncryptionKey(TypedDict, total=False):
     """Encryption key containing details about key to encrypt different keys.
 
-    :ivar kek_type: Type of encryption key used for key encryption. Required. Known values are:
+    :ivar kekType: Type of encryption key used for key encryption. Required. Known values are:
      "MicrosoftManaged" and "CustomerManaged".
-    :vartype kek_type: Union[str, "KekType"]
-    :ivar identity_properties: Managed identity properties used for key encryption.
-    :vartype identity_properties: "IdentityProperties"
-    :ivar kek_url: Key encryption key. It is required in case of Customer managed KekType.
-    :vartype kek_url: str
-    :ivar kek_vault_resource_id: Kek vault resource id. It is required in case of Customer managed
+    :vartype kekType: Union[str, "KekType"]
+    :ivar identityProperties: Managed identity properties used for key encryption.
+    :vartype identityProperties: "IdentityProperties"
+    :ivar kekUrl: Key encryption key. It is required in case of Customer managed KekType.
+    :vartype kekUrl: str
+    :ivar kekVaultResourceID: Kek vault resource id. It is required in case of Customer managed
      KekType.
-    :vartype kek_vault_resource_id: str
+    :vartype kekVaultResourceID: str
     """
 
     kekType: Required[Union[str, "KekType"]]
@@ -2042,14 +2029,14 @@ class KeyEncryptionKey(TypedDict, total=False):
 class LastMitigationActionOnJob(TypedDict, total=False):
     """Last Mitigation Action Performed On Job.
 
-    :ivar action_date_time_in_utc: Action performed date time.
-    :vartype action_date_time_in_utc: str
-    :ivar is_performed_by_customer: Action performed by customer, possibility is that mitigation
-     might happen by customer or service or by ops.
-    :vartype is_performed_by_customer: bool
-    :ivar customer_resolution: Resolution code provided by customer. Known values are: "None",
+    :ivar actionDateTimeInUtc: Action performed date time.
+    :vartype actionDateTimeInUtc: str
+    :ivar isPerformedByCustomer: Action performed by customer, possibility is that mitigation might
+     happen by customer or service or by ops.
+    :vartype isPerformedByCustomer: bool
+    :ivar customerResolution: Resolution code provided by customer. Known values are: "None",
      "MoveToCleanUpDevice", "Resume", "Restart", and "ReachOutToOperation".
-    :vartype customer_resolution: Union[str, "CustomerResolutionCode"]
+    :vartype customerResolution: Union[str, "CustomerResolutionCode"]
     """
 
     actionDateTimeInUtc: str
@@ -2065,21 +2052,21 @@ class LastMitigationActionOnJob(TypedDict, total=False):
 class ManagedDiskDetails(TypedDict, total=False):
     """Details of the managed disks.
 
-    :ivar share_password: Password for all the shares to be created on the device. Should not be
+    :ivar sharePassword: Password for all the shares to be created on the device. Should not be
      passed for TransferType:ExportFromAzure jobs. If this is not passed, the service will generate
      password itself. This will not be returned in Get Call. Password Requirements :  Password must
      be minimum of 12 and maximum of 64 characters. Password must have at least one uppercase
      alphabet, one number and one special character. Password cannot have the following characters :
      IilLoO0 Password can have only alphabets, numbers and these characters : @#\\-$%^!+=;:_()]+.
-    :vartype share_password: str
-    :ivar resource_group_id: Resource Group Id of the compute disks. Required.
-    :vartype resource_group_id: str
-    :ivar staging_storage_account_id: Resource Id of the storage account that can be used to copy
-     the vhd for staging. Required.
-    :vartype staging_storage_account_id: str
-    :ivar data_account_type: Account Type of the data to be transferred. Required. Azure Managed
-     disk storage.
-    :vartype data_account_type: Literal[DataAccountType.MANAGED_DISK]
+    :vartype sharePassword: str
+    :ivar resourceGroupId: Resource Group Id of the compute disks. Required.
+    :vartype resourceGroupId: str
+    :ivar stagingStorageAccountId: Resource Id of the storage account that can be used to copy the
+     vhd for staging. Required.
+    :vartype stagingStorageAccountId: str
+    :ivar dataAccountType: Account Type of the data to be transferred. Required. Azure Managed disk
+     storage.
+    :vartype dataAccountType: Literal[DataAccountType.MANAGED_DISK]
     """
 
     sharePassword: str
@@ -2100,8 +2087,8 @@ class ManagedDiskDetails(TypedDict, total=False):
 class MarkDevicesShippedRequest(TypedDict, total=False):
     """The request body to provide the delivery package details of job.
 
-    :ivar deliver_to_dc_package_details: Delivery package details. Required.
-    :vartype deliver_to_dc_package_details: "PackageCarrierInfo"
+    :ivar deliverToDcPackageDetails: Delivery package details. Required.
+    :vartype deliverToDcPackageDetails: "PackageCarrierInfo"
     """
 
     deliverToDcPackageDetails: Required["PackageCarrierInfo"]
@@ -2111,12 +2098,12 @@ class MarkDevicesShippedRequest(TypedDict, total=False):
 class MitigateJobRequest(TypedDict, total=False):
     """The Mitigate Job captured from request body for Mitigate API.
 
-    :ivar customer_resolution_code: Resolution code for the job. Known values are: "None",
+    :ivar customerResolutionCode: Resolution code for the job. Known values are: "None",
      "MoveToCleanUpDevice", "Resume", "Restart", and "ReachOutToOperation".
-    :vartype customer_resolution_code: Union[str, "CustomerResolutionCode"]
-    :ivar serial_number_customer_resolution_map: Serial number and the customer resolution code
+    :vartype customerResolutionCode: Union[str, "CustomerResolutionCode"]
+    :ivar serialNumberCustomerResolutionMap: Serial number and the customer resolution code
      corresponding to each serial number.
-    :vartype serial_number_customer_resolution_map: dict[str, Union[str, "CustomerResolutionCode"]]
+    :vartype serialNumberCustomerResolutionMap: dict[str, Union[str, "CustomerResolutionCode"]]
     """
 
     customerResolutionCode: Union[str, "CustomerResolutionCode"]
@@ -2129,12 +2116,11 @@ class MitigateJobRequest(TypedDict, total=False):
 class NotificationPreference(TypedDict, total=False):
     """Notification preference for a job stage.
 
-    :ivar stage_name: Name of the stage. Required. Known values are: "DevicePrepared",
-     "Dispatched", "Delivered", "PickedUp", "AtAzureDC", "DataCopy", "Created", and
-     "ShippedToCustomer".
-    :vartype stage_name: Union[str, "NotificationStageName"]
-    :ivar send_notification: Notification is required or not. Required.
-    :vartype send_notification: bool
+    :ivar stageName: Name of the stage. Required. Known values are: "DevicePrepared", "Dispatched",
+     "Delivered", "PickedUp", "AtAzureDC", "DataCopy", "Created", and "ShippedToCustomer".
+    :vartype stageName: Union[str, "NotificationStageName"]
+    :ivar sendNotification: Notification is required or not. Required.
+    :vartype sendNotification: bool
     """
 
     stageName: Required[Union[str, "NotificationStageName"]]
@@ -2148,12 +2134,12 @@ class NotificationPreference(TypedDict, total=False):
 class PackageCarrierDetails(TypedDict, total=False):
     """Package carrier details.
 
-    :ivar carrier_account_number: Carrier Account Number of customer for customer disk.
-    :vartype carrier_account_number: str
-    :ivar carrier_name: Name of the carrier.
-    :vartype carrier_name: str
-    :ivar tracking_id: Tracking Id of shipment.
-    :vartype tracking_id: str
+    :ivar carrierAccountNumber: Carrier Account Number of customer for customer disk.
+    :vartype carrierAccountNumber: str
+    :ivar carrierName: Name of the carrier.
+    :vartype carrierName: str
+    :ivar trackingId: Tracking Id of shipment.
+    :vartype trackingId: str
     """
 
     carrierAccountNumber: str
@@ -2167,10 +2153,10 @@ class PackageCarrierDetails(TypedDict, total=False):
 class PackageCarrierInfo(TypedDict, total=False):
     """package carrier info.
 
-    :ivar carrier_name: Name of the carrier.
-    :vartype carrier_name: str
-    :ivar tracking_id: Tracking Id of shipment.
-    :vartype tracking_id: str
+    :ivar carrierName: Name of the carrier.
+    :vartype carrierName: str
+    :ivar trackingId: Tracking Id of shipment.
+    :vartype trackingId: str
     """
 
     carrierName: str
@@ -2182,12 +2168,12 @@ class PackageCarrierInfo(TypedDict, total=False):
 class PackageShippingDetails(TypedDict, total=False):
     """package shipping details.
 
-    :ivar tracking_url: Url where shipment can be tracked.
-    :vartype tracking_url: str
-    :ivar carrier_name: Name of the carrier.
-    :vartype carrier_name: str
-    :ivar tracking_id: Tracking Id of shipment.
-    :vartype tracking_id: str
+    :ivar trackingUrl: Url where shipment can be tracked.
+    :vartype trackingUrl: str
+    :ivar carrierName: Name of the carrier.
+    :vartype carrierName: str
+    :ivar trackingId: Tracking Id of shipment.
+    :vartype trackingId: str
     """
 
     trackingUrl: str
@@ -2201,18 +2187,18 @@ class PackageShippingDetails(TypedDict, total=False):
 class Preferences(TypedDict, total=False):
     """Preferences related to the order.
 
-    :ivar preferred_data_center_region: Preferred data center region.
-    :vartype preferred_data_center_region: list[str]
-    :ivar transport_preferences: Preferences related to the shipment logistics of the sku.
-    :vartype transport_preferences: "TransportPreferences"
-    :ivar reverse_transport_preferences: Optional Preferences related to the reverse shipment
+    :ivar preferredDataCenterRegion: Preferred data center region.
+    :vartype preferredDataCenterRegion: list[str]
+    :ivar transportPreferences: Preferences related to the shipment logistics of the sku.
+    :vartype transportPreferences: "TransportPreferences"
+    :ivar reverseTransportPreferences: Optional Preferences related to the reverse shipment
      logistics of the sku.
-    :vartype reverse_transport_preferences: "TransportPreferences"
-    :ivar encryption_preferences: Preferences related to the Encryption.
-    :vartype encryption_preferences: "EncryptionPreferences"
-    :ivar storage_account_access_tier_preferences: Preferences related to the Access Tier of
-     storage accounts.
-    :vartype storage_account_access_tier_preferences: list[Literal["Archive"]]
+    :vartype reverseTransportPreferences: "TransportPreferences"
+    :ivar encryptionPreferences: Preferences related to the Encryption.
+    :vartype encryptionPreferences: "EncryptionPreferences"
+    :ivar storageAccountAccessTierPreferences: Preferences related to the Access Tier of storage
+     accounts.
+    :vartype storageAccountAccessTierPreferences: list[Literal["Archive"]]
     """
 
     preferredDataCenterRegion: list[str]
@@ -2232,17 +2218,17 @@ class PreferencesValidationRequest(TypedDict, total=False):
 
     :ivar preference: Preference of transport and data center.
     :vartype preference: "Preferences"
-    :ivar device_type: Device type to be used for the job. Required. Known values are: "DataBox",
+    :ivar deviceType: Device type to be used for the job. Required. Known values are: "DataBox",
      "DataBoxDisk", "DataBoxHeavy", and "DataBoxCustomerDisk".
-    :vartype device_type: Union[str, "SkuName"]
+    :vartype deviceType: Union[str, "SkuName"]
     :ivar model: The customer friendly name of the combination of version and capacity of the
      device. This field is necessary only at the time of ordering the newer generation device i.e.
      AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
      "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
     :vartype model: Union[str, "ModelName"]
-    :ivar validation_type: Identifies the type of validation request. Required. Identify request
-     and response of preference validation.
-    :vartype validation_type: Literal[ValidationInputDiscriminator.VALIDATE_PREFERENCES]
+    :ivar validationType: Identifies the type of validation request. Required. Identify request and
+     response of preference validation.
+    :vartype validationType: Literal[ValidationInputDiscriminator.VALIDATE_PREFERENCES]
     """
 
     preference: "Preferences"
@@ -2263,16 +2249,15 @@ class PreferencesValidationRequest(TypedDict, total=False):
 class RegionConfigurationRequest(TypedDict, total=False):
     """Request body to get the configuration for the region.
 
-    :ivar schedule_availability_request: Request body to get the availability for scheduling
-     orders.
-    :vartype schedule_availability_request: "ScheduleAvailabilityRequest"
-    :ivar transport_availability_request: Request body to get the transport availability for given
+    :ivar scheduleAvailabilityRequest: Request body to get the availability for scheduling orders.
+    :vartype scheduleAvailabilityRequest: "ScheduleAvailabilityRequest"
+    :ivar transportAvailabilityRequest: Request body to get the transport availability for given
      sku.
-    :vartype transport_availability_request: "TransportAvailabilityRequest"
-    :ivar datacenter_address_request: Request body to get the datacenter address for given sku.
-    :vartype datacenter_address_request: "DatacenterAddressRequest"
-    :ivar device_capability_request: Request body to get the device capabilities for a given sku.
-    :vartype device_capability_request: "DeviceCapabilityRequest"
+    :vartype transportAvailabilityRequest: "TransportAvailabilityRequest"
+    :ivar datacenterAddressRequest: Request body to get the datacenter address for given sku.
+    :vartype datacenterAddressRequest: "DatacenterAddressRequest"
+    :ivar deviceCapabilityRequest: Request body to get the device capabilities for a given sku.
+    :vartype deviceCapabilityRequest: "DeviceCapabilityRequest"
     """
 
     scheduleAvailabilityRequest: "ScheduleAvailabilityRequest"
@@ -2290,12 +2275,12 @@ class ResourceIdentity(TypedDict, total=False):
 
     :ivar type: Identity type.
     :vartype type: str
-    :ivar principal_id: Service Principal Id backing the Msi.
-    :vartype principal_id: str
-    :ivar tenant_id: Home Tenant Id.
-    :vartype tenant_id: str
-    :ivar user_assigned_identities: User Assigned Identities.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :ivar principalId: Service Principal Id backing the Msi.
+    :vartype principalId: str
+    :ivar tenantId: Home Tenant Id.
+    :vartype tenantId: str
+    :ivar userAssignedIdentities: User Assigned Identities.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     type: str
@@ -2311,13 +2296,13 @@ class ResourceIdentity(TypedDict, total=False):
 class ReverseShippingDetails(TypedDict, total=False):
     """Reverse Shipping Address and contact details for a job.
 
-    :ivar contact_details: Contact Info.
-    :vartype contact_details: "ContactInfo"
-    :ivar shipping_address: Shipping address where customer wishes to receive the device.
-    :vartype shipping_address: "ShippingAddress"
-    :ivar is_updated: A flag to indicate whether Reverse Shipping details are updated or not after
+    :ivar contactDetails: Contact Info.
+    :vartype contactDetails: "ContactInfo"
+    :ivar shippingAddress: Shipping address where customer wishes to receive the device.
+    :vartype shippingAddress: "ShippingAddress"
+    :ivar isUpdated: A flag to indicate whether Reverse Shipping details are updated or not after
      device has been prepared. Read only field.
-    :vartype is_updated: bool
+    :vartype isUpdated: bool
     """
 
     contactDetails: "ContactInfo"
@@ -2332,14 +2317,14 @@ class ReverseShippingDetails(TypedDict, total=False):
 class ShipmentPickUpRequest(TypedDict, total=False):
     """Shipment pick up request details.
 
-    :ivar start_time: Minimum date after which the pick up should commence, this must be in local
+    :ivar startTime: Minimum date after which the pick up should commence, this must be in local
      time of pick up area. Required.
-    :vartype start_time: str
-    :ivar end_time: Maximum date before which the pick up should commence, this must be in local
+    :vartype startTime: str
+    :ivar endTime: Maximum date before which the pick up should commence, this must be in local
      time of pick up area. Required.
-    :vartype end_time: str
-    :ivar shipment_location: Shipment Location in the pickup place. Eg.front desk. Required.
-    :vartype shipment_location: str
+    :vartype endTime: str
+    :ivar shipmentLocation: Shipment Location in the pickup place. Eg.front desk. Required.
+    :vartype shipmentLocation: str
     """
 
     startTime: Required[str]
@@ -2355,31 +2340,31 @@ class ShipmentPickUpRequest(TypedDict, total=False):
 class ShippingAddress(TypedDict, total=False):
     """Shipping address where customer wishes to receive the device.
 
-    :ivar street_address1: Street Address line 1. Required.
-    :vartype street_address1: str
-    :ivar street_address2: Street Address line 2.
-    :vartype street_address2: str
-    :ivar street_address3: Street Address line 3.
-    :vartype street_address3: str
+    :ivar streetAddress1: Street Address line 1. Required.
+    :vartype streetAddress1: str
+    :ivar streetAddress2: Street Address line 2.
+    :vartype streetAddress2: str
+    :ivar streetAddress3: Street Address line 3.
+    :vartype streetAddress3: str
     :ivar city: Name of the City.
     :vartype city: str
-    :ivar state_or_province: Name of the State or Province.
-    :vartype state_or_province: str
+    :ivar stateOrProvince: Name of the State or Province.
+    :vartype stateOrProvince: str
     :ivar country: Name of the Country. Required.
     :vartype country: str
-    :ivar postal_code: Postal code.
-    :vartype postal_code: str
-    :ivar zip_extended_code: Extended Zip Code.
-    :vartype zip_extended_code: str
-    :ivar company_name: Name of the company.
-    :vartype company_name: str
-    :ivar address_type: Type of address. Known values are: "None", "Residential", and "Commercial".
-    :vartype address_type: Union[str, "AddressType"]
-    :ivar skip_address_validation: Flag to indicate if customer has chosen to skip default address
+    :ivar postalCode: Postal code.
+    :vartype postalCode: str
+    :ivar zipExtendedCode: Extended Zip Code.
+    :vartype zipExtendedCode: str
+    :ivar companyName: Name of the company.
+    :vartype companyName: str
+    :ivar addressType: Type of address. Known values are: "None", "Residential", and "Commercial".
+    :vartype addressType: Union[str, "AddressType"]
+    :ivar skipAddressValidation: Flag to indicate if customer has chosen to skip default address
      validation.
-    :vartype skip_address_validation: bool
-    :ivar tax_identification_number: Tax Identification Number.
-    :vartype tax_identification_number: str
+    :vartype skipAddressValidation: bool
+    :ivar taxIdentificationNumber: Tax Identification Number.
+    :vartype taxIdentificationNumber: str
     """
 
     streetAddress1: Required[str]
@@ -2414,8 +2399,8 @@ class Sku(TypedDict, total=False):
     :ivar name: The sku name. Required. Known values are: "DataBox", "DataBoxDisk", "DataBoxHeavy",
      and "DataBoxCustomerDisk".
     :vartype name: Union[str, "SkuName"]
-    :ivar display_name: The display name of the sku.
-    :vartype display_name: str
+    :ivar displayName: The display name of the sku.
+    :vartype displayName: str
     :ivar family: The sku family.
     :vartype family: str
     :ivar model: The customer friendly name of the combination of version and capacity of the
@@ -2442,12 +2427,12 @@ class Sku(TypedDict, total=False):
 class SkuAvailabilityValidationRequest(TypedDict, total=False):
     """Request to validate sku availability.
 
-    :ivar device_type: Device type to be used for the job. Required. Known values are: "DataBox",
+    :ivar deviceType: Device type to be used for the job. Required. Known values are: "DataBox",
      "DataBoxDisk", "DataBoxHeavy", and "DataBoxCustomerDisk".
-    :vartype device_type: Union[str, "SkuName"]
-    :ivar transfer_type: Type of the transfer. Required. Known values are: "ImportToAzure" and
+    :vartype deviceType: Union[str, "SkuName"]
+    :ivar transferType: Type of the transfer. Required. Known values are: "ImportToAzure" and
      "ExportFromAzure".
-    :vartype transfer_type: Union[str, "TransferType"]
+    :vartype transferType: Union[str, "TransferType"]
     :ivar country: ISO country code. Country for hardware shipment. For codes check:
      `https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements
      <https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements>`_.
@@ -2463,9 +2448,9 @@ class SkuAvailabilityValidationRequest(TypedDict, total=False):
      AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
      "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
     :vartype model: Union[str, "ModelName"]
-    :ivar validation_type: Identifies the type of validation request. Required. Identify request
-     and response of active job limit for sku availability.
-    :vartype validation_type: Literal[ValidationInputDiscriminator.VALIDATE_SKU_AVAILABILITY]
+    :ivar validationType: Identifies the type of validation request. Required. Identify request and
+     response of active job limit for sku availability.
+    :vartype validationType: Literal[ValidationInputDiscriminator.VALIDATE_SKU_AVAILABILITY]
     """
 
     deviceType: Required[Union[str, "SkuName"]]
@@ -2496,18 +2481,17 @@ class SkuAvailabilityValidationRequest(TypedDict, total=False):
 class StorageAccountDetails(TypedDict, total=False):
     """Details for the storage account.
 
-    :ivar share_password: Password for all the shares to be created on the device. Should not be
+    :ivar sharePassword: Password for all the shares to be created on the device. Should not be
      passed for TransferType:ExportFromAzure jobs. If this is not passed, the service will generate
      password itself. This will not be returned in Get Call. Password Requirements :  Password must
      be minimum of 12 and maximum of 64 characters. Password must have at least one uppercase
      alphabet, one number and one special character. Password cannot have the following characters :
      IilLoO0 Password can have only alphabets, numbers and these characters : @#\\-$%^!+=;:_()]+.
-    :vartype share_password: str
-    :ivar storage_account_id: Storage Account Resource Id. Required.
-    :vartype storage_account_id: str
-    :ivar data_account_type: Account Type of the data to be transferred. Required. Storage Accounts
-     .
-    :vartype data_account_type: Literal[DataAccountType.STORAGE_ACCOUNT]
+    :vartype sharePassword: str
+    :ivar storageAccountId: Storage Account Resource Id. Required.
+    :vartype storageAccountId: str
+    :ivar dataAccountType: Account Type of the data to be transferred. Required. Storage Accounts .
+    :vartype dataAccountType: Literal[DataAccountType.STORAGE_ACCOUNT]
     """
 
     sharePassword: str
@@ -2526,9 +2510,9 @@ class StorageAccountDetails(TypedDict, total=False):
 class SubscriptionIsAllowedToCreateJobValidationRequest(TypedDict, total=False):  # pylint: disable=name-too-long
     """Request to validate subscription permission to create jobs.
 
-    :ivar validation_type: Identifies the type of validation request. Required. Identify request
-     and response for validation of subscription permission to create job.
-    :vartype validation_type:
+    :ivar validationType: Identifies the type of validation request. Required. Identify request and
+     response for validation of subscription permission to create job.
+    :vartype validationType:
      Literal[ValidationInputDiscriminator.VALIDATE_SUBSCRIPTION_IS_ALLOWED_TO_CREATE_JOB]
     """
 
@@ -2540,20 +2524,20 @@ class SubscriptionIsAllowedToCreateJobValidationRequest(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -2575,13 +2559,13 @@ class SystemData(TypedDict, total=False):
 class TransferAllDetails(TypedDict, total=False):
     """Details to transfer all data.
 
-    :ivar data_account_type: Type of the account of data. Required. Known values are:
+    :ivar dataAccountType: Type of the account of data. Required. Known values are:
      "StorageAccount" and "ManagedDisk".
-    :vartype data_account_type: Union[str, "DataAccountType"]
-    :ivar transfer_all_blobs: To indicate if all Azure blobs have to be transferred.
-    :vartype transfer_all_blobs: bool
-    :ivar transfer_all_files: To indicate if all Azure Files have to be transferred.
-    :vartype transfer_all_files: bool
+    :vartype dataAccountType: Union[str, "DataAccountType"]
+    :ivar transferAllBlobs: To indicate if all Azure blobs have to be transferred.
+    :vartype transferAllBlobs: bool
+    :ivar transferAllFiles: To indicate if all Azure Files have to be transferred.
+    :vartype transferAllFiles: bool
     """
 
     dataAccountType: Required[Union[str, "DataAccountType"]]
@@ -2596,15 +2580,15 @@ class TransferAllDetails(TypedDict, total=False):
 class TransferConfiguration(TypedDict, total=False):
     """Configuration for defining the transfer of data.
 
-    :ivar transfer_configuration_type: Type of the configuration for transfer. Required. Known
-     values are: "TransferAll" and "TransferUsingFilter".
-    :vartype transfer_configuration_type: Union[str, "TransferConfigurationType"]
-    :ivar transfer_filter_details: Map of filter type and the details to filter. This field is
+    :ivar transferConfigurationType: Type of the configuration for transfer. Required. Known values
+     are: "TransferAll" and "TransferUsingFilter".
+    :vartype transferConfigurationType: Union[str, "TransferConfigurationType"]
+    :ivar transferFilterDetails: Map of filter type and the details to filter. This field is
      required only if the TransferConfigurationType is given as TransferUsingFilter.
-    :vartype transfer_filter_details: "TransferConfigurationTransferFilterDetails"
-    :ivar transfer_all_details: Map of filter type and the details to transfer all data. This field
+    :vartype transferFilterDetails: "TransferConfigurationTransferFilterDetails"
+    :ivar transferAllDetails: Map of filter type and the details to transfer all data. This field
      is required only if the TransferConfigurationType is given as TransferAll.
-    :vartype transfer_all_details: "TransferConfigurationTransferAllDetails"
+    :vartype transferAllDetails: "TransferConfigurationTransferAllDetails"
     """
 
     transferConfigurationType: Required[Union[str, "TransferConfigurationType"]]
@@ -2645,15 +2629,15 @@ class TransferConfigurationTransferFilterDetails(TypedDict, total=False):  # pyl
 class TransferFilterDetails(TypedDict, total=False):
     """Details of the filtering the transfer of data.
 
-    :ivar data_account_type: Type of the account of data. Required. Known values are:
+    :ivar dataAccountType: Type of the account of data. Required. Known values are:
      "StorageAccount" and "ManagedDisk".
-    :vartype data_account_type: Union[str, "DataAccountType"]
-    :ivar blob_filter_details: Filter details to transfer blobs.
-    :vartype blob_filter_details: "BlobFilterDetails"
-    :ivar azure_file_filter_details: Filter details to transfer Azure files.
-    :vartype azure_file_filter_details: "AzureFileFilterDetails"
-    :ivar filter_file_details: Details of the filter files to be used for data transfer.
-    :vartype filter_file_details: list["FilterFileDetails"]
+    :vartype dataAccountType: Union[str, "DataAccountType"]
+    :ivar blobFilterDetails: Filter details to transfer blobs.
+    :vartype blobFilterDetails: "BlobFilterDetails"
+    :ivar azureFileFilterDetails: Filter details to transfer Azure files.
+    :vartype azureFileFilterDetails: "AzureFileFilterDetails"
+    :ivar filterFileDetails: Details of the filter files to be used for data transfer.
+    :vartype filterFileDetails: list["FilterFileDetails"]
     """
 
     dataAccountType: Required[Union[str, "DataAccountType"]]
@@ -2670,9 +2654,9 @@ class TransferFilterDetails(TypedDict, total=False):
 class TransportAvailabilityRequest(TypedDict, total=False):
     """Request body to get the transport availability for given sku.
 
-    :ivar sku_name: Type of the device. Known values are: "DataBox", "DataBoxDisk", "DataBoxHeavy",
+    :ivar skuName: Type of the device. Known values are: "DataBox", "DataBoxDisk", "DataBoxHeavy",
      and "DataBoxCustomerDisk".
-    :vartype sku_name: Union[str, "SkuName"]
+    :vartype skuName: Union[str, "SkuName"]
     :ivar model: The customer friendly name of the combination of version and capacity of the
      device. This field is necessary only at the time of ordering the newer generation device i.e.
      AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
@@ -2693,12 +2677,12 @@ class TransportAvailabilityRequest(TypedDict, total=False):
 class TransportPreferences(TypedDict, total=False):
     """Preferences related to the shipment logistics of the sku.
 
-    :ivar preferred_shipment_type: Indicates Shipment Logistics type that the customer preferred.
+    :ivar preferredShipmentType: Indicates Shipment Logistics type that the customer preferred.
      Required. Known values are: "CustomerManaged" and "MicrosoftManaged".
-    :vartype preferred_shipment_type: Union[str, "TransportShipmentTypes"]
-    :ivar is_updated: Read only property which indicates whether transport preferences has been
+    :vartype preferredShipmentType: Union[str, "TransportShipmentTypes"]
+    :ivar isUpdated: Read only property which indicates whether transport preferences has been
      updated or not after device is prepared.
-    :vartype is_updated: bool
+    :vartype isUpdated: bool
     """
 
     preferredShipmentType: Required[Union[str, "TransportShipmentTypes"]]
@@ -2712,18 +2696,18 @@ class TransportPreferences(TypedDict, total=False):
 class UpdateJobDetails(TypedDict, total=False):
     """Job details for update.
 
-    :ivar contact_details: Contact details for notification and shipping.
-    :vartype contact_details: "ContactDetails"
-    :ivar shipping_address: Shipping address of the customer.
-    :vartype shipping_address: "ShippingAddress"
-    :ivar reverse_shipping_details: Reverse Shipping Address and contact details for a job.
-    :vartype reverse_shipping_details: "ReverseShippingDetails"
+    :ivar contactDetails: Contact details for notification and shipping.
+    :vartype contactDetails: "ContactDetails"
+    :ivar shippingAddress: Shipping address of the customer.
+    :vartype shippingAddress: "ShippingAddress"
+    :ivar reverseShippingDetails: Reverse Shipping Address and contact details for a job.
+    :vartype reverseShippingDetails: "ReverseShippingDetails"
     :ivar preferences: Preferences related to the order.
     :vartype preferences: "Preferences"
-    :ivar key_encryption_key: Key encryption key for the job.
-    :vartype key_encryption_key: "KeyEncryptionKey"
-    :ivar return_to_customer_package_details: Return package details of job.
-    :vartype return_to_customer_package_details: "PackageCarrierDetails"
+    :ivar keyEncryptionKey: Key encryption key for the job.
+    :vartype keyEncryptionKey: "KeyEncryptionKey"
+    :ivar returnToCustomerPackageDetails: Return package details of job.
+    :vartype returnToCustomerPackageDetails: "PackageCarrierDetails"
     """
 
     contactDetails: "ContactDetails"
@@ -2754,10 +2738,10 @@ class UpdateJobProperties(TypedDict, total=False):
 class UserAssignedIdentity(TypedDict, total=False):
     """User assigned identity properties.
 
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
@@ -2769,8 +2753,8 @@ class UserAssignedIdentity(TypedDict, total=False):
 class UserAssignedProperties(TypedDict, total=False):
     """User assigned identity properties.
 
-    :ivar resource_id: Arm resource id for user assigned identity to be used to fetch MSI token.
-    :vartype resource_id: str
+    :ivar resourceId: Arm resource id for user assigned identity to be used to fetch MSI token.
+    :vartype resourceId: str
     """
 
     resourceId: str
@@ -2780,21 +2764,21 @@ class UserAssignedProperties(TypedDict, total=False):
 class ValidateAddress(TypedDict, total=False):
     """The requirements to validate customer address where the device needs to be shipped.
 
-    :ivar shipping_address: Shipping address of the customer. Required.
-    :vartype shipping_address: "ShippingAddress"
-    :ivar device_type: Device type to be used for the job. Required. Known values are: "DataBox",
+    :ivar shippingAddress: Shipping address of the customer. Required.
+    :vartype shippingAddress: "ShippingAddress"
+    :ivar deviceType: Device type to be used for the job. Required. Known values are: "DataBox",
      "DataBoxDisk", "DataBoxHeavy", and "DataBoxCustomerDisk".
-    :vartype device_type: Union[str, "SkuName"]
-    :ivar transport_preferences: Preferences related to the shipment logistics of the sku.
-    :vartype transport_preferences: "TransportPreferences"
+    :vartype deviceType: Union[str, "SkuName"]
+    :ivar transportPreferences: Preferences related to the shipment logistics of the sku.
+    :vartype transportPreferences: "TransportPreferences"
     :ivar model: The customer friendly name of the combination of version and capacity of the
      device. This field is necessary only at the time of ordering the newer generation device i.e.
      AzureDataBox120 and AzureDataBox525 as of Feb/2025. Known values are: "DataBox", "DataBoxDisk",
      "DataBoxHeavy", "DataBoxCustomerDisk", "AzureDataBox120", and "AzureDataBox525".
     :vartype model: Union[str, "ModelName"]
-    :ivar validation_type: Identifies the type of validation request. Required. Identify request
-     and response of address validation.
-    :vartype validation_type: Literal[ValidationInputDiscriminator.VALIDATE_ADDRESS]
+    :ivar validationType: Identifies the type of validation request. Required. Identify request and
+     response of address validation.
+    :vartype validationType: Literal[ValidationInputDiscriminator.VALIDATE_ADDRESS]
     """
 
     shippingAddress: Required["ShippingAddress"]

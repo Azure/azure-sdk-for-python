@@ -48,7 +48,7 @@ class AccountCredentialDetails(_Model):
     """Per share level unencrypted access credentials."""
 
 
-class AdditionalErrorInfo(_Model):
+class AdditionalErrorInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class represents additional info which Resource Providers pass when an error occurs.
 
     :ivar info: Additional information of the type of error.
@@ -94,7 +94,7 @@ class AddressValidationOutput(_Model):
     __flattened_items = ["error", "validation_status", "alternate_addresses", "validation_type"]
 
 
-class ValidationInputResponse(_Model):
+class ValidationInputResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Minimum properties that should be present in each individual validation response.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -183,7 +183,7 @@ class AddressValidationProperties(ValidationInputResponse, discriminator="Valida
         self.validation_type = ValidationInputDiscriminator.VALIDATE_ADDRESS  # type: ignore
 
 
-class ApiError(_Model):
+class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ApiError.
 
     :ivar error: The error detail. Required.
@@ -226,7 +226,7 @@ class ApplianceNetworkConfiguration(_Model):
     """Mac Address."""
 
 
-class AvailableSkuRequest(_Model):
+class AvailableSkuRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The filters for showing the available skus.
 
     :ivar transfer_type: Type of the transfer. Required. Known values are: "ImportToAzure" and
@@ -286,7 +286,7 @@ class AvailableSkuRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureFileFilterDetails(_Model):
+class AzureFileFilterDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Filter details to transfer Azure files.
 
     :ivar file_prefix_list: Prefix list of the Azure files to be transferred.
@@ -330,7 +330,7 @@ class AzureFileFilterDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlobFilterDetails(_Model):
+class BlobFilterDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Filter details to transfer Azure Blobs.
 
     :ivar blob_prefix_list: Prefix list of the Azure blobs to be transferred.
@@ -374,7 +374,7 @@ class BlobFilterDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CancellationReason(_Model):
+class CancellationReason(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reason for cancellation.
 
     :ivar reason: Reason for cancellation. Required.
@@ -402,7 +402,7 @@ class CancellationReason(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudError(_Model):
+class CloudError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provides additional information about an http error response.
 
     :ivar additional_info: Gets or sets additional error info.
@@ -450,7 +450,7 @@ class CloudError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContactDetails(_Model):
+class ContactDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contact Details.
 
     :ivar contact_name: Contact name of the person. Required.
@@ -507,7 +507,7 @@ class ContactDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContactInfo(_Model):
+class ContactInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contact Info.
 
     :ivar contact_name: Contact name of the person. Required.
@@ -552,7 +552,7 @@ class ContactInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CopyLogDetails(_Model):
+class CopyLogDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details for log generated during copy.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -678,7 +678,7 @@ class CopyProgress(_Model):
     """Available actions on the job."""
 
 
-class ValidationRequest(_Model):
+class ValidationRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Minimum request requirement of any validation category.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -720,7 +720,9 @@ class ValidationRequest(_Model):
         self.validation_category = "JobCreationValidation"  # type: ignore
 
 
-class CreateJobValidations(ValidationRequest, discriminator="JobCreationValidation"):
+class CreateJobValidations(
+    ValidationRequest, discriminator="JobCreationValidation"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """It does all pre-job creation validations.
 
     :ivar individual_request_details: List of request details contain validationType and its
@@ -749,7 +751,7 @@ class CreateJobValidations(ValidationRequest, discriminator="JobCreationValidati
         super().__init__(*args, **kwargs)
 
 
-class ValidationInputRequest(_Model):
+class ValidationInputRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Minimum fields that must be present in any type of validation request.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -791,7 +793,7 @@ class ValidationInputRequest(_Model):
 
 class CreateOrderLimitForSubscriptionValidationRequest(
     ValidationInputRequest, discriminator="ValidateCreateOrderLimit"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Request to validate create order limit for current subscription.
 
     :ivar device_type: Device type to be used for the job. Required. Known values are: "DataBox",
@@ -882,7 +884,7 @@ class CreateOrderLimitForSubscriptionValidationResponseProperties(
         self.validation_type = ValidationInputDiscriminator.VALIDATE_CREATE_ORDER_LIMIT  # type: ignore
 
 
-class JobSecrets(_Model):
+class JobSecrets(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The base class for the secrets.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -968,7 +970,7 @@ class CustomerDiskJobSecrets(JobSecrets, discriminator="DataBoxCustomerDisk"):
         self.job_secrets_type = ClassDiscriminator.DATA_BOX_CUSTOMER_DISK  # type: ignore
 
 
-class DataAccountDetails(_Model):
+class DataAccountDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Account details of the data to be transferred.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1163,7 +1165,7 @@ class DataBoxCustomerDiskCopyProgress(CopyProgress):
      \"DriveNotDetected\", \"DriveCorrupted\", and \"MetadataFilesModifiedOrRemoved\"."""
 
 
-class JobDetails(_Model):
+class JobDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Job details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1325,7 +1327,9 @@ class JobDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataBoxCustomerDiskJobDetails(JobDetails, discriminator="DataBoxCustomerDisk"):
+class DataBoxCustomerDiskJobDetails(
+    JobDetails, discriminator="DataBoxCustomerDisk"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Customer disk job details.
 
     :ivar job_stages: List of stages that run in the job.
@@ -1530,7 +1534,7 @@ class DataBoxDiskCopyProgress(_Model):
     """Available actions on the job."""
 
 
-class GranularCopyLogDetails(_Model):
+class GranularCopyLogDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Granular Details for log generated during copy.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1763,7 +1767,9 @@ class DataBoxDiskGranularCopyProgress(GranularCopyProgress):
      \"DriveNotDetected\", \"DriveCorrupted\", and \"MetadataFilesModifiedOrRemoved\"."""
 
 
-class DataBoxDiskJobDetails(JobDetails, discriminator="DataBoxDisk"):
+class DataBoxDiskJobDetails(
+    JobDetails, discriminator="DataBoxDisk"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataBox Disk Job Details.
 
     :ivar job_stages: List of stages that run in the job.
@@ -1973,7 +1979,9 @@ class DataBoxHeavyAccountCopyLogDetails(CopyLogDetails, discriminator="DataBoxHe
         self.copy_log_details_type = ClassDiscriminator.DATA_BOX_HEAVY  # type: ignore
 
 
-class DataBoxHeavyJobDetails(JobDetails, discriminator="DataBoxHeavy"):
+class DataBoxHeavyJobDetails(
+    JobDetails, discriminator="DataBoxHeavy"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Databox Heavy Device Job Details.
 
     :ivar job_stages: List of stages that run in the job.
@@ -2146,7 +2154,9 @@ class DataBoxHeavySecret(_Model):
     """Per account level access credentials."""
 
 
-class DataBoxJobDetails(JobDetails, discriminator="DataBox"):
+class DataBoxJobDetails(
+    JobDetails, discriminator="DataBox"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Databox Job Details.
 
     :ivar job_stages: List of stages that run in the job.
@@ -2249,7 +2259,9 @@ class DataBoxJobDetails(JobDetails, discriminator="DataBox"):
         self.job_details_type = ClassDiscriminator.DATA_BOX  # type: ignore
 
 
-class DataboxJobSecrets(JobSecrets, discriminator="DataBox"):
+class DataboxJobSecrets(
+    JobSecrets, discriminator="DataBox"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The secrets related to a databox job.
 
     :ivar dc_access_security_code: Dc Access Security Code for Customer Managed Shipping.
@@ -2289,7 +2301,7 @@ class DataboxJobSecrets(JobSecrets, discriminator="DataBox"):
         self.job_secrets_type = ClassDiscriminator.DATA_BOX  # type: ignore
 
 
-class ScheduleAvailabilityRequest(_Model):
+class ScheduleAvailabilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body to get the availability for scheduling orders.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2355,7 +2367,9 @@ class ScheduleAvailabilityRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataBoxScheduleAvailabilityRequest(ScheduleAvailabilityRequest, discriminator="DataBox"):
+class DataBoxScheduleAvailabilityRequest(
+    ScheduleAvailabilityRequest, discriminator="DataBox"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body to get the availability for scheduling data box orders orders.
 
     :ivar storage_location: Location for data transfer. For locations check:
@@ -2430,7 +2444,7 @@ class DataBoxSecret(_Model):
     """Per account level access credentials."""
 
 
-class DatacenterAddressResponse(_Model):
+class DatacenterAddressResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Datacenter address for given storage location.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2599,7 +2613,7 @@ class DatacenterAddressLocationResponse(DatacenterAddressResponse, discriminator
         self.datacenter_address_type = DatacenterAddressType.DATACENTER_ADDRESS_LOCATION  # type: ignore
 
 
-class DatacenterAddressRequest(_Model):
+class DatacenterAddressRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body to get the datacenter address.
 
     :ivar storage_location: Storage location. For locations check:
@@ -2657,7 +2671,7 @@ class DatacenterAddressRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataExportDetails(_Model):
+class DataExportDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the data to be used for exporting data from azure.
 
     :ivar transfer_configuration: Configuration for the data transfer. Required.
@@ -2702,7 +2716,7 @@ class DataExportDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataImportDetails(_Model):
+class DataImportDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the data to be used for importing data to azure.
 
     :ivar account_details: Account details of the data to be transferred. Required.
@@ -2755,7 +2769,9 @@ class DataLocationToServiceLocationMap(_Model):
     """Location of the service."""
 
 
-class DataTransferDetailsValidationRequest(ValidationInputRequest, discriminator="ValidateDataTransferDetails"):
+class DataTransferDetailsValidationRequest(
+    ValidationInputRequest, discriminator="ValidateDataTransferDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request to validate export and import data details.
 
     :ivar data_export_details: List of DataTransfer details to be used to export data from azure.
@@ -2868,7 +2884,7 @@ class DataTransferDetailsValidationResponseProperties(
         self.validation_type = ValidationInputDiscriminator.VALIDATE_DATA_TRANSFER_DETAILS  # type: ignore
 
 
-class DcAccessSecurityCode(_Model):
+class DcAccessSecurityCode(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dc access security code.
 
     :ivar reverse_dc_access_code: Reverse Dc access security code.
@@ -2905,7 +2921,7 @@ class DcAccessSecurityCode(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Details(_Model):
+class Details(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details.
 
     :ivar code: Error code. Required.
@@ -2953,7 +2969,7 @@ class DeviceCapabilityDetails(_Model):
      and \"Disabled\"."""
 
 
-class DeviceCapabilityRequest(_Model):
+class DeviceCapabilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body to get the device capabilities for given sku.
 
     :ivar sku_name: Type of the device. Known values are: "DataBox", "DataBoxDisk", "DataBoxHeavy",
@@ -3048,7 +3064,9 @@ class DeviceErasureDetails(_Model):
     """Shared access key to download secure erasure certificate for the device."""
 
 
-class DiskScheduleAvailabilityRequest(ScheduleAvailabilityRequest, discriminator="DataBoxDisk"):
+class DiskScheduleAvailabilityRequest(
+    ScheduleAvailabilityRequest, discriminator="DataBoxDisk"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body to get the availability for scheduling disk orders.
 
     :ivar storage_location: Location for data transfer. For locations check:
@@ -3116,7 +3134,7 @@ class DiskSecret(_Model):
     """Bit Locker key of the disk which can be used to unlock the disk to copy data."""
 
 
-class EncryptionPreferences(_Model):
+class EncryptionPreferences(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Preferences related to the Encryption.
 
     :ivar double_encryption: Defines secondary layer of software-based encryption enablement. Known
@@ -3157,7 +3175,7 @@ class EncryptionPreferences(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorDetail(_Model):
+class ErrorDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ErrorDetail.
 
     :ivar code: Error code. Required.
@@ -3220,7 +3238,7 @@ class ExportDiskDetails(_Model):
     """Path to backed up manifest, only returned if enableManifestBackup is true."""
 
 
-class FilterFileDetails(_Model):
+class FilterFileDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the filter files to be used for data transfer.
 
     :ivar filter_file_type: Type of the filter file. Required. Known values are: "AzureBlob" and
@@ -3259,7 +3277,9 @@ class FilterFileDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HeavyScheduleAvailabilityRequest(ScheduleAvailabilityRequest, discriminator="DataBoxHeavy"):
+class HeavyScheduleAvailabilityRequest(
+    ScheduleAvailabilityRequest, discriminator="DataBoxHeavy"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body to get the availability for scheduling heavy orders.
 
     :ivar storage_location: Location for data transfer. For locations check:
@@ -3302,7 +3322,7 @@ class HeavyScheduleAvailabilityRequest(ScheduleAvailabilityRequest, discriminato
         self.sku_name = SkuName.DATA_BOX_HEAVY  # type: ignore
 
 
-class IdentityProperties(_Model):
+class IdentityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed identity properties.
 
     :ivar type: Managed service identity type.
@@ -3337,7 +3357,7 @@ class IdentityProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImportDiskDetails(_Model):
+class ImportDiskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Import disk details.
 
     :ivar manifest_file: The relative path of the manifest file on the disk. Required.
@@ -3411,7 +3431,7 @@ class JobDelayDetails(_Model):
     """Timestamp when the delay notification was resolved."""
 
 
-class JobDeliveryInfo(_Model):
+class JobDeliveryInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional delivery info.
 
     :ivar scheduled_date_time: Scheduled date time.
@@ -3441,7 +3461,7 @@ class JobDeliveryInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobProperties(_Model):
+class JobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Job Properties.
 
     :ivar transfer_type: Type of the data transfer. Required. Known values are: "ImportToAzure" and
@@ -3602,7 +3622,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3646,7 +3666,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class JobResource(TrackedResource):
+class JobResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Job Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3741,7 +3761,7 @@ class JobResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class JobResourceUpdateParameter(_Model):
+class JobResourceUpdateParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JobResourceUpdateParameter.
 
     :ivar properties: Properties of a job to be updated.
@@ -3856,7 +3876,7 @@ class JobStages(_Model):
     """Delay information for the job stages."""
 
 
-class KeyEncryptionKey(_Model):
+class KeyEncryptionKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Encryption key containing details about key to encrypt different keys.
 
     :ivar kek_type: Type of encryption key used for key encryption. Required. Known values are:
@@ -3908,7 +3928,7 @@ class KeyEncryptionKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LastMitigationActionOnJob(_Model):
+class LastMitigationActionOnJob(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Last Mitigation Action Performed On Job.
 
     :ivar action_date_time_in_utc: Action performed date time.
@@ -3956,7 +3976,9 @@ class LastMitigationActionOnJob(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedDiskDetails(DataAccountDetails, discriminator="ManagedDisk"):
+class ManagedDiskDetails(
+    DataAccountDetails, discriminator="ManagedDisk"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the managed disks.
 
     :ivar share_password: Password for all the shares to be created on the device. Should not be
@@ -4008,7 +4030,7 @@ class ManagedDiskDetails(DataAccountDetails, discriminator="ManagedDisk"):
         self.data_account_type = DataAccountType.MANAGED_DISK  # type: ignore
 
 
-class MarkDevicesShippedRequest(_Model):
+class MarkDevicesShippedRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The request body to provide the delivery package details of job.
 
     :ivar deliver_to_dc_package_details: Delivery package details. Required.
@@ -4038,7 +4060,7 @@ class MarkDevicesShippedRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MitigateJobRequest(_Model):
+class MitigateJobRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Mitigate Job captured from request body for Mitigate API.
 
     :ivar customer_resolution_code: Resolution code for the job. Known values are: "None",
@@ -4079,7 +4101,7 @@ class MitigateJobRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NotificationPreference(_Model):
+class NotificationPreference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Notification preference for a job stage.
 
     :ivar stage_name: Name of the stage. Required. Known values are: "DevicePrepared",
@@ -4120,7 +4142,7 @@ class NotificationPreference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation entity.
 
     :ivar name: Name of the operation. Format:
@@ -4188,7 +4210,7 @@ class Operation(_Model):
             super().__setattr__(key, value)
 
 
-class OperationDisplay(_Model):
+class OperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation display.
 
     :ivar provider: Provider name.
@@ -4235,7 +4257,7 @@ class OperationProperties(_Model):
     """Operation properties."""
 
 
-class PackageCarrierDetails(_Model):
+class PackageCarrierDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Package carrier details.
 
     :ivar carrier_account_number: Carrier Account Number of customer for customer disk.
@@ -4279,7 +4301,7 @@ class PackageCarrierDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PackageCarrierInfo(_Model):
+class PackageCarrierInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """package carrier info.
 
     :ivar carrier_name: Name of the carrier.
@@ -4335,7 +4357,7 @@ class PackageShippingDetails(_Model):
     """Tracking Id of shipment."""
 
 
-class Preferences(_Model):
+class Preferences(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Preferences related to the order.
 
     :ivar preferred_data_center_region: Preferred data center region.
@@ -4395,7 +4417,9 @@ class Preferences(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PreferencesValidationRequest(ValidationInputRequest, discriminator="ValidatePreferences"):
+class PreferencesValidationRequest(
+    ValidationInputRequest, discriminator="ValidatePreferences"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request to validate preference of transport and data center.
 
     :ivar preference: Preference of transport and data center.
@@ -4489,7 +4513,7 @@ class PreferencesValidationResponseProperties(ValidationInputResponse, discrimin
         self.validation_type = ValidationInputDiscriminator.VALIDATE_PREFERENCES  # type: ignore
 
 
-class RegionConfigurationRequest(_Model):
+class RegionConfigurationRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body to get the configuration for the region.
 
     :ivar schedule_availability_request: Request body to get the availability for scheduling
@@ -4576,7 +4600,7 @@ class RegionConfigurationResponse(_Model):
     """Device capabilities available for a given sku in a region."""
 
 
-class ResourceIdentity(_Model):
+class ResourceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Msi identity details of the resource.
 
     :ivar type: Identity type.
@@ -4619,7 +4643,7 @@ class ResourceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReverseShippingDetails(_Model):
+class ReverseShippingDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reverse Shipping Address and contact details for a job.
 
     :ivar contact_details: Contact Info.
@@ -4708,7 +4732,7 @@ class ShareCredentialDetails(_Model):
     """Access protocols supported on the device."""
 
 
-class ShipmentPickUpRequest(_Model):
+class ShipmentPickUpRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Shipment pick up request details.
 
     :ivar start_time: Minimum date after which the pick up should commence, this must be in local
@@ -4772,7 +4796,7 @@ class ShipmentPickUpResponse(_Model):
     """Time by which shipment should be ready for pick up, this is in local time of pick up area."""
 
 
-class ShippingAddress(_Model):
+class ShippingAddress(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Shipping address where customer wishes to receive the device.
 
     :ivar street_address1: Street Address line 1. Required.
@@ -4874,7 +4898,7 @@ class ShippingAddress(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Sku.
 
     :ivar name: The sku name. Required. Known values are: "DataBox", "DataBoxDisk", "DataBoxHeavy",
@@ -4929,7 +4953,9 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuAvailabilityValidationRequest(ValidationInputRequest, discriminator="ValidateSkuAvailability"):
+class SkuAvailabilityValidationRequest(
+    ValidationInputRequest, discriminator="ValidateSkuAvailability"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request to validate sku availability.
 
     :ivar device_type: Device type to be used for the job. Required. Known values are: "DataBox",
@@ -5169,7 +5195,9 @@ class SkuProperties(_Model):
     """List of all the Countries in the SKU specific commerce boundary."""
 
 
-class StorageAccountDetails(DataAccountDetails, discriminator="StorageAccount"):
+class StorageAccountDetails(
+    DataAccountDetails, discriminator="StorageAccount"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details for the storage account.
 
     :ivar share_password: Password for all the shares to be created on the device. Should not be
@@ -5285,7 +5313,7 @@ class SubscriptionIsAllowedToCreateJobValidationResponseProperties(
         self.validation_type = ValidationInputDiscriminator.VALIDATE_SUBSCRIPTION_IS_ALLOWED_TO_CREATE_JOB  # type: ignore
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -5352,7 +5380,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TransferAllDetails(_Model):
+class TransferAllDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details to transfer all data.
 
     :ivar data_account_type: Type of the account of data. Required. Known values are:
@@ -5398,7 +5426,7 @@ class TransferAllDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TransferConfiguration(_Model):
+class TransferConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for defining the transfer of data.
 
     :ivar transfer_configuration_type: Type of the configuration for transfer. Required. Known
@@ -5451,7 +5479,7 @@ class TransferConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TransferConfigurationTransferAllDetails(_Model):
+class TransferConfigurationTransferAllDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Map of filter type and the details to transfer all data. This field is required only if the
     TransferConfigurationType is given as TransferAll.
 
@@ -5482,7 +5510,9 @@ class TransferConfigurationTransferAllDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TransferConfigurationTransferFilterDetails(_Model):  # pylint: disable=name-too-long
+class TransferConfigurationTransferFilterDetails(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Map of filter type and the details to filter. This field is required only if the
     TransferConfigurationType is given as TransferUsingFilter.
 
@@ -5513,7 +5543,7 @@ class TransferConfigurationTransferFilterDetails(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class TransferFilterDetails(_Model):
+class TransferFilterDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the filtering the transfer of data.
 
     :ivar data_account_type: Type of the account of data. Required. Known values are:
@@ -5581,7 +5611,7 @@ class TransportAvailabilityDetails(_Model):
      \"MicrosoftManaged\"."""
 
 
-class TransportAvailabilityRequest(_Model):
+class TransportAvailabilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body to get the transport availability for given sku.
 
     :ivar sku_name: Type of the device. Known values are: "DataBox", "DataBoxDisk", "DataBoxHeavy",
@@ -5640,7 +5670,7 @@ class TransportAvailabilityResponse(_Model):
     """List of transport availability details for given region."""
 
 
-class TransportPreferences(_Model):
+class TransportPreferences(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Preferences related to the shipment logistics of the sku.
 
     :ivar preferred_shipment_type: Indicates Shipment Logistics type that the customer preferred.
@@ -5693,7 +5723,7 @@ class UnencryptedCredentials(_Model):
     """Secrets related to this job."""
 
 
-class UpdateJobDetails(_Model):
+class UpdateJobDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Job details for update.
 
     :ivar contact_details: Contact details for notification and shipping.
@@ -5758,7 +5788,7 @@ class UpdateJobDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateJobProperties(_Model):
+class UpdateJobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Job Properties for update.
 
     :ivar details: Details of a job to be updated.
@@ -5803,7 +5833,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class UserAssignedProperties(_Model):
+class UserAssignedProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User assigned identity properties.
 
     :ivar resource_id: Arm resource id for user assigned identity to be used to fetch MSI token.
@@ -5833,7 +5863,9 @@ class UserAssignedProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidateAddress(ValidationInputRequest, discriminator="ValidateAddress"):
+class ValidateAddress(
+    ValidationInputRequest, discriminator="ValidateAddress"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The requirements to validate customer address where the device needs to be shipped.
 
     :ivar shipping_address: Shipping address of the customer. Required.

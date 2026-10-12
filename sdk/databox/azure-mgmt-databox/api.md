@@ -3403,26 +3403,19 @@ namespace azure.mgmt.databox.types
         country: str
         location: str
         skuNames: list[Union[str, SkuName]]
-        sku_names: list[Union[str, SkuName]]
-        transfer_type: Union[str, TransferType]
+        transferType: Union[str, TransferType]
 
 
     class azure.mgmt.databox.types.AzureFileFilterDetails(TypedDict, total=False):
         filePathList: list[str]
         filePrefixList: list[str]
         fileShareList: list[str]
-        file_path_list: list[str]
-        file_prefix_list: list[str]
-        file_share_list: list[str]
 
 
     class azure.mgmt.databox.types.BlobFilterDetails(TypedDict, total=False):
         blobPathList: list[str]
         blobPrefixList: list[str]
-        blob_path_list: list[str]
-        blob_prefix_list: list[str]
         containerList: list[str]
-        container_list: list[str]
 
 
     class azure.mgmt.databox.types.CancellationReason(TypedDict, total=False):
@@ -3442,7 +3435,6 @@ namespace azure.mgmt.databox.types
         key "message": str
         key "target": str
         additionalInfo: list[AdditionalErrorInfo]
-        additional_info: list[AdditionalErrorInfo]
         code: str
         details: list[CloudError]
         message: str
@@ -3455,13 +3447,12 @@ namespace azure.mgmt.databox.types
         key "mobile": str
         key "phone": Required[str]
         key "phoneExtension": str
-        contact_name: str
-        email_list: list[str]
+        contactName: str
+        emailList: list[str]
         mobile: str
         notificationPreference: list[NotificationPreference]
-        notification_preference: list[NotificationPreference]
         phone: str
-        phone_extension: str
+        phoneExtension: str
 
 
     class azure.mgmt.databox.types.ContactInfo(TypedDict, total=False):
@@ -3469,10 +3460,10 @@ namespace azure.mgmt.databox.types
         key "mobile": str
         key "phone": Required[str]
         key "phoneExtension": str
-        contact_name: str
+        contactName: str
         mobile: str
         phone: str
-        phone_extension: str
+        phoneExtension: str
 
 
     class azure.mgmt.databox.types.CopyProgress(TypedDict, total=False):
@@ -3492,39 +3483,39 @@ namespace azure.mgmt.databox.types
         key "totalBytesToProcess": int
         key "totalFilesToProcess": int
         key "transferType": Union[str, TransferType]
-        account_id: str
+        accountId: str
         actions: list[Union[str, CustomerResolutionCode]]
-        bytes_processed: int
-        data_account_type: Union[str, DataAccountType]
-        directories_errored_out: int
+        bytesProcessed: int
+        dataAccountType: Union[str, DataAccountType]
+        directoriesErroredOut: int
         error: CloudError
-        files_errored_out: int
-        files_processed: int
-        invalid_directories_processed: int
-        invalid_file_bytes_uploaded: int
-        invalid_files_processed: int
-        is_enumeration_in_progress: bool
-        renamed_container_count: int
-        storage_account_name: str
-        total_bytes_to_process: int
-        total_files_to_process: int
-        transfer_type: Union[str, TransferType]
+        filesErroredOut: int
+        filesProcessed: int
+        invalidDirectoriesProcessed: int
+        invalidFileBytesUploaded: int
+        invalidFilesProcessed: int
+        isEnumerationInProgress: bool
+        renamedContainerCount: int
+        storageAccountName: str
+        totalBytesToProcess: int
+        totalFilesToProcess: int
+        transferType: Union[str, TransferType]
 
 
     class azure.mgmt.databox.types.CreateJobValidations(TypedDict, total=False):
         key "individualRequestDetails": Required[list[ValidationInputRequest]]
         key "validationCategory": Required[Literal["JobCreationValidation"]]
-        individual_request_details: list[ValidationInputRequest]
-        validation_category: Literal[JobCreationValidation]
+        individualRequestDetails: list[ValidationInputRequest]
+        validationCategory: Literal[JobCreationValidation]
 
 
     class azure.mgmt.databox.types.CreateOrderLimitForSubscriptionValidationRequest(TypedDict, total=False):
         key "deviceType": Required[Union[str, SkuName]]
         key "model": Union[str, ModelName]
         key "validationType": Required[Literal[ValidationInputDiscriminator.VALIDATE_CREATE_ORDER_LIMIT]]
-        device_type: Union[str, SkuName]
+        deviceType: Union[str, SkuName]
         model: Union[str, ModelName]
-        validation_type: Literal[ValidationInputDiscriminator.VALIDATE_CREATE_ORDER_LIMIT]
+        validationType: Literal[ValidationInputDiscriminator.VALIDATE_CREATE_ORDER_LIMIT]
 
 
     class azure.mgmt.databox.types.DataAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3537,10 +3528,10 @@ namespace azure.mgmt.databox.types
         key "copyLogDetailsType": Required[Literal[ClassDiscriminator.DATA_BOX]]
         key "copyLogLink": str
         key "copyVerboseLogLink": str
-        account_name: str
-        copy_log_details_type: Literal[ClassDiscriminator.DATA_BOX]
-        copy_log_link: str
-        copy_verbose_log_link: str
+        accountName: str
+        copyLogDetailsType: Literal[ClassDiscriminator.DATA_BOX]
+        copyLogLink: str
+        copyVerboseLogLink: str
 
 
     class azure.mgmt.databox.types.DataBoxCustomerDiskCopyLogDetails(TypedDict, total=False):
@@ -3548,10 +3539,10 @@ namespace azure.mgmt.databox.types
         key "errorLogLink": str
         key "serialNumber": str
         key "verboseLogLink": str
-        copy_log_details_type: Literal[ClassDiscriminator.DATA_BOX_CUSTOMER_DISK]
-        error_log_link: str
-        serial_number: str
-        verbose_log_link: str
+        copyLogDetailsType: Literal[ClassDiscriminator.DATA_BOX_CUSTOMER_DISK]
+        errorLogLink: str
+        serialNumber: str
+        verboseLogLink: str
 
 
     class azure.mgmt.databox.types.DataBoxCustomerDiskCopyProgress(CopyProgress):
@@ -3573,25 +3564,25 @@ namespace azure.mgmt.databox.types
         key "totalBytesToProcess": int
         key "totalFilesToProcess": int
         key "transferType": Union[str, TransferType]
-        account_id: str
+        accountId: str
         actions: list[Union[str, CustomerResolutionCode]]
-        bytes_processed: int
-        copy_status: Union[str, CopyStatus]
-        data_account_type: Union[str, DataAccountType]
-        directories_errored_out: int
+        bytesProcessed: int
+        copyStatus: Union[str, CopyStatus]
+        dataAccountType: Union[str, DataAccountType]
+        directoriesErroredOut: int
         error: CloudError
-        files_errored_out: int
-        files_processed: int
-        invalid_directories_processed: int
-        invalid_file_bytes_uploaded: int
-        invalid_files_processed: int
-        is_enumeration_in_progress: bool
-        renamed_container_count: int
-        serial_number: str
-        storage_account_name: str
-        total_bytes_to_process: int
-        total_files_to_process: int
-        transfer_type: Union[str, TransferType]
+        filesErroredOut: int
+        filesProcessed: int
+        invalidDirectoriesProcessed: int
+        invalidFileBytesUploaded: int
+        invalidFilesProcessed: int
+        isEnumerationInProgress: bool
+        renamedContainerCount: int
+        serialNumber: str
+        storageAccountName: str
+        totalBytesToProcess: int
+        totalFilesToProcess: int
+        transferType: Union[str, TransferType]
 
 
     class azure.mgmt.databox.types.DataBoxCustomerDiskJobDetails(TypedDict, total=False):
@@ -3614,38 +3605,31 @@ namespace azure.mgmt.databox.types
         key "reverseShippingDetails": ForwardRef('ReverseShippingDetails', module='types')
         key "shippingAddress": ForwardRef('ShippingAddress', module='types')
         actions: list[Union[str, CustomerResolutionCode]]
-        chain_of_custody_sas_key: str
-        contact_details: ContactDetails
+        chainOfCustodySasKey: str
+        contactDetails: ContactDetails
         copyLogDetails: list[CopyLogDetails]
         copyProgress: list[DataBoxCustomerDiskCopyProgress]
-        copy_log_details: list[CopyLogDetails]
-        copy_progress: list[DataBoxCustomerDiskCopyProgress]
+        dataCenterCode: Union[str, DataCenterCode]
         dataExportDetails: list[DataExportDetails]
         dataImportDetails: list[DataImportDetails]
-        data_center_code: Union[str, DataCenterCode]
-        data_export_details: list[DataExportDetails]
-        data_import_details: list[DataImportDetails]
-        datacenter_address: DatacenterAddressResponse
-        deliver_to_dc_package_details: PackageCarrierInfo
-        delivery_package: PackageShippingDetails
-        device_erasure_details: DeviceErasureDetails
-        enable_manifest_backup: bool
-        expected_data_size_in_tera_bytes: int
+        datacenterAddress: DatacenterAddressResponse
+        deliverToDcPackageDetails: PackageCarrierInfo
+        deliveryPackage: PackageShippingDetails
+        deviceErasureDetails: DeviceErasureDetails
+        enableManifestBackup: bool
+        expectedDataSizeInTeraBytes: int
         exportDiskDetailsCollection: dict[str, ExportDiskDetails]
-        export_disk_details_collection: dict[str, ExportDiskDetails]
         importDiskDetailsCollection: dict[str, ImportDiskDetails]
-        import_disk_details_collection: dict[str, ImportDiskDetails]
+        jobDetailsType: Literal[ClassDiscriminator.DATA_BOX_CUSTOMER_DISK]
         jobStages: list[JobStages]
-        job_details_type: Literal[ClassDiscriminator.DATA_BOX_CUSTOMER_DISK]
-        job_stages: list[JobStages]
-        key_encryption_key: KeyEncryptionKey
-        last_mitigation_action_on_job: LastMitigationActionOnJob
+        keyEncryptionKey: KeyEncryptionKey
+        lastMitigationActionOnJob: LastMitigationActionOnJob
         preferences: Preferences
-        return_package: PackageShippingDetails
-        return_to_customer_package_details: PackageCarrierDetails
-        reverse_shipment_label_sas_key: str
-        reverse_shipping_details: ReverseShippingDetails
-        shipping_address: ShippingAddress
+        returnPackage: PackageShippingDetails
+        returnToCustomerPackageDetails: PackageCarrierDetails
+        reverseShipmentLabelSasKey: str
+        reverseShippingDetails: ReverseShippingDetails
+        shippingAddress: ShippingAddress
 
 
     class azure.mgmt.databox.types.DataBoxDiskCopyLogDetails(TypedDict, total=False):
@@ -3653,10 +3637,10 @@ namespace azure.mgmt.databox.types
         key "diskSerialNumber": str
         key "errorLogLink": str
         key "verboseLogLink": str
-        copy_log_details_type: Literal[ClassDiscriminator.DATA_BOX_DISK]
-        disk_serial_number: str
-        error_log_link: str
-        verbose_log_link: str
+        copyLogDetailsType: Literal[ClassDiscriminator.DATA_BOX_DISK]
+        diskSerialNumber: str
+        errorLogLink: str
+        verboseLogLink: str
 
 
     class azure.mgmt.databox.types.DataBoxDiskCopyProgress(TypedDict, total=False):
@@ -3666,10 +3650,10 @@ namespace azure.mgmt.databox.types
         key "serialNumber": str
         key "status": Union[str, CopyStatus]
         actions: list[Union[str, CustomerResolutionCode]]
-        bytes_copied: int
+        bytesCopied: int
         error: CloudError
-        percent_complete: int
-        serial_number: str
+        percentComplete: int
+        serialNumber: str
         status: Union[str, CopyStatus]
 
 
@@ -3679,11 +3663,11 @@ namespace azure.mgmt.databox.types
         key "errorLogLink": str
         key "serialNumber": str
         key "verboseLogLink": str
-        account_id: str
-        copy_log_details_type: Literal[ClassDiscriminator.DATA_BOX_CUSTOMER_DISK]
-        error_log_link: str
-        serial_number: str
-        verbose_log_link: str
+        accountId: str
+        copyLogDetailsType: Literal[ClassDiscriminator.DATA_BOX_CUSTOMER_DISK]
+        errorLogLink: str
+        serialNumber: str
+        verboseLogLink: str
 
 
     class azure.mgmt.databox.types.DataBoxDiskGranularCopyProgress(GranularCopyProgress):
@@ -3705,25 +3689,25 @@ namespace azure.mgmt.databox.types
         key "totalBytesToProcess": int
         key "totalFilesToProcess": int
         key "transferType": Union[str, TransferType]
-        account_id: str
+        accountId: str
         actions: list[Union[str, CustomerResolutionCode]]
-        bytes_processed: int
-        copy_status: Union[str, CopyStatus]
-        data_account_type: Union[str, DataAccountType]
-        directories_errored_out: int
+        bytesProcessed: int
+        copyStatus: Union[str, CopyStatus]
+        dataAccountType: Union[str, DataAccountType]
+        directoriesErroredOut: int
         error: CloudError
-        files_errored_out: int
-        files_processed: int
-        invalid_directories_processed: int
-        invalid_file_bytes_uploaded: int
-        invalid_files_processed: int
-        is_enumeration_in_progress: bool
-        renamed_container_count: int
-        serial_number: str
-        storage_account_name: str
-        total_bytes_to_process: int
-        total_files_to_process: int
-        transfer_type: Union[str, TransferType]
+        filesErroredOut: int
+        filesProcessed: int
+        invalidDirectoriesProcessed: int
+        invalidFileBytesUploaded: int
+        invalidFilesProcessed: int
+        isEnumerationInProgress: bool
+        renamedContainerCount: int
+        serialNumber: str
+        storageAccountName: str
+        totalBytesToProcess: int
+        totalFilesToProcess: int
+        transferType: Union[str, TransferType]
 
 
     class azure.mgmt.databox.types.DataBoxDiskJobDetails(TypedDict, total=False):
@@ -3744,51 +3728,40 @@ namespace azure.mgmt.databox.types
         key "reverseShippingDetails": ForwardRef('ReverseShippingDetails', module='types')
         key "shippingAddress": ForwardRef('ShippingAddress', module='types')
         actions: list[Union[str, CustomerResolutionCode]]
-        chain_of_custody_sas_key: str
-        contact_details: ContactDetails
+        chainOfCustodySasKey: str
+        contactDetails: ContactDetails
         copyLogDetails: list[CopyLogDetails]
         copyProgress: list[DataBoxDiskCopyProgress]
-        copy_log_details: list[CopyLogDetails]
-        copy_progress: list[DataBoxDiskCopyProgress]
+        dataCenterCode: Union[str, DataCenterCode]
         dataExportDetails: list[DataExportDetails]
         dataImportDetails: list[DataImportDetails]
-        data_center_code: Union[str, DataCenterCode]
-        data_export_details: list[DataExportDetails]
-        data_import_details: list[DataImportDetails]
-        datacenter_address: DatacenterAddressResponse
-        delivery_package: PackageShippingDetails
-        device_erasure_details: DeviceErasureDetails
+        datacenterAddress: DatacenterAddressResponse
+        deliveryPackage: PackageShippingDetails
+        deviceErasureDetails: DeviceErasureDetails
         disksAndSizeDetails: dict[str, int]
-        disks_and_size_details: dict[str, int]
-        expected_data_size_in_tera_bytes: int
+        expectedDataSizeInTeraBytes: int
         granularCopyLogDetails: list[DataBoxDiskGranularCopyLogDetails]
         granularCopyProgress: list[DataBoxDiskGranularCopyProgress]
-        granular_copy_log_details: list[DataBoxDiskGranularCopyLogDetails]
-        granular_copy_progress: list[DataBoxDiskGranularCopyProgress]
+        jobDetailsType: Literal[ClassDiscriminator.DATA_BOX_DISK]
         jobStages: list[JobStages]
-        job_details_type: Literal[ClassDiscriminator.DATA_BOX_DISK]
-        job_stages: list[JobStages]
-        key_encryption_key: KeyEncryptionKey
-        last_mitigation_action_on_job: LastMitigationActionOnJob
+        keyEncryptionKey: KeyEncryptionKey
+        lastMitigationActionOnJob: LastMitigationActionOnJob
         passkey: str
         preferences: Preferences
         preferredDisks: dict[str, int]
-        preferred_disks: dict[str, int]
-        return_package: PackageShippingDetails
-        reverse_shipment_label_sas_key: str
-        reverse_shipping_details: ReverseShippingDetails
-        shipping_address: ShippingAddress
+        returnPackage: PackageShippingDetails
+        reverseShipmentLabelSasKey: str
+        reverseShippingDetails: ReverseShippingDetails
+        shippingAddress: ShippingAddress
 
 
     class azure.mgmt.databox.types.DataBoxHeavyAccountCopyLogDetails(TypedDict, total=False):
         key "accountName": str
         key "copyLogDetailsType": Required[Literal[ClassDiscriminator.DATA_BOX_HEAVY]]
-        account_name: str
+        accountName: str
+        copyLogDetailsType: Literal[ClassDiscriminator.DATA_BOX_HEAVY]
         copyLogLink: list[str]
         copyVerboseLogLink: list[str]
-        copy_log_details_type: Literal[ClassDiscriminator.DATA_BOX_HEAVY]
-        copy_log_link: list[str]
-        copy_verbose_log_link: list[str]
 
 
     class azure.mgmt.databox.types.DataBoxHeavyJobDetails(TypedDict, total=False):
@@ -3809,32 +3782,27 @@ namespace azure.mgmt.databox.types
         key "reverseShippingDetails": ForwardRef('ReverseShippingDetails', module='types')
         key "shippingAddress": ForwardRef('ShippingAddress', module='types')
         actions: list[Union[str, CustomerResolutionCode]]
-        chain_of_custody_sas_key: str
-        contact_details: ContactDetails
+        chainOfCustodySasKey: str
+        contactDetails: ContactDetails
         copyLogDetails: list[CopyLogDetails]
         copyProgress: list[CopyProgress]
-        copy_log_details: list[CopyLogDetails]
-        copy_progress: list[CopyProgress]
+        dataCenterCode: Union[str, DataCenterCode]
         dataExportDetails: list[DataExportDetails]
         dataImportDetails: list[DataImportDetails]
-        data_center_code: Union[str, DataCenterCode]
-        data_export_details: list[DataExportDetails]
-        data_import_details: list[DataImportDetails]
-        datacenter_address: DatacenterAddressResponse
-        delivery_package: PackageShippingDetails
-        device_erasure_details: DeviceErasureDetails
-        device_password: str
-        expected_data_size_in_tera_bytes: int
+        datacenterAddress: DatacenterAddressResponse
+        deliveryPackage: PackageShippingDetails
+        deviceErasureDetails: DeviceErasureDetails
+        devicePassword: str
+        expectedDataSizeInTeraBytes: int
+        jobDetailsType: Literal[ClassDiscriminator.DATA_BOX_HEAVY]
         jobStages: list[JobStages]
-        job_details_type: Literal[ClassDiscriminator.DATA_BOX_HEAVY]
-        job_stages: list[JobStages]
-        key_encryption_key: KeyEncryptionKey
-        last_mitigation_action_on_job: LastMitigationActionOnJob
+        keyEncryptionKey: KeyEncryptionKey
+        lastMitigationActionOnJob: LastMitigationActionOnJob
         preferences: Preferences
-        return_package: PackageShippingDetails
-        reverse_shipment_label_sas_key: str
-        reverse_shipping_details: ReverseShippingDetails
-        shipping_address: ShippingAddress
+        returnPackage: PackageShippingDetails
+        reverseShipmentLabelSasKey: str
+        reverseShippingDetails: ReverseShippingDetails
+        shippingAddress: ShippingAddress
 
 
     class azure.mgmt.databox.types.DataBoxJobDetails(TypedDict, total=False):
@@ -3855,32 +3823,27 @@ namespace azure.mgmt.databox.types
         key "reverseShippingDetails": ForwardRef('ReverseShippingDetails', module='types')
         key "shippingAddress": ForwardRef('ShippingAddress', module='types')
         actions: list[Union[str, CustomerResolutionCode]]
-        chain_of_custody_sas_key: str
-        contact_details: ContactDetails
+        chainOfCustodySasKey: str
+        contactDetails: ContactDetails
         copyLogDetails: list[CopyLogDetails]
         copyProgress: list[CopyProgress]
-        copy_log_details: list[CopyLogDetails]
-        copy_progress: list[CopyProgress]
+        dataCenterCode: Union[str, DataCenterCode]
         dataExportDetails: list[DataExportDetails]
         dataImportDetails: list[DataImportDetails]
-        data_center_code: Union[str, DataCenterCode]
-        data_export_details: list[DataExportDetails]
-        data_import_details: list[DataImportDetails]
-        datacenter_address: DatacenterAddressResponse
-        delivery_package: PackageShippingDetails
-        device_erasure_details: DeviceErasureDetails
-        device_password: str
-        expected_data_size_in_tera_bytes: int
+        datacenterAddress: DatacenterAddressResponse
+        deliveryPackage: PackageShippingDetails
+        deviceErasureDetails: DeviceErasureDetails
+        devicePassword: str
+        expectedDataSizeInTeraBytes: int
+        jobDetailsType: Literal[ClassDiscriminator.DATA_BOX]
         jobStages: list[JobStages]
-        job_details_type: Literal[ClassDiscriminator.DATA_BOX]
-        job_stages: list[JobStages]
-        key_encryption_key: KeyEncryptionKey
-        last_mitigation_action_on_job: LastMitigationActionOnJob
+        keyEncryptionKey: KeyEncryptionKey
+        lastMitigationActionOnJob: LastMitigationActionOnJob
         preferences: Preferences
-        return_package: PackageShippingDetails
-        reverse_shipment_label_sas_key: str
-        reverse_shipping_details: ReverseShippingDetails
-        shipping_address: ShippingAddress
+        returnPackage: PackageShippingDetails
+        reverseShipmentLabelSasKey: str
+        reverseShippingDetails: ReverseShippingDetails
+        shippingAddress: ShippingAddress
 
 
     class azure.mgmt.databox.types.DataBoxScheduleAvailabilityRequest(TypedDict, total=False):
@@ -3890,24 +3853,24 @@ namespace azure.mgmt.databox.types
         key "storageLocation": Required[str]
         country: str
         model: Union[str, ModelName]
-        sku_name: Literal[SkuName.DATA_BOX]
-        storage_location: str
+        skuName: Literal[SkuName.DATA_BOX]
+        storageLocation: str
 
 
     class azure.mgmt.databox.types.DataExportDetails(TypedDict, total=False):
         key "accountDetails": Required[DataAccountDetails]
         key "logCollectionLevel": Union[str, LogCollectionLevel]
         key "transferConfiguration": Required[TransferConfiguration]
-        account_details: DataAccountDetails
-        log_collection_level: Union[str, LogCollectionLevel]
-        transfer_configuration: TransferConfiguration
+        accountDetails: DataAccountDetails
+        logCollectionLevel: Union[str, LogCollectionLevel]
+        transferConfiguration: TransferConfiguration
 
 
     class azure.mgmt.databox.types.DataImportDetails(TypedDict, total=False):
         key "accountDetails": Required[DataAccountDetails]
         key "logCollectionLevel": Union[str, LogCollectionLevel]
-        account_details: DataAccountDetails
-        log_collection_level: Union[str, LogCollectionLevel]
+        accountDetails: DataAccountDetails
+        logCollectionLevel: Union[str, LogCollectionLevel]
 
 
     class azure.mgmt.databox.types.DataTransferDetailsValidationRequest(TypedDict, total=False):
@@ -3917,23 +3880,20 @@ namespace azure.mgmt.databox.types
         key "validationType": Required[Literal[ValidationInputDiscriminator.VALIDATE_DATA_TRANSFER_DETAILS]]
         dataExportDetails: list[DataExportDetails]
         dataImportDetails: list[DataImportDetails]
-        data_export_details: list[DataExportDetails]
-        data_import_details: list[DataImportDetails]
-        device_type: Union[str, SkuName]
+        deviceType: Union[str, SkuName]
         model: Union[str, ModelName]
-        transfer_type: Union[str, TransferType]
-        validation_type: Literal[ValidationInputDiscriminator.VALIDATE_DATA_TRANSFER_DETAILS]
+        transferType: Union[str, TransferType]
+        validationType: Literal[ValidationInputDiscriminator.VALIDATE_DATA_TRANSFER_DETAILS]
 
 
     class azure.mgmt.databox.types.DatacenterAddressInstructionResponse(TypedDict, total=False):
         key "communicationInstruction": str
         key "dataCenterAzureLocation": str
         key "datacenterAddressType": Required[Literal[DatacenterAddressType.DATACENTER_ADDRESS_INSTRUCTION]]
-        communication_instruction: str
-        data_center_azure_location: str
-        datacenter_address_type: Literal[DatacenterAddressType.DATACENTER_ADDRESS_INSTRUCTION]
+        communicationInstruction: str
+        dataCenterAzureLocation: str
+        datacenterAddressType: Literal[DatacenterAddressType.DATACENTER_ADDRESS_INSTRUCTION]
         supportedCarriersForReturnShipment: list[str]
-        supported_carriers_for_return_shipment: list[str]
 
 
     class azure.mgmt.databox.types.DatacenterAddressLocationResponse(TypedDict, total=False):
@@ -3952,22 +3912,21 @@ namespace azure.mgmt.databox.types
         key "street2": str
         key "street3": str
         key "zip": str
-        additional_shipping_information: str
-        address_type: str
+        additionalShippingInformation: str
+        addressType: str
         city: str
         company: str
-        contact_person_name: str
+        contactPersonName: str
         country: str
-        data_center_azure_location: str
-        datacenter_address_type: Literal[DatacenterAddressType.DATACENTER_ADDRESS_LOCATION]
+        dataCenterAzureLocation: str
+        datacenterAddressType: Literal[DatacenterAddressType.DATACENTER_ADDRESS_LOCATION]
         phone: str
-        phone_extension: str
+        phoneExtension: str
         state: str
         street1: str
         street2: str
         street3: str
         supportedCarriersForReturnShipment: list[str]
-        supported_carriers_for_return_shipment: list[str]
         zip: str
 
 
@@ -3976,8 +3935,8 @@ namespace azure.mgmt.databox.types
         key "skuName": Required[Union[str, SkuName]]
         key "storageLocation": Required[str]
         model: Union[str, ModelName]
-        sku_name: Union[str, SkuName]
-        storage_location: str
+        skuName: Union[str, SkuName]
+        storageLocation: str
 
 
     class azure.mgmt.databox.types.DatacenterAddressType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3989,16 +3948,16 @@ namespace azure.mgmt.databox.types
         key "model": Union[str, ModelName]
         key "skuName": Union[str, SkuName]
         model: Union[str, ModelName]
-        sku_name: Union[str, SkuName]
+        skuName: Union[str, SkuName]
 
 
     class azure.mgmt.databox.types.DeviceErasureDetails(TypedDict, total=False):
         key "deviceErasureStatus": Union[str, StageStatus]
         key "erasureOrDestructionCertificateSasKey": str
         key "secureErasureCertificateSasKey": str
-        device_erasure_status: Union[str, StageStatus]
-        erasure_or_destruction_certificate_sas_key: str
-        secure_erasure_certificate_sas_key: str
+        deviceErasureStatus: Union[str, StageStatus]
+        erasureOrDestructionCertificateSasKey: str
+        secureErasureCertificateSasKey: str
 
 
     class azure.mgmt.databox.types.DiskScheduleAvailabilityRequest(TypedDict, total=False):
@@ -4008,33 +3967,33 @@ namespace azure.mgmt.databox.types
         key "skuName": Required[Literal[SkuName.DATA_BOX_DISK]]
         key "storageLocation": Required[str]
         country: str
-        expected_data_size_in_tera_bytes: int
+        expectedDataSizeInTeraBytes: int
         model: Union[str, ModelName]
-        sku_name: Literal[SkuName.DATA_BOX_DISK]
-        storage_location: str
+        skuName: Literal[SkuName.DATA_BOX_DISK]
+        storageLocation: str
 
 
     class azure.mgmt.databox.types.EncryptionPreferences(TypedDict, total=False):
         key "doubleEncryption": Union[str, DoubleEncryption]
         key "hardwareEncryption": Union[str, HardwareEncryption]
-        double_encryption: Union[str, DoubleEncryption]
-        hardware_encryption: Union[str, HardwareEncryption]
+        doubleEncryption: Union[str, DoubleEncryption]
+        hardwareEncryption: Union[str, HardwareEncryption]
 
 
     class azure.mgmt.databox.types.ExportDiskDetails(TypedDict, total=False):
         key "backupManifestCloudPath": str
         key "manifestFile": str
         key "manifestHash": str
-        backup_manifest_cloud_path: str
-        manifest_file: str
-        manifest_hash: str
+        backupManifestCloudPath: str
+        manifestFile: str
+        manifestHash: str
 
 
     class azure.mgmt.databox.types.FilterFileDetails(TypedDict, total=False):
         key "filterFilePath": Required[str]
         key "filterFileType": Required[Union[str, FilterFileType]]
-        filter_file_path: str
-        filter_file_type: Union[str, FilterFileType]
+        filterFilePath: str
+        filterFileType: Union[str, FilterFileType]
 
 
     class azure.mgmt.databox.types.GranularCopyLogDetails(TypedDict, total=False):
@@ -4043,11 +4002,11 @@ namespace azure.mgmt.databox.types
         key "errorLogLink": str
         key "serialNumber": str
         key "verboseLogLink": str
-        account_id: str
-        copy_log_details_type: Literal[ClassDiscriminator.DATA_BOX_CUSTOMER_DISK]
-        error_log_link: str
-        serial_number: str
-        verbose_log_link: str
+        accountId: str
+        copyLogDetailsType: Literal[ClassDiscriminator.DATA_BOX_CUSTOMER_DISK]
+        errorLogLink: str
+        serialNumber: str
+        verboseLogLink: str
 
 
     class azure.mgmt.databox.types.GranularCopyProgress(TypedDict, total=False):
@@ -4067,23 +4026,23 @@ namespace azure.mgmt.databox.types
         key "totalBytesToProcess": int
         key "totalFilesToProcess": int
         key "transferType": Union[str, TransferType]
-        account_id: str
+        accountId: str
         actions: list[Union[str, CustomerResolutionCode]]
-        bytes_processed: int
-        data_account_type: Union[str, DataAccountType]
-        directories_errored_out: int
+        bytesProcessed: int
+        dataAccountType: Union[str, DataAccountType]
+        directoriesErroredOut: int
         error: CloudError
-        files_errored_out: int
-        files_processed: int
-        invalid_directories_processed: int
-        invalid_file_bytes_uploaded: int
-        invalid_files_processed: int
-        is_enumeration_in_progress: bool
-        renamed_container_count: int
-        storage_account_name: str
-        total_bytes_to_process: int
-        total_files_to_process: int
-        transfer_type: Union[str, TransferType]
+        filesErroredOut: int
+        filesProcessed: int
+        invalidDirectoriesProcessed: int
+        invalidFileBytesUploaded: int
+        invalidFilesProcessed: int
+        isEnumerationInProgress: bool
+        renamedContainerCount: int
+        storageAccountName: str
+        totalBytesToProcess: int
+        totalFilesToProcess: int
+        transferType: Union[str, TransferType]
 
 
     class azure.mgmt.databox.types.HeavyScheduleAvailabilityRequest(TypedDict, total=False):
@@ -4093,15 +4052,15 @@ namespace azure.mgmt.databox.types
         key "storageLocation": Required[str]
         country: str
         model: Union[str, ModelName]
-        sku_name: Literal[SkuName.DATA_BOX_HEAVY]
-        storage_location: str
+        skuName: Literal[SkuName.DATA_BOX_HEAVY]
+        storageLocation: str
 
 
     class azure.mgmt.databox.types.IdentityProperties(TypedDict, total=False):
         key "type": str
         key "userAssigned": ForwardRef('UserAssignedProperties', module='types')
         type: str
-        user_assigned: UserAssignedProperties
+        userAssigned: UserAssignedProperties
 
 
     class azure.mgmt.databox.types.ImportDiskDetails(TypedDict, total=False):
@@ -4109,10 +4068,10 @@ namespace azure.mgmt.databox.types
         key "bitLockerKey": Required[str]
         key "manifestFile": Required[str]
         key "manifestHash": Required[str]
-        backup_manifest_cloud_path: str
-        bit_locker_key: str
-        manifest_file: str
-        manifest_hash: str
+        backupManifestCloudPath: str
+        bitLockerKey: str
+        manifestFile: str
+        manifestHash: str
 
 
     class azure.mgmt.databox.types.JobDelayDetails(TypedDict, total=False):
@@ -4122,15 +4081,15 @@ namespace azure.mgmt.databox.types
         key "startTime": str
         key "status": Union[str, DelayNotificationStatus]
         description: str
-        error_code: Union[str, PortalDelayErrorCode]
-        resolution_time: str
-        start_time: str
+        errorCode: Union[str, PortalDelayErrorCode]
+        resolutionTime: str
+        startTime: str
         status: Union[str, DelayNotificationStatus]
 
 
     class azure.mgmt.databox.types.JobDeliveryInfo(TypedDict, total=False):
         key "scheduledDateTime": str
-        scheduled_date_time: str
+        scheduledDateTime: str
 
 
     class azure.mgmt.databox.types.JobProperties(TypedDict, total=False):
@@ -4151,23 +4110,23 @@ namespace azure.mgmt.databox.types
         key "startTime": str
         key "status": Union[str, StageName]
         key "transferType": Required[Union[str, TransferType]]
-        all_devices_lost: bool
-        cancellation_reason: str
-        delayed_stage: Union[str, StageName]
-        delivery_info: JobDeliveryInfo
-        delivery_type: Union[str, JobDeliveryType]
+        allDevicesLost: bool
+        cancellationReason: str
+        delayedStage: Union[str, StageName]
+        deliveryInfo: JobDeliveryInfo
+        deliveryType: Union[str, JobDeliveryType]
         details: JobDetails
         error: CloudError
-        is_cancellable: bool
-        is_cancellable_without_fee: bool
-        is_deletable: bool
-        is_prepare_to_ship_enabled: bool
-        is_shipping_address_editable: bool
-        reverse_shipping_details_update: Union[str, ReverseShippingDetailsEditStatus]
-        reverse_transport_preference_update: Union[str, ReverseTransportPreferenceEditStatus]
-        start_time: str
+        isCancellable: bool
+        isCancellableWithoutFee: bool
+        isDeletable: bool
+        isPrepareToShipEnabled: bool
+        isShippingAddressEditable: bool
+        reverseShippingDetailsUpdate: Union[str, ReverseShippingDetailsEditStatus]
+        reverseTransportPreferenceUpdate: Union[str, ReverseTransportPreferenceEditStatus]
+        startTime: str
         status: Union[str, StageName]
-        transfer_type: Union[str, TransferType]
+        transferType: Union[str, TransferType]
 
 
     class azure.mgmt.databox.types.JobResource(TrackedResource):
@@ -4185,7 +4144,7 @@ namespace azure.mgmt.databox.types
         name: str
         properties: JobProperties
         sku: Sku
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4205,12 +4164,11 @@ namespace azure.mgmt.databox.types
         key "stageStatus": Union[str, StageStatus]
         key "stageTime": str
         delayInformation: list[JobDelayDetails]
-        delay_information: list[JobDelayDetails]
-        display_name: str
-        job_stage_details: Any
-        stage_name: Union[str, StageName]
-        stage_status: Union[str, StageStatus]
-        stage_time: str
+        displayName: str
+        jobStageDetails: Any
+        stageName: Union[str, StageName]
+        stageStatus: Union[str, StageStatus]
+        stageTime: str
 
 
     class azure.mgmt.databox.types.KeyEncryptionKey(TypedDict, total=False):
@@ -4218,19 +4176,19 @@ namespace azure.mgmt.databox.types
         key "kekType": Required[Union[str, KekType]]
         key "kekUrl": str
         key "kekVaultResourceID": str
-        identity_properties: IdentityProperties
-        kek_type: Union[str, KekType]
-        kek_url: str
-        kek_vault_resource_id: str
+        identityProperties: IdentityProperties
+        kekType: Union[str, KekType]
+        kekUrl: str
+        kekVaultResourceID: str
 
 
     class azure.mgmt.databox.types.LastMitigationActionOnJob(TypedDict, total=False):
         key "actionDateTimeInUtc": str
         key "customerResolution": Union[str, CustomerResolutionCode]
         key "isPerformedByCustomer": bool
-        action_date_time_in_utc: str
-        customer_resolution: Union[str, CustomerResolutionCode]
-        is_performed_by_customer: bool
+        actionDateTimeInUtc: str
+        customerResolution: Union[str, CustomerResolutionCode]
+        isPerformedByCustomer: bool
 
 
     class azure.mgmt.databox.types.ManagedDiskDetails(TypedDict, total=False):
@@ -4238,67 +4196,64 @@ namespace azure.mgmt.databox.types
         key "resourceGroupId": Required[str]
         key "sharePassword": str
         key "stagingStorageAccountId": Required[str]
-        data_account_type: Literal[DataAccountType.MANAGED_DISK]
-        resource_group_id: str
-        share_password: str
-        staging_storage_account_id: str
+        dataAccountType: Literal[DataAccountType.MANAGED_DISK]
+        resourceGroupId: str
+        sharePassword: str
+        stagingStorageAccountId: str
 
 
     class azure.mgmt.databox.types.MarkDevicesShippedRequest(TypedDict, total=False):
         key "deliverToDcPackageDetails": Required[PackageCarrierInfo]
-        deliver_to_dc_package_details: PackageCarrierInfo
+        deliverToDcPackageDetails: PackageCarrierInfo
 
 
     class azure.mgmt.databox.types.MitigateJobRequest(TypedDict, total=False):
         key "customerResolutionCode": Union[str, CustomerResolutionCode]
-        customer_resolution_code: Union[str, CustomerResolutionCode]
+        customerResolutionCode: Union[str, CustomerResolutionCode]
         serialNumberCustomerResolutionMap: dict[str, Union[str, CustomerResolutionCode]]
-        serial_number_customer_resolution_map: dict[str, Union[str, CustomerResolutionCode]]
 
 
     class azure.mgmt.databox.types.NotificationPreference(TypedDict, total=False):
         key "sendNotification": Required[bool]
         key "stageName": Required[Union[str, NotificationStageName]]
-        send_notification: bool
-        stage_name: Union[str, NotificationStageName]
+        sendNotification: bool
+        stageName: Union[str, NotificationStageName]
 
 
     class azure.mgmt.databox.types.PackageCarrierDetails(TypedDict, total=False):
         key "carrierAccountNumber": str
         key "carrierName": str
         key "trackingId": str
-        carrier_account_number: str
-        carrier_name: str
-        tracking_id: str
+        carrierAccountNumber: str
+        carrierName: str
+        trackingId: str
 
 
     class azure.mgmt.databox.types.PackageCarrierInfo(TypedDict, total=False):
         key "carrierName": str
         key "trackingId": str
-        carrier_name: str
-        tracking_id: str
+        carrierName: str
+        trackingId: str
 
 
     class azure.mgmt.databox.types.PackageShippingDetails(TypedDict, total=False):
         key "carrierName": str
         key "trackingId": str
         key "trackingUrl": str
-        carrier_name: str
-        tracking_id: str
-        tracking_url: str
+        carrierName: str
+        trackingId: str
+        trackingUrl: str
 
 
     class azure.mgmt.databox.types.Preferences(TypedDict, total=False):
         key "encryptionPreferences": ForwardRef('EncryptionPreferences', module='types')
         key "reverseTransportPreferences": ForwardRef('TransportPreferences', module='types')
         key "transportPreferences": ForwardRef('TransportPreferences', module='types')
-        encryption_preferences: EncryptionPreferences
+        encryptionPreferences: EncryptionPreferences
         preferredDataCenterRegion: list[str]
-        preferred_data_center_region: list[str]
-        reverse_transport_preferences: TransportPreferences
+        reverseTransportPreferences: TransportPreferences
         storageAccountAccessTierPreferences: list[Literal["Archive"]]
-        storage_account_access_tier_preferences: list[Literal[Archive]]
-        transport_preferences: TransportPreferences
+        transportPreferences: TransportPreferences
 
 
     class azure.mgmt.databox.types.PreferencesValidationRequest(TypedDict, total=False):
@@ -4306,10 +4261,10 @@ namespace azure.mgmt.databox.types
         key "model": Union[str, ModelName]
         key "preference": ForwardRef('Preferences', module='types')
         key "validationType": Required[Literal[ValidationInputDiscriminator.VALIDATE_PREFERENCES]]
-        device_type: Union[str, SkuName]
+        deviceType: Union[str, SkuName]
         model: Union[str, ModelName]
         preference: Preferences
-        validation_type: Literal[ValidationInputDiscriminator.VALIDATE_PREFERENCES]
+        validationType: Literal[ValidationInputDiscriminator.VALIDATE_PREFERENCES]
 
 
     class azure.mgmt.databox.types.RegionConfigurationRequest(TypedDict, total=False):
@@ -4317,10 +4272,10 @@ namespace azure.mgmt.databox.types
         key "deviceCapabilityRequest": ForwardRef('DeviceCapabilityRequest', module='types')
         key "scheduleAvailabilityRequest": ForwardRef('ScheduleAvailabilityRequest', module='types')
         key "transportAvailabilityRequest": ForwardRef('TransportAvailabilityRequest', module='types')
-        datacenter_address_request: DatacenterAddressRequest
-        device_capability_request: DeviceCapabilityRequest
-        schedule_availability_request: ScheduleAvailabilityRequest
-        transport_availability_request: TransportAvailabilityRequest
+        datacenterAddressRequest: DatacenterAddressRequest
+        deviceCapabilityRequest: DeviceCapabilityRequest
+        scheduleAvailabilityRequest: ScheduleAvailabilityRequest
+        transportAvailabilityRequest: TransportAvailabilityRequest
 
 
     class azure.mgmt.databox.types.Resource(TypedDict, total=False):
@@ -4330,7 +4285,7 @@ namespace azure.mgmt.databox.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4338,29 +4293,28 @@ namespace azure.mgmt.databox.types
         key "principalId": str
         key "tenantId": str
         key "type": str
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: str
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
 
 
     class azure.mgmt.databox.types.ReverseShippingDetails(TypedDict, total=False):
         key "contactDetails": ForwardRef('ContactInfo', module='types')
         key "isUpdated": bool
         key "shippingAddress": ForwardRef('ShippingAddress', module='types')
-        contact_details: ContactInfo
-        is_updated: bool
-        shipping_address: ShippingAddress
+        contactDetails: ContactInfo
+        isUpdated: bool
+        shippingAddress: ShippingAddress
 
 
     class azure.mgmt.databox.types.ShipmentPickUpRequest(TypedDict, total=False):
         key "endTime": Required[str]
         key "shipmentLocation": Required[str]
         key "startTime": Required[str]
-        end_time: str
-        shipment_location: str
-        start_time: str
+        endTime: str
+        shipmentLocation: str
+        startTime: str
 
 
     class azure.mgmt.databox.types.ShippingAddress(TypedDict, total=False):
@@ -4376,18 +4330,18 @@ namespace azure.mgmt.databox.types
         key "streetAddress3": str
         key "taxIdentificationNumber": str
         key "zipExtendedCode": str
-        address_type: Union[str, AddressType]
+        addressType: Union[str, AddressType]
         city: str
-        company_name: str
+        companyName: str
         country: str
-        postal_code: str
-        skip_address_validation: bool
-        state_or_province: str
-        street_address1: str
-        street_address2: str
-        street_address3: str
-        tax_identification_number: str
-        zip_extended_code: str
+        postalCode: str
+        skipAddressValidation: bool
+        stateOrProvince: str
+        streetAddress1: str
+        streetAddress2: str
+        streetAddress3: str
+        taxIdentificationNumber: str
+        zipExtendedCode: str
 
 
     class azure.mgmt.databox.types.Sku(TypedDict, total=False):
@@ -4395,7 +4349,7 @@ namespace azure.mgmt.databox.types
         key "family": str
         key "model": Union[str, ModelName]
         key "name": Required[Union[str, SkuName]]
-        display_name: str
+        displayName: str
         family: str
         model: Union[str, ModelName]
         name: Union[str, SkuName]
@@ -4409,11 +4363,11 @@ namespace azure.mgmt.databox.types
         key "transferType": Required[Union[str, TransferType]]
         key "validationType": Required[Literal[ValidationInputDiscriminator.VALIDATE_SKU_AVAILABILITY]]
         country: str
-        device_type: Union[str, SkuName]
+        deviceType: Union[str, SkuName]
         location: str
         model: Union[str, ModelName]
-        transfer_type: Union[str, TransferType]
-        validation_type: Literal[ValidationInputDiscriminator.VALIDATE_SKU_AVAILABILITY]
+        transferType: Union[str, TransferType]
+        validationType: Literal[ValidationInputDiscriminator.VALIDATE_SKU_AVAILABILITY]
 
 
     class azure.mgmt.databox.types.SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -4427,14 +4381,14 @@ namespace azure.mgmt.databox.types
         key "dataAccountType": Required[Literal[DataAccountType.STORAGE_ACCOUNT]]
         key "sharePassword": str
         key "storageAccountId": Required[str]
-        data_account_type: Literal[DataAccountType.STORAGE_ACCOUNT]
-        share_password: str
-        storage_account_id: str
+        dataAccountType: Literal[DataAccountType.STORAGE_ACCOUNT]
+        sharePassword: str
+        storageAccountId: str
 
 
     class azure.mgmt.databox.types.SubscriptionIsAllowedToCreateJobValidationRequest(TypedDict, total=False):
         key "validationType": Required[Literal[ValidationInputDiscriminator.VALIDATE_SUBSCRIPTION_IS_ALLOWED_TO_CREATE_JOB]]
-        validation_type: Literal[ValidationInputDiscriminator.VALIDATE_SUBSCRIPTION_IS_ALLOWED_TO_CREATE_JOB]
+        validationType: Literal[ValidationInputDiscriminator.VALIDATE_SUBSCRIPTION_IS_ALLOWED_TO_CREATE_JOB]
 
 
     class azure.mgmt.databox.types.SystemData(TypedDict, total=False):
@@ -4444,12 +4398,12 @@ namespace azure.mgmt.databox.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.databox.types.TrackedResource(Resource):
@@ -4461,7 +4415,7 @@ namespace azure.mgmt.databox.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4470,18 +4424,18 @@ namespace azure.mgmt.databox.types
         key "dataAccountType": Required[Union[str, DataAccountType]]
         key "transferAllBlobs": bool
         key "transferAllFiles": bool
-        data_account_type: Union[str, DataAccountType]
-        transfer_all_blobs: bool
-        transfer_all_files: bool
+        dataAccountType: Union[str, DataAccountType]
+        transferAllBlobs: bool
+        transferAllFiles: bool
 
 
     class azure.mgmt.databox.types.TransferConfiguration(TypedDict, total=False):
         key "transferAllDetails": ForwardRef('TransferConfigurationTransferAllDetails', module='types')
         key "transferConfigurationType": Required[Union[str, TransferConfigurationType]]
         key "transferFilterDetails": ForwardRef('TransferConfigurationTransferFilterDetails', module='types')
-        transfer_all_details: TransferConfigurationTransferAllDetails
-        transfer_configuration_type: Union[str, TransferConfigurationType]
-        transfer_filter_details: TransferConfigurationTransferFilterDetails
+        transferAllDetails: TransferConfigurationTransferAllDetails
+        transferConfigurationType: Union[str, TransferConfigurationType]
+        transferFilterDetails: TransferConfigurationTransferFilterDetails
 
 
     class azure.mgmt.databox.types.TransferConfigurationTransferAllDetails(TypedDict, total=False):
@@ -4498,25 +4452,24 @@ namespace azure.mgmt.databox.types
         key "azureFileFilterDetails": ForwardRef('AzureFileFilterDetails', module='types')
         key "blobFilterDetails": ForwardRef('BlobFilterDetails', module='types')
         key "dataAccountType": Required[Union[str, DataAccountType]]
-        azure_file_filter_details: AzureFileFilterDetails
-        blob_filter_details: BlobFilterDetails
-        data_account_type: Union[str, DataAccountType]
+        azureFileFilterDetails: AzureFileFilterDetails
+        blobFilterDetails: BlobFilterDetails
+        dataAccountType: Union[str, DataAccountType]
         filterFileDetails: list[FilterFileDetails]
-        filter_file_details: list[FilterFileDetails]
 
 
     class azure.mgmt.databox.types.TransportAvailabilityRequest(TypedDict, total=False):
         key "model": Union[str, ModelName]
         key "skuName": Union[str, SkuName]
         model: Union[str, ModelName]
-        sku_name: Union[str, SkuName]
+        skuName: Union[str, SkuName]
 
 
     class azure.mgmt.databox.types.TransportPreferences(TypedDict, total=False):
         key "isUpdated": bool
         key "preferredShipmentType": Required[Union[str, TransportShipmentTypes]]
-        is_updated: bool
-        preferred_shipment_type: Union[str, TransportShipmentTypes]
+        isUpdated: bool
+        preferredShipmentType: Union[str, TransportShipmentTypes]
 
 
     class azure.mgmt.databox.types.UpdateJobDetails(TypedDict, total=False):
@@ -4526,12 +4479,12 @@ namespace azure.mgmt.databox.types
         key "returnToCustomerPackageDetails": ForwardRef('PackageCarrierDetails', module='types')
         key "reverseShippingDetails": ForwardRef('ReverseShippingDetails', module='types')
         key "shippingAddress": ForwardRef('ShippingAddress', module='types')
-        contact_details: ContactDetails
-        key_encryption_key: KeyEncryptionKey
+        contactDetails: ContactDetails
+        keyEncryptionKey: KeyEncryptionKey
         preferences: Preferences
-        return_to_customer_package_details: PackageCarrierDetails
-        reverse_shipping_details: ReverseShippingDetails
-        shipping_address: ShippingAddress
+        returnToCustomerPackageDetails: PackageCarrierDetails
+        reverseShippingDetails: ReverseShippingDetails
+        shippingAddress: ShippingAddress
 
 
     class azure.mgmt.databox.types.UpdateJobProperties(TypedDict, total=False):
@@ -4542,13 +4495,13 @@ namespace azure.mgmt.databox.types
     class azure.mgmt.databox.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
     class azure.mgmt.databox.types.UserAssignedProperties(TypedDict, total=False):
         key "resourceId": str
-        resource_id: str
+        resourceId: str
 
 
     class azure.mgmt.databox.types.ValidateAddress(TypedDict, total=False):
@@ -4557,11 +4510,11 @@ namespace azure.mgmt.databox.types
         key "shippingAddress": Required[ShippingAddress]
         key "transportPreferences": ForwardRef('TransportPreferences', module='types')
         key "validationType": Required[Literal[ValidationInputDiscriminator.VALIDATE_ADDRESS]]
-        device_type: Union[str, SkuName]
+        deviceType: Union[str, SkuName]
         model: Union[str, ModelName]
-        shipping_address: ShippingAddress
-        transport_preferences: TransportPreferences
-        validation_type: Literal[ValidationInputDiscriminator.VALIDATE_ADDRESS]
+        shippingAddress: ShippingAddress
+        transportPreferences: TransportPreferences
+        validationType: Literal[ValidationInputDiscriminator.VALIDATE_ADDRESS]
 
 
     class azure.mgmt.databox.types.ValidationInputDiscriminator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -4576,8 +4529,8 @@ namespace azure.mgmt.databox.types
     class azure.mgmt.databox.types.ValidationRequest(TypedDict, total=False):
         key "individualRequestDetails": Required[list[ValidationInputRequest]]
         key "validationCategory": Required[Literal["JobCreationValidation"]]
-        individual_request_details: list[ValidationInputRequest]
-        validation_category: Literal[JobCreationValidation]
+        individualRequestDetails: list[ValidationInputRequest]
+        validationCategory: Literal[JobCreationValidation]
 
 
 ```

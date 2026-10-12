@@ -31,7 +31,9 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DataBoxManagementClient(_DataBoxManagementClientOperationsMixin):
+class DataBoxManagementClient(
+    _DataBoxManagementClientOperationsMixin
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataBoxManagementClient.
 
     :ivar operations: Operations operations
