@@ -95,6 +95,17 @@ sdk_build azure-storage* --devbuild=True
 sdk_build azure* --service=core -d "<artifact_folder>"
 ```
 
+For compiled wheels on Windows, when `NODE_EXTRA_CA_CERTS` supplies a network-isolation
+proxy CA, the cibuildwheel subprocess receives temporary `SSL_CERT_FILE` and
+`REQUESTS_CA_BUNDLE` bundles containing that CA plus the existing configured roots
+(or certifi's roots by default). Requests-specific overrides (`REQUESTS_CA_BUNDLE`,
+then `CURL_CA_BUNDLE`, then pip's `PIP_CERT`) retain their own roots. Missing or
+invalid CA files fail the build explicitly. The bundles live until cibuildwheel
+and its build/test subprocesses finish, then are removed; the parent environment,
+installed certifi bundle, build frontend, and package feed credentials are unchanged.
+This does not use the SDK test-proxy development certificate. Non-Windows builds,
+pure-Python builds, and builds without `NODE_EXTRA_CA_CERTS` are unchanged.
+
 ## Using "versioning" modules
 
 On top of assembling packages, azure-sdk-tools also can be used to complete various tasks with respect to version "maintenance". There are three primary entrypoints, and each fulfills a purpose in the repository.

@@ -1,5 +1,7 @@
 # Extension package for Azure Storage Python libraries
 
+<!-- TEST-ONLY: Target native wheel builds for proxy CA validation; remove after draft CI validation. -->
+
 **This package provides optional native extensions for Azure Storage Python SDK libraries and is not intended for direct use.**
 
 This package contains native extension modules that provide performance-critical functionality for Azure Storage Python SDK libraries. It is designed exclusively for use with Azure Storage SDKs and must be explicitly installed to enable enhanced performance features.
