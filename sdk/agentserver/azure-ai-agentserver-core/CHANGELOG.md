@@ -1,5 +1,13 @@
 # Release History
 
+## 2.2.1 (Unreleased)
+
+### Bugs Fixed
+
+- Failed steering queue appends no longer retain an unreturned acknowledgment
+  future. Per-slot acknowledgment IDs prevent a committed append with a lost
+  response from routing the next accepted input's result incorrectly.
+
 ## 2.2.0 (2026-09-23)
 
 ### Other Changes
