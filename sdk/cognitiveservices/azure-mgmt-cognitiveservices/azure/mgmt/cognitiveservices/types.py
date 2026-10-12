@@ -22,6 +22,8 @@ from .models._enums import (
 if TYPE_CHECKING:
     from .models import (
         AbusePenaltyAction,
+        AdapterDeploymentOperationState,
+        AdapterDeploymentOperationType,
         AgentDeploymentProvisioningState,
         AgentDeploymentState,
         AgentProtocol,
@@ -37,6 +39,11 @@ if TYPE_CHECKING:
         ConnectionCategory,
         ConnectionGroup,
         ContentLevel,
+        CostControlDimensionType,
+        CostControlPeriod,
+        CostControlThresholdAction,
+        CostControlThresholdType,
+        CostControlUnit,
         CreatedByType,
         DefenderForAISettingState,
         DeploymentModelVersionUpgradeOption,
@@ -64,6 +71,12 @@ if TYPE_CHECKING:
         PrivateEndpointServiceConnectionStatus,
         ProvisioningState,
         PublicNetworkAccess,
+        RaiAcsHarmCategory,
+        RaiAcsModerationSubjectFormat,
+        RaiAcsPolicyDefinitionType,
+        RaiAcsPolicyTarget,
+        RaiAcsPolicyTargetKind,
+        RaiAcsToolNameSelector,
         RaiActionType,
         RaiEgressDefaultAction,
         RaiEgressHeaderOperation,
@@ -72,8 +85,10 @@ if TYPE_CHECKING:
         RaiEgressRuleType,
         RaiEgressScheme,
         RaiPolicyContentSource,
+        RaiPolicyFormat,
         RaiPolicyMode,
         RaiPolicyType,
+        RaiRegoEncoding,
         ResourceIdentityType,
         RoutingMethods,
         RoutingMode,
@@ -87,6 +102,8 @@ if TYPE_CHECKING:
         TrafficRoutingProtocol,
         UpgradeAvailabilityStatus,
         VmPriority,
+        WorkbenchProvisioningState,
+        WorkbenchStatus,
     )
 
 
@@ -106,11 +123,11 @@ class AADAuthTypeConnectionProperties(TypedDict, total=False):
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -161,10 +178,10 @@ class AADAuthTypeConnectionProperties(TypedDict, total=False):
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
-     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
-     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
-     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
+     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
+     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
+     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -230,11 +247,11 @@ class AccessKeyAuthTypeConnectionProperties(TypedDict, total=False):
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -287,10 +304,10 @@ class AccessKeyAuthTypeConnectionProperties(TypedDict, total=False):
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
-     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
-     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
-     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
+     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
+     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
+     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -430,11 +447,11 @@ class AccountKeyAuthTypeConnectionProperties(TypedDict, total=False):
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -487,10 +504,10 @@ class AccountKeyAuthTypeConnectionProperties(TypedDict, total=False):
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
-     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
-     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
-     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
+     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
+     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
+     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -668,6 +685,15 @@ class AccountProperties(TypedDict, total=False):
      unchanged. Responses only include hosting configuration types defined by the requested API
      version.
     :vartype agentHostingConfigurations: list["AgentHostingConfiguration"]
+    :ivar costControlIds: The full resource IDs of cost controls directly attached to this account.
+     At the moment the service only supports a single cost control. This will be expanded in future
+     API versions.
+    :vartype costControlIds: list[str]
+    :ivar costControlConnections: The account-level connections used to publish cost control
+     telemetry and events. Application Insights is optional for attachment, accounting, and
+     enforcement and can be configured later. Event Grid must be configured before attaching a cost
+     control with an alert threshold.
+    :vartype costControlConnections: "CostControlConnections"
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -754,6 +780,115 @@ class AccountProperties(TypedDict, total=False):
      the configuration cannot be changed, removed, or reordered. Account update requests should omit
      this property or send the complete existing value unchanged. Responses only include hosting
      configuration types defined by the requested API version."""
+    costControlIds: list[str]
+    """The full resource IDs of cost controls directly attached to this account. At the moment the
+     service only supports a single cost control. This will be expanded in future API versions."""
+    costControlConnections: Optional["CostControlConnections"]
+    """The account-level connections used to publish cost control telemetry and events. Application
+     Insights is optional for attachment, accounting, and enforcement and can be configured later.
+     Event Grid must be configured before attaching a cost control with an alert threshold."""
+
+
+class AdapterDeployment(ProxyResource):
+    """An independently managed LoRA adapter attached to a managed compute deployment.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: Properties of the Cognitive Services adapter deployment.
+    :vartype properties: "AdapterDeploymentProperties"
+    :ivar etag: The concurrency token for this adapter deployment.
+    :vartype etag: str
+    """
+
+    properties: "AdapterDeploymentProperties"
+    """Properties of the Cognitive Services adapter deployment."""
+    etag: str
+    """The concurrency token for this adapter deployment."""
+
+
+class AdapterDeploymentLastOperation(TypedDict, total=False):
+    """The most recently requested adapter lifecycle operation.
+
+    :ivar type: The type of lifecycle operation. Required. Known values are: "Create", "Update",
+     and "Delete".
+    :vartype type: Union[str, "AdapterDeploymentOperationType"]
+    :ivar status: The current or terminal operation state. Required. Known values are: "Accepted",
+     "Running", "Succeeded", and "Failed".
+    :vartype status: Union[str, "AdapterDeploymentOperationState"]
+    :ivar requestedTargetDeploymentName: The target deployment requested by a create or re-target
+     operation.
+    :vartype requestedTargetDeploymentName: str
+    :ivar startedAt: The time at which the operation started. Required.
+    :vartype startedAt: str
+    :ivar completedAt: The time at which the operation reached a terminal state.
+    :vartype completedAt: str
+    """
+
+    type: Required[Union[str, "AdapterDeploymentOperationType"]]
+    """The type of lifecycle operation. Required. Known values are: \"Create\", \"Update\", and
+     \"Delete\"."""
+    status: Required[Union[str, "AdapterDeploymentOperationState"]]
+    """The current or terminal operation state. Required. Known values are: \"Accepted\", \"Running\",
+     \"Succeeded\", and \"Failed\"."""
+    requestedTargetDeploymentName: str
+    """The target deployment requested by a create or re-target operation."""
+    startedAt: Required[str]
+    """The time at which the operation started. Required."""
+    completedAt: str
+    """The time at which the operation reached a terminal state."""
+
+
+class AdapterDeploymentProperties(TypedDict, total=False):
+    """Properties of an adapter deployment.
+
+    :ivar sourceModelId: The immutable Project Models version produced by Foundry fine-tuning. The
+     identifier uses the Azure AI project model URI format. The service validates LoRA weight type,
+     protected status, provenance, compatibility metadata, and registration state. Required.
+    :vartype sourceModelId: str
+    :ivar targetDeploymentName: The name of the compatible managed compute parent deployment. The
+     service resolves this name within the adapter's owning account; full ARM resource IDs and
+     cross-account references are not accepted. It cannot equal the adapter deployment's resource
+     name. Updating this value re-targets the adapter while its source model remains unchanged.
+     Required.
+    :vartype targetDeploymentName: str
+    :ivar activeTargetDeploymentName: The managed compute deployment currently serving the adapter.
+     During re-targeting this remains the prior deployment until atomic cutover.
+    :vartype activeTargetDeploymentName: str
+    :ivar provisioningState: The provisioning state of the adapter deployment. Known values are:
+     "Accepted", "Creating", "Deleting", "Moving", "Failed", "Succeeded", "Canceled",
+     "ResolvingDNS", and "ExtensionUnreachable".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar lastOperation: Information about the most recently requested lifecycle operation.
+    :vartype lastOperation: "AdapterDeploymentLastOperation"
+    """
+
+    sourceModelId: Required[str]
+    """The immutable Project Models version produced by Foundry fine-tuning. The identifier uses the
+     Azure AI project model URI format. The service validates LoRA weight type, protected status,
+     provenance, compatibility metadata, and registration state. Required."""
+    targetDeploymentName: Required[str]
+    """The name of the compatible managed compute parent deployment. The service resolves this name
+     within the adapter's owning account; full ARM resource IDs and cross-account references are not
+     accepted. It cannot equal the adapter deployment's resource name. Updating this value
+     re-targets the adapter while its source model remains unchanged. Required."""
+    activeTargetDeploymentName: str
+    """The managed compute deployment currently serving the adapter. During re-targeting this remains
+     the prior deployment until atomic cutover."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """The provisioning state of the adapter deployment. Known values are: \"Accepted\", \"Creating\",
+     \"Deleting\", \"Moving\", \"Failed\", \"Succeeded\", \"Canceled\", \"ResolvingDNS\", and
+     \"ExtensionUnreachable\"."""
+    lastOperation: "AdapterDeploymentLastOperation"
+    """Information about the most recently requested lifecycle operation."""
 
 
 class AgentApplication(ProxyResource):
@@ -937,11 +1072,11 @@ class ApiKeyAuthConnectionProperties(TypedDict, total=False):
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -994,10 +1129,10 @@ class ApiKeyAuthConnectionProperties(TypedDict, total=False):
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
-     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
-     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
-     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
+     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
+     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
+     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -1866,8 +2001,6 @@ class Compute(ProxyResource):
     :vartype properties: "ComputeProperties"
     :ivar etag: Resource Etag.
     :vartype etag: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
     :ivar kind: The kind (type) of compute resource.
     :vartype kind: str
     :ivar identity: Identity for the resource.
@@ -1879,8 +2012,6 @@ class Compute(ProxyResource):
      ContainerInstance. Required."""
     etag: str
     """Resource Etag."""
-    tags: dict[str, str]
-    """Resource tags."""
     kind: str
     """The kind (type) of compute resource."""
     identity: "Identity"
@@ -2132,6 +2263,218 @@ class ContainerInstanceComputeProperties(TypedDict, total=False):
     """Network connectivity endpoints assigned to the container instance."""
 
 
+class CostControl(ProxyResource):
+    """A cost control owned by a Cognitive Services account.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "CostControlProperties"
+    :ivar etag: The entity tag used for optimistic concurrency.
+    :vartype etag: str
+    """
+
+    properties: "CostControlProperties"
+    """The resource-specific properties for this resource."""
+    etag: str
+    """The entity tag used for optimistic concurrency."""
+
+
+class CostControlConnections(TypedDict, total=False):
+    """Account-level connections used to publish cost control telemetry and events.
+
+    :ivar appInsightsConnectionId: The full resource ID of the Application Insights connection used
+     for cost control audit telemetry. This connection is optional for attachment, accounting, and
+     enforcement, and can be configured later. Customer audit delivery requires this connection.
+    :vartype appInsightsConnectionId: str
+    :ivar eventGridConnectionId: The full resource ID of the Event Grid connection used for cost
+     control alerts. This connection must be configured when an attached cost control contains an
+     alert threshold action and cannot be removed while such an action remains attached.
+    :vartype eventGridConnectionId: str
+    """
+
+    appInsightsConnectionId: Optional[str]
+    """The full resource ID of the Application Insights connection used for cost control audit
+     telemetry. This connection is optional for attachment, accounting, and enforcement, and can be
+     configured later. Customer audit delivery requires this connection."""
+    eventGridConnectionId: Optional[str]
+    """The full resource ID of the Event Grid connection used for cost control alerts. This connection
+     must be configured when an attached cost control contains an alert threshold action and cannot
+     be removed while such an action remains attached."""
+
+
+class CostControlDimension(TypedDict, total=False):
+    """A request dimension used to partition cost control consumption.
+
+    :ivar type: The kind of request dimension. Required. Known values are: "agent", "identity",
+     "session", "project", "account", and "custom".
+    :vartype type: Union[str, "CostControlDimensionType"]
+    :ivar attribute: The request attribute used by a custom dimension. This property is required
+     for custom dimensions and must be omitted for built-in dimensions.
+    :vartype attribute: str
+    """
+
+    type: Required[Union[str, "CostControlDimensionType"]]
+    """The kind of request dimension. Required. Known values are: \"agent\", \"identity\",
+     \"session\", \"project\", \"account\", and \"custom\"."""
+    attribute: str
+    """The request attribute used by a custom dimension. This property is required for custom
+     dimensions and must be omitted for built-in dimensions."""
+
+
+CostControlMatch = TypedDict(
+    "CostControlMatch",
+    {
+        "foundry.caller.agent.id": list[str],
+        "foundry.caller.identity.oid": list[str],
+        "foundry.caller.session.id": list[str],
+        "foundry.project.id": list[str],
+    },
+    total=False,
+)
+CostControlMatch.__doc__ = """Up to four trusted request attributes and their allowed values used to select matching
+requests.
+
+:ivar foundry.caller.agent.id: The stable Foundry agent IDs to match.
+:vartype foundry.caller.agent.id: list[str]
+:ivar foundry.caller.identity.oid: The authenticated principal object IDs to match.
+:vartype foundry.caller.identity.oid: list[str]
+:ivar foundry.caller.session.id: The Foundry session IDs to match.
+:vartype foundry.caller.session.id: list[str]
+:ivar foundry.project.id: The Foundry project resource IDs to match.
+:vartype foundry.project.id: list[str]
+"""
+
+
+class CostControlPatch(TypedDict, total=False):
+    """The request used to update a cost control.
+
+    :ivar properties: The cost control properties to update.
+    :vartype properties: "CostControlPatchProperties"
+    """
+
+    properties: "CostControlPatchProperties"
+    """The cost control properties to update."""
+
+
+class CostControlPatchProperties(TypedDict, total=False):
+    """The properties that can be changed on a cost control.
+
+    :ivar displayName: An optional human-readable name for the cost control. Set this property to
+     null to clear it.
+    :vartype displayName: str
+    :ivar rules: The complete replacement set of cost control rules.
+    :vartype rules: list["CostControlRule"]
+    """
+
+    displayName: Optional[str]
+    """An optional human-readable name for the cost control. Set this property to null to clear it."""
+    rules: list["CostControlRule"]
+    """The complete replacement set of cost control rules."""
+
+
+class CostControlProperties(TypedDict, total=False):
+    """The customer-authored settings of a cost control.
+
+    :ivar displayName: An optional human-readable name for the cost control.
+    :vartype displayName: str
+    :ivar rules: The rules enforced by the cost control. Required.
+    :vartype rules: list["CostControlRule"]
+    """
+
+    displayName: str
+    """An optional human-readable name for the cost control."""
+    rules: Required[list["CostControlRule"]]
+    """The rules enforced by the cost control. Required."""
+
+
+class CostControlRule(TypedDict, total=False):
+    """A cost limit and the population to which it applies.
+
+    :ivar name: The stable rule identifier, unique within the cost control without regard to case.
+     Required.
+    :vartype name: str
+    :ivar counterKey: The built-in dimension used to partition consumption. The initial preview
+     supports exactly one dimension. Required.
+    :vartype counterKey: list["CostControlDimension"]
+    :ivar unit: The unit used for the cost control amount and absolute thresholds. Required. "usd"
+    :vartype unit: Union[str, "CostControlUnit"]
+    :ivar amount: The maximum consumption allowed by this rule, expressed in the selected unit.
+     Required.
+    :vartype amount: float
+    :ivar period: The calendar-aligned UTC renewal period. This property is required for recurring
+     rules and omitted for non-recurring rules. Known values are: "minute", "hour", "day", "week",
+     "month", and "year".
+    :vartype period: Union[str, "CostControlPeriod"]
+    :ivar recurring: Whether the cost control renews. The default is true.
+    :vartype recurring: bool
+    :ivar match: Trusted request attributes and allowed values used to select matching requests.
+    :vartype match: "CostControlMatch"
+    :ivar thresholds: The optional actions evaluated as consumption approaches the configured
+     amount. Omitted, null, or empty thresholds define an audit-only rule. Explicit audit thresholds
+     must use a value of zero. Only an explicit block threshold enforces a limit.
+    :vartype thresholds: list["CostControlThreshold"]
+    """
+
+    name: Required[str]
+    """The stable rule identifier, unique within the cost control without regard to case. Required."""
+    counterKey: Required[list["CostControlDimension"]]
+    """The built-in dimension used to partition consumption. The initial preview supports exactly one
+     dimension. Required."""
+    unit: Required[Union[str, "CostControlUnit"]]
+    """The unit used for the cost control amount and absolute thresholds. Required. \"usd\""""
+    amount: Required[float]
+    """The maximum consumption allowed by this rule, expressed in the selected unit. Required."""
+    period: Union[str, "CostControlPeriod"]
+    """The calendar-aligned UTC renewal period. This property is required for recurring rules and
+     omitted for non-recurring rules. Known values are: \"minute\", \"hour\", \"day\", \"week\",
+     \"month\", and \"year\"."""
+    recurring: bool
+    """Whether the cost control renews. The default is true."""
+    match: "CostControlMatch"
+    """Trusted request attributes and allowed values used to select matching requests."""
+    thresholds: Optional[list["CostControlThreshold"]]
+    """The optional actions evaluated as consumption approaches the configured amount. Omitted, null,
+     or empty thresholds define an audit-only rule. Explicit audit thresholds must use a value of
+     zero. Only an explicit block threshold enforces a limit."""
+
+
+class CostControlThreshold(TypedDict, total=False):
+    """An action evaluated when cost control consumption reaches a threshold.
+
+    :ivar type: How the threshold value is interpreted. Required. Known values are: "percentage"
+     and "absolute".
+    :vartype type: Union[str, "CostControlThresholdType"]
+    :ivar value: The threshold value. Audit thresholds must use zero. Block and alert thresholds
+     must be greater than zero. Percentage values cannot exceed 100, and absolute values cannot
+     exceed the rule amount. Required.
+    :vartype value: float
+    :ivar action: The action taken when the threshold is reached. Omitted actions default to audit
+     and therefore require a value of zero. Known values are: "audit", "alert", and "block".
+    :vartype action: Union[str, "CostControlThresholdAction"]
+    """
+
+    type: Required[Union[str, "CostControlThresholdType"]]
+    """How the threshold value is interpreted. Required. Known values are: \"percentage\" and
+     \"absolute\"."""
+    value: Required[float]
+    """The threshold value. Audit thresholds must use zero. Block and alert thresholds must be greater
+     than zero. Percentage values cannot exceed 100, and absolute values cannot exceed the rule
+     amount. Required."""
+    action: Union[str, "CostControlThresholdAction"]
+    """The action taken when the threshold is reached. Omitted actions default to audit and therefore
+     require a value of zero. Known values are: \"audit\", \"alert\", and \"block\"."""
+
+
 class RaiBlocklistConfig(TypedDict, total=False):
     """Azure OpenAI blocklist config.
 
@@ -2193,11 +2536,11 @@ class CustomKeysConnectionProperties(TypedDict, total=False):
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -2250,10 +2593,10 @@ class CustomKeysConnectionProperties(TypedDict, total=False):
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
-     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
-     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
-     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
+     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
+     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
+     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -2434,6 +2777,10 @@ class DeploymentProperties(TypedDict, total=False):
      select the models subset for routing and the routing mode (balanced, quality, cost) for routing
      across all supported models or the model subset.
     :vartype routing: "DeploymentRouting"
+    :ivar costControlIds: The full resource IDs of cost controls directly attached to this
+     deployment. At the moment the service only supports a single cost control. This will be
+     expanded in future API versions.
+    :vartype costControlIds: list[str]
     """
 
     provisioningState: Union[str, "DeploymentProvisioningState"]
@@ -2486,6 +2833,9 @@ class DeploymentProperties(TypedDict, total=False):
      the deployed model is 'model-router' version 2025-11-18 or later. Allows you to select the
      models subset for routing and the routing mode (balanced, quality, cost) for routing across all
      supported models or the model subset."""
+    costControlIds: list[str]
+    """The full resource IDs of cost controls directly attached to this deployment. At the moment the
+     service only supports a single cost control. This will be expanded in future API versions."""
 
 
 class DeploymentRouting(TypedDict, total=False):
@@ -2763,6 +3113,19 @@ class FqdnOutboundRule(TypedDict, total=False):
     """Type of a managed network Outbound Rule of a cognitive services account. Required. FQDN."""
 
 
+class GatedModelAccessProperties(TypedDict, total=False):
+    """Gated model access configuration for a managed compute deployment.
+
+    :ivar connectionId: The fully qualified Azure resource ID of the project connection used to
+     authorize access to a gated model during deployment creation. Required.
+    :vartype connectionId: str
+    """
+
+    connectionId: Required[str]
+    """The fully qualified Azure resource ID of the project connection used to authorize access to a
+     gated model during deployment creation. Required."""
+
+
 class HostedAgentDeployment(TypedDict, total=False):
     """Represents a hosted agent deployment where the underlying infrastructure is owned by the
     platform.
@@ -3038,6 +3401,9 @@ class ManagedComputeDeploymentProperties(TypedDict, total=False):
      OnceNewDefaultVersionAvailable. Known values are: "OnceNewDefaultVersionAvailable",
      "OnceCurrentVersionExpired", and "NoAutoUpgrade".
     :vartype versionUpgradeOption: Union[str, "DeploymentModelVersionUpgradeOption"]
+    :ivar gatedModelAccess: Configuration used to authorize access to a gated model during
+     deployment creation.
+    :vartype gatedModelAccess: "GatedModelAccessProperties"
     :ivar capabilities: Deployment capabilities represented as key-value pairs. Example: {
      assetsV2: "true" }.
     :vartype capabilities: dict[str, str]
@@ -3078,6 +3444,8 @@ class ManagedComputeDeploymentProperties(TypedDict, total=False):
     versionUpgradeOption: Union[str, "DeploymentModelVersionUpgradeOption"]
     """Template auto-upgrade policy. Defaults to OnceNewDefaultVersionAvailable. Known values are:
      \"OnceNewDefaultVersionAvailable\", \"OnceCurrentVersionExpired\", and \"NoAutoUpgrade\"."""
+    gatedModelAccess: "GatedModelAccessProperties"
+    """Configuration used to authorize access to a gated model during deployment creation."""
     capabilities: dict[str, str]
     """Deployment capabilities represented as key-value pairs. Example: { assetsV2: \"true\" }."""
     computeId: str
@@ -3152,11 +3520,11 @@ class ManagedIdentityAuthTypeConnectionProperties(TypedDict, total=False):  # py
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -3209,10 +3577,10 @@ class ManagedIdentityAuthTypeConnectionProperties(TypedDict, total=False):  # py
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
-     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
-     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
-     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
+     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
+     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
+     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -3516,11 +3884,11 @@ class NoneAuthTypeConnectionProperties(TypedDict, total=False):
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -3571,10 +3939,10 @@ class NoneAuthTypeConnectionProperties(TypedDict, total=False):
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
-     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
-     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
-     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
+     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
+     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
+     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -3621,11 +3989,11 @@ class OAuth2AuthTypeConnectionProperties(TypedDict, total=False):
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -3679,10 +4047,10 @@ class OAuth2AuthTypeConnectionProperties(TypedDict, total=False):
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
-     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
-     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
-     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
+     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
+     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
+     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -3768,11 +4136,11 @@ class PATAuthTypeConnectionProperties(TypedDict, total=False):
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -3825,10 +4193,10 @@ class PATAuthTypeConnectionProperties(TypedDict, total=False):
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
-     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
-     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
-     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
+     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
+     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
+     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -4293,6 +4661,284 @@ class QuotaTierUpgradeEligibilityInfo(TypedDict, total=False):
      TierUpgradePolicy is \"OnceUpgradeIsAvailable\" (UTC)."""
     upgradeUnavailabilityReason: Optional[str]
     """Reason in case the subscription is not eligible for upgrade to the next tier."""
+
+
+class RaiAcsEmptyObject(TypedDict, total=False):
+    """An object that must contain no properties."""
+
+
+class RaiAcsHarmConfiguration(TypedDict, total=False):
+    """Selects one AACS harm-detector configuration.
+
+    :ivar category: The logical harm category exposed under input.snapshot.moderation.harm.
+     Required. Known values are: "Hate", "SelfHarm", "Sexual", "Violence", "PromptInjection",
+     "ProtectedMaterialText", and "ProtectedMaterialCode".
+    :vartype category: Union[str, "RaiAcsHarmCategory"]
+    :ivar harm_config_id: The AACS detector configuration identifier. When supplied, it must be the
+     configuration supported for the selected category.
+    :vartype harm_config_id: str
+    """
+
+    category: Required[Union[str, "RaiAcsHarmCategory"]]
+    """The logical harm category exposed under input.snapshot.moderation.harm. Required. Known values
+     are: \"Hate\", \"SelfHarm\", \"Sexual\", \"Violence\", \"PromptInjection\",
+     \"ProtectedMaterialText\", and \"ProtectedMaterialCode\"."""
+    harm_config_id: str
+    """The AACS detector configuration identifier. When supplied, it must be the configuration
+     supported for the selected category."""
+
+
+class RaiAcsInterventionPoint(TypedDict, total=False):
+    """Binds one logical policy to an ACS intervention point.
+
+    :ivar policy_target: The canonical Agent Hooks snapshot path projected as the policy target.
+     Required. Known values are: "$snap.input", "$snap.output", "$snap.tool_call.args", and
+     "$snap.tool_result.value".
+    :vartype policy_target: Union[str, "RaiAcsPolicyTarget"]
+    :ivar policy_target_kind: The semantic kind of the projected policy target. Required. Known
+     values are: "user_input", "assistant_output", "tool_args", and "tool_result".
+    :vartype policy_target_kind: Union[str, "RaiAcsPolicyTargetKind"]
+    :ivar policy: The logical policy evaluated at this intervention point. Required.
+    :vartype policy: "RaiAcsPolicyBinding"
+    :ivar annotations: Standard ACS annotation bindings are disabled; when present, this object
+     must be empty.
+    :vartype annotations: "RaiAcsEmptyObject"
+    """
+
+    policy_target: Required[Union[str, "RaiAcsPolicyTarget"]]
+    """The canonical Agent Hooks snapshot path projected as the policy target. Required. Known values
+     are: \"$snap.input\", \"$snap.output\", \"$snap.tool_call.args\", and
+     \"$snap.tool_result.value\"."""
+    policy_target_kind: Required[Union[str, "RaiAcsPolicyTargetKind"]]
+    """The semantic kind of the projected policy target. Required. Known values are: \"user_input\",
+     \"assistant_output\", \"tool_args\", and \"tool_result\"."""
+    policy: Required["RaiAcsPolicyBinding"]
+    """The logical policy evaluated at this intervention point. Required."""
+    annotations: "RaiAcsEmptyObject"
+    """Standard ACS annotation bindings are disabled; when present, this object must be empty."""
+
+
+class RaiAcsInterventionPoints(TypedDict, total=False):
+    """Intervention points supported by the Unified Moderate AACS host profile.
+
+    :ivar input: The policy evaluated for user input.
+    :vartype input: "RaiAcsInterventionPoint"
+    :ivar pre_tool_call: The policy evaluated before a tool call.
+    :vartype pre_tool_call: "RaiAcsToolInterventionPoint"
+    :ivar post_tool_call: The policy evaluated after a tool call.
+    :vartype post_tool_call: "RaiAcsToolInterventionPoint"
+    :ivar output: The policy evaluated for final output.
+    :vartype output: "RaiAcsInterventionPoint"
+    """
+
+    input: "RaiAcsInterventionPoint"
+    """The policy evaluated for user input."""
+    pre_tool_call: "RaiAcsToolInterventionPoint"
+    """The policy evaluated before a tool call."""
+    post_tool_call: "RaiAcsToolInterventionPoint"
+    """The policy evaluated after a tool call."""
+    output: "RaiAcsInterventionPoint"
+    """The policy evaluated for final output."""
+
+
+class RaiAcsManifest(TypedDict, total=False):
+    """The closed Rego-only Agent Control Specification profile supported by Unified Moderate.
+
+    :ivar agent_control_specification_version: The declared Agent Control Specification manifest
+     version. Required.
+    :vartype agent_control_specification_version: str
+    :ivar metadata: Non-policy manifest metadata.
+    :vartype metadata: dict[str, Any]
+    :ivar policies: Named Rego policies in this manifest. Required.
+    :vartype policies: dict[str, "RaiAcsRegoPolicyDefinition"]
+    :ivar intervention_points: ACS intervention-point bindings. At least one intervention point is
+     required. Required.
+    :vartype intervention_points: "RaiAcsInterventionPoints"
+    :ivar tools: Static tool catalog keyed by canonical tool name. The catalog may be omitted or
+     empty when no tool selector is configured. A tool selector requires a non-empty catalog, and an
+     unknown selected key fails closed.
+    :vartype tools: dict[str, "RaiAcsToolDefinition"]
+    :ivar annotators: Standard ACS annotator dispatch is disabled; when present, this object must
+     be empty.
+    :vartype annotators: "RaiAcsEmptyObject"
+    """
+
+    agent_control_specification_version: Required[str]
+    """The declared Agent Control Specification manifest version. Required."""
+    metadata: dict[str, Any]
+    """Non-policy manifest metadata."""
+    policies: Required[dict[str, "RaiAcsRegoPolicyDefinition"]]
+    """Named Rego policies in this manifest. Required."""
+    intervention_points: Required["RaiAcsInterventionPoints"]
+    """ACS intervention-point bindings. At least one intervention point is required. Required."""
+    tools: dict[str, "RaiAcsToolDefinition"]
+    """Static tool catalog keyed by canonical tool name. The catalog may be omitted or empty when no
+     tool selector is configured. A tool selector requires a non-empty catalog, and an unknown
+     selected key fails closed."""
+    annotators: "RaiAcsEmptyObject"
+    """Standard ACS annotator dispatch is disabled; when present, this object must be empty."""
+
+
+class RaiAcsModerationBindingExtension(TypedDict, total=False):
+    """AACS-specific moderation work performed before ACS evaluates the selected Rego query.
+
+    :ivar subject_format: How the selected policy target is represented to moderation capabilities.
+     Required. Known values are: "text" and "canonical_json".
+    :vartype subject_format: Union[str, "RaiAcsModerationSubjectFormat"]
+    :ivar harm_configs: Harm signals requested for this intervention point. Required.
+    :vartype harm_configs: list["RaiAcsHarmConfiguration"]
+    """
+
+    subject_format: Required[Union[str, "RaiAcsModerationSubjectFormat"]]
+    """How the selected policy target is represented to moderation capabilities. Required. Known
+     values are: \"text\" and \"canonical_json\"."""
+    harm_configs: Required[list["RaiAcsHarmConfiguration"]]
+    """Harm signals requested for this intervention point. Required."""
+
+
+class RaiAcsPolicyBinding(TypedDict, total=False):
+    """Identifies the logical policy evaluated at an ACS intervention point.
+
+    :ivar id: The logical policy identifier. Required.
+    :vartype id: str
+    :ivar query: An optional intervention-specific Rego query override.
+    :vartype query: str
+    :ivar aacs_moderation: Optional AACS moderation capabilities invoked before Rego evaluation.
+    :vartype aacs_moderation: "RaiAcsModerationBindingExtension"
+    """
+
+    id: Required[str]
+    """The logical policy identifier. Required."""
+    query: str
+    """An optional intervention-specific Rego query override."""
+    aacs_moderation: "RaiAcsModerationBindingExtension"
+    """Optional AACS moderation capabilities invoked before Rego evaluation."""
+
+
+class RaiAcsRegoPolicyDefinition(TypedDict, total=False):
+    """A Rego policy definition in the Unified Moderate AACS host profile.
+
+    :ivar type: The policy language. This profile supports only Rego. Required. "rego"
+    :vartype type: Union[str, "RaiAcsPolicyDefinitionType"]
+    :ivar query: The fully qualified Rego query evaluated for this policy. Required.
+    :vartype query: str
+    """
+
+    type: Required[Union[str, "RaiAcsPolicyDefinitionType"]]
+    """The policy language. This profile supports only Rego. Required. \"rego\""""
+    query: Required[str]
+    """The fully qualified Rego query evaluated for this policy. Required."""
+
+
+class RaiAcsToolDefinition(TypedDict, total=False):
+    """Static policy metadata for one ACS tool catalog entry.
+
+    :ivar id: Optional host-defined tool identifier. The catalog map key, not this value, controls
+     tool lookup.
+    :vartype id: str
+    :ivar type: Optional host-defined tool type.
+    :vartype type: str
+    :ivar description: Human-readable policy metadata.
+    :vartype description: str
+    :ivar security_labels: Labels describing the sink or capability.
+    :vartype security_labels: list[str]
+    :ivar clearance: Maximum sensitivity or host-defined clearance metadata.
+    :vartype clearance: str
+    """
+
+    id: str
+    """Optional host-defined tool identifier. The catalog map key, not this value, controls tool
+     lookup."""
+    type: str
+    """Optional host-defined tool type."""
+    description: str
+    """Human-readable policy metadata."""
+    security_labels: list[str]
+    """Labels describing the sink or capability."""
+    clearance: str
+    """Maximum sensitivity or host-defined clearance metadata."""
+
+
+class RaiAcsToolInterventionPoint(TypedDict, total=False):
+    """Binds one logical policy to a tool-call intervention point.
+
+    :ivar policy_target: The canonical Agent Hooks snapshot path projected as the policy target.
+     Required. Known values are: "$snap.input", "$snap.output", "$snap.tool_call.args", and
+     "$snap.tool_result.value".
+    :vartype policy_target: Union[str, "RaiAcsPolicyTarget"]
+    :ivar policy_target_kind: The semantic kind of the projected policy target. Required. Known
+     values are: "user_input", "assistant_output", "tool_args", and "tool_result".
+    :vartype policy_target_kind: Union[str, "RaiAcsPolicyTargetKind"]
+    :ivar policy: The logical policy evaluated at this intervention point. Required.
+    :vartype policy: "RaiAcsPolicyBinding"
+    :ivar annotations: Standard ACS annotation bindings are disabled; when present, this object
+     must be empty.
+    :vartype annotations: "RaiAcsEmptyObject"
+    :ivar tool_name_from: Selects the tool catalog key from the raw Agent Hooks snapshot using an
+     extensible snapshot path. Known values are: "$snap.tool_call.name" and "$.tool_call.name".
+    :vartype tool_name_from: Union[str, "RaiAcsToolNameSelector"]
+    """
+
+    policy_target: Required[Union[str, "RaiAcsPolicyTarget"]]
+    """The canonical Agent Hooks snapshot path projected as the policy target. Required. Known values
+     are: \"$snap.input\", \"$snap.output\", \"$snap.tool_call.args\", and
+     \"$snap.tool_result.value\"."""
+    policy_target_kind: Required[Union[str, "RaiAcsPolicyTargetKind"]]
+    """The semantic kind of the projected policy target. Required. Known values are: \"user_input\",
+     \"assistant_output\", \"tool_args\", and \"tool_result\"."""
+    policy: Required["RaiAcsPolicyBinding"]
+    """The logical policy evaluated at this intervention point. Required."""
+    annotations: "RaiAcsEmptyObject"
+    """Standard ACS annotation bindings are disabled; when present, this object must be empty."""
+    tool_name_from: Union[str, "RaiAcsToolNameSelector"]
+    """Selects the tool catalog key from the raw Agent Hooks snapshot using an extensible snapshot
+     path. Known values are: \"$snap.tool_call.name\" and \"$.tool_call.name\"."""
+
+
+class RaiBinding(ProxyResource):
+    """An account-scoped binding from an Azure resource to an ACS policy.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: Properties of the RAI binding.
+    :vartype properties: "RaiBindingProperties"
+    :ivar etag: Resource ETag.
+    :vartype etag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    properties: "RaiBindingProperties"
+    """Properties of the RAI binding."""
+    etag: str
+    """Resource ETag."""
+    tags: dict[str, str]
+    """Resource tags."""
+
+
+class RaiBindingProperties(TypedDict, total=False):
+    """Properties of a binding from an Azure resource to an ACS policy.
+
+    :ivar boundResourceId: A valid ARM resource ID of the resource to bind to the target RAI
+     policy. Required.
+    :vartype boundResourceId: str
+    :ivar targetPolicyName: The same-account ACS policy name targeted by the binding. Required.
+    :vartype targetPolicyName: str
+    """
+
+    boundResourceId: Required[str]
+    """A valid ARM resource ID of the resource to bind to the target RAI policy. Required."""
+    targetPolicyName: Required[str]
+    """The same-account ACS policy name targeted by the binding. Required."""
 
 
 class RaiBlocklist(ProxyResource):
@@ -4780,9 +5426,43 @@ class RaiPolicyContentFilter(TypedDict, total=False):
      \"ANNOTATING\", \"HITL\", and \"RETRY\"."""
 
 
+class RaiPolicyCustomExternalSafetyProviderReference(TypedDict, total=False):  # pylint: disable=name-too-long
+    """A customer-visible reference to a subscription-level external safety provider.
+
+    :ivar externalSafetyProviderName: The registered external safety-provider name. Required.
+    :vartype externalSafetyProviderName: str
+    :ivar managedIdentityResourceId: Optional managed identity used when invoking the external
+     safety provider.
+    :vartype managedIdentityResourceId: str
+    :ivar source: The request stage at which the provider runs. Required. Known values are:
+     "Prompt", "Completion", "PreToolCall", "PostToolCall", "PreRun", and "PostRun".
+    :vartype source: Union[str, "RaiPolicyContentSource"]
+    :ivar blocking: Whether a provider rejection blocks the request.
+    :vartype blocking: bool
+    """
+
+    externalSafetyProviderName: Required[str]
+    """The registered external safety-provider name. Required."""
+    managedIdentityResourceId: str
+    """Optional managed identity used when invoking the external safety provider."""
+    source: Required[Union[str, "RaiPolicyContentSource"]]
+    """The request stage at which the provider runs. Required. Known values are: \"Prompt\",
+     \"Completion\", \"PreToolCall\", \"PostToolCall\", \"PreRun\", and \"PostRun\"."""
+    blocking: bool
+    """Whether a provider rejection blocks the request."""
+
+
 class RaiPolicyProperties(TypedDict, total=False):
     """Azure OpenAI Content Filters properties.
 
+    :ivar format: The policy representation. Omission selects ContentFilters when creating a
+     policy. ACS policy creation and replacement require ACS. Known values are: "ContentFilters" and
+     "ACS".
+    :vartype format: Union[str, "RaiPolicyFormat"]
+    :ivar acs: The ACS manifest. Required by service validation when format is ACS.
+    :vartype acs: "RaiAcsManifest"
+    :ivar acsRegos: Reusable same-account Rego resources loaded with the ACS manifest.
+    :vartype acsRegos: list["RaiRegoReference"]
     :ivar type: Content Filters policy type. Known values are: "UserManaged" and "SystemManaged".
     :vartype type: Union[str, "RaiPolicyType"]
     :ivar mode: Rai policy mode. The enum value mapping is as below: Default = 0, Deferred=1,
@@ -4798,11 +5478,21 @@ class RaiPolicyProperties(TypedDict, total=False):
     :vartype customBlocklists: list["CustomBlocklistConfig"]
     :ivar safetyProviders: The list of Safety Providers.
     :vartype safetyProviders: list["SafetyProviderConfig"]
+    :ivar customExternalSafetyProviders: Optional external safety-provider references used by this
+     policy.
+    :vartype customExternalSafetyProviders: list["RaiPolicyCustomExternalSafetyProviderReference"]
     :ivar egressPolicy: Egress (outbound network) policy controlling which external endpoints
      sandboxed agents can reach. Includes rules with Allow/Deny/Transform/Rewrite actions.
     :vartype egressPolicy: "RaiEgressPolicyConfig"
     """
 
+    format: Union[str, "RaiPolicyFormat"]
+    """The policy representation. Omission selects ContentFilters when creating a policy. ACS policy
+     creation and replacement require ACS. Known values are: \"ContentFilters\" and \"ACS\"."""
+    acs: "RaiAcsManifest"
+    """The ACS manifest. Required by service validation when format is ACS."""
+    acsRegos: list["RaiRegoReference"]
+    """Reusable same-account Rego resources loaded with the ACS manifest."""
     type: Union[str, "RaiPolicyType"]
     """Content Filters policy type. Known values are: \"UserManaged\" and \"SystemManaged\"."""
     mode: Union[str, "RaiPolicyMode"]
@@ -4818,9 +5508,69 @@ class RaiPolicyProperties(TypedDict, total=False):
     """The list of custom Blocklist."""
     safetyProviders: list["SafetyProviderConfig"]
     """The list of Safety Providers."""
+    customExternalSafetyProviders: list["RaiPolicyCustomExternalSafetyProviderReference"]
+    """Optional external safety-provider references used by this policy."""
     egressPolicy: "RaiEgressPolicyConfig"
     """Egress (outbound network) policy controlling which external endpoints sandboxed agents can
      reach. Includes rules with Allow/Deny/Transform/Rewrite actions."""
+
+
+class RaiRego(ProxyResource):
+    """An account-scoped reusable Rego artifact.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: Properties of the reusable Rego artifact.
+    :vartype properties: "RaiRegoProperties"
+    :ivar etag: Resource ETag.
+    :vartype etag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    properties: "RaiRegoProperties"
+    """Properties of the reusable Rego artifact."""
+    etag: str
+    """Resource ETag."""
+    tags: dict[str, str]
+    """Resource tags."""
+
+
+class RaiRegoProperties(TypedDict, total=False):
+    """Properties of an account-scoped reusable Rego resource.
+
+    :ivar encoding: How the Rego source is encoded on the wire. The default is None. Known values
+     are: "None" and "Base64".
+    :vartype encoding: Union[str, "RaiRegoEncoding"]
+    :ivar rego: Rego source in the selected transport encoding. Required.
+    :vartype rego: str
+    """
+
+    encoding: Union[str, "RaiRegoEncoding"]
+    """How the Rego source is encoded on the wire. The default is None. Known values are: \"None\" and
+     \"Base64\"."""
+    rego: Required[str]
+    """Rego source in the selected transport encoding. Required."""
+
+
+class RaiRegoReference(TypedDict, total=False):
+    """References one reusable Rego resource on the same account.
+
+    :ivar regoName: The same-account Rego resource name. Required.
+    :vartype regoName: str
+    """
+
+    regoName: Required[str]
+    """The same-account Rego resource name. Required."""
 
 
 class RaiSafetyProviderConfig(TypedDict, total=False):
@@ -5069,11 +5819,11 @@ class SASAuthTypeConnectionProperties(TypedDict, total=False):
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -5126,10 +5876,10 @@ class SASAuthTypeConnectionProperties(TypedDict, total=False):
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
-     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
-     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
-     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
+     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
+     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
+     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -5177,11 +5927,11 @@ class ServicePrincipalAuthTypeConnectionProperties(TypedDict, total=False):  # p
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -5234,10 +5984,10 @@ class ServicePrincipalAuthTypeConnectionProperties(TypedDict, total=False):  # p
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
-     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
-     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
-     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
+     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
+     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
+     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -5536,11 +6286,11 @@ class UsernamePasswordAuthTypeConnectionProperties(TypedDict, total=False):  # p
      "Spark", "SqlServer", "Sybase", "Teradata", "Vertica", "Pinecone", "Databricks", "Cassandra",
      "Couchbase", "MongoDbV2", "MongoDbAtlas", "AmazonS3Compatible", "FileServer", "FtpServer",
      "GoogleCloudStorage", "Hdfs", "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc",
-     "GenericRest", "RemoteTool", "AmazonMws", "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm",
-     "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua", "Responsys",
-     "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce", "SalesforceServiceCloud",
-     "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc", "ServiceNow",
-     "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
+     "GenericRest", "RemoteTool", "OpenAPI", "AmazonMws", "Concur", "Dynamics", "DynamicsAx",
+     "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira", "Magento", "Marketo", "Office365", "Eloqua",
+     "Responsys", "OracleServiceCloud", "PayPal", "QuickBooks", "Salesforce",
+     "SalesforceServiceCloud", "SalesforceMarketingCloud", "SapCloudForCustomer", "SapEcc",
+     "ServiceNow", "SharePointOnlineList", "Shopify", "Square", "WebTable", "Xero", "Zoho",
      "GenericContainerRegistry", "Elasticsearch", "AppInsights", "AppConfig", "OpenAI", "Serp",
      "BingLLMSearch", "Serverless", "ManagedOnlineEndpoint", "ApiManagement", "ModelGateway",
      "GroundingWithBingSearch", "GroundingWithCustomSearch", "Sharepoint", "MicrosoftFabric",
@@ -5593,10 +6343,10 @@ class UsernamePasswordAuthTypeConnectionProperties(TypedDict, total=False):  # p
      \"Vertica\", \"Pinecone\", \"Databricks\", \"Cassandra\", \"Couchbase\", \"MongoDbV2\",
      \"MongoDbAtlas\", \"AmazonS3Compatible\", \"FileServer\", \"FtpServer\",
      \"GoogleCloudStorage\", \"Hdfs\", \"OracleCloudStorage\", \"Sftp\", \"GenericHttp\",
-     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"AmazonMws\", \"Concur\",
-     \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\", \"Jira\",
-     \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\", \"OracleServiceCloud\",
-     \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
+     \"ODataRest\", \"Odbc\", \"GenericRest\", \"RemoteTool\", \"OpenAPI\", \"AmazonMws\",
+     \"Concur\", \"Dynamics\", \"DynamicsAx\", \"DynamicsCrm\", \"GoogleAdWords\", \"Hubspot\",
+     \"Jira\", \"Magento\", \"Marketo\", \"Office365\", \"Eloqua\", \"Responsys\",
+     \"OracleServiceCloud\", \"PayPal\", \"QuickBooks\", \"Salesforce\", \"SalesforceServiceCloud\",
      \"SalesforceMarketingCloud\", \"SapCloudForCustomer\", \"SapEcc\", \"ServiceNow\",
      \"SharePointOnlineList\", \"Shopify\", \"Square\", \"WebTable\", \"Xero\", \"Zoho\",
      \"GenericContainerRegistry\", \"Elasticsearch\", \"AppInsights\", \"AppConfig\", \"OpenAI\",
@@ -5714,10 +6464,6 @@ class Workbench(ProxyResource):
     :vartype properties: "WorkbenchProperties"
     :ivar etag: Resource Etag.
     :vartype etag: str
-    :ivar location: The location of the workbench resource.
-    :vartype location: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: "Identity"
     """
@@ -5726,10 +6472,6 @@ class Workbench(ProxyResource):
     """Properties of the workbench resource. Required."""
     etag: str
     """Resource Etag."""
-    location: str
-    """The location of the workbench resource."""
-    tags: dict[str, str]
-    """Resource tags."""
     identity: "Identity"
     """Identity for the resource."""
 
@@ -5737,26 +6479,42 @@ class Workbench(ProxyResource):
 class WorkbenchProperties(TypedDict, total=False):
     """Properties for a Workbench resource.
 
-    :ivar targetClusterId: ARM resource ID of the parent cluster that hosts this workbench.
-     Required.
+    :ivar targetClusterId: Resource ID of the Foundry Compute or virtual cluster that hosts this
+     workbench. Changing the cluster requires the workbench to be stopped. Required.
     :vartype targetClusterId: str
-    :ivar imageLink: Container image URI (e.g., MCR or ACR image path) for the workbench. Required.
+    :ivar imageLink: Container image URI (e.g., MCR or ACR image path) for the workbench. Immutable
+     after creation. Required.
     :vartype imageLink: str
+    :ivar instanceType: For virtual clusters, an exact Singularity instance type or a full-node
+     Azure VM size. If omitted or null on creation, defaults to Singularity.D4_v3. Foundry Compute
+     ignores this override and uses the pool configuration. Changing the instance type requires the
+     workbench to be stopped.
+    :vartype instanceType: str
+    :ivar gpuCount: GPU count for GPU pools or vCPU count for CPU pools. Must be 1, 2, 4, 8, or a
+     positive multiple of 8. A full-node Azure VM size permits partition selection; omitted or null
+     uses the full node. For an exact Singularity instance type, a supplied count must match that
+     type; the Singularity.D4_v3 fallback accepts 4.
+    :vartype gpuCount: int
     :ivar idleTimeBeforeShutdown: ISO 8601 duration before the idle workbench is automatically shut
      down (e.g., 'PT30M').
     :vartype idleTimeBeforeShutdown: str
-    :ivar datasetId: The dataset ID to mount for the workbench.
+    :ivar datasetId: The dataset ID to mount for the workbench. Set only during creation.
     :vartype datasetId: str
-    :ivar sshSettings: SSH configuration for remote access to the workbench.
+    :ivar sshSettings: SSH configuration for remote access to the workbench. Set only during
+     creation.
     :vartype sshSettings: "SshSettings"
     :ivar connectivityEndpoints: Network connectivity endpoints assigned to the workbench.
     :vartype connectivityEndpoints: "ConnectivityEndpoints"
     :ivar webEndpoint: The web endpoint URL for accessing the workbench.
     :vartype webEndpoint: str
-    :ivar provisioningState: Provisioning state of the workbench resource. Known values are:
-     "Accepted", "Succeeded", "Failed", "Canceled", "Deleting", "Scaling", "Disabled", "Starting",
-     "Stopping", "Restarting", and "Stopped".
-    :vartype provisioningState: Union[str, "ComputeProvisioningState"]
+    :ivar provisioningState: Provisioning state of the workbench resource, independent of runtime
+     lifecycle status. Known values are: "Creating", "Succeeded", "Failed", and "Canceled".
+    :vartype provisioningState: Union[str, "WorkbenchProvisioningState"]
+    :ivar status: Runtime lifecycle status of the workbench. Independent of resource provisioning;
+     start, stop, restart, and runtime health changes do not change provisioningState. Known values
+     are: "Unknown", "Creating", "Starting", "Running", "Stopping", "Stopped", "Restarting",
+     "Updating", "Deleting", and "Failed".
+    :vartype status: Union[str, "WorkbenchStatus"]
     :ivar errors: Error details for the workbench resource.
     :vartype errors: list["ErrorDetail"]
     :ivar creationTime: Creation time of the workbench resource.
@@ -5764,27 +6522,103 @@ class WorkbenchProperties(TypedDict, total=False):
     """
 
     targetClusterId: Required[str]
-    """ARM resource ID of the parent cluster that hosts this workbench. Required."""
+    """Resource ID of the Foundry Compute or virtual cluster that hosts this workbench. Changing the
+     cluster requires the workbench to be stopped. Required."""
     imageLink: Required[str]
-    """Container image URI (e.g., MCR or ACR image path) for the workbench. Required."""
+    """Container image URI (e.g., MCR or ACR image path) for the workbench. Immutable after creation.
+     Required."""
+    instanceType: Optional[str]
+    """For virtual clusters, an exact Singularity instance type or a full-node Azure VM size. If
+     omitted or null on creation, defaults to Singularity.D4_v3. Foundry Compute ignores this
+     override and uses the pool configuration. Changing the instance type requires the workbench to
+     be stopped."""
+    gpuCount: Optional[int]
+    """GPU count for GPU pools or vCPU count for CPU pools. Must be 1, 2, 4, 8, or a positive multiple
+     of 8. A full-node Azure VM size permits partition selection; omitted or null uses the full
+     node. For an exact Singularity instance type, a supplied count must match that type; the
+     Singularity.D4_v3 fallback accepts 4."""
     idleTimeBeforeShutdown: str
     """ISO 8601 duration before the idle workbench is automatically shut down (e.g., 'PT30M')."""
     datasetId: str
-    """The dataset ID to mount for the workbench."""
+    """The dataset ID to mount for the workbench. Set only during creation."""
     sshSettings: "SshSettings"
-    """SSH configuration for remote access to the workbench."""
+    """SSH configuration for remote access to the workbench. Set only during creation."""
     connectivityEndpoints: "ConnectivityEndpoints"
     """Network connectivity endpoints assigned to the workbench."""
     webEndpoint: str
     """The web endpoint URL for accessing the workbench."""
-    provisioningState: Union[str, "ComputeProvisioningState"]
-    """Provisioning state of the workbench resource. Known values are: \"Accepted\", \"Succeeded\",
-     \"Failed\", \"Canceled\", \"Deleting\", \"Scaling\", \"Disabled\", \"Starting\", \"Stopping\",
-     \"Restarting\", and \"Stopped\"."""
+    provisioningState: Union[str, "WorkbenchProvisioningState"]
+    """Provisioning state of the workbench resource, independent of runtime lifecycle status. Known
+     values are: \"Creating\", \"Succeeded\", \"Failed\", and \"Canceled\"."""
+    status: Union[str, "WorkbenchStatus"]
+    """Runtime lifecycle status of the workbench. Independent of resource provisioning; start, stop,
+     restart, and runtime health changes do not change provisioningState. Known values are:
+     \"Unknown\", \"Creating\", \"Starting\", \"Running\", \"Stopping\", \"Stopped\",
+     \"Restarting\", \"Updating\", \"Deleting\", and \"Failed\"."""
     errors: list["ErrorDetail"]
     """Error details for the workbench resource."""
     creationTime: str
     """Creation time of the workbench resource."""
+
+
+class WorkbenchUpdate(TypedDict, total=False):
+    """The mutable fields of a workbench resource.
+
+    :ivar properties: Properties of the workbench to update.
+    :vartype properties: "WorkbenchUpdateProperties"
+    :ivar identity: Identity for the resource. May be changed while the workbench is running only
+     when properties is omitted or null; the change takes effect after restart. If a properties
+     object is supplied, including an empty object or timeout-only update, changing identity
+     requires the workbench to be stopped.
+    :vartype identity: "Identity"
+    """
+
+    properties: "WorkbenchUpdateProperties"
+    """Properties of the workbench to update."""
+    identity: "Identity"
+    """Identity for the resource. May be changed while the workbench is running only when properties
+     is omitted or null; the change takes effect after restart. If a properties object is supplied,
+     including an empty object or timeout-only update, changing identity requires the workbench to
+     be stopped."""
+
+
+class WorkbenchUpdateProperties(TypedDict, total=False):
+    """Mutable properties for a Workbench resource.
+
+    :ivar targetClusterId: Resource ID of the Foundry Compute or virtual cluster that hosts this
+     workbench. Changing the cluster requires the workbench to be stopped.
+    :vartype targetClusterId: str
+    :ivar idleTimeBeforeShutdown: ISO 8601 duration before the idle workbench is automatically shut
+     down (e.g., 'PT30M').
+    :vartype idleTimeBeforeShutdown: str
+    :ivar instanceType: For virtual clusters, an exact Singularity instance type or a full-node
+     Azure VM size. Omit to preserve the current value; null resets to the Singularity.D4_v3
+     fallback. Foundry Compute ignores this override and uses the pool configuration. An actual
+     instance type change requires the workbench to be stopped.
+    :vartype instanceType: str
+    :ivar gpuCount: GPU count for GPU pools or vCPU count for CPU pools. Must be 1, 2, 4, 8, or a
+     positive multiple of 8. Omit to preserve the current value; null clears the override to use the
+     full node or the instance type's default count. Full-node Azure VM sizes permit partition
+     selection. A supplied count must match an exact Singularity instance type; the
+     Singularity.D4_v3 fallback accepts 4.
+    :vartype gpuCount: int
+    """
+
+    targetClusterId: str
+    """Resource ID of the Foundry Compute or virtual cluster that hosts this workbench. Changing the
+     cluster requires the workbench to be stopped."""
+    idleTimeBeforeShutdown: str
+    """ISO 8601 duration before the idle workbench is automatically shut down (e.g., 'PT30M')."""
+    instanceType: Optional[str]
+    """For virtual clusters, an exact Singularity instance type or a full-node Azure VM size. Omit to
+     preserve the current value; null resets to the Singularity.D4_v3 fallback. Foundry Compute
+     ignores this override and uses the pool configuration. An actual instance type change requires
+     the workbench to be stopped."""
+    gpuCount: Optional[int]
+    """GPU count for GPU pools or vCPU count for CPU pools. Must be 1, 2, 4, 8, or a positive multiple
+     of 8. Omit to preserve the current value; null clears the override to use the full node or the
+     instance type's default count. Full-node Azure VM sizes permit partition selection. A supplied
+     count must match an exact Singularity instance type; the Singularity.D4_v3 fallback accepts 4."""
 
 
 ConnectionPropertiesV2 = Union[

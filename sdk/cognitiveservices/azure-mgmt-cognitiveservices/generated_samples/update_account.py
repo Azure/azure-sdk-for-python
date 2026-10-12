@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -33,11 +34,20 @@ def main():
     response = client.accounts.begin_update(
         resource_group_name="bvttest",
         account_name="bingSearch",
-        account={"location": "global", "sku": {"name": "S2"}},
+        account={
+            "location": "global",
+            "properties": {
+                "costControlConnections": {
+                    "appInsightsConnectionId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/bvttest/providers/Microsoft.MachineLearningServices/workspaces/bingSearch@AML/connections/cost-control-insights",
+                    "eventGridConnectionId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/bvttest/providers/Microsoft.MachineLearningServices/workspaces/bingSearch@AML/connections/cost-control-events",
+                }
+            },
+            "sku": {"name": "S2"},
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-07-15-preview/UpdateAccount.json
+# x-ms-original-file: 2026-09-15-preview/UpdateAccount.json
 if __name__ == "__main__":
     main()
