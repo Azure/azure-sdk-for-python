@@ -31,6 +31,8 @@ SUBMISSION = "Structured management SDK review."
 INCOMPLETE = "Management SDK review incomplete: "
 SEVERITIES = ("Blocking", "Warning", "Suggestion")
 MAX_BYTES = 2 * 1024 * 1024
+MAX_REVIEW_REQUEST_BYTES = 9000
+MAX_INITIAL_ATTRIBUTION_ENTRIES = 8
 
 
 def obj(properties):
@@ -92,6 +94,7 @@ RENDER_SCHEMA = obj(
                         {
                             "outcome": enum("no_entries", "entries", "incomplete"),
                             "initial_release": {"type": "boolean"},
+                            "omitted_count": {"type": "integer", "minimum": 0},
                             "reason": TEXT,
                             "entries": array(
                                 obj(
@@ -136,6 +139,7 @@ DRAFT_SCHEMA = obj(
                     "package": {"type": "string", "pattern": r"^sdk/[^/]+/azure-mgmt-[a-z0-9-]+$"},
                     "checks": obj({name: CHECK for name in SEMANTIC_CHECKS}),
                     "findings": array(FINDING),
+                    "attribution_omitted": {"type": "integer", "minimum": 0},
                     "attribution": array(
                         obj(
                             {
@@ -468,10 +472,12 @@ def validate_review(data, context):
         entries = attribution["entries"]
         indexes = unique_index(entries, "entry_index", field + ".entries")
         trusted_entries = breaking["introducedEntries"]
+        omitted = attribution["omitted_count"]
+        require(omitted <= len(trusted_entries), field + ".omitted_count", "omitted count exceeds trusted entries")
         require(
-            set(indexes) == set(range(len(trusted_entries))),
+            set(indexes) == set(range(len(trusted_entries) - omitted)),
             field + ".entries",
-            "must account for every trusted introduced entry exactly once",
+            "must account for the retained trusted prefix exactly once; omissions must be explicit",
         )
         incomplete = (
             breaking["status"] != "complete"
@@ -479,6 +485,7 @@ def validate_review(data, context):
             or bool(breaking["emptyBreakingChangeSections"])
             or context["commitDiscovery"]["status"] != "complete"
             or context["packageDiscovery"]["status"] != "complete"
+            or bool(omitted)
         )
         expected = "incomplete" if incomplete else ("entries" if trusted_entries else "no_entries")
         require(
@@ -715,6 +722,27 @@ def render(data, context):
                 + "<br>"
                 + "<br>".join(text(issue) for issue in issues)
             )
+        if analysis["omitted_count"]:
+            omitted = analysis["omitted_count"]
+            total = len(breaking["introducedEntries"])
+            first = breaking["introducedEntries"][total - omitted]
+            last = breaking["introducedEntries"][-1]
+            omission = attribution_omission_reason(omitted, total)
+            unverified.append([text(name), "Breaking-change attribution truncated", text(omission)])
+            attribution_sections.append(
+                f"**Package: {text(name)} | Unreviewed breaking changes**\n\n"
+                + f"**Needs human review:** {text(omission)}<br>"
+                + evidence_link(
+                    file_url(
+                        context,
+                        breaking["changelogPath"],
+                        context["latestRevision"],
+                        first["startLine"],
+                        last["endLine"],
+                    ),
+                    "Omitted changelog entries",
+                )
+            )
     findings.sort(key=lambda row: (SEVERITIES.index(row[0]), row[2], row[1]))
     partial = bool(unverified) or any(
         package["attribution"]["outcome"] == "incomplete"
@@ -865,6 +893,15 @@ def schema_errors(data, schema=DRAFT_SCHEMA, path="data"):
 
 def draft_template(context):
     """Supply structure and trusted identities, never prepopulate review conclusions."""
+    counts = [0] * len(context["breakingChangeContext"])
+    remaining = MAX_INITIAL_ATTRIBUTION_ENTRIES
+    while remaining and any(
+        count < len(item["introducedEntries"]) for count, item in zip(counts, context["breakingChangeContext"])
+    ):
+        for index, item in enumerate(context["breakingChangeContext"]):
+            if remaining and counts[index] < len(item["introducedEntries"]):
+                counts[index] += 1
+                remaining -= 1
     return {
         "schema_version": "2",
         "outcome": "reviewed" if context["affectedPackages"] else "not_applicable",
@@ -873,6 +910,7 @@ def draft_template(context):
                 "package": item["packagePath"],
                 "checks": {name: {"outcome": "unverified", "reason": "", "sources": []} for name in SEMANTIC_CHECKS},
                 "findings": [],
+                "attribution_omitted": len(item["introducedEntries"]) - count,
                 "attribution": [
                     {
                         "entry_id": entry_id(entry),
@@ -881,12 +919,20 @@ def draft_template(context):
                         "sources": [],
                         "sdk_context": [],
                     }
-                    for entry in item["introducedEntries"]
+                    for entry in item["introducedEntries"][:count]
                 ],
             }
-            for item in context["breakingChangeContext"]
+            for count, item in zip(counts, context["breakingChangeContext"])
         ],
     }
+
+
+def attribution_omission_reason(omitted, total):
+    return (
+        f"{omitted} of {total} breaking-change entries were not reviewed. "
+        f"Attribution is bounded to {MAX_INITIAL_ATTRIBUTION_ENTRIES} entries initially and "
+        f"a {MAX_REVIEW_REQUEST_BYTES}-byte MCP request budget; human review is required for the omitted suffix."
+    )
 
 
 def incomplete_submission(message):
@@ -1054,15 +1100,20 @@ def expand_draft(data, context):
             )
             # SDK context is separately validated, then rendered as literal supporting prose links.
             entries[-1]["sdk_context"] = sdk_sources
-        if seen != set(trusted_entries):
+        omitted = package["attribution_omitted"]
+        retained = len(record["introducedEntries"]) - omitted
+        expected_ids = {entry_id(entry) for entry in record["introducedEntries"][:max(0, retained)]}
+        if omitted > len(trusted_entries) or seen != expected_ids:
             errors.append(
                 {
                     "code": "entry_coverage",
                     "path": path + ".attribution",
-                    "message": "Account for all trusted introduced entry IDs.",
+                    "message": "Account for the retained trusted prefix; omitted suffix count must match exactly.",
                 }
             )
         issues = list(record["collectionIssues"])
+        if omitted:
+            issues.append(attribution_omission_reason(omitted, len(trusted_entries)))
         if record["status"] != "complete" and not issues:
             issues.append("Breaking-change collection is incomplete.")
         if record["emptyBreakingChangeSections"]:
@@ -1078,6 +1129,7 @@ def expand_draft(data, context):
                 "attribution": {
                     "outcome": "incomplete" if issues else ("entries" if trusted_entries else "no_entries"),
                     "initial_release": record["releaseBaseline"]["status"] == "not_applicable",
+                    "omitted_count": omitted,
                     "reason": "; ".join(issues),
                     "entries": entries,
                 },
