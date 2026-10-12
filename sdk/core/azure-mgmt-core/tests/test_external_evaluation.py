@@ -39,6 +39,8 @@ from azure.mgmt.core.policies import (
     AsyncExternalEvaluationPolicy,
     ExternalEvaluationPolicy,
     PolicyTokenRequestContext,
+    create_policy_token_provider,
+    create_async_policy_token_provider,
 )
 
 
@@ -458,6 +460,94 @@ def test_context_is_immutable_and_envelope_escapes_uri():
         context.content = b"{}"
 
 
+@pytest.fixture(params=["sync", "async"])
+def default_provider(request):
+    def bind(acquire, subscription_id=SUBSCRIPTION):
+        if request.param == "sync":
+            provider = create_policy_token_provider(acquire, subscription_id=subscription_id)
+            return lambda context: provider(context)
+
+        async def async_acquire(*args, **kwargs):
+            await asyncio.sleep(0)
+            return acquire(*args, **kwargs)
+
+        provider = create_async_policy_token_provider(async_acquire, subscription_id=subscription_id)
+        return lambda context: asyncio.run(provider(context))
+
+    return bind
+
+
+@pytest.mark.parametrize("body", [None, b"", b'{\r\n "number":1.00, "escaped":"\\u0061"\r\n}'])
+def test_default_provider_preserves_body_and_safe_options(default_provider, body):
+    result = acquisition_result()
+    captured = []
+
+    def acquire(parameters, **kwargs):
+        captured.append((parameters, parameters.read(), kwargs))
+        return result
+
+    context = PolicyTokenRequestContext(URI, "PATCH", SUBSCRIPTION, body)
+    provider = default_provider(acquire)
+    assert provider(context) is result
+    assert captured[0][1] == context.get_request_body()
+    assert captured[0][2] == {"logging_enable": False, "permit_redirects": False}
+    assert captured[0][0].closed
+
+
+def test_default_provider_accepts_case_insensitive_subscription(default_provider):
+    subscription = "abcdef01-2345-6789-abcd-ef0123456789"
+    acquire = Mock(return_value=acquisition_result())
+    provider = default_provider(acquire, subscription_id=subscription.upper())
+    context = PolicyTokenRequestContext(URI, "DELETE", subscription.upper(), None)
+    assert provider(context)["token"] == TOKEN
+    acquire.assert_called_once()
+
+
+def test_default_provider_rejects_subscription_mismatch(default_provider):
+    acquire = Mock()
+    provider = default_provider(acquire, subscription_id="11111111-1111-1111-1111-111111111111")
+    context = PolicyTokenRequestContext(URI, "PUT", SUBSCRIPTION, b"{}")
+    with pytest.raises(ValueError, match="different subscription"):
+        provider(context)
+    acquire.assert_not_called()
+
+
+def test_default_provider_preserves_acquisition_error(default_provider):
+    failure = ServiceRequestError("offline acquisition error")
+    captured = []
+
+    def acquire(parameters, **kwargs):
+        captured.append(parameters)
+        raise failure
+
+    provider = default_provider(acquire)
+    with pytest.raises(ServiceRequestError) as error:
+        provider(PolicyTokenRequestContext(URI, "PUT", SUBSCRIPTION, b"{}"))
+    assert error.value is failure
+    assert captured[0].closed
+
+
+@pytest.mark.parametrize("factory", [create_policy_token_provider, create_async_policy_token_provider])
+def test_default_provider_rejects_invalid_configuration(factory):
+    with pytest.raises(ValueError):
+        factory(Mock(), subscription_id="not-a-subscription")
+    with pytest.raises(TypeError, match="must be callable"):
+        factory(None, subscription_id=SUBSCRIPTION)
+
+
+def test_async_default_provider_preserves_cancellation():
+    captured = []
+
+    async def acquire(parameters, **kwargs):
+        captured.append(parameters)
+        raise asyncio.CancelledError()
+
+    provider = create_async_policy_token_provider(acquire, subscription_id=SUBSCRIPTION)
+    with pytest.raises(asyncio.CancelledError):
+        asyncio.run(provider(PolicyTokenRequestContext(URI, "PUT", SUBSCRIPTION, b"{}")))
+    assert captured[0].closed
+
+
 @pytest.mark.parametrize("retry_acquisition", [False, True])
 def test_generated_policy_client_provider_and_opt_in(retry_acquisition, caplog):
     # Exercise the README adapter when the adjacent policy package is available.
@@ -506,13 +596,7 @@ def test_generated_policy_client_provider_and_opt_in(retry_acquisition, caplog):
         retry_backoff_factor=0,
     )
 
-    def provider(context):
-        assert context.subscription_id == SUBSCRIPTION
-        return token_client.policy_tokens.acquire(
-            io.BytesIO(context.get_request_body()),
-            logging_enable=False,
-            permit_redirects=False,
-        )
+    provider = create_policy_token_provider(token_client.policy_tokens.acquire, subscription_id=SUBSCRIPTION)
 
     guarded_client = storage_module.StorageManagementClient(
         credential,
@@ -589,10 +673,9 @@ def test_generated_async_user_example(caplog):
             logging_enable=True,
         ) as token_client:
 
-            async def provider(context):
-                return await token_client.policy_tokens.acquire(
-                    io.BytesIO(context.get_request_body()), logging_enable=False, permit_redirects=False
-                )
+            provider = create_async_policy_token_provider(
+                token_client.policy_tokens.acquire, subscription_id=SUBSCRIPTION
+            )
 
             async with storage_module.StorageManagementClient(
                 credential,

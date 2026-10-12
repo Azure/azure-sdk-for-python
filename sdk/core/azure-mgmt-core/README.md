@@ -32,11 +32,10 @@ configured the same way. Set `AZURE_SUBSCRIPTION_ID`, `AZURE_RESOURCE_GROUP`, an
 ### Synchronous SDK user
 
 ```python
-from io import BytesIO
 import os
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.core.policies import ExternalEvaluationPolicy, PolicyTokenRequestContext
+from azure.mgmt.core.policies import ExternalEvaluationPolicy, create_policy_token_provider
 from azure.mgmt.resource.policy import PolicyClient
 from azure.mgmt.storage import StorageManagementClient
 
@@ -48,19 +47,14 @@ with DefaultAzureCredential() as credential:
     # The provider client uses the same credential and ARM cloud/endpoint as the
     # guarded client. Do not add ExternalEvaluationPolicy to this client.
     with PolicyClient(credential, subscription_id, api_version="2025-11-01") as token_client:
-        def acquire_policy_token(context: PolicyTokenRequestContext):
-            if context.subscription_id.lower() != subscription_id.lower():
-                raise ValueError("The provider is configured for a different subscription.")
-            return token_client.policy_tokens.acquire(
-                BytesIO(context.get_request_body()),
-                logging_enable=False,
-                permit_redirects=False,
-            )
+        provider = create_policy_token_provider(
+            token_client.policy_tokens.acquire, subscription_id=subscription_id
+        )
 
         with StorageManagementClient(
             credential,
             subscription_id,
-            per_call_policies=[ExternalEvaluationPolicy(acquire_policy_token)],
+            per_call_policies=[ExternalEvaluationPolicy(provider)],
         ) as storage_client:
             # Call ordinary SDK operations. If this scope has an external-
             # evaluation policy, acquisition and replay happen in the pipeline.
@@ -77,11 +71,10 @@ with DefaultAzureCredential() as credential:
 ### Asynchronous SDK user
 
 ```python
-from io import BytesIO
 import os
 
 from azure.identity.aio import DefaultAzureCredential
-from azure.mgmt.core.policies import AsyncExternalEvaluationPolicy, PolicyTokenRequestContext
+from azure.mgmt.core.policies import AsyncExternalEvaluationPolicy, create_async_policy_token_provider
 from azure.mgmt.resource.policy.aio import PolicyClient
 from azure.mgmt.storage.aio import StorageManagementClient
 
@@ -91,19 +84,14 @@ async def update_storage_account_tags():
     storage_account_name = os.environ["AZURE_STORAGE_ACCOUNT_NAME"]
     async with DefaultAzureCredential() as credential:
         async with PolicyClient(credential, subscription_id, api_version="2025-11-01") as token_client:
-            async def acquire_policy_token(context: PolicyTokenRequestContext):
-                if context.subscription_id.lower() != subscription_id.lower():
-                    raise ValueError("The provider is configured for a different subscription.")
-                return await token_client.policy_tokens.acquire(
-                    BytesIO(context.get_request_body()),
-                    logging_enable=False,
-                    permit_redirects=False,
-                )
+            provider = create_async_policy_token_provider(
+                token_client.policy_tokens.acquire, subscription_id=subscription_id
+            )
 
             async with StorageManagementClient(
                 credential,
                 subscription_id,
-                per_call_policies=[AsyncExternalEvaluationPolicy(acquire_policy_token)],
+                per_call_policies=[AsyncExternalEvaluationPolicy(provider)],
             ) as storage_client:
                 account = await storage_client.storage_accounts.get_properties(
                     resource_group_name, storage_account_name
@@ -114,6 +102,12 @@ async def update_storage_account_tags():
                 )
                 print(updated_account.name)
 ```
+
+The factories remove the need to write a callback, **not** the separate Policy
+client. They accept its bound acquisition method, avoiding a dependency from
+`azure-mgmt-core` to `azure-mgmt-resource-policy`. Pass the same subscription ID
+used to construct that client. The caller continues to own client configuration
+and cleanup. Custom callbacks remain supported.
 
 The helper embeds the original serialized JSON directly in `operation.content`;
 do not replace it with a parsed model or dictionary. Tokens are opaque and are
@@ -137,8 +131,9 @@ passed verbatim. A new policy instance should be used for each client pipeline.
   retries on both clients. A shared end-to-end deadline across the provider and
   replay is not implemented in this prototype.
 - Token-bearing replay deliberately disables redirects and raw HTTP debug
-  logging. The provider must also disable acquisition body logging and redirects,
-  as shown above. Custom policies, telemetry, and test recordings must not expose
+  logging. The default provider factories also disable acquisition body logging
+  and redirects; custom providers must do the same. Custom policies, telemetry,
+  and test recordings must not expose
   tokens. Do not add this header to logging allowlists.
 - For sovereign clouds or custom endpoints, configure both clients with the same
   trusted ARM endpoint, credential scopes, and cloud settings. Do not choose the
