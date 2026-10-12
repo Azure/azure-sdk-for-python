@@ -29,6 +29,7 @@ if TYPE_CHECKING:
         MaintenanceWindowType,
         ManagedServiceIdentityType,
         MigrationProvisioningState,
+        MigrationRollbackReason,
         PrivateEndpointConnectionProvisioningState,
         PrivateEndpointServiceConnectionStatus,
         Protocol,
@@ -53,9 +54,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -81,9 +82,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -98,9 +99,9 @@ class AccessPolicyAssignment(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties of the access policy assignment.
     :vartype properties: "AccessPolicyAssignmentProperties"
     """
@@ -112,18 +113,12 @@ class AccessPolicyAssignment(ProxyResource):
 class AccessPolicyAssignmentProperties(TypedDict, total=False):
     """Properties of Redis Enterprise database access policy assignment.
 
-    :ivar provisioning_state: Current provisioning status of the access policy assignment. Known
+    :ivar provisioningState: Current provisioning status of the access policy assignment. Known
      values are: "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar access_policy_name: **Deprecated.** This property always returns "default". Use
-     ``accessString`` to configure custom Redis ACL permissions instead.
-    :vartype access_policy_name: str
-    :ivar access_string: The Redis ACL permissions string applied to this assignment, for example
-     ``+@read ~cache:*``. Defaults to ``+@all ~*`` if not specified.
-    :vartype access_string: str
-    :ivar provisioning_error: Provisioning error details when the access string failed to apply
-     (e.g., invalid ACL syntax). Null when provisioning succeeded.
-    :vartype provisioning_error: "AccessPolicyAssignmentProvisioningError"
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar accessPolicyName: Name of access policy under specific access policy assignment. Only
+     "default" policy is supported for now. Required.
+    :vartype accessPolicyName: str
     :ivar user: The user associated with the access policy. Required.
     :vartype user: "AccessPolicyAssignmentPropertiesUser"
     """
@@ -131,15 +126,9 @@ class AccessPolicyAssignmentProperties(TypedDict, total=False):
     provisioningState: Union[str, "ProvisioningState"]
     """Current provisioning status of the access policy assignment. Known values are: \"Succeeded\",
      \"Failed\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
-    accessPolicyName: str
-    """**Deprecated.** This property always returns \"default\". Use ``accessString`` to configure
-     custom Redis ACL permissions instead."""
-    accessString: str
-    """The Redis ACL permissions string applied to this assignment, for example ``+@read ~cache:*``.
-     Defaults to ``+@all ~*`` if not specified."""
-    provisioningError: "AccessPolicyAssignmentProvisioningError"
-    """Provisioning error details when the access string failed to apply (e.g., invalid ACL syntax).
-     Null when provisioning succeeded."""
+    accessPolicyName: Required[str]
+    """Name of access policy under specific access policy assignment. Only \"default\" policy is
+     supported for now. Required."""
     user: Required["AccessPolicyAssignmentPropertiesUser"]
     """The user associated with the access policy. Required."""
 
@@ -147,82 +136,74 @@ class AccessPolicyAssignmentProperties(TypedDict, total=False):
 class AccessPolicyAssignmentPropertiesUser(TypedDict, total=False):
     """The user associated with the access policy.
 
-    :ivar object_id: The object ID of the user.
-    :vartype object_id: str
+    :ivar objectId: The object ID of the user.
+    :vartype objectId: str
     """
 
     objectId: str
     """The object ID of the user."""
 
 
-class AccessPolicyAssignmentProvisioningError(TypedDict, total=False):
-    """Error details for access policy assignment provisioning failures.
-
-    :ivar code: Machine-readable error code (e.g., "InvalidAccessString"). Required.
-    :vartype code: str
-    :ivar message: Human-readable error message describing the failure. Required.
-    :vartype message: str
-    :ivar target: The property that caused the error (e.g., "properties.accessString").
-    :vartype target: str
-    """
-
-    code: Required[str]
-    """Machine-readable error code (e.g., \"InvalidAccessString\"). Required."""
-    message: Required[str]
-    """Human-readable error message describing the failure. Required."""
-    target: str
-    """The property that caused the error (e.g., \"properties.accessString\")."""
-
-
 class AzureCacheForRedisMigrationProperties(TypedDict, total=False):
     """Properties for Redis Enterprise migration operation for Azure Cache for Redis.
 
-    :ivar target_resource_id: The Azure resource ID of the Azure Managed Redis destination cache to
+    :ivar targetResourceId: The Azure resource ID of the Azure Managed Redis destination cache to
      migrate.
-    :vartype target_resource_id: str
-    :ivar provisioning_state: Current provisioning status of the migration. Known values are:
+    :vartype targetResourceId: str
+    :ivar provisioningState: Current provisioning status of the migration. Known values are:
      "Accepted", "InProgress", "ReadyForDnsSwitch", "Succeeded", "Failed", "Cancelling",
-     "Cancelled", and "CancellationFailed".
-    :vartype provisioning_state: Union[str, "MigrationProvisioningState"]
-    :ivar status_details: Additional details about the migration operation's status in free text
+     "Cancelled", "CancellationFailed", "Unlinking", "Unlinked", and "UnlinkFailed".
+    :vartype provisioningState: Union[str, "MigrationProvisioningState"]
+    :ivar statusDetails: Additional details about the migration operation's status in free text
      format.
-    :vartype status_details: str
-    :ivar creation_time: The timestamp when the migration operation was created.
-    :vartype creation_time: str
-    :ivar last_modified_time: The timestamp when the migration operation was last updated.
-    :vartype last_modified_time: str
-    :ivar source_resource_id: The source resource ID to migrate from. This is the resource ID of
-     the Azure Cache for Redis. Required.
-    :vartype source_resource_id: str
-    :ivar switch_dns: Sets whether the DNS is switched automatically after the data is transferred
+    :vartype statusDetails: str
+    :ivar creationTime: The timestamp when the migration operation was created.
+    :vartype creationTime: str
+    :ivar lastModifiedTime: The timestamp when the migration operation was last updated.
+    :vartype lastModifiedTime: str
+    :ivar rollbackEligibleUntil: The timestamp until which a successful migration remains eligible
+     to be undone (rolled back) to the source cache. This property is only returned while the
+     migration is in the Succeeded state, and is calculated from the time the migration succeeded
+     plus the rollback window. After this time the source cache is released and the migration can no
+     longer be undone.
+    :vartype rollbackEligibleUntil: str
+    :ivar sourceResourceId: The source resource ID to migrate from. This is the resource ID of the
+     Azure Cache for Redis. Required.
+    :vartype sourceResourceId: str
+    :ivar switchDns: Sets whether the DNS is switched automatically after the data is transferred
      from the source cache to the target cache. This property must be true during the preview.
      Required.
-    :vartype switch_dns: bool
-    :ivar skip_data_migration: Sets whether the data is migrated from source to target or not. This
-     property must be true during the preview. Required.
-    :vartype skip_data_migration: bool
-    :ivar force_migrate: Sets whether to ignore warnings when performing validation of the
-     migration request. If this property is true, warning-level disparities between the source and
-     target resources will be ignored, and the request will only fail validation if there are
-     error-level disparities. The default value is false.
-    :vartype force_migrate: bool
-    :ivar source_type: Describes the source of the migration operation. Required. Migration from
+    :vartype switchDns: bool
+    :ivar skipDataMigration: Sets whether the data is migrated from source to target or not. Set
+     this property to true to skip data migration. Required.
+    :vartype skipDataMigration: bool
+    :ivar forceMigrate: Sets whether to ignore warnings when performing validation of the migration
+     request. If this property is true, warning-level disparities between the source and target
+     resources will be ignored, and the request will only fail validation if there are error-level
+     disparities. The default value is false.
+    :vartype forceMigrate: bool
+    :ivar sourceType: Describes the source of the migration operation. Required. Migration from
      Azure Cache for Redis to Redis Enterprise.
-    :vartype source_type: Literal[SourceType.AZURE_CACHE_FOR_REDIS]
+    :vartype sourceType: Literal[SourceType.AZURE_CACHE_FOR_REDIS]
     """
 
     targetResourceId: str
     """The Azure resource ID of the Azure Managed Redis destination cache to migrate."""
     provisioningState: Union[str, "MigrationProvisioningState"]
     """Current provisioning status of the migration. Known values are: \"Accepted\", \"InProgress\",
-     \"ReadyForDnsSwitch\", \"Succeeded\", \"Failed\", \"Cancelling\", \"Cancelled\", and
-     \"CancellationFailed\"."""
-    statusDetails: str
+     \"ReadyForDnsSwitch\", \"Succeeded\", \"Failed\", \"Cancelling\", \"Cancelled\",
+     \"CancellationFailed\", \"Unlinking\", \"Unlinked\", and \"UnlinkFailed\"."""
+    statusDetails: Optional[str]
     """Additional details about the migration operation's status in free text format."""
     creationTime: str
     """The timestamp when the migration operation was created."""
     lastModifiedTime: str
     """The timestamp when the migration operation was last updated."""
+    rollbackEligibleUntil: str
+    """The timestamp until which a successful migration remains eligible to be undone (rolled back) to
+     the source cache. This property is only returned while the migration is in the Succeeded state,
+     and is calculated from the time the migration succeeded plus the rollback window. After this
+     time the source cache is released and the migration can no longer be undone."""
     sourceResourceId: Required[str]
     """The source resource ID to migrate from. This is the resource ID of the Azure Cache for Redis.
      Required."""
@@ -230,8 +211,8 @@ class AzureCacheForRedisMigrationProperties(TypedDict, total=False):
     """Sets whether the DNS is switched automatically after the data is transferred from the source
      cache to the target cache. This property must be true during the preview. Required."""
     skipDataMigration: Required[bool]
-    """Sets whether the data is migrated from source to target or not. This property must be true
-     during the preview. Required."""
+    """Sets whether the data is migrated from source to target or not. Set this property to true to
+     skip data migration. Required."""
     forceMigrate: bool
     """Sets whether to ignore warnings when performing validation of the migration request. If this
      property is true, warning-level disparities between the source and target resources will be
@@ -253,9 +234,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -279,9 +260,9 @@ class Cluster(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -314,40 +295,40 @@ class ClusterProperties(TypedDict, total=False):
     """Properties of Redis Enterprise clusters, as opposed to general resource properties like
     location, tags.
 
-    :ivar high_availability: Enabled by default. If highAvailability is disabled, the data set is
+    :ivar highAvailability: Enabled by default. If highAvailability is disabled, the data set is
      not replicated. This affects the availability SLA, and increases the risk of data loss. Known
      values are: "Enabled" and "Disabled".
-    :vartype high_availability: Union[str, "HighAvailability"]
-    :ivar minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
-     Newer versions can be added in the future. Note that TLS 1.0 and TLS 1.1 are now completely
-     obsolete -- you cannot use them. They are mentioned only for the sake of consistency with old
-     API versions. Known values are: "1.0", "1.1", and "1.2".
-    :vartype minimum_tls_version: Union[str, "TlsVersion"]
+    :vartype highAvailability: Union[str, "HighAvailability"]
+    :ivar minimumTlsVersion: The minimum TLS version for the cluster to support, e.g. '1.2'. Newer
+     versions can be added in the future. Note that TLS 1.0 and TLS 1.1 are now completely obsolete
+     -- you cannot use them. They are mentioned only for the sake of consistency with old API
+     versions. Known values are: "1.0", "1.1", and "1.2".
+    :vartype minimumTlsVersion: Union[str, "TlsVersion"]
     :ivar encryption: Encryption-at-rest configuration for the cluster.
     :vartype encryption: "ClusterPropertiesEncryption"
-    :ivar maintenance_configuration: Cluster-level maintenance configuration.
-    :vartype maintenance_configuration: "MaintenanceConfiguration"
-    :ivar host_name: DNS name of the cluster endpoint.
-    :vartype host_name: str
-    :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
+    :ivar maintenanceConfiguration: Cluster-level maintenance configuration.
+    :vartype maintenanceConfiguration: "MaintenanceConfiguration"
+    :ivar hostName: DNS name of the cluster endpoint.
+    :vartype hostName: str
+    :ivar provisioningState: Current provisioning status of the cluster. Known values are:
      "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar redundancy_mode: Explains the current redundancy strategy of the cluster, which affects
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar redundancyMode: Explains the current redundancy strategy of the cluster, which affects
      the expected SLA. Known values are: "None", "LR", and "ZR".
-    :vartype redundancy_mode: Union[str, "RedundancyMode"]
-    :ivar resource_state: Current resource status of the cluster. Known values are: "Running",
+    :vartype redundancyMode: Union[str, "RedundancyMode"]
+    :ivar resourceState: Current resource status of the cluster. Known values are: "Running",
      "Creating", "CreateFailed", "Updating", "UpdateFailed", "Deleting", "DeleteFailed", "Enabling",
      "EnableFailed", "Disabling", "DisableFailed", "Disabled", "Scaling", "ScalingFailed", and
      "Moving".
-    :vartype resource_state: Union[str, "ResourceState"]
-    :ivar redis_version: Version of redis the cluster supports, e.g. '6'.
-    :vartype redis_version: str
-    :ivar private_endpoint_connections: List of private endpoint connections associated with the
+    :vartype resourceState: Union[str, "ResourceState"]
+    :ivar redisVersion: Version of redis the cluster supports, e.g. '6'.
+    :vartype redisVersion: str
+    :ivar privateEndpointConnections: List of private endpoint connections associated with the
      specified Redis Enterprise cluster.
-    :vartype private_endpoint_connections: list["PrivateEndpointConnection"]
-    :ivar migrated_endpoint: The endpoint of the source resource that is currently pointing to this
+    :vartype privateEndpointConnections: list["PrivateEndpointConnection"]
+    :ivar migratedEndpoint: The endpoint of the source resource that is currently pointing to this
      resource as a result of an ACR/ACRE to AMR migration.
-    :vartype migrated_endpoint: str
+    :vartype migratedEndpoint: str
     """
 
     highAvailability: Union[str, "HighAvailability"]
@@ -388,45 +369,45 @@ class ClusterProperties(TypedDict, total=False):
 class ClusterCreateProperties(ClusterProperties):
     """Properties of Redis Enterprise clusters for create operations.
 
-    :ivar high_availability: Enabled by default. If highAvailability is disabled, the data set is
+    :ivar highAvailability: Enabled by default. If highAvailability is disabled, the data set is
      not replicated. This affects the availability SLA, and increases the risk of data loss. Known
      values are: "Enabled" and "Disabled".
-    :vartype high_availability: Union[str, "HighAvailability"]
-    :ivar minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
-     Newer versions can be added in the future. Note that TLS 1.0 and TLS 1.1 are now completely
-     obsolete -- you cannot use them. They are mentioned only for the sake of consistency with old
-     API versions. Known values are: "1.0", "1.1", and "1.2".
-    :vartype minimum_tls_version: Union[str, "TlsVersion"]
+    :vartype highAvailability: Union[str, "HighAvailability"]
+    :ivar minimumTlsVersion: The minimum TLS version for the cluster to support, e.g. '1.2'. Newer
+     versions can be added in the future. Note that TLS 1.0 and TLS 1.1 are now completely obsolete
+     -- you cannot use them. They are mentioned only for the sake of consistency with old API
+     versions. Known values are: "1.0", "1.1", and "1.2".
+    :vartype minimumTlsVersion: Union[str, "TlsVersion"]
     :ivar encryption: Encryption-at-rest configuration for the cluster.
     :vartype encryption: "ClusterPropertiesEncryption"
-    :ivar maintenance_configuration: Cluster-level maintenance configuration.
-    :vartype maintenance_configuration: "MaintenanceConfiguration"
-    :ivar host_name: DNS name of the cluster endpoint.
-    :vartype host_name: str
-    :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
+    :ivar maintenanceConfiguration: Cluster-level maintenance configuration.
+    :vartype maintenanceConfiguration: "MaintenanceConfiguration"
+    :ivar hostName: DNS name of the cluster endpoint.
+    :vartype hostName: str
+    :ivar provisioningState: Current provisioning status of the cluster. Known values are:
      "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar redundancy_mode: Explains the current redundancy strategy of the cluster, which affects
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar redundancyMode: Explains the current redundancy strategy of the cluster, which affects
      the expected SLA. Known values are: "None", "LR", and "ZR".
-    :vartype redundancy_mode: Union[str, "RedundancyMode"]
-    :ivar resource_state: Current resource status of the cluster. Known values are: "Running",
+    :vartype redundancyMode: Union[str, "RedundancyMode"]
+    :ivar resourceState: Current resource status of the cluster. Known values are: "Running",
      "Creating", "CreateFailed", "Updating", "UpdateFailed", "Deleting", "DeleteFailed", "Enabling",
      "EnableFailed", "Disabling", "DisableFailed", "Disabled", "Scaling", "ScalingFailed", and
      "Moving".
-    :vartype resource_state: Union[str, "ResourceState"]
-    :ivar redis_version: Version of redis the cluster supports, e.g. '6'.
-    :vartype redis_version: str
-    :ivar private_endpoint_connections: List of private endpoint connections associated with the
+    :vartype resourceState: Union[str, "ResourceState"]
+    :ivar redisVersion: Version of redis the cluster supports, e.g. '6'.
+    :vartype redisVersion: str
+    :ivar privateEndpointConnections: List of private endpoint connections associated with the
      specified Redis Enterprise cluster.
-    :vartype private_endpoint_connections: list["PrivateEndpointConnection"]
-    :ivar migrated_endpoint: The endpoint of the source resource that is currently pointing to this
+    :vartype privateEndpointConnections: list["PrivateEndpointConnection"]
+    :ivar migratedEndpoint: The endpoint of the source resource that is currently pointing to this
      resource as a result of an ACR/ACRE to AMR migration.
-    :vartype migrated_endpoint: str
-    :ivar public_network_access: Whether or not public network traffic can access the Redis
-     cluster. Only 'Enabled' or 'Disabled' can be set. null is returned only for clusters created
-     using an old API version which do not have this property and cannot be set. Required. Known
-     values are: "Enabled" and "Disabled".
-    :vartype public_network_access: Union[str, "PublicNetworkAccess"]
+    :vartype migratedEndpoint: str
+    :ivar publicNetworkAccess: Whether or not public network traffic can access the Redis cluster.
+     Only 'Enabled' or 'Disabled' can be set. null is returned only for clusters created using an
+     old API version which do not have this property and cannot be set. Required. Known values are:
+     "Enabled" and "Disabled".
+    :vartype publicNetworkAccess: Union[str, "PublicNetworkAccess"]
     """
 
     publicNetworkAccess: Required[Optional[Union[str, "PublicNetworkAccess"]]]
@@ -439,9 +420,9 @@ class ClusterCreateProperties(ClusterProperties):
 class ClusterPropertiesEncryption(TypedDict, total=False):
     """Encryption-at-rest configuration for the cluster.
 
-    :ivar customer_managed_key_encryption: All Customer-managed key encryption properties for the
+    :ivar customerManagedKeyEncryption: All Customer-managed key encryption properties for the
      resource. Set this to an empty object to use Microsoft-managed key encryption.
-    :vartype customer_managed_key_encryption:
+    :vartype customerManagedKeyEncryption:
      "ClusterPropertiesEncryptionCustomerManagedKeyEncryption"
     """
 
@@ -454,14 +435,14 @@ class ClusterPropertiesEncryptionCustomerManagedKeyEncryption(TypedDict, total=F
     """All Customer-managed key encryption properties for the resource. Set this to an empty object to
     use Microsoft-managed key encryption.
 
-    :ivar key_encryption_key_identity: All identity configuration for Customer-managed key settings
+    :ivar keyEncryptionKeyIdentity: All identity configuration for Customer-managed key settings
      defining which identity should be used to auth to Key Vault.
-    :vartype key_encryption_key_identity:
+    :vartype keyEncryptionKeyIdentity:
      "ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity"
-    :ivar key_encryption_key_url: Key encryption key Url, versioned only. Ex:
+    :ivar keyEncryptionKeyUrl: Key encryption key Url, versioned only. Ex:
      `https://contosovault.vault.azure.net/keys/contosokek/562a4bb76b524a1493a6afe8e536ee78
      <https://contosovault.vault.azure.net/keys/contosokek/562a4bb76b524a1493a6afe8e536ee78>`_.
-    :vartype key_encryption_key_url: str
+    :vartype keyEncryptionKeyUrl: str
     """
 
     keyEncryptionKeyIdentity: "ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity"
@@ -479,14 +460,14 @@ class ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity(
     """All identity configuration for Customer-managed key settings defining which identity should be
     used to auth to Key Vault.
 
-    :ivar user_assigned_identity_resource_id: User assigned identity to use for accessing key
+    :ivar userAssignedIdentityResourceId: User assigned identity to use for accessing key
      encryption key Url. Ex: /subscriptions/<sub uuid>/resourceGroups/<resource
      group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId.
-    :vartype user_assigned_identity_resource_id: str
-    :ivar identity_type: Only userAssignedIdentity is supported in this API version; other types
-     may be supported in the future. Known values are: "systemAssignedIdentity" and
+    :vartype userAssignedIdentityResourceId: str
+    :ivar identityType: Only userAssignedIdentity is supported in this API version; other types may
+     be supported in the future. Known values are: "systemAssignedIdentity" and
      "userAssignedIdentity".
-    :vartype identity_type: Union[str, "CmkIdentityType"]
+    :vartype identityType: Union[str, "CmkIdentityType"]
     """
 
     userAssignedIdentityResourceId: str
@@ -524,45 +505,45 @@ class ClusterUpdate(TypedDict, total=False):
 class ClusterUpdateProperties(ClusterProperties):
     """Properties of Redis Enterprise clusters for update operations.
 
-    :ivar high_availability: Enabled by default. If highAvailability is disabled, the data set is
+    :ivar highAvailability: Enabled by default. If highAvailability is disabled, the data set is
      not replicated. This affects the availability SLA, and increases the risk of data loss. Known
      values are: "Enabled" and "Disabled".
-    :vartype high_availability: Union[str, "HighAvailability"]
-    :ivar minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
-     Newer versions can be added in the future. Note that TLS 1.0 and TLS 1.1 are now completely
-     obsolete -- you cannot use them. They are mentioned only for the sake of consistency with old
-     API versions. Known values are: "1.0", "1.1", and "1.2".
-    :vartype minimum_tls_version: Union[str, "TlsVersion"]
+    :vartype highAvailability: Union[str, "HighAvailability"]
+    :ivar minimumTlsVersion: The minimum TLS version for the cluster to support, e.g. '1.2'. Newer
+     versions can be added in the future. Note that TLS 1.0 and TLS 1.1 are now completely obsolete
+     -- you cannot use them. They are mentioned only for the sake of consistency with old API
+     versions. Known values are: "1.0", "1.1", and "1.2".
+    :vartype minimumTlsVersion: Union[str, "TlsVersion"]
     :ivar encryption: Encryption-at-rest configuration for the cluster.
     :vartype encryption: "ClusterPropertiesEncryption"
-    :ivar maintenance_configuration: Cluster-level maintenance configuration.
-    :vartype maintenance_configuration: "MaintenanceConfiguration"
-    :ivar host_name: DNS name of the cluster endpoint.
-    :vartype host_name: str
-    :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
+    :ivar maintenanceConfiguration: Cluster-level maintenance configuration.
+    :vartype maintenanceConfiguration: "MaintenanceConfiguration"
+    :ivar hostName: DNS name of the cluster endpoint.
+    :vartype hostName: str
+    :ivar provisioningState: Current provisioning status of the cluster. Known values are:
      "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar redundancy_mode: Explains the current redundancy strategy of the cluster, which affects
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar redundancyMode: Explains the current redundancy strategy of the cluster, which affects
      the expected SLA. Known values are: "None", "LR", and "ZR".
-    :vartype redundancy_mode: Union[str, "RedundancyMode"]
-    :ivar resource_state: Current resource status of the cluster. Known values are: "Running",
+    :vartype redundancyMode: Union[str, "RedundancyMode"]
+    :ivar resourceState: Current resource status of the cluster. Known values are: "Running",
      "Creating", "CreateFailed", "Updating", "UpdateFailed", "Deleting", "DeleteFailed", "Enabling",
      "EnableFailed", "Disabling", "DisableFailed", "Disabled", "Scaling", "ScalingFailed", and
      "Moving".
-    :vartype resource_state: Union[str, "ResourceState"]
-    :ivar redis_version: Version of redis the cluster supports, e.g. '6'.
-    :vartype redis_version: str
-    :ivar private_endpoint_connections: List of private endpoint connections associated with the
+    :vartype resourceState: Union[str, "ResourceState"]
+    :ivar redisVersion: Version of redis the cluster supports, e.g. '6'.
+    :vartype redisVersion: str
+    :ivar privateEndpointConnections: List of private endpoint connections associated with the
      specified Redis Enterprise cluster.
-    :vartype private_endpoint_connections: list["PrivateEndpointConnection"]
-    :ivar migrated_endpoint: The endpoint of the source resource that is currently pointing to this
+    :vartype privateEndpointConnections: list["PrivateEndpointConnection"]
+    :ivar migratedEndpoint: The endpoint of the source resource that is currently pointing to this
      resource as a result of an ACR/ACRE to AMR migration.
-    :vartype migrated_endpoint: str
-    :ivar public_network_access: Whether or not public network traffic can access the Redis
-     cluster. Only 'Enabled' or 'Disabled' can be set. null is returned only for clusters created
-     using an old API version which do not have this property and cannot be set. Known values are:
-     "Enabled" and "Disabled".
-    :vartype public_network_access: Union[str, "PublicNetworkAccess"]
+    :vartype migratedEndpoint: str
+    :ivar publicNetworkAccess: Whether or not public network traffic can access the Redis cluster.
+     Only 'Enabled' or 'Disabled' can be set. null is returned only for clusters created using an
+     old API version which do not have this property and cannot be set. Known values are: "Enabled"
+     and "Disabled".
+    :vartype publicNetworkAccess: Union[str, "PublicNetworkAccess"]
     """
 
     publicNetworkAccess: Optional[Union[str, "PublicNetworkAccess"]]
@@ -583,9 +564,9 @@ class Database(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Other properties of the database.
     :vartype properties: "DatabaseCreateProperties"
     """
@@ -598,55 +579,55 @@ class DatabaseProperties(TypedDict, total=False):
     """Properties of Redis Enterprise databases, as opposed to general resource properties like
     location, tags.
 
-    :ivar client_protocol: Specifies whether redis clients can connect using TLS-encrypted or
+    :ivar clientProtocol: Specifies whether redis clients can connect using TLS-encrypted or
      plaintext redis protocols. Default is TLS-encrypted. Known values are: "Encrypted" and
      "Plaintext".
-    :vartype client_protocol: Union[str, "Protocol"]
+    :vartype clientProtocol: Union[str, "Protocol"]
     :ivar port: TCP port of the database endpoint. Specified at create time. Defaults to an
      available port.
     :vartype port: int
-    :ivar provisioning_state: Current provisioning status of the database. Known values are:
+    :ivar provisioningState: Current provisioning status of the database. Known values are:
      "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar resource_state: Current resource status of the database. Known values are: "Running",
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar resourceState: Current resource status of the database. Known values are: "Running",
      "Creating", "CreateFailed", "Updating", "UpdateFailed", "Deleting", "DeleteFailed", "Enabling",
      "EnableFailed", "Disabling", "DisableFailed", "Disabled", "Scaling", "ScalingFailed", and
      "Moving".
-    :vartype resource_state: Union[str, "ResourceState"]
-    :ivar clustering_policy: Clustering policy - default is OSSCluster. This property can be
-     updated only if the current value is NoCluster. If the value is OSSCluster or
-     EnterpriseCluster, it cannot be updated without deleting the database. Known values are:
-     "EnterpriseCluster", "OSSCluster", and "NoCluster".
-    :vartype clustering_policy: Union[str, "ClusteringPolicy"]
-    :ivar eviction_policy: Redis eviction policy - default is VolatileLRU. Known values are:
+    :vartype resourceState: Union[str, "ResourceState"]
+    :ivar clusteringPolicy: Clustering policy - default is OSSCluster. This property can be updated
+     only if the current value is NoCluster. If the value is OSSCluster or EnterpriseCluster, it
+     cannot be updated without deleting the database. Known values are: "EnterpriseCluster",
+     "OSSCluster", and "NoCluster".
+    :vartype clusteringPolicy: Union[str, "ClusteringPolicy"]
+    :ivar evictionPolicy: Redis eviction policy - default is VolatileLRU. Known values are:
      "AllKeysLFU", "AllKeysLRU", "AllKeysRandom", "VolatileLRU", "VolatileLFU", "VolatileTTL",
      "VolatileRandom", and "NoEviction".
-    :vartype eviction_policy: Union[str, "EvictionPolicy"]
+    :vartype evictionPolicy: Union[str, "EvictionPolicy"]
     :ivar persistence: Persistence settings.
     :vartype persistence: "Persistence"
     :ivar modules: Optional set of redis modules to enable in this database - modules can only be
      added at creation time.
     :vartype modules: list["Module"]
-    :ivar geo_replication: Optional set of properties to configure geo replication for this
+    :ivar geoReplication: Optional set of properties to configure geo replication for this
      database.
-    :vartype geo_replication: "DatabasePropertiesGeoReplication"
-    :ivar redis_version: Version of Redis the database is running on, e.g. '6.0'.
-    :vartype redis_version: str
-    :ivar defer_upgrade: Option to defer upgrade when newest version is released - default is
+    :vartype geoReplication: "DatabasePropertiesGeoReplication"
+    :ivar redisVersion: Version of Redis the database is running on, e.g. '6.0'.
+    :vartype redisVersion: str
+    :ivar deferUpgrade: Option to defer upgrade when newest version is released - default is
      NotDeferred. Learn more: `https://aka.ms/redisversionupgrade
      <https://aka.ms/redisversionupgrade>`_. Known values are: "Deferred" and "NotDeferred".
-    :vartype defer_upgrade: Union[str, "DeferUpgradeSetting"]
-    :ivar access_keys_authentication: This property can be Enabled/Disabled to allow or deny access
+    :vartype deferUpgrade: Union[str, "DeferUpgradeSetting"]
+    :ivar accessKeysAuthentication: This property can be Enabled/Disabled to allow or deny access
      with the current access keys. Can be updated even after database is created. Known values are:
      "Disabled" and "Enabled".
-    :vartype access_keys_authentication: Union[str, "AccessKeysAuthentication"]
-    :ivar notify_keyspace_events: Specifies which keyspace events should trigger notifications.
+    :vartype accessKeysAuthentication: Union[str, "AccessKeysAuthentication"]
+    :ivar notifyKeyspaceEvents: Specifies which keyspace events should trigger notifications.
      Default is an empty string, meaning this feature is disabled. When enabled, at least 'K'
      (keyspace events) or 'E' (keyevent events) must be present. For example, 'AKE' enables all
      standard events. See `https://redis.io/docs/latest/develop/use/keyspace-notifications/
      <https://redis.io/docs/latest/develop/use/keyspace-notifications/>`_ for the complete list of
      event types.
-    :vartype notify_keyspace_events: str
+    :vartype notifyKeyspaceEvents: str
     """
 
     clientProtocol: Union[str, "Protocol"]
@@ -699,65 +680,65 @@ class DatabaseProperties(TypedDict, total=False):
 class DatabaseCreateProperties(DatabaseProperties):
     """Properties for creating Redis Enterprise databases.
 
-    :ivar client_protocol: Specifies whether redis clients can connect using TLS-encrypted or
+    :ivar clientProtocol: Specifies whether redis clients can connect using TLS-encrypted or
      plaintext redis protocols. Default is TLS-encrypted. Known values are: "Encrypted" and
      "Plaintext".
-    :vartype client_protocol: Union[str, "Protocol"]
+    :vartype clientProtocol: Union[str, "Protocol"]
     :ivar port: TCP port of the database endpoint. Specified at create time. Defaults to an
      available port.
     :vartype port: int
-    :ivar provisioning_state: Current provisioning status of the database. Known values are:
+    :ivar provisioningState: Current provisioning status of the database. Known values are:
      "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar resource_state: Current resource status of the database. Known values are: "Running",
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar resourceState: Current resource status of the database. Known values are: "Running",
      "Creating", "CreateFailed", "Updating", "UpdateFailed", "Deleting", "DeleteFailed", "Enabling",
      "EnableFailed", "Disabling", "DisableFailed", "Disabled", "Scaling", "ScalingFailed", and
      "Moving".
-    :vartype resource_state: Union[str, "ResourceState"]
-    :ivar clustering_policy: Clustering policy - default is OSSCluster. This property can be
-     updated only if the current value is NoCluster. If the value is OSSCluster or
-     EnterpriseCluster, it cannot be updated without deleting the database. Known values are:
-     "EnterpriseCluster", "OSSCluster", and "NoCluster".
-    :vartype clustering_policy: Union[str, "ClusteringPolicy"]
-    :ivar eviction_policy: Redis eviction policy - default is VolatileLRU. Known values are:
+    :vartype resourceState: Union[str, "ResourceState"]
+    :ivar clusteringPolicy: Clustering policy - default is OSSCluster. This property can be updated
+     only if the current value is NoCluster. If the value is OSSCluster or EnterpriseCluster, it
+     cannot be updated without deleting the database. Known values are: "EnterpriseCluster",
+     "OSSCluster", and "NoCluster".
+    :vartype clusteringPolicy: Union[str, "ClusteringPolicy"]
+    :ivar evictionPolicy: Redis eviction policy - default is VolatileLRU. Known values are:
      "AllKeysLFU", "AllKeysLRU", "AllKeysRandom", "VolatileLRU", "VolatileLFU", "VolatileTTL",
      "VolatileRandom", and "NoEviction".
-    :vartype eviction_policy: Union[str, "EvictionPolicy"]
+    :vartype evictionPolicy: Union[str, "EvictionPolicy"]
     :ivar persistence: Persistence settings.
     :vartype persistence: "Persistence"
     :ivar modules: Optional set of redis modules to enable in this database - modules can only be
      added at creation time.
     :vartype modules: list["Module"]
-    :ivar geo_replication: Optional set of properties to configure geo replication for this
+    :ivar geoReplication: Optional set of properties to configure geo replication for this
      database.
-    :vartype geo_replication: "DatabasePropertiesGeoReplication"
-    :ivar redis_version: Version of Redis the database is running on, e.g. '6.0'.
-    :vartype redis_version: str
-    :ivar defer_upgrade: Option to defer upgrade when newest version is released - default is
+    :vartype geoReplication: "DatabasePropertiesGeoReplication"
+    :ivar redisVersion: Version of Redis the database is running on, e.g. '6.0'.
+    :vartype redisVersion: str
+    :ivar deferUpgrade: Option to defer upgrade when newest version is released - default is
      NotDeferred. Learn more: `https://aka.ms/redisversionupgrade
      <https://aka.ms/redisversionupgrade>`_. Known values are: "Deferred" and "NotDeferred".
-    :vartype defer_upgrade: Union[str, "DeferUpgradeSetting"]
-    :ivar notify_keyspace_events: Specifies which keyspace events should trigger notifications.
+    :vartype deferUpgrade: Union[str, "DeferUpgradeSetting"]
+    :ivar notifyKeyspaceEvents: Specifies which keyspace events should trigger notifications.
      Default is an empty string, meaning this feature is disabled. When enabled, at least 'K'
      (keyspace events) or 'E' (keyevent events) must be present. For example, 'AKE' enables all
      standard events. See `https://redis.io/docs/latest/develop/use/keyspace-notifications/
      <https://redis.io/docs/latest/develop/use/keyspace-notifications/>`_ for the complete list of
      event types.
-    :vartype notify_keyspace_events: str
-    :ivar access_keys_authentication: This property can be Enabled/Disabled to allow or deny access
+    :vartype notifyKeyspaceEvents: str
+    :ivar accessKeysAuthentication: This property can be Enabled/Disabled to allow or deny access
      with the current access keys. Can be updated even after database is created. Default is
      Disabled. Known values are: "Disabled" and "Enabled".
-    :vartype access_keys_authentication: Union[str, "AccessKeysAuthentication"]
+    :vartype accessKeysAuthentication: Union[str, "AccessKeysAuthentication"]
     """
 
 
 class DatabasePropertiesGeoReplication(TypedDict, total=False):
     """Optional set of properties to configure geo replication for this database.
 
-    :ivar group_nickname: Name for the group of linked database resources.
-    :vartype group_nickname: str
-    :ivar linked_databases: List of database resources to link with this database.
-    :vartype linked_databases: list["LinkedDatabase"]
+    :ivar groupNickname: Name for the group of linked database resources.
+    :vartype groupNickname: str
+    :ivar linkedDatabases: List of database resources to link with this database.
+    :vartype linkedDatabases: list["LinkedDatabase"]
     """
 
     groupNickname: str
@@ -780,63 +761,63 @@ class DatabaseUpdate(TypedDict, total=False):
 class DatabaseUpdateProperties(DatabaseProperties):
     """Properties for updating Redis Enterprise databases.
 
-    :ivar client_protocol: Specifies whether redis clients can connect using TLS-encrypted or
+    :ivar clientProtocol: Specifies whether redis clients can connect using TLS-encrypted or
      plaintext redis protocols. Default is TLS-encrypted. Known values are: "Encrypted" and
      "Plaintext".
-    :vartype client_protocol: Union[str, "Protocol"]
+    :vartype clientProtocol: Union[str, "Protocol"]
     :ivar port: TCP port of the database endpoint. Specified at create time. Defaults to an
      available port.
     :vartype port: int
-    :ivar provisioning_state: Current provisioning status of the database. Known values are:
+    :ivar provisioningState: Current provisioning status of the database. Known values are:
      "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar resource_state: Current resource status of the database. Known values are: "Running",
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar resourceState: Current resource status of the database. Known values are: "Running",
      "Creating", "CreateFailed", "Updating", "UpdateFailed", "Deleting", "DeleteFailed", "Enabling",
      "EnableFailed", "Disabling", "DisableFailed", "Disabled", "Scaling", "ScalingFailed", and
      "Moving".
-    :vartype resource_state: Union[str, "ResourceState"]
-    :ivar clustering_policy: Clustering policy - default is OSSCluster. This property can be
-     updated only if the current value is NoCluster. If the value is OSSCluster or
-     EnterpriseCluster, it cannot be updated without deleting the database. Known values are:
-     "EnterpriseCluster", "OSSCluster", and "NoCluster".
-    :vartype clustering_policy: Union[str, "ClusteringPolicy"]
-    :ivar eviction_policy: Redis eviction policy - default is VolatileLRU. Known values are:
+    :vartype resourceState: Union[str, "ResourceState"]
+    :ivar clusteringPolicy: Clustering policy - default is OSSCluster. This property can be updated
+     only if the current value is NoCluster. If the value is OSSCluster or EnterpriseCluster, it
+     cannot be updated without deleting the database. Known values are: "EnterpriseCluster",
+     "OSSCluster", and "NoCluster".
+    :vartype clusteringPolicy: Union[str, "ClusteringPolicy"]
+    :ivar evictionPolicy: Redis eviction policy - default is VolatileLRU. Known values are:
      "AllKeysLFU", "AllKeysLRU", "AllKeysRandom", "VolatileLRU", "VolatileLFU", "VolatileTTL",
      "VolatileRandom", and "NoEviction".
-    :vartype eviction_policy: Union[str, "EvictionPolicy"]
+    :vartype evictionPolicy: Union[str, "EvictionPolicy"]
     :ivar persistence: Persistence settings.
     :vartype persistence: "Persistence"
     :ivar modules: Optional set of redis modules to enable in this database - modules can only be
      added at creation time.
     :vartype modules: list["Module"]
-    :ivar geo_replication: Optional set of properties to configure geo replication for this
+    :ivar geoReplication: Optional set of properties to configure geo replication for this
      database.
-    :vartype geo_replication: "DatabasePropertiesGeoReplication"
-    :ivar redis_version: Version of Redis the database is running on, e.g. '6.0'.
-    :vartype redis_version: str
-    :ivar defer_upgrade: Option to defer upgrade when newest version is released - default is
+    :vartype geoReplication: "DatabasePropertiesGeoReplication"
+    :ivar redisVersion: Version of Redis the database is running on, e.g. '6.0'.
+    :vartype redisVersion: str
+    :ivar deferUpgrade: Option to defer upgrade when newest version is released - default is
      NotDeferred. Learn more: `https://aka.ms/redisversionupgrade
      <https://aka.ms/redisversionupgrade>`_. Known values are: "Deferred" and "NotDeferred".
-    :vartype defer_upgrade: Union[str, "DeferUpgradeSetting"]
-    :ivar notify_keyspace_events: Specifies which keyspace events should trigger notifications.
+    :vartype deferUpgrade: Union[str, "DeferUpgradeSetting"]
+    :ivar notifyKeyspaceEvents: Specifies which keyspace events should trigger notifications.
      Default is an empty string, meaning this feature is disabled. When enabled, at least 'K'
      (keyspace events) or 'E' (keyevent events) must be present. For example, 'AKE' enables all
      standard events. See `https://redis.io/docs/latest/develop/use/keyspace-notifications/
      <https://redis.io/docs/latest/develop/use/keyspace-notifications/>`_ for the complete list of
      event types.
-    :vartype notify_keyspace_events: str
-    :ivar access_keys_authentication: This property can be Enabled/Disabled to allow or deny access
+    :vartype notifyKeyspaceEvents: str
+    :ivar accessKeysAuthentication: This property can be Enabled/Disabled to allow or deny access
      with the current access keys. Can be updated even after database is created. Default is
      Disabled. Known values are: "Disabled" and "Enabled".
-    :vartype access_keys_authentication: Union[str, "AccessKeysAuthentication"]
+    :vartype accessKeysAuthentication: Union[str, "AccessKeysAuthentication"]
     """
 
 
 class ExportClusterParameters(TypedDict, total=False):
     """Parameters for a Redis Enterprise export operation.
 
-    :ivar sas_uri: SAS URI for the target directory to export to. Required.
-    :vartype sas_uri: str
+    :ivar sasUri: SAS URI for the target directory to export to. Required.
+    :vartype sasUri: str
     """
 
     sasUri: Required[str]
@@ -859,8 +840,8 @@ class ForceLinkParameters(TypedDict, total=False):
     """Parameters for reconfiguring active geo-replication, of an existing database that was
     previously unlinked from a replication group.
 
-    :ivar geo_replication: Properties to configure geo replication for this database. Required.
-    :vartype geo_replication: "ForceLinkParametersGeoReplication"
+    :ivar geoReplication: Properties to configure geo replication for this database. Required.
+    :vartype geoReplication: "ForceLinkParametersGeoReplication"
     """
 
     geoReplication: Required["ForceLinkParametersGeoReplication"]
@@ -870,13 +851,13 @@ class ForceLinkParameters(TypedDict, total=False):
 class ForceLinkParametersGeoReplication(TypedDict, total=False):
     """Properties to configure geo replication for this database.
 
-    :ivar group_nickname: The name of the group of linked database resources. This should match the
+    :ivar groupNickname: The name of the group of linked database resources. This should match the
      existing replication group name.
-    :vartype group_nickname: str
-    :ivar linked_databases: The resource IDs of the databases that are expected to be linked and
+    :vartype groupNickname: str
+    :ivar linkedDatabases: The resource IDs of the databases that are expected to be linked and
      included in the replication group. This parameter is used to validate that the linking is to
      the expected (unlinked) part of the replication group, if it is splintered.
-    :vartype linked_databases: list["LinkedDatabase"]
+    :vartype linkedDatabases: list["LinkedDatabase"]
     """
 
     groupNickname: str
@@ -902,8 +883,8 @@ class ForceUnlinkParameters(TypedDict, total=False):
 class ImportClusterParameters(TypedDict, total=False):
     """Parameters for a Redis Enterprise import operation.
 
-    :ivar sas_uris: SAS URIs for the target blobs to import from. Required.
-    :vartype sas_uris: list[str]
+    :ivar sasUris: SAS URIs for the target blobs to import from. Required.
+    :vartype sasUris: list[str]
     """
 
     sasUris: Required[list[str]]
@@ -930,8 +911,8 @@ class LinkedDatabase(TypedDict, total=False):
 class MaintenanceConfiguration(TypedDict, total=False):
     """Cluster-level maintenance configuration.
 
-    :ivar maintenance_windows: Custom maintenance windows that apply to the cluster.
-    :vartype maintenance_windows: list["MaintenanceWindow"]
+    :ivar maintenanceWindows: Custom maintenance windows that apply to the cluster.
+    :vartype maintenanceWindows: list["MaintenanceWindow"]
     """
 
     maintenanceWindows: list["MaintenanceWindow"]
@@ -945,8 +926,8 @@ class MaintenanceWindow(TypedDict, total=False):
     :vartype type: Union[str, "MaintenanceWindowType"]
     :ivar duration: Duration in ISO-8601 format, for example 'PT5H'. Required.
     :vartype duration: str
-    :ivar start_hour_utc: Start hour (0-23) in UTC when the maintenance window begins. Required.
-    :vartype start_hour_utc: int
+    :ivar startHourUtc: Start hour (0-23) in UTC when the maintenance window begins. Required.
+    :vartype startHourUtc: int
     :ivar schedule: Recurring schedule for the maintenance window. Required.
     :vartype schedule: "MaintenanceWindowSchedule"
     """
@@ -964,9 +945,9 @@ class MaintenanceWindow(TypedDict, total=False):
 class MaintenanceWindowSchedule(TypedDict, total=False):
     """Schedule details for a maintenance window.
 
-    :ivar day_of_week: Day of week. Required when the maintenance window type is 'Weekly'. Known
+    :ivar dayOfWeek: Day of week. Required when the maintenance window type is 'Weekly'. Known
      values are: "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", and "Saturday".
-    :vartype day_of_week: Union[str, "MaintenanceDayOfWeek"]
+    :vartype dayOfWeek: Union[str, "MaintenanceDayOfWeek"]
     """
 
     dayOfWeek: Union[str, "MaintenanceDayOfWeek"]
@@ -977,17 +958,17 @@ class MaintenanceWindowSchedule(TypedDict, total=False):
 class ManagedServiceIdentity(TypedDict, total=False):
     """Managed service identity (system assigned and/or user assigned identities).
 
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+    :ivar principalId: The service principal ID of the system assigned identity. This property will
+     only be provided for a system assigned identity.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
-    :vartype tenant_id: str
+    :vartype tenantId: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
      "None", "SystemAssigned", "UserAssigned", and "SystemAssigned, UserAssigned".
     :vartype type: Union[str, "ManagedServiceIdentityType"]
-    :ivar user_assigned_identities: The identities assigned to this resource by the user.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :ivar userAssignedIdentities: The identities assigned to this resource by the user.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     principalId: str
@@ -1014,9 +995,9 @@ class Migration(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties of the migration operation.
     :vartype properties: "MigrationProperties"
     """
@@ -1025,20 +1006,32 @@ class Migration(ProxyResource):
     """Properties of the migration operation."""
 
 
+class MigrationUndoRequest(TypedDict, total=False):
+    """Parameters supplied to the undo migration operation.
+
+    :ivar rollbackReason: The reason for undoing (rolling back) the migration. Choose the value
+     that best describes why the rollback is needed. This information helps us improve the migration
+     experience and does not change how the rollback is performed. Known values are: "performance",
+     "compatibility", "clientConnection", "cost", "testing", "stability", "dataLoss", and "other".
+    :vartype rollbackReason: Union[str, "MigrationRollbackReason"]
+    """
+
+    rollbackReason: Union[str, "MigrationRollbackReason"]
+    """The reason for undoing (rolling back) the migration. Choose the value that best describes why
+     the rollback is needed. This information helps us improve the migration experience and does not
+     change how the rollback is performed. Known values are: \"performance\", \"compatibility\",
+     \"clientConnection\", \"cost\", \"testing\", \"stability\", \"dataLoss\", and \"other\"."""
+
+
 class MigrationValidationRequest(TypedDict, total=False):
     """Properties for validating migration from Azure Cache for Redis to Redis Enterprise.
 
-    :ivar source_resource_id: The source resource ID to validate migration from. This is the
-     resource ID of the Azure Cache for Redis. Required.
-    :vartype source_resource_id: str
-    :ivar skip_data_migration: Sets whether the data is migrated from source to target or not. The
+    :ivar sourceResourceId: The source resource ID to validate migration from. This is the resource
+     ID of the Azure Cache for Redis. Required.
+    :vartype sourceResourceId: str
+    :ivar skipDataMigration: Sets whether the data is migrated from source to target or not. The
      default value is true.
-    :vartype skip_data_migration: bool
-    :ivar force_migrate: Sets whether to ignore warnings when validating if the source cache can be
-     migrated to the target cache. If this property is true, the isValid property in the response
-     will ignore warning-level disparities between the source and target resource. The default value
-     is false.
-    :vartype force_migrate: bool
+    :vartype skipDataMigration: bool
     """
 
     sourceResourceId: Required[str]
@@ -1046,10 +1039,6 @@ class MigrationValidationRequest(TypedDict, total=False):
      for Redis. Required."""
     skipDataMigration: bool
     """Sets whether the data is migrated from source to target or not. The default value is true."""
-    forceMigrate: bool
-    """Sets whether to ignore warnings when validating if the source cache can be migrated to the
-     target cache. If this property is true, the isValid property in the response will ignore
-     warning-level disparities between the source and target resource. The default value is false."""
 
 
 class Module(TypedDict, total=False):
@@ -1075,19 +1064,19 @@ class Module(TypedDict, total=False):
 class Persistence(TypedDict, total=False):
     """Persistence-related configuration for the Redis Enterprise database.
 
-    :ivar aof_enabled: Sets whether AOF is enabled. Note that at most one of AOF or RDB persistence
+    :ivar aofEnabled: Sets whether AOF is enabled. Note that at most one of AOF or RDB persistence
      may be enabled.
-    :vartype aof_enabled: bool
-    :ivar rdb_enabled: Sets whether RDB is enabled. Note that at most one of AOF or RDB persistence
+    :vartype aofEnabled: bool
+    :ivar rdbEnabled: Sets whether RDB is enabled. Note that at most one of AOF or RDB persistence
      may be enabled.
-    :vartype rdb_enabled: bool
-    :ivar aof_frequency: Sets the frequency at which data is written to disk. Defaults to '1s',
+    :vartype rdbEnabled: bool
+    :ivar aofFrequency: Sets the frequency at which data is written to disk. Defaults to '1s',
      meaning 'every second'. Note that the 'always' setting is deprecated, because of its
      performance impact. Known values are: "1s" and "always".
-    :vartype aof_frequency: Union[str, "AofFrequency"]
-    :ivar rdb_frequency: Sets the frequency at which a snapshot of the database is created. Known
+    :vartype aofFrequency: Union[str, "AofFrequency"]
+    :ivar rdbFrequency: Sets the frequency at which a snapshot of the database is created. Known
      values are: "1h", "6h", and "12h".
-    :vartype rdb_frequency: Union[str, "RdbFrequency"]
+    :vartype rdbFrequency: Union[str, "RdbFrequency"]
     """
 
     aofEnabled: bool
@@ -1125,9 +1114,9 @@ class PrivateEndpointConnection(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Resource properties.
     :vartype properties: "PrivateEndpointConnectionProperties"
     """
@@ -1139,16 +1128,16 @@ class PrivateEndpointConnection(Resource):
 class PrivateEndpointConnectionProperties(TypedDict, total=False):
     """Properties of the private endpoint connection.
 
-    :ivar group_ids: The group ids for the private endpoint resource.
-    :vartype group_ids: list[str]
-    :ivar private_endpoint: The private endpoint resource.
-    :vartype private_endpoint: "PrivateEndpoint"
-    :ivar private_link_service_connection_state: A collection of information about the state of the
+    :ivar groupIds: The group ids for the private endpoint resource.
+    :vartype groupIds: list[str]
+    :ivar privateEndpoint: The private endpoint resource.
+    :vartype privateEndpoint: "PrivateEndpoint"
+    :ivar privateLinkServiceConnectionState: A collection of information about the state of the
      connection between service consumer and provider. Required.
-    :vartype private_link_service_connection_state: "PrivateLinkServiceConnectionState"
-    :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
+    :vartype privateLinkServiceConnectionState: "PrivateLinkServiceConnectionState"
+    :ivar provisioningState: The provisioning state of the private endpoint connection resource.
      Known values are: "Succeeded", "Creating", "Deleting", and "Failed".
-    :vartype provisioning_state: Union[str, "PrivateEndpointConnectionProvisioningState"]
+    :vartype provisioningState: Union[str, "PrivateEndpointConnectionProvisioningState"]
     """
 
     groupIds: list[str]
@@ -1172,9 +1161,9 @@ class PrivateLinkServiceConnectionState(TypedDict, total=False):
     :vartype status: Union[str, "PrivateEndpointServiceConnectionStatus"]
     :ivar description: The reason for approval/rejection of the connection.
     :vartype description: str
-    :ivar actions_required: A message indicating if changes on the service provider require any
+    :ivar actionsRequired: A message indicating if changes on the service provider require any
      updates on the consumer.
-    :vartype actions_required: str
+    :vartype actionsRequired: str
     """
 
     status: Union[str, "PrivateEndpointServiceConnectionStatus"]
@@ -1189,9 +1178,9 @@ class PrivateLinkServiceConnectionState(TypedDict, total=False):
 class RegenerateKeyParameters(TypedDict, total=False):
     """Specifies which access keys to reset to a new random value.
 
-    :ivar key_type: Which access key to regenerate. Required. Known values are: "Primary" and
+    :ivar keyType: Which access key to regenerate. Required. Known values are: "Primary" and
      "Secondary".
-    :vartype key_type: Union[str, "AccessKeyType"]
+    :vartype keyType: Union[str, "AccessKeyType"]
     """
 
     keyType: Required[Union[str, "AccessKeyType"]]
@@ -1255,20 +1244,20 @@ class Sku(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -1290,10 +1279,10 @@ class SystemData(TypedDict, total=False):
 class UserAssignedIdentity(TypedDict, total=False):
     """User assigned identity properties.
 
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str

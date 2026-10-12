@@ -44,13 +44,7 @@ class TestRedisEnterpriseManagementAccessPolicyAssignmentOperationsAsync(AzureMg
                 parameters={
                     "id": "str",
                     "name": "str",
-                    "properties": {
-                        "user": {"objectId": "str"},
-                        "accessPolicyName": "str",
-                        "accessString": "str",
-                        "provisioningError": {"code": "str", "message": "str", "target": "str"},
-                        "provisioningState": "str",
-                    },
+                    "properties": {"accessPolicyName": "str", "user": {"objectId": "str"}, "provisioningState": "str"},
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
