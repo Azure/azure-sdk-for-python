@@ -2,6 +2,10 @@
 
 ## 1.6.1 (Unreleased)
 
+### Features Added
+
+- Added experimental, opt-in `ExternalEvaluationPolicy` and `AsyncExternalEvaluationPolicy` for subscription-level ARM external evaluation, with `PolicyTokenRequestContext` to preserve serialized JSON in token acquisition and replay.
+
 ### Bugs Fixed
 
 - `ARMPolling` now includes the `azure-asyncoperation` header in the continuation token to ensure proper LRO rehydration.

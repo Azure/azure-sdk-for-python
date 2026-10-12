@@ -149,6 +149,7 @@ def test_no_log(mock_http_logger, http_request, http_response):
     mock_http_logger.reset_mock()
 
     # I can enable it globally
+    request.context.pop("logging_enable", None)
     request.context.options = {}
     http_logger.enable_http_logger = True
     http_logger.on_request(request)
@@ -180,6 +181,29 @@ def test_no_log(mock_http_logger, http_request, http_response):
 
     second_count = mock_http_logger.debug.call_count
     assert second_count == first_count * 2
+
+
+@mock.patch("azure.core.pipeline.policies._universal._LOGGER")
+@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
+@pytest.mark.parametrize("global_enable,operation_enable", [(True, False), (False, True)])
+def test_network_logging_override_survives_resends(
+    mock_http_logger, http_request, http_response, global_enable, operation_enable
+):
+    universal_request = http_request("GET", "http://localhost/")
+    request = PipelineRequest(universal_request, PipelineContext(None, logging_enable=operation_enable))
+    response = PipelineResponse(request, create_http_response(http_response, universal_request, None), request.context)
+    policy = NetworkTraceLoggingPolicy(logging_enable=global_enable)
+
+    for _ in range(3):
+        policy.on_request(request)
+        policy.on_response(request, response)
+        assert request.context["logging_enable"] is operation_enable
+
+    if operation_enable:
+        assert mock_http_logger.debug.call_count >= 6
+    else:
+        mock_http_logger.debug.assert_not_called()
+    assert "logging_enable" not in request.context.options
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)

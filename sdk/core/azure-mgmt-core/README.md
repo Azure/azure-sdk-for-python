@@ -7,6 +7,133 @@ As an end user, you don't need to manually install azure-mgmt-core because it wi
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-mgmt-core/) | [Package (Pypi)][package] | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-mgmt-core/)
 
+## Experimental ARM external evaluation
+
+This design-review prototype adds **opt-in** external-evaluation policies. Nothing
+is enabled by default, and existing generated clients do not need regeneration.
+The proposed API is not finalized; see
+[Azure/azure-sdk#10081](https://github.com/Azure/azure-sdk/issues/10081).
+Use both the `azure-core` and `azure-mgmt-core` sources from this prototype:
+the accompanying core fix keeps per-operation logging overrides effective across
+retries. A released minimum-core dependency must be selected before shipping.
+
+When a subscription-level ARM write returns `403 RequestDisallowedByPolicy`
+with a missing-policy-token hint, the policy invokes your provider and replays
+the operation once with the returned token. The provider uses a separate Policy
+client, without the external-evaluation policy, to avoid recursion.
+
+Install the management package for your resource, `azure-identity`, and a version
+of `azure-mgmt-resource-policy` that exposes `policy_tokens.acquire`. The example
+uses the Resources client; another ARM client supporting `per_call_policies` can
+be configured the same way.
+
+### Synchronous SDK user
+
+```python
+from io import BytesIO
+import os
+
+from azure.identity import DefaultAzureCredential
+from azure.mgmt.core.policies import ExternalEvaluationPolicy, PolicyTokenRequestContext
+from azure.mgmt.resource.policy import PolicyClient
+from azure.mgmt.resource.resources import ResourceManagementClient
+
+subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+
+with DefaultAzureCredential() as credential:
+    # The provider client uses the same credential and ARM cloud/endpoint as the
+    # guarded client. Do not add ExternalEvaluationPolicy to this client.
+    with PolicyClient(credential, subscription_id, api_version="2025-11-01") as token_client:
+        def acquire_policy_token(context: PolicyTokenRequestContext):
+            if context.subscription_id.lower() != subscription_id.lower():
+                raise ValueError("The provider is configured for a different subscription.")
+            return token_client.policy_tokens.acquire(
+                BytesIO(context.get_request_body()),
+                logging_enable=False,
+                permit_redirects=False,
+            )
+
+        with ResourceManagementClient(
+            credential,
+            subscription_id,
+            per_call_policies=[ExternalEvaluationPolicy(acquire_policy_token)],
+        ) as resource_client:
+            # Call ordinary SDK operations. If this scope has an external-
+            # evaluation policy, acquisition and replay happen in the pipeline.
+            group = resource_client.resource_groups.create_or_update(
+                "external-evaluation-example",
+                {"location": "westus2"},
+            )
+            print(group.name)
+```
+
+### Asynchronous SDK user
+
+```python
+from io import BytesIO
+import os
+
+from azure.identity.aio import DefaultAzureCredential
+from azure.mgmt.core.policies import AsyncExternalEvaluationPolicy, PolicyTokenRequestContext
+from azure.mgmt.resource.policy.aio import PolicyClient
+from azure.mgmt.resource.resources.aio import ResourceManagementClient
+
+async def create_resource_group():
+    subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+    async with DefaultAzureCredential() as credential:
+        async with PolicyClient(credential, subscription_id, api_version="2025-11-01") as token_client:
+            async def acquire_policy_token(context: PolicyTokenRequestContext):
+                if context.subscription_id.lower() != subscription_id.lower():
+                    raise ValueError("The provider is configured for a different subscription.")
+                return await token_client.policy_tokens.acquire(
+                    BytesIO(context.get_request_body()),
+                    logging_enable=False,
+                    permit_redirects=False,
+                )
+
+            async with ResourceManagementClient(
+                credential,
+                subscription_id,
+                per_call_policies=[AsyncExternalEvaluationPolicy(acquire_policy_token)],
+            ) as resource_client:
+                group = await resource_client.resource_groups.create_or_update(
+                    "external-evaluation-example",
+                    {"location": "westus2"},
+                )
+                print(group.name)
+```
+
+The helper embeds the original serialized JSON directly in `operation.content`;
+do not replace it with a parsed model or dictionary. Tokens are opaque and are
+passed verbatim. A new policy instance should be used for each client pipeline.
+
+### Prototype boundaries
+
+- Only subscription-level `PUT`, `PATCH`, `POST`, and `DELETE` operations are
+  supported. GETs, unrelated denials, acquisition requests, and requests with a
+  caller-supplied token are left unchanged.
+- Bodies must be in-memory UTF-8 JSON, with a JSON content type, or absent.
+  Streams, multipart/form data, management-group scopes, and automatic
+  ChangeSafety integration are not supported. An actionable challenge for an
+  unsupported body or required change reference raises an explicit error.
+- Acquisition must succeed, contain a nonempty token, and report only
+  `Allow`/`Audit` evaluations. Acquisition/evaluation failure does not replay the
+  operation. Azure SDK provider errors are chained to an `HttpResponseError`
+  retaining the original 403 and ARM error details.
+- Standard retry/authentication policies run again on replay, but token
+  acquisition itself is never repeated by this policy. Configure timeouts and
+  retries on both clients. A shared end-to-end deadline across the provider and
+  replay is not implemented in this prototype.
+- Token-bearing replay deliberately disables redirects and raw HTTP debug
+  logging. The provider must also disable acquisition body logging and redirects,
+  as shown above. Custom policies, telemetry, and test recordings must not expose
+  tokens. Do not add this header to logging allowlists.
+- For sovereign clouds or custom endpoints, configure both clients with the same
+  trusted ARM endpoint, credential scopes, and cloud settings. Do not choose the
+  acquisition endpoint from the challenge payload.
+- Live service byte-binding, authorization, LRO integration, and cross-language
+  API approval remain review/validation work before this can ship.
+
 
 ## Contributing
 This project welcomes contributions and suggestions. Most contributions require
