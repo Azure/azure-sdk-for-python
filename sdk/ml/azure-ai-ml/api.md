@@ -5432,6 +5432,41 @@ namespace azure.ai.ml.entities
             ): ...
 
 
+    class azure.ai.ml.entities.FabricSparkCompute(Compute):
+        property base_path: str    # Read-only
+        property created_on: Optional[str]    # Read-only
+        property creation_context: Optional[SystemData]    # Read-only
+        property id: Optional[str]    # Read-only
+        property provisioning_errors: Optional[str]    # Read-only
+        property provisioning_state: Optional[str]    # Read-only
+        property type: Optional[str]    # Read-only
+
+        def __init__(
+                self,
+                *,
+                description: Optional[str] = ...,
+                environment_id: str,
+                fabric_workspace_id: str,
+                identity: Optional[IdentityConfiguration] = ...,
+                lakehouse_id: str,
+                name: str,
+                pool_id: str,
+                pool_name: Optional[str] = ...,
+                tags: Optional[Dict[str, str]] = ...,
+                **kwargs: Any
+            ) -> None: ...
+
+        def __repr__(self) -> str: ...
+
+        def __str__(self) -> str: ...
+
+        def dump(
+                self,
+                dest: Union[str, PathLike, IO[AnyStr]],
+                **kwargs: Any
+            ) -> None: ...
+
+
     class azure.ai.ml.entities.Feature(RestTranslatableMixin):
 
         def __init__(

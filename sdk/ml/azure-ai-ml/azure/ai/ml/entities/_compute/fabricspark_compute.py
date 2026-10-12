@@ -4,7 +4,12 @@
 
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.arm_ml_service.models import ComputeResource, FabricSpark, FabricSparkProperties
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    ComputeResource,
+    FabricSpark,
+    FabricSparkProperties,
+    ProvisioningState,
+)
 from azure.ai.ml._schema.compute.fabricspark_compute import FabricSparkComputeSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeType
@@ -30,6 +35,10 @@ class FabricSparkCompute(Compute):
     :paramtype identity: Optional[~azure.ai.ml.entities.IdentityConfiguration]
     :keyword pool_name: Name of the pool returned by the service.
     :paramtype pool_name: Optional[str]
+    :keyword description: Description of the compute attachment.
+    :paramtype description: Optional[str]
+    :keyword tags: Tags assigned to the compute attachment.
+    :paramtype tags: Optional[Dict[str, str]]
     """
 
     def __init__(
@@ -70,6 +79,7 @@ class FabricSparkCompute(Compute):
             id=rest_obj.id,
             location=rest_obj.location,
             description=prop.description,
+            resource_id=prop.resource_id,
             tags=rest_obj.tags,
             fabric_workspace_id=details.fabric_workspace_id,
             lakehouse_id=details.lakehouse_id,
@@ -80,7 +90,11 @@ class FabricSparkCompute(Compute):
             created_on=prop.created_on,
             modified_on=prop.modified_on,
             disable_local_auth=prop.disable_local_auth,
-            provisioning_state=prop.provisioning_state,
+            provisioning_state=(
+                prop.provisioning_state.value
+                if isinstance(prop.provisioning_state, ProvisioningState)
+                else prop.provisioning_state
+            ),
             provisioning_errors=(
                 prop.provisioning_errors[0].error.code
                 if prop.provisioning_errors and prop.provisioning_errors[0].error
@@ -97,6 +111,7 @@ class FabricSparkCompute(Compute):
             identity=self.identity._to_compute_rest_object() if self.identity else None,
             properties=FabricSpark(
                 description=self.description,
+                resource_id=self.resource_id,
                 properties=FabricSparkProperties(
                     fabric_workspace_id=self.fabric_workspace_id,
                     lakehouse_id=self.lakehouse_id,

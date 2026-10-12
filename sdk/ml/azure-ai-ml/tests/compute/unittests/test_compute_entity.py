@@ -100,6 +100,7 @@ class TestComputeEntity:
             "properties": {
                 "computeType": "FabricSpark",
                 "description": "Custom pool",
+                "resourceId": "/fabric/resource",
                 "isAttachedCompute": True,
                 "disableLocalAuth": False,
                 "modifiedOn": "2026-10-12T18:58:17Z",
@@ -119,6 +120,9 @@ class TestComputeEntity:
         assert result.id == response["id"]
         assert result.location == "eastus2euap"
         assert result.provisioning_state == "Succeeded"
+        assert result._to_dict()["provisioning_state"] == "Succeeded"
+        assert result.resource_id == "/fabric/resource"
+        assert result._to_dict()["resource_id"] == "/fabric/resource"
         assert result.is_attached_compute is True
         assert result._to_dict()["is_attached_compute"] is True
         assert result._to_dict()["disable_local_auth"] is False
@@ -137,6 +141,7 @@ class TestComputeEntity:
         assert result.identity.type.replace("_", "").lower() == identity["type"].lower()
         body = _to_wire(result._to_rest_object())
         assert body["properties"]["properties"]["poolId"] == "pool-id"
+        assert body["properties"]["resourceId"] == "/fabric/resource"
         assert "poolName" not in body["properties"]["properties"]
 
     def test_compute_from_rest(self):
