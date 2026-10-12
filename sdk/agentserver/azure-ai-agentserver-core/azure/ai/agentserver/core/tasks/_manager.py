@@ -15,6 +15,7 @@ import logging
 import os
 import traceback
 from collections.abc import Awaitable, Callable, Mapping
+from dataclasses import dataclass
 from typing import Any, TypeVar
 
 from .._config import AgentConfig
@@ -297,11 +298,11 @@ def get_task_manager() -> TaskManager:
         )
 
         raise TaskManagerNotInitialized(
-            "TaskManager not initialized: the resilient task subsystem is not enabled. "
+            "TaskManager not initialized: resilient tasks are disabled or session initialization is incomplete. "
             "Durable tasks and crash recovery are opt-in - call "
             "set_resilient_tasks_enabled(True) before host startup (e.g. at import time), "
             "or, for the responses protocol, construct the host with "
-            "ResponsesServerOptions(resilient_background=True)."  # pylint: disable=implicit-str-concat
+            "ResponsesServerOptions(resilient_background=True), and wait for session activation."
         )
     return _manager
 
@@ -393,6 +394,16 @@ class _ActiveTask:  # pylint: disable=too-many-instance-attributes
         self._pending_input_count: int = 0
 
 
+@dataclass
+class _TaskInitializationPhase:
+    completed: bool = False
+    completed_restore_id: str | None = None
+
+    def complete(self, restore_id: str | None) -> None:
+        self.completed_restore_id = restore_id
+        self.completed = True
+
+
 class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-access,broad-exception-caught
     """Lifecycle orchestrator for resilient tasks.
 
@@ -435,6 +446,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         #   Layer 2: periodic recovery scan task. Created
         # at startup() time; cancelled at shutdown().
         self._periodic_recovery_task: asyncio.Task[None] | None = None
+        self._startup_lock = asyncio.Lock()
+        self._startup_phases = {
+            name: _TaskInitializationPhase()
+            for name in ("construct", "register", "recovery", "periodic", "ready")
+        }
         #   / C-WQ-1..3 — per-task write-queue
         # registry. A single asyncio.Lock per task_id serializes all
         # in-process PATCHes against that task so etag conflicts become
@@ -728,40 +744,66 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         if not future.done():
             future.set_exception(TaskCancelled())
 
-    async def startup(self) -> None:
+    @property
+    def _has_live_workers(self) -> bool:
+        return (
+            bool(self._active_tasks)
+            or (
+                self._periodic_recovery_task is not None
+                and not self._periodic_recovery_task.done()
+            )
+            or any(not worker.done() for worker in self._timeout_watchdogs.values())
+        )
+
+    async def startup(self, *, restore_id: str | None = None) -> None:
         """Initialize the manager and recover stale tasks.
 
-        Called by ``AgentServerHost`` during lifespan startup.
+        Called during ordinary session startup or after memory restoration.
+
+        :keyword restore_id: Platform restore identity, or None for cold startup.
+        :paramtype restore_id: str or None
         """
-        logger.info(
-            "TaskManager starting (owner=%s, instance=%s, hosted=%s)",
-            self._lease_owner,
-            self._instance_id,
-            self._config.is_hosted,
-        )
-        # Pick up descriptors registered at import time (for recovery)
-        from ._decorator import (  # pylint: disable=import-outside-toplevel
-            _REGISTERED_DESCRIPTORS,
-        )
+        async with self._startup_lock:
+            if self._shutdown_event.is_set():
+                raise RuntimeError("Cannot initialize a stopped TaskManager")
+            logger.info(
+                "TaskManager starting (owner=%s, instance=%s, hosted=%s, restore_id=%s)",
+                self._lease_owner,
+                self._instance_id,
+                self._config.is_hosted,
+                restore_id,
+            )
+            self._startup_phases["construct"].complete(restore_id)
+            register = self._startup_phases["register"]
+            if not register.completed:
+                from ._decorator import (  # pylint: disable=import-outside-toplevel
+                    _REGISTERED_DESCRIPTORS,
+                )
 
-        for fn_name, fn, opts in _REGISTERED_DESCRIPTORS:
-            self._resume_callbacks[fn_name] = fn
-            self._resume_opts[fn_name] = opts
+                for fn_name, fn, opts in _REGISTERED_DESCRIPTORS:
+                    self._resume_callbacks[fn_name] = fn
+                    self._resume_opts[fn_name] = opts
+            register.complete(restore_id)
 
-        await self._recover_stale_tasks()
+            recovery = self._startup_phases["recovery"]
+            if not recovery.completed or recovery.completed_restore_id != restore_id:
+                await self._recover_stale_tasks()
+                recovery.complete(restore_id)
 
-        #   Layer 2: start the periodic recovery task.
-        # Reads _PERIODIC_RECOVERY_INTERVAL_SECONDS at spawn time;
-        # tests monkey-patch the constant to drive the scan
-        # deterministically.
-        try:
-            loop = asyncio.get_running_loop()
-            self._periodic_recovery_task = loop.create_task(self._periodic_recovery_loop())
-        except RuntimeError:
-            # No running loop (called from outside async context); skip
-            # — the layer-1 startup scan above still covered the
-            # initial reclaim pass.
-            pass
+            scanner = self._periodic_recovery_task
+            if scanner is not None and scanner.done():
+                self._startup_phases["periodic"].completed = False
+                self._startup_phases["ready"].completed = False
+                self._periodic_recovery_task = None
+                if not scanner.cancelled():
+                    scanner.result()
+                logger.warning("Restarting stopped periodic task recovery scanner")
+            if self._periodic_recovery_task is None:
+                self._periodic_recovery_task = asyncio.create_task(
+                    self._periodic_recovery_loop()
+                )
+            self._startup_phases["periodic"].complete(restore_id)
+            self._startup_phases["ready"].complete(restore_id)
 
     async def _periodic_recovery_loop(self) -> None:
         """Layer 2: periodic background recovery scan.
@@ -875,15 +917,35 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         # Cancel all renewal and execution tasks. Always do this so handlers
         # listening on the cancellation signal wake up and exit cleanly.
-        for active in self._active_tasks.values():
+        workers: set[asyncio.Task[Any]] = set()
+        for active in list(self._active_tasks.values()):
             active.renewal_cancel.set()
             if active.renewal_task and not active.renewal_task.done():
                 active.renewal_task.cancel()
+                workers.add(active.renewal_task)
             if not active.execution_task.done():
                 active.execution_task.cancel()
+                workers.add(active.execution_task)
+        for watchdog in self._timeout_watchdogs.values():
+            if not watchdog.done():
+                watchdog.cancel()
+                workers.add(watchdog)
+        if workers:
+            results = await asyncio.gather(*workers, return_exceptions=True)
+            for result in results:
+                if isinstance(result, Exception):
+                    logger.warning(
+                        "Task worker failed during shutdown",
+                        exc_info=(type(result), result, result.__traceback__),
+                    )
 
         self._active_tasks.clear()
-        set_task_manager(None)
+        self._timeout_watchdogs.clear()
+        for phase in self._startup_phases.values():
+            phase.completed = False
+            phase.completed_restore_id = None
+        if _manager is self:
+            set_task_manager(None)
 
     async def create_and_run(
         self,

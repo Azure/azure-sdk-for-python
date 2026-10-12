@@ -2,6 +2,28 @@
 
 The `azure-ai-agentserver-core` package provides the foundation host framework for building Azure AI Hosted Agent containers. It handles the protocol-agnostic infrastructure — health probes, graceful shutdown, OpenTelemetry tracing, and ASGI serving — so that protocol packages can focus on their endpoint logic.
 
+## Memory snapshot task initialization
+
+The draft integration separates task definitions from session-bound TaskManager
+initialization. Resilient tasks must still be explicitly enabled.
+
+`FOUNDRY_MEMORY_SNAPSHOT_ENABLED=false` activates tasks during ordinary cold/local
+startup. An absent value (capture) or `true` defers activation until the platform
+after-restore hook, after session hydration and dependency callbacks. Present
+values must be literal `true` or `false` (case-insensitive). Missing does not mean
+false. The flag does not gate running tasks or lease renewal.
+
+Task startup checkpoints completed phases by restore ID and owns the manager
+through shutdown, including managers created after lifespan startup. Existing
+best-effort recovery dispatches reclaimed work immediately during the hook.
+FHA admits new requests after successful restore.
+
+Author startup task submissions are not queued or replayed by this integration.
+No session-start callback or launch-intent registry is included. Local tests are
+not proof of hosted golden restoration. See the [design specification](docs/memory-snapshot-task-integration.md)
+for lifecycle ordering, launcher compatibility requirements, validation, and
+the unresolved startup-submission options.
+
 ## Getting started
 
 ### Install the package

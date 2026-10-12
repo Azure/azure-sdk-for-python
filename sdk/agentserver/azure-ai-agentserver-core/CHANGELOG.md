@@ -4,6 +4,12 @@
 
 ### Features Added
 
+- Separate process-side task registration from session-bound task activation.
+  Explicit `FOUNDRY_MEMORY_SNAPSHOT_ENABLED=false` starts requested tasks during
+  cold startup; absent or true defers startup until after-restore. Preserve
+  best-effort recovery, checkpoint initialization phases by restore ID, and
+  stop owned workers before incompatible configuration rollback or shutdown.
+
 - Added the private `POST /_agent/before-snapshot` and
   `POST /_agent/after-restore` lifecycle endpoints for safely capturing and
   restoring hosted agent processes. Applications can register

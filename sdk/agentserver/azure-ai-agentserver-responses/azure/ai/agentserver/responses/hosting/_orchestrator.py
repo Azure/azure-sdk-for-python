@@ -4342,16 +4342,19 @@ class _ResponseOrchestrator:
             # `previous_response_id`. Propagate so the endpoint layer
             # surfaces HTTP 409 `conversation_fork_not_supported`.
             raise
-        except TaskManagerNotInitialized:
-            # No manager is installed. Because ``AgentServerHost`` fails the
-            # lifespan when resilient tasks are ENABLED but construction/startup
-            # fails, a missing manager in a running deployment means resilient
-            # tasks are simply DISABLED (opt-out) — recovery/durability was not
-            # requested. (It also covers in-process test clients whose lifespan
-            # never ran.) SWALLOW and run the handler in-process: the response
-            # still executes and persists (GET works), it is simply not
-            # crash-recoverable. This is the deliberate non-durable path, NOT a
-            # failure.
+        except TaskManagerNotInitialized as exc:
+            from azure.ai.agentserver.core.tasks import (  # pylint: disable=import-outside-toplevel
+                resilient_tasks_enabled,
+            )
+
+            if resilient_tasks_enabled():
+                logger.error(
+                    "Task runtime is not initialized for enabled resilient response %s",
+                    ctx.response_id,
+                )
+                setattr(exc, PLATFORM_ERROR_TAG, True)
+                raise
+            # Missing runtime is a fallback only for intentional opt-out.
             logger.info(
                 "Resilient task subsystem not enabled for response %s; running handler "
                 "in-process (non-durable). Enable via set_resilient_tasks_enabled(True) "

@@ -2,6 +2,12 @@
 
 ## 2.2.0b2 (2026-09-24)
 
+### Other Changes
+
+- Require Core's snapshot lifecycle integration and preserve intentional
+  non-durable opt-out while propagating enabled-but-uninitialized task errors.
+  No new HTTP 503 mapping or author startup-task replay is introduced.
+
 ### Features Added
 
 - Added optional response metadata to `ResponseEventStream.emit_failed`. Invalid failure metadata is logged and
