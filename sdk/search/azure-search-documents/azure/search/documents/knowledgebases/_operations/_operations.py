@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -30,6 +31,7 @@ from .. import models as _models1, types as _types_models1
 from ... import models as _models2
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Serializer
+from ..._utils.streaming_base import Stream, _read_sse_response, _update_sse_request_headers
 from ..._utils.utils import ClientMixinABC
 from ..._validation import api_version_validation
 from .._configuration import KnowledgeBaseRetrievalClientConfiguration
@@ -46,7 +48,7 @@ def build_knowledge_base_retrieval_retrieve_request(  # pylint: disable=name-too
     *,
     query_source_authorization: Optional[str] = None,
     query_work_iq_source_authorization: Optional[str] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -88,7 +90,7 @@ def build_knowledge_base_retrieval_retrieve_stream_request(  # pylint: disable=n
     *,
     query_source_authorization: Optional[str] = None,
     query_work_iq_source_authorization: Optional[str] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -136,7 +138,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         query_source_authorization: Optional[str] = None,
         query_work_iq_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models1.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
@@ -168,7 +170,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         query_source_authorization: Optional[str] = None,
         query_work_iq_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models1.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
@@ -200,7 +202,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         query_source_authorization: Optional[str] = None,
         query_work_iq_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models1.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
@@ -239,7 +241,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         *,
         query_source_authorization: Optional[str] = None,
         query_work_iq_source_authorization: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models1.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
@@ -336,8 +338,18 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         query_source_authorization: Optional[str] = None,
         query_work_iq_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
-    ) -> Iterator[bytes]:
+        **kwargs: Any,
+    ) -> Stream[
+        Union[
+            _models1.KnowledgeBaseRetrievalStartedEvent,
+            _models1.KnowledgeBaseActivityStartedEvent,
+            _models1.KnowledgeBaseActivityRecord,
+            _models1.KnowledgeBaseAnswerCompletedEvent,
+            list[_models1.KnowledgeBaseReference],
+            _models1.KnowledgeBaseStreamErrorEvent,
+            _models1.KnowledgeBaseResponseCompletedEvent,
+        ]
+    ]:
         """Retrieves relevant data from backing stores and streams progress and results as server-sent
         events.
 
@@ -362,8 +374,18 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: An instance of Stream that iterates over KnowledgeBaseRetrievalStartedEvent or
+         KnowledgeBaseActivityStartedEvent or KnowledgeBaseActivityRecord or
+         KnowledgeBaseAnswerCompletedEvent or list of KnowledgeBaseReference or
+         KnowledgeBaseStreamErrorEvent or KnowledgeBaseResponseCompletedEvent
+        :rtype:
+         ~azure.search.documents.Stream[~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStartedEvent
+         or ~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityStartedEvent or
+         ~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecord or
+         ~azure.search.documents.knowledgebases.models.KnowledgeBaseAnswerCompletedEvent or
+         list[~azure.search.documents.knowledgebases.models.KnowledgeBaseReference] or
+         ~azure.search.documents.knowledgebases.models.KnowledgeBaseStreamErrorEvent or
+         ~azure.search.documents.knowledgebases.models.KnowledgeBaseResponseCompletedEvent]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -375,8 +397,18 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         query_source_authorization: Optional[str] = None,
         query_work_iq_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
-    ) -> Iterator[bytes]:
+        **kwargs: Any,
+    ) -> Stream[
+        Union[
+            _models1.KnowledgeBaseRetrievalStartedEvent,
+            _models1.KnowledgeBaseActivityStartedEvent,
+            _models1.KnowledgeBaseActivityRecord,
+            _models1.KnowledgeBaseAnswerCompletedEvent,
+            list[_models1.KnowledgeBaseReference],
+            _models1.KnowledgeBaseStreamErrorEvent,
+            _models1.KnowledgeBaseResponseCompletedEvent,
+        ]
+    ]:
         """Retrieves relevant data from backing stores and streams progress and results as server-sent
         events.
 
@@ -401,8 +433,18 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: An instance of Stream that iterates over KnowledgeBaseRetrievalStartedEvent or
+         KnowledgeBaseActivityStartedEvent or KnowledgeBaseActivityRecord or
+         KnowledgeBaseAnswerCompletedEvent or list of KnowledgeBaseReference or
+         KnowledgeBaseStreamErrorEvent or KnowledgeBaseResponseCompletedEvent
+        :rtype:
+         ~azure.search.documents.Stream[~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStartedEvent
+         or ~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityStartedEvent or
+         ~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecord or
+         ~azure.search.documents.knowledgebases.models.KnowledgeBaseAnswerCompletedEvent or
+         list[~azure.search.documents.knowledgebases.models.KnowledgeBaseReference] or
+         ~azure.search.documents.knowledgebases.models.KnowledgeBaseStreamErrorEvent or
+         ~azure.search.documents.knowledgebases.models.KnowledgeBaseResponseCompletedEvent]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -414,8 +456,18 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         query_source_authorization: Optional[str] = None,
         query_work_iq_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
-    ) -> Iterator[bytes]:
+        **kwargs: Any,
+    ) -> Stream[
+        Union[
+            _models1.KnowledgeBaseRetrievalStartedEvent,
+            _models1.KnowledgeBaseActivityStartedEvent,
+            _models1.KnowledgeBaseActivityRecord,
+            _models1.KnowledgeBaseAnswerCompletedEvent,
+            list[_models1.KnowledgeBaseReference],
+            _models1.KnowledgeBaseStreamErrorEvent,
+            _models1.KnowledgeBaseResponseCompletedEvent,
+        ]
+    ]:
         """Retrieves relevant data from backing stores and streams progress and results as server-sent
         events.
 
@@ -439,8 +491,18 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: An instance of Stream that iterates over KnowledgeBaseRetrievalStartedEvent or
+         KnowledgeBaseActivityStartedEvent or KnowledgeBaseActivityRecord or
+         KnowledgeBaseAnswerCompletedEvent or list of KnowledgeBaseReference or
+         KnowledgeBaseStreamErrorEvent or KnowledgeBaseResponseCompletedEvent
+        :rtype:
+         ~azure.search.documents.Stream[~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStartedEvent
+         or ~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityStartedEvent or
+         ~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecord or
+         ~azure.search.documents.knowledgebases.models.KnowledgeBaseAnswerCompletedEvent or
+         list[~azure.search.documents.knowledgebases.models.KnowledgeBaseReference] or
+         ~azure.search.documents.knowledgebases.models.KnowledgeBaseStreamErrorEvent or
+         ~azure.search.documents.knowledgebases.models.KnowledgeBaseResponseCompletedEvent]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -468,8 +530,18 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         *,
         query_source_authorization: Optional[str] = None,
         query_work_iq_source_authorization: Optional[str] = None,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
+        **kwargs: Any,
+    ) -> Stream[
+        Union[
+            _models1.KnowledgeBaseRetrievalStartedEvent,
+            _models1.KnowledgeBaseActivityStartedEvent,
+            _models1.KnowledgeBaseActivityRecord,
+            _models1.KnowledgeBaseAnswerCompletedEvent,
+            list[_models1.KnowledgeBaseReference],
+            _models1.KnowledgeBaseStreamErrorEvent,
+            _models1.KnowledgeBaseResponseCompletedEvent,
+        ]
+    ]:
         """Retrieves relevant data from backing stores and streams progress and results as server-sent
         events.
 
@@ -493,8 +565,18 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
          app registration configured on a Work IQ knowledge source. Used for on-behalf-of authentication
          to the Work IQ API. Default value is None.
         :paramtype query_work_iq_source_authorization: str
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
+        :return: An instance of Stream that iterates over KnowledgeBaseRetrievalStartedEvent or
+         KnowledgeBaseActivityStartedEvent or KnowledgeBaseActivityRecord or
+         KnowledgeBaseAnswerCompletedEvent or list of KnowledgeBaseReference or
+         KnowledgeBaseStreamErrorEvent or KnowledgeBaseResponseCompletedEvent
+        :rtype:
+         ~azure.search.documents.Stream[~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStartedEvent
+         or ~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityStartedEvent or
+         ~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecord or
+         ~azure.search.documents.knowledgebases.models.KnowledgeBaseAnswerCompletedEvent or
+         list[~azure.search.documents.knowledgebases.models.KnowledgeBaseReference] or
+         ~azure.search.documents.knowledgebases.models.KnowledgeBaseStreamErrorEvent or
+         ~azure.search.documents.knowledgebases.models.KnowledgeBaseResponseCompletedEvent]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -509,8 +591,21 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[
+            Stream[
+                Union[
+                    _models1.KnowledgeBaseRetrievalStartedEvent,
+                    _models1.KnowledgeBaseActivityStartedEvent,
+                    _models1.KnowledgeBaseActivityRecord,
+                    _models1.KnowledgeBaseAnswerCompletedEvent,
+                    list[_models1.KnowledgeBaseReference],
+                    _models1.KnowledgeBaseStreamErrorEvent,
+                    _models1.KnowledgeBaseResponseCompletedEvent,
+                ]
+            ]
+        ] = kwargs.pop("cls", None)
 
+        _last_event_id = kwargs.pop("last_event_id", None)
         content_type = content_type or "application/json"
         _content = None
         if isinstance(retrieval_request, (IOBase, bytes)):
@@ -533,6 +628,9 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        if _last_event_id is not None:
+            _request.headers["Last-Event-ID"] = _last_event_id
+
         _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -554,12 +652,50 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
             )
             raise HttpResponseError(response=response, model=error)
 
-        response_headers = {}
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+        def _callback(_http_response, _event):
+            if _event.event == "retrieval.started":
+                _event_json = json.loads(_event.data)
+                deserialized = _deserialize(_models1.KnowledgeBaseRetrievalStartedEvent, _event_json)
+            elif _event.event == "activity.started":
+                _event_json = json.loads(_event.data)
+                deserialized = _deserialize(_models1.KnowledgeBaseActivityStartedEvent, _event_json)
+            elif _event.event == "activity.completed":
+                _event_json = json.loads(_event.data)
+                deserialized = _deserialize(_models1.KnowledgeBaseActivityRecord, _event_json)
+            elif _event.event == "answer.completed":
+                _event_json = json.loads(_event.data)
+                deserialized = _deserialize(_models1.KnowledgeBaseAnswerCompletedEvent, _event_json)
+            elif _event.event == "references.completed":
+                _event_json = json.loads(_event.data)
+                deserialized = _deserialize(list[_models1.KnowledgeBaseReference], _event_json)
+            elif _event.event == "error":
+                _event_json = json.loads(_event.data)
+                deserialized = _deserialize(_models1.KnowledgeBaseStreamErrorEvent, _event_json)
+            elif _event.event == "response.completed":
+                _event_json = json.loads(_event.data)
+                deserialized = _deserialize(_models1.KnowledgeBaseResponseCompletedEvent, _event_json)
+            else:
+                raise ValueError(f"Unknown SSE event type: {_event.event!r}")
+            return deserialized
 
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        def _reconnect(_last_event_id, _reconnect_delay):
+            _transport: Any = pipeline_response.context.transport
+            _transport.sleep(_reconnect_delay)
+            _update_sse_request_headers(_request, _last_event_id)
+            _reconnect_response = self._client.send_request(_request, stream=True, **kwargs)
+            if _reconnect_response.status_code not in [200, 204]:
+                _read_sse_response(_reconnect_response)
+                map_error(
+                    status_code=_reconnect_response.status_code, response=_reconnect_response, error_map=error_map
+                )
+                error = _failsafe_deserialize(
+                    _models2.ErrorResponse,
+                    _reconnect_response,
+                )
+                raise HttpResponseError(response=_reconnect_response, model=error)
+            return _reconnect_response
 
+        deserialized: Stream[Union[_models1.KnowledgeBaseRetrievalStartedEvent, _models1.KnowledgeBaseActivityStartedEvent, _models1.KnowledgeBaseActivityRecord, _models1.KnowledgeBaseAnswerCompletedEvent, list[_models1.KnowledgeBaseReference], _models1.KnowledgeBaseStreamErrorEvent, _models1.KnowledgeBaseResponseCompletedEvent]] = Stream(response=response, deserialization_callback=_callback, terminal_event_names=["error", "response.completed"], last_event_id=_last_event_id, reconnect_callback=_reconnect)  # type: ignore
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+        return deserialized

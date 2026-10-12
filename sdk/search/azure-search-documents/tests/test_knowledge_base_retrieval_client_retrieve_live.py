@@ -35,8 +35,6 @@ _RETRIEVAL_CAPABILITIES = (
 )
 _STREAM_CAPABILITIES = (
     "azure.search.documents.knowledgebases.KnowledgeBaseRetrievalClient.retrieve_stream",
-    "KnowledgeBaseRetrievalEvent",
-    "KnowledgeBaseRetrievalStream",
     "azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStartedEvent",
     "azure.search.documents.knowledgebases.models.KnowledgeBaseResponseCompletedEvent",
 )
@@ -117,9 +115,7 @@ class TestKnowledgeBaseRetrievalClient(AzureRecordedTestCase):
                 with client.retrieve_stream(retrieval_request) as stream:
                     events = list(stream)
 
-            assert events[0].event_type == "retrieval.started"
-            assert isinstance(events[0].data, KnowledgeBaseRetrievalStartedEvent)
-            assert events[-1].event_type == "response.completed"
-            assert isinstance(events[-1].data, KnowledgeBaseResponseCompletedEvent)
-            assert isinstance(events[-1].data.response, KnowledgeBaseRetrievalResponse)
-            assert sum(event.event_type in ("response.completed", "error") for event in events) == 1
+            assert isinstance(events[0], KnowledgeBaseRetrievalStartedEvent)
+            assert isinstance(events[-1], KnowledgeBaseResponseCompletedEvent)
+            assert isinstance(events[-1].response, KnowledgeBaseRetrievalResponse)
+            assert sum(isinstance(event, KnowledgeBaseResponseCompletedEvent) for event in events) == 1
