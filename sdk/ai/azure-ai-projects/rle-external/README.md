@@ -75,6 +75,8 @@ updates use separate commits so manifest URLs pin immutable artifact commits.
 Publishing uses `GH_TOKEN`, `GITHUB_TOKEN`, or Git's GitHub credentials; it requires
 write permission on the upstream distribution branch and permission to open PRs.
 No credentials are written into repository files or remote URLs.
+If Git Credential Manager has multiple accounts, pass `--github-user <account>`
+to select the existing GitHub login without changing global Git settings.
 
 Publishing verifies the manifest and every retained wheel anonymously, then
 creates or reuses a draft PR. If upload or verification fails, the command fails;
