@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.iothub import IotHubClient
+from azure.mgmt.commvaultcontentstore import CommvaultContentStoreMgmtClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-iothub
+    pip install azure-mgmt-commvaultcontentstore
 # USAGE
-    python create_or_replace_certificates_with_device_registry_policy.py
+    python storages_disable_compliance_lock_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,20 +25,19 @@ from azure.mgmt.iothub import IotHubClient
 
 
 def main():
-    client = IotHubClient(
+    client = CommvaultContentStoreMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.certificates.create_or_update(
-        resource_group_name="myResourceGroup",
-        resource_name="testHub",
-        certificate_name="cert",
-        certificate_description={"properties": {"certificate": "############################################"}},
+    response = client.storages.disable_compliance_lock(
+        resource_group_name="rgcommvault",
+        cloud_account_name="myCloudAccount",
+        storage_name="myStorage",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/CreateOrReplace_Certificates_With_DeviceRegistryPolicy.json
+# x-ms-original-file: 2026-09-30/Storages_DisableComplianceLock_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

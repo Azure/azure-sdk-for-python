@@ -33,6 +33,27 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r eng/ci_tools.txt
 
+      - name: Detect azure-ai-projects branch
+        id: branch_check
+        # Scopes the azure-ai-projects dev dependency pre-install below to sessions whose branch
+        # name identifies them as azure-ai-projects work (e.g.
+        # "copilot/azure-ai-projects-regenerate-<commit>", the actual naming GitHub's issue
+        # assignment uses for this package's regeneration workflow), so unrelated cloud agent
+        # sessions in this repo don't pay for a package-specific install. The Node.js, tsp-client,
+        # and TypeSpec Python emitter steps are deliberately not gated: every package regenerated
+        # through tsp-client needs them. A plain branch-name check is used instead of git ancestry
+        # because actions/checkout's default shallow clone (fetch-depth: 1) does not reliably
+        # support merge-base ancestry checks.
+        run: |
+          BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+          if [[ "${BRANCH,,}" == *azure-ai-projects* ]]; then
+            echo "On branch '$BRANCH' (matches azure-ai-projects); pre-installing its dev dependencies."
+            echo "azure_ai_projects=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "On branch '$BRANCH' (no azure-ai-projects match); skipping its dev dependency pre-install."
+            echo "azure_ai_projects=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Set up Node.js
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with:
@@ -45,27 +66,40 @@ jobs:
         # session.
         run: npm ci --prefix eng/common/tsp-client
 
-      - name: Pre-install azure-ai-projects dev dependencies
-        # Scoped to sessions whose branch name identifies them as azure-ai-projects work (e.g.
-        # "copilot/azure-ai-projects-regenerate-<commit>", the actual naming GitHub's issue
-        # assignment uses for this package's regeneration workflow), so unrelated cloud agent
-        # sessions in this repo don't pay for a package-specific install. A plain branch-name
-        # check is used instead of git ancestry because actions/checkout's default shallow clone
-        # (fetch-depth: 1) does not reliably support merge-base ancestry checks.
+      - name: Pre-install TypeSpec Python emitter's Python dependencies
+        # `tsp-client update` (any package, not just azure-ai-projects) shells out to the
+        # TypeSpec Python emitter (`@azure-tools/typespec-python`), which creates its own isolated
+        # venv and pip-installs the `pygen` generator bundled in `@typespec/http-client-python`
+        # (pinned in eng/emitter-package.json) plus its pinned requirements (black, docutils,
+        # Jinja2, PyYAML, tomli, setuptools, ...). A plain "pip install" here would only warm pip's
+        # HTTP cache, which pip does not consult when the package index is unreachable. Instead,
+        # download the complete runtime requirement set, derived from the pinned package itself,
+        # into a fixed wheelhouse and point PIP_FIND_LINKS at it for the rest of the job,
+        # including the firewalled agent session. The final step verifies an install of the
+        # generator succeeds with the index disabled.
         run: |
-          BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-          if [[ "${BRANCH,,}" == *azure-ai-projects* ]]; then
-            echo "On branch '$BRANCH' (matches azure-ai-projects); installing its dev dependencies."
-            # dev_requirements.txt contains bare local paths (e.g. "../../core/azure-core") that
-            # pip resolves against the current working directory, not the requirements file's own
-            # directory. Run it with cwd set to the package directory, in a subshell so the rest
-            # of this job keeps the repository root as its working directory.
-            (cd sdk/ai/azure-ai-projects && \
-              python -m pip install -r dev_requirements.txt && \
-              python -m pip install -e .)
-          else
-            echo "On branch '$BRANCH' (no azure-ai-projects match); skipping its dev dependency pre-install."
-          fi
+          WHEELHOUSE="$HOME/.cache/pip-find-links"
+          WORKDIR="$(mktemp -d)"
+          mkdir -p "$WHEELHOUSE"
+          PYGEN_VERSION="$(jq -r '.devDependencies["@typespec/http-client-python"]' eng/emitter-package.json)"
+          (cd "$WORKDIR" && npm pack "@typespec/http-client-python@${PYGEN_VERSION}" --silent && tar xzf typespec-http-client-python-*.tgz)
+          PYGEN_DIR="$WORKDIR/package/generator"
+          python -m pip download -d "$WHEELHOUSE" pip setuptools wheel
+          python -m pip download -d "$WHEELHOUSE" "$PYGEN_DIR"
+          python -m venv "$WORKDIR/verify-venv"
+          PIP_NO_INDEX=1 "$WORKDIR/verify-venv/bin/python" -m pip install --find-links "$WHEELHOUSE" "$PYGEN_DIR"
+          echo "PIP_FIND_LINKS=$WHEELHOUSE" >> "$GITHUB_ENV"
+
+      - name: Pre-install azure-ai-projects dev dependencies
+        if: steps.branch_check.outputs.azure_ai_projects == 'true'
+        run: |
+          # dev_requirements.txt contains bare local paths (e.g. "../../core/azure-core") that
+          # pip resolves against the current working directory, not the requirements file's own
+          # directory. Run it with cwd set to the package directory, in a subshell so the rest
+          # of this job keeps the repository root as its working directory.
+          (cd sdk/ai/azure-ai-projects && \
+            python -m pip install -r dev_requirements.txt && \
+            python -m pip install -e .)
 
       - name: Install azsdk mcp server
         shell: pwsh
