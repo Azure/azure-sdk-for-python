@@ -37,10 +37,19 @@ Existing version entries and artifacts must never be overwritten.
 
 ## Container builds
 
-Use a remote Docker `ADD` of the registry before SDK installation. Its content
-participates in the build cache, so a changed latest pointer invalidates the SDK
-installation layer. `pip --no-cache-dir` alone does not invalidate Docker layers.
-Do not bake a snapshot of the registry into the sample.
+Use Git-source Docker `ADD` of the public distribution subdirectory before SDK
+installation, with a Git-source-ADD-capable builder such as Docker with BuildKit:
+
+```dockerfile
+ADD https://github.com/Azure/azure-sdk-for-python.git#rle-external-releases:sdk/ai/azure-ai-projects/rle-external /app/rle-sdk-dist/
+```
+
+The builder resolves the public branch commit and scopes the image contents to
+this subdirectory; no Git installation is needed in the runtime image. New
+release commits invalidate the SDK installation layer. Raw GitHub HTTP manifests
+have a five-minute CDN cache and GitHub REST has anonymous rate limits, so neither
+is a reliable Docker cache-busting input. `pip --no-cache-dir` alone does not
+invalidate Docker layers. Do not bake a registry snapshot into the sample.
 
 Use `ARG AZURE_AI_PROJECTS_RLE_VERSION` for builders that accept build arguments.
 Host environment variables must be explicitly forwarded as build arguments;
