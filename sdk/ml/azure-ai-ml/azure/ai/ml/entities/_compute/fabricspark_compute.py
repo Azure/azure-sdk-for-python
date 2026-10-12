@@ -16,6 +16,7 @@ from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities._compute.compute import Compute
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 class FabricSparkCompute(Compute):
@@ -23,14 +24,14 @@ class FabricSparkCompute(Compute):
 
     :keyword name: Name of the AML compute attachment.
     :paramtype name: str
-    :keyword fabric_workspace_id: ID of the Fabric workspace containing the resources.
-    :paramtype fabric_workspace_id: str
-    :keyword lakehouse_id: ID of a Lakehouse in the Fabric workspace.
-    :paramtype lakehouse_id: str
-    :keyword environment_id: ID of a published Fabric Environment selecting the custom pool.
-    :paramtype environment_id: str
-    :keyword pool_id: ID of the custom Spark pool selected by the Environment.
-    :paramtype pool_id: str
+    :keyword fabric_workspace_id: ID of the Fabric workspace containing the resources. Required for attach.
+    :paramtype fabric_workspace_id: Optional[str]
+    :keyword lakehouse_id: ID of a Lakehouse in the Fabric workspace. Required for attach.
+    :paramtype lakehouse_id: Optional[str]
+    :keyword environment_id: ID of a published Fabric Environment selecting the custom pool. Required for attach.
+    :paramtype environment_id: Optional[str]
+    :keyword pool_id: ID of the custom Spark pool selected by the Environment. Required for attach.
+    :paramtype pool_id: Optional[str]
     :keyword identity: Optional identity belonging to the AML compute attachment.
     :paramtype identity: Optional[~azure.ai.ml.entities.IdentityConfiguration]
     :keyword pool_name: Name of the pool returned by the service.
@@ -45,10 +46,10 @@ class FabricSparkCompute(Compute):
         self,
         *,
         name: str,
-        fabric_workspace_id: str,
-        lakehouse_id: str,
-        environment_id: str,
-        pool_id: str,
+        fabric_workspace_id: Optional[str] = None,
+        lakehouse_id: Optional[str] = None,
+        environment_id: Optional[str] = None,
+        pool_id: Optional[str] = None,
         identity: Optional[IdentityConfiguration] = None,
         pool_name: Optional[str] = None,
         description: Optional[str] = None,
@@ -81,11 +82,11 @@ class FabricSparkCompute(Compute):
             description=prop.description,
             resource_id=prop.resource_id,
             tags=rest_obj.tags,
-            fabric_workspace_id=details.fabric_workspace_id,
-            lakehouse_id=details.lakehouse_id,
-            environment_id=details.environment_id,
-            pool_id=details.pool_id,
-            pool_name=details.pool_name,
+            fabric_workspace_id=details.fabric_workspace_id if details else None,
+            lakehouse_id=details.lakehouse_id if details else None,
+            environment_id=details.environment_id if details else None,
+            pool_id=details.pool_id if details else None,
+            pool_name=details.pool_name if details else None,
             identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
             created_on=prop.created_on,
             modified_on=prop.modified_on,
@@ -104,6 +105,16 @@ class FabricSparkCompute(Compute):
         )
 
     def _to_rest_object(self) -> ComputeResource:
+        if not all((self.fabric_workspace_id, self.lakehouse_id, self.environment_id, self.pool_id)):
+            message = (
+                "Fabric Spark compute attach requires fabric_workspace_id, lakehouse_id, environment_id, and pool_id."
+            )
+            raise ValidationException(
+                message=message,
+                target=ErrorTarget.COMPUTE,
+                no_personal_data_message=message,
+                error_category=ErrorCategory.USER_ERROR,
+            )
         return ComputeResource(
             name=self.name,
             location=self.location,

@@ -22,6 +22,7 @@ from azure.ai.ml.entities import (
     UnsupportedCompute,
     VirtualMachineCompute,
 )
+from azure.ai.ml.exceptions import ValidationException
 
 
 def _to_wire(rest_obj):
@@ -143,6 +144,28 @@ class TestComputeEntity:
         assert body["properties"]["properties"]["poolId"] == "pool-id"
         assert body["properties"]["resourceId"] == "/fabric/resource"
         assert "poolName" not in body["properties"]["properties"]
+
+    def test_fabric_spark_arm_response_without_nested_properties(self):
+        response = {
+            "name": "fabricpoc01",
+            "properties": {"computeType": "FabricSpark", "provisioningState": "Failed"},
+        }
+        result = Compute._from_rest_object(ComputeResource(response))
+        assert isinstance(result, FabricSparkCompute)
+        assert result.name == "fabricpoc01"
+        assert result.provisioning_state == "Failed"
+        assert result.fabric_workspace_id is None
+        assert result.lakehouse_id is None
+        assert result.environment_id is None
+        assert result.pool_id is None
+        assert result.pool_name is None
+        assert result._to_dict() == {
+            "name": "fabricpoc01",
+            "type": "fabricspark",
+            "provisioning_state": "Failed",
+        }
+        with pytest.raises(ValidationException, match="requires fabric_workspace_id"):
+            result._to_rest_object()
 
     def test_compute_from_rest(self):
         with open("tests/test_configs/compute/compute-kubernetes.yaml", "r") as f:
