@@ -70,11 +70,11 @@
   - Added enum `WorkbenchStatus`
   - Added model `WorkbenchUpdate`
   - Added model `WorkbenchUpdateProperties`
-  - Model `RaiPoliciesOperations` added parameter `etag` in method `begin_delete`
-  - Model `RaiPoliciesOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `RaiPoliciesOperations` added parameter `etag` in method `create_or_update`
-  - Model `RaiPoliciesOperations` added parameter `match_condition` in method `create_or_update`
-  - Model `WorkbenchesOperations` added method `update`
+  - Operation group `RaiPoliciesOperations` added parameter `etag` in method `begin_delete`
+  - Operation group `RaiPoliciesOperations` added parameter `match_condition` in method `begin_delete`
+  - Operation group `RaiPoliciesOperations` added parameter `etag` in method `create_or_update`
+  - Operation group `RaiPoliciesOperations` added parameter `match_condition` in method `create_or_update`
+  - Operation group `WorkbenchesOperations` added method `update`
   - Added operation group `AdapterDeploymentsOperations`
   - Added operation group `CostControlsOperations`
   - Added operation group `RaiBindingsOperations`
