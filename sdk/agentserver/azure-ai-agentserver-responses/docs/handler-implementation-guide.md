@@ -1336,7 +1336,7 @@ The server sends periodic keep-alive comments during SSE streaming to prevent
 reverse proxies from closing idle connections. When
 `sse_keep_alive_interval_seconds` is unset, the host inherits the interval from
 `AgentConfig`, which defaults to 15 seconds. Set `SSE_KEEPALIVE_INTERVAL=0` to
-disable keep-alives when no explicit option overrides it.
+disable keep-alive comments when no explicit option overrides it.
 
 Enable via environment variable:
 
