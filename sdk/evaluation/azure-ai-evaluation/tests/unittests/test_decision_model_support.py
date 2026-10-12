@@ -151,16 +151,19 @@ class TestDecisionModelRunnerConfiguration:
         with pytest.raises(EvaluationException):
             DecisionModelRunner({**DECISION_CONFIG, "probability_threshold": value}, binary=True)
 
-    @pytest.mark.parametrize("endpoint", [
-        "https://example.services.ai.azure.com",
-        "https://example.services.ai.azure.com/",
-        "http://example.services.ai.azure.com",
-        "https://user:secret@example.services.ai.azure.com",
-        "https://example.services.ai.azure.com?x=1",
-        "https://example.services.ai.azure.com#fragment",
-        "https://example.services.ai.azure.com/api/projects/proj",
-        "not-a-url",
-    ])
+    @pytest.mark.parametrize(
+        "endpoint",
+        [
+            "https://example.services.ai.azure.com",
+            "https://example.services.ai.azure.com/",
+            "http://example.services.ai.azure.com",
+            "https://user:secret@example.services.ai.azure.com",
+            "https://example.services.ai.azure.com?x=1",
+            "https://example.services.ai.azure.com#fragment",
+            "https://example.services.ai.azure.com/api/projects/proj",
+            "not-a-url",
+        ],
+    )
     def test_endpoint_format_is_left_to_http_client(self, endpoint):
         runner = DecisionModelRunner({**DECISION_CONFIG, "azure_endpoint": endpoint})
         assert runner._url == endpoint.rstrip("/") + "/providers/microsoft/v1/systemone"
@@ -244,9 +247,7 @@ class TestDecisionModelRunnerRequests:
                 return Response(request, status if self.calls == 1 else 200)
 
         transport = Transport()
-        monkeypatch.setattr(
-            _model_runners, "get_async_http_client", lambda: AsyncHttpPipeline(transport=transport)
-        )
+        monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: AsyncHttpPipeline(transport=transport))
         result = run(DecisionModelRunner(DECISION_CONFIG))
         assert transport.calls == 2
         assert result["model"] == "microsoft-decision-1"
@@ -294,8 +295,13 @@ class TestDecisionModelRunnerRequests:
 
     @pytest.mark.parametrize(
         "status, blame",
-        [(400, ErrorBlame.USER_ERROR), (401, ErrorBlame.USER_ERROR), (404, ErrorBlame.USER_ERROR),
-         (429, ErrorBlame.SYSTEM_ERROR), (503, ErrorBlame.SYSTEM_ERROR)],
+        [
+            (400, ErrorBlame.USER_ERROR),
+            (401, ErrorBlame.USER_ERROR),
+            (404, ErrorBlame.USER_ERROR),
+            (429, ErrorBlame.SYSTEM_ERROR),
+            (503, ErrorBlame.SYSTEM_ERROR),
+        ],
     )
     def test_http_failures_are_sanitized(self, client, status, blame):
         client.response = FakeResponse(status, b"echoed test-key-value and secret detail")
@@ -475,8 +481,11 @@ class TestSharedBaseSelection:
         credential = object()
         with patch.object(_model_runners.AsyncPrompty, "load", return_value=flow) as load:
             evaluator = ProbeModelEvaluator(
-                result_key="probe", prompty_file="probe.prompty", model_config=CHAT_CONFIG,
-                credential=credential, threshold=4,
+                result_key="probe",
+                prompty_file="probe.prompty",
+                model_config=CHAT_CONFIG,
+                credential=credential,
+                threshold=4,
             )
         kwargs = load.call_args.kwargs
         assert kwargs["source"] == "probe.prompty"
@@ -542,5 +551,3 @@ class TestSharedDecisionStrategy:
         )
         properties = asyncio.run(strategy.evaluate({"calls": [1, 2]}))["tool_call_accuracy_properties"]
         assert properties["calls"] == 2 and properties["decision_model"]["deployment"] == "Decision-1"
-
-

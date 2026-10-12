@@ -210,9 +210,7 @@ class DecisionModelRunner:
         """The deployment name sent as the request's model."""
         return self._deployment
 
-    async def __call__(
-        self, *, state: Any, questions: Dict[str, Dict[str, Any]], timeout: float
-    ) -> Dict[str, Any]:
+    async def __call__(self, *, state: Any, questions: Dict[str, Dict[str, Any]], timeout: float) -> Dict[str, Any]:
         """Request the decisions for ``questions`` about ``state`` and return the validated response.
 
         :keyword state: The prepared evidence, as text or JSON-serializable data.

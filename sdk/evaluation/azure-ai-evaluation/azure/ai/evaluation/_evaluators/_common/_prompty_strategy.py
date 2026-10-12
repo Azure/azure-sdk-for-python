@@ -48,9 +48,7 @@ class PromptyEvaluationStrategy:
         return self.parse(await runner(timeout=self.timeout, **eval_input))
 
     def skipped(self, reason: str, threshold: Optional[float] = None) -> Dict[str, Any]:
-        result = not_applicable_result(
-            self.result_key, reason, self.threshold if threshold is None else threshold
-        )
+        result = not_applicable_result(self.result_key, reason, self.threshold if threshold is None else threshold)
         if self.top_level_usage:
             metadata = ModelEvaluatorBase._get_token_metadata({})
             result.update({f"{self.result_key}_{key}": value for key, value in metadata.items()})
@@ -105,8 +103,13 @@ class PromptyEvaluationStrategy:
         return self.format_result(score, verdict, reason, "completed", properties, output)
 
     def format_result(
-        self, score: Optional[float], verdict: str, reason: str, status: str,
-        properties: Dict[str, Any], output: Optional[Dict[str, Any]] = None,
+        self,
+        score: Optional[float],
+        verdict: str,
+        reason: str,
+        status: str,
+        properties: Dict[str, Any],
+        output: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         metadata = ModelEvaluatorBase._get_token_metadata(output or {})
         properties.update(metadata)
