@@ -3,6 +3,7 @@
 ## 12.27.0b1 (Unreleased)
 
 ### Features Added
+- Added opt-in client session-based authentication via the new `use_session` keyword argument. When enabled, eligible file read requests are authenticated with a short-lived, per-file-system session credential obtained from the service rather than the bearer token. Requires a `TokenCredential`. Sessions are managed by a session provider, which can be shared across clients via the `session_provider` keyword, and the account name used for signing can be set explicitly with `session_account_name`.
 
 ### Bugs Fixed
 - Fixed an issue where a SAS generated for a path containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.

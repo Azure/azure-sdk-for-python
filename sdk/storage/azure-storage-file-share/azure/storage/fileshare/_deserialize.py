@@ -3,10 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------_
+from urllib.parse import unquote
 from typing import Any, cast, Dict, List, Optional, Tuple, TYPE_CHECKING
-
-from ._generated.models import ShareFileRangeList
-from ._models import DirectoryProperties, FileProperties, ShareProperties
+from ._generated.models import HardLinkList, ShareFileRangeList
+from ._models import DirectoryProperties, FileProperties, HardLink, ShareProperties
 from ._shared.response_handlers import deserialize_metadata
 
 if TYPE_CHECKING:
@@ -91,6 +91,18 @@ def deserialize_permission_key(
     if response is None or headers is None:
         return None
     return cast(Optional[str], headers.get("x-ms-file-permission-key", None))
+
+
+def deserialize_hard_links(
+    response: "PipelineResponse", obj: HardLinkList, headers: Dict[str, Any]  # pylint: disable=unused-argument
+) -> List[HardLink]:
+    return [
+        HardLink(
+            name=unquote(link.file_name.content) if link.file_name.encoded else link.file_name.content,
+            parent_id=link.parent_id,
+        )
+        for link in obj.hard_links or []
+    ]
 
 
 def get_file_ranges_result(ranges: ShareFileRangeList) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:

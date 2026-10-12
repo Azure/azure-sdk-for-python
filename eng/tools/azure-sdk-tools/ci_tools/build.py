@@ -1,14 +1,66 @@
 import argparse, sys, os, logging, glob, shutil
+import ssl
+from contextlib import contextmanager
+from tempfile import TemporaryDirectory
 
 from subprocess import run
 
-from typing import List, Optional
+from typing import Dict, Iterator, List, Optional
+import certifi
 from ci_tools.functions import discover_targeted_packages, process_requires, get_pip_list_output
 from ci_tools.parsing import ParsedSetup, parse_require
 from ci_tools.variables import DEFAULT_BUILD_ID, str_to_bool, discover_repo_root, get_artifact_directory
 from ci_tools.versioning.version_shared import set_version_py, set_dev_classifier
 from ci_tools.versioning.version_set_dev import get_dev_version, format_build_id
 from ci_tools.logging import logger, configure_logging, run_logged
+
+
+_ONE_ES_PROXY_CA_DIRECTORY = r"C:\NI"
+
+
+@contextmanager
+def _cibuildwheel_environment() -> Iterator[Optional[Dict[str, str]]]:
+    """Scope the Windows 1ES proxy CA to cibuildwheel without changing inherited trust elsewhere."""
+    if (
+        sys.platform != "win32"
+        or os.environ.get("TF_BUILD", "").lower() != "true"
+        or not os.environ.get("1ESNI_CONFIG_PATH")
+        or not os.environ.get("HTTPS_PROXY")
+    ):
+        yield None
+        return
+
+    build_id = os.environ.get("BUILD_BUILDID", "")
+    if not build_id.isascii() or not build_id.isdecimal():
+        raise ValueError("Windows 1ES proxy trust requires an ASCII numeric BUILD_BUILDID.")
+
+    proxy_ca = os.path.join(_ONE_ES_PROXY_CA_DIRECTORY, f"HttpProxyRootCa-{build_id}.pem")
+    baseline_ca = os.environ.get("SSL_CERT_FILE", certifi.where())
+
+    logger.info("Preparing cibuildwheel TLS trust with the 1ES network-isolation proxy CA.")
+    with TemporaryDirectory(prefix="cibuildwheel-proxy-ca-") as directory:
+        bundle = os.path.join(directory, "ca-bundle.pem")
+        with open(bundle, "wb") as combined:
+            for certificate_file in (baseline_ca, proxy_ca):
+                ssl.create_default_context(cafile=certificate_file)
+                with open(certificate_file, "rb") as certificate:
+                    combined.write(certificate.read())
+                combined.write(b"\n")
+
+        environment = os.environ.copy()
+        environment["SSL_CERT_FILE"] = bundle
+        yield environment
+
+
+def _run_cibuildwheel(package_folder: str, dist: str, should_log_build_output: bool) -> None:
+    with _cibuildwheel_environment() as environment:
+        run_logged(
+            [sys.executable, "-m", "cibuildwheel", "--output-dir", dist],
+            cwd=package_folder,
+            check=True,
+            should_stream_to_console=should_log_build_output,
+            env=environment,
+        )
 
 
 def build_package() -> None:
@@ -242,12 +294,7 @@ def create_package(
         # when building with pyproject, check if package has compiled extensions
         if enable_wheel and setup_parsed.ext_modules:
             # Use cibuildwheel for compiled extensions (respects [tool.cibuildwheel] config)
-            run_logged(
-                [sys.executable, "-m", "cibuildwheel", "--output-dir", dist],
-                cwd=setup_parsed.folder,
-                check=True,
-                should_stream_to_console=should_log_build_output,
-            )
+            _run_cibuildwheel(setup_parsed.folder, dist, should_log_build_output)
             if enable_sdist:
                 # Build sdist separately with python -m build
                 run_logged(
@@ -290,12 +337,7 @@ def create_package(
     else:
         if enable_wheel:
             if setup_parsed.ext_modules:
-                run_logged(
-                    [sys.executable, "-m", "cibuildwheel", "--output-dir", dist],
-                    cwd=setup_parsed.folder,
-                    check=True,
-                    should_stream_to_console=should_log_build_output,
-                )
+                _run_cibuildwheel(setup_parsed.folder, dist, should_log_build_output)
             else:
                 run_logged(
                     [sys.executable, "setup.py", "bdist_wheel", "-d", dist],

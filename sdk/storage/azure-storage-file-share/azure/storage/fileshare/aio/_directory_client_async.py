@@ -21,6 +21,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._deserialize import deserialize_directory_properties
 from .._directory_client_helpers import _format_url, _from_directory_url, _parse_url
+from .._file_client_helpers import _assert_not_file_id_addressed
 from .._generated.aio import FileClient as AzureFileStorage
 from .._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
 from .._serialize import get_api_version, get_dest_lease_id, get_rename_smb_properties
@@ -122,6 +123,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             )
         if hasattr(credential, "get_token") and not token_intent:
             raise ValueError("'token_intent' keyword is required when 'credential' is an AsyncTokenCredential.")
+        self.file_id: Optional[str] = kwargs.pop("_file_id", None)
         parsed_url = _parse_url(account_url, share_name)
         path_snapshot, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
@@ -196,13 +198,14 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         :returns: A directory client.
         :rtype: ~azure.storage.fileshare.ShareDirectoryClient
         """
-        account_url, share_name, directory_path, snapshot = _from_directory_url(directory_url, snapshot)
+        account_url, share_name, directory_path, snapshot, file_id = _from_directory_url(directory_url, snapshot)
         return cls(
             account_url=account_url,
             share_name=share_name,
             directory_path=directory_path,
             snapshot=snapshot,
             credential=credential,
+            _file_id=file_id,
             **kwargs,
         )
 
@@ -214,7 +217,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         :returns: A formatted endpoint URL including the current location mode hostname.
         :rtype: str
         """
-        return _format_url(self.scheme, hostname, self.share_name, self.directory_path, self._query_str)
+        return _format_url(self.scheme, hostname, self.share_name, self.directory_path, self._query_str, self.file_id)
 
     @classmethod
     def from_connection_string(
@@ -267,6 +270,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         :returns: A File Client.
         :rtype: ~azure.storage.fileshare.ShareFileClient
         """
+        _assert_not_file_id_addressed(self.file_id)
         if self.directory_path:
             file_name = self.directory_path.rstrip("/") + "/" + file_name
 
@@ -310,6 +314,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                 :dedent: 16
                 :caption: Gets the subdirectory client.
         """
+        _assert_not_file_id_addressed(self.file_id)
         directory_path = directory_name
         if self.directory_path:
             directory_path = self.directory_path.rstrip("/") + "/" + directory_name
@@ -406,6 +411,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                 :dedent: 16
                 :caption: Creates a directory.
         """
+        _assert_not_file_id_addressed(self.file_id)
         metadata = kwargs.pop("metadata", None)
         timeout = kwargs.pop("timeout", None)
         headers = kwargs.pop("headers", {})
@@ -462,6 +468,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                 :dedent: 16
                 :caption: Deletes a directory.
         """
+        _assert_not_file_id_addressed(self.file_id)
         timeout = kwargs.pop("timeout", None)
         try:
             await self._client.directory.delete(
@@ -534,6 +541,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         :returns: The new Directory Client.
         :rtype: ~azure.storage.fileshare.ShareDirectoryClient
         """
+        _assert_not_file_id_addressed(self.file_id)
         if not new_name:
             raise ValueError("Please specify a new directory name.")
 
@@ -598,7 +606,9 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             begin with the specified prefix.
         :keyword List[str] include:
             Include this parameter to specify one or more datasets to include in the response.
-            Possible str values are "timestamps", "Etag", "Attributes", "PermissionKey".
+            Possible str values are "Timestamps", "Etag", "Attributes", "PermissionKey",
+            "Permissions", "LinkCount", "NfsAttributes", and "All".
+            The values "Permissions", "LinkCount", and "NfsAttributes" apply only to NFS shares.
 
             .. versionadded:: 12.6.0
 
@@ -629,6 +639,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                 :dedent: 16
                 :caption: List directories and files.
         """
+        _assert_not_file_id_addressed(self.file_id)
         timeout = kwargs.pop("timeout", None)
         results_per_page = kwargs.pop("results_per_page", None)
         command = functools.partial(
@@ -661,6 +672,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         :returns: An auto-paging iterable of Handle
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.fileshare.Handle]
         """
+        _assert_not_file_id_addressed(self.file_id)
         timeout = kwargs.pop("timeout", None)
         results_per_page = kwargs.pop("results_per_page", None)
         command = functools.partial(
@@ -687,6 +699,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         :returns: True if the directory exists, False otherwise.
         :rtype: bool
         """
+        _assert_not_file_id_addressed(self.file_id)
         try:
             await self._client.directory.get_properties(
                 allow_trailing_dot=self.allow_trailing_dot,
@@ -717,6 +730,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             and the number of handles failed to close in a dict.
         :rtype: dict[str, int]
         """
+        _assert_not_file_id_addressed(self.file_id)
         if isinstance(handle, Handle):
             handle_id = handle.id
         else:
@@ -759,6 +773,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
             and the number of handles failed to close in a dict.
         :rtype: dict[str, int]
         """
+        _assert_not_file_id_addressed(self.file_id)
         timeout = kwargs.pop("timeout", None)
         start_time = time.time()
 
@@ -839,6 +854,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         :returns: Directory-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
+        _assert_not_file_id_addressed(self.file_id)
         timeout = kwargs.pop("timeout", None)
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
@@ -915,6 +931,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
+        _assert_not_file_id_addressed(self.file_id)
         timeout = kwargs.pop("timeout", None)
         file_permission = _get_file_permission(file_permission, permission_key, None)
         file_change_time = kwargs.pop("file_change_time", None)
@@ -966,6 +983,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                 :dedent: 16
                 :caption: Create a subdirectory.
         """
+        _assert_not_file_id_addressed(self.file_id)
         metadata = kwargs.pop("metadata", None)
         timeout = kwargs.pop("timeout", None)
         subdir = self.get_subdirectory_client(directory_name)
@@ -995,6 +1013,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                 :dedent: 16
                 :caption: Delete a subdirectory.
         """
+        _assert_not_file_id_addressed(self.file_id)
         timeout = kwargs.pop("timeout", None)
         subdir = self.get_subdirectory_client(directory_name)
         await subdir.delete_directory(timeout=timeout, **kwargs)
@@ -1057,6 +1076,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                 :dedent: 16
                 :caption: Upload a file to a directory.
         """
+        _assert_not_file_id_addressed(self.file_id)
         file_client = self.get_file_client(file_name)
         await file_client.upload_file(data, length=length, **kwargs)
         return file_client
@@ -1085,5 +1105,6 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                 :dedent: 16
                 :caption: Delete a file in a directory.
         """
+        _assert_not_file_id_addressed(self.file_id)
         file_client = self.get_file_client(file_name)
         await file_client.delete_file(**kwargs)

@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-few-public-methods
 
-from typing import Any, Callable, Dict, List, Optional
+from typing import Callable, List, Optional, Union
 
 from azure.core.async_paging import AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
@@ -163,7 +163,7 @@ class DirectoryPropertiesPaged(AsyncPageIterator):
     """The continuation token to retrieve the next page of results."""
     location_mode: Optional[str] = None
     """The location mode being used to list results. The available options include "primary" and "secondary"."""
-    current_page: List[Dict[str, Any]]
+    current_page: List[Union[DirectoryProperties, FileProperties]]
     """The current page of listed results."""
 
     def __init__(
@@ -201,13 +201,34 @@ class DirectoryPropertiesPaged(AsyncPageIterator):
         self.service_endpoint = self._response.service_endpoint
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
+        segment = self._response.segment
         self.current_page = [
             DirectoryProperties._from_generated(i)  # pylint: disable = protected-access
-            for i in self._response.segment.directory_items
+            for i in segment.directory_items
         ]
         self.current_page.extend(
-            FileProperties._from_generated(i)  # pylint: disable = protected-access
-            for i in self._response.segment.file_items
+            FileProperties._from_generated(i, file_type="Regular")  # pylint: disable = protected-access
+            for i in segment.file_items
+        )
+        self.current_page.extend(
+            FileProperties._from_generated(i, file_type="SymLink")  # pylint: disable = protected-access
+            for i in segment.sym_link_items or []
+        )
+        self.current_page.extend(
+            FileProperties._from_generated(i, file_type="BlockDevice")  # pylint: disable = protected-access
+            for i in segment.block_device_items or []
+        )
+        self.current_page.extend(
+            FileProperties._from_generated(i, file_type="CharacterDevice")  # pylint: disable = protected-access
+            for i in segment.char_device_items or []
+        )
+        self.current_page.extend(
+            FileProperties._from_generated(i, file_type="Fifo")  # pylint: disable = protected-access
+            for i in segment.fifo_items or []
+        )
+        self.current_page.extend(
+            FileProperties._from_generated(i, file_type="Socket")  # pylint: disable = protected-access
+            for i in segment.socket_items or []
         )
         return self._response.next_marker or None, self.current_page
 

@@ -95,6 +95,19 @@ sdk_build azure-storage* --devbuild=True
 sdk_build azure* --service=core -d "<artifact_folder>"
 ```
 
+### Windows network-isolation proxy
+
+For compiled-wheel builds on Windows Azure Pipelines agents with `1ESNI_CONFIG_PATH`
+and `HTTPS_PROXY` configured, `sdk_build` and `sdk_build_package` supply cibuildwheel
+with a temporary `SSL_CERT_FILE` bundle. It combines the existing `SSL_CERT_FILE`
+(or certifi's roots when unset) with the 1ES-generated
+`C:\NI\HttpProxyRootCa-<BUILD_BUILDID>.pem`. Missing or invalid certificates fail the
+build; arbitrary `NODE_EXTRA_CA_CERTS` paths are not used as trust sources.
+
+The bundle is removed after cibuildwheel exits, including on failure. Parent and
+machine-wide trust, package feeds, proxy enforcement, build frontends, and targets
+are unchanged. This handles proxy TLS trust, not archive download sourcing.
+
 ## Using "versioning" modules
 
 On top of assembling packages, azure-sdk-tools also can be used to complete various tasks with respect to version "maintenance". There are three primary entrypoints, and each fulfills a purpose in the repository.

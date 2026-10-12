@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from typing import Any, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
-from urllib.parse import quote, unquote, urlparse
+from urllib.parse import parse_qs, quote, unquote, urlparse
 
 from ._serialize import get_lease_id, get_source_conditions
 from ._shared.base_client import parse_query
@@ -15,15 +15,32 @@ if TYPE_CHECKING:
     from urllib.parse import ParseResult
 
 
-def _parse_url(account_url: str, share_name: str, file_path: str) -> "ParseResult":
+def _parse_file_id(parsed_url: "ParseResult") -> Optional[str]:
+    file_id = parse_qs(parsed_url.query).get("fileid")
+    return file_id[0] if file_id else None
+
+
+def _format_file_id_url(scheme: str, hostname: str, share_name: bytes, file_id: str, query_str: str) -> str:
+    query = f"fileid={quote(file_id, safe='')}"
+    if query_str:
+        query += "&" + query_str.lstrip("?")
+    return f"{scheme}://{hostname}/{quote(share_name)}?{query}"
+
+
+def _assert_not_file_id_addressed(file_id: Optional[str]) -> None:
+    if file_id is not None:
+        raise ValueError("This operation is not supported on a client created from a file ID.")
+
+
+def _parse_url(account_url: str, share_name: str, file_path: str, file_id: Optional[str] = None) -> "ParseResult":
     try:
         if not account_url.lower().startswith("http"):
             account_url = "https://" + account_url
     except AttributeError as exc:
         raise ValueError("Account URL must be a string.") from exc
     parsed_url = urlparse(account_url.rstrip("/"))
-    if not (share_name and file_path):
-        raise ValueError("Please specify a share name and file name.")
+    if not (share_name and (file_path or file_id)):
+        raise ValueError("Please specify a share name and either a file path or a file ID.")
     if not parsed_url.netloc:
         raise ValueError(f"Invalid URL: {account_url}")
     return parsed_url
@@ -31,7 +48,7 @@ def _parse_url(account_url: str, share_name: str, file_path: str) -> "ParseResul
 
 def _from_file_url(
     file_url: str, snapshot: Optional[Union[str, Dict[str, Any]]] = None
-) -> Tuple[str, str, str, Optional[Union[str, Dict[str, Any]]]]:
+) -> Tuple[str, str, str, Optional[Union[str, Dict[str, Any]]], Optional[str]]:
     try:
         if not file_url.lower().startswith("http"):
             file_url = "https://" + file_url
@@ -45,16 +62,26 @@ def _from_file_url(
 
     path_share, _, path_file = parsed_url.path.lstrip("/").partition("/")
     path_snapshot, _ = parse_query(parsed_url.query)
+    file_id = _parse_file_id(parsed_url)
     snapshot = snapshot or path_snapshot
     share_name = unquote(path_share)
     file_path = "/".join([unquote(p) for p in path_file.split("/")])
 
-    return account_url, share_name, file_path, snapshot
+    return account_url, share_name, file_path, snapshot, file_id
 
 
-def _format_url(scheme: str, hostname: str, share_name: Union[str, bytes], file_path: List[str], query_str: str) -> str:
+def _format_url(
+    scheme: str,
+    hostname: str,
+    share_name: Union[str, bytes],
+    file_path: List[str],
+    query_str: str,
+    file_id: Optional[str] = None,
+) -> str:
     if isinstance(share_name, str):
         share_name = share_name.encode("UTF-8")
+    if file_id:
+        return _format_file_id_url(scheme, hostname, share_name, file_id, query_str)
     return (
         f"{scheme}://{hostname}/{quote(share_name)}" f"/{'/'.join([quote(p, safe='~') for p in file_path])}{query_str}"
     )
