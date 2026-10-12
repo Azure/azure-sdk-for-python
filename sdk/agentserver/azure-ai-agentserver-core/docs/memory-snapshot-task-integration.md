@@ -329,7 +329,7 @@ typed-input behavior is not broadened or redesigned.
 | Hard crash after checkpoints 1 and 2 | Controlled hosted recovery; no new invocation during orphan interval |
 | Independent sessions/concurrent tasks | Controlled hosted owner/worker/lease observations |
 | Cancellation | Controlled hosted terminal cancellation, no task resurrection during observation |
-| Natural idle/resume | Not yet qualified: no actual suspension observed in the bounded test |
+| Natural idle/resume | Controlled hosted test: 120-second policy; after six quiet minutes, same session/capture with a new restore ID and worker, followed by renewed leases and completion |
 | Customer startup submissions (Q3) | Deferred; options above only |
 
 The controlled hosted test runs the existing resilient streaming sample.
@@ -339,6 +339,12 @@ one-shot marker prevents repeated crash injection. A capture-only heap marker
 is retained through restoration, together with a new restore ID/worker and
 incremented fencing generation, to distinguish replacement from cold import.
 
+For idle/resume, management continued reporting the logical session as active.
+The test closed its log reader before the quiet interval and invoked the same
+session only once afterwards. The new restore ID/worker, retained capture heap
+marker, and subsequent lease-backed completion establish restoration; elapsed
+quiet time or management status alone would not. This does not establish the
+exact suspension timestamp or a guarantee of suspension at exactly 120 seconds.
+
 These observations do not replace CI, public rollout qualification, or an
-unobserved scenario. The idle/resume limitation is retained rather than
-interpreting elapsed quiet time as proof of suspension.
+unobserved scenario.
