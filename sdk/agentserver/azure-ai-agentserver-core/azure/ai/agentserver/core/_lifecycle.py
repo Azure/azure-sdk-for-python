@@ -25,7 +25,7 @@ class AgentSessionContext:
 
     session_id: str
     restore_id: str
-    session_env_overrides: Mapping[str, str]
+    session_env_overrides: Mapping[str, str] = field(repr=False)
 
     def __init__(
         self,

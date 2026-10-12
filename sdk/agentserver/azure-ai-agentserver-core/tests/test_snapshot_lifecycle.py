@@ -1063,6 +1063,18 @@ def test_agent_session_context_defensively_copies_overrides() -> None:
         context.session_env_overrides["VALUE"] = "changed"  # type: ignore[index]
 
 
+def test_agent_session_context_repr_excludes_environment_overrides() -> None:
+    secret = "sentinel-secret-override"
+    context = AgentSessionContext(
+        session_id="session-1",
+        restore_id="restore-1",
+        session_env_overrides={"CONNECTION_STRING": secret},
+    )
+
+    assert secret not in repr(context)
+    assert "session_env_overrides" not in repr(context)
+
+
 def test_lifecycle_decorators_return_original_functions() -> None:
     agent = AgentServerHost()
 
