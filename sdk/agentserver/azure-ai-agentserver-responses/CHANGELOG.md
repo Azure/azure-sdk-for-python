@@ -4,6 +4,10 @@
 
 ### Bugs Fixed
 
+- Signal accepted durable task shutdown before awaiting response execution, so
+  explicit and checkpoint-based recovery exits preserve recoverable input.
+  Rebind cold-recovery cancellation to the handler's exact event before
+  publication, allowing cancellation to finish the tracked execution.
 - Atomically close fresh response reservations and unpublished execution
   admission when shutdown takes its drain snapshot. Preserve exact accepted
   executions for terminal finalization, track handler work before its first

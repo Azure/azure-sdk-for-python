@@ -713,6 +713,8 @@ class ResilientResponseOrchestrator:
         # (Spec 024 Phase 5 — Proposal #11) Expose the task context so
         # ``context.exit_for_recovery()`` can delegate to the recovery sentinel.
         context._task_context = ctx  # pylint: disable=protected-access
+        if context.shutdown.is_set():
+            ctx.shutdown.set()
 
         if not is_recovery:
             return False
@@ -1270,6 +1272,9 @@ class ResilientResponseOrchestrator:
 
         if await self._flatten_recovery_context(ctx, context, is_recovery):
             return
+        cancellation_signal: asyncio.Event = _ref("_cancel_ref") or record.cancel_signal
+        record.cancel_signal = cancellation_signal
+        context._cancellation_signal = cancellation_signal  # pylint: disable=protected-access
         if _ref("_record_ref") is None:
             assert self._runtime_state is not None, "runtime_state always wired at orchestrator init"
             if not await self._runtime_state.add(record):
@@ -1294,7 +1299,6 @@ class ResilientResponseOrchestrator:
         #   ``context.client_cancelled`` at the HTTP boundary, BEFORE
         #   propagating through ``ctx.cancel`` here. The bridge below
         #   does NOT clobber an existing ``client_cancelled=True``.
-        cancellation_signal: asyncio.Event = _ref("_cancel_ref") or asyncio.Event()
         cancel_bridge = self._setup_cancel_bridge(ctx, context, cancellation_signal)
 
         # Return the handler-body result so a graceful-shutdown / handler

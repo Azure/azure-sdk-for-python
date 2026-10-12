@@ -2113,6 +2113,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 # semantically distinct surfaces and handlers expect
                 # different responses to each.
                 record.response_context.shutdown.set()
+                task_context = record.response_context._task_context  # pylint: disable=protected-access
+                if task_context is not None:
+                    task_context.shutdown.set()
 
             record.cancel_signal.set()
 

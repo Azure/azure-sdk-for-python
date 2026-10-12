@@ -168,6 +168,19 @@ execution task takes ownership, so shutdown can signal and await accepted work
 even before the first handler event. Exact pending cleanup cannot discard a
 successor or another user's record.
 
+The response drain signals the accepted context's durable task shutdown event
+before waiting for its execution task. Task-context attachment also preserves
+shutdown already signaled during startup. This satisfies the Core recovery-exit
+precondition while the response drain precedes TaskManager shutdown; explicit
+and implicit exits retain the checkpoint and recoverable task input rather than
+failing the task. Recovery exit outside shutdown still fails.
+
+Cold reconstruction binds the execution record, response context, and handler
+to one cancellation event before runtime publication. A real client cancel
+therefore wakes the recovered handler before cancellation waits for its tracked
+execution and persists the cancelled terminal, rather than waiting for natural
+completion on an unrelated event. Cancellation remains distinct from shutdown.
+
 A create rejected before HTTP headers returns the existing `503`
 `service_unavailable` shutdown response, not a response-ID conflict or handler
 failure. Once streaming headers have been sent, rejected startup retains the
