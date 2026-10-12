@@ -2,8 +2,14 @@
 
 ## 2.9.0 (Unreleased)
 
+### Features Added
+
+* Added an optional `transport` keyword on synchronous and asynchronous realtime `connect()` using `VoiceAgentTransport.WEBSOCKET` or `VoiceAgentTransport.WEBRTC`. The SDK constructs the transport wire query internally.
+
 ### Sample updates
 
+* Fixed the realtime audio conversation sample to enable input transcription, count only successfully sent audio payloads, and finish pending capture sends before printing transfer totals.
+* Fixed the conversation deletion snippet to handle the API's no-content response.
 * Updated Voice Agent samples to use `FOUNDRY_VOICE_AGENT_MODEL` for model configuration, retaining `FOUNDRY_VOICE_MODEL` as a deprecated fallback in `sample_voice_agent_with_tools.py`.
 * Renamed Voice Agent realtime samples from `sample_voice_agent_live_*` to `sample_voice_agent_realtime_*`, updating usage instructions and cross-references.
 * Updated `sample_multiturn_trace_evaluation_agent_filter.py` to use the supported agent-name/version filter, remove unsupported command-line filtering options, and configure trace lookback and maximum trace count through `TRACE_LOOKBACK_HOURS` and `TRACE_MAX_TRACES`.
