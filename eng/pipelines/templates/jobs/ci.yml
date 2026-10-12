@@ -343,10 +343,6 @@ jobs:
             parameters:
               ServiceDirectory: ${{parameters.ServiceDirectory}}
               ExcludePaths: ${{parameters.ExcludePaths}}
-          - pwsh: |
-              ./eng/scripts/Exclude-RustTemplateFixtureFromGenericPR.ps1 `
-                  -PackagePropertiesFolder "$(Build.ArtifactStagingDirectory)/PackageInfo"
-            displayName: Exclude Rust template fixture from generic PR validation
       CloudConfig:
         Cloud: Public
       AdditionalParameters:

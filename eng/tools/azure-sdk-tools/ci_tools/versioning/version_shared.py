@@ -102,33 +102,6 @@ def set_version_py(setup_path, new_version):
 
         version_py_file.write(replaced_version_contents)
 
-    pyproject_location = path.join(path.dirname(setup_path), "pyproject.toml")
-    if path.isfile(pyproject_location):
-        with open(pyproject_location, "r", newline="") as pyproject_file:
-            pyproject_contents = pyproject_file.read()
-
-        project_section = re.search(r"(?m)^\[project\][^\r\n]*(?:\r?\n|$)", pyproject_contents)
-        if project_section:
-            next_section = re.search(r"(?m)^\[", pyproject_contents[project_section.end() :])
-            project_end = project_section.end() + next_section.start() if next_section else len(pyproject_contents)
-            project_contents = pyproject_contents[project_section.end() : project_end]
-            version_pattern = re.compile(r"(?m)^(\s*version\s*=\s*)([\"'])([^\"'\r\n]+)(\2)([^\r\n]*)(\r?\n|$)")
-            replaced_project_contents, replacements = version_pattern.subn(
-                lambda match: (
-                    f"{match.group(1)}{match.group(2)}{new_version}" f"{match.group(4)}{match.group(5)}{match.group(6)}"
-                ),
-                project_contents,
-                count=1,
-            )
-            if replacements:
-                updated_contents = (
-                    pyproject_contents[: project_section.end()]
-                    + replaced_project_contents
-                    + pyproject_contents[project_end:]
-                )
-                with open(pyproject_location, "w", newline="") as pyproject_file:
-                    pyproject_file.write(updated_contents)
-
 
 # Get classification for PyPI (https://pypi.org/classifiers/)
 def get_classification(version):

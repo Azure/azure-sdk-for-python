@@ -4,7 +4,6 @@ extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: template
-      BuildTargetingString: azure-template|azure-template-two
       MatrixReplace:
         - TestSamples=.*/true
       EnvVars:

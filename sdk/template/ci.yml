@@ -58,10 +58,6 @@ extends:
     oneESTemplateTag: ${{ parameters.oneESTemplateTag }}
     ServiceDirectory: template
     TestProxy: true
-    InstallMsRustToolchain: true
-    MsRustWorkingDirectory: $(Build.SourcesDirectory)/sdk/template/azure-template-three
-    MsRustToolchainFeed: https://pkgs.dev.azure.com/azure-sdk/_packaging/azure-sdk-for-rust-org-test/nuget/v3/index.json
-    MsRustAdditionalTargets: aarch64-pc-windows-msvc
     Artifacts:
     - name: azure-template
       safeName: azuretemplate
@@ -75,10 +71,5 @@ extends:
       # Pure C-based package, not generating docs at this moment. Doc publishing
       # resolves a single wheel per package, which does not hold for a package
       # that ships one wheel per platform.
-      skipPublishDocGithubIo: true
-      skipPublishDocMs: true
-    - name: azure-template-three
-      safeName: azuretemplatethree
-      signBinaries: true
       skipPublishDocGithubIo: true
       skipPublishDocMs: true

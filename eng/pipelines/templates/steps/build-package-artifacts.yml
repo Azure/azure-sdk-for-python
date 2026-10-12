@@ -98,14 +98,6 @@ steps:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       ExcludePaths: ${{ parameters.ExcludePaths }}
 
-  # Template CI validates the Rust fixture; generic PR builds do not enable
-  # its Rust toolchain setup.
-  - ${{ if eq(parameters.ServiceDirectory, 'auto') }}:
-    - pwsh: |
-        ./eng/scripts/Exclude-RustTemplateFixtureFromGenericPR.ps1 `
-            -PackagePropertiesFolder "$(Build.ArtifactStagingDirectory)/PackageInfo"
-      displayName: Exclude Rust template fixture from generic PR validation
-
   - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
     parameters:
       BuildTargetingString: ${{ parameters.BuildTargetingString }}

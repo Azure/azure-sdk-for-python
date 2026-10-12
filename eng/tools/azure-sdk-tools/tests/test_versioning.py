@@ -7,7 +7,7 @@ import pytest
 
 from ci_tools.parsing import ParsedSetup
 from ci_tools.versioning.version_set_dev import set_dev_version
-from ci_tools.versioning.version_shared import get_classification, DEV_STATUS_REGEX, set_version_py
+from ci_tools.versioning.version_shared import get_classification, DEV_STATUS_REGEX
 
 integration_folder = os.path.join(os.path.dirname(__file__), "integration")
 setup_folder = os.path.join(integration_folder, "scenarios", "setup_py_project_def")
@@ -92,57 +92,3 @@ def test_set_dev_version_on_setup():
     # Expect version to have 'a' suffix with zero-padded build id
     assert parsed_after.version == "1.0.0a20250813001"
     assert "Development Status :: 4 - Beta" in parsed_after.classifiers
-
-
-def test_set_version_synchronizes_static_pyproject_and_runtime_version(tmp_path):
-    package_dir = tmp_path / "static-version-package"
-    version_dir = package_dir / "src"
-    version_dir.mkdir(parents=True)
-    pyproject = package_dir / "pyproject.toml"
-    pyproject.write_text(
-        """[build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
-
-[project]
-name = "static-version-package"
-# Keep this comment and the original formatting.
-version  =  "1.0.0b1"  # Distribution version
-requires-python = ">=3.10"
-dependencies = []
-
-[tool.example]
-version = "unchanged"
-"""
-    )
-    version_file = version_dir / "_version.py"
-    version_file.write_text('VERSION = "1.0.0b1"\n')
-    set_version_py(str(pyproject), "1.0.0b12345")
-    assert (
-        pyproject.read_text()
-        == """[build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
-
-[project]
-name = "static-version-package"
-# Keep this comment and the original formatting.
-version  =  "1.0.0b12345"  # Distribution version
-requires-python = ">=3.10"
-dependencies = []
-
-[tool.example]
-version = "unchanged"
-"""
-    )
-    assert version_file.read_text() == 'VERSION = "1.0.0b12345"\n'
-    assert ParsedSetup.from_path(str(package_dir)).version == "1.0.0b12345"
-
-
-def test_set_version_preserves_dynamic_pyproject_version_configuration(tmp_path):
-    shutil.copytree(pyproject_folder, tmp_path / "package")
-    pyproject = tmp_path / "package/pyproject.toml"
-    original = pyproject.read_bytes()
-    set_version_py(str(pyproject), "1.0.0b12345")
-    assert pyproject.read_bytes() == original
-    assert ParsedSetup.from_path(str(pyproject.parent)).version == "1.0.0b12345"
