@@ -31,13 +31,13 @@ def main():
     )
 
     response = client.goal_resources.get(
-        service_group_name="sg1",
-        goal_assignment_name="ga1",
-        goal_resource_name="gr1",
+        service_group_name="production-sg",
+        goal_assignment_name="zonal-resiliency-goal",
+        goal_resource_name="primary-vm",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-08-31-preview/GoalResources_Get_MinimumSet_Gen.json
+# x-ms-original-file: 2026-10-01/GoalResources_Get_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

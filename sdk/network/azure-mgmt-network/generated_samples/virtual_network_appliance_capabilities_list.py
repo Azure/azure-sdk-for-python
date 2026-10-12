@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.resiliencemanagement import ResilienceManagementClient
+from azure.mgmt.network import NetworkManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-resiliencemanagement
+    pip install azure-mgmt-network
 # USAGE
-    python goal_templates_list_minimum_set_gen.py
+    python virtual_network_appliance_capabilities_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,18 +25,19 @@ from azure.mgmt.resiliencemanagement import ResilienceManagementClient
 
 
 def main():
-    client = ResilienceManagementClient(
+    client = NetworkManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.goal_templates.list(
-        service_group_name="sg1",
+    response = client.virtual_network_appliance_capabilities.list(
+        resource_group_name="rg1",
+        virtual_network_appliance_name="test-vna",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2026-08-31-preview/GoalTemplates_List_MinimumSet_Gen.json
+# x-ms-original-file: 2026-03-01/VirtualNetworkApplianceCapabilities_List.json
 if __name__ == "__main__":
     main()
