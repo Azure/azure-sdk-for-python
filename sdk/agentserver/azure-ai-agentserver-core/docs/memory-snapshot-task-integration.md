@@ -410,10 +410,42 @@ Real-session binding and dependency preparation
   -> finish restore without waiting for task completion
 ```
 
-Automatic task IDs are derived from the captured intention and actual
-agent/session, so separate sessions do not collide and replacement of the
-same session can reconcile its original task. Explicit IDs are preserved;
-conflicts with unrelated records fail, rather than silently attaching.
+Automatic IDs for **new submissions** include the captured intention, actual
+agent/session, and platform `restore_id` when available:
+
+```text
+snapshot: SHA256(agent_name : session_id : intent_id : restore_id)
+no restore ID: SHA256(agent_name : session_id : intent_id)
+```
+
+The second form is unchanged for registry activation without a restore ID.
+Ordinary non-snapshot startup still uses its existing task submission path and
+ID generation; it does not manufacture a platform restore ID.
+
+FHA generates a new restore ID for a new golden materialization, crash
+replacement, idle restoration, and qualifying in-place memory resume. Retries
+and concurrent hook calls for the same restoration reuse that ID. Normal
+requests and lease renewal do not change it.
+
+**Recover first, allocate second.** Match a captured intention to unfinished
+startup work by its stable intention marker and actual session before deriving
+a new launch ID. A recovered run retains its persisted task ID even though a
+fresh submission in the new restoration would have a different ID. Retain the
+recovered handle if a short job completes before the registry drain.
+
+When no unfinished match exists, create new work. A completed/deleted one-shot
+job is not recreated with its old ID: the new materialization gets a new
+restore-scoped ID. This addresses the hosted create409 that previously failed
+idle after-restore.
+
+The existing best-effort manager scan remains unchanged. Query failure or an
+unreclaimed in-progress startup record is not proof of absence; registry drain
+surfaces the uncertainty/conflict rather than launching another copy.
+Same-restoration retry IDs are deterministic, and valid accepted launches are
+not repeated.
+
+Explicit user task IDs remain unchanged. Unrelated marker/source conflicts
+fail, rather than silently attaching or rewriting the caller's identity.
 
 The prototype persists an internal intention marker with normal task creation.
 Initial/inline recovery uses that marker to recover the captured handler,
@@ -424,9 +456,12 @@ start it twice in the same materialization.
 
 Accepted intentions are checkpointed by runtime/materialization. Same-ID
 retries do not resubmit valid accepted work; an unfinished drain retries
-remaining work. Runtime disposal invalidates acceptance, not the historical
-fact that a receipt already represented a submitted run. Partial submission
-failure follows the existing worker cleanup/configuration rollback path.
+remaining work. Runtime disposal invalidates unfinished acceptance, not a
+successful result that the receipt already holds. If a later intention fails
+and the manager is rebuilt for the same restore ID, previously successful
+completed intentions remain deduplicated. A different restore ID can create
+fresh startup work when no unfinished job exists. Partial submission failure
+follows the existing worker cleanup/configuration rollback path.
 
 No change to worker timing, task storage backend, lease fencing, or immediate
 best-effort discovery policy is required.
