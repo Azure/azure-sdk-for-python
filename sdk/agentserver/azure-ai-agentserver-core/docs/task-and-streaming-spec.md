@@ -1045,7 +1045,7 @@ chain record itself does not carry the per-turn diagnostic.
 | `pending_ack_ids` | array of opaque strings or nulls | Internal acknowledgment IDs aligned with `pending_inputs`. Each new append adds a unique ID in the same PATCH; drain and queued cancel remove the corresponding ID. Null marks an untagged slot from a pre-upgrade task record. These are independent of the caller's `input_id`. |
 | `next_input_seq` | integer | Monotonic counter for promoted-attachment key allocation (NEVER reused). |
 | `cancel_requested` | boolean | Resilient cancel signal; set on steering append; cleared after drain when pending is empty. |
-| `drain_in_progress` | boolean | True between the start of a drain PATCH and the next turn-start; protects against partial drain on crash. |
+| `drain_in_progress` | boolean | True after the drain-start PATCH; cleared at turn-start Phase 3 or atomically with active fields at turn end. Protects against partial drain on crash. |
 | `active_input` | any JSON value OR ref | The single input being drained (mirror copy used by the race-recovery contract). Cleared at suspend / terminal. |
 | `active_ack_id` | opaque string or null | Internal acknowledgment ID for `active_input`. Written in the same drain PATCH and cleared with `active_input`; lets a committed drain reconcile after a lost response. |
 
@@ -1355,6 +1355,8 @@ These transitions MUST be single PATCHes carrying BOTH `payload` and
 3. **Suspend (multi-turn turn-end via `return X`)**:
    - `payload["input"] = null`
    - `payload["steering"]["active_input"] = null`
+   - `payload["steering"]["active_ack_id"] = null`
+   - `payload["steering"]["drain_in_progress"] = false`
    - `payload["retry_attempt"] = null` (fresh budget for the next turn)
    - `attachments["input"] = null` (delete) IF the input was a ref
 4. **Steering append (promoted)**: `payload["steering"]["pending_inputs"]
@@ -3097,7 +3099,8 @@ Phase 3 — "Drain end" PATCH (after handler re-entered):
 
 Phase 4 — On the next turn-end:
  22. The handler returns/suspends/raises. The terminal handler clears
-     active_input as part of its suspend/complete PATCH (§53).
+     active_input, active_ack_id, and drain_in_progress together as part
+     of its suspend/complete PATCH (§53).
 ```
 
 **Race-recovery contract.** If the process crashes:
