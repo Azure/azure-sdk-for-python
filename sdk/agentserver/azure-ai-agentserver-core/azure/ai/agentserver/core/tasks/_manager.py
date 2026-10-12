@@ -2680,6 +2680,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 steering_patch = dict(existing_steering)
                 steering_patch["active_input"] = None
                 steering_patch["active_ack_id"] = None
+                steering_patch["drain_in_progress"] = False
             existing_input_slot = task_info.payload.get("input")
             if _is_ref(existing_input_slot):
                 attachments_patch[_ref_key(existing_input_slot)] = None
@@ -2820,6 +2821,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 steering_patch = dict(existing_steering)
                 steering_patch["active_input"] = None
                 steering_patch["active_ack_id"] = None
+                steering_patch["drain_in_progress"] = False
             existing_input_slot = task_info.payload.get("input")
             if _is_ref(existing_input_slot):
                 attachments_patch[_ref_key(existing_input_slot)] = None
