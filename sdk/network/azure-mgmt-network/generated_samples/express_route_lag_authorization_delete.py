@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.iothub import IotHubClient
+from azure.mgmt.network import NetworkManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-iothub
+    pip install azure-mgmt-network
 # USAGE
-    python create_or_replace_certificates_with_device_registry_policy.py
+    python express_route_lag_authorization_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,20 +25,18 @@ from azure.mgmt.iothub import IotHubClient
 
 
 def main():
-    client = IotHubClient(
+    client = NetworkManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.certificates.create_or_update(
-        resource_group_name="myResourceGroup",
-        resource_name="testHub",
-        certificate_name="cert",
-        certificate_description={"properties": {"certificate": "############################################"}},
-    )
-    print(response)
+    client.express_route_lag_authorizations.begin_delete(
+        resource_group_name="rg1",
+        express_route_lag_name="expressRouteLagName",
+        authorization_name="authorizationName",
+    ).result()
 
 
-# x-ms-original-file: 2026-05-01-preview/CreateOrReplace_Certificates_With_DeviceRegistryPolicy.json
+# x-ms-original-file: 2026-03-01/ExpressRouteLagAuthorizationDelete.json
 if __name__ == "__main__":
     main()

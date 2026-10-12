@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.resiliencemanagement import ResilienceManagementClient
+from azure.mgmt.commvaultcontentstore import CommvaultContentStoreMgmtClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-resiliencemanagement
+    pip install azure-mgmt-commvaultcontentstore
 # USAGE
-    python goal_templates_delete_maximum_set_gen.py
+    python storages_refresh_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,17 +25,19 @@ from azure.mgmt.resiliencemanagement import ResilienceManagementClient
 
 
 def main():
-    client = ResilienceManagementClient(
+    client = CommvaultContentStoreMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.goal_templates.begin_delete(
-        service_group_name="ajsvdpsdgp",
-        goal_template_name="gt1",
-    ).result()
+    response = client.storages.refresh(
+        resource_group_name="rgcommvault",
+        cloud_account_name="myCloudAccount",
+        storage_name="myStorage",
+    )
+    print(response)
 
 
-# x-ms-original-file: 2026-08-31-preview/GoalTemplates_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-30/Storages_Refresh_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
