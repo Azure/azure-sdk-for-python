@@ -114,6 +114,30 @@ app = MyAgentHost()
 app.run()
 ```
 
+### Readiness handler
+
+By default, `GET /readiness` returns `200 OK` with
+`{"status": "healthy"}`. Register a readiness handler to replace the default
+response with application-specific readiness logic:
+
+```python
+from azure.ai.agentserver.core import AgentServerHost
+from starlette.requests import Request
+from starlette.responses import JSONResponse, Response
+
+app = AgentServerHost()
+
+@app.readiness_handler
+async def readiness(request: Request) -> Response:
+    if await dependencies_ready():
+        return JSONResponse({"status": "healthy"})
+
+    return JSONResponse({"status": "not_ready"}, status_code=503)
+```
+
+When no handler is registered, the built-in healthy response remains
+unchanged.
+
 ### Shutdown handler
 
 Register a cleanup function that runs during graceful shutdown:

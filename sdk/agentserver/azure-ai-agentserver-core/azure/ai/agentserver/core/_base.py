@@ -269,6 +269,7 @@ class AgentServerHost(Starlette):
     ) -> None:
         # Shutdown handler slot (server-level lifecycle) -------------------
         self._shutdown_fn: Optional[Callable[[], Awaitable[None]]] = None
+        self._readiness_fn: Optional[Callable[[Request], Awaitable[Response]]] = None
         self._lifecycle = _LifecycleState()
         #  Pre-shutdown callbacks invoked SYNCHRONOUSLY from the
         # SIGTERM signal handler — before Hypercorn's graceful drain
@@ -627,6 +628,24 @@ class AgentServerHost(Starlette):
         :rtype: Callable[[], Awaitable[None]]
         """
         self._shutdown_fn = fn
+        return fn
+
+    def readiness_handler(
+        self,
+        fn: Callable[[Request], Awaitable[Response]],
+    ) -> Callable[[Request], Awaitable[Response]]:
+        """Register a function to handle readiness probe requests.
+
+        The registered function replaces the default healthy response for
+        ``GET /readiness``.
+
+        :param fn: Async function accepting the incoming request and returning
+            the readiness response.
+        :type fn: Callable[[Request], Awaitable[Response]]
+        :return: The original function (unmodified).
+        :rtype: Callable[[Request], Awaitable[Response]]
+        """
+        self._readiness_fn = fn
         return fn
 
     def register_pre_shutdown_callback(self, fn: Callable[[], None]) -> None:
@@ -1001,4 +1020,6 @@ class AgentServerHost(Starlette):
         :return: 200 OK response.
         :rtype: Response
         """
+        if self._readiness_fn is not None:
+            return await self._readiness_fn(request)
         return Response(_HEALTHY_BODY, media_type="application/json")

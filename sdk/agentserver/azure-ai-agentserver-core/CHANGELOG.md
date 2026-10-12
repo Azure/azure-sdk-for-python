@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Added `AgentServerHost.readiness_handler` for replacing the default
+  `GET /readiness` response with application-specific readiness logic. When no
+  handler is registered, the existing healthy response remains unchanged.
 - Added the private `POST /_agent/before-snapshot` and
   `POST /_agent/after-restore` lifecycle endpoints for safely capturing and
   restoring hosted agent processes. Applications can register
