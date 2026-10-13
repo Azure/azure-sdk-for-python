@@ -33,11 +33,11 @@ def main():
     response = client.entities.get_signal_recommendations(
         resource_group_name="online-store-rg",
         health_model_name="online-store",
-        entity_name="orders-db",
+        entity_name="online-store-aks",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-09-01-preview/Entities_GetSignalRecommendations.json
+# x-ms-original-file: 2026-10-01-preview/Entities_GetSignalRecommendations.json
 if __name__ == "__main__":
     main()
