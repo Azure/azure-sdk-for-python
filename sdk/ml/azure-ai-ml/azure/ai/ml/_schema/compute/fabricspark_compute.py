@@ -12,10 +12,10 @@ from .compute import ComputeSchema, IdentitySchema
 
 class FabricSparkComputeSchema(ComputeSchema):
     type = StringTransformedEnum(allowed_values=[ComputeType.FABRICSPARK], required=True)
-    fabric_workspace_id = fields.Str(required=True)
-    lakehouse_id = fields.Str(required=True)
-    environment_id = fields.Str(required=True)
-    pool_id = fields.Str(required=True)
+    fabric_workspace_id = fields.Str()
+    lakehouse_id = fields.Str()
+    environment_id = fields.Str()
+    pool_id = fields.Str()
     pool_name = fields.Str(dump_only=True)
     is_attached_compute = fields.Bool(dump_only=True)
     modified_on = fields.Str(dump_only=True)

@@ -122,7 +122,6 @@ class FabricSparkCompute(Compute):
             identity=self.identity._to_compute_rest_object() if self.identity else None,
             properties=FabricSpark(
                 description=self.description,
-                resource_id=self.resource_id,
                 properties=FabricSparkProperties(
                     fabric_workspace_id=self.fabric_workspace_id,
                     lakehouse_id=self.lakehouse_id,

@@ -59,8 +59,6 @@ class TestComputeEntity:
 
     @pytest.mark.parametrize("missing_id", ["fabric_workspace_id", "lakehouse_id", "environment_id", "pool_id"])
     def test_fabric_spark_requires_target_ids(self, missing_id):
-        from marshmallow import ValidationError
-
         data = {
             "type": "fabricspark",
             "name": "fabricpoc01",
@@ -70,8 +68,9 @@ class TestComputeEntity:
             "pool_id": "pool-id",
         }
         del data[missing_id]
-        with pytest.raises(ValidationError):
-            Compute._load(data)
+        compute = Compute._load(data)
+        with pytest.raises(ValidationException, match="requires fabric_workspace_id"):
+            compute._to_rest_object()
 
     @pytest.mark.parametrize(
         "identity",
@@ -142,7 +141,7 @@ class TestComputeEntity:
         assert result.identity.type.replace("_", "").lower() == identity["type"].lower()
         body = _to_wire(result._to_rest_object())
         assert body["properties"]["properties"]["poolId"] == "pool-id"
-        assert body["properties"]["resourceId"] == "/fabric/resource"
+        assert "resourceId" not in body["properties"]
         assert "poolName" not in body["properties"]["properties"]
 
     def test_fabric_spark_arm_response_without_nested_properties(self):
@@ -164,6 +163,9 @@ class TestComputeEntity:
             "type": "fabricspark",
             "provisioning_state": "Failed",
         }
+        reloaded = Compute._load(result._to_dict())
+        assert isinstance(reloaded, FabricSparkCompute)
+        assert reloaded.fabric_workspace_id is None
         with pytest.raises(ValidationException, match="requires fabric_workspace_id"):
             result._to_rest_object()
 
