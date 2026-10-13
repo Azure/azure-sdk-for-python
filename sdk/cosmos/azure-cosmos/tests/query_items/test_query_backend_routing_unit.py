@@ -1108,7 +1108,6 @@ def _new_sync_connection() -> SyncConnection:
     conn.session = None
     conn.UseMultipleWriteLocations = False
     conn.master_key = None
-    conn.resource_tokens = None
     conn.aad_credentials = None
     conn.client_id = None
     conn.availability_strategy = None
@@ -1133,7 +1132,6 @@ def _new_async_connection() -> AsyncConnection:
     conn.session = None
     conn.UseMultipleWriteLocations = False
     conn.master_key = None
-    conn.resource_tokens = None
     conn.aad_credentials = None
     conn.client_id = None
     conn.availability_strategy = None

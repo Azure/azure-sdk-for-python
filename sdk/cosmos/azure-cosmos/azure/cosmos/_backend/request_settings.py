@@ -110,7 +110,6 @@ class ResourceSettings(_ValidatedSettings):
     offer_throughput: Optional[int] = None
     autoscale_settings: Optional[str] = None
     offer_type: Optional[str] = None
-    resource_token_expiry_seconds: Optional[int] = None
     enable_ru_per_minute: Optional[bool] = None
     disable_ru_per_minute: Optional[bool] = None
     enable_script_logging: Optional[bool] = None
@@ -123,7 +122,6 @@ class ResourceSettings(_ValidatedSettings):
         self._check_type("offer_throughput", self.offer_throughput, int)
         self._check_type("autoscale_settings", self.autoscale_settings, str)
         self._check_type("offer_type", self.offer_type, str)
-        self._check_type("resource_token_expiry_seconds", self.resource_token_expiry_seconds, int)
         self._check_type("enable_ru_per_minute", self.enable_ru_per_minute, bool)
         self._check_type("disable_ru_per_minute", self.disable_ru_per_minute, bool)
         self._check_type("enable_script_logging", self.enable_script_logging, bool)

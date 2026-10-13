@@ -25,7 +25,6 @@ from ._retry_utility import ConnectionRetryPolicy
 from .container import ContainerProxy
 from .cosmos_client import CosmosClient
 from .database import DatabaseProxy
-from .user import UserProxy
 from .scripts import ScriptsProxy
 from .offer import Offer
 from .offer import ThroughputProperties
@@ -34,7 +33,6 @@ from .documents import (
     DataType,
     IndexKind,
     IndexingMode,
-    PermissionMode,
     ProxyConfiguration,
     SSLConfiguration,
     TriggerOperation,
@@ -42,7 +40,6 @@ from .documents import (
     DatabaseAccount,
 )
 from .partition_key import PartitionKey
-from .permission import Permission
 from ._global_secondary_index import GlobalSecondaryIndexDefinition
 
 __all__ = (
@@ -50,16 +47,13 @@ __all__ = (
     "DatabaseProxy",
     "ContainerProxy",
     "PartitionKey",
-    "Permission",
     "ScriptsProxy",
-    "UserProxy",
     "Offer",
     "DatabaseAccount",
     "ConsistencyLevel",
     "DataType",
     "IndexKind",
     "IndexingMode",
-    "PermissionMode",
     "ProxyConfiguration",
     "SSLConfiguration",
     "TriggerOperation",

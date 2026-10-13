@@ -3915,10 +3915,13 @@ def test_sync_backend_maps_transport_error_to_service_response_error(monkeypatch
 
     monkeypatch.setattr(rust_mod, "_binding_function_for_op", lambda op: boom)
 
-    with pytest.raises(ServiceResponseError) as excinfo:
-        backend.execute(_transport_test_request())
-    assert "ServiceUnavailable" in str(excinfo.value)
-    assert isinstance(excinfo.value.__cause__, transport_exc_type)
+    try:
+        with pytest.raises(ServiceResponseError) as excinfo:
+            backend.execute(_transport_test_request())
+        assert "ServiceUnavailable" in str(excinfo.value)
+        assert isinstance(excinfo.value.__cause__, transport_exc_type)
+    finally:
+        backend.close()
 
 
 def test_async_backend_maps_transport_error_to_service_response_error(monkeypatch):
@@ -3942,10 +3945,13 @@ def test_async_backend_maps_transport_error_to_service_response_error(monkeypatc
     monkeypatch.setattr(async_rust_mod, "_binding_function_for_op", lambda op: boom)
 
     async def run():
-        with pytest.raises(ServiceResponseError) as excinfo:
-            await backend.execute(_transport_test_request())
-        assert "ServiceUnavailable" in str(excinfo.value)
-        assert isinstance(excinfo.value.__cause__, transport_exc_type)
+        try:
+            with pytest.raises(ServiceResponseError) as excinfo:
+                await backend.execute(_transport_test_request())
+            assert "ServiceUnavailable" in str(excinfo.value)
+            assert isinstance(excinfo.value.__cause__, transport_exc_type)
+        finally:
+            await backend.close()
 
     asyncio.run(run())
 
@@ -3969,17 +3975,19 @@ def test_sync_list_databases_transport_error_does_not_replay_legacy(monkeypatch)
     monkeypatch.setattr(rust_mod, "_binding_function_by_name", lambda _op: boom)
     legacy_calls = []
 
-    with pytest.raises(ServiceResponseError):
-        backend.run_page_operation(
-            build_request=lambda: PreparedPageRequest(
-                op=OP_LIST_DATABASES, container_link="", headers={}
-            ),
-            routing=OperationRouting(OP_LIST_DATABASES, True),
-            legacy_call=lambda: legacy_calls.append("legacy"),
-            process_response=lambda page: page,
-        )
-
-    assert legacy_calls == []
+    try:
+        with pytest.raises(ServiceResponseError):
+            backend.run_page_operation(
+                build_request=lambda: PreparedPageRequest(
+                    op=OP_LIST_DATABASES, container_link="", headers={}
+                ),
+                routing=OperationRouting(OP_LIST_DATABASES, True),
+                legacy_call=lambda: legacy_calls.append("legacy"),
+                process_response=lambda page: page,
+            )
+        assert legacy_calls == []
+    finally:
+        backend.close()
 
 
 def test_async_list_databases_transport_error_does_not_replay_legacy(monkeypatch):
@@ -4005,16 +4013,19 @@ def test_async_list_databases_transport_error_does_not_replay_legacy(monkeypatch
         def build_request():
             return PreparedPageRequest(op=OP_LIST_DATABASES, container_link="", headers={})
 
-        with pytest.raises(ServiceResponseError):
-            await backend.run_page_operation(
-                build_request=build_request,
-                routing=OperationRouting(OP_LIST_DATABASES, True),
-                legacy_call=lambda: legacy_calls.append("legacy"),
-                process_response=lambda page: page,
-            )
+        try:
+            with pytest.raises(ServiceResponseError):
+                await backend.run_page_operation(
+                    build_request=build_request,
+                    routing=OperationRouting(OP_LIST_DATABASES, True),
+                    legacy_call=lambda: legacy_calls.append("legacy"),
+                    process_response=lambda page: page,
+                )
+            assert legacy_calls == []
+        finally:
+            await backend.close()
 
     asyncio.run(run())
-    assert legacy_calls == []
 
 
 # --- Regressions for the Rust client lifecycle and process-wide runtime policy ---

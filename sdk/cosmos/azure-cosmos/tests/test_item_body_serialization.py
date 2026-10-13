@@ -73,7 +73,6 @@ class _DummyHeaderClient:
 
     UseMultipleWriteLocations = False
     master_key = None
-    resource_tokens = None
     client_id = None
 
     class connection_policy:
@@ -435,15 +434,13 @@ class TestItemBodySerialization(unittest.TestCase):
 
     def test_enabled_option_does_not_change_other_request_bodies(self):
         """The option is scoped to item writes only. Control-plane bodies
-        (databases, containers, users, permissions, sprocs, triggers, UDFs)
+        (databases, containers, sprocs, triggers, UDFs)
         and document queries all stay ASCII-escaped even when it is on."""
         data = {"text": "日本"}
         expected = json.dumps(data, separators=(",", ":"))
         unaffected_requests = (
             (http_constants.ResourceType.Database, _OperationType.Create),
             (http_constants.ResourceType.Collection, _OperationType.Replace),
-            (http_constants.ResourceType.User, _OperationType.Upsert),
-            (http_constants.ResourceType.Permission, _OperationType.Create),
             (http_constants.ResourceType.StoredProcedure, _OperationType.Create),
             (http_constants.ResourceType.StoredProcedure, _OperationType.ExecuteJavaScript),
             (http_constants.ResourceType.Trigger, _OperationType.Create),

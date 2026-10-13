@@ -40,7 +40,7 @@ await database.read() requests the database's properties from the
 service backend; obtaining the DatabaseProxy does not.
 """
 
-from azure.cosmos._backend.capabilities import OperationRouting, require_legacy_api
+from azure.cosmos._backend.capabilities import OperationRouting
 from .._backend.capabilities import reject_unsupported_rust_arguments
 
 from typing import TYPE_CHECKING, Any, Mapping, Optional, Union, Callable, overload, Literal
@@ -48,6 +48,7 @@ from typing import TYPE_CHECKING, Any, Mapping, Optional, Union, Callable, overl
 import warnings
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
+from .._telemetry import trace_operation_async
 from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection
@@ -55,7 +56,6 @@ from .._base import build_options as _build_options, _set_throughput_options, _b
 from ._container import ContainerProxy
 from ..offer import ThroughputProperties
 from ..exceptions import CosmosResourceNotFoundError
-from ._user import UserProxy
 from ..documents import IndexingMode
 from ..partition_key import PartitionKey
 from .._cosmos_responses import CosmosDict
@@ -97,10 +97,6 @@ def _get_database_link(database_or_id: Union[str, 'DatabaseProxy', Mapping[str, 
 class DatabaseProxy(object):
     """An interface to interact with a specific database.
 
-    Cosmos user methods on this class are retained for legacy Python only and
-    are excluded from the Rust-backed release, including get_user_client.
-    They manage resource-token permissions, not Microsoft Entra identities.
-
     This class should not be instantiated directly. Instead use the
     :func:`~azure.cosmos.aio.CosmosClient.get_database_client` method to obtain a local
     database proxy, or :func:`~azure.cosmos.aio.CosmosClient.create_database` to create
@@ -108,10 +104,6 @@ class DatabaseProxy(object):
 
     A database contains one or more containers, each of which can contain items,
     stored procedures, triggers, and user-defined functions.
-
-    A database can also have associated users, each of which is configured with
-    a set of permissions for accessing certain containers, stored procedures,
-    triggers, user-defined functions, or items.
 
     :ivar id: The ID (name) of the database.
 
@@ -123,7 +115,6 @@ class DatabaseProxy(object):
     * `_self`:	The unique addressable URI for the resource.
     * `_etag`:	The resource etag required for optimistic concurrency control.
     * `_colls`:	The addressable path of the collections resource.
-    * `_users`:	The addressable path of the users resource.
     """
 
     def __init__(
@@ -157,13 +148,6 @@ class DatabaseProxy(object):
 
     def _get_container_link(self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]) -> str:
         return "{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
-
-    def _get_user_link(self, user_or_id: Union[UserProxy, str, Mapping[str, Any]]) -> str:
-        if isinstance(user_or_id, str):
-            return "{}/users/{}".format(self.database_link, user_or_id)
-        if isinstance(user_or_id, UserProxy):
-            return user_or_id.user_link
-        return "{}/users/{}".format(self.database_link, user_or_id["id"])
 
     async def _get_properties(self) -> dict[str, Any]:
         if self._properties is None:
@@ -397,7 +381,7 @@ class DatabaseProxy(object):
         """
         ...
 
-    @distributed_trace_async
+    @trace_operation_async(binding_operation="create_container")
     async def create_container( # pylint:disable=docstring-should-be-keyword, too-many-statements
         self,
         *args: Any,
@@ -1293,7 +1277,7 @@ class DatabaseProxy(object):
             container_properties["id"],
             properties=container_properties, _item_context=self._item_context), container_properties
 
-    @distributed_trace_async
+    @trace_operation_async(binding_operation="delete_container")
     async def delete_container(
         self,
         container: Union[str, ContainerProxy, Mapping[str, Any]],
@@ -1332,230 +1316,6 @@ class DatabaseProxy(object):
         collection_link = self._get_container_link(container)
         await AsyncContainerHelper(self.client_connection, get_selected_backend(self.client_connection)).delete_container(
             collection_link, request_options, response_hook=response_hook, kwargs=kwargs,
-        )
-
-    @distributed_trace_async
-    async def create_user(
-        self,
-        body: dict[str, Any],
-        **kwargs: Any
-    ) -> UserProxy:  # body should just be id?
-        """Legacy-only: create a Cosmos user in this database.
-
-        To update or replace an existing user, use the
-        :func:`DatabaseProxy.upsert_user` method.
-
-        :param dict[str, Any] body: A dict object with an `id` key and value representing the user to be created.
-            The user ID must be unique within the database, and consist of no more than 255 characters.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[dict[str, str], dict[str, Any]], None]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be created.
-        :returns: A `UserProxy` instance representing the new user.
-        :rtype: ~azure.cosmos.aio.UserProxy
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/examples_async.py
-                :start-after: [START create_user]
-                :end-before: [END create_user]
-                :language: python
-                :dedent: 0
-                :caption: Create a database user:
-                :name: create_user
-        """
-        reject_unsupported_rust_arguments(self, kwargs)
-        require_legacy_api(self.client_connection, "DatabaseProxy.create_user", item_context=self._item_context)
-
-        request_options = _build_options(kwargs)
-
-        user = await self.client_connection.CreateUser(
-            database_link=self.database_link, user=body, options=request_options, **kwargs)
-
-        return UserProxy(
-            client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
-        )
-
-    def get_user_client(
-        self,
-        user: Union[str, UserProxy, Mapping[str, Any]]
-    ) -> UserProxy:
-        """Legacy-only: get a local UserProxy for a Cosmos database user.
-
-        :param user: The ID (name), dict representing the properties, or :class:`UserProxy`
-            instance of the user to get.
-        :type user: Union[str, dict[str, Any], ~azure.cosmos.aio.UserProxy]
-        :returns: A `UserProxy` instance representing the retrieved user.
-        :rtype: ~azure.cosmos.aio.UserProxy
-        """
-        require_legacy_api(self.client_connection, "DatabaseProxy.get_user_client", item_context=self._item_context)
-
-        if isinstance(user, str):
-            id_value = user
-        elif isinstance(user, UserProxy):
-            id_value = user.id
-        else:
-            id_value = str(user['id'])
-        return UserProxy(client_connection=self.client_connection, id=id_value, database_link=self.database_link)
-
-    @distributed_trace
-    def list_users(
-        self,
-        *,
-        max_item_count: Optional[int] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """Legacy-only: list Cosmos users in this database.
-
-        :keyword int max_item_count: Max number of users to be returned in the enumeration operation.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]
-        :returns: An AsyncItemPaged of user properties (dicts).
-        :rtype: AsyncItemPaged[dict[str, Any]]
-        """
-        reject_unsupported_rust_arguments(self, kwargs)
-        require_legacy_api(self.client_connection, "DatabaseProxy.list_users", item_context=self._item_context)
-
-        feed_options = _build_options(kwargs)
-        if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
-
-        result = self.client_connection.ReadUsers(
-            database_link=self.database_link, options=feed_options, **kwargs
-        )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
-        return result
-
-    @distributed_trace
-    def query_users(
-        self,
-        query: str,
-        *,
-        parameters: Optional[list[dict[str, Any]]] = None,
-        max_item_count: Optional[int] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """Legacy-only: query Cosmos users in this database.
-
-        :param str query: The Azure Cosmos DB SQL query to execute.
-        :keyword parameters: Optional array of parameters to the query.
-            Each parameter is a dict() with 'name' and 'value' keys.
-            Ignored if no query is provided.
-        :paramtype parameters: Optional[list[dict[str, Any]]]
-        :keyword int max_item_count: Max number of users to be returned in the enumeration operation.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]
-        :returns: An AsyncItemPaged of user properties (dicts).
-        :rtype: AsyncItemPaged[dict[str, Any]]
-        """
-        reject_unsupported_rust_arguments(self, kwargs)
-        require_legacy_api(self.client_connection, "DatabaseProxy.query_users", item_context=self._item_context)
-
-        feed_options = _build_options(kwargs)
-        if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
-
-        result = self.client_connection.QueryUsers(
-            database_link=self.database_link,
-            query=query if parameters is None else {"query": query, "parameters": parameters},
-            options=feed_options,
-            **kwargs
-        )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
-        return result
-
-    @distributed_trace_async
-    async def upsert_user(
-        self,
-        body: dict[str, Any],
-        **kwargs: Any
-    ) -> UserProxy:
-        """Legacy-only: create or replace a Cosmos user in this database.
-
-        If the user already exists in the database, it is replaced. If the user
-        does not already exist, it is inserted.
-
-        :param dict[str, Any] body: A dict-like object representing the user to update or insert.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[dict[str, str], dict[str, Any]], None]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user could not be upserted.
-        :returns: A `UserProxy` instance representing the upserted user.
-        :rtype: ~azure.cosmos.aio.UserProxy
-        """
-        reject_unsupported_rust_arguments(self, kwargs)
-        require_legacy_api(self.client_connection, "DatabaseProxy.upsert_user", item_context=self._item_context)
-
-        request_options = _build_options(kwargs)
-
-        user = await self.client_connection.UpsertUser(
-            database_link=self.database_link, user=body, options=request_options, **kwargs
-        )
-        return UserProxy(
-            client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
-        )
-
-    @distributed_trace_async
-    async def replace_user(
-        self,
-        user: Union[str, UserProxy, Mapping[str, Any]],
-        body: dict[str, Any],
-        **kwargs: Any
-    ) -> UserProxy:
-        """Legacy-only: replace an existing Cosmos database user.
-
-        :param user: The ID (name), dict representing the properties or :class:`UserProxy`
-            instance of the user to be replaced.
-        :type user: Union[str, dict[str, Any], ~azure.cosmos.aio.UserProxy]
-        :param dict[str, Any] body: A dict object representing the user to replace.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[dict[str, str], dict[str, Any]], None]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
-            If the replace operation failed or the user with given ID does not exist.
-        :returns: A `UserProxy` instance representing the user after replace went through.
-        :rtype: ~azure.cosmos.aio.UserProxy
-        """
-        reject_unsupported_rust_arguments(self, kwargs)
-        require_legacy_api(self.client_connection, "DatabaseProxy.replace_user", item_context=self._item_context)
-
-        request_options = _build_options(kwargs)
-
-        replaced_user = await self.client_connection.ReplaceUser(
-            user_link=self._get_user_link(user), user=body, options=request_options, **kwargs)
-
-        return UserProxy(
-            client_connection=self.client_connection,
-            id=replaced_user["id"],
-            database_link=self.database_link,
-            properties=replaced_user
-        )
-
-    @distributed_trace_async
-    async def delete_user(
-        self,
-        user: Union[str, UserProxy, Mapping[str, Any]],
-        **kwargs: Any
-    ) -> None:
-        """Legacy-only: delete a Cosmos user from this database.
-
-        :param user: The ID (name), dict representing the properties or :class:`UserProxy`
-            instance of the user to be deleted.
-        :type user: Union[str, dict[str, Any], ~azure.cosmos.aio.UserProxy]
-        :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[dict[str, str], None], None]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The user wasn't deleted successfully.
-        :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The user does not exist in the container.
-        :rtype: None
-        """
-        reject_unsupported_rust_arguments(self, kwargs)
-        require_legacy_api(self.client_connection, "DatabaseProxy.delete_user", item_context=self._item_context)
-
-        request_options = _build_options(kwargs)
-
-        await self.client_connection.DeleteUser(
-            user_link=self._get_user_link(user), options=request_options, **kwargs
         )
 
     @distributed_trace_async

@@ -357,12 +357,15 @@ def test_delete_conditions_are_forwarded_without_ignored_warnings(delete_case, l
         assert condition == ({"type": expected[0], "condition": expected[1]} if expected else None)
         assert "etag" not in call.kwargs
     else:
-        headers = case.backend.execute.call_args.args[0].headers
+        prepared = case.backend.execute.call_args.args[0]
+        condition = prepared.settings.item
         if expected:
-            assert headers["If-Match" if expected[0] == "IfMatch" else "If-None-Match"] == expected[1]
+            assert getattr(condition, "if_match" if expected[0] == "IfMatch" else "if_none_match") == expected[1]
+            assert getattr(condition, "if_none_match" if expected[0] == "IfMatch" else "if_match") is None
         else:
-            assert "If-Match" not in headers
-            assert "If-None-Match" not in headers
+            assert condition.if_match is None
+            assert condition.if_none_match is None
+        assert not {"if-match", "if-none-match"}.intersection(key.lower() for key in prepared.headers)
 
 
 @pytest.mark.parametrize("legacy", [False, True])

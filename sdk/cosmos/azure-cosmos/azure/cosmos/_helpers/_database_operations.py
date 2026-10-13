@@ -3,13 +3,23 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Coordinate account-level database operations through the selected Python backend.
+"""Coordinate database creation, property reads, deletion, and get-or-create.
 
-Public clients delegate execution and response handling here. Builders prepare
-prepared requests without transport state; unsupported Rust-path settings fail
-before execution rather than falling back. Explicit legacy-path selection
-retains its connection calls. Creation accepts client-owned response state and
-gives its success hook independent copies of that operation's result.
+This module is Python wrapper code. Its scope is the database resource, such
+as "sales", not the complete database API or operations on its containers and
+items. Get-or-create means obtaining the database, creating it if it does not
+exist.
+
+For example, DatabaseProxy.read() asks DatabaseHelper for the properties of
+"sales". DatabaseHelper prepares the read and passes it to BindingAdapter.
+
+BindingAdapter calls the binding, which translates the prepared inputs into
+a Rust driver call. The Rust driver requests the properties from the service
+backend.
+
+The result returns through the binding and BindingAdapter. DatabaseHelper
+uses the Python response-handling code to turn the returned body bytes into
+the database properties given to the customer app.
 """
 
 from __future__ import annotations

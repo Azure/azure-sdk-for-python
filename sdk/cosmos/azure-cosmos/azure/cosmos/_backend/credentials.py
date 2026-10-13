@@ -14,6 +14,7 @@ resource tokens that grant access to particular resources, fail during
 construction. Resolving a credential does not fetch an access token or contact
 the service backend to check whether the supplied credential grants access.
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -25,6 +26,18 @@ from typing import Any, Iterator, Optional, Tuple
 
 from ._async_credential_bridge import AsyncTokenCredentialBridge
 from ._binding_adapter_shared import close_credential_bridge_quietly
+
+_RESOURCE_TOKEN_ERROR = (
+    "CosmosClient does not support resource-token (per-user / permission) credentials. "
+    "This capability is intentionally excluded. "
+    "Use an account key or a Microsoft Entra token credential."
+)
+
+
+def reject_resource_token_fields(credential: Mapping[str, Any]) -> None:
+    """Reject removed authentication fields even alongside a supported credential."""
+    if "resourceTokens" in credential or "permissionFeed" in credential:
+        raise ValueError(_RESOURCE_TOKEN_ERROR)
 
 
 def _is_async_credential(credential: Any) -> bool:
@@ -42,7 +55,9 @@ def _is_async_credential(credential: Any) -> bool:
         if asyncio.iscoroutinefunction(method) or inspect.iscoroutinefunction(method):
             return True
         unwrapped = inspect.unwrap(method) if callable(method) else method
-        if asyncio.iscoroutinefunction(unwrapped) or inspect.iscoroutinefunction(unwrapped):
+        if asyncio.iscoroutinefunction(unwrapped) or inspect.iscoroutinefunction(
+            unwrapped
+        ):
             return True
     # Also recognize async context entry when the method check did not detect it.
     if hasattr(credential, "__aenter__") and (
@@ -71,52 +86,46 @@ def _is_resource_token_credential(credential: Any) -> bool:
     return isinstance(credential, _AbcSequence)
 
 
-def resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
-    """Return (master_key, token_credential) with exactly one entry set.
-
-    For key authentication, accept a non-empty string or a dictionary whose
-    masterKey value is a non-empty string. An empty string raises ValueError
-    during client construction. For example, "" is rejected here, but accepting
-    a non-empty string does not establish that it belongs to the account.
-
-    An object with a synchronous get_token is passed through.
-    Async credentials use the async credential bridge, AsyncTokenCredentialBridge.
-
-    Resource-token authentication is intentionally excluded, not pending Rust
-    driver support. Those forms and other unrecognized inputs raise ValueError here.
-    Getting a token or using it with the service backend can still fail later.
-    """
+def validate_credential(credential: Any) -> None:
+    """Validate supported credentials without acquiring a bridge or contacting the service."""
+    if isinstance(credential, Mapping):
+        reject_resource_token_fields(credential)
     if isinstance(credential, str):
         if not credential:
-            raise ValueError(
-                "The account key must be a non-empty string."
-            )
-        return credential, None
+            raise ValueError("The account key must be a non-empty string.")
+        return
     if isinstance(credential, Mapping) and "masterKey" in credential:
         master_key = credential["masterKey"]
         if not isinstance(master_key, str) or not master_key:
             # Report an invalid key at client construction, before driver creation.
             raise ValueError(
-                "The Rust binding requires the 'masterKey' entry to be a non-empty string."
+                "CosmosClient requires the 'masterKey' entry to be a non-empty string."
             )
-        return master_key, None
-    # Async methods are callable too. Wrap them before accepting a plain get_token.
+        return
     if _is_async_credential(credential):
-        return None, AsyncTokenCredentialBridge.acquire(credential)
+        return
     get_token = getattr(credential, "get_token", None)
     if callable(get_token):
-        return None, credential
+        return
     if _is_resource_token_credential(credential):
-        raise ValueError(
-            "The Rust binding does not support resource-token (per-user / "
-            "permission) credentials. This capability is intentionally excluded. "
-            "Use an account key or a Microsoft Entra token credential."
-        )
+        raise ValueError(_RESOURCE_TOKEN_ERROR)
     raise ValueError(
-        "The Rust binding requires a master-key credential (a string, or a dict "
+        "CosmosClient requires a master-key credential (a string, or a dict "
         "with a 'masterKey' entry) or a Microsoft Entra token credential "
         "(synchronous or asynchronous). Resource-token authentication is intentionally excluded."
     )
+
+
+def resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
+    """Return a supported key or token credential, bridging async token methods."""
+    validate_credential(credential)
+    if isinstance(credential, str):
+        return credential, None
+    if isinstance(credential, Mapping) and "masterKey" in credential:
+        return credential["masterKey"], None
+    if _is_async_credential(credential):
+        return None, AsyncTokenCredentialBridge.acquire(credential)
+    return None, credential
 
 
 @contextmanager

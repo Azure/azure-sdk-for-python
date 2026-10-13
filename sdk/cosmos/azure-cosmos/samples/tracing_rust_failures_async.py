@@ -11,6 +11,7 @@ created. Client-scoped Rust transport faults intercept every CreateItem before
 forwarding it; this is not a physical socket outage or a Python binding mock.
 Each unique synthetic order is checked absent before and after the call.
 No spans are uploaded. Run in a fresh process with a rebuilt extension.
+The SDK must use Rust as its default backend.
 
 The timeout case retains the normal public settings and records which timer
 wins. The binding-timeout case overrides only the prepared driver budget to
@@ -153,9 +154,10 @@ async def run_case(exporter, connection, failure, mode):
     settings.tracing_enabled = mode != "global-disabled"
     async with CosmosClient.from_connection_string(
         connection,
-        _backend="rust",
         _fault_injection_rules=[rule],
     ) as client:
+        if client._adapter.name != "rust":
+            raise RuntimeError("This sample requires an SDK with Rust as the default backend.")
         container = client.get_database_client("sales").get_container_client("orders")
         properties = await container.read()
         if properties["partitionKey"]["paths"] != ["/customerId"]:

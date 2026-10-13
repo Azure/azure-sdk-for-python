@@ -242,7 +242,7 @@ class ContainerProxy:
 
         return partition_key._get_epk_range_for_partition_key(partition_key_value)
 
-    @distributed_trace_async
+    @trace_operation_async(binding_operation="read_container")
     async def read(
         self,
         *,
@@ -1472,7 +1472,7 @@ class ContainerProxy:
 
         return result
 
-    @distributed_trace_async
+    @trace_operation_async(binding_operation="replace_item")
     async def replace_item(
         self,
         item: Union[str, Mapping[str, Any]],
@@ -1559,7 +1559,7 @@ class ContainerProxy:
             **kwargs,
         )
 
-    @distributed_trace_async
+    @trace_operation_async(binding_operation="patch_item")
     async def patch_item(
         self,
         item: Union[str, dict[str, Any]],
@@ -1581,9 +1581,10 @@ class ContainerProxy:
         """ Patches the specified item with the provided operations if it
          exists in the container.
 
-        With Rust, caller If-Match is supported; filter predicates and If-None-Match
-        raise ``NotImplementedError`` without legacy replay. Rust retains its Auto
-        strategy (server PATCH or client-side Read-Modify-Replace). One explicit
+        With Rust, caller If-Match and filter predicates are supported; If-None-Match
+        raises ``NotImplementedError`` without legacy replay. A filter predicate
+        selects server-side patch; otherwise Rust retains its Auto strategy
+        (server PATCH or client-side Read-Modify-Replace). One explicit
         timeout covers preparation, metadata, and execution. Success hooks receive
         isolated body/header snapshots and are never retried.
 

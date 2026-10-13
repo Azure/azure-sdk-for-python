@@ -220,6 +220,8 @@ fn config_fingerprint(config: Option<&Bound<'_, PyAny>>) -> PyResult<String> {
                 "operation_type": item.getattr("operation_type")?.extract::<String>()?,
                 "status_code": item.getattr("status_code")?.extract::<Option<u16>>()?,
                 "error_type": get_config_opt::<String>(item, "error_type")?,
+                "response_body": get_config_opt::<Vec<u8>>(item, "response_body")?.unwrap_or_default(),
+                "response_headers": fault_response_headers_from_config(item)?,
                 "sub_status": item.getattr("sub_status")?.extract::<u16>()?,
                 "container_id": item.getattr("container_id")?.extract::<Option<String>>()?,
                 "region": item.getattr("region")?.extract::<Option<String>>()?,
@@ -536,7 +538,7 @@ pub(crate) fn acquire_driver_handle(
         }
         None => {
             let key = master_key.ok_or_else(|| PyValueError::new_err(AUTH_REQUIRED_ERROR))?;
-            AccountReference::with_master_key(endpoint_url, key.to_string())
+            AccountReference::with_account_key(endpoint_url, key.to_string())
         }
     };
 
@@ -696,6 +698,29 @@ fn user_agent_suffix_from_config(config: &Bound<'_, PyAny>) -> PyResult<Option<U
     }
 }
 
+fn fault_response_headers_from_config(rule: &Bound<'_, PyAny>) -> PyResult<BTreeMap<String, String>> {
+    let mut headers = BTreeMap::new();
+    if let Some(value) = get_config_opt::<PyObject>(rule, "response_headers")? {
+        for pair in value.bind(rule.py()).call_method0("items")?.iter()? {
+            let (name, value) = pair?.extract::<(String, String)>()?;
+            if name.is_empty()
+                || !name.bytes().all(|c| c.is_ascii_alphanumeric() || b"!#$%&'*+-.^_`|~".contains(&c))
+                || value.chars().any(|c| (c < ' ' && c != '\t') || c == '\u{7f}')
+            {
+                return Err(PyValueError::new_err("fault rule response_headers contains an invalid header"));
+            }
+            let name = name.to_ascii_lowercase();
+            if name == "x-ms-substatus" {
+                return Err(PyValueError::new_err("fault rule response_headers must use sub_status instead of x-ms-substatus"));
+            }
+            if headers.insert(name, value).is_some() {
+                return Err(PyValueError::new_err("fault rule response_headers contains duplicate case-insensitive names"));
+            }
+        }
+    }
+    Ok(headers)
+}
+
 fn fault_rules_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Arc<FaultInjectionRule>>> {
     let value = match config.getattr("fault_injection_rules") {
         Ok(value) => value,
@@ -733,6 +758,18 @@ fn fault_rules_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Arc<FaultI
         let status_code: Option<u16> = item.getattr("status_code")?.extract()?;
         let sub_status: u16 = item.getattr("sub_status")?.extract()?;
         let error_type = get_config_opt::<String>(&item, "error_type")?;
+        let response_body = get_config_opt::<Vec<u8>>(&item, "response_body")?.unwrap_or_default();
+        let response_headers = fault_response_headers_from_config(&item)?;
+        if error_type.is_some() && !response_body.is_empty() {
+            return Err(PyValueError::new_err(
+                "fault rule response_body requires status_code, not error_type",
+            ));
+        }
+        if error_type.is_some() && !response_headers.is_empty() {
+            return Err(PyValueError::new_err(
+                "fault rule response_headers requires status_code, not error_type",
+            ));
+        }
         let delay_ms: u64 = item.getattr("delay_ms")?.extract()?;
         let probability: f32 = item.getattr("probability")?.extract()?;
         let mut result = FaultInjectionResultBuilder::new().with_probability(probability);
@@ -743,13 +780,19 @@ fn fault_rules_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Arc<FaultI
                 if sub_status != 0 {
                     response = response.with_sub_status(sub_status);
                 }
-                result.with_custom_response(response.build())
+                for (name, value) in response_headers {
+                    response = response.with_header(name, value);
+                }
+                result.with_custom_response(response.with_body(response_body).build())
             }
             (None, Some("ConnectionError")) if sub_status == 0 => {
                 result.with_error(FaultInjectionErrorType::ConnectionError)
             }
+            (None, Some("ResponseTimeout")) if sub_status == 0 => {
+                result.with_error(FaultInjectionErrorType::ResponseTimeout)
+            }
             _ => return Err(PyValueError::new_err(
-                "fault rule requires status_code 100..599 or error_type ConnectionError, not both; connection errors cannot have sub_status",
+                "fault rule requires status_code 100..599 or error_type ConnectionError/ResponseTimeout, not both; transport errors cannot have sub_status",
             )),
         };
         if delay_ms != 0 {
@@ -961,6 +1004,54 @@ pub(crate) fn _debug_fault_injection_rule_hit_count(driver_handle: &str, rule_id
     Ok(rule.hit_count())
 }
 
+/// Toggle only an explicitly configured rule; callers must use isolated rule IDs.
+// PyO3 generates the identity PyErr conversion in the Python-call wrapper.
+#[allow(clippy::useless_conversion)]
+#[pyfunction]
+pub(crate) fn _debug_set_fault_injection_rule_enabled(
+    driver_handle: &str,
+    rule_id: &str,
+    enabled: bool,
+) -> PyResult<()> {
+    let cache = drivers().read();
+    let entry = cache
+        .get(driver_handle)
+        .ok_or_else(|| PyValueError::new_err("unknown or closed Rust client handle"))?;
+    let rule = entry.fault_rules.get(rule_id).ok_or_else(|| {
+        PyValueError::new_err(format!("unknown fault injection rule id: {rule_id:?}"))
+    })?;
+    if enabled {
+        rule.enable();
+    } else {
+        rule.disable();
+    }
+    Ok(())
+}
+
+/// Inspect already-cached regions without causing a metadata request.
+#[pyfunction]
+pub(crate) fn _debug_cached_account_regions(
+    py: Python<'_>,
+    driver_handle: &str,
+) -> PyResult<Option<(Vec<String>, Vec<String>)>> {
+    let driver = drivers()
+        .read()
+        .get(driver_handle)
+        .map(|entry| Arc::clone(&entry.driver))
+        .ok_or_else(|| PyValueError::new_err("unknown or closed Rust client handle"))?;
+    let runtime = require_runtime_context("inspect cached account regions")?;
+    Ok(py.allow_threads(|| {
+        runtime.tokio_rt.block_on(async {
+            driver.cached_account_regions_for_testing().await.map(|(writes, reads)| {
+                (
+                    writes.iter().map(|region| region.as_str().to_owned()).collect(),
+                    reads.iter().map(|region| region.as_str().to_owned()).collect(),
+                )
+            })
+        })
+    }))
+}
+
 #[cfg(test)]
 mod tests {
     use super::{
@@ -971,6 +1062,114 @@ mod tests {
         validate_runtime_context, RuntimeContext, RuntimeSettings, AUTH_EXCLUSIVE_ERROR,
         AUTH_REQUIRED_ERROR,
     };
+
+    #[test]
+    fn fault_wait_budget_config_preserves_fractional_seconds() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let config = PyModule::import_bound(py, "types").unwrap()
+                .getattr("SimpleNamespace").unwrap().call0().unwrap();
+            config.setattr("throttling_max_retry_count", 5).unwrap();
+            for (seconds, milliseconds) in [(2.5, 2500), (10.0, 10000)] {
+                config.setattr("throttling_max_retry_wait_time_seconds", seconds).unwrap();
+                let options = operation_options_from_config(Some(&config)).unwrap();
+                let throttle = options.throttling_retry_options.unwrap();
+                assert_eq!(throttle.max_retry_count, Some(5));
+                assert_eq!(throttle.max_retry_wait_time, Some(Duration::from_millis(milliseconds)));
+            }
+        });
+    }
+
+    #[test]
+    fn fault_response_headers_are_forwarded_and_isolate_cached_drivers() {
+        use super::{config_fingerprint, fault_rules_from_config};
+        use azure_core::http::headers::HeaderName;
+
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let module = PyModule::from_code_bound(
+                py,
+                r#"
+from types import MappingProxyType, SimpleNamespace
+headers = {"X-MS-Retry-After-MS": "1000", "x-test": "value"}
+rule = SimpleNamespace(
+    id="wait", operation_type="ReadItem", status_code=429, sub_status=17,
+    container_id="orders", region=None, delay_ms=0, probability=1.0,
+    hit_limit=None, enabled=True, response_headers=MappingProxyType(headers))
+config = SimpleNamespace(fault_injection_rules=(rule,))
+equivalent = {"x-test": "value", "x-ms-retry-after-ms": "1000"}
+invalid = [
+    {"": "value"}, {"bad name": "value"}, {"bad:header": "value"},
+    {"x-test": "bad\r\nvalue"}, {"x-test": "\x00"}, {"x-test": "\x7f"},
+    {"x-test": "1", "X-Test": "2"}, {"X-MS-Substatus": "1"},
+]
+"#,
+                "fault_headers.py",
+                "fault_headers",
+            ).unwrap();
+            let config = module.getattr("config").unwrap();
+            let rule = module.getattr("rule").unwrap();
+            let first = config_fingerprint(Some(&config)).unwrap();
+            let rules = fault_rules_from_config(&config).unwrap();
+            let response = rules[0].result().custom_response().unwrap();
+            assert_eq!(u16::from(response.status_code()), 429);
+            assert_eq!(response.headers().get_optional_str(&HeaderName::from_static("x-ms-retry-after-ms")), Some("1000"));
+            assert_eq!(response.headers().get_optional_str(&HeaderName::from_static("x-ms-substatus")), Some("17"));
+            assert!(rules[0].result().delay().is_none());
+            rule.setattr("response_headers", module.getattr("equivalent").unwrap()).unwrap();
+            assert_eq!(first, config_fingerprint(Some(&config)).unwrap());
+            let headers = rule.getattr("response_headers").unwrap();
+            headers.set_item("x-ms-retry-after-ms", "2000").unwrap();
+            assert_ne!(first, config_fingerprint(Some(&config)).unwrap());
+            let changed = fault_rules_from_config(&config).unwrap();
+            assert_eq!(
+                changed[0].result().custom_response().unwrap().headers()
+                    .get_optional_str(&HeaderName::from_static("x-ms-retry-after-ms")),
+                Some("2000"),
+            );
+            for invalid in module.getattr("invalid").unwrap().iter().unwrap() {
+                rule.setattr("response_headers", invalid.unwrap()).unwrap();
+                assert!(fault_rules_from_config(&config).is_err());
+                assert!(config_fingerprint(Some(&config)).is_err());
+            }
+            rule.setattr("response_headers", headers).unwrap();
+            rule.setattr("status_code", py.None()).unwrap();
+            rule.setattr("sub_status", 0).unwrap();
+            for error_type in ["ConnectionError", "ResponseTimeout"] {
+                rule.setattr("error_type", error_type).unwrap();
+                assert!(fault_rules_from_config(&config).unwrap_err().to_string().contains("response_headers"));
+            }
+        });
+    }
+
+    #[test]
+    fn fault_response_body_is_preserved_and_changes_driver_identity() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let module = PyModule::from_code_bound(py, r#"
+from types import SimpleNamespace
+rule = SimpleNamespace(
+    id="topology", operation_type="MetadataReadDatabaseAccount",
+    status_code=200, sub_status=0, container_id=None, region=None,
+    delay_ms=0, probability=1.0, hit_limit=None, enabled=True,
+    response_body=b'{"id":"first"}')
+config = SimpleNamespace(fault_injection_rules=(rule,))
+"#, "fault_body.py", "fault_body").unwrap();
+            let config = module.getattr("config").unwrap();
+            let rule = module.getattr("rule").unwrap();
+            let before = super::config_fingerprint(Some(&config)).unwrap();
+            let rules = super::fault_rules_from_config(&config).unwrap();
+            assert_eq!(
+                rules[0].result().custom_response().unwrap().body(),
+                br#"{"id":"first"}"#
+            );
+            rule.setattr("response_body", pyo3::types::PyBytes::new_bound(py, br#"{"id":"second"}"#)).unwrap();
+            assert_ne!(before, super::config_fingerprint(Some(&config)).unwrap());
+            rule.setattr("status_code", py.None()).unwrap();
+            rule.setattr("error_type", "ConnectionError").unwrap();
+            assert!(super::fault_rules_from_config(&config).is_err());
+        });
+    }
     use azure_data_cosmos_driver::options::{
         AvailabilityStrategy, HedgeThreshold, HedgingStrategy, OperationOptionsBuilder,
         OperationOptionsView, ReadConsistencyStrategy,
@@ -1170,6 +1369,76 @@ class ExplicitNone:
     }
 
     #[tokio::test]
+    async fn fault_rule_toggle_is_scoped_and_rejects_unknown_or_closed_handles() {
+        use azure_data_cosmos_driver::{
+            fault_injection::{
+                FaultInjectionErrorType, FaultInjectionResultBuilder, FaultInjectionRuleBuilder,
+            },
+            in_memory_emulator::{InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion},
+            models::AccountReference,
+            options::DriverOptions,
+        };
+        use std::{collections::HashMap, sync::Arc};
+        use url::Url;
+
+        pyo3::prepare_freethreaded_python();
+        let endpoint = Url::parse("https://toggle.emulator.local").unwrap();
+        let config =
+            VirtualAccountConfig::new(vec![VirtualRegion::new("East US", endpoint.clone())])
+                .unwrap();
+        let emulator = Arc::new(InMemoryEmulatorHttpClient::new(config));
+        let runtime = emulator.runtime_builder().build().await.unwrap();
+        let driver = runtime
+            .create_driver(
+                DriverOptions::builder(AccountReference::with_account_key(
+                    endpoint,
+                    "ZW11bGF0b3Ita2V5",
+                ))
+                .build(),
+            )
+            .await
+            .unwrap();
+        let rules: Vec<_> = ["selected", "other"]
+            .into_iter()
+            .map(|id| {
+                let rule = Arc::new(
+                    FaultInjectionRuleBuilder::new(
+                        id,
+                        FaultInjectionResultBuilder::new()
+                            .with_error(FaultInjectionErrorType::Timeout)
+                            .build(),
+                    )
+                    .build(),
+                );
+                rule.disable();
+                rule
+            })
+            .collect();
+        let handle = "fault-rule-toggle-scoping-test";
+        super::drivers().write().insert(
+            handle.into(),
+            super::DriverEntry {
+                driver,
+                fault_rules: rules
+                    .iter()
+                    .map(|rule| (rule.id().to_owned(), Arc::clone(rule)))
+                    .collect::<HashMap<_, _>>(),
+                refcount: 1,
+            },
+        );
+        for enabled in [true, true, false, false] {
+            super::_debug_set_fault_injection_rule_enabled(handle, "selected", enabled).unwrap();
+            assert_eq!(rules[0].is_enabled(), enabled);
+            assert!(!rules[1].is_enabled());
+            assert_eq!(rules[0].hit_count(), 0);
+        }
+        assert!(super::_debug_set_fault_injection_rule_enabled(handle, "missing", true).is_err());
+        super::release_driver_handle(handle).unwrap();
+        assert!(super::_debug_set_fault_injection_rule_enabled(handle, "selected", true).is_err());
+        assert!(!rules[0].is_enabled());
+    }
+
+    #[tokio::test]
     async fn release_preserves_other_clients_and_operation_references() {
         use azure_data_cosmos_driver::{
             in_memory_emulator::{InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion},
@@ -1185,7 +1454,7 @@ class ExplicitNone:
                 .unwrap();
         let emulator = Arc::new(InMemoryEmulatorHttpClient::new(config));
         let runtime = emulator.runtime_builder().build().await.unwrap();
-        let account = AccountReference::with_master_key(endpoint, "ZW11bGF0b3Ita2V5");
+        let account = AccountReference::with_account_key(endpoint, "ZW11bGF0b3Ita2V5");
         let driver = runtime
             .create_driver(DriverOptions::builder(account).build())
             .await
@@ -1332,7 +1601,7 @@ class Config:
     }
 
     #[test]
-    fn fault_connection_error_preserves_response_rules_and_cache_isolation() {
+    fn fault_transport_errors_preserve_response_rules_and_cache_isolation() {
         use super::{config_fingerprint, fault_rules_from_config, FaultInjectionErrorType};
         pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
@@ -1369,7 +1638,22 @@ config = SimpleNamespace(fault_injection_rules=(rule,))
             );
             assert!(rules[0].result().custom_response().is_none());
             assert_eq!(rules[0].result().delay(), Some(Duration::from_secs(2)));
-            assert_ne!(before, config_fingerprint(Some(&config)).unwrap());
+            let connection_fingerprint = config_fingerprint(Some(&config)).unwrap();
+            assert_ne!(before, connection_fingerprint);
+            rule.setattr("error_type", "ResponseTimeout").unwrap();
+            let rules = fault_rules_from_config(&config).unwrap();
+            assert_eq!(rules[0].result().error_type(), Some(FaultInjectionErrorType::ResponseTimeout));
+            assert!(rules[0].result().custom_response().is_none());
+            assert_eq!(rules[0].result().delay(), Some(Duration::from_secs(2)));
+            let response_fingerprint = config_fingerprint(Some(&config)).unwrap();
+            assert_ne!(before, response_fingerprint);
+            assert_ne!(connection_fingerprint, response_fingerprint);
+            rule.setattr("status_code", 503).unwrap();
+            assert!(fault_rules_from_config(&config).is_err());
+            rule.setattr("status_code", py.None()).unwrap();
+            rule.setattr("response_body", pyo3::types::PyBytes::new_bound(py, b"body")).unwrap();
+            assert!(fault_rules_from_config(&config).is_err());
+            rule.setattr("response_body", pyo3::types::PyBytes::new_bound(py, b"")).unwrap();
             rule.setattr("sub_status", 1).unwrap();
             assert!(fault_rules_from_config(&config).is_err());
             rule.setattr("sub_status", 0).unwrap();

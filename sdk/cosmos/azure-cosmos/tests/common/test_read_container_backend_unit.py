@@ -108,7 +108,7 @@ def test_legacy_read_copies_preserve_original_methods(surface, source_file, clas
     """The copied container tests still match the shipped originals, sync and async.
 
     Each copy is compared against its source in parsed form, so the assertions
-    must be identical while formatting and comments may differ. The set of
+    must be identical while formatting, comments and explanatory docstrings may differ. The set of
     copied tests is pinned, so dropping one is a failure rather than a quieter
     run.
 
@@ -122,10 +122,15 @@ def test_legacy_read_copies_preserve_original_methods(surface, source_file, clas
 
     def methods(text):
         cls = next(node for node in ast.parse(text).body if isinstance(node, ast.ClassDef) and node.name == class_name)
-        return {
-            node.name: node for node in cls.body
+        found = {
+            node.name: node
+            for node in cls.body
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name.startswith("test_")
         }
+        for method in found.values():
+            if ast.get_docstring(method) is not None:
+                method.body = method.body[1:]
+        return found
 
     copied, source = methods(copied_text), methods(source_text)
     assert set(copied) == set(method_names)
@@ -265,9 +270,9 @@ def test_conditions_preserved_without_unused_etag_fallback(read_case, kwargs, ex
         )
     else:
         case.connection.ReadContainer.assert_not_called()
-        if expected:
-            headers = case.backend.execute.call_args.args[0].headers
-            assert headers["If-Match" if expected[0] == "IfMatch" else "If-None-Match"] == expected[1]
+        conditions = case.backend.execute.call_args.args[0].settings.item
+        assert conditions.if_match == (expected[1] if expected and expected[0] == "IfMatch" else None)
+        assert conditions.if_none_match == (expected[1] if expected and expected[0] == "IfNoneMatch" else None)
 
 
 @pytest.mark.parametrize("kwargs,error", [

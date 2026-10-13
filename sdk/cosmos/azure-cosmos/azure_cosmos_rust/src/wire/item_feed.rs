@@ -648,7 +648,7 @@ mod tests {
             );
         }
         let runtime = emulator.runtime_builder().build().await.unwrap();
-        let account = AccountReference::with_master_key(url, "ZW11bGF0b3Ita2V5");
+        let account = AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5");
         let driver = runtime
             .create_driver(
                 DriverOptions::builder(account)

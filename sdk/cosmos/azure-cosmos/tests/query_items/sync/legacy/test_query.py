@@ -1,11 +1,13 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Sync ``test_paging_with_continuation_token`` test against the
-``_backend="rust"`` path.
+"""Copied sync query tests against the ``_backend="rust"`` path.
 
 Self-contained: builds its own database + container in ``setUp`` and
-deletes them in ``tearDown``. The class name and method name match the
+registers cleanup immediately. The class name and method names match the
 source at ``tests/test_query.py`` so test IDs differ only by path.
+The None-parameters, ordered-paging, and OFFSET LIMIT tests reuse the owned
+container; their query inputs and assertions are unchanged.
+DISTINCT retains its original composite indexes in a separate owned container.
 
 Run with::
 
@@ -18,6 +20,7 @@ import uuid
 import pytest
 
 from azure.cosmos import CosmosClient, PartitionKey
+from query_items._legacy_distinct_helpers import DistinctConfig
 
 
 HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
@@ -29,22 +32,256 @@ KEY = os.environ.get(
 
 @pytest.mark.cosmosEmulator
 class TestQuery(unittest.TestCase):
+    config = DistinctConfig
 
     def setUp(self) -> None:
         self.client = CosmosClient(HOST, KEY, _backend="rust")
+        self.addCleanup(self.client.close)
         self._db_id = "legacy_query_paging_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
         self.database = self.client.create_database(self._db_id)
+        self.addCleanup(self._delete_owned_database)
+        print(f"\nOwned query database: {self._db_id}")
         self.container = self.database.create_container(
             id=self._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
 
-    def tearDown(self) -> None:
-        try:
-            self.client.delete_database(self._db_id)
-        except Exception:  # pylint: disable=broad-except
-            pass
+    def _delete_owned_database(self) -> None:
+        self.client.delete_database(self._db_id)
+        print(f"\nDeleted owned query database: {self._db_id}")
+
+    def test_query_items_with_parameters_none(self):
+        """Test that query_items handles parameters=None correctly (issue #43662)."""
+        # Source: tests/test_query.py::TestQuery.test_query_items_with_parameters_none
+        created_collection = self.container
+
+        # Create test documents
+        doc1_id = 'doc1_' + str(uuid.uuid4())
+        doc2_id = 'doc2_' + str(uuid.uuid4())
+        created_collection.create_item(body={'pk': 'pk1', 'id': doc1_id, 'value1': 1})
+        created_collection.create_item(body={'pk': 'pk2', 'id': doc2_id, 'value1': 2})
+
+        # Test 1: Explicitly passing parameters=None should not cause TypeError
+        query = 'SELECT * FROM c'
+        query_iterable = created_collection.query_items(
+            query=query,
+            parameters=None,
+            enable_cross_partition_query=True
+        )
+        results = list(query_iterable)
+        self.assertEqual(len(results), 2)
+
+        # Test 2: parameters=None with partition_key should work
+        query_iterable = created_collection.query_items(
+            query=query,
+            parameters=None,
+            partition_key='pk1'
+        )
+        results = list(query_iterable)
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['id'], doc1_id)
+
+        # Test 3: Verify parameterized query still works with actual parameters
+        query_with_params = 'SELECT * FROM c WHERE c.value1 = @value'
+        query_iterable = created_collection.query_items(
+            query=query_with_params,
+            parameters=[{'name': '@value', 'value': 2}],
+            enable_cross_partition_query=True
+        )
+        results = list(query_iterable)
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['id'], doc2_id)
+
+        # Test 4: Query without parameters argument should work (default behavior)
+        query_iterable = created_collection.query_items(
+            query=query,
+            enable_cross_partition_query=True
+        )
+        results = list(query_iterable)
+        self.assertEqual(len(results), 2)
+
+        self.database.delete_container(created_collection.id)
+
+    def test_query_pagination_with_max_item_count(self):
+        """Test pagination showing per-page limits and total results counting."""
+        # Source: tests/test_query.py::TestQuery.test_query_pagination_with_max_item_count
+        created_collection = self.container
+
+        # Create 20 items in a single partition
+        total_items = 20
+        partition_key_value = "test_pk"
+        for i in range(total_items):
+            document_definition = {
+                'pk': partition_key_value,
+                'id': f'item_{i}',
+                'value': i
+            }
+            created_collection.create_item(body=document_definition)
+
+        # Test pagination with max_item_count limiting items per page
+        max_items_per_page = 7
+        query = "SELECT * FROM c WHERE c.pk = @pk ORDER BY c['value']"
+        query_iterable = created_collection.query_items(
+            query=query,
+            parameters=[{"name": "@pk", "value": partition_key_value}],
+            partition_key=partition_key_value,
+            max_item_count=max_items_per_page
+        )
+
+        # Iterate through pages and verify per-page counts
+        all_fetched_results = []
+        page_count = 0
+        item_pages = query_iterable.by_page()
+
+        for page in item_pages:
+            page_count += 1
+            items_in_page = list(page)
+            all_fetched_results.extend(items_in_page)
+
+            # Each page should have at most max_item_count items
+            # (last page may have fewer)
+            self.assertLessEqual(len(items_in_page), max_items_per_page)
+
+        # Verify total results match expected count
+        self.assertEqual(len(all_fetched_results), total_items)
+
+        # Verify we got the expected number of pages
+        # 20 items with max 7 per page = 3 pages (7, 7, 6)
+        self.assertEqual(page_count, 3)
+
+        # Verify ordering is maintained
+        for i, item in enumerate(all_fetched_results):
+            self.assertEqual(item['value'], i)
+
+        self.database.delete_container(created_collection.id)
+
+    def test_offset_limit(self):
+        # Source: tests/test_query.py::TestQuery.test_offset_limit
+        created_collection = self.container
+        values = []
+        for i in range(10):
+            document_definition = {'pk': i, 'id': 'myId' + str(uuid.uuid4()), 'value': i // 3}
+            values.append(created_collection.create_item(body=document_definition)['pk'])
+
+        self._validate_distinct_offset_limit(created_collection=created_collection,
+                                             query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 0 LIMIT 2',
+                                             results=[0, 1])
+
+        self._validate_distinct_offset_limit(created_collection=created_collection,
+                                             query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 2 LIMIT 2',
+                                             results=[2, 3])
+
+        self._validate_distinct_offset_limit(created_collection=created_collection,
+                                             query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 4 LIMIT 3',
+                                             results=[])
+
+        self._validate_offset_limit(created_collection=created_collection,
+                                    query='SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5',
+                                    results=values[:5])
+
+        self._validate_offset_limit(created_collection=created_collection,
+                                    query='SELECT * from c ORDER BY c.pk OFFSET 5 LIMIT 10',
+                                    results=values[5:])
+
+        self._validate_offset_limit(created_collection=created_collection,
+                                    query='SELECT * from c ORDER BY c.pk OFFSET 10 LIMIT 5',
+                                    results=[])
+
+        self._validate_offset_limit(created_collection=created_collection,
+                                    query='SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1',
+                                    results=[])
+        self.database.delete_container(created_collection.id)
+
+    def _validate_offset_limit(self, created_collection, query, results):
+        query_iterable = created_collection.query_items(
+            query=query,
+            enable_cross_partition_query=True
+        )
+        self.assertListEqual(list(map(lambda doc: doc['pk'], list(query_iterable))), results)
+
+    def _validate_distinct_offset_limit(self, created_collection, query, results):
+        query_iterable = created_collection.query_items(
+            query=query,
+            enable_cross_partition_query=True
+        )
+        self.assertListEqual(list(map(lambda doc: doc["value"], list(query_iterable))), results)
+
+    def test_distinct(self):
+        # Source: tests/test_query.py::TestQuery.test_distinct
+        distinct_field = 'distinct_field'
+        pk_field = "pk"
+        different_field = "different_field"
+
+        created_collection = self.database.create_container(
+            id='collection with composite index ' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk", kind="Hash"),
+            indexing_policy={
+                "compositeIndexes": [
+                    [{"path": "/" + pk_field, "order": "ascending"},
+                     {"path": "/" + distinct_field, "order": "ascending"}],
+                    [{"path": "/" + distinct_field, "order": "ascending"},
+                     {"path": "/" + pk_field, "order": "ascending"}]
+                ]
+            }
+        )
+        documents = []
+        for i in range(5):
+            j = i
+            while j > i - 5:
+                document_definition = {pk_field: i, 'id': str(uuid.uuid4()), distinct_field: j}
+                documents.append(created_collection.create_item(body=document_definition))
+                document_definition = {pk_field: i, 'id': str(uuid.uuid4()), distinct_field: j}
+                documents.append(created_collection.create_item(body=document_definition))
+                document_definition = {pk_field: i, 'id': str(uuid.uuid4())}
+                documents.append(created_collection.create_item(body=document_definition))
+                j -= 1
+
+        padded_docs = self.config._pad_with_none(documents, distinct_field)
+
+        self._validate_distinct(created_collection=created_collection,
+                                query='SELECT distinct c.%s from c' % distinct_field,  # nosec
+                                results=self.config._get_distinct_docs(padded_docs, distinct_field, None, False),
+                                is_select=True,
+                                fields=[distinct_field])
+
+        self._validate_distinct(created_collection=created_collection,
+                                query='SELECT distinct c.%s, c.%s from c' % (distinct_field, pk_field),  # nosec
+                                results=self.config._get_distinct_docs(padded_docs, distinct_field, pk_field, False),
+                                is_select=True,
+                                fields=[distinct_field, pk_field])
+
+        self._validate_distinct(created_collection=created_collection,
+                                query='SELECT distinct value c.%s from c' % distinct_field,  # nosec
+                                results=self.config._get_distinct_docs(padded_docs, distinct_field, None, True),
+                                is_select=True,
+                                fields=[distinct_field])
+
+        self._validate_distinct(created_collection=created_collection,
+                                query='SELECT distinct c.%s from c' % different_field,  # nosec
+                                results=['None'],
+                                is_select=True,
+                                fields=[different_field])
+
+        self.database.delete_container(created_collection.id)
+
+    def _validate_distinct(self, created_collection, query, results, is_select, fields):
+        query_iterable = created_collection.query_items(
+            query=query,
+            enable_cross_partition_query=True
+        )
+        query_results = list(query_iterable)
+
+        self.assertEqual(len(results), len(query_results))
+        query_results_strings = []
+        result_strings = []
+        for i in range(len(results)):
+            query_results_strings.append(self.config._get_query_result_string(query_results[i], fields))
+            result_strings.append(str(results[i]))
+        if is_select:
+            query_results_strings = sorted(query_results_strings)
+            result_strings = sorted(result_strings)
+        self.assertListEqual(result_strings, query_results_strings)
 
     def test_paging_with_continuation_token(self):
         """A continuation token replays the page that follows it.

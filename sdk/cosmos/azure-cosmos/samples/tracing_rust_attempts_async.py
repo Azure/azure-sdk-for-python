@@ -14,6 +14,7 @@ Use --read for a successful read of the setup order, or --read-missing for
 a read of a different, absent ID returning 404. Only the measured client
 request is inspected or optionally exported.
 OpenTelemetry, its SDK, and a rebuilt azure.cosmos._rust extension are required.
+The SDK must use Rust as its default backend.
 Use --azure-monitor to also export an allowlisted copy of the measured trace.
 Install samples/requirements-telemetry.txt and set
 APPLICATIONINSIGHTS_CONNECTION_STRING in the same terminal first. Local-only
@@ -181,8 +182,9 @@ async def run_proof(exporter, *, conflict=False, read=False, not_found=False, az
         "customerId": proof_name,
         "total": 125.5,
     }
-    # The selector is private migration scaffolding, not a customer-facing option.
-    async with CosmosClient.from_connection_string(os.environ["COSMOSDBCONNECTIONSTRING"], _backend="rust") as client:
+    async with CosmosClient.from_connection_string(os.environ["COSMOSDBCONNECTIONSTRING"]) as client:
+        if client._adapter.name != "rust":
+            raise RuntimeError("This sample requires an SDK with Rust as the default backend.")
         container = client.get_database_client("sales").get_container_client("orders")
         properties = await container.read()
         if properties["partitionKey"]["paths"] != ["/customerId"]:

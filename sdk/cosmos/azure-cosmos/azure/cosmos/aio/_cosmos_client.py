@@ -36,7 +36,7 @@ This module is Python wrapper code, not the binding or the Rust driver.
 import logging
 from .._backend.capabilities import reject_rust_arguments, reject_unsupported_rust_arguments
 from copy import copy
-from typing import Any, Optional, Union, cast, Mapping, Iterable, Callable, overload, Literal
+from typing import Any, Optional, Union, Mapping, Callable, overload, Literal
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import TokenCredential
@@ -48,6 +48,7 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos.offer import ThroughputProperties
 
 from .._backend.errors import raise_account_read_unsupported
+from .._backend.credentials import validate_credential
 from .._backend.constants import is_rust_backend
 from .._backend.client_config import _resolve_hedging
 from .._backend.transport_settings import resolve_client_transport_timeouts
@@ -76,7 +77,7 @@ from ._retry_utility_async import _ConnectionRetryPolicy
 __all__ = ("CosmosClient",)
 
 CredentialType = Union[
-    AsyncTokenCredential, CredentialDict, str, Mapping[str, Any], Iterable[Mapping[str, Any]]
+    AsyncTokenCredential, CredentialDict, str, Mapping[str, Any]
 ]
 
 def _build_auth(credential: CredentialType) -> CredentialDict:
@@ -84,17 +85,13 @@ def _build_auth(credential: CredentialType) -> CredentialDict:
     if isinstance(credential, str):
         auth['masterKey'] = credential
     elif isinstance(credential, Mapping):
-        if any(k for k in credential.keys() if k in ['masterKey', 'resourceTokens', 'permissionFeed']):
-            return cast(CredentialDict, credential)  # Backwards compatible
-        auth['resourceTokens'] = credential
-    elif isinstance(credential, Iterable):
-        auth['permissionFeed'] = cast(Iterable[Mapping[str, Any]], credential)
+        auth['masterKey'] = credential['masterKey']
     elif isinstance(credential, (TokenCredential, AsyncTokenCredential)):
         auth['clientSecretCredential'] = credential
     else:
         raise TypeError(
             "Unrecognized credential type. Please supply the master key as a string "
-            "or a dictionary, or resource tokens, or a list of permissions, or any instance of a class implementing"
+            "or a dictionary containing 'masterKey', or any instance of a class implementing"
             " AsyncTokenCredential (see azure.identity module for specific implementations "
             "such as ClientSecretCredential).")
     return auth
@@ -273,6 +270,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         If construction fails, the customer app does not receive a usable client.
         """
+        validate_credential(credential)
         kwargs = resolve_connection_policy_kwargs(kwargs)
         # Choose which backend this client will use. A ``_backend=`` argument
         # wins; otherwise the COSMOS_BACKEND environment variable decides;

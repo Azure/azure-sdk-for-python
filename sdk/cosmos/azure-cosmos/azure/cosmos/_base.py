@@ -279,9 +279,6 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if options.get("enableScanInQuery"):
         headers[http_constants.HttpHeaders.EnableScanInQuery] = options["enableScanInQuery"]
 
-    if options.get("resourceTokenExpirySeconds"):
-        headers[http_constants.HttpHeaders.ResourceTokenExpiry] = options["resourceTokenExpirySeconds"]
-
     if options.get("offerType"):
         headers[http_constants.HttpHeaders.OfferType] = options["offerType"]
 
@@ -341,7 +338,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     # formatdate guarantees RFC 1123 date format regardless of current locale
     headers[http_constants.HttpHeaders.XDate] = formatdate(timeval=None, localtime=False, usegmt=True)
 
-    if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
+    if cosmos_client_connection.master_key:
         resource_type = _internal_resourcetype(resource_type)
         authorization = _get_authorization_header(
             cosmos_client_connection, verb, path, resource_id, IsNameBased(resource_id), resource_type, headers
@@ -643,8 +640,6 @@ def IsMasterResource(resourceType: str) -> bool:
     return resourceType in (
         http_constants.ResourceType.Offer,
         http_constants.ResourceType.Database,
-        http_constants.ResourceType.User,
-        http_constants.ResourceType.Permission,
         http_constants.ResourceType.Topology,
         http_constants.ResourceType.DatabaseAccount,
         http_constants.ResourceType.PartitionKeyRange,

@@ -27,6 +27,7 @@ use super::driver_runner::{run_driver_operation_async, run_driver_operation_sync
 use super::request::{build_operation_options, RequestHeadersAndOptions};
 use super::response::{
     tuple_from_container_feed_result, tuple_from_query_containers_result, tuple_from_result,
+    tuple_from_result_with_attempts,
 };
 
 /// Create a container and convert the response for synchronous Python code.
@@ -37,13 +38,18 @@ pub(crate) fn run_create_container_operation<'py>(
     database_id: String,
     body_bytes: Vec<u8>,
     operation_name: &str,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     run_driver_operation_sync(
         py,
         driver_handle,
         operation_name,
         move |driver| run_create_container_future(driver, modifiers, database_id, body_bytes),
-        tuple_from_result,
+        if include_attempts {
+            tuple_from_result_with_attempts
+        } else {
+            tuple_from_result
+        },
     )
 }
 
@@ -55,13 +61,18 @@ pub(crate) fn run_create_container_operation_async<'py>(
     database_id: String,
     body_bytes: Vec<u8>,
     operation_name: &str,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     run_driver_operation_async(
         py,
         driver_handle,
         operation_name,
         move |driver| run_create_container_future(driver, modifiers, database_id, body_bytes),
-        tuple_from_result,
+        if include_attempts {
+            tuple_from_result_with_attempts
+        } else {
+            tuple_from_result
+        },
     )
 }
 
@@ -73,13 +84,18 @@ pub(crate) fn run_read_container_operation<'py>(
     database_id: String,
     container_id: String,
     operation_name: &str,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     run_driver_operation_sync(
         py,
         driver_handle,
         operation_name,
         move |driver| run_read_container_future(driver, modifiers, database_id, container_id),
-        tuple_from_result,
+        if include_attempts {
+            tuple_from_result_with_attempts
+        } else {
+            tuple_from_result
+        },
     )
 }
 
@@ -91,13 +107,18 @@ pub(crate) fn run_read_container_operation_async<'py>(
     database_id: String,
     container_id: String,
     operation_name: &str,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     run_driver_operation_async(
         py,
         driver_handle,
         operation_name,
         move |driver| run_read_container_future(driver, modifiers, database_id, container_id),
-        tuple_from_result,
+        if include_attempts {
+            tuple_from_result_with_attempts
+        } else {
+            tuple_from_result
+        },
     )
 }
 
@@ -109,13 +130,18 @@ pub(crate) fn run_delete_container_operation<'py>(
     database_id: String,
     container_id: String,
     operation_name: &str,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     run_driver_operation_sync(
         py,
         driver_handle,
         operation_name,
         move |driver| run_delete_container_future(driver, modifiers, database_id, container_id),
-        tuple_from_result,
+        if include_attempts {
+            tuple_from_result_with_attempts
+        } else {
+            tuple_from_result
+        },
     )
 }
 
@@ -127,13 +153,18 @@ pub(crate) fn run_delete_container_operation_async<'py>(
     database_id: String,
     container_id: String,
     operation_name: &str,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     run_driver_operation_async(
         py,
         driver_handle,
         operation_name,
         move |driver| run_delete_container_future(driver, modifiers, database_id, container_id),
-        tuple_from_result,
+        if include_attempts {
+            tuple_from_result_with_attempts
+        } else {
+            tuple_from_result
+        },
     )
 }
 

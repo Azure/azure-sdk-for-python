@@ -68,14 +68,13 @@ class _StubConnectionPolicy:
 class _StubClientConnection:
     """Minimal stand-in for the client connection ``GetHeaders`` expects.
 
-    ``master_key`` / ``resource_tokens`` are left unset so ``GetHeaders`` skips
+    ``master_key`` is left unset so ``GetHeaders`` skips
     the authorization step -- signing needs a real key and would add a header
     that is not option-derived anyway.
     """
 
     UseMultipleWriteLocations = False
     master_key = None
-    resource_tokens = None
     client_id = None
 
     def __init__(self):
@@ -166,7 +165,6 @@ _TRUTHY_CASES = [
     ("populateQueryMetrics", True),
     ("populateQuotaInfo", True),
     ("queryVersion", "1.0"),
-    ("resourceTokenExpirySeconds", 60),
     ("responseContinuationTokenLimitInKb", 8),
     ("supportedQueryFeatures", "OrderBy"),
     ("consistencyLevel", "Eventual"),
@@ -205,7 +203,6 @@ _FALSY_CASES = [
     ("maxIntegratedCacheStaleness", 0),
     ("offerThroughput", 0),
     ("responseContinuationTokenLimitInKb", 0),
-    ("resourceTokenExpirySeconds", 0),
     ("consistencyLevel", ""),
     ("continuation", ""),
     ("priorityLevel", ""),

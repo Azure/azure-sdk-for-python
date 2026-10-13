@@ -98,13 +98,14 @@ fn patch_operation(
 /// is None or empty, read the id from body_bytes. Missing or wrongly typed
 /// attributes raise instead; this does not select the legacy execution path.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false, include_fault_diagnostics=false))]
 pub(crate) fn create_item<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
+    include_fault_diagnostics: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "create_item")?;
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
@@ -122,6 +123,7 @@ pub(crate) fn create_item<'py>(
         "create_item",
         true,
         include_attempts,
+        include_fault_diagnostics,
         |item_ref, body| CosmosOperation::create_item(item_ref).with_body(body),
     )
 }
@@ -154,6 +156,7 @@ pub(crate) fn upsert_item<'py>(
         "upsert_item",
         true,
         include_attempts,
+        false,
         |item_ref, body| CosmosOperation::upsert_item(item_ref).with_body(body),
     )
 }
@@ -167,12 +170,13 @@ pub(crate) fn upsert_item<'py>(
 /// `no_response=True`. `If-Match` / `If-None-Match` flow through
 /// `custom_headers`.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn replace_item<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "replace_item")?;
     // A dictionary's resource address must not become a name-based replacement
@@ -192,6 +196,7 @@ pub(crate) fn replace_item<'py>(
         body_bytes,
         "replace_item",
         true,
+        include_attempts,
         false,
         |item_ref, body| CosmosOperation::replace_item(item_ref).with_body(body),
     )
@@ -227,6 +232,7 @@ pub(crate) fn delete_item<'py>(
         "delete_item",
         false,
         include_attempts,
+        false,
         |item_ref, _| CosmosOperation::delete_item(item_ref),
     )
 }
@@ -243,13 +249,14 @@ pub(crate) fn delete_item<'py>(
 /// `max_integrated_cache_staleness_in_ms`, is forwarded through
 /// `custom_headers` like any other per-request header.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false, include_fault_diagnostics=false))]
 pub(crate) fn read_item<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
+    include_fault_diagnostics: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "read_item")?;
     let (container_link, partition_key, mut modifiers, target) =
@@ -268,6 +275,7 @@ pub(crate) fn read_item<'py>(
         "read_item",
         false,
         include_attempts,
+        include_fault_diagnostics,
         |item_ref, _| CosmosOperation::read_item(item_ref),
     )
 }
@@ -284,12 +292,13 @@ pub(crate) fn read_item<'py>(
 /// the body and force service-side execution, including for increments.
 /// These binding checks raise errors; they do not repeat the operation through legacy.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn patch_item<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "patch_item")?;
     let (container_link, partition_key, mut modifiers, body_bytes) = extract_body_inputs(prepared)?;
@@ -314,6 +323,7 @@ pub(crate) fn patch_item<'py>(
         body_bytes,
         "patch_item",
         true,
+        include_attempts,
         false,
         move |item_ref, body| patch_operation(item_ref, body, precondition),
     )
@@ -322,13 +332,14 @@ pub(crate) fn patch_item<'py>(
 /// Async twin of `create_item`: identical inputs and driver work, returns a
 /// Python awaitable instead of a ready tuple.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false, include_fault_diagnostics=false))]
 pub(crate) fn create_item_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
+    include_fault_diagnostics: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "create_item")?;
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
@@ -346,6 +357,8 @@ pub(crate) fn create_item_async<'py>(
         "create_item",
         true,
         include_attempts,
+        include_fault_diagnostics,
+        None,
         |item_ref, body| CosmosOperation::create_item(item_ref).with_body(body),
     )
 }
@@ -375,6 +388,8 @@ pub(crate) fn upsert_item_async<'py>(
         "upsert_item",
         true,
         include_attempts,
+        false,
+        None,
         |item_ref, body| CosmosOperation::upsert_item(item_ref).with_body(body),
     )
 }
@@ -382,12 +397,13 @@ pub(crate) fn upsert_item_async<'py>(
 /// Async twin of `replace_item`: identical inputs and driver work (URL id from
 /// the request, not the body), returns a Python awaitable instead of a tuple.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn replace_item_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "replace_item")?;
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
@@ -405,7 +421,9 @@ pub(crate) fn replace_item_async<'py>(
         body_bytes,
         "replace_item",
         true,
+        include_attempts,
         false,
+        None,
         |item_ref, body| CosmosOperation::replace_item(item_ref).with_body(body),
     )
 }
@@ -438,20 +456,25 @@ pub(crate) fn delete_item_async<'py>(
         "delete_item",
         false,
         include_attempts,
+        false,
+        None,
         |item_ref, _| CosmosOperation::delete_item(item_ref),
     )
 }
 
 /// Async twin of `read_item`: identical inputs and driver work, returns a
-/// Python awaitable instead of a ready tuple.
+/// Python awaitable instead of a ready tuple. The optional internal lifecycle
+/// probe observes this operation future's destruction, not socket or service work.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false, include_fault_diagnostics=false, _debug_lifecycle=None))]
 pub(crate) fn read_item_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
+    include_fault_diagnostics: bool,
+    _debug_lifecycle: Option<PyRef<'py, crate::wire::lifecycle::AsyncOperationProbe>>,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "read_item")?;
     let (container_link, partition_key, mut modifiers, target) =
@@ -470,6 +493,8 @@ pub(crate) fn read_item_async<'py>(
         "read_item",
         false,
         include_attempts,
+        include_fault_diagnostics,
+        _debug_lifecycle.map(|probe| probe.state.clone()),
         |item_ref, _| CosmosOperation::read_item(item_ref),
     )
 }
@@ -478,12 +503,13 @@ pub(crate) fn read_item_async<'py>(
 /// PatchInstructions body, resource address or target id from the request), returns a Python
 /// awaitable instead of a ready tuple.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn patch_item_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "patch_item")?;
     let (container_link, partition_key, mut modifiers, body_bytes) = extract_body_inputs(prepared)?;
@@ -508,7 +534,9 @@ pub(crate) fn patch_item_async<'py>(
         body_bytes,
         "patch_item",
         true,
+        include_attempts,
         false,
+        None,
         move |item_ref, body| patch_operation(item_ref, body, precondition),
     )
 }
@@ -599,9 +627,9 @@ mod tests {
                 ));
                 for asynchronous in [false, true] {
                     let error = if asynchronous {
-                        read_item_async(py, "invalid-driver-handle", &prepared, None, false).map(|_| ())
+                        read_item_async(py, "invalid-driver-handle", &prepared, None, false, false, None).map(|_| ())
                     } else {
-                        read_item(py, "invalid-driver-handle", &prepared, None, false).map(|_| ())
+                        read_item(py, "invalid-driver-handle", &prepared, None, false, false).map(|_| ())
                     }
                     .unwrap_err();
                     assert!(error
@@ -620,9 +648,9 @@ mod tests {
                 prepared.setattr("item_self_link", link).unwrap();
                 for asynchronous in [false, true] {
                     let error = if asynchronous {
-                        read_item_async(py, "invalid-driver-handle", &prepared, None, false).map(|_| ())
+                        read_item_async(py, "invalid-driver-handle", &prepared, None, false, false, None).map(|_| ())
                     } else {
-                        read_item(py, "invalid-driver-handle", &prepared, None, false).map(|_| ())
+                        read_item(py, "invalid-driver-handle", &prepared, None, false, false).map(|_| ())
                     }
                     .unwrap_err();
                     assert!(error.is_instance_of::<PyValueError>(py));
@@ -633,9 +661,9 @@ mod tests {
             prepared.setattr("item_id", py.None()).unwrap();
             for asynchronous in [false, true] {
                 let error = if asynchronous {
-                    read_item_async(py, "invalid-driver-handle", &prepared, None, false).map(|_| ())
+                    read_item_async(py, "invalid-driver-handle", &prepared, None, false, false, None).map(|_| ())
                 } else {
-                    read_item(py, "invalid-driver-handle", &prepared, None, false).map(|_| ())
+                    read_item(py, "invalid-driver-handle", &prepared, None, false, false).map(|_| ())
                 }
                 .unwrap_err();
                 assert!(error.is_instance_of::<PyValueError>(py));
@@ -699,12 +727,14 @@ mod tests {
                 prepared
                     .setattr("body_bytes", PyBytes::new_bound(py, body))
                     .unwrap();
-                assert!(patch_item(py, "unused-handle", &prepared, None)
-                    .unwrap_err()
-                    .is_instance_of::<PyNotImplementedError>(py));
-                assert!(patch_item_async(py, "unused-handle", &prepared, None)
-                    .unwrap_err()
-                    .is_instance_of::<PyNotImplementedError>(py));
+                for include_attempts in [false, true] {
+                    assert!(patch_item(py, "unused-handle", &prepared, None, include_attempts)
+                        .unwrap_err()
+                        .is_instance_of::<PyNotImplementedError>(py));
+                    assert!(patch_item_async(py, "unused-handle", &prepared, None, include_attempts)
+                        .unwrap_err()
+                        .is_instance_of::<PyNotImplementedError>(py));
+                }
             }
         });
     }
@@ -764,7 +794,7 @@ mod tests {
             .build();
         let driver = runtime
             .create_driver(
-                DriverOptions::builder(AccountReference::with_master_key(url, "ZW11bGF0b3Ita2V5"))
+                DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
                     .with_operation_options(options)
                     .build(),
             )

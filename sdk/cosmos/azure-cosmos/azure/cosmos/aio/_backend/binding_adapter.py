@@ -192,6 +192,15 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         """Await driver acquisition, including account setup when creating a driver."""
         await self._ensure_driver_handle()
 
+    async def _debug_fault_injection_rule_hit_count(self, rule_id: str) -> int:
+        """Return how many Rust request attempts applied the named test rule."""
+        if _rust_module is None:
+            raise NotImplementedError(
+                "Rust fault injection requires the compiled azure.cosmos._rust module."
+            )
+        driver_handle = await self._ensure_driver_handle()
+        return int(_rust_module._debug_fault_injection_rule_hit_count(driver_handle, rule_id))
+
     def _acquire_driver_handle(self) -> str:
         """Return the stored driver handle or acquire one through the binding.
 
@@ -365,7 +374,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
             # Never raise from object finalization.
             pass
 
-    async def execute(
+    async def execute(  # pylint: disable=too-many-branches
         self, prepared: PreparedRequest, *, deadline: Optional[float] = None
     ) -> BackendResponse:
         """Execute one prepared request and return a backend response.
@@ -414,6 +423,8 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
                 binding_kwargs["include_attempts"] = True
             result = await binding_function(driver_handle, prepared, **binding_kwargs)
         except TimeoutError as exc:
+            if contribution is not None:
+                contribution.error(exc)
             if deadline is None:
                 raise
             raise CosmosClientTimeoutError(error=exc) from exc

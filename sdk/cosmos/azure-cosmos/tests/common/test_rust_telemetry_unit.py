@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Exercise public item telemetry with real tracing and controlled binding results."""
+"""Exercise public telemetry with real tracing and controlled binding results."""
 
 import asyncio
 import builtins
@@ -20,6 +20,7 @@ from threading import Barrier
 from unittest.mock import AsyncMock, Mock
 
 import pytest
+from common.typed_requests import wire_headers
 
 pytest.importorskip("opentelemetry.sdk.trace")
 # Optional dependency checks must run before the tracing imports.
@@ -40,9 +41,14 @@ from azure.cosmos._backend.errors import BindingProtocolError
 from azure.cosmos._helpers._item_context import ItemClientContext
 from azure.cosmos.aio._container import ContainerProxy
 from azure.cosmos.container import ContainerProxy as SyncContainerProxy
+from azure.cosmos.database import DatabaseProxy as SyncDatabaseProxy
+from azure.cosmos.aio._database import DatabaseProxy
 from azure.cosmos.aio._backend import binding_adapter
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos import _telemetry as telemetry
+from azure.cosmos import PartitionKey
+from azure.cosmos import _operation_deadline
+from azure.cosmos._helpers import _item_prep
 from azure.cosmos.exceptions import (
     CosmosAccessConditionFailedError,
     CosmosClientTimeoutError,
@@ -53,6 +59,12 @@ from azure.cosmos.exceptions import (
 # pylint: enable=wrong-import-position
 
 ORDER = {"id": "order-17", "customerId": "customer-17", "total": 125.5}
+CONTAINER_PROPERTIES = {
+    "id": "orders",
+    "_rid": "container-rid",
+    "partitionKey": {"paths": ["/customerId"], "kind": "Hash"},
+    "indexingPolicy": {"indexingMode": "consistent", "includedPaths": [{"path": "/*"}]},
+}
 
 
 class DriverTransportError(RuntimeError):
@@ -91,6 +103,7 @@ def item_harness(recording, monkeypatch):  # pylint: disable=unused-argument
         container=container,
         calls=[],
         payloads=[],
+        prepared_requests=[],
         operations=[],
         targets=[],
         transform=lambda result: result,
@@ -99,14 +112,16 @@ def item_harness(recording, monkeypatch):  # pylint: disable=unused-argument
         response_status=201,
         omit_body=False,
         driver_error=None,
+        driver_error_type=DriverTransportError,
     )
     monkeypatch.setattr(backend, "_ensure_driver_handle", AsyncMock(return_value="test-driver"))
     monkeypatch.setattr(binding_adapter, "_DRIVER_TRANSPORT_ERROR", DriverTransportError)
 
     async def binding(driver_handle, prepared, *, timeout_seconds=None, include_attempts=False):
         assert driver_handle == "test-driver"
-        assert prepared.container_link == "dbs/sales/colls/orders"
+        assert prepared.container_link == ("" if prepared.op == "create_container" else "dbs/sales/colls/orders")
         harness.calls.append((include_attempts, timeout_seconds, dict(prepared.headers)))
+        harness.prepared_requests.append(prepared)
         harness.operations.append(prepared.op)
         harness.targets.append((prepared.item_id, prepared.item_self_link))
         start = time.time_ns()
@@ -135,16 +150,24 @@ def item_harness(recording, monkeypatch):  # pylint: disable=unused-argument
         harness.payloads.append(payload)
         if harness.response_status == 408:
             # This is a driver error without a service response, not an HTTP 408 response.
-            harness.driver_error = DriverTransportError("driver failure")
+            harness.driver_error = harness.driver_error_type("driver failure")
             if include_attempts:
                 _, payload = harness.transform((None, payload))
                 if payload is not None:
                     harness.driver_error._cosmos_attempt_payload = payload
             raise harness.driver_error
         if harness.response_status == 201:
-            body = prepared.body_bytes
+            body = (
+                json.dumps({**CONTAINER_PROPERTIES, **json.loads(prepared.body_bytes)}).encode()
+                if prepared.op == "create_container"
+                else prepared.body_bytes
+            )
         elif harness.response_status == 200:
-            body = prepared.body_bytes if prepared.op == "upsert_item" else json.dumps(ORDER).encode()
+            body = (
+                prepared.body_bytes
+                if prepared.op in ("upsert_item", "replace_item")
+                else json.dumps(CONTAINER_PROPERTIES if prepared.op == "read_container" else ORDER).encode()
+            )
         elif harness.response_status in (204, 304):
             body = b""
         elif harness.response_status == 404:
@@ -160,7 +183,15 @@ def item_harness(recording, monkeypatch):  # pylint: disable=unused-argument
         binding_adapter,
         "_rust_module",
         SimpleNamespace(
-            create_item_async=binding, read_item_async=binding, delete_item_async=binding, upsert_item_async=binding
+            create_item_async=binding,
+            read_item_async=binding,
+            delete_item_async=binding,
+            upsert_item_async=binding,
+            replace_item_async=binding,
+            patch_item_async=binding,
+            read_container_async=binding,
+            delete_container_async=binding,
+            create_container_async=binding,
         ),
     )
     yield harness
@@ -180,7 +211,9 @@ def attempt_spans(recording):
     [None, SimpleNamespace(name="core-python"), ASYNC_LEGACY_BACKEND],
     ids=["missing", "legacy-name", "async-legacy"],
 )
-@pytest.mark.parametrize("operation", ["create_item", "read_item", "delete_item", "upsert_item"])
+@pytest.mark.parametrize(
+    "operation", ["create_item", "read_item", "delete_item", "upsert_item", "replace_item", "patch_item"]
+)
 @pytest.mark.usefixtures("recording")
 def test_non_rust_calls_do_not_create_rust_telemetry_state(backend, operation):
     container = SimpleNamespace(_item_context=SimpleNamespace(adapter=backend))
@@ -903,12 +936,14 @@ def sync_item_harness(recording, monkeypatch):  # pylint: disable=unused-argumen
         container=container,
         calls=[],
         payloads=[],
+        prepared_requests=[],
         states=[],
         response_status=201,
         omit_body=False,
         error=None,
         barrier=None,
         driver_error=None,
+        driver_error_type=DriverTransportError,
         transform=lambda result: result,
     )
     monkeypatch.setattr(backend, "_ensure_driver_handle", Mock(return_value="test-driver"))
@@ -917,6 +952,7 @@ def sync_item_harness(recording, monkeypatch):  # pylint: disable=unused-argumen
     def binding(driver_handle, prepared, *, timeout_seconds=None, include_attempts=False):
         assert driver_handle == "test-driver"
         harness.calls.append((include_attempts, timeout_seconds, prepared))
+        harness.prepared_requests.append(prepared)
         harness.states.append(telemetry._OPERATION.get())
         start = time.time_ns()
         if harness.barrier is not None:
@@ -939,13 +975,19 @@ def sync_item_harness(recording, monkeypatch):  # pylint: disable=unused-argumen
         }
         harness.payloads.append(payload)
         if harness.response_status == 408:
-            harness.driver_error = DriverTransportError("driver failure")
+            harness.driver_error = harness.driver_error_type("driver failure")
             if include_attempts:
                 _, diagnostics = harness.transform((None, payload))
                 harness.driver_error._cosmos_attempt_payload = diagnostics
             raise harness.driver_error
         if harness.response_status in (200, 201):
-            body = prepared.body_bytes if prepared.op in ("create_item", "upsert_item") else json.dumps(ORDER).encode()
+            body = (
+                prepared.body_bytes
+                if prepared.op in ("create_item", "upsert_item", "replace_item")
+                else json.dumps(CONTAINER_PROPERTIES if prepared.op == "read_container" else ORDER).encode()
+            )
+            if prepared.op == "create_container":
+                body = json.dumps({**CONTAINER_PROPERTIES, **json.loads(prepared.body_bytes)}).encode()
         elif harness.response_status in (204, 304):
             body = b""
         else:
@@ -958,7 +1000,17 @@ def sync_item_harness(recording, monkeypatch):  # pylint: disable=unused-argumen
     monkeypatch.setattr(
         sync_binding_adapter,
         "_rust_module",
-        SimpleNamespace(create_item=binding, read_item=binding, delete_item=binding, upsert_item=binding),
+        SimpleNamespace(
+            create_item=binding,
+            read_item=binding,
+            delete_item=binding,
+            upsert_item=binding,
+            replace_item=binding,
+            patch_item=binding,
+            read_container=binding,
+            delete_container=binding,
+            create_container=binding,
+        ),
     )
     yield harness
     backend.close()
@@ -1575,6 +1627,39 @@ def delete_harness(item_runtime):
     return item_runtime
 
 
+@pytest.fixture(name="container_read")
+def container_read_harness(item_runtime):
+    item_runtime.response_status = 200
+    item_runtime.connection = SimpleNamespace(
+        _backend=item_runtime.backend,
+        ReadContainer=Mock(side_effect=AssertionError("Unexpected legacy container read")),
+        _set_container_properties_cache=Mock(),
+        last_response_headers={},
+    )
+    item_runtime.container.client_connection = item_runtime.connection
+    item_runtime.read_properties = lambda **kwargs: item_runtime.invoke(item_runtime.container.read, **kwargs)
+    return item_runtime
+
+
+@pytest.fixture(name="container_delete")
+def container_delete_harness(item_runtime):
+    item_runtime.response_status = 204
+    item_runtime.connection = SimpleNamespace(
+        _backend=item_runtime.backend,
+        DeleteContainer=Mock(side_effect=AssertionError("Unexpected legacy container delete")),
+        ReadContainer=Mock(side_effect=AssertionError("Unexpected Python metadata read")),
+        last_response_headers={},
+    )
+    proxy = (
+        DatabaseProxy if isinstance(item_runtime.backend, binding_adapter.AsyncBindingAdapter) else SyncDatabaseProxy
+    )
+    item_runtime.database = proxy(item_runtime.connection, "sales", _item_context=item_runtime.container._item_context)
+    item_runtime.delete_container = lambda **kwargs: item_runtime.invoke(
+        item_runtime.database.delete_container, "orders", **kwargs
+    )
+    return item_runtime
+
+
 @pytest.fixture(name="upsert")
 def upsert_harness(item_runtime):
     item_runtime.response_status = 201
@@ -1584,11 +1669,64 @@ def upsert_harness(item_runtime):
     return item_runtime
 
 
-@pytest.fixture(name="point_write", params=["delete", "upsert"])
+@pytest.fixture(name="container_create")
+def container_create_harness(item_runtime):
+    item_runtime.response_status = 201
+    item_runtime.connection = SimpleNamespace(
+        _backend=item_runtime.backend,
+        CreateContainer=Mock(side_effect=AssertionError("Unexpected legacy container create")),
+        ReadContainer=Mock(side_effect=AssertionError("Unexpected Python metadata read")),
+        _set_container_properties_cache=Mock(),
+        last_response_headers={},
+    )
+    proxy = (
+        DatabaseProxy if isinstance(item_runtime.backend, binding_adapter.AsyncBindingAdapter) else SyncDatabaseProxy
+    )
+    item_runtime.database = proxy(item_runtime.connection, "sales", _item_context=item_runtime.container._item_context)
+    item_runtime.create_container = lambda **kwargs: item_runtime.invoke(
+        item_runtime.database.create_container, "orders", PartitionKey(path="/customerId"), **kwargs
+    )
+    return item_runtime
+
+
+@pytest.fixture(name="replacement")
+def replacement_harness(item_runtime):
+    item_runtime.response_status = 200
+
+    def call(*, item=ORDER["id"], body=None, **kwargs):
+        return item_runtime.invoke(
+            item_runtime.container.replace_item, item, deepcopy(ORDER) if body is None else body, **kwargs
+        )
+
+    item_runtime.replacement = call
+    return item_runtime
+
+
+@pytest.fixture(name="patch")
+def patch_harness(item_runtime):
+    item_runtime.response_status = 200
+    item_runtime.patch_timeout = 10
+
+    def call(*, item=ORDER["id"], operations=None, **kwargs):
+        if item_runtime.patch_timeout is not None:
+            kwargs.setdefault("timeout", item_runtime.patch_timeout)
+        return item_runtime.invoke(
+            item_runtime.container.patch_item,
+            item,
+            ORDER["customerId"],
+            [{"op": "set", "path": "/total", "value": 200}] if operations is None else operations,
+            **kwargs,
+        )
+
+    item_runtime.patch = call
+    return item_runtime
+
+
+@pytest.fixture(name="point_write", params=["delete", "upsert", "replacement", "patch"])
 def point_write_harness(request, item_runtime):  # pylint: disable=unused-argument
     harness = request.getfixturevalue(request.param)
     harness.write = getattr(harness, request.param)
-    harness.operation = f"{request.param}_item"
+    harness.operation = "replace_item" if request.param == "replacement" else f"{request.param}_item"
     harness.expected_result = None if request.param == "delete" else ORDER
     harness.service_error_status = 404 if request.param == "delete" else 412
     harness.service_error_type = (
@@ -1597,9 +1735,9 @@ def point_write_harness(request, item_runtime):  # pylint: disable=unused-argume
     return harness
 
 
-def assert_item_attempts(harness, recording, parent, status, name):
+def assert_item_attempts(harness, recording, parent, status, name, owner="ContainerProxy"):
     attempts = attempt_spans(recording)
-    operations = [span for span in recording.exporter.get_finished_spans() if span.name == f"ContainerProxy.{name}"]
+    operations = [span for span in recording.exporter.get_finished_spans() if span.name == f"{owner}.{name}"]
     assert len(operations) == 1
     operation = operations[0]
     assert operation.parent.span_id == parent.get_span_context().span_id
@@ -1613,6 +1751,559 @@ def assert_item_attempts(harness, recording, parent, status, name):
         assert span.context.trace_id == operation.context.trace_id
         assert operation.start_time <= span.start_time == row["start_ns"]
         assert span.end_time == row["end_ns"] <= operation.end_time
+
+
+@pytest.mark.parametrize("status", [201, 409, 408])
+@pytest.mark.parametrize("return_properties", [False, True])
+@pytest.mark.parametrize(
+    "mode",
+    ["enabled", "disabled", "global-disabled", "sampled-out", "merged", "handler-only", "attributes", "enable-call"],
+)
+def test_container_create_owns_returned_proxy_and_properties(  # pylint: disable=too-many-statements
+    container_create, recording, status, return_properties, mode
+):
+    harness = container_create
+    harness.response_status = status
+    seen, hooks = [], []
+    harness.database._item_context = replace(
+        harness.database._item_context,
+        telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=mode == "handler-only"),),
+    )
+    kwargs = {"timeout": 10, "return_properties": return_properties}
+    if mode in ("global-disabled", "handler-only", "enable-call"):
+        settings.tracing_enabled = False
+    elif mode == "disabled":
+        kwargs["tracing_options"] = {"enabled": False}
+    elif mode == "sampled-out":
+        recording.provider.sampler = ALWAYS_OFF
+    elif mode == "merged":
+        kwargs["merge_span"] = True
+    if mode == "enable-call":
+        kwargs["tracing_options"] = {"enabled": True}
+    elif mode == "attributes":
+        kwargs["tracing_attributes"] = {"test.context": "create-config"}
+    collect = mode in ("enabled", "handler-only", "attributes", "enable-call")
+
+    def hook(headers, body):
+        state = telemetry._OPERATION.get()
+        assert state is not None and not state.closed
+        assert state.backend is harness.database._item_context.adapter is harness.connection._backend
+        assert state.binding_operation == "create_container" and state.collector.received == int(collect)
+        assert not seen and not attempt_spans(recording)
+        assert body["partitionKey"]["paths"] == ["/customerId"]
+        hooks.append(body)
+        headers.clear()
+        # Create hooks already receive the returned body, unlike read's body snapshot.
+        body["defaultTtl"] = 42
+
+    def cache(link, properties):
+        assert link == "dbs/sales/colls/orders"
+        assert properties["partitionKey"]["paths"] == ["/customerId"]
+        assert not telemetry._OPERATION.get().closed and not seen
+        assert len(hooks) == 1
+
+    harness.connection._set_container_properties_cache.side_effect = cache
+    with trace.get_tracer("customer").start_as_current_span("create_disposable") as parent:
+        if status == 201:
+            result = harness.create_container(response_hook=hook, **kwargs)
+            container = result[0] if return_properties else result
+            assert isinstance(container, (ContainerProxy, SyncContainerProxy))
+            assert container.id == "orders" and container._item_context is harness.database._item_context
+            if return_properties:
+                assert result[1] is hooks[0] and result[1]["defaultTtl"] == 42
+            harness.connection._set_container_properties_cache.assert_called_once()
+        else:
+            with pytest.raises(CosmosResourceExistsError if status == 409 else ServiceResponseError) as caught:
+                harness.create_container(response_hook=hook, **kwargs)
+            if status == 408:
+                assert caught.value.__cause__ is harness.driver_error
+            assert not hooks
+            harness.connection._set_container_properties_cache.assert_not_called()
+        assert trace.get_current_span() is parent
+    assert len(harness.calls) == 1 and harness.calls[0][0] is collect
+    prepared = harness.prepared_requests[0]
+    assert prepared.op == "create_container" and prepared.item_id == "sales"
+    assert prepared.container_link == "" and prepared.settings.timeout_seconds == 10
+    assert json.loads(prepared.body_bytes)["partitionKey"]["paths"] == ["/customerId"]
+    assert not any("tracing" in key or "test." in key for key in prepared.headers)
+    harness.connection.CreateContainer.assert_not_called()
+    harness.connection.ReadContainer.assert_not_called()
+    assert len(seen) == 1 and seen[0].operation == "create_container"
+    assert seen[0].outcome == ("success" if status == 201 else "error")
+    assert (seen[0].diagnostics is not None) is collect
+    if status != 408:
+        assert harness.connection.last_response_headers["x-ms-cosmos-sdk-diagnostics"] == "diagnostic-text"
+    if mode in ("enabled", "attributes", "enable-call"):
+        assert_item_attempts(harness, recording, parent, status, "create_container", owner="DatabaseProxy")
+        if mode == "attributes":
+            operation = next(
+                span
+                for span in recording.exporter.get_finished_spans()
+                if span.name == "DatabaseProxy.create_container"
+            )
+            assert operation.attributes["test.context"] == "create-config"
+    else:
+        assert not attempt_spans(recording)
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("mode", ["enabled", "disabled", "global-disabled"])
+@pytest.mark.parametrize("failure", ["none", "diagnostics", "emitter", "handler"])
+@pytest.mark.parametrize("outcome", ["success", "hook-error", "cache-error", "timeout"])
+def test_container_create_preserves_errors_when_reporting_fails(
+    container_create, recording, monkeypatch, mode, failure, outcome
+):
+    harness = container_create
+    original = ValueError("public completion failure")
+    hook = Mock(side_effect=original if outcome == "hook-error" else None)
+    if outcome == "cache-error":
+        harness.connection._set_container_properties_cache.side_effect = original
+    kwargs = {"tracing_options": {"enabled": False}} if mode == "disabled" else {}
+    if mode == "global-disabled":
+        settings.tracing_enabled = False
+    if outcome == "timeout":
+        harness.response_status = 408
+        harness.driver_error_type = TimeoutError
+    seen = []
+    handlers = (telemetry.CompletionHandler(seen.append),)
+    if failure == "diagnostics":
+        harness.transform = lambda result: (result[0], {"schema_version": 999})
+    elif failure == "emitter":
+        monkeypatch.setattr(telemetry, "emit_attempts", Mock(side_effect=RuntimeError("emitter failure")))
+    elif failure == "handler":
+        handlers = (telemetry.CompletionHandler(Mock(side_effect=RuntimeError("handler failure"))),) + handlers
+    harness.database._item_context = replace(harness.database._item_context, telemetry_handlers=handlers)
+    if outcome == "success":
+        assert harness.create_container(response_hook=hook, **kwargs).id == "orders"
+    else:
+        with pytest.raises(TimeoutError if outcome == "timeout" else ValueError) as caught:
+            harness.create_container(response_hook=hook, **kwargs)
+        assert caught.value is (harness.driver_error if outcome == "timeout" else original)
+    assert hook.call_count == (0 if outcome == "timeout" else 1)
+    assert len(harness.calls) == len(seen) == 1
+    assert seen[0].outcome == ("success" if outcome == "success" else "error")
+    harness.connection.CreateContainer.assert_not_called()
+    if mode != "enabled":
+        assert not attempt_spans(recording)
+    elif failure in ("none", "handler"):
+        assert len(attempt_spans(recording)) == harness.payloads[0]["retained_request_count"]
+        operation = next(
+            span for span in recording.exporter.get_finished_spans() if span.name == "DatabaseProxy.create_container"
+        )
+        assert operation.status.status_code is (
+            trace.StatusCode.UNSET if outcome == "success" else trace.StatusCode.ERROR
+        )
+    assert telemetry._OPERATION.get() is None
+
+
+def test_async_container_create_cancellation_closes_database_operation(create, recording):
+    harness = create
+    connection = SimpleNamespace(
+        _backend=harness.backend,
+        CreateContainer=Mock(side_effect=AssertionError("Unexpected legacy create")),
+        _set_container_properties_cache=Mock(),
+    )
+    database = DatabaseProxy(connection, "sales", _item_context=harness.container._item_context)
+    seen = []
+    database._item_context = replace(
+        database._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+    hook = Mock()
+
+    async def run():
+        harness.gate = asyncio.Event()
+        with trace.get_tracer("customer").start_as_current_span("create_disposable"):
+            pending = asyncio.create_task(
+                database.create_container("orders", PartitionKey(path="/customerId"), response_hook=hook, timeout=10)
+            )
+            await harness.gate.wait()
+            pending.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await pending
+
+    asyncio.run(run())
+    assert len(harness.calls) == len(seen) == 1
+    assert seen[0].operation == "create_container" and seen[0].outcome == "cancelled"
+    assert seen[0].diagnostics is None
+    hook.assert_not_called()
+    connection.CreateContainer.assert_not_called()
+    connection._set_container_properties_cache.assert_not_called()
+    assert not attempt_spans(recording)
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("status", [204, 404, 412, 408])
+@pytest.mark.parametrize(
+    "mode",
+    ["enabled", "disabled", "global-disabled", "sampled-out", "merged", "handler-only", "attributes", "enable-call"],
+)
+def test_container_delete_owns_database_context_until_completion(  # pylint: disable=too-many-statements
+    container_delete, recording, status, mode
+):
+    harness = container_delete
+    harness.response_status = status
+    seen, hooks = [], []
+    harness.database._item_context = replace(
+        harness.database._item_context,
+        telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=mode == "handler-only"),),
+    )
+    kwargs = {"timeout": 10}
+    if mode in ("global-disabled", "handler-only", "enable-call"):
+        settings.tracing_enabled = False
+    elif mode == "disabled":
+        kwargs["tracing_options"] = {"enabled": False}
+    elif mode == "sampled-out":
+        recording.provider.sampler = ALWAYS_OFF
+    elif mode == "merged":
+        kwargs["merge_span"] = True
+    if mode == "enable-call":
+        kwargs["tracing_options"] = {"enabled": True}
+    elif mode == "attributes":
+        kwargs["tracing_options"] = {"attributes": {"test.context": "delete-config"}}
+        kwargs["tracing_attributes"] = {"test.legacy": "delete-config"}
+    collect = mode in ("enabled", "handler-only", "attributes", "enable-call")
+
+    def hook(headers, body):
+        state = telemetry._OPERATION.get()
+        assert state is not None and not state.closed
+        assert state.backend is harness.database._item_context.adapter is harness.connection._backend
+        assert state.binding_operation == "delete_container"
+        assert state.collector.received == int(collect)
+        assert not seen and not attempt_spans(recording)
+        assert body is None
+        hooks.append(dict(headers))
+        headers.clear()
+
+    with trace.get_tracer("customer").start_as_current_span("delete_disposable") as parent:
+        if status == 204:
+            assert harness.delete_container(response_hook=hook, **kwargs) is None
+            assert len(hooks) == 1
+        else:
+            error_type = {
+                404: CosmosResourceNotFoundError,
+                412: CosmosAccessConditionFailedError,
+                408: ServiceResponseError,
+            }[status]
+            with pytest.raises(error_type) as caught:
+                harness.delete_container(response_hook=hook, **kwargs)
+            if status == 408:
+                assert caught.value.__cause__ is harness.driver_error
+            else:
+                assert caught.value.status_code == status
+            assert not hooks
+        assert trace.get_current_span() is parent
+    assert len(harness.calls) == 1 and harness.calls[0][0] is collect
+    prepared = harness.prepared_requests[0]
+    assert prepared.op == "delete_container" and prepared.settings.timeout_seconds == 10
+    assert not any("test." in key or "tracing" in key for key in prepared.headers)
+    harness.connection.DeleteContainer.assert_not_called()
+    harness.connection.ReadContainer.assert_not_called()
+    assert len(seen) == 1 and seen[0].operation == "delete_container"
+    assert seen[0].outcome == ("success" if status == 204 else "error")
+    assert (seen[0].diagnostics is not None) is collect
+    if status != 408:
+        assert harness.connection.last_response_headers["x-ms-cosmos-sdk-diagnostics"] == "diagnostic-text"
+    if mode in ("enabled", "attributes", "enable-call"):
+        assert_item_attempts(harness, recording, parent, status, "delete_container", owner="DatabaseProxy")
+        if mode == "attributes":
+            operation = next(
+                span
+                for span in recording.exporter.get_finished_spans()
+                if span.name == "DatabaseProxy.delete_container"
+            )
+            assert operation.attributes["test.context"] == operation.attributes["test.legacy"] == "delete-config"
+    else:
+        assert not attempt_spans(recording)
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("mode", ["enabled", "disabled", "global-disabled"])
+@pytest.mark.parametrize("failure", ["none", "diagnostics", "emitter", "handler"])
+@pytest.mark.parametrize("outcome", ["success", "hook-error", "timeout"])
+def test_container_delete_preserves_errors_when_reporting_fails(
+    container_delete, recording, monkeypatch, mode, failure, outcome
+):
+    harness = container_delete
+    hook_error = ValueError("customer hook failure")
+    hook = Mock(side_effect=hook_error if outcome == "hook-error" else None)
+    kwargs = {"tracing_options": {"enabled": False}} if mode == "disabled" else {}
+    if mode == "global-disabled":
+        settings.tracing_enabled = False
+    if outcome == "timeout":
+        harness.response_status = 408
+        harness.driver_error_type = TimeoutError
+    seen = []
+    handlers = (telemetry.CompletionHandler(seen.append),)
+    if failure == "diagnostics":
+        harness.transform = lambda result: (result[0], {"schema_version": 999})
+    elif failure == "emitter":
+        monkeypatch.setattr(telemetry, "emit_attempts", Mock(side_effect=RuntimeError("emitter failure")))
+    elif failure == "handler":
+        handlers = (telemetry.CompletionHandler(Mock(side_effect=RuntimeError("handler failure"))),) + handlers
+    harness.database._item_context = replace(harness.database._item_context, telemetry_handlers=handlers)
+    if outcome == "success":
+        assert harness.delete_container(response_hook=hook, **kwargs) is None
+    else:
+        with pytest.raises(TimeoutError if outcome == "timeout" else ValueError) as caught:
+            harness.delete_container(response_hook=hook, **kwargs)
+        assert caught.value is (harness.driver_error if outcome == "timeout" else hook_error)
+    assert hook.call_count == (0 if outcome == "timeout" else 1)
+    if hook.called:
+        assert hook.call_args.args[1] is None
+    assert len(harness.calls) == len(seen) == 1
+    assert seen[0].outcome == ("success" if outcome == "success" else "error")
+    harness.connection.DeleteContainer.assert_not_called()
+    if mode != "enabled":
+        assert not attempt_spans(recording)
+    elif failure in ("none", "handler"):
+        assert len(attempt_spans(recording)) == harness.payloads[0]["retained_request_count"]
+        operation = next(
+            span for span in recording.exporter.get_finished_spans() if span.name == "DatabaseProxy.delete_container"
+        )
+        assert operation.status.status_code is (
+            trace.StatusCode.UNSET if outcome == "success" else trace.StatusCode.ERROR
+        )
+    assert telemetry._OPERATION.get() is None
+
+
+def test_container_delete_internal_metadata_is_not_a_second_contribution(container_delete, recording, monkeypatch):
+    harness = container_delete
+    is_async = isinstance(harness.backend, binding_adapter.AsyncBindingAdapter)
+    module = binding_adapter if is_async else sync_binding_adapter
+    binding_name = "delete_container_async" if is_async else "delete_container"
+    metadata_name = "get_container_metadata_async" if is_async else "get_container_metadata"
+    original = getattr(module._rust_module, binding_name)
+    metadata = (AsyncMock if is_async else Mock)(return_value=("container-rid", ("/customerId",), "Hash", False))
+    monkeypatch.setattr(module._rust_module, metadata_name, metadata, raising=False)
+
+    async def delete_async(*args, **kwargs):
+        await harness.backend.get_container_metadata(harness.container.container_link)
+        return await original(*args, **kwargs)
+
+    def delete_sync(*args, **kwargs):
+        harness.backend.get_container_metadata(harness.container.container_link)
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(module._rust_module, binding_name, delete_async if is_async else delete_sync)
+    with trace.get_tracer("customer").start_as_current_span("delete_disposable") as parent:
+        assert harness.delete_container() is None
+    metadata.assert_called_once_with("test-driver", harness.container.container_link)
+    assert len(harness.calls) == 1
+    assert_item_attempts(harness, recording, parent, 204, "delete_container", owner="DatabaseProxy")
+
+
+def test_async_container_delete_cancellation_closes_database_operation(create, recording):
+    harness = create
+    harness.connection = SimpleNamespace(
+        _backend=harness.backend, DeleteContainer=Mock(side_effect=AssertionError("Unexpected legacy delete"))
+    )
+    harness.database = DatabaseProxy(harness.connection, "sales", _item_context=harness.container._item_context)
+    seen = []
+    harness.database._item_context = replace(
+        harness.database._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+    hook = Mock()
+
+    async def run():
+        harness.gate = asyncio.Event()
+        with trace.get_tracer("customer").start_as_current_span("delete_disposable"):
+            pending = asyncio.create_task(harness.database.delete_container("orders", response_hook=hook, timeout=10))
+            await harness.gate.wait()
+            pending.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await pending
+
+    asyncio.run(run())
+    assert len(harness.calls) == len(seen) == 1
+    assert seen[0].operation == "delete_container" and seen[0].outcome == "cancelled"
+    assert seen[0].diagnostics is None
+    hook.assert_not_called()
+    harness.connection.DeleteContainer.assert_not_called()
+    assert not attempt_spans(recording)
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("status", [200, 304, 404, 412, 408])
+@pytest.mark.parametrize(
+    "mode",
+    ["enabled", "disabled", "global-disabled", "sampled-out", "merged", "handler-only", "attributes", "enable-call"],
+)
+def test_container_read_owns_diagnostics_through_hook_and_cache(  # pylint: disable=too-many-statements
+    container_read, recording, status, mode
+):
+    harness = container_read
+    harness.response_status = status
+    seen, hooks = [], []
+    harness.container._item_context = replace(
+        harness.container._item_context,
+        telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=mode == "handler-only"),),
+    )
+    kwargs = {}
+    if mode in ("global-disabled", "handler-only", "enable-call"):
+        settings.tracing_enabled = False
+    elif mode == "disabled":
+        kwargs["tracing_options"] = {"enabled": False}
+    elif mode == "sampled-out":
+        recording.provider.sampler = ALWAYS_OFF
+    elif mode == "merged":
+        kwargs["merge_span"] = True
+    if mode == "enable-call":
+        kwargs["tracing_options"] = {"enabled": True}
+    elif mode == "attributes":
+        kwargs["tracing_options"] = {"attributes": {"test.context": "read-config"}}
+        kwargs["tracing_attributes"] = {"test.legacy": "read-config"}
+    collect = mode in ("enabled", "handler-only", "attributes", "enable-call")
+
+    def check_open_state():
+        state = telemetry._OPERATION.get()
+        assert state is not None and not state.closed
+        assert state.binding_operation == "read_container"
+        assert state.collector.received == int(collect)
+        assert not seen and not attempt_spans(recording)
+
+    def hook(headers, body):
+        check_open_state()
+        hooks.append(deepcopy(body))
+        headers.clear()
+        if body:
+            body["partitionKey"]["paths"][0] = "/hook-only"
+            body["indexingPolicy"].clear()
+
+    harness.connection._set_container_properties_cache.side_effect = lambda *_: check_open_state()
+    with trace.get_tracer("customer").start_as_current_span("inspect_orders") as parent:
+        if status < 400:
+            result = harness.read_properties(response_hook=hook, **kwargs)
+            assert result == (CONTAINER_PROPERTIES if status == 200 else {})
+            assert hooks == [result]
+            assert result.get_response_headers()["x-ms-cosmos-sdk-diagnostics"] == "diagnostic-text"
+            cached = harness.connection._set_container_properties_cache.call_args.args[1]
+            assert cached["partitionKey"] == (CONTAINER_PROPERTIES["partitionKey"] if status == 200 else None)
+        else:
+            error_type = {
+                404: CosmosResourceNotFoundError,
+                412: CosmosAccessConditionFailedError,
+                408: ServiceResponseError,
+            }[status]
+            with pytest.raises(error_type) as caught:
+                harness.read_properties(response_hook=hook, **kwargs)
+            if status == 408:
+                assert caught.value.__cause__ is harness.driver_error
+            else:
+                assert caught.value.status_code == status
+            assert not hooks
+            harness.connection._set_container_properties_cache.assert_not_called()
+        assert trace.get_current_span() is parent
+
+    assert len(harness.calls) == 1
+    assert harness.calls[0][0] is collect
+    assert harness.prepared_requests[0].op == "read_container"
+    harness.connection.ReadContainer.assert_not_called()
+    assert len(seen) == 1 and seen[0].operation == "read"
+    assert seen[0].outcome == ("success" if status < 400 else "error")
+    assert (seen[0].diagnostics is not None) is collect
+    if mode in ("enabled", "attributes", "enable-call"):
+        assert_item_attempts(harness, recording, parent, status, "read")
+        if mode == "attributes":
+            operation = next(
+                span for span in recording.exporter.get_finished_spans() if span.name == "ContainerProxy.read"
+            )
+            assert operation.attributes["test.context"] == operation.attributes["test.legacy"] == "read-config"
+            assert not any("test." in key or "tracing" in key for key in harness.prepared_requests[0].headers)
+    else:
+        assert not attempt_spans(recording)
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("failure", ["diagnostics", "emitter", "handler"])
+@pytest.mark.parametrize("outcome", ["success", "hook-error", "timeout"])
+def test_container_read_reporting_failures_preserve_execution(container_read, monkeypatch, failure, outcome):
+    harness = container_read
+    hook_error = ValueError("customer hook failure")
+    hook = Mock(side_effect=hook_error if outcome == "hook-error" else None)
+    if outcome == "timeout":
+        harness.response_status = 408
+        harness.driver_error_type = TimeoutError
+    seen = []
+    handlers = (telemetry.CompletionHandler(seen.append),)
+    if failure == "diagnostics":
+        harness.transform = lambda result: (result[0], {"schema_version": 999})
+    elif failure == "emitter":
+        monkeypatch.setattr(telemetry, "emit_attempts", Mock(side_effect=RuntimeError("emitter failure")))
+    else:
+        handlers = (telemetry.CompletionHandler(Mock(side_effect=RuntimeError("handler failure"))),) + handlers
+    harness.container._item_context = replace(harness.container._item_context, telemetry_handlers=handlers)
+    if outcome == "success":
+        assert harness.read_properties(response_hook=hook) == CONTAINER_PROPERTIES
+    else:
+        with pytest.raises(TimeoutError if outcome == "timeout" else ValueError) as caught:
+            harness.read_properties(response_hook=hook)
+        assert caught.value is (harness.driver_error if outcome == "timeout" else hook_error)
+        harness.connection._set_container_properties_cache.assert_not_called()
+    assert hook.call_count == (0 if outcome == "timeout" else 1)
+    assert len(harness.calls) == len(seen) == 1
+    assert seen[0].outcome == ("success" if outcome == "success" else "error")
+    assert telemetry._OPERATION.get() is None
+
+
+def test_internal_metadata_does_not_contribute_to_public_container_read(container_read, recording, monkeypatch):
+    harness = container_read
+    is_async = isinstance(harness.backend, binding_adapter.AsyncBindingAdapter)
+    module = binding_adapter if is_async else sync_binding_adapter
+    binding_name = "read_container_async" if is_async else "read_container"
+    metadata_name = "get_container_metadata_async" if is_async else "get_container_metadata"
+    original = getattr(module._rust_module, binding_name)
+    metadata = (AsyncMock if is_async else Mock)(return_value=("container-rid", ("/customerId",), "Hash", False))
+    monkeypatch.setattr(module._rust_module, metadata_name, metadata, raising=False)
+
+    async def read_async(*args, **kwargs):
+        await harness.backend.get_container_metadata(harness.container.container_link)
+        return await original(*args, **kwargs)
+
+    def read_sync(*args, **kwargs):
+        harness.backend.get_container_metadata(harness.container.container_link)
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(module._rust_module, binding_name, read_async if is_async else read_sync)
+    with trace.get_tracer("customer").start_as_current_span("inspect_orders") as parent:
+        assert harness.read_properties() == CONTAINER_PROPERTIES
+    metadata.assert_called_once_with("test-driver", harness.container.container_link)
+    assert len(harness.calls) == 1
+    assert_item_attempts(harness, recording, parent, 200, "read")
+    assert (
+        len([span for span in recording.exporter.get_finished_spans() if span.name.startswith("ContainerProxy.")]) == 1
+    )
+
+
+def test_async_container_read_cancellation_completes_without_diagnostics(create, recording):
+    create.response_status = 200
+    create.container.client_connection = SimpleNamespace(
+        _backend=create.backend,
+        _set_container_properties_cache=Mock(),
+        ReadContainer=Mock(side_effect=AssertionError("Unexpected legacy read")),
+    )
+    seen = []
+    create.container._item_context = replace(
+        create.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+    hook = Mock()
+
+    async def run():
+        create.gate = asyncio.Event()
+        with trace.get_tracer("customer").start_as_current_span("inspect_orders"):
+            pending = asyncio.create_task(create.container.read(response_hook=hook))
+            await create.gate.wait()
+            pending.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await pending
+
+    asyncio.run(run())
+    assert len(create.calls) == len(seen) == 1
+    assert seen[0].operation == "read" and seen[0].outcome == "cancelled"
+    assert seen[0].diagnostics is None
+    hook.assert_not_called()
+    create.container.client_connection._set_container_properties_cache.assert_not_called()
+    assert not attempt_spans(recording)
+    assert telemetry._OPERATION.get() is None
 
 
 @pytest.mark.parametrize("status", [204, 404, 408])
@@ -1631,21 +2322,19 @@ def test_delete_preserves_outcome_and_records_only_its_owned_attempts(delete, re
         kwargs["merge_span"] = True
 
     def response_hook(headers, item):
-        hooks.append((dict(headers), dict(item)))
+        hooks.append((dict(headers), item))
         if mode == "enabled":
             state = telemetry._OPERATION.get()
             assert state is not None and not state.closed
             assert state.collector.received == 1
             assert not attempt_spans(recording)
         headers["x-ms-request-charge"] = "changed"
-        item["hook-only"] = True
 
     with trace.get_tracer("customer").start_as_current_span("delete_order") as parent:
         if status == 204:
             assert delete.delete(response_hook=response_hook, **kwargs) is None
             assert len(hooks) == 1
-            # Preserve the existing Rust path's empty parsed body, not its None annotation.
-            assert hooks[0][1] == {}
+            assert hooks[0][1] is None
         else:
             with pytest.raises(CosmosResourceNotFoundError if status == 404 else ServiceResponseError) as caught:
                 delete.delete(response_hook=response_hook, **kwargs)
@@ -1673,7 +2362,7 @@ def test_delete_preserves_outcome_and_records_only_its_owned_attempts(delete, re
     assert telemetry._OPERATION.get() is None
 
 
-@pytest.mark.parametrize("outcome", ["success", "service-error", "response-hook"])
+@pytest.mark.parametrize("outcome", ["success", "service-error", "response-hook", "driver-timeout"])
 @pytest.mark.parametrize("failure", ["diagnostics", "emitter", "handler"])
 def test_point_write_telemetry_failures_cannot_replace_public_execution(
     point_write, monkeypatch, capfd, outcome, failure
@@ -1683,6 +2372,9 @@ def test_point_write_telemetry_failures_cannot_replace_public_execution(
     hook = Mock(side_effect=hook_error if outcome == "response-hook" else None)
     if outcome == "service-error":
         point_write.response_status = point_write.service_error_status
+    elif outcome == "driver-timeout":
+        point_write.response_status = 408
+        point_write.driver_error_type = TimeoutError
     handlers = (telemetry.CompletionHandler(seen.append),)
     if failure == "diagnostics":
         point_write.transform = lambda result: (result[0], {"schema_version": 999})
@@ -1700,11 +2392,21 @@ def test_point_write_telemetry_failures_cannot_replace_public_execution(
         if outcome == "success":
             assert point_write.write(response_hook=hook) == point_write.expected_result
         else:
-            with pytest.raises(point_write.service_error_type if outcome == "service-error" else ValueError) as caught:
+            error_type = {
+                "service-error": point_write.service_error_type,
+                "response-hook": ValueError,
+                "driver-timeout": CosmosClientTimeoutError if point_write.operation == "patch_item" else TimeoutError,
+            }[outcome]
+            with pytest.raises(error_type) as caught:
                 point_write.write(response_hook=hook)
             if outcome == "response-hook":
                 assert caught.value is hook_error
-        assert hook.call_count == (0 if outcome == "service-error" else 1)
+            elif outcome == "driver-timeout":
+                original = caught.value.__cause__ if point_write.operation == "patch_item" else caught.value
+                assert original is point_write.driver_error
+        assert hook.call_count == (0 if outcome in ("service-error", "driver-timeout") else 1)
+        if point_write.operation == "delete_item" and hook.call_count:
+            assert hook.call_args.args[1] is None
         assert len(point_write.calls) == len(seen) == 1
         assert seen[0].operation == point_write.operation
         assert seen[0].outcome == ("success" if outcome == "success" else "error")
@@ -1745,8 +2447,11 @@ def test_point_write_without_tracing_does_not_import_opentelemetry(point_write, 
     assert point_write.calls[0][0] is False
 
 
-@pytest.mark.parametrize("operation", ["delete_item", "upsert_item"])
-def test_point_write_cancellation_completes_once_without_inventing_attempts(create, recording, operation):
+@pytest.mark.parametrize(
+    "operation,timeout",
+    [("delete_item", None), ("upsert_item", None), ("replace_item", None), ("patch_item", None), ("patch_item", 10)],
+)
+def test_point_write_cancellation_completes_once_without_inventing_attempts(create, recording, operation, timeout):
     seen = []
     hook = Mock()
     create.container._item_context = replace(
@@ -1755,11 +2460,21 @@ def test_point_write_cancellation_completes_once_without_inventing_attempts(crea
 
     async def run():
         create.gate = asyncio.Event()
-        pending = (
-            create.container.delete_item(ORDER["id"], partition_key=ORDER["customerId"], response_hook=hook)
-            if operation == "delete_item"
-            else create.container.upsert_item(ORDER, response_hook=hook)
-        )
+        if operation == "delete_item":
+            pending = create.container.delete_item(ORDER["id"], partition_key=ORDER["customerId"], response_hook=hook)
+        elif operation == "replace_item":
+            pending = create.container.replace_item(ORDER["id"], ORDER, response_hook=hook)
+        elif operation == "patch_item":
+            kwargs = {} if timeout is None else {"timeout": timeout}
+            pending = create.container.patch_item(
+                ORDER["id"],
+                ORDER["customerId"],
+                [{"op": "incr", "path": "/total", "value": 1}],
+                response_hook=hook,
+                **kwargs,
+            )
+        else:
+            pending = create.container.upsert_item(ORDER, response_hook=hook)
         task = asyncio.create_task(pending)
         await create.gate.wait()
         task.cancel()
@@ -1776,9 +2491,9 @@ def test_point_write_cancellation_completes_once_without_inventing_attempts(crea
     assert telemetry._OPERATION.get() is None
 
 
-@pytest.mark.parametrize("operation", ["delete_item", "upsert_item"])
+@pytest.mark.parametrize("operation", ["delete_item", "upsert_item", "replace_item", "patch_item"])
 def test_overlapping_point_writes_keep_their_own_attempts(create, recording, operation):
-    create.response_status = 204 if operation == "delete_item" else 201
+    create.response_status = {"delete_item": 204, "upsert_item": 201, "replace_item": 200, "patch_item": 200}[operation]
 
     async def write(item_id):
         with trace.get_tracer("customer").start_as_current_span(item_id):
@@ -1786,7 +2501,17 @@ def test_overlapping_point_writes_keep_their_own_attempts(create, recording, ope
                 assert await create.container.delete_item(item_id, partition_key=ORDER["customerId"]) is None
             else:
                 order = dict(ORDER, id=item_id)
-                assert await create.container.upsert_item(order) == order
+                if operation == "replace_item":
+                    assert await create.container.replace_item(item_id, order) == order
+                elif operation == "patch_item":
+                    assert (
+                        await create.container.patch_item(
+                            item_id, ORDER["customerId"], [{"op": "incr", "path": "/total", "value": 1}], timeout=10
+                        )
+                        == ORDER
+                    )
+                else:
+                    assert await create.container.upsert_item(order) == order
 
     async def run():
         await asyncio.gather(write("order-A"), write("order-B"))
@@ -1804,10 +2529,31 @@ def test_overlapping_point_writes_keep_their_own_attempts(create, recording, ope
     assert telemetry._OPERATION.get() is None
 
 
-@pytest.mark.parametrize("status", [201, 200, 412, 408])
+@pytest.mark.parametrize(
+    "method,status",
+    [
+        ("upsert", 201),
+        ("upsert", 200),
+        ("upsert", 412),
+        ("upsert", 408),
+        ("replacement", 200),
+        ("replacement", 404),
+        ("replacement", 412),
+        ("replacement", 408),
+        ("patch", 200),
+        ("patch", 404),
+        ("patch", 412),
+        ("patch", 408),
+    ],
+)
 @pytest.mark.parametrize("mode", ["enabled", "disabled", "global-disabled", "sampled-out", "merged"])
-def test_upsert_preserves_insert_replace_and_error_outcomes(upsert, recording, status, mode):
-    upsert.response_status = status
+def test_body_write_preserves_result_and_error_outcomes(
+    item_runtime, request, recording, method, status, mode
+):  # pylint: disable=unused-argument
+    harness = request.getfixturevalue(method)
+    harness.response_status = status
+    operation = "replace_item" if method == "replacement" else f"{method}_item"
+    call = getattr(harness, method)
     hooks = []
     if mode == "global-disabled":
         settings.tracing_enabled = False
@@ -1825,46 +2571,57 @@ def test_upsert_preserves_insert_replace_and_error_outcomes(upsert, recording, s
         headers["x-ms-request-charge"] = "changed"
         item["id"] = "hook-only"
 
-    with trace.get_tracer("customer").start_as_current_span("upsert_order") as parent:
+    with trace.get_tracer("customer").start_as_current_span("save_order") as parent:
         if status < 400:
-            result = upsert.upsert(response_hook=response_hook, **kwargs)
+            result = call(response_hook=response_hook, **kwargs)
             assert result == ORDER
             assert len(hooks) == 1 and hooks[0][1] == ORDER
             assert result.get_response_headers()["x-ms-request-charge"] == "5.0"
         else:
-            with pytest.raises(CosmosAccessConditionFailedError if status == 412 else ServiceResponseError) as caught:
-                upsert.upsert(response_hook=response_hook, **kwargs)
+            exception = {
+                404: CosmosResourceNotFoundError,
+                412: CosmosAccessConditionFailedError,
+                408: ServiceResponseError,
+            }
+            with pytest.raises(exception[status]) as caught:
+                call(response_hook=response_hook, **kwargs)
             assert not hooks
-            if status == 412:
-                assert caught.value.status_code == 412
+            if status in (404, 412):
+                assert caught.value.status_code == status
                 assert caught.value.headers["x-ms-cosmos-sdk-diagnostics"] == "diagnostic-text"
             else:
-                assert caught.value.__cause__ is upsert.driver_error
+                assert caught.value.__cause__ is harness.driver_error
         assert trace.get_current_span() is parent
         if parent.is_recording():
             assert not any(key.startswith("cosmos.poc.") for key in parent.attributes)
-    assert len(upsert.calls) == 1
-    assert upsert.calls[0][0] is (mode == "enabled")
-    assert upsert.calls[0][1] is None
+    assert len(harness.calls) == 1
+    assert harness.calls[0][0] is (mode == "enabled")
+    if method == "patch" and harness.patch_timeout is not None:
+        assert 0 < harness.calls[0][1] <= harness.patch_timeout
+    else:
+        assert harness.calls[0][1] is None
     if mode == "enabled":
-        assert_item_attempts(upsert, recording, parent, status, "upsert_item")
+        assert_item_attempts(harness, recording, parent, status, operation)
     else:
         assert not attempt_spans(recording)
     assert telemetry._OPERATION.get() is None
 
 
-@pytest.mark.parametrize("status", [201, 200])
+@pytest.mark.parametrize("method,status", [("upsert", 201), ("upsert", 200), ("replacement", 200), ("patch", 200)])
 @pytest.mark.parametrize("enabled", [False, True])
-def test_upsert_empty_response_keeps_headers_and_completion(upsert, recording, status, enabled):
-    upsert.response_status = status
-    upsert.omit_body = True
+def test_body_write_empty_response_keeps_headers_and_completion(
+    item_runtime, request, recording, method, status, enabled
+):  # pylint: disable=unused-argument
+    harness = request.getfixturevalue(method)
+    harness.response_status = status
+    harness.omit_body = True
     hook = Mock()
-    result = upsert.upsert(no_response=True, response_hook=hook, tracing_options={"enabled": enabled})
+    result = getattr(harness, method)(no_response=True, response_hook=hook, tracing_options={"enabled": enabled})
     assert result == {}
     hook.assert_called_once()
     assert hook.call_args.args[1] == {}
     assert result.get_response_headers()["x-ms-cosmos-sdk-diagnostics"] == "diagnostic-text"
-    assert upsert.calls[0][0] is enabled
+    assert harness.calls[0][0] is enabled
     assert bool(attempt_spans(recording)) is enabled
     assert telemetry._OPERATION.get() is None
 
@@ -1881,3 +2638,343 @@ def test_upsert_invalid_body_finishes_without_binding_execution(upsert, recordin
     assert seen[0].diagnostics is None
     assert not attempt_spans(recording)
     assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("mapping", [False, True])
+def test_replace_telemetry_preserves_target_and_body(replacement, mapping):
+    target = {"id": "order-17", "_self": "dbs/sales/colls/orders/docs/order-17/"} if mapping else "order-17"
+    body = dict(ORDER, id="different-body-id")
+    original_target, original_body = deepcopy(target), deepcopy(body)
+    assert replacement.replacement(item=target, body=body) == body
+    prepared = replacement.prepared_requests[0]
+    assert prepared.op == "replace_item"
+    assert prepared.item_id == "order-17"
+    assert prepared.item_self_link == (target["_self"] if mapping else None)
+    assert json.loads(prepared.body_bytes)["id"] == "different-body-id"
+    assert target == original_target and body == original_body
+    assert replacement.calls[0][0] is True
+
+
+@pytest.mark.parametrize("defect", ["body-id", "target-link", "target-id"])
+def test_replace_invalid_input_completes_before_binding(replacement, defect):
+    seen = []
+    replacement.container._item_context = replace(
+        replacement.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+    kwargs = {
+        "body-id": {"body": dict(ORDER, id="bad/id")},
+        "target-link": {"item": {"id": ORDER["id"], "_self": None}},
+        "target-id": {"item": {"_self": "dbs/sales/colls/orders/docs/order-17/"}},
+    }[defect]
+    with pytest.raises((ValueError, TypeError, KeyError)):
+        replacement.replacement(**kwargs)
+    assert not replacement.calls
+    assert len(seen) == 1 and seen[0].outcome == "error"
+    assert seen[0].diagnostics is None
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("stage", ["within-budget", "acquisition-expired", "binding-timeout", "response-expired"])
+@pytest.mark.parametrize("method", ["replacement", "patch"])
+def test_point_write_telemetry_preserves_deadline_and_hook_boundary(
+    item_runtime, request, recording, monkeypatch, stage, method
+):  # pylint: disable=unused-argument
+    harness = request.getfixturevalue(method)
+    clock = SimpleNamespace(now=100.0)
+    clock.monotonic = lambda: clock.now
+    monkeypatch.setattr(_item_prep, "time", clock)
+    monkeypatch.setattr(_operation_deadline, "time", clock)
+
+    def initialize():
+        clock.now += 6 if stage == "acquisition-expired" else 2
+        return "test-driver"
+
+    initializer = AsyncMock if isinstance(harness.backend, binding_adapter.AsyncBindingAdapter) else Mock
+    monkeypatch.setattr(harness.backend, "_ensure_driver_handle", initializer(side_effect=initialize))
+    if stage == "binding-timeout":
+        harness.error = TimeoutError("binding deadline")
+    elif stage == "response-expired":
+
+        def expire(result):
+            clock.now = 106
+            return result
+
+        harness.transform = expire
+    hook = Mock()
+    seen = []
+    harness.container._item_context = replace(
+        harness.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+    if stage == "within-budget":
+        assert getattr(harness, method)(timeout=5, response_hook=hook) == ORDER
+        hook.assert_called_once()
+    else:
+        with pytest.raises(CosmosClientTimeoutError):
+            getattr(harness, method)(timeout=5, response_hook=hook)
+        hook.assert_not_called()
+    assert len(seen) == 1 and seen[0].outcome == ("success" if stage == "within-budget" else "error")
+    if stage == "acquisition-expired":
+        assert not harness.calls
+    else:
+        assert len(harness.calls) == 1 and harness.calls[0][1] == 3
+    assert bool(attempt_spans(recording)) is (stage in ("within-budget", "response-expired"))
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("mapping", [False, True])
+def test_patch_telemetry_preserves_target_guard_filter_and_snapshot(patch, monkeypatch, mapping):
+    target = {"_self": "dbs/sales/colls/orders/docs/order-17/"} if mapping else ORDER["id"]
+    operations = [{"op": "increment", "path": "/total", "value": 1}]
+    options = {"filterPredicate": "FROM c WHERE c.total = 200"}
+    original_target = deepcopy(target)
+
+    def initialize():
+        operations[0]["value"] = 999
+        options["filterPredicate"] = "FROM c WHERE c.total = 999"
+        return "test-driver"
+
+    initializer = AsyncMock if isinstance(patch.backend, binding_adapter.AsyncBindingAdapter) else Mock
+    monkeypatch.setattr(patch.backend, "_ensure_driver_handle", initializer(side_effect=initialize))
+    assert patch.patch(item=target, operations=operations, request_options=options, if_match='"v1"') == ORDER
+    prepared = patch.prepared_requests[0]
+    assert prepared.item_id == (None if mapping else ORDER["id"])
+    assert prepared.item_self_link == (target["_self"] if mapping else None)
+    assert json.loads(prepared.body_bytes) == {
+        "operations": [{"op": "incr", "path": "/total", "value": 1}],
+        "condition": "FROM c WHERE c.total = 200",
+    }
+    assert wire_headers(prepared)["if-match"] == '"v1"'
+    assert target == original_target
+    assert patch.calls[0][0] is True
+
+
+@pytest.mark.parametrize(
+    "kwargs,error",
+    [
+        ({"operations": []}, ValueError),
+        ({"operations": [1]}, TypeError),
+        ({"item": {"id": "order-17"}}, KeyError),
+        ({"item": {"_self": None}}, TypeError),
+        ({"if_none_match": "*"}, NotImplementedError),
+        ({"filter_predicate": 7}, TypeError),
+    ],
+)
+def test_patch_invalid_input_completes_without_binding(patch, kwargs, error):
+    seen = []
+    patch.container._item_context = replace(
+        patch.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+    with pytest.raises(error):
+        patch.patch(**kwargs)
+    assert not patch.calls
+    assert len(seen) == 1 and seen[0].outcome == "error"
+    assert seen[0].diagnostics is None
+    assert telemetry._OPERATION.get() is None
+
+
+def test_patch_without_deadline_records_the_same_operation(patch, recording):
+    patch.patch_timeout = None
+    with trace.get_tracer("customer").start_as_current_span("change_order") as parent:
+        assert patch.patch() == ORDER
+    assert patch.calls[0][0] is True and patch.calls[0][1] is None
+    assert_item_attempts(patch, recording, parent, 200, "patch_item")
+
+
+@pytest.mark.parametrize("eager", [False, True])
+def test_patch_deadline_authorizes_only_its_worker(create, monkeypatch, eager):
+    states = []
+
+    async def unowned():
+        assert telemetry.get_operation(create.backend, "patch_item") is None
+        return await _operation_deadline.run_with_deadline(lookup, time.monotonic() + 10)
+
+    async def lookup():
+        return telemetry.get_operation(create.backend, "patch_item")
+
+    async def initialize():
+        state = telemetry.get_operation(create.backend, "patch_item")
+        assert state is not None
+        assert state.task is not asyncio.current_task()
+        assert telemetry.get_operation(object(), "patch_item") is None
+        assert telemetry.get_operation(create.backend, "read_item") is None
+        assert await asyncio.create_task(unowned()) is None
+        assert await _operation_deadline.run_with_deadline(lookup, time.monotonic() + 10) is state
+        assert telemetry.get_operation(create.backend, "patch_item") is state
+        states.append(state)
+        return "test-driver"
+
+    monkeypatch.setattr(create.backend, "_ensure_driver_handle", initialize)
+    create.response_status = 200
+
+    async def run():
+        loop = asyncio.get_running_loop()
+        previous = loop.get_task_factory()
+        if eager:
+            factory = getattr(asyncio, "eager_task_factory", None)
+            if factory is None:
+                pytest.skip("Eager task factories require Python 3.12.")
+            loop.set_task_factory(factory)
+        try:
+            assert (
+                await create.container.patch_item(
+                    ORDER["id"], ORDER["customerId"], [{"op": "set", "path": "/total", "value": 200}], timeout=10
+                )
+                == ORDER
+            )
+        finally:
+            loop.set_task_factory(previous)
+
+    asyncio.run(run())
+    assert len(states) == 1 and states[0].closed
+    assert not states[0].delegated_tasks
+    assert create.calls[0][0] is True
+
+
+@pytest.mark.parametrize("outcome", ["success", "error", "timeout", "cancelled"])
+def test_deadline_worker_releases_authorization_before_public_completion(create, monkeypatch, outcome):
+    # Exercise the actual wait/drain path without spending a full operation timeout.
+    monkeypatch.setattr(_operation_deadline, "remaining_timeout", lambda _: 0.02 if outcome == "timeout" else 10)
+    failure = TimeoutError("customer response hook")
+
+    @telemetry.trace_operation_async(binding_operation="patch_item")
+    async def public(owner):  # pylint: disable=unused-argument
+        state = telemetry.get_operation(create.backend, "patch_item")
+        stopped = []
+
+        async def worker():
+            assert telemetry.get_operation(create.backend, "patch_item") is state
+            try:
+                if outcome == "error":
+                    raise failure
+                if outcome == "cancelled":
+                    asyncio.current_task().cancel()
+                if outcome in ("timeout", "cancelled"):
+                    await asyncio.Future()
+                return ORDER
+            finally:
+                stopped.append(True)
+
+        try:
+            result = await _operation_deadline.run_with_deadline(worker, 1)
+            assert outcome == "success" and result == ORDER
+        except TimeoutError as error:
+            assert outcome == "error" and error is failure
+        except CosmosClientTimeoutError:
+            assert outcome == "timeout"
+        except asyncio.CancelledError:
+            assert outcome == "cancelled"
+        assert stopped == [True]
+        assert not state.closed and not state.delegated_tasks
+        assert telemetry.get_operation(create.backend, "patch_item") is state
+
+    asyncio.run(public(create.container))
+    assert telemetry._OPERATION.get() is None
+
+
+def test_worker_authorization_is_single_use_and_does_not_restore_masked_state(create):
+    @telemetry.trace_operation_async(binding_operation="patch_item")
+    async def public(owner):  # pylint: disable=unused-argument
+        state = telemetry.get_operation(create.backend, "patch_item")
+
+        async def lookup():
+            return telemetry.get_operation(create.backend, "patch_item")
+
+        bound = telemetry.bind_operation_task(lookup)
+        assert await asyncio.create_task(bound()) is state
+        assert not state.delegated_tasks
+        assert await asyncio.create_task(bound()) is None
+        masked = telemetry.bind_operation_task(lookup)
+        token = telemetry._OPERATION.set(None)
+        try:
+            assert await asyncio.create_task(masked()) is None
+        finally:
+            telemetry._OPERATION.reset(token)
+        assert not state.delegated_tasks
+        assert telemetry.get_operation(create.backend, "patch_item") is state
+
+    asyncio.run(public(create.container))
+
+
+@pytest.fixture(
+    name="timeout_item", params=["create_item", "read_item", "upsert_item", "replace_item", "delete_item", "patch_item"]
+)
+def timeout_item_harness(request, item_runtime):
+    item_runtime.operation = request.param
+    item_runtime.response_status = 408
+    item_runtime.driver_error_type = TimeoutError
+    arguments = {
+        "create_item": (deepcopy(ORDER),),
+        "read_item": (ORDER["id"], ORDER["customerId"]),
+        "upsert_item": (deepcopy(ORDER),),
+        "replace_item": (ORDER["id"], deepcopy(ORDER)),
+        "delete_item": (ORDER["id"], ORDER["customerId"]),
+        "patch_item": (ORDER["id"], ORDER["customerId"], [{"op": "set", "path": "/total", "value": 200}]),
+    }[request.param]
+    item_runtime.call = lambda **kwargs: item_runtime.invoke(
+        getattr(item_runtime.container, request.param), *arguments, **kwargs
+    )
+    return item_runtime
+
+
+@pytest.mark.parametrize("budget", [False, True])
+@pytest.mark.parametrize("mode", ["enabled", "disabled", "global-disabled", "sampled-out", "handler-only"])
+def test_driver_returned_timeout_keeps_diagnostics_and_original_exception(timeout_item, recording, budget, mode):
+    seen = []
+    hook = Mock()
+    timeout_item.container._item_context = replace(
+        timeout_item.container._item_context,
+        telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=mode == "handler-only"),),
+    )
+    if mode in ("global-disabled", "handler-only"):
+        settings.tracing_enabled = False
+    elif mode == "sampled-out":
+        recording.provider.sampler = ALWAYS_OFF
+    kwargs = {"timeout": 10} if budget else {}
+    if mode == "disabled":
+        kwargs["tracing_options"] = {"enabled": False}
+    has_deadline = budget and timeout_item.operation in ("create_item", "read_item", "replace_item", "patch_item")
+    error_type = CosmosClientTimeoutError if has_deadline else TimeoutError
+    with trace.get_tracer("customer").start_as_current_span("change_order") as parent:
+        with pytest.raises(error_type) as caught:
+            timeout_item.call(response_hook=hook, **kwargs)
+        original = caught.value.__cause__ if has_deadline else caught.value
+        assert original is timeout_item.driver_error
+        if parent.is_recording():
+            assert not any(key.startswith("cosmos.poc.") for key in parent.attributes)
+    hook.assert_not_called()
+    assert len(timeout_item.calls) == len(seen) == 1
+    assert seen[0].operation == timeout_item.operation and seen[0].outcome == "error"
+    collect = mode in ("enabled", "handler-only")
+    assert timeout_item.calls[0][0] is collect
+    assert (timeout_item.calls[0][1] is not None) is has_deadline
+    assert (seen[0].diagnostics is not None) is collect
+    if collect:
+        assert seen[0].diagnostics.complete
+        assert seen[0].diagnostics.request_count == timeout_item.payloads[0]["request_count"]
+    if mode == "enabled":
+        assert_item_attempts(timeout_item, recording, parent, 408, timeout_item.operation)
+    else:
+        assert not attempt_spans(recording)
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("enabled", [False, True])
+def test_timeout_diagnostic_lookup_failure_never_replaces_timeout(timeout_item, recording, caplog, enabled):
+    accesses = []
+
+    class UnreadableTimeout(TimeoutError):
+        @property
+        def _cosmos_attempt_payload(self):
+            accesses.append(True)
+            raise RuntimeError("PRIVATE diagnostic lookup failed")
+
+    original = UnreadableTimeout("driver deadline")
+    timeout_item.error = original
+    with caplog.at_level(logging.WARNING), pytest.raises(TimeoutError) as caught:
+        timeout_item.call(tracing_options={"enabled": enabled})
+    assert caught.value is original
+    assert accesses == ([True] if enabled else [])
+    assert len(timeout_item.calls) == 1
+    assert not attempt_spans(recording)
+    assert ("could not read error diagnostics" in caplog.text) is enabled
+    assert "PRIVATE" not in caplog.text

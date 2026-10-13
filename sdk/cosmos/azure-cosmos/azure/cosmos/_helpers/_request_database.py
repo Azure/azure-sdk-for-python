@@ -54,6 +54,9 @@ from ._wire_encoding import serialize_body_to_bytes
 _RUST_READ_DATABASE_SUPPORTED_KWARGS = frozenset({
     Constants.Kwargs.TIMEOUT,
     "response_hook",
+    # Azure Core handles these controls; they are not driver settings.
+    "tracing_options",
+    "tracing_attributes",
 })
 
 _CREATE_DATABASE_OPTIONS = frozenset({

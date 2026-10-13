@@ -54,9 +54,10 @@ pub(crate) fn create_database_async<'py>(
 }
 
 /// Read a database and return its properties as body bytes in a response tuple.
-/// DatabaseProxy.read uses this directly. The Python wrapper also uses it as
-/// the read step of create_database_if_not_exists; this binding call does not
-/// make the read/create decision or perform both operations.
+/// DatabaseProxy.read reaches this entry through DatabaseHelper and BindingAdapter.
+/// The Python wrapper also uses it as the read step of
+/// create_database_if_not_exists; this binding call does not make the read/create
+/// decision or perform both operations.
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
 pub(crate) fn read_database<'py>(

@@ -28,7 +28,9 @@ use super::driver_runner::{
     run_prepared_driver_operation_async, run_prepared_driver_operation_sync,
 };
 use super::request::{build_operation_options, parse_container_link, RequestHeadersAndOptions};
-use super::response::{tuple_from_result, tuple_from_result_with_attempts};
+use super::response::{
+    tuple_from_result, tuple_from_result_with_attempts, tuple_from_result_with_fault_diagnostics,
+};
 
 /// Preserve whether the prepared target names an item or supplies its resource address.
 pub(crate) enum ItemTarget {
@@ -90,8 +92,12 @@ pub(crate) fn execute_item_operation_sync<'py>(
     op_name: &str,
     honor_content_response: bool,
     include_attempts: bool,
+    include_fault_diagnostics: bool,
     build_op: impl FnOnce(ItemReference, Vec<u8>) -> CosmosOperation + Send,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    if include_attempts && include_fault_diagnostics {
+        return Err(PyValueError::new_err("Select either attempt telemetry or fault diagnostics"));
+    }
     run_prepared_driver_operation_sync(
         py,
         driver_handle,
@@ -115,7 +121,9 @@ pub(crate) fn execute_item_operation_sync<'py>(
             );
             Ok(async move { future.await? })
         },
-        if include_attempts {
+        if include_fault_diagnostics {
+            |py, result| tuple_from_result_with_fault_diagnostics(py, result?)
+        } else if include_attempts {
             |py, result| tuple_from_result_with_attempts(py, result?)
         } else {
             |py, result| tuple_from_result(py, result?)
@@ -142,8 +150,13 @@ pub(crate) fn execute_item_operation_async<'py>(
     op_name: &str,
     honor_content_response: bool,
     include_attempts: bool,
+    include_fault_diagnostics: bool,
+    lifecycle_probe: Option<Arc<std::sync::atomic::AtomicU8>>,
     build_op: impl FnOnce(ItemReference, Vec<u8>) -> CosmosOperation + Send + 'static,
 ) -> PyResult<Bound<'py, PyAny>> {
+    if include_attempts && include_fault_diagnostics {
+        return Err(PyValueError::new_err("Select either attempt telemetry or fault diagnostics"));
+    }
     run_prepared_driver_operation_async(
         py,
         driver_handle,
@@ -165,9 +178,12 @@ pub(crate) fn execute_item_operation_async<'py>(
                     build_op,
                 ),
             );
-            Ok(async move { future.await? })
+            let future = super::lifecycle::LifecycleFuture::new(future, lifecycle_probe)?;
+            Ok(async move { future.run().await? })
         },
-        if include_attempts {
+        if include_fault_diagnostics {
+            |py, result| tuple_from_result_with_fault_diagnostics(py, result?)
+        } else if include_attempts {
             |py, result| tuple_from_result_with_attempts(py, result?)
         } else {
             |py, result| tuple_from_result(py, result?)
@@ -404,7 +420,7 @@ mod tests {
         let runtime = emulator.runtime_builder().build().await.unwrap();
         let driver = runtime
             .create_driver(
-                DriverOptions::builder(AccountReference::with_master_key(
+                DriverOptions::builder(AccountReference::with_account_key(
                     url.clone(),
                     "ZW11bGF0b3Ita2V5",
                 ))
@@ -419,7 +435,7 @@ mod tests {
         let admin_runtime = emulator.runtime_builder().build().await.unwrap();
         let admin = admin_runtime
             .create_driver(
-                DriverOptions::builder(AccountReference::with_master_key(url, "ZW11bGF0b3Ita2V5"))
+                DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
                     .build(),
             )
             .await
@@ -556,7 +572,7 @@ mod tests {
             let runtime = emulator.runtime_builder().build().await.unwrap();
             let driver = runtime
                 .create_driver(
-                    DriverOptions::builder(AccountReference::with_master_key(url, "ZW11bGF0b3Ita2V5"))
+                    DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
                         .with_partition_failover_options(
                             crate::runtime::partition_failover_options().unwrap(),
                         )
@@ -655,7 +671,7 @@ mod tests {
         let runtime = emulator.runtime_builder().build().await.unwrap();
         let driver = runtime
             .create_driver(
-                DriverOptions::builder(AccountReference::with_master_key(url, "ZW11bGF0b3Ita2V5"))
+                DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
                     .with_partition_failover_options(
                         crate::runtime::partition_failover_options().unwrap(),
                     )
@@ -769,7 +785,7 @@ mod tests {
         let runtime = emulator.runtime_builder().build().await.unwrap();
         let driver = runtime
             .create_driver(
-                DriverOptions::builder(AccountReference::with_master_key(url, "ZW11bGF0b3Ita2V5"))
+                DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
                     .build(),
             )
             .await
@@ -855,7 +871,7 @@ mod tests {
         let runtime = emulator.runtime_builder().build().await.unwrap();
         let driver = runtime
             .create_driver(
-                DriverOptions::builder(AccountReference::with_master_key(url, "ZW11bGF0b3Ita2V5"))
+                DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
                     .with_partition_failover_options(
                         crate::runtime::partition_failover_options().unwrap(),
                     )
@@ -938,7 +954,7 @@ mod tests {
         let runtime = emulator.runtime_builder().build().await.unwrap();
         let driver = runtime
             .create_driver(
-                DriverOptions::builder(AccountReference::with_master_key(url, "ZW11bGF0b3Ita2V5"))
+                DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
                     .build(),
             )
             .await
@@ -1134,7 +1150,7 @@ mod tests {
         let runtime = emulator.runtime_builder().build().await.unwrap();
         let driver = runtime
             .create_driver(
-                DriverOptions::builder(AccountReference::with_master_key(url, "ZW11bGF0b3Ita2V5"))
+                DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
                     .with_partition_failover_options(
                         crate::runtime::partition_failover_options().unwrap(),
                     )
@@ -1232,7 +1248,7 @@ mod tests {
         let runtime = emulator.runtime_builder().build().await.unwrap();
         let driver = runtime
             .create_driver(
-                DriverOptions::builder(AccountReference::with_master_key(url, "ZW11bGF0b3Ita2V5"))
+                DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
                     .with_operation_options(
                         OperationOptionsBuilder::new()
                             .with_binary_encoding(BinaryEncodingOptions::new().with_enabled(false))
@@ -1363,7 +1379,7 @@ mod tests {
         let runtime = emulator.runtime_builder().build().await.unwrap();
         let driver = runtime
             .create_driver(
-                DriverOptions::builder(AccountReference::with_master_key(east, "ZW11bGF0b3Ita2V5"))
+                DriverOptions::builder(AccountReference::with_account_key(east, "ZW11bGF0b3Ita2V5"))
                     .with_preferred_regions(vec![Region::WEST_US, Region::EAST_US])
                     .build(),
             )
@@ -1434,7 +1450,7 @@ mod tests {
         let runtime = emulator.runtime_builder().build().await.unwrap();
         let driver = runtime
             .create_driver(
-                DriverOptions::builder(AccountReference::with_master_key(url, "ZW11bGF0b3Ita2V5"))
+                DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
                     .with_operation_options(
                         OperationOptionsBuilder::new()
                             .with_binary_encoding(BinaryEncodingOptions::new().with_enabled(false))

@@ -4,37 +4,37 @@ parameters:
     default: ''
 
 steps:
-    # when we merge pipeline v3, this check will change to examining the targeting string $(TargetingString)
-    # as the generate-pr-diff call + resolution will be present in resolve-package-targeting.yml.
-    # until then, we simply check to see if we're targeting a service directory that owns a
-    # package with a compiled extension.
+    # Packages that ship compiled binaries opt in with `signBinaries: true` on their artifact entry in
+    # the service ci.yml. Save-Package-Properties copies that artifact entry verbatim into each package
+    # info file as `ArtifactDetails`, so the opt-in is readable here without threading the artifact list
+    # through every caller.
+    #
+    # resolve-package-targeting.yml runs immediately before this and deletes the package info files that
+    # this run is not targeting, so the folder is already narrowed to the packages being built; on 'auto'
+    # pull request builds save-package-properties.yml narrows it to the PR diff first. This deliberately
+    # keeps reading the folder rather than the $(TargetingString) those steps also set, because that
+    # variable carries only package names and the decision below needs an artifact property.
     - pwsh: |
-        # These packages ship a compiled extension, so a wheel is needed for every
-        # platform rather than a single pure-Python wheel built on Linux.
-        $binaryPackages = @("azure-storage-extensions", "azure-cosmos")
-
-        $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}/*.json" `
-          | ForEach-Object { $_.Name.Replace(".json", "") }
-
-        $targeted = @($packageProperties | Where-Object { $binaryPackages -contains $_ })
-
-        # sdk_build only streams subprocess output when its logger is at DEBUG,
-        # otherwise it buffers everything and replays it in a single record if the
-        # command fails. A cibuildwheel run takes many minutes, so buffering leaves
-        # the step silent and then collapses the whole build onto one timestamp.
-        # Stream extension builds, and leave everything else at the default level so
-        # the Linux job that builds every package stays readable.
+        $binaryPackages = @()
         $logLevel = "INFO"
 
-        if ($targeted.Count -gt 0) {
-          Write-Host "Targeting binary package(s) $($targeted -join ', '), enabling extension build."
-          Write-Host "##vso[task.setvariable variable=ENABLE_EXTENSION_BUILD]true"
-          $logLevel = "DEBUG"
+        foreach ($packageInfoPath in (Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}/*.json")) {
+          $packageInfo = Get-Content -Raw -Path $packageInfoPath.FullName | ConvertFrom-Json
+
+          if ($packageInfo.ArtifactDetails.signBinaries -eq $true) {
+            $binaryPackages += $packageInfo.Name
+          }
         }
 
-        # Always define this. It is consumed as $(SDK_BUILD_LOGLEVEL), and an
-        # undefined variable would reach sdk_build as the literal macro text and
-        # fail the logging setup.
-        Write-Host "sdk_build log level: $logLevel"
+        if ($binaryPackages) {
+          Write-Host "Targeting package(s) with compiled binaries ($($binaryPackages -join ', ')), enabling extension build."
+          Write-Host "##vso[task.setvariable variable=ENABLE_EXTENSION_BUILD]true"
+          # DEBUG streams long native builds instead of buffering output until a failure.
+          $logLevel = "DEBUG"
+        }
+        else {
+          Write-Host "No targeted package declares compiled binaries, building on linux only."
+        }
+        # Always define the variable used by the build step's LOGLEVEL mapping.
         Write-Host "##vso[task.setvariable variable=SDK_BUILD_LOGLEVEL]$logLevel"
       displayName: Check extension package presence

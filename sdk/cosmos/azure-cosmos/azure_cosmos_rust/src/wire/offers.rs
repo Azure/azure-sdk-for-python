@@ -283,7 +283,7 @@ mod tests {
             .unwrap();
         let driver = runtime
             .create_driver(
-                DriverOptions::builder(AccountReference::with_master_key(url, "ZW11bGF0b3Ita2V5"))
+                DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
                     .build(),
             )
             .await

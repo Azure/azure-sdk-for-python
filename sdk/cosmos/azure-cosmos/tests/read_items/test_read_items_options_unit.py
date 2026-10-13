@@ -163,7 +163,6 @@ def test_consistency_level_header_comes_from_the_options_dict():
     connection._useMultipleWriteLocations = False
     # Use a valid signing key so header preparation reaches the assertion.
     connection.master_key = base64.b64encode(b"0" * 32).decode()
-    connection.resource_tokens = None
     connection.aad_credentials = None
     headers = GetHeaders(
         connection,

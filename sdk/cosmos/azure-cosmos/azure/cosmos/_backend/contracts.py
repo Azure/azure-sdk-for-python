@@ -133,6 +133,9 @@ class PreparedFaultInjectionRule(_ValidatedSettings):
     hit_limit: Optional[int] = None
     enabled: bool = True
     error_type: Optional[str] = None
+    response_body: bytes = b""
+    #: Synthetic HTTP response headers, copied independently of the caller.
+    response_headers: Mapping[str, str] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         self._check_type("id", self.id, str, optional=False)
@@ -146,6 +149,8 @@ class PreparedFaultInjectionRule(_ValidatedSettings):
         self._check_type("hit_limit", self.hit_limit, int)
         self._check_type("enabled", self.enabled, bool, optional=False)
         self._check_type("error_type", self.error_type, str)
+        self._check_type("response_body", self.response_body, bytes, optional=False)
+        object.__setattr__(self, "response_headers", freeze_headers(self.response_headers))
 
 
 @dataclass(frozen=True)

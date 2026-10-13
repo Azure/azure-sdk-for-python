@@ -17,6 +17,12 @@ you get one file: `_rust.pyd` on Windows, `_rust.so` on Linux/macOS.
 That file gets dropped into `azure/cosmos/`, and the Python code
 imports it as `azure.cosmos._rust`.
 
+The workspace pins the driver to Git commit
+`84e2bb66c9911fa730dc9756c8fc3f9612456344`; `Cargo.lock` records the same source.
+This revision names PATCH strategy configuration `unstable_patch` and its
+account-key constructor `AccountReference::with_account_key`. The binding uses
+those names without changing the Python API or patching the driver source.
+
 The binding is split across modules:
 
 - `src/lib.rs` — module registration (`#[pymodule]` export list)
@@ -42,7 +48,9 @@ driver_handle = _rust.acquire_driver_handle("https://localhost:8081", master_key
 status, sub_status, headers, body, diagnostics = _rust.create_item(driver_handle, prepared)
 ```
 
-For public `create_item`, `read_item`, `delete_item` and `upsert_item`, the Python
+For public `create_item`, `read_item`, `delete_item`, `upsert_item`, `replace_item`,
+`patch_item`, `ContainerProxy.read`, `DatabaseProxy.delete_container` and
+`DatabaseProxy.create_container`, the Python
 wrapper requests structured request diagnostics when it owns a recording
 operation span or an SDK-internal
 completion handler requires request detail. No such handler is registered by
@@ -52,18 +60,39 @@ When enabled, they return `(response_tuple, attempt_payload)`; the response tupl
 itself is unchanged. A response-less driver error keeps its existing exception
 and carries available diagnostics in `_cosmos_attempt_payload`.
 
-Both item runners reuse `wire/response.rs` for this conversion. The shared Python
-module `azure.cosmos._telemetry` records the request spans before Azure Core ends
+The item, container-read, container-delete and container-create runners reuse
+`wire/response.rs` for this conversion.
+The shared Python module `azure.cosmos._telemetry` records the request spans before Azure Core ends
 the public operation span, including when a response hook raises. Customer apps
 call the normal methods and retain ownership of tracing configuration and
 exporters. This integration does not yet cover the other operations listed below.
+Public `ContainerProxy.read` uses the `read_container` binding operation.
+Internal `get_container_metadata` calls keep their existing metadata-only
+contract and do not contribute request diagnostics to this public read.
+Public `DatabaseProxy.delete_container` uses binding operation `delete_container`;
+its context owns the same adapter as the retained connection's container helper.
+Completion includes the existing response hook with `(headers, None)`.
+The Rust driver's metadata resolution remains internal: only diagnostics on the
+returned result are recorded, not invented lookup attempts or a second contribution.
+Public `DatabaseProxy.create_container` uses binding operation `create_container`
+and the same database-owned context. Completion includes the response hook,
+property normalization and returned container proxy construction. The existing
+hook receives a header copy and the returned properties object; telemetry does
+not introduce body isolation or change either public return form.
 
 Each binding invocation contributes through a single-use token. The Python
 collector rejects duplicate or late delivery and records operation totals once.
-The current public create/read/delete/upsert path accepts one binding result;
+The integrated public single-item and container metadata paths accept one binding result;
 future composed paths must explicitly configure a retained-detail limit before collecting
 multiple independent results. Driver retries already included in one result
 are not additional Python contributions.
+
+The shared Python deadline helper explicitly authorizes its own async task
+to use the operation state until that task unwinds. Inherited context alone
+still does not authorize another task. This preserves patch recording with
+an explicit timeout without changing cancellation or response hook behavior.
+Patch can produce multiple driver attempts within its one binding result;
+recording does not impose a server-side or Read-Modify-Replace strategy.
 
 Exports are registered in `src/lib.rs` (`#[pymodule] fn _rust(...)`).
 Current surface:

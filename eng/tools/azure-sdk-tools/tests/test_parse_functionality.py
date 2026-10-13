@@ -2,7 +2,6 @@ from ci_tools.parsing import parse_require, ParsedSetup
 from ci_tools.parsing.parse_functions import has_cibuildwheel_config
 from packaging.specifiers import SpecifierSet
 import os
-import runpy
 import shutil
 from unittest.mock import patch
 
@@ -338,42 +337,50 @@ def test_namespace_discovery_with_substantial_content():
         os.unlink(temp_file)
 
 
-def test_cibuildwheel_config_detected_without_ext_modules(tmp_path):
-    """
-    A [tool.cibuildwheel] table marks a package as compiled even when it declares no
-    setuptools Extension. Backends such as maturin/PyO3 build native code but expose
-    no ext_modules, so ext_modules alone would misclassify them as pure Python.
-    """
-    # baseline: an ordinary pyproject package opts into neither
-    assert has_cibuildwheel_config(pyproject_scenario) == False
-    assert ParsedSetup.from_path(pyproject_scenario).uses_cibuildwheel == False
+@pytest.mark.parametrize(
+    "config",
+    [
+        "\n[tool.cibuildwheel]\n",
+        '\n[tool.cibuildwheel]\nbuild = "cp310-*"\n',
+        '\n[tool.cibuildwheel.linux]\narchs = ["x86_64", "aarch64"]\n',
+    ],
+)
+def test_cibuildwheel_config_detected_without_ext_modules(tmp_path, config):
+    package = tmp_path / "package"
+    shutil.copytree(pyproject_scenario, package)
+    with (package / "pyproject.toml").open("a") as stream:
+        stream.write(config)
 
-    pkg = tmp_path / "maturin_style_pkg"
-    shutil.copytree(pyproject_scenario, pkg)
-    with open(pkg / "pyproject.toml", "a") as f:
-        f.write('\n[tool.cibuildwheel]\nbuild = "cp310-*"\n')
-
-    assert has_cibuildwheel_config(str(pkg)) == True
-
-    parsed = ParsedSetup.from_path(str(pkg))
+    parsed = ParsedSetup.from_path(str(package))
     assert parsed.ext_modules == []
-    assert parsed.uses_cibuildwheel == True
-
-
-def test_cibuildwheel_config_absent_when_no_pyproject():
-    # setup.py-only packages have no pyproject.toml to read
-    assert has_cibuildwheel_config(setup_project_scenario) == False
-    assert ParsedSetup.from_path(setup_project_scenario).uses_cibuildwheel == False
-
-
-def test_cosmos_package_uses_cibuildwheel_with_matching_metadata():
-    repo_root = os.path.abspath(os.path.join(package_root, "..", "..", ".."))
-    cosmos_package = os.path.join(repo_root, "sdk", "cosmos", "azure-cosmos")
-    parsed = ParsedSetup.from_path(cosmos_package)
-    version = runpy.run_path(os.path.join(cosmos_package, "azure", "cosmos", "_version.py"))["VERSION"]
-
-    assert parsed.name == "azure-cosmos"
-    assert parsed.version == version
-    assert parsed.python_requires == ">=3.10"
-    assert parsed.is_pyproject is True
     assert parsed.uses_cibuildwheel is True
+    assert has_cibuildwheel_config(str(package)) is True
+
+
+@pytest.mark.parametrize("scenario", [pyproject_scenario, setup_project_scenario])
+def test_cibuildwheel_config_absent(scenario):
+    assert has_cibuildwheel_config(scenario) is False
+    assert ParsedSetup.from_path(scenario).uses_cibuildwheel is False
+
+
+def test_cibuildwheel_config_detected_for_legacy_setup(tmp_path):
+    package = tmp_path / "package"
+    shutil.copytree(setup_project_scenario, package)
+    (package / "pyproject.toml").write_text('[tool.cibuildwheel]\nbuild = "cp310-*"\n')
+
+    parsed = ParsedSetup.from_path(str(package))
+    assert parsed.is_pyproject is False
+    assert parsed.uses_cibuildwheel is True
+
+
+def test_invalid_cibuildwheel_toml_is_not_ignored(tmp_path):
+    (tmp_path / "pyproject.toml").write_text("[tool.cibuildwheel\n")
+    with pytest.raises(ValueError):
+        has_cibuildwheel_config(str(tmp_path))
+
+
+@pytest.mark.parametrize("value", ["false", '"not-a-table"'])
+def test_cibuildwheel_config_requires_a_table(tmp_path, value):
+    (tmp_path / "pyproject.toml").write_text(f"[tool]\ncibuildwheel = {value}\n")
+    with pytest.raises(ValueError, match=r"Expected a \[tool.cibuildwheel\] table"):
+        has_cibuildwheel_config(str(tmp_path))

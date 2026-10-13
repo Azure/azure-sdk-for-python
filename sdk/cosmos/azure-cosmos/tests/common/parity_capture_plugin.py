@@ -987,6 +987,7 @@ def _emit_block(payload: Dict[str, Any]) -> None:
 # therefore misattribute captures.
 
 _LAZY_CAPTURE_OPS = frozenset((
+    "query_items",
     "read_feed_ranges",
     "list_databases",
     "query_databases",
@@ -1007,19 +1008,36 @@ class _CapturedPageIterator:
         return getattr(self._pages, name)
 
     def _before(self):
+        try:
+            continuation = self._pages.continuation_token
+        except NotImplementedError as error:
+            # Some queries can keep fetching without supporting saved tokens.
+            continuation = {"unavailable": _serialise_exception(error)}
         return (
             _rust_operation_count(),
             _rust_fallback_count(),
             _snapshot_headers_identity(self._client),
-            self._pages.continuation_token,
+            continuation,
         )
 
     def _record(self, before, rows, error=None, exhausted=False):
-        evidence = _execution_evidence(before[0], before[1])
+        evidence = _execution_evidence(
+            before[0], before[1], selected_backend=_infer_backend_label(self._client)
+        )
         fresh_headers = _snapshot_headers_identity(self._client) != before[2]
-        if exhausted and not fresh_headers and not evidence["rust_operation_delta"]:
-            return
-        headers = _snapshot_headers(self._client) if error is None or fresh_headers else {}
+        if exhausted and not evidence["rust_fallback_delta"]:
+            # A retained query can enter the binding just to drain its local
+            # cursor. Its page state counts responses, unlike the entry counter.
+            responses = getattr(getattr(self._pages, "state", None), "responses", None)
+            if responses == 0 or (
+                responses is None and not fresh_headers and not evidence["rust_operation_delta"]
+            ):
+                return
+        headers = (
+            _snapshot_headers(self._client)
+            if error is None
+            else _snapshot_exception_headers(error, self._client, before[2])
+        )
         self._emit(rows, headers, evidence, before[3], error)
 
 
@@ -1039,6 +1057,8 @@ class _CapturedSyncPageIterator(_CapturedPageIterator):
             raise
         self._record(before, rows)
         return iter(rows)
+
+    next = __next__
 
 
 class _CapturedAsyncPageIterator(_CapturedPageIterator):
@@ -1072,6 +1092,11 @@ class _CapturedPagedResult:
         self._client = client
         self._items = None
 
+    @property
+    def __class__(self):
+        # Preserve isinstance checks against the actual wrapped paging type.
+        return self._result.__class__
+
     def __getattr__(self, name):
         return getattr(self._result, name)
 
@@ -1089,6 +1114,8 @@ class _CapturedSyncPagedResult(_CapturedPagedResult):
         if self._items is None:
             self._items = self._iterate()
         return next(self._items)
+
+    next = __next__
 
     def _iterate(self):
         for page in self.by_page():

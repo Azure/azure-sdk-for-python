@@ -46,7 +46,7 @@ from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._cosmos_responses import CosmosDict
-from azure.cosmos._helpers._response_parse import process_backend_response
+from azure.cosmos._helpers._response_parse import process_backend_response, process_delete_response
 from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
 from azure.cosmos.exceptions import (
     CosmosHttpResponseError,
@@ -64,6 +64,50 @@ def _make_response(*, status_code=200, sub_status=0, headers=None, body=b"", dia
         body=body,
         diagnostics=diagnostics,
     )
+
+
+@pytest.mark.parametrize("hook_fails", [False, True])
+@pytest.mark.parametrize("with_state", [False, True])
+def test_delete_hook_receives_none_after_headers_are_published(with_state, hook_fails):
+    state = ClientLastResponseHeaders() if with_state else None
+    response = _make_response(
+        status_code=204, headers={"etag": "original", "x-ms-request-charge": "1"}, diagnostics="delete-diagnostics"
+    )
+    calls = []
+    failure = ValueError("customer hook failure")
+
+    def hook(headers, body):
+        calls.append(body)
+        assert body is None
+        assert headers["x-ms-request-charge"] == "1"
+        assert headers["x-ms-cosmos-sdk-diagnostics"] == "delete-diagnostics"
+        if state is not None:
+            assert state.last_response_headers == headers
+        headers["etag"] = "changed"
+        if hook_fails:
+            raise failure
+
+    if hook_fails:
+        with pytest.raises(ValueError) as caught:
+            process_delete_response(response, response_state=state, response_hook=hook)
+        assert caught.value is failure
+    else:
+        assert process_delete_response(response, response_state=state, response_hook=hook) is None
+    assert calls == [None]
+    assert response.headers["etag"] == "original"
+    if state is not None:
+        assert state.last_response_headers["etag"] == "original"
+
+
+def test_delete_failure_publishes_headers_without_calling_hook():
+    state = ClientLastResponseHeaders()
+    response = _make_response(status_code=404, headers={"x-ms-request-charge": "1"}, diagnostics="delete-diagnostics")
+    calls = []
+    with pytest.raises(CosmosResourceNotFoundError) as caught:
+        process_delete_response(response, response_state=state, response_hook=lambda *args: calls.append(args))
+    assert not calls
+    assert caught.value.status_code == 404
+    assert state.last_response_headers["x-ms-cosmos-sdk-diagnostics"] == "delete-diagnostics"
 
 
 def test_wire_string_headers_do_not_need_deepcopy(monkeypatch):

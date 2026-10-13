@@ -53,10 +53,12 @@ pub(crate) fn get_container_metadata_async<'py>(
 /// Create a container from the definition prepared by Python.
 /// The returned tuple contains the service response used by `DatabaseProxy.create_container`.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, include_attempts=false))]
 pub(crate) fn create_container<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "create_container")?;
     let (database_id, modifiers) =
@@ -69,15 +71,18 @@ pub(crate) fn create_container<'py>(
         database_id,
         body_bytes,
         "create_container",
+        include_attempts,
     )
 }
 
 /// Return an awaitable that creates a container.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, include_attempts=false))]
 pub(crate) fn create_container_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "create_container")?;
     let (database_id, modifiers) =
@@ -90,15 +95,18 @@ pub(crate) fn create_container_async<'py>(
         database_id,
         body_bytes,
         "create_container_async",
+        include_attempts,
     )
 }
 
 /// Read a container's properties by database and container name.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, include_attempts=false))]
 pub(crate) fn read_container<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "read_container")?;
     let (database_id, container_id, modifiers) = extract_container_point_prepared_inputs(prepared)?;
@@ -109,15 +117,18 @@ pub(crate) fn read_container<'py>(
         database_id,
         container_id,
         "read_container",
+        include_attempts,
     )
 }
 
 /// Return an awaitable that reads a container's properties.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, include_attempts=false))]
 pub(crate) fn read_container_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "read_container")?;
     let (database_id, container_id, modifiers) = extract_container_point_prepared_inputs(prepared)?;
@@ -128,15 +139,18 @@ pub(crate) fn read_container_async<'py>(
         database_id,
         container_id,
         "read_container_async",
+        include_attempts,
     )
 }
 
 /// Delete a container identified by database and container name.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, include_attempts=false))]
 pub(crate) fn delete_container<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "delete_container")?;
     let (database_id, container_id, modifiers) = extract_container_point_prepared_inputs(prepared)?;
@@ -147,15 +161,18 @@ pub(crate) fn delete_container<'py>(
         database_id,
         container_id,
         "delete_container",
+        include_attempts,
     )
 }
 
 /// Return an awaitable that deletes a container.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, include_attempts=false))]
 pub(crate) fn delete_container_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "delete_container")?;
     let (database_id, container_id, modifiers) = extract_container_point_prepared_inputs(prepared)?;
@@ -166,6 +183,7 @@ pub(crate) fn delete_container_async<'py>(
         database_id,
         container_id,
         "delete_container_async",
+        include_attempts,
     )
 }
 

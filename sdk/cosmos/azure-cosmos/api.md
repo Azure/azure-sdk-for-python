@@ -1,9 +1,3 @@
-> **Legacy API snapshot, not the Rust-backed release contract.** This inventory
-> retains earlier signatures and comparison-only APIs. Trigger options,
-> scripting APIs, and Cosmos user/permission APIs shown below are not supported
-> on the Rust path. See `docs\V5\api-review\API_REVIEW_BOARD.md` for the reviewed
-> release scope. Ordinary item queries invoking deployed UDFs remain supported.
-
 ```py
 namespace azure.cosmos
 
@@ -34,23 +28,22 @@ namespace azure.cosmos
                 client_connection: CosmosClientConnection, 
                 database_link: str, 
                 id: str, 
-                properties: Optional[dict[str, Any]] = None
+                properties: Optional[dict[str, Any]] = None, 
+                *, 
+                _item_context: Optional[ItemClientContext[CosmosBackend]] = ...
             ) -> None: ...
 
         def __repr__(self) -> str: ...
 
-        @distributed_trace
+        @trace_operation(binding_operation='create_item')
         def create_item(
                 self, 
                 body: dict[str, Any], 
-                populate_query_metrics: Optional[bool] = None, 
-                pre_trigger_include: Optional[str] = None, 
-                post_trigger_include: Optional[str] = None, 
-                indexing_directive: Optional[int] = None, 
                 *, 
                 availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 enable_automatic_id_generation: bool = False, 
                 excluded_locations: Optional[Sequence[str]] = ..., 
+                indexing_directive: Optional[int] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 no_response: Optional[bool] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
@@ -58,6 +51,7 @@ namespace azure.cosmos
                 retry_write: Optional[int] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> CosmosDict: ...
 
@@ -67,8 +61,6 @@ namespace azure.cosmos
                 partition_key: PartitionKeyType, 
                 *, 
                 excluded_locations: Optional[Sequence[str]] = ..., 
-                post_trigger_include: Optional[str] = ..., 
-                pre_trigger_include: Optional[str] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], None], None]] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
@@ -85,14 +77,12 @@ namespace azure.cosmos
                 **kwargs: Any
             ) -> None: ...
 
-        @distributed_trace
+        @trace_operation(binding_operation='delete_item')
         def delete_item(
                 self, 
                 item: Union[Mapping[str, Any], str], 
                 partition_key: PartitionKeyType, 
                 populate_query_metrics: Optional[bool] = None, 
-                pre_trigger_include: Optional[str] = None, 
-                post_trigger_include: Optional[str] = None, 
                 *, 
                 availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 etag: Optional[str] = ..., 
@@ -115,8 +105,6 @@ namespace azure.cosmos
                 *, 
                 availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
-                post_trigger_include: Optional[str] = ..., 
-                pre_trigger_include: Optional[str] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], list[dict[str, Any]]], None]] = ..., 
                 retry_write: Optional[int] = ..., 
@@ -179,8 +167,6 @@ namespace azure.cosmos
                 filter_predicate: Optional[str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 no_response: Optional[bool] = ..., 
-                post_trigger_include: Optional[str] = ..., 
-                pre_trigger_include: Optional[str] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 retry_write: Optional[int] = ..., 
@@ -308,11 +294,10 @@ namespace azure.cosmos
         @distributed_trace
         def read(
                 self, 
-                populate_query_metrics: Optional[bool] = None, 
-                populate_partition_key_range_statistics: Optional[bool] = None, 
-                populate_quota_info: Optional[bool] = None, 
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                populate_partition_key_range_statistics: Optional[bool] = ..., 
+                populate_quota_info: Optional[bool] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 **kwargs: Any
@@ -321,17 +306,17 @@ namespace azure.cosmos
         @distributed_trace
         def read_all_items(
                 self, 
-                max_item_count: Optional[int] = None, 
-                populate_query_metrics: Optional[bool] = None, 
                 *, 
                 availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_integrated_cache_staleness_in_ms: Optional[int] = ..., 
+                max_item_count: Optional[int] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[dict[str, Any]]: ...
 
@@ -341,24 +326,25 @@ namespace azure.cosmos
                 *, 
                 force_refresh: bool = False, 
                 **kwargs: Any
-            ) -> Iterable[dict[str, Any]]: ...
+            ) -> CosmosItemPaged: ...
 
-        @distributed_trace
+        @trace_operation(binding_operation='read_item')
         def read_item(
                 self, 
                 item: Union[str, Mapping[str, Any]], 
                 partition_key: PartitionKeyType, 
-                populate_query_metrics: Optional[bool] = None, 
-                post_trigger_include: Optional[str] = None, 
                 *, 
                 availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
+                etag: Optional[str] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 max_integrated_cache_staleness_in_ms: Optional[int] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> CosmosDict: ...
 
@@ -374,18 +360,12 @@ namespace azure.cosmos
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_concurrency: Optional[int] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
+                response_hook = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> CosmosList: ...
-
-        @distributed_trace
-        def read_offer(
-                self, 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs: Any
-            ) -> Offer: ...
 
         @distributed_trace
         def replace_item(
@@ -393,8 +373,6 @@ namespace azure.cosmos
                 item: Union[str, Mapping[str, Any]], 
                 body: dict[str, Any], 
                 populate_query_metrics: Optional[bool] = None, 
-                pre_trigger_include: Optional[str] = None, 
-                post_trigger_include: Optional[str] = None, 
                 *, 
                 availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 etag: Optional[str] = ..., 
@@ -428,13 +406,11 @@ namespace azure.cosmos
                 options: Optional[dict[str, Any]] = ...
             ) -> CosmosDict: ...
 
-        @distributed_trace
+        @trace_operation(binding_operation='upsert_item')
         def upsert_item(
                 self, 
                 body: dict[str, Any], 
                 populate_query_metrics: Optional[bool] = None, 
-                pre_trigger_include: Optional[str] = None, 
-                post_trigger_include: Optional[str] = None, 
                 *, 
                 availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 etag: Optional[str] = ..., 
@@ -453,6 +429,7 @@ namespace azure.cosmos
 
     class azure.cosmos.CosmosClient: implements ContextManager 
 
+        @unwind_client_construction
         def __init__(
                 self, 
                 url: str, 
@@ -467,9 +444,9 @@ namespace azure.cosmos
         def from_connection_string(
                 cls, 
                 conn_str: str, 
-                credential: Optional[Union[TokenCredential, str, dict[str, Any]]] = None, 
-                consistency_level: Optional[str] = None, 
-                **kwargs
+                *, 
+                consistency_level: Optional[str] = ..., 
+                **kwargs: Any
             ) -> CosmosClient: ...
 
         def close(self) -> None: ...
@@ -481,7 +458,7 @@ namespace azure.cosmos
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
-                response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = ..., 
                 return_properties: Literal[False] = False, 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
@@ -494,11 +471,24 @@ namespace azure.cosmos
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
-                response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = ..., 
                 return_properties: Literal[True], 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
             ) -> tuple[DatabaseProxy, CosmosDict]: ...
+
+        @overload
+        def create_database(
+                self, 
+                id: str, 
+                *, 
+                initial_headers: Optional[dict[str, str]] = ..., 
+                offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = ..., 
+                return_properties: bool, 
+                throughput_bucket: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]: ...
 
         @overload
         def create_database_if_not_exists(
@@ -507,7 +497,7 @@ namespace azure.cosmos
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
-                response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = ..., 
                 return_properties: Literal[False] = False, 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
@@ -520,19 +510,33 @@ namespace azure.cosmos
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
-                response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = ..., 
                 return_properties: Literal[True], 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
             ) -> tuple[DatabaseProxy, CosmosDict]: ...
 
+        @overload
+        def create_database_if_not_exists(
+                self, 
+                id: str, 
+                *, 
+                initial_headers: Optional[dict[str, str]] = ..., 
+                offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = ..., 
+                return_properties: bool, 
+                throughput_bucket: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]: ...
+
         @distributed_trace
         def delete_database(
                 self, 
                 database: Union[str, DatabaseProxy, Mapping[str, Any]], 
-                populate_query_metrics: Optional[bool] = None, 
                 *, 
+                etag: Optional[str] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                match_condition: MatchConditions = ..., 
                 response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
@@ -551,29 +555,28 @@ namespace azure.cosmos
         @distributed_trace
         def list_databases(
                 self, 
-                max_item_count: Optional[int] = None, 
-                populate_query_metrics: Optional[bool] = None, 
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                max_item_count: Optional[int] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
                 throughput_bucket: Optional[int] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[dict[str, Any]]: ...
 
         @distributed_trace
         def query_databases(
                 self, 
-                query: Optional[str] = None, 
-                parameters: Optional[list[dict[str, Any]]] = None, 
-                enable_cross_partition_query: Optional[bool] = None, 
-                max_item_count: Optional[int] = None, 
-                populate_query_metrics: Optional[bool] = None, 
+                query: Optional[Union[str, dict[str, Any]]], 
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                max_item_count: Optional[int] = ..., 
+                parameters: Optional[list[dict[str, Any]]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
                 throughput_bucket: Optional[int] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
+            ) -> ItemPaged[Any]: ...
 
 
     class azure.cosmos.CosmosDict(dict[str, Any]):
@@ -631,7 +634,9 @@ namespace azure.cosmos
                 self, 
                 client_connection: CosmosClientConnection, 
                 id: str, 
-                properties: Optional[dict[str, Any]] = None
+                properties: Optional[dict[str, Any]] = None, 
+                *, 
+                _item_context: Optional[ItemClientContext[CosmosBackend]] = ...
             ) -> None: ...
 
         def __repr__(self) -> str: ...
@@ -641,20 +646,19 @@ namespace azure.cosmos
                 self, 
                 id: str, 
                 partition_key: PartitionKey, 
-                indexing_policy: Optional[dict[str, Any]] = None, 
-                default_ttl: Optional[int] = None, 
-                populate_query_metrics: Optional[bool] = None, 
-                offer_throughput: Optional[Union[int, ThroughputProperties]] = None, 
-                unique_key_policy: Optional[dict[str, Any]] = None, 
-                conflict_resolution_policy: Optional[dict[str, Any]] = None, 
                 *, 
                 analytical_storage_ttl: Optional[int] = ..., 
                 change_feed_policy: Optional[dict[str, Any]] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
+                conflict_resolution_policy: Optional[dict[str, Any]] = ..., 
+                default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
                 global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
+                indexing_policy: Optional[dict[str, Any]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
                 return_properties: Literal[False] = False, 
+                unique_key_policy: Optional[dict[str, Any]] = ..., 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
                 **kwargs: Any
             ) -> ContainerProxy: ...
@@ -664,20 +668,19 @@ namespace azure.cosmos
                 self, 
                 id: str, 
                 partition_key: PartitionKey, 
-                indexing_policy: Optional[dict[str, Any]] = None, 
-                default_ttl: Optional[int] = None, 
-                populate_query_metrics: Optional[bool] = None, 
-                offer_throughput: Optional[Union[int, ThroughputProperties]] = None, 
-                unique_key_policy: Optional[dict[str, Any]] = None, 
-                conflict_resolution_policy: Optional[dict[str, Any]] = None, 
                 *, 
                 analytical_storage_ttl: Optional[int] = ..., 
                 change_feed_policy: Optional[dict[str, Any]] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
+                conflict_resolution_policy: Optional[dict[str, Any]] = ..., 
+                default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
                 global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
+                indexing_policy: Optional[dict[str, Any]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
                 return_properties: Literal[True], 
+                unique_key_policy: Optional[dict[str, Any]] = ..., 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
                 **kwargs: Any
             ) -> tuple[ContainerProxy, CosmosDict]: ...
@@ -687,20 +690,19 @@ namespace azure.cosmos
                 self, 
                 id: str, 
                 partition_key: PartitionKey, 
-                indexing_policy: Optional[dict[str, Any]] = None, 
-                default_ttl: Optional[int] = None, 
-                populate_query_metrics: Optional[bool] = None, 
-                offer_throughput: Optional[Union[int, ThroughputProperties]] = None, 
-                unique_key_policy: Optional[dict[str, Any]] = None, 
-                conflict_resolution_policy: Optional[dict[str, Any]] = None, 
                 *, 
                 analytical_storage_ttl: Optional[int] = ..., 
                 change_feed_policy: Optional[dict[str, Any]] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
+                conflict_resolution_policy: Optional[dict[str, Any]] = ..., 
+                default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
                 global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
+                indexing_policy: Optional[dict[str, Any]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
                 return_properties: Literal[False] = False, 
+                unique_key_policy: Optional[dict[str, Any]] = ..., 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
                 **kwargs: Any
             ) -> ContainerProxy: ...
@@ -710,53 +712,33 @@ namespace azure.cosmos
                 self, 
                 id: str, 
                 partition_key: PartitionKey, 
-                indexing_policy: Optional[dict[str, Any]] = None, 
-                default_ttl: Optional[int] = None, 
-                populate_query_metrics: Optional[bool] = None, 
-                offer_throughput: Optional[Union[int, ThroughputProperties]] = None, 
-                unique_key_policy: Optional[dict[str, Any]] = None, 
-                conflict_resolution_policy: Optional[dict[str, Any]] = None, 
                 *, 
                 analytical_storage_ttl: Optional[int] = ..., 
                 change_feed_policy: Optional[dict[str, Any]] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
+                conflict_resolution_policy: Optional[dict[str, Any]] = ..., 
+                default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
                 global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
+                indexing_policy: Optional[dict[str, Any]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
                 return_properties: Literal[True], 
+                unique_key_policy: Optional[dict[str, Any]] = ..., 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
                 **kwargs: Any
             ) -> tuple[ContainerProxy, CosmosDict]: ...
 
         @distributed_trace
-        def create_user(
-                self, 
-                body: dict[str, Any], 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs: Any
-            ) -> UserProxy: ...
-
-        @distributed_trace
         def delete_container(
                 self, 
                 container: Union[str, ContainerProxy, Mapping[str, Any]], 
-                populate_query_metrics: Optional[bool] = None, 
                 *, 
                 etag: Optional[str] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 response_hook: Optional[Callable] = ..., 
-                session_token: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace
-        def delete_user(
-                self, 
-                user: Union[str, UserProxy, Mapping[str, Any]], 
-                *, 
-                response_hook: Optional[Callable] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -770,85 +752,55 @@ namespace azure.cosmos
                 **kwargs: Any
             ) -> ThroughputProperties: ...
 
-        def get_user_client(self, user: Union[str, UserProxy, Mapping[str, Any]]) -> UserProxy: ...
-
         @distributed_trace
         def list_containers(
                 self, 
-                max_item_count: Optional[int] = None, 
-                populate_query_metrics: Optional[bool] = None, 
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                max_item_count: Optional[int] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = ..., 
-                session_token: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        @distributed_trace
-        def list_users(
-                self, 
-                max_item_count: Optional[int] = None, 
-                *, 
-                response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[dict[str, Any]]: ...
 
         @distributed_trace
         def query_containers(
                 self, 
-                query: Optional[str] = None, 
-                parameters: Optional[list[dict[str, Any]]] = None, 
-                max_item_count: Optional[int] = None, 
-                populate_query_metrics: Optional[bool] = None, 
+                query: Optional[Union[str, dict[str, Any]]], 
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                max_item_count: Optional[int] = ..., 
+                parameters: Optional[list[dict[str, Any]]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        @distributed_trace
-        def query_users(
-                self, 
-                query: str, 
-                parameters: Optional[list[dict[str, Any]]] = None, 
-                max_item_count: Optional[int] = None, 
-                *, 
-                response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[dict[str, Any]]: ...
 
         @distributed_trace
         def read(
                 self, 
-                populate_query_metrics: Optional[bool] = None, 
                 *, 
+                etag: Optional[str] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
-                response_hook: Optional[Callable] = ..., 
+                match_condition: MatchConditions = ..., 
+                response_hook: Callable[[Mapping[str, Any], Optional[dict[str, Any]]], None] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> CosmosDict: ...
-
-        @distributed_trace
-        def read_offer(
-                self, 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs: Any
-            ) -> Offer: ...
 
         @overload
         def replace_container(
                 self, 
                 container: Union[str, ContainerProxy, Mapping[str, Any]], 
                 partition_key: PartitionKey, 
-                indexing_policy: Optional[dict[str, Any]] = None, 
-                default_ttl: Optional[int] = None, 
-                conflict_resolution_policy: Optional[dict[str, Any]] = None, 
-                populate_query_metrics: Optional[bool] = None, 
                 *, 
                 analytical_storage_ttl: Optional[int] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
+                conflict_resolution_policy: Optional[dict[str, Any]] = ..., 
+                default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
                 global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
+                indexing_policy: Optional[dict[str, Any]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 return_properties: Literal[False] = False, 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
@@ -860,15 +812,14 @@ namespace azure.cosmos
                 self, 
                 container: Union[str, ContainerProxy, Mapping[str, Any]], 
                 partition_key: PartitionKey, 
-                indexing_policy: Optional[dict[str, Any]] = None, 
-                default_ttl: Optional[int] = None, 
-                conflict_resolution_policy: Optional[dict[str, Any]] = None, 
-                populate_query_metrics: Optional[bool] = None, 
                 *, 
                 analytical_storage_ttl: Optional[int] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
+                conflict_resolution_policy: Optional[dict[str, Any]] = ..., 
+                default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
                 global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
+                indexing_policy: Optional[dict[str, Any]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 return_properties: Literal[True], 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
@@ -883,25 +834,6 @@ namespace azure.cosmos
                 response_hook: Optional[Callable] = ..., 
                 **kwargs: Any
             ) -> ThroughputProperties: ...
-
-        @distributed_trace
-        def replace_user(
-                self, 
-                user: Union[str, UserProxy, Mapping[str, Any]], 
-                body: dict[str, Any], 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs: Any
-            ) -> UserProxy: ...
-
-        @distributed_trace
-        def upsert_user(
-                self, 
-                body: dict[str, Any], 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs: Any
-            ) -> UserProxy: ...
 
 
     class azure.cosmos.GlobalSecondaryIndexDefinition:
@@ -971,24 +903,6 @@ namespace azure.cosmos
             ) -> None: ...
 
         def __repr__(self) -> str: ...
-
-
-    class azure.cosmos.Permission:
-
-        def __init__(
-                self, 
-                id: str, 
-                user_link: str, 
-                permission_mode: str, 
-                resource_link: str, 
-                properties: Mapping[str, Any]
-            ) -> None: ...
-
-
-    class azure.cosmos.PermissionMode:
-        All: Literal["all"] = all
-        NoneMode: Literal["none"] = none
-        Read: Literal["read"] = read
 
 
     class azure.cosmos.ProxyConfiguration:
@@ -1189,95 +1103,6 @@ namespace azure.cosmos
         Pre: Literal["pre"] = pre
 
 
-    class azure.cosmos.UserProxy:
-        id: str
-        user_link: str
-
-        def __init__(
-                self, 
-                client_connection: CosmosClientConnection, 
-                id: str, 
-                database_link: str, 
-                properties: Optional[CosmosDict] = None
-            ) -> None: ...
-
-        def __repr__(self) -> str: ...
-
-        @distributed_trace
-        def create_permission(
-                self, 
-                body: dict[str, Any], 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs: Any
-            ) -> Permission: ...
-
-        @distributed_trace
-        def delete_permission(
-                self, 
-                permission: Union[str, Permission, Mapping[str, Any]], 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        def get_permission(
-                self, 
-                permission: Union[str, Permission, Mapping[str, Any]], 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs: Any
-            ) -> Permission: ...
-
-        @distributed_trace
-        def list_permissions(
-                self, 
-                max_item_count: Optional[int] = None, 
-                *, 
-                response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        @distributed_trace
-        def query_permissions(
-                self, 
-                query: str, 
-                parameters: Optional[list[dict[str, Any]]] = None, 
-                max_item_count: Optional[int] = None, 
-                *, 
-                response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        @distributed_trace
-        def read(
-                self, 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        @distributed_trace
-        def replace_permission(
-                self, 
-                permission: Union[str, Permission, Mapping[str, Any]], 
-                body: dict[str, Any], 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs
-            ) -> Permission: ...
-
-        @distributed_trace
-        def upsert_permission(
-                self, 
-                body: dict[str, Any], 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs: Any
-            ) -> Permission: ...
-
-
 namespace azure.cosmos.aio
 
     class azure.cosmos.aio.ContainerProxy:
@@ -1291,12 +1116,14 @@ namespace azure.cosmos.aio
                 client_connection: CosmosClientConnection, 
                 database_link: str, 
                 id: str, 
-                properties: Optional[dict[str, Any]] = None
+                properties: Optional[dict[str, Any]] = None, 
+                *, 
+                _item_context: Optional[ItemClientContext[AsyncCosmosBackend]] = ...
             ) -> None: ...
 
         def __repr__(self) -> str: ...
 
-        @distributed_trace_async
+        @trace_operation_async(binding_operation='create_item')
         async def create_item(
                 self, 
                 body: dict[str, Any], 
@@ -1307,13 +1134,12 @@ namespace azure.cosmos.aio
                 indexing_directive: Optional[int] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 no_response: Optional[bool] = ..., 
-                post_trigger_include: Optional[str] = ..., 
-                pre_trigger_include: Optional[str] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
-                response_hook: Callable[[Mapping[str, str], dict[str, Any]], None] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 retry_write: Optional[int] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> CosmosDict: ...
 
@@ -1323,8 +1149,6 @@ namespace azure.cosmos.aio
                 partition_key: PartitionKeyType, 
                 *, 
                 excluded_locations: Optional[Sequence[str]] = ..., 
-                post_trigger_include: Optional[str] = ..., 
-                pre_trigger_include: Optional[str] = ..., 
                 response_hook: Optional[Callable] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
@@ -1341,7 +1165,7 @@ namespace azure.cosmos.aio
                 **kwargs: Any
             ) -> None: ...
 
-        @distributed_trace_async
+        @trace_operation_async(binding_operation='delete_item')
         async def delete_item(
                 self, 
                 item: Union[str, Mapping[str, Any]], 
@@ -1352,10 +1176,8 @@ namespace azure.cosmos.aio
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
-                post_trigger_include: Optional[str] = ..., 
-                pre_trigger_include: Optional[str] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
-                response_hook: Callable[[Mapping[str, str], None], None] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, str], None], None]] = ..., 
                 retry_write: Optional[int] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
@@ -1370,8 +1192,6 @@ namespace azure.cosmos.aio
                 *, 
                 availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
-                post_trigger_include: Optional[str] = ..., 
-                pre_trigger_include: Optional[str] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable] = ..., 
                 retry_write: Optional[int] = ..., 
@@ -1434,10 +1254,8 @@ namespace azure.cosmos.aio
                 filter_predicate: Optional[str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 no_response: Optional[bool] = ..., 
-                post_trigger_include: Optional[str] = ..., 
-                pre_trigger_include: Optional[str] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
-                response_hook: Callable[[Mapping[str, str], dict[str, Any]], None] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 retry_write: Optional[int] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
@@ -1588,7 +1406,7 @@ namespace azure.cosmos.aio
                 populate_partition_key_range_statistics: Optional[bool] = ..., 
                 populate_quota_info: Optional[bool] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
-                response_hook: Callable[[Mapping[str, str], dict[str, Any]], None] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 **kwargs: Any
             ) -> CosmosDict: ...
 
@@ -1602,9 +1420,10 @@ namespace azure.cosmos.aio
                 max_integrated_cache_staleness_in_ms: Optional[int] = ..., 
                 max_item_count: Optional[int] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
-                response_hook: Callable[[Mapping[str, str], dict[str, Any]], None] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[dict[str, Any]]: ...
 
@@ -1614,23 +1433,25 @@ namespace azure.cosmos.aio
                 *, 
                 force_refresh: bool = False, 
                 **kwargs: Any
-            ) -> AsyncIterable[dict[str, Any]]: ...
+            ) -> CosmosAsyncItemPaged: ...
 
-        @distributed_trace_async
+        @trace_operation_async(binding_operation='read_item')
         async def read_item(
                 self, 
                 item: Union[str, Mapping[str, Any]], 
                 partition_key: PartitionKeyType, 
                 *, 
                 availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
+                etag: Optional[str] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 max_integrated_cache_staleness_in_ms: Optional[int] = ..., 
-                post_trigger_include: Optional[str] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
-                response_hook: Callable[[Mapping[str, str], dict[str, Any]], None] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> CosmosDict: ...
 
@@ -1645,8 +1466,10 @@ namespace azure.cosmos.aio
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_concurrency: Optional[int] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
+                response_hook = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> CosmosList: ...
 
@@ -1662,10 +1485,8 @@ namespace azure.cosmos.aio
                 initial_headers: Optional[dict[str, str]] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 no_response: Optional[bool] = ..., 
-                post_trigger_include: Optional[str] = ..., 
-                pre_trigger_include: Optional[str] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
-                response_hook: Callable[[Mapping[str, str], dict[str, Any]], None] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 retry_write: Optional[int] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
@@ -1690,7 +1511,7 @@ namespace azure.cosmos.aio
                 options: Optional[dict[str, Any]] = ...
             ) -> CosmosDict: ...
 
-        @distributed_trace_async
+        @trace_operation_async(binding_operation='upsert_item')
         async def upsert_item(
                 self, 
                 body: dict[str, Any], 
@@ -1701,10 +1522,8 @@ namespace azure.cosmos.aio
                 initial_headers: Optional[dict[str, str]] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 no_response: Optional[bool] = ..., 
-                post_trigger_include: Optional[str] = ..., 
-                pre_trigger_include: Optional[str] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
-                response_hook: Callable[[Mapping[str, str], dict[str, Any]], None] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 retry_write: Optional[int] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
@@ -1714,6 +1533,7 @@ namespace azure.cosmos.aio
 
     class azure.cosmos.aio.CosmosClient: implements AsyncContextManager 
 
+        @unwind_client_construction
         def __init__(
                 self, 
                 url: str, 
@@ -1733,7 +1553,6 @@ namespace azure.cosmos.aio
                 conn_str: str, 
                 *, 
                 consistency_level: Optional[str] = ..., 
-                credential: Optional[Union[str, dict[str, str]]] = ..., 
                 **kwargs: Any
             ) -> CosmosClient: ...
 
@@ -1746,7 +1565,7 @@ namespace azure.cosmos.aio
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
-                response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = ..., 
                 return_properties: Literal[False] = False, 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
@@ -1759,11 +1578,24 @@ namespace azure.cosmos.aio
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
-                response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = ..., 
                 return_properties: Literal[True], 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
             ) -> tuple[DatabaseProxy, CosmosDict]: ...
+
+        @overload
+        async def create_database(
+                self, 
+                id: str, 
+                *, 
+                initial_headers: Optional[dict[str, str]] = ..., 
+                offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = ..., 
+                return_properties: bool, 
+                throughput_bucket: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]: ...
 
         @overload
         async def create_database_if_not_exists(
@@ -1772,7 +1604,7 @@ namespace azure.cosmos.aio
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
-                response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = ..., 
                 return_properties: Literal[False] = False, 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
@@ -1785,24 +1617,39 @@ namespace azure.cosmos.aio
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
-                response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = ..., 
                 return_properties: Literal[True], 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
             ) -> tuple[DatabaseProxy, CosmosDict]: ...
+
+        @overload
+        async def create_database_if_not_exists(
+                self, 
+                id: str, 
+                *, 
+                initial_headers: Optional[dict[str, str]] = ..., 
+                offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = ..., 
+                return_properties: bool, 
+                throughput_bucket: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]: ...
 
         @distributed_trace_async
         async def delete_database(
                 self, 
                 database: Union[str, DatabaseProxy, dict[str, Any]], 
                 *, 
+                etag: Optional[str] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                match_condition: MatchConditions = ..., 
                 response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
-        def get_database_client(self, database: Union[str, DatabaseProxy, dict[str, Any]]) -> DatabaseProxy: ...
+        def get_database_client(self, database: Union[str, DatabaseProxy, Mapping[str, Any]]) -> DatabaseProxy: ...
 
         @distributed_trace
         def list_databases(
@@ -1811,24 +1658,24 @@ namespace azure.cosmos.aio
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_item_count: Optional[int] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
-                session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[dict[str, Any]]: ...
 
         @distributed_trace
         def query_databases(
                 self, 
-                query: str, 
+                query: Optional[Union[str, dict[str, Any]]], 
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_item_count: Optional[int] = ..., 
                 parameters: Optional[list[dict[str, Any]]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
-                session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
-            ) -> AsyncItemPaged[dict[str, Any]]: ...
+            ) -> AsyncItemPaged[Any]: ...
 
 
     class azure.cosmos.aio.DatabaseProxy:
@@ -1838,7 +1685,9 @@ namespace azure.cosmos.aio
                 self, 
                 client_connection: CosmosClientConnection, 
                 id: str, 
-                properties: Optional[dict[str, Any]] = None
+                properties: Optional[dict[str, Any]] = None, 
+                *, 
+                _item_context: Optional[ItemClientContext[AsyncCosmosBackend]] = ...
             ) -> None: ...
 
         def __repr__(self) -> str: ...
@@ -1932,34 +1781,19 @@ namespace azure.cosmos.aio
             ) -> tuple[ContainerProxy, CosmosDict]: ...
 
         @distributed_trace_async
-        async def create_user(
-                self, 
-                body: dict[str, Any], 
-                *, 
-                response_hook: Callable[[dict[str, str], dict[str, Any]], None] = ..., 
-                **kwargs: Any
-            ) -> UserProxy: ...
-
-        @distributed_trace_async
         async def delete_container(
                 self, 
                 container: Union[str, ContainerProxy, Mapping[str, Any]], 
                 *, 
+                etag: Optional[str] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 response_hook: Callable[[Mapping[str, str], None], None] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
-        @distributed_trace_async
-        async def delete_user(
-                self, 
-                user: Union[str, UserProxy, Mapping[str, Any]], 
-                *, 
-                response_hook: Callable[[dict[str, str], None], None] = ..., 
-                **kwargs: Any
-            ) -> None: ...
-
-        def get_container_client(self, container: Union[str, ContainerProxy, dict[str, Any]]) -> ContainerProxy: ...
+        def get_container_client(self, container: Union[str, ContainerProxy, Mapping[str, Any]]) -> ContainerProxy: ...
 
         @distributed_trace_async
         async def get_throughput(
@@ -1969,8 +1803,6 @@ namespace azure.cosmos.aio
                 **kwargs: Any
             ) -> ThroughputProperties: ...
 
-        def get_user_client(self, user: Union[str, UserProxy, Mapping[str, Any]]) -> UserProxy: ...
-
         @distributed_trace
         def list_containers(
                 self, 
@@ -1978,38 +1810,20 @@ namespace azure.cosmos.aio
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_item_count: Optional[int] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]] = ..., 
-                **kwargs
-            ) -> AsyncItemPaged[dict[str, Any]]: ...
-
-        @distributed_trace
-        def list_users(
-                self, 
-                *, 
-                max_item_count: Optional[int] = ..., 
-                response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[dict[str, Any]]: ...
 
         @distributed_trace
         def query_containers(
                 self, 
-                query: str, 
+                query: Optional[Union[str, dict[str, Any]]], 
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_item_count: Optional[int] = ..., 
                 parameters: Optional[list[dict[str, Any]]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[dict[str, Any]]: ...
-
-        @distributed_trace
-        def query_users(
-                self, 
-                query: str, 
-                *, 
-                max_item_count: Optional[int] = ..., 
-                parameters: Optional[list[dict[str, Any]]] = ..., 
-                response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[dict[str, Any]]: ...
 
@@ -2017,8 +1831,11 @@ namespace azure.cosmos.aio
         async def read(
                 self, 
                 *, 
+                etag: Optional[str] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
-                response_hook: Callable[[Mapping[str, str], dict[str, Any]], None] = ..., 
+                match_condition: MatchConditions = ..., 
+                response_hook: Callable[[Mapping[str, Any], Optional[dict[str, Any]]], None] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> CosmosDict: ...
 
@@ -2030,11 +1847,11 @@ namespace azure.cosmos.aio
                 *, 
                 analytical_storage_ttl: Optional[int] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
-                conflict_resolution_policy: Optional[dict[str, str]] = ..., 
+                conflict_resolution_policy: Optional[dict[str, Any]] = ..., 
                 default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
                 global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
-                indexing_policy: Optional[dict[str, str]] = ..., 
+                indexing_policy: Optional[dict[str, Any]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 return_properties: Literal[False] = False, 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
@@ -2049,11 +1866,11 @@ namespace azure.cosmos.aio
                 *, 
                 analytical_storage_ttl: Optional[int] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
-                conflict_resolution_policy: Optional[dict[str, str]] = ..., 
+                conflict_resolution_policy: Optional[dict[str, Any]] = ..., 
                 default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
                 global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
-                indexing_policy: Optional[dict[str, str]] = ..., 
+                indexing_policy: Optional[dict[str, Any]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 return_properties: Literal[True], 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
@@ -2068,25 +1885,6 @@ namespace azure.cosmos.aio
                 response_hook: Callable[[dict[str, str], dict[str, Any]], None] = ..., 
                 **kwargs: Any
             ) -> ThroughputProperties: ...
-
-        @distributed_trace_async
-        async def replace_user(
-                self, 
-                user: Union[str, UserProxy, Mapping[str, Any]], 
-                body: dict[str, Any], 
-                *, 
-                response_hook: Callable[[dict[str, str], dict[str, Any]], None] = ..., 
-                **kwargs: Any
-            ) -> UserProxy: ...
-
-        @distributed_trace_async
-        async def upsert_user(
-                self, 
-                body: dict[str, Any], 
-                *, 
-                response_hook: Callable[[dict[str, str], dict[str, Any]], None] = ..., 
-                **kwargs: Any
-            ) -> UserProxy: ...
 
 
     class azure.cosmos.aio.ScriptsProxy:
@@ -2251,95 +2049,6 @@ namespace azure.cosmos.aio
             ) -> dict[str, Any]: ...
 
 
-    class azure.cosmos.aio.UserProxy:
-        id: str
-        user_link: str
-
-        def __init__(
-                self, 
-                client_connection: CosmosClientConnection, 
-                id: str, 
-                database_link: str, 
-                properties: Optional[CosmosDict] = None
-            ) -> None: ...
-
-        def __repr__(self) -> str: ...
-
-        @distributed_trace_async
-        async def create_permission(
-                self, 
-                body: dict[str, Any], 
-                *, 
-                response_hook: Callable[[dict[str, str], dict[str, Any]], None] = ..., 
-                **kwargs: Any
-            ) -> Permission: ...
-
-        @distributed_trace_async
-        async def delete_permission(
-                self, 
-                permission: Union[str, Mapping[str, Any], Permission], 
-                *, 
-                response_hook: Callable[[dict[str, str], None], None] = ..., 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def get_permission(
-                self, 
-                permission: Union[str, Mapping[str, Any], Permission], 
-                *, 
-                response_hook: Callable[[dict[str, str], dict[str, Any]], None] = ..., 
-                **kwargs: Any
-            ) -> Permission: ...
-
-        @distributed_trace
-        def list_permissions(
-                self, 
-                *, 
-                max_item_count: Optional[int] = ..., 
-                response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[dict[str, Any]]: ...
-
-        @distributed_trace
-        def query_permissions(
-                self, 
-                query: str, 
-                *, 
-                max_item_count: Optional[int] = ..., 
-                parameters: Optional[list[dict[str, Any]]] = ..., 
-                response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[dict[str, Any]]], None]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[dict[str, Any]]: ...
-
-        @distributed_trace_async
-        async def read(
-                self, 
-                *, 
-                response_hook: Callable[[dict[str, str], dict[str, Any]], None] = ..., 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        @distributed_trace_async
-        async def replace_permission(
-                self, 
-                permission: Union[str, Mapping[str, Any], Permission], 
-                body: dict[str, Any], 
-                *, 
-                response_hook: Callable[[dict[str, str], dict[str, Any]], None] = ..., 
-                **kwargs: Any
-            ) -> Permission: ...
-
-        @distributed_trace_async
-        async def upsert_permission(
-                self, 
-                body: dict[str, Any], 
-                *, 
-                response_hook: Callable[[dict[str, str], dict[str, Any]], None] = ..., 
-                **kwargs: Any
-            ) -> Permission: ...
-
-
 namespace azure.cosmos.auth
 
     def azure.cosmos.auth.GetAuthorizationHeader(
@@ -2366,23 +2075,22 @@ namespace azure.cosmos.container
                 client_connection: CosmosClientConnection, 
                 database_link: str, 
                 id: str, 
-                properties: Optional[dict[str, Any]] = None
+                properties: Optional[dict[str, Any]] = None, 
+                *, 
+                _item_context: Optional[ItemClientContext[CosmosBackend]] = ...
             ) -> None: ...
 
         def __repr__(self) -> str: ...
 
-        @distributed_trace
+        @trace_operation(binding_operation='create_item')
         def create_item(
                 self, 
                 body: dict[str, Any], 
-                populate_query_metrics: Optional[bool] = None, 
-                pre_trigger_include: Optional[str] = None, 
-                post_trigger_include: Optional[str] = None, 
-                indexing_directive: Optional[int] = None, 
                 *, 
                 availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 enable_automatic_id_generation: bool = False, 
                 excluded_locations: Optional[Sequence[str]] = ..., 
+                indexing_directive: Optional[int] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 no_response: Optional[bool] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
@@ -2390,6 +2098,7 @@ namespace azure.cosmos.container
                 retry_write: Optional[int] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> CosmosDict: ...
 
@@ -2399,8 +2108,6 @@ namespace azure.cosmos.container
                 partition_key: PartitionKeyType, 
                 *, 
                 excluded_locations: Optional[Sequence[str]] = ..., 
-                post_trigger_include: Optional[str] = ..., 
-                pre_trigger_include: Optional[str] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], None], None]] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
@@ -2417,14 +2124,12 @@ namespace azure.cosmos.container
                 **kwargs: Any
             ) -> None: ...
 
-        @distributed_trace
+        @trace_operation(binding_operation='delete_item')
         def delete_item(
                 self, 
                 item: Union[Mapping[str, Any], str], 
                 partition_key: PartitionKeyType, 
                 populate_query_metrics: Optional[bool] = None, 
-                pre_trigger_include: Optional[str] = None, 
-                post_trigger_include: Optional[str] = None, 
                 *, 
                 availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 etag: Optional[str] = ..., 
@@ -2447,8 +2152,6 @@ namespace azure.cosmos.container
                 *, 
                 availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
-                post_trigger_include: Optional[str] = ..., 
-                pre_trigger_include: Optional[str] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], list[dict[str, Any]]], None]] = ..., 
                 retry_write: Optional[int] = ..., 
@@ -2511,8 +2214,6 @@ namespace azure.cosmos.container
                 filter_predicate: Optional[str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 no_response: Optional[bool] = ..., 
-                post_trigger_include: Optional[str] = ..., 
-                pre_trigger_include: Optional[str] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 retry_write: Optional[int] = ..., 
@@ -2640,11 +2341,10 @@ namespace azure.cosmos.container
         @distributed_trace
         def read(
                 self, 
-                populate_query_metrics: Optional[bool] = None, 
-                populate_partition_key_range_statistics: Optional[bool] = None, 
-                populate_quota_info: Optional[bool] = None, 
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                populate_partition_key_range_statistics: Optional[bool] = ..., 
+                populate_quota_info: Optional[bool] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 **kwargs: Any
@@ -2653,17 +2353,17 @@ namespace azure.cosmos.container
         @distributed_trace
         def read_all_items(
                 self, 
-                max_item_count: Optional[int] = None, 
-                populate_query_metrics: Optional[bool] = None, 
                 *, 
                 availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_integrated_cache_staleness_in_ms: Optional[int] = ..., 
+                max_item_count: Optional[int] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[dict[str, Any]]: ...
 
@@ -2673,24 +2373,25 @@ namespace azure.cosmos.container
                 *, 
                 force_refresh: bool = False, 
                 **kwargs: Any
-            ) -> Iterable[dict[str, Any]]: ...
+            ) -> CosmosItemPaged: ...
 
-        @distributed_trace
+        @trace_operation(binding_operation='read_item')
         def read_item(
                 self, 
                 item: Union[str, Mapping[str, Any]], 
                 partition_key: PartitionKeyType, 
-                populate_query_metrics: Optional[bool] = None, 
-                post_trigger_include: Optional[str] = None, 
                 *, 
                 availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
+                etag: Optional[str] = ..., 
                 excluded_locations: Optional[Sequence[str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 max_integrated_cache_staleness_in_ms: Optional[int] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> CosmosDict: ...
 
@@ -2706,18 +2407,12 @@ namespace azure.cosmos.container
                 initial_headers: Optional[dict[str, str]] = ..., 
                 max_concurrency: Optional[int] = ..., 
                 priority: Optional[Literal[High, Low]] = ..., 
+                response_hook = ..., 
                 session_token: Optional[str] = ..., 
                 throughput_bucket: Optional[int] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> CosmosList: ...
-
-        @distributed_trace
-        def read_offer(
-                self, 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs: Any
-            ) -> Offer: ...
 
         @distributed_trace
         def replace_item(
@@ -2725,8 +2420,6 @@ namespace azure.cosmos.container
                 item: Union[str, Mapping[str, Any]], 
                 body: dict[str, Any], 
                 populate_query_metrics: Optional[bool] = None, 
-                pre_trigger_include: Optional[str] = None, 
-                post_trigger_include: Optional[str] = None, 
                 *, 
                 availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 etag: Optional[str] = ..., 
@@ -2760,13 +2453,11 @@ namespace azure.cosmos.container
                 options: Optional[dict[str, Any]] = ...
             ) -> CosmosDict: ...
 
-        @distributed_trace
+        @trace_operation(binding_operation='upsert_item')
         def upsert_item(
                 self, 
                 body: dict[str, Any], 
                 populate_query_metrics: Optional[bool] = None, 
-                pre_trigger_include: Optional[str] = None, 
-                post_trigger_include: Optional[str] = None, 
                 *, 
                 availability_strategy: Optional[Union[bool, dict[str, Any]]] = ..., 
                 etag: Optional[str] = ..., 
@@ -2787,6 +2478,7 @@ namespace azure.cosmos.cosmos_client
 
     class azure.cosmos.cosmos_client.CosmosClient: implements ContextManager 
 
+        @unwind_client_construction
         def __init__(
                 self, 
                 url: str, 
@@ -2801,9 +2493,9 @@ namespace azure.cosmos.cosmos_client
         def from_connection_string(
                 cls, 
                 conn_str: str, 
-                credential: Optional[Union[TokenCredential, str, dict[str, Any]]] = None, 
-                consistency_level: Optional[str] = None, 
-                **kwargs
+                *, 
+                consistency_level: Optional[str] = ..., 
+                **kwargs: Any
             ) -> CosmosClient: ...
 
         def close(self) -> None: ...
@@ -2815,7 +2507,7 @@ namespace azure.cosmos.cosmos_client
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
-                response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = ..., 
                 return_properties: Literal[False] = False, 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
@@ -2828,11 +2520,24 @@ namespace azure.cosmos.cosmos_client
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
-                response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = ..., 
                 return_properties: Literal[True], 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
             ) -> tuple[DatabaseProxy, CosmosDict]: ...
+
+        @overload
+        def create_database(
+                self, 
+                id: str, 
+                *, 
+                initial_headers: Optional[dict[str, str]] = ..., 
+                offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = ..., 
+                return_properties: bool, 
+                throughput_bucket: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]: ...
 
         @overload
         def create_database_if_not_exists(
@@ -2841,7 +2546,7 @@ namespace azure.cosmos.cosmos_client
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
-                response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = ..., 
                 return_properties: Literal[False] = False, 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
@@ -2854,19 +2559,33 @@ namespace azure.cosmos.cosmos_client
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
-                response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = ..., 
                 return_properties: Literal[True], 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
             ) -> tuple[DatabaseProxy, CosmosDict]: ...
 
+        @overload
+        def create_database_if_not_exists(
+                self, 
+                id: str, 
+                *, 
+                initial_headers: Optional[dict[str, str]] = ..., 
+                offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
+                response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = ..., 
+                return_properties: bool, 
+                throughput_bucket: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]: ...
+
         @distributed_trace
         def delete_database(
                 self, 
                 database: Union[str, DatabaseProxy, Mapping[str, Any]], 
-                populate_query_metrics: Optional[bool] = None, 
                 *, 
+                etag: Optional[str] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                match_condition: MatchConditions = ..., 
                 response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
                 throughput_bucket: Optional[int] = ..., 
                 **kwargs: Any
@@ -2885,29 +2604,28 @@ namespace azure.cosmos.cosmos_client
         @distributed_trace
         def list_databases(
                 self, 
-                max_item_count: Optional[int] = None, 
-                populate_query_metrics: Optional[bool] = None, 
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                max_item_count: Optional[int] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
                 throughput_bucket: Optional[int] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[dict[str, Any]]: ...
 
         @distributed_trace
         def query_databases(
                 self, 
-                query: Optional[str] = None, 
-                parameters: Optional[list[dict[str, Any]]] = None, 
-                enable_cross_partition_query: Optional[bool] = None, 
-                max_item_count: Optional[int] = None, 
-                populate_query_metrics: Optional[bool] = None, 
+                query: Optional[Union[str, dict[str, Any]]], 
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                max_item_count: Optional[int] = ..., 
+                parameters: Optional[list[dict[str, Any]]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, Any]], None]] = ..., 
                 throughput_bucket: Optional[int] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
+            ) -> ItemPaged[Any]: ...
 
 
 namespace azure.cosmos.database
@@ -2919,7 +2637,9 @@ namespace azure.cosmos.database
                 self, 
                 client_connection: CosmosClientConnection, 
                 id: str, 
-                properties: Optional[dict[str, Any]] = None
+                properties: Optional[dict[str, Any]] = None, 
+                *, 
+                _item_context: Optional[ItemClientContext[CosmosBackend]] = ...
             ) -> None: ...
 
         def __repr__(self) -> str: ...
@@ -2929,20 +2649,19 @@ namespace azure.cosmos.database
                 self, 
                 id: str, 
                 partition_key: PartitionKey, 
-                indexing_policy: Optional[dict[str, Any]] = None, 
-                default_ttl: Optional[int] = None, 
-                populate_query_metrics: Optional[bool] = None, 
-                offer_throughput: Optional[Union[int, ThroughputProperties]] = None, 
-                unique_key_policy: Optional[dict[str, Any]] = None, 
-                conflict_resolution_policy: Optional[dict[str, Any]] = None, 
                 *, 
                 analytical_storage_ttl: Optional[int] = ..., 
                 change_feed_policy: Optional[dict[str, Any]] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
+                conflict_resolution_policy: Optional[dict[str, Any]] = ..., 
+                default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
                 global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
+                indexing_policy: Optional[dict[str, Any]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
                 return_properties: Literal[False] = False, 
+                unique_key_policy: Optional[dict[str, Any]] = ..., 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
                 **kwargs: Any
             ) -> ContainerProxy: ...
@@ -2952,20 +2671,19 @@ namespace azure.cosmos.database
                 self, 
                 id: str, 
                 partition_key: PartitionKey, 
-                indexing_policy: Optional[dict[str, Any]] = None, 
-                default_ttl: Optional[int] = None, 
-                populate_query_metrics: Optional[bool] = None, 
-                offer_throughput: Optional[Union[int, ThroughputProperties]] = None, 
-                unique_key_policy: Optional[dict[str, Any]] = None, 
-                conflict_resolution_policy: Optional[dict[str, Any]] = None, 
                 *, 
                 analytical_storage_ttl: Optional[int] = ..., 
                 change_feed_policy: Optional[dict[str, Any]] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
+                conflict_resolution_policy: Optional[dict[str, Any]] = ..., 
+                default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
                 global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
+                indexing_policy: Optional[dict[str, Any]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
                 return_properties: Literal[True], 
+                unique_key_policy: Optional[dict[str, Any]] = ..., 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
                 **kwargs: Any
             ) -> tuple[ContainerProxy, CosmosDict]: ...
@@ -2975,20 +2693,19 @@ namespace azure.cosmos.database
                 self, 
                 id: str, 
                 partition_key: PartitionKey, 
-                indexing_policy: Optional[dict[str, Any]] = None, 
-                default_ttl: Optional[int] = None, 
-                populate_query_metrics: Optional[bool] = None, 
-                offer_throughput: Optional[Union[int, ThroughputProperties]] = None, 
-                unique_key_policy: Optional[dict[str, Any]] = None, 
-                conflict_resolution_policy: Optional[dict[str, Any]] = None, 
                 *, 
                 analytical_storage_ttl: Optional[int] = ..., 
                 change_feed_policy: Optional[dict[str, Any]] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
+                conflict_resolution_policy: Optional[dict[str, Any]] = ..., 
+                default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
                 global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
+                indexing_policy: Optional[dict[str, Any]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
                 return_properties: Literal[False] = False, 
+                unique_key_policy: Optional[dict[str, Any]] = ..., 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
                 **kwargs: Any
             ) -> ContainerProxy: ...
@@ -2998,53 +2715,33 @@ namespace azure.cosmos.database
                 self, 
                 id: str, 
                 partition_key: PartitionKey, 
-                indexing_policy: Optional[dict[str, Any]] = None, 
-                default_ttl: Optional[int] = None, 
-                populate_query_metrics: Optional[bool] = None, 
-                offer_throughput: Optional[Union[int, ThroughputProperties]] = None, 
-                unique_key_policy: Optional[dict[str, Any]] = None, 
-                conflict_resolution_policy: Optional[dict[str, Any]] = None, 
                 *, 
                 analytical_storage_ttl: Optional[int] = ..., 
                 change_feed_policy: Optional[dict[str, Any]] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
+                conflict_resolution_policy: Optional[dict[str, Any]] = ..., 
+                default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
                 global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
+                indexing_policy: Optional[dict[str, Any]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
                 return_properties: Literal[True], 
+                unique_key_policy: Optional[dict[str, Any]] = ..., 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
                 **kwargs: Any
             ) -> tuple[ContainerProxy, CosmosDict]: ...
 
         @distributed_trace
-        def create_user(
-                self, 
-                body: dict[str, Any], 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs: Any
-            ) -> UserProxy: ...
-
-        @distributed_trace
         def delete_container(
                 self, 
                 container: Union[str, ContainerProxy, Mapping[str, Any]], 
-                populate_query_metrics: Optional[bool] = None, 
                 *, 
                 etag: Optional[str] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 response_hook: Optional[Callable] = ..., 
-                session_token: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace
-        def delete_user(
-                self, 
-                user: Union[str, UserProxy, Mapping[str, Any]], 
-                *, 
-                response_hook: Optional[Callable] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -3058,85 +2755,55 @@ namespace azure.cosmos.database
                 **kwargs: Any
             ) -> ThroughputProperties: ...
 
-        def get_user_client(self, user: Union[str, UserProxy, Mapping[str, Any]]) -> UserProxy: ...
-
         @distributed_trace
         def list_containers(
                 self, 
-                max_item_count: Optional[int] = None, 
-                populate_query_metrics: Optional[bool] = None, 
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                max_item_count: Optional[int] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = ..., 
-                session_token: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        @distributed_trace
-        def list_users(
-                self, 
-                max_item_count: Optional[int] = None, 
-                *, 
-                response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[dict[str, Any]]: ...
 
         @distributed_trace
         def query_containers(
                 self, 
-                query: Optional[str] = None, 
-                parameters: Optional[list[dict[str, Any]]] = None, 
-                max_item_count: Optional[int] = None, 
-                populate_query_metrics: Optional[bool] = None, 
+                query: Optional[Union[str, dict[str, Any]]], 
                 *, 
                 initial_headers: Optional[dict[str, str]] = ..., 
+                max_item_count: Optional[int] = ..., 
+                parameters: Optional[list[dict[str, Any]]] = ..., 
                 response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        @distributed_trace
-        def query_users(
-                self, 
-                query: str, 
-                parameters: Optional[list[dict[str, Any]]] = None, 
-                max_item_count: Optional[int] = None, 
-                *, 
-                response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[dict[str, Any]]: ...
 
         @distributed_trace
         def read(
                 self, 
-                populate_query_metrics: Optional[bool] = None, 
                 *, 
+                etag: Optional[str] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
-                response_hook: Optional[Callable] = ..., 
+                match_condition: MatchConditions = ..., 
+                response_hook: Callable[[Mapping[str, Any], Optional[dict[str, Any]]], None] = ..., 
+                timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> CosmosDict: ...
-
-        @distributed_trace
-        def read_offer(
-                self, 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs: Any
-            ) -> Offer: ...
 
         @overload
         def replace_container(
                 self, 
                 container: Union[str, ContainerProxy, Mapping[str, Any]], 
                 partition_key: PartitionKey, 
-                indexing_policy: Optional[dict[str, Any]] = None, 
-                default_ttl: Optional[int] = None, 
-                conflict_resolution_policy: Optional[dict[str, Any]] = None, 
-                populate_query_metrics: Optional[bool] = None, 
                 *, 
                 analytical_storage_ttl: Optional[int] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
+                conflict_resolution_policy: Optional[dict[str, Any]] = ..., 
+                default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
                 global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
+                indexing_policy: Optional[dict[str, Any]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 return_properties: Literal[False] = False, 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
@@ -3148,15 +2815,14 @@ namespace azure.cosmos.database
                 self, 
                 container: Union[str, ContainerProxy, Mapping[str, Any]], 
                 partition_key: PartitionKey, 
-                indexing_policy: Optional[dict[str, Any]] = None, 
-                default_ttl: Optional[int] = None, 
-                conflict_resolution_policy: Optional[dict[str, Any]] = None, 
-                populate_query_metrics: Optional[bool] = None, 
                 *, 
                 analytical_storage_ttl: Optional[int] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
+                conflict_resolution_policy: Optional[dict[str, Any]] = ..., 
+                default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
                 global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
+                indexing_policy: Optional[dict[str, Any]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 return_properties: Literal[True], 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
@@ -3171,25 +2837,6 @@ namespace azure.cosmos.database
                 response_hook: Optional[Callable] = ..., 
                 **kwargs: Any
             ) -> ThroughputProperties: ...
-
-        @distributed_trace
-        def replace_user(
-                self, 
-                user: Union[str, UserProxy, Mapping[str, Any]], 
-                body: dict[str, Any], 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs: Any
-            ) -> UserProxy: ...
-
-        @distributed_trace
-        def upsert_user(
-                self, 
-                body: dict[str, Any], 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs: Any
-            ) -> UserProxy: ...
 
 
 namespace azure.cosmos.documents
@@ -3267,12 +2914,6 @@ namespace azure.cosmos.documents
     class azure.cosmos.documents.PartitionKind:
         Hash: Literal["Hash"] = Hash
         MultiHash: Literal["MultiHash"] = MultiHash
-
-
-    class azure.cosmos.documents.PermissionMode:
-        All: Literal["all"] = all
-        NoneMode: Literal["none"] = none
-        Read: Literal["read"] = read
 
 
     class azure.cosmos.documents.ProxyConfiguration:
@@ -3635,7 +3276,6 @@ namespace azure.cosmos.http_constants
         RequestDurationMs = x-ms-request-duration-ms
         RequestId = x-ms-request-id
         ResourceQuota = x-ms-resource-quota
-        ResourceTokenExpiry = x-ms-documentdb-expiry-seconds
         ResourceUsage = x-ms-resource-usage
         ResponseContinuationTokenLimitInKb = x-ms-documentdb-responsecontinuationtokenlimitinkb
         RetryAfter = Retry-After
@@ -3739,12 +3379,10 @@ namespace azure.cosmos.http_constants
         Offer = offers
         PartitionKey = partitionkey
         PartitionKeyRange = pkranges
-        Permission = permissions
         Schema = schemas
         StoredProcedure = sprocs
         Topology = topology
         Trigger = triggers
-        User = users
         UserDefinedFunction = udfs
 
         @staticmethod
@@ -3881,37 +3519,27 @@ namespace azure.cosmos.partition_key
         def __repr__(self) -> str: ...
 
 
-namespace azure.cosmos.permission
-
-    class azure.cosmos.permission.Permission:
-
-        def __init__(
-                self, 
-                id: str, 
-                user_link: str, 
-                permission_mode: str, 
-                resource_link: str, 
-                properties: Mapping[str, Any]
-            ) -> None: ...
-
-
-    class azure.cosmos.permission.PermissionMode:
-        All: Literal["all"] = all
-        NoneMode: Literal["none"] = none
-        Read: Literal["read"] = read
-
-
 namespace azure.cosmos.scripts
 
     def azure.cosmos.scripts.build_options(kwargs: dict[str, Any]) -> dict[str, Any]: ...
+
+
+    def azure.cosmos.scripts.require_legacy_api(
+            connection: Any, 
+            api_name: str, 
+            *, 
+            item_context: Any = ...
+        ) -> None: ...
 
 
     class azure.cosmos.scripts.CosmosClientConnection:
         property ReadEndpoint: str    # Read-only
         property Session: Optional[Session]
         property WriteEndpoint: str    # Read-only
+        property last_response_headers: CaseInsensitiveDict
         PartitionResolverErrorMessage = Couldn't find any partition resolvers for the database link provided. Ensure that the link you used when registering the partition resolvers matches the link provided or you need to register both types of database link(self link as well as ID based link).
 
+        @unwind_connection_construction
         def __init__(
                 self, 
                 url_connection: str, 
@@ -3932,6 +3560,7 @@ namespace azure.cosmos.scripts
                 **kwargs: Any
             ) -> CosmosList: ...
 
+        @initialize_legacy_connection
         def Create(
                 self, 
                 body: dict[str, Any], 
@@ -3966,14 +3595,6 @@ namespace azure.cosmos.scripts
                 **kwargs: Any
             ) -> CosmosDict: ...
 
-        def CreatePermission(
-                self, 
-                user_link: str, 
-                permission: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
         def CreateStoredProcedure(
                 self, 
                 collection_link: str, 
@@ -3990,14 +3611,6 @@ namespace azure.cosmos.scripts
                 **kwargs: Any
             ) -> CosmosDict: ...
 
-        def CreateUser(
-                self, 
-                database_link: str, 
-                user: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
         def CreateUserDefinedFunction(
                 self, 
                 collection_link: str, 
@@ -4006,6 +3619,7 @@ namespace azure.cosmos.scripts
                 **kwargs: Any
             ) -> CosmosDict: ...
 
+        @initialize_legacy_connection
         def DeleteAllItemsByPartitionKey(
                 self, 
                 collection_link: str, 
@@ -4041,13 +3655,7 @@ namespace azure.cosmos.scripts
                 **kwargs: Any
             ) -> None: ...
 
-        def DeletePermission(
-                self, 
-                permission_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> None: ...
-
+        @initialize_legacy_connection
         def DeleteResource(
                 self, 
                 path: str, 
@@ -4072,13 +3680,6 @@ namespace azure.cosmos.scripts
                 **kwargs: Any
             ) -> None: ...
 
-        def DeleteUser(
-                self, 
-                user_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> None: ...
-
         def DeleteUserDefinedFunction(
                 self, 
                 udf_link: str, 
@@ -4086,6 +3687,7 @@ namespace azure.cosmos.scripts
                 **kwargs: Any
             ) -> None: ...
 
+        @initialize_legacy_connection
         def ExecuteStoredProcedure(
                 self, 
                 sproc_link: str, 
@@ -4102,6 +3704,7 @@ namespace azure.cosmos.scripts
 
         def GetPartitionResolver(self, database_link: str) -> Optional[RangePartitionResolver]: ...
 
+        @initialize_legacy_connection
         def PatchItem(
                 self, 
                 document_link: str, 
@@ -4168,14 +3771,6 @@ namespace azure.cosmos.scripts
                 **kwargs: Any
             ) -> ItemPaged[dict[str, Any]]: ...
 
-        def QueryPermissions(
-                self, 
-                user_link: str, 
-                query: Optional[Union[str, dict[str, Any]]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
         def QueryStoredProcedures(
                 self, 
                 collection_link: str, 
@@ -4200,14 +3795,7 @@ namespace azure.cosmos.scripts
                 **kwargs: Any
             ) -> ItemPaged[dict[str, Any]]: ...
 
-        def QueryUsers(
-                self, 
-                database_link: str, 
-                query: Optional[Union[str, dict[str, Any]]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
+        @initialize_legacy_connection
         def Read(
                 self, 
                 path: str, 
@@ -4286,20 +3874,6 @@ namespace azure.cosmos.scripts
                 **kwargs: Any
             ) -> ItemPaged[dict[str, Any]]: ...
 
-        def ReadPermission(
-                self, 
-                permission_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def ReadPermissions(
-                self, 
-                user_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
         def ReadStoredProcedure(
                 self, 
                 sproc_link: str, 
@@ -4328,13 +3902,6 @@ namespace azure.cosmos.scripts
                 **kwargs: Any
             ) -> ItemPaged[dict[str, Any]]: ...
 
-        def ReadUser(
-                self, 
-                user_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
         def ReadUserDefinedFunction(
                 self, 
                 udf_link: str, 
@@ -4349,19 +3916,13 @@ namespace azure.cosmos.scripts
                 **kwargs: Any
             ) -> ItemPaged[dict[str, Any]]: ...
 
-        def ReadUsers(
-                self, 
-                database_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
         def RegisterPartitionResolver(
                 self, 
                 database_link: str, 
                 partition_resolver: RangePartitionResolver
             ) -> None: ...
 
+        @initialize_legacy_connection
         def Replace(
                 self, 
                 resource: dict[str, Any], 
@@ -4396,14 +3957,6 @@ namespace azure.cosmos.scripts
                 **kwargs: Any
             ) -> CosmosDict: ...
 
-        def ReplacePermission(
-                self, 
-                permission_link: str, 
-                permission: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
         def ReplaceStoredProcedure(
                 self, 
                 sproc_link: str, 
@@ -4420,14 +3973,6 @@ namespace azure.cosmos.scripts
                 **kwargs: Any
             ) -> CosmosDict: ...
 
-        def ReplaceUser(
-                self, 
-                user_link: str, 
-                user: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
         def ReplaceUserDefinedFunction(
                 self, 
                 udf_link: str, 
@@ -4436,6 +3981,7 @@ namespace azure.cosmos.scripts
                 **kwargs: Any
             ) -> CosmosDict: ...
 
+        @initialize_legacy_connection
         def Upsert(
                 self, 
                 body: dict[str, Any], 
@@ -4455,14 +4001,6 @@ namespace azure.cosmos.scripts
                 **kwargs: Any
             ) -> CosmosDict: ...
 
-        def UpsertPermission(
-                self, 
-                user_link: str, 
-                permission: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
         def UpsertStoredProcedure(
                 self, 
                 collection_link: str, 
@@ -4475,14 +4013,6 @@ namespace azure.cosmos.scripts
                 self, 
                 collection_link: str, 
                 trigger: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def UpsertUser(
-                self, 
-                database_link: str, 
-                user: dict[str, Any], 
                 options: Optional[Mapping[str, Any]] = None, 
                 **kwargs: Any
             ) -> CosmosDict: ...
@@ -4694,738 +4224,6 @@ namespace azure.cosmos.scripts
                 body: dict[str, Any], 
                 **kwargs: Any
             ) -> CosmosDict: ...
-
-
-namespace azure.cosmos.user
-
-    def azure.cosmos.user.build_options(kwargs: dict[str, Any]) -> dict[str, Any]: ...
-
-
-    class azure.cosmos.user.CosmosClientConnection:
-        property ReadEndpoint: str    # Read-only
-        property Session: Optional[Session]
-        property WriteEndpoint: str    # Read-only
-        PartitionResolverErrorMessage = Couldn't find any partition resolvers for the database link provided. Ensure that the link you used when registering the partition resolvers matches the link provided or you need to register both types of database link(self link as well as ID based link).
-
-        def __init__(
-                self, 
-                url_connection: str, 
-                auth: CredentialDict, 
-                connection_policy: Optional[ConnectionPolicy] = None, 
-                consistency_level: Optional[str] = None, 
-                availability_strategy: Union[bool, dict[str, Any]] = False, 
-                availability_strategy_executor: Optional[ThreadPoolExecutor] = None, 
-                enable_compact_utf8_item_writes: bool = False, 
-                **kwargs: Any
-            ) -> None: ...
-
-        def Batch(
-                self, 
-                collection_link: str, 
-                batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ]], Tuple[str, Tuple[Any, ], dict[str, Any]]]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosList: ...
-
-        def Create(
-                self, 
-                body: dict[str, Any], 
-                path: str, 
-                resource_type: str, 
-                id: Optional[str], 
-                initial_headers: Optional[Mapping[str, Any]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def CreateContainer(
-                self, 
-                database_link: str, 
-                collection: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def CreateDatabase(
-                self, 
-                database: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def CreateItem(
-                self, 
-                database_or_container_link: str, 
-                document: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def CreatePermission(
-                self, 
-                user_link: str, 
-                permission: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def CreateStoredProcedure(
-                self, 
-                collection_link: str, 
-                sproc: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def CreateTrigger(
-                self, 
-                collection_link: str, 
-                trigger: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def CreateUser(
-                self, 
-                database_link: str, 
-                user: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def CreateUserDefinedFunction(
-                self, 
-                collection_link: str, 
-                udf: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def DeleteAllItemsByPartitionKey(
-                self, 
-                collection_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> None: ...
-
-        def DeleteConflict(
-                self, 
-                conflict_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> None: ...
-
-        def DeleteContainer(
-                self, 
-                collection_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> None: ...
-
-        def DeleteDatabase(
-                self, 
-                database_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> None: ...
-
-        def DeleteItem(
-                self, 
-                document_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> None: ...
-
-        def DeletePermission(
-                self, 
-                permission_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> None: ...
-
-        def DeleteResource(
-                self, 
-                path: str, 
-                resource_type: str, 
-                id: Optional[str], 
-                initial_headers: Optional[Mapping[str, Any]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> None: ...
-
-        def DeleteStoredProcedure(
-                self, 
-                sproc_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> None: ...
-
-        def DeleteTrigger(
-                self, 
-                trigger_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> None: ...
-
-        def DeleteUser(
-                self, 
-                user_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> None: ...
-
-        def DeleteUserDefinedFunction(
-                self, 
-                udf_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> None: ...
-
-        def ExecuteStoredProcedure(
-                self, 
-                sproc_link: str, 
-                params: Optional[Union[dict[str, Any], list[dict[str, Any]]]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> Any: ...
-
-        def GetDatabaseAccount(
-                self, 
-                url_connection: Optional[str] = None, 
-                **kwargs: Any
-            ) -> DatabaseAccount: ...
-
-        def GetPartitionResolver(self, database_link: str) -> Optional[RangePartitionResolver]: ...
-
-        def PatchItem(
-                self, 
-                document_link: str, 
-                operations: list[dict[str, Any]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def QueryConflicts(
-                self, 
-                collection_link: str, 
-                query: Optional[Union[str, dict[str, Any]]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        def QueryContainers(
-                self, 
-                database_link: str, 
-                query: Optional[Union[str, dict[str, Any]]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        def QueryDatabases(
-                self, 
-                query: Optional[Union[str, dict[str, Any]]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        def QueryFeed(
-                self, 
-                path: str, 
-                collection_id: str, 
-                query: Optional[Union[str, dict[str, Any]]], 
-                options: Mapping[str, Any], 
-                partition_key_range_id: Optional[str] = None, 
-                **kwargs: Any
-            ) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]: ...
-
-        def QueryItems(
-                self, 
-                database_or_container_link: str, 
-                query: Optional[Union[str, dict[str, Any]]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                partition_key: Optional[PartitionKeyType] = None, 
-                response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None, 
-                **kwargs: Any
-            ) -> CosmosItemPaged: ...
-
-        def QueryItemsChangeFeed(
-                self, 
-                collection_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        def QueryOffers(
-                self, 
-                query: Optional[Union[str, dict[str, Any]]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        def QueryPermissions(
-                self, 
-                user_link: str, 
-                query: Optional[Union[str, dict[str, Any]]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        def QueryStoredProcedures(
-                self, 
-                collection_link: str, 
-                query: Optional[Union[str, dict[str, Any]]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        def QueryTriggers(
-                self, 
-                collection_link: str, 
-                query: Optional[Union[str, dict[str, Any]]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        def QueryUserDefinedFunctions(
-                self, 
-                collection_link: str, 
-                query: Optional[Union[str, dict[str, Any]]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        def QueryUsers(
-                self, 
-                database_link: str, 
-                query: Optional[Union[str, dict[str, Any]]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        def Read(
-                self, 
-                path: str, 
-                resource_type: str, 
-                id: Optional[str], 
-                initial_headers: Optional[Mapping[str, Any]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def ReadConflict(
-                self, 
-                conflict_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def ReadConflicts(
-                self, 
-                collection_link: str, 
-                feed_options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        def ReadContainer(
-                self, 
-                collection_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def ReadContainers(
-                self, 
-                database_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        def ReadDatabase(
-                self, 
-                database_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def ReadDatabases(
-                self, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        def ReadItem(
-                self, 
-                document_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs
-            ) -> CosmosDict: ...
-
-        def ReadItems(
-                self, 
-                collection_link: str, 
-                feed_options: Optional[Mapping[str, Any]] = None, 
-                response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        def ReadOffer(
-                self, 
-                offer_link: str, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def ReadOffers(
-                self, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        def ReadPermission(
-                self, 
-                permission_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def ReadPermissions(
-                self, 
-                user_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        def ReadStoredProcedure(
-                self, 
-                sproc_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def ReadStoredProcedures(
-                self, 
-                collection_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        def ReadTrigger(
-                self, 
-                trigger_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def ReadTriggers(
-                self, 
-                collection_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        def ReadUser(
-                self, 
-                user_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def ReadUserDefinedFunction(
-                self, 
-                udf_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def ReadUserDefinedFunctions(
-                self, 
-                collection_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        def ReadUsers(
-                self, 
-                database_link: str, 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        def RegisterPartitionResolver(
-                self, 
-                database_link: str, 
-                partition_resolver: RangePartitionResolver
-            ) -> None: ...
-
-        def Replace(
-                self, 
-                resource: dict[str, Any], 
-                path: str, 
-                resource_type: str, 
-                id: Optional[str], 
-                initial_headers: Optional[Mapping[str, Any]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def ReplaceContainer(
-                self, 
-                collection_link: str, 
-                collection: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def ReplaceItem(
-                self, 
-                document_link: str, 
-                new_document: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def ReplaceOffer(
-                self, 
-                offer_link: str, 
-                offer: dict[str, Any], 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def ReplacePermission(
-                self, 
-                permission_link: str, 
-                permission: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def ReplaceStoredProcedure(
-                self, 
-                sproc_link: str, 
-                sproc: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def ReplaceTrigger(
-                self, 
-                trigger_link: str, 
-                trigger: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def ReplaceUser(
-                self, 
-                user_link: str, 
-                user: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def ReplaceUserDefinedFunction(
-                self, 
-                udf_link: str, 
-                udf: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def Upsert(
-                self, 
-                body: dict[str, Any], 
-                path: str, 
-                resource_type: str, 
-                id: Optional[str], 
-                initial_headers: Optional[Mapping[str, Any]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def UpsertItem(
-                self, 
-                database_or_container_link: str, 
-                document: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def UpsertPermission(
-                self, 
-                user_link: str, 
-                permission: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def UpsertStoredProcedure(
-                self, 
-                collection_link: str, 
-                sproc: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def UpsertTrigger(
-                self, 
-                collection_link: str, 
-                trigger: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def UpsertUser(
-                self, 
-                database_link: str, 
-                user: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def UpsertUserDefinedFunction(
-                self, 
-                collection_link: str, 
-                udf: dict[str, Any], 
-                options: Optional[Mapping[str, Any]] = None, 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        def health_check(
-                self, 
-                url_connection: Optional[str] = None, 
-                **kwargs: Any
-            ): ...
-
-        def read_items(
-                self, 
-                collection_link: str, 
-                items: Sequence[Tuple[str, PartitionKeyType]], 
-                options: Optional[Mapping[str, Any]] = None, 
-                *, 
-                executor: Optional[ThreadPoolExecutor] = ..., 
-                **kwargs: Any
-            ) -> CosmosList: ...
-
-        def refresh_routing_map_provider(
-                self, 
-                collection_link: Optional[str] = None, 
-                previous_routing_map: Optional[Any] = None, 
-                feed_options: Optional[dict[str, Any]] = None
-            ) -> None: ...
-
-
-    class azure.cosmos.user.CosmosDict(dict[str, Any]):
-
-        def __init__(
-                self, 
-                original_dict: Optional[Mapping[str, Any]], 
-                /, 
-                *, 
-                response_headers: CaseInsensitiveDict
-            ) -> None: ...
-
-        def get_response_headers(self) -> CaseInsensitiveDict: ...
-
-
-    class azure.cosmos.user.Permission:
-
-        def __init__(
-                self, 
-                id: str, 
-                user_link: str, 
-                permission_mode: str, 
-                resource_link: str, 
-                properties: Mapping[str, Any]
-            ) -> None: ...
-
-
-    class azure.cosmos.user.UserProxy:
-        id: str
-        user_link: str
-
-        def __init__(
-                self, 
-                client_connection: CosmosClientConnection, 
-                id: str, 
-                database_link: str, 
-                properties: Optional[CosmosDict] = None
-            ) -> None: ...
-
-        def __repr__(self) -> str: ...
-
-        @distributed_trace
-        def create_permission(
-                self, 
-                body: dict[str, Any], 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs: Any
-            ) -> Permission: ...
-
-        @distributed_trace
-        def delete_permission(
-                self, 
-                permission: Union[str, Permission, Mapping[str, Any]], 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        def get_permission(
-                self, 
-                permission: Union[str, Permission, Mapping[str, Any]], 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs: Any
-            ) -> Permission: ...
-
-        @distributed_trace
-        def list_permissions(
-                self, 
-                max_item_count: Optional[int] = None, 
-                *, 
-                response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        @distributed_trace
-        def query_permissions(
-                self, 
-                query: str, 
-                parameters: Optional[list[dict[str, Any]]] = None, 
-                max_item_count: Optional[int] = None, 
-                *, 
-                response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[dict[str, Any]]: ...
-
-        @distributed_trace
-        def read(
-                self, 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs: Any
-            ) -> CosmosDict: ...
-
-        @distributed_trace
-        def replace_permission(
-                self, 
-                permission: Union[str, Permission, Mapping[str, Any]], 
-                body: dict[str, Any], 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs
-            ) -> Permission: ...
-
-        @distributed_trace
-        def upsert_permission(
-                self, 
-                body: dict[str, Any], 
-                *, 
-                response_hook: Optional[Callable] = ..., 
-                **kwargs: Any
-            ) -> Permission: ...
 
 
 ```

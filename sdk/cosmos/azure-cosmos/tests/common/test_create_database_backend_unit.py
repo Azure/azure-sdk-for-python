@@ -183,7 +183,6 @@ def test_read_database_prepared_preserves_legacy_option_headers():
         "initialHeaders": initial_headers,
         "maxItemCount": 10,
         "enableScanInQuery": True,
-        "resourceTokenExpirySeconds": 60,
         "offerType": "S1",
         "contentType": "application/custom+json",
         "isQueryPlanRequest": True,
@@ -223,7 +222,6 @@ def test_read_database_prepared_preserves_legacy_option_headers():
         "enableScanInQuery",
         "maxItemCount",
         "populateQueryMetrics",
-        "resourceTokenExpirySeconds",
         "sessionToken",
         "throughputBucket",
     ],
@@ -3688,7 +3686,7 @@ def test_database_defaults_and_overrides_are_stable_across_every_step(
         client._adapter = ASYNC_LEGACY_BACKEND if is_async else LEGACY_BACKEND
         replies = iter(_get_or_create_responses(statuses))
         header_context = SimpleNamespace(
-            UseMultipleWriteLocations=False, master_key=None, resource_tokens=None, client_id=None,
+            UseMultipleWriteLocations=False, master_key=None, client_id=None,
         )
 
         def dispatch(*args, options, **kwargs):

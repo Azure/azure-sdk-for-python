@@ -116,20 +116,28 @@ def test_native_integer_boundaries_are_preserved_without_mutating_inputs():
     assert rule == before
 
 
-def test_connection_fault_has_no_synthetic_response():
-    rule = {"id": "connection", "operation_type": "CreateItem", "error_type": "ConnectionError"}
+@pytest.mark.parametrize("error_type", ["ConnectionError", "ResponseTimeout"])
+def test_transport_fault_has_no_synthetic_response(error_type):
+    rule = {"id": "transport", "operation_type": "ReadItem", "error_type": error_type}
+    before = dict(rule)
     prepared, = _prepare_fault_injection_rules([rule])
-    assert prepared.error_type == "ConnectionError"
+    assert prepared.error_type == error_type
     assert prepared.status_code is None
+    assert prepared.response_body == b""
+    assert prepared.response_headers == {}
+    assert rule == before
     assert "status_code" not in rule
 
 
+@pytest.mark.parametrize("error_type", ["ConnectionError", "ResponseTimeout"])
 @pytest.mark.parametrize("extra", [
-    {"status_code": 502}, {"sub_status": 1}, {"error_type": "ResponseTimeout"},
+    {"status_code": 502}, {"sub_status": 1}, {"response_body": b"body"},
+    {"response_headers": {"x-ms-retry-after-ms": "1000"}},
+    {"error_type": "ResponseTimeoutAfterService"},
     {"error_type": ""}, {"error_type": []}, {"error_type": True},
 ])
-def test_connection_fault_rejects_ambiguous_or_unsupported_rules(extra):
-    rule = {"id": "connection", "operation_type": "CreateItem", "error_type": "ConnectionError", **extra}
+def test_transport_fault_rejects_ambiguous_or_unsupported_rules(error_type, extra):
+    rule = {"id": "transport", "operation_type": "ReadItem", "error_type": error_type, **extra}
     with pytest.raises(ValueError, match="error_type"):
         _prepare_fault_injection_rules([rule])
 
@@ -151,6 +159,29 @@ def test_zero_and_false_are_values_not_missing_options():
     assert prepared.hit_limit == 0
     assert prepared.probability == 0.0
     assert prepared.enabled is False
+
+
+def test_response_headers_are_normalized_copied_and_frozen():
+    headers = {"X-MS-Retry-After-MS": "1000", "x-test": ""}
+    rule = _rule(response_headers=headers)
+    prepared, = _prepare_fault_injection_rules([rule])
+    assert headers == {"X-MS-Retry-After-MS": "1000", "x-test": ""}
+    assert dict(prepared.response_headers) == {"x-ms-retry-after-ms": "1000", "x-test": ""}
+    headers["X-MS-Retry-After-MS"] = "5000"
+    assert prepared.response_headers["x-ms-retry-after-ms"] == "1000"
+    with pytest.raises(TypeError):
+        prepared.response_headers["x-ms-retry-after-ms"] = "5000"
+
+
+@pytest.mark.parametrize("headers", [
+    None, [], "", {1: "1000"}, {"x-test": 1000}, {"": "value"},
+    {"bad name": "value"}, {"bad:header": "value"}, {"x-test": "bad\r\nvalue"},
+    {"x-test": "\x00"}, {"x-test": "\x7f"}, {"x-test": "1", "X-Test": "2"},
+    {"X-MS-Substatus": "1"},
+])
+def test_response_headers_reject_invalid_or_ambiguous_values(headers):
+    with pytest.raises(ValueError, match="response_headers"):
+        _prepare_fault_injection_rules([_rule(response_headers=headers)])
 
 
 def test_rule_defaults_and_duplicate_detection_are_preserved():

@@ -229,6 +229,11 @@ def _prepare_fault_injection_rules(
     For example, a rule can select an order read and specify a failure status
     and a delay in milliseconds. This helper checks and copies that instruction;
     it does not send the read or inject the failure itself.
+    ConnectionError and ResponseTimeout instead inject transport failures
+    without fabricating an HTTP response or expiring the operation budget.
+    response_headers supplies synthetic HTTP headers, such as
+    x-ms-retry-after-ms, rather than delaying the response itself. Header names
+    are case-insensitive; use sub_status instead of an x-ms-substatus header.
 
     Reject unknown fields, duplicate rule IDs, unsupported operation types,
     and invalid field values. Operation types use Rust driver test-rule names
@@ -276,8 +281,8 @@ def _prepare_fault_injection_rules(
 
         status_code = rule.get("status_code")
         error_type = rule.get("error_type")
-        if error_type is not None and error_type != "ConnectionError":
-            raise ValueError("fault rule error_type must be ConnectionError or None.")
+        if error_type is not None and error_type not in ("ConnectionError", "ResponseTimeout"):
+            raise ValueError("fault rule error_type must be ConnectionError, ResponseTimeout, or None.")
         if error_type is not None and (status_code is not None or rule.get("sub_status", 0) != 0):
             raise ValueError("fault rule error_type cannot be combined with status_code or sub_status.")
         if error_type is None and (
@@ -292,6 +297,31 @@ def _prepare_fault_injection_rules(
             )
 
         sub_status = rule.get("sub_status", 0)
+        response_body = rule.get("response_body", b"")
+        if not isinstance(response_body, bytes):
+            raise ValueError("fault rule response_body must be immutable bytes.")
+        if error_type is not None and response_body:
+            raise ValueError("fault rule response_body requires status_code, not error_type.")
+        response_headers = rule.get("response_headers", {})
+        if not isinstance(response_headers, Mapping):
+            raise ValueError("fault rule response_headers must be a mapping of strings to strings.")
+        normalized_headers: dict[str, str] = {}
+        for name, value in response_headers.items():
+            if (
+                type(name) is not str or type(value) is not str or not name
+                or any(char not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#$%&'*+-.^_`|~"
+                       for char in name)
+                or any(ord(char) < 32 and char != "\t" or ord(char) == 127 for char in value)
+            ):
+                raise ValueError("fault rule response_headers must contain valid header names and string values.")
+            name = name.lower()
+            if name == "x-ms-substatus":
+                raise ValueError("fault rule response_headers must use sub_status instead of x-ms-substatus.")
+            if name in normalized_headers:
+                raise ValueError("fault rule response_headers contains duplicate case-insensitive names.")
+            normalized_headers[name] = value
+        if error_type is not None and normalized_headers:
+            raise ValueError("fault rule response_headers requires status_code, not error_type.")
         if (
             isinstance(sub_status, bool)
             or not isinstance(sub_status, int)
@@ -379,6 +409,8 @@ def _prepare_fault_injection_rules(
                 hit_limit=hit_limit,
                 enabled=enabled,
                 error_type=error_type,
+                response_body=response_body,
+                response_headers=normalized_headers,
             )
         )
     return tuple(prepared)

@@ -49,7 +49,7 @@ from ._item_prep import (
 )
 from ._document import build_create_document, serialize_document
 from ._resource_validation import validate_resource
-from ._response_parse import complete_item_response, process_backend_response
+from ._response_parse import complete_item_response, process_backend_response, process_delete_response
 from .._operation_deadline import remaining_timeout
 
 
@@ -246,8 +246,9 @@ class ItemHelper:
             return complete_item_response(parsed, response_hook, deadline)
         if op == "replace_item":
             remaining_timeout(deadline)
-        parsed = process_backend_response(response, response_state=self._response_state, response_hook=response_hook)
-        return None if op == "delete_item" else parsed
+        if op == "delete_item":
+            return process_delete_response(response, response_state=self._response_state, response_hook=response_hook)
+        return process_backend_response(response, response_state=self._response_state, response_hook=response_hook)
 
     def _run(
         self, op: str, arguments: Dict[str, Any], *, deadline: Optional[float] = None

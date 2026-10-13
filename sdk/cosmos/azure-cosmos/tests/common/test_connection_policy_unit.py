@@ -152,6 +152,14 @@ def test_connection_string_factory_preserves_grouped_settings(construct_client):
     assert legacy.RetryOptions.MaxRetryAttemptCount == 3
 
 
+@pytest.mark.parametrize("seconds", [2.5, 10.0])
+def test_fractional_throttle_wait_budget_reaches_prepared_config(construct_client, seconds):
+    client, legacy = construct_client(retry_throttle_total=5, retry_throttle_backoff_max=seconds)
+    assert client._adapter._client_config.throttling_max_retry_count == 5
+    assert client._adapter._client_config.throttling_max_retry_wait_time_seconds == seconds
+    assert legacy.RetryOptions.MaxWaitTimeInSeconds == seconds
+
+
 def test_policy_zero_retry_limits_are_not_replaced_by_defaults(construct_client):
     """Asking for no retries at all means no retries, not the default number.
 

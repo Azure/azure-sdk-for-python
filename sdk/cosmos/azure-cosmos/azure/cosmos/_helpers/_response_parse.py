@@ -69,11 +69,12 @@ def process_database_read_response(
 def process_delete_response(
     response: BackendResponse,
     *,
-    client_connection: Any,
+    client_connection: Optional[Any] = None,
+    response_state: Optional[ClientLastResponseHeaders] = None,
     response_hook: Optional[Callable[[Mapping[str, Any], None], None]] = None,
 ) -> None:
     """Parse errors and headers while preserving the no-body deletion contract."""
-    result = process_backend_response(response, client_connection=client_connection)
+    result = process_backend_response(response, client_connection=client_connection, response_state=response_state)
     if response_hook is not None:
         response_hook(result.get_response_headers(), None)
 

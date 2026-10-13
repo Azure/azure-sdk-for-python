@@ -88,6 +88,7 @@ macro_rules! add_pyfn {
 #[pymodule]
 fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, wire::settings::_request_settings_schema);
+    m.add_class::<wire::lifecycle::AsyncOperationProbe>()?;
     m.add_class::<wire::item_feed::ItemFeedCursor>()?;
     add_pyfn!(m, wire::item_feed::fetch_page_with_cursor);
     add_pyfn!(m, wire::item_feed::fetch_page_with_cursor_async);
@@ -96,6 +97,8 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, runtime::runtime_configuration);
     add_pyfn!(m, runtime::release_driver_handle);
     add_pyfn!(m, runtime::_debug_fault_injection_rule_hit_count);
+    add_pyfn!(m, runtime::_debug_set_fault_injection_rule_enabled);
+    add_pyfn!(m, runtime::_debug_cached_account_regions);
     add_pyfn!(m, ffi::create_item);
     add_pyfn!(m, ffi::upsert_item);
     add_pyfn!(m, ffi::replace_item);

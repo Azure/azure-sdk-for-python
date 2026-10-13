@@ -230,7 +230,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def __get_client_container_caches(self) -> dict[str, dict[str, Any]]:
         return self.client_connection._container_properties_cache
 
-    @distributed_trace
+    @trace_operation(binding_operation="read_container")
     def read(  # pylint:disable=docstring-missing-param
         self,
         *,
@@ -1242,7 +1242,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         return result
 
-    @distributed_trace
+    @trace_operation(binding_operation="replace_item")
     def replace_item(  # pylint:disable=docstring-missing-param
         self,
         item: Union[str, Mapping[str, Any]],
@@ -1502,7 +1502,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         )
         return complete_item_response(result, response_hook, deadline)
 
-    @distributed_trace
+    @trace_operation(binding_operation="patch_item")
     def patch_item(
         self,
         item: Union[str, dict[str, Any]],
@@ -1524,9 +1524,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """ Patches the specified item with the provided operations if it
          exists in the container.
 
-        With Rust, caller If-Match is supported; filter predicates and If-None-Match
-        raise ``NotImplementedError`` without legacy replay. Rust retains its Auto
-        strategy (server PATCH or client-side Read-Modify-Replace). One explicit
+        With Rust, caller If-Match and filter predicates are supported; If-None-Match
+        raises ``NotImplementedError`` without legacy replay. A filter predicate
+        selects server-side patch; otherwise Rust retains its Auto strategy
+        (server PATCH or client-side Read-Modify-Replace). One explicit
         timeout covers preparation, metadata, and execution. Success hooks receive
         isolated body/header snapshots and are never retried.
 

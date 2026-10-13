@@ -111,7 +111,6 @@ header_group!(resource_headers, RESOURCE_FIELDS, {
     offer_throughput: i64 => "x-ms-offer-throughput",
     autoscale_settings: String => "x-ms-cosmos-offer-autopilot-settings",
     offer_type: String => "x-ms-offer-type",
-    resource_token_expiry_seconds: i64 => "x-ms-documentdb-expiry-seconds",
     enable_ru_per_minute: bool => "x-ms-offer-is-ru-per-minute-throughput-enabled" [pascal_case],
     disable_ru_per_minute: bool => "x-ms-documentdb-disable-ru-per-minute-usage" [pascal_case],
     enable_script_logging: bool => "x-ms-documentdb-script-enable-logging" [pascal_case],
@@ -459,8 +458,7 @@ mod tests {
                         | "max_staleness_ms"
                         | "max_item_count"
                         | "continuation_limit_kb"
-                        | "offer_throughput"
-                        | "resource_token_expiry_seconds" => obj.setattr(*field, 7).unwrap(),
+                        | "offer_throughput" => obj.setattr(*field, 7).unwrap(),
                         "is_query"
                         | "enable_cross_partition"
                         | "enable_scan"

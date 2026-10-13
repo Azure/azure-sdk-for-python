@@ -151,7 +151,7 @@ class _DiagnosticCollector:
 
 
 @dataclass
-class _Operation:
+class _Operation:  # pylint: disable=too-many-instance-attributes
     operation: str
     backend: object
     caller: Optional[SpanContext]
@@ -162,10 +162,15 @@ class _Operation:
     handlers: tuple[CompletionHandler, ...] = ()
     started_ns: int = field(default_factory=perf_counter_ns)
     collector: _DiagnosticCollector = field(default_factory=_DiagnosticCollector)
+    delegated_tasks: set[object] = field(default_factory=set, repr=False)
 
     @property
     def closed(self) -> bool:
         return self.collector.closed
+
+    def owns_execution(self) -> bool:
+        task = _current_task()
+        return self.thread == get_ident() and (self.task is task or task in self.delegated_tasks)
 
     def begin_contribution(self) -> Optional[_Contribution]:
         """Reserve one independently completed binding result.
@@ -189,6 +194,7 @@ class _Operation:
         parent, handlers = self.parent, self.handlers
         self.parent = None
         self.handlers = ()
+        self.delegated_tasks.clear()
         if parent is not None:
             try:
                 emit_attempts(parent, diagnostics)
@@ -260,6 +266,45 @@ def _current_task() -> object:
         return asyncio.current_task()
     except RuntimeError:
         return None
+
+
+def bind_operation_task(operation: Callable[[], Awaitable[_T]]) -> Callable[[], Awaitable[_T]]:
+    """Authorize one SDK-owned worker, captured before creating its task.
+
+    Ordinary context inheritance does not authorize child tasks. Only this
+    worker joins the current operation, until its execution unwinds. This also
+    works when a task factory starts the worker eagerly.
+
+    :param operation: Work that the SDK will execute in its deadline task.
+    :type operation: callable
+    :return: A single-use worker with scoped diagnostic ownership.
+    :rtype: callable
+    """
+    state = _OPERATION.get()
+    if state is None or state.closed or not state.owns_execution():
+        return operation
+    used = False
+
+    async def run() -> _T:
+        nonlocal used
+        task = _current_task()
+        authorized = (
+            not used
+            and task is not None
+            and not state.closed
+            and state.thread == get_ident()
+            and _OPERATION.get() is state
+        )
+        used = True
+        if authorized:
+            state.delegated_tasks.add(task)
+        try:
+            return await operation()
+        finally:
+            if authorized:
+                state.delegated_tasks.discard(task)
+
+    return run
 
 
 def _new_operation(
@@ -408,12 +453,7 @@ def get_operation(backend: object, operation: str) -> Optional[_Operation]:
         return None
     if state.parent is None and not any(handler.collect_attempts for handler in state.handlers):
         return None
-    if (
-        state.backend is not backend
-        or state.binding_operation != operation
-        or state.thread != get_ident()
-        or state.task is not _current_task()
-    ):
+    if state.backend is not backend or state.binding_operation != operation or not state.owns_execution():
         return None
     return state
 

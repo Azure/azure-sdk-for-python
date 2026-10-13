@@ -24,7 +24,7 @@ from ..._helpers._item_operations import (
     normalize_item_arguments, validate_rust_item_options,
     build_item_request,
 )
-from ..._helpers._response_parse import process_backend_response, complete_item_response
+from ..._helpers._response_parse import process_backend_response, complete_item_response, process_delete_response
 from ..._operation_deadline import remaining_timeout, run_with_deadline
 from .._backend.cosmos_backend import AsyncCosmosBackend
 
@@ -81,10 +81,13 @@ class AsyncItemHelper:
         response = await self._backend.execute(prepared, deadline=args["deadline"])
         if op == "replace_item":
             remaining_timeout(args["deadline"])
-        parsed = process_backend_response(
+        if op == "delete_item":
+            return process_delete_response(
+                response, response_state=self._response_state, response_hook=args["kwargs"].get("response_hook")
+            )
+        return process_backend_response(
             response, response_state=self._response_state, response_hook=args["kwargs"].get("response_hook")
         )
-        return None if op == "delete_item" else parsed
 
     async def create_item(self, *, deadline: Optional[float], **kwargs: Any) -> Any:
         """Create an item, failing if that id and partition key already exist.

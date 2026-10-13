@@ -308,11 +308,7 @@ class ParsedSetup:
         self.is_pyproject = self.setup_filename.endswith(".toml")
 
         self.folder = os.path.dirname(self.setup_filename)
-
-        # Whether this package asks to be built by cibuildwheel. Checked in addition to
-        # `ext_modules` when routing builds, so that compiled packages using a non-setuptools
-        # backend (maturin/PyO3) are not mistaken for pure-Python ones.
-        self.uses_cibuildwheel = has_cibuildwheel_config(self.folder)
+        self.uses_cibuildwheel: bool = has_cibuildwheel_config(self.folder)
 
     @classmethod
     def from_path(cls, parse_directory_or_file: str):
@@ -834,20 +830,17 @@ def parse_setup(
 
 
 def has_cibuildwheel_config(folder: str) -> bool:
-    """
-    Given a package folder, returns whether its pyproject.toml declares a [tool.cibuildwheel] table.
-
-    A package that configures cibuildwheel is telling us it produces a compiled, platform-specific
-    wheel. This is a separate signal from `ext_modules`, which only covers setuptools `Extension`
-    objects: packages built by other backends (maturin/PyO3, for example) compile native code but
-    expose no `ext_modules` at all.
-    """
+    """Return whether the package opts into cibuildwheel, including non-setuptools backends."""
     pyproject_filename = os.path.join(folder, "pyproject.toml")
-
     if not os.path.exists(pyproject_filename):
         return False
 
-    return get_value_from_dict(get_pyproject_dict(pyproject_filename), "tool.cibuildwheel", None) is not None
+    config = get_value_from_dict(get_pyproject_dict(pyproject_filename), "tool.cibuildwheel")
+    if config is None:
+        return False
+    if not isinstance(config, dict):
+        raise ValueError(f"Expected a [tool.cibuildwheel] table in {pyproject_filename}")
+    return True
 
 
 def get_pyproject_dict(pyproject_file: str) -> Dict[str, Any]:

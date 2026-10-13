@@ -33,6 +33,7 @@ mod container_metadata;
 pub(crate) mod deadline;
 mod diagnostics;
 mod driver_runner;
+pub(crate) mod lifecycle;
 mod errors;
 mod request;
 mod response;

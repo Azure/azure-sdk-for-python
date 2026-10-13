@@ -48,7 +48,7 @@ import os
 from urllib.parse import urlparse
 import uuid
 from functools import cached_property
-from typing import Callable, Any, Dict, Iterable, Mapping, NoReturn, Optional, Sequence, Tuple, Union, cast
+from typing import Callable, Any, Dict, Mapping, NoReturn, Optional, Sequence, Tuple, Union, cast
 from typing_extensions import TypedDict
 from urllib3.util.retry import Retry
 
@@ -104,6 +104,7 @@ from .._routing.feed_range_continuation import (
     _write_query_outbound_continuation,
 )
 from ..documents import ConnectionPolicy, DatabaseAccount
+from .._backend.credentials import reject_resource_token_fields
 from .._constants import _Constants as Constants
 from .._query_advisor import get_query_advice_info
 from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
@@ -140,8 +141,6 @@ _LOGGER = logging.getLogger(__name__)
 
 class CredentialDict(TypedDict, total=False):
     masterKey: str
-    resourceTokens: Mapping[str, Any]
-    permissionFeed: Iterable[Mapping[str, Any]]
     clientSecretCredential: AsyncTokenCredential
 
 
@@ -194,10 +193,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param str url_connection:
             The URL for connecting to the DB server.
         :param dict auth:
-            Contains 'masterKey' or 'resourceTokens', where
-            auth['masterKey'] is the default authorization key to use to
-            create the client, and auth['resourceTokens'] is the alternative
-            authorization key.
+            Contains an account key in 'masterKey' or a Microsoft Entra
+            credential in 'clientSecretCredential'.
         :param documents.ConnectionPolicy connection_policy:
             The connection policy for the client.
         :param documents.ConsistencyLevel consistency_level:
@@ -217,19 +214,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             validate_client_hedging_strategy(availability_strategy)
         self.availability_strategy_max_concurrency: Optional[int] = availability_strategy_max_concurrency
         self.master_key: Optional[str] = None
-        self.resource_tokens: Optional[Mapping[str, Any]] = None
         self.aad_credentials: Optional[AsyncTokenCredential] = None
         if auth is not None:
+            reject_resource_token_fields(auth)
             self.master_key = auth.get("masterKey")
-            self.resource_tokens = auth.get("resourceTokens")
             self.aad_credentials = auth.get("clientSecretCredential")
-
-            if auth.get("permissionFeed"):
-                self.resource_tokens = {}
-                for permission_feed in auth["permissionFeed"]:
-                    resource_parts = permission_feed["resource"].split("/")
-                    id_ = resource_parts[-1]
-                    self.resource_tokens[id_] = permission_feed["_token"]
 
         self.connection_policy = connection_policy or ConnectionPolicy()
         self.partition_resolvers: dict[str, RangePartitionResolver] = {}
@@ -478,16 +467,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             return consistency_level
         return None
 
-    def _GetDatabaseIdWithPathForUser(
-        self,
-        database_link: str,
-        user: Mapping[str, Any]
-    ) -> Tuple[Optional[str], str]:
-        base._validate_resource(user)
-        path = base.GetPathFromLink(database_link, http_constants.ResourceType.User)
-        database_id = base.GetResourceIdOrFullNameFromLink(database_link)
-        return database_id, path
-
     def _GetContainerIdWithPathForSproc(
         self,
         collection_link: str,
@@ -641,33 +620,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = "/dbs"
         return await self.Create(database, path, http_constants.ResourceType.Database, None, None, options, **kwargs)
 
-    async def CreateUser(
-        self,
-        database_link: str,
-        user: dict[str, Any],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Creates a user.
-
-        :param str database_link:
-            The link to the database.
-        :param dict user:
-            The Azure Cosmos user to create.
-        :param dict options:
-            The request options for the request.
-        :return:
-            The created User.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        database_id, path = self._GetDatabaseIdWithPathForUser(database_link, user)
-        return await self.Create(user, path, http_constants.ResourceType.User, database_id, None, options, **kwargs)
-
     async def CreateContainer(
         self,
         database_link: str,
@@ -740,33 +692,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         return await self.Create(document, path, http_constants.ResourceType.Document, collection_id, None,
                                  options, **kwargs)
-
-    async def CreatePermission(
-        self,
-        user_link: str,
-        permission: dict[str, Any],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Creates a permission for a user.
-
-        :param str user_link:
-            The link to the user entity.
-        :param dict permission:
-            The Azure Cosmos user permission to create.
-        :param dict options:
-            The request options for the request.
-        :return:
-            The created Permission.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        path, user_id = self._GetUserIdWithPathForPermission(permission, user_link)
-        return await self.Create(permission, path, "permissions", user_id, None, options, **kwargs)
 
     async def CreateUserDefinedFunction(
         self,
@@ -944,60 +869,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if response_hook:
             response_hook(last_response_headers, result)
         return CosmosDict(result, response_headers=last_response_headers)
-
-    async def UpsertUser(
-        self,
-        database_link: str,
-        user: dict[str, Any],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Upserts a user.
-
-        :param str database_link:
-            The link to the database.
-        :param dict user:
-            The Azure Cosmos user to upsert.
-        :param dict options:
-            The request options for the request.
-        :return:
-            The upserted User.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        database_id, path = self._GetDatabaseIdWithPathForUser(database_link, user)
-        return await self.Upsert(user, path, http_constants.ResourceType.User, database_id, None, options, **kwargs)
-
-    async def UpsertPermission(
-        self,
-        user_link: str,
-        permission: dict[str, Any],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Upserts a permission for a user.
-
-        :param str user_link:
-            The link to the user entity.
-        :param dict permission:
-            The Azure Cosmos user permission to upsert.
-        :param dict options:
-            The request options for the request.
-        :return:
-            The upserted permission.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        path, user_id = self._GetUserIdWithPathForPermission(permission, user_link)
-        return await self.Upsert(permission, path, "permissions", user_id, None, options, **kwargs)
 
     async def UpsertItem(
         self,
@@ -1208,58 +1079,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         return await self.Read(path, http_constants.ResourceType.Document, document_id, None, options, **kwargs)
 
-    async def ReadUser(
-        self,
-        user_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Reads a user.
-
-        :param str user_link:
-            The link to the user entity.
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The read User.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(user_link)
-        user_id = base.GetResourceIdOrFullNameFromLink(user_link)
-        return await self.Read(path, http_constants.ResourceType.User, user_id, None, options, **kwargs)
-
-    async def ReadPermission(
-        self,
-        permission_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Reads a permission.
-
-        :param str permission_link:
-            The link to the permission.
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The read permission.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(permission_link)
-        permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
-        return await self.Read(path, "permissions", permission_id, None, options, **kwargs)
-
     async def ReadUserDefinedFunction(
         self,
         udf_link: str,
@@ -1437,62 +1256,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             request_data=None,
             **kwargs
         )
-
-    async def ReplaceUser(
-        self,
-        user_link: str,
-        user: dict[str, Any],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Replaces a user and return it.
-
-        :param str user_link:
-            The link to the user entity.
-        :param dict user:
-        :param dict options:
-            The request options for the request.
-        :return:
-            The new User.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        base._validate_resource(user)
-        path = base.GetPathFromLink(user_link)
-        user_id = base.GetResourceIdOrFullNameFromLink(user_link)
-        return await self.Replace(user, path, http_constants.ResourceType.User, user_id, None, options, **kwargs)
-
-    async def ReplacePermission(
-        self,
-        permission_link: str,
-        permission: dict[str, Any],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Replaces a permission and return it.
-
-        :param str permission_link:
-            The link to the permission.
-        :param dict permission:
-        :param dict options:
-            The request options for the request.
-        :return:
-            The new Permission.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        base._validate_resource(permission)
-        path = base.GetPathFromLink(permission_link)
-        permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
-        return await self.Replace(permission, path, "permissions", permission_id, None, options, **kwargs)
 
     async def ReplaceContainer(
         self,
@@ -1877,54 +1640,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(database_link)
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         await self.DeleteResource(path, http_constants.ResourceType.Database, database_id, None, options, **kwargs)
-
-    async def DeleteUser(
-        self,
-        user_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Deletes a user.
-
-        :param str user_link:
-            The link to the user entity.
-        :param dict options:
-            The request options for the request.
-
-        :rtype:
-            None
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(user_link)
-        user_id = base.GetResourceIdOrFullNameFromLink(user_link)
-        await self.DeleteResource(path, http_constants.ResourceType.User, user_id, None, options, **kwargs)
-
-    async def DeletePermission(
-        self,
-        permission_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Deletes a permission.
-
-        :param str permission_link:
-            The link to the permission.
-        :param dict options:
-            The request options for the request.
-
-        :rtype:
-            None
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(permission_link)
-        permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
-        await self.DeleteResource(path, "permissions", permission_id, None, options, **kwargs)
 
     async def DeleteContainer(
         self,
@@ -2682,132 +2397,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             fetch_function=fetch_fn,
             page_iterator_class=query_iterable.QueryIterable,
             resource_type=http_constants.ResourceType.Offer
-        )
-
-    def ReadUsers(
-        self,
-        database_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """Reads all users in a database.
-
-        :param str database_link:
-            The link to the database.
-        :param dict[str, Any] options:
-            The request options for the request.
-        :return:
-            Query iterable of Users.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-
-        return self.QueryUsers(database_link, None, options, **kwargs)
-
-    def QueryUsers(
-        self,
-        database_link: str,
-        query: Optional[Union[str, dict[str, Any]]],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """Queries users in a database.
-
-        :param str database_link:
-            The link to the database.
-        :param (str or dict) query:
-        :param dict options:
-            The request options for the request.
-        :return:
-            Query Iterable of Users.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(database_link, http_constants.ResourceType.User)
-        database_id = base.GetResourceIdOrFullNameFromLink(database_link)
-
-        async def fetch_fn(options: Mapping[str, Any]) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
-            return (
-                await self.__QueryFeed(
-                    path, http_constants.ResourceType.User, database_id, lambda r: r["Users"],
-                    lambda _, b: b, query, options, **kwargs
-                ),
-                self.last_response_headers,
-            )
-
-        return AsyncItemPaged(
-            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable,
-            resource_type=http_constants.ResourceType.User
-        )
-
-    def ReadPermissions(
-        self,
-        user_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """Reads all permissions for a user.
-
-        :param str user_link:
-            The link to the user entity.
-        :param dict options:
-            The request options for the request.
-        :return:
-            Query Iterable of Permissions.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-
-        return self.QueryPermissions(user_link, None, options, **kwargs)
-
-    def QueryPermissions(
-        self,
-        user_link: str,
-        query: Optional[Union[str, dict[str, Any]]],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """Queries permissions for a user.
-
-        :param str user_link:
-            The link to the user entity.
-        :param (str or dict) query:
-        :param dict options:
-            The request options for the request.
-        :return:
-            Query Iterable of Permissions.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(user_link, http_constants.ResourceType.Permission)
-        user_id = base.GetResourceIdOrFullNameFromLink(user_link)
-
-        async def fetch_fn(options: Mapping[str, Any]) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
-            return (
-                await self.__QueryFeed(
-                    path, http_constants.ResourceType.Permission, user_id, lambda r: r["Permissions"], lambda _, b: b,
-                    query, options, **kwargs
-                ),
-                self.last_response_headers,
-            )
-
-        return AsyncItemPaged(
-            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable,
-            resource_type=http_constants.ResourceType.Permission
         )
 
     def ReadStoredProcedures(
@@ -3912,12 +3501,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(collection_link, http_constants.ResourceType.Document)
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return collection_id, document, path
-
-    def _GetUserIdWithPathForPermission(self, permission, user_link):
-        base._validate_resource(permission)
-        path = base.GetPathFromLink(user_link, "permissions")
-        user_id = base.GetResourceIdOrFullNameFromLink(user_link)
-        return path, user_id
 
     def RegisterPartitionResolver(
         self,

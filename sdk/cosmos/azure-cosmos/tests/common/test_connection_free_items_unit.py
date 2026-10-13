@@ -334,6 +334,7 @@ def test_standalone_item_execution(async_mode, op):
     assert state.last_response_headers["x-ms-request-charge"] == "2.5"
     if op == "delete_item":
         assert result is None
+        assert hook.call_args.args[1] is None
     else:
         assert isinstance(result, CosmosDict)
         assert result.get_response_headers() == state.last_response_headers

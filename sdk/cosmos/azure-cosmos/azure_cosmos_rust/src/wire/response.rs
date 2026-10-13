@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-use pyo3::exceptions::{PyAttributeError, PyRuntimeError, PyRuntimeWarning, PyValueError};
+use pyo3::exceptions::{PyAttributeError, PyRuntimeError, PyRuntimeWarning, PyTimeoutError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyDict, PyTuple};
 use serde::{Deserialize, Serialize};
@@ -14,6 +14,41 @@ use azure_data_cosmos_driver::{
 use super::diagnostics::record_diagnostics;
 use super::errors::{_DriverTransportError, _UnsupportedQueryFeatureError};
 use super::feed_range::{FeedRangeFromPartitionKeyError, FeedRangeFromPartitionKeyPayload};
+
+/// Opt-in fault-test envelope. Ordinary responses and telemetry are unchanged.
+/// Response-less errors retain their type and carry evidence privately when available.
+pub(super) fn tuple_from_result_with_fault_diagnostics<'py>(
+    py: Python<'py>,
+    response_result: Result<CosmosResponse, CosmosError>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let diagnostics = match &response_result {
+        Ok(response) => Some(response.diagnostics()),
+        Err(error) => error.diagnostics(),
+    };
+    let status = match &response_result {
+        Ok(response) => response.status(),
+        Err(error) => error.status(),
+    };
+    let payload = match diagnostics {
+        Some(diagnostics) => {
+            let payload = super::diagnostics::fault_payload(py, &diagnostics)?;
+            let (status, sub_status) = status_code_and_sub_status(status);
+            payload.set_item("result_status", status)?;
+            payload.set_item("result_sub_status", sub_status)?;
+            payload.into_any().unbind()
+        }
+        None => py.None(),
+    };
+    match tuple_from_result(py, response_result) {
+        Ok(response) => Ok(PyTuple::new_bound(py, [response.into_any().unbind(), payload])),
+        Err(error) => {
+            if !payload.is_none(py) {
+                error.value_bound(py).setattr("_cosmos_fault_diagnostics", payload)?;
+            }
+            Err(error)
+        }
+    }
+}
 
 /// Opt-in POC envelope: (unchanged response tuple, attempt payload).
 /// A response-less driver exception carries the same payload privately.
@@ -38,7 +73,10 @@ pub(super) fn tuple_from_result_with_attempts<'py>(
             [response.into_any().unbind(), payload],
         )),
         Err(error) => {
-            if error.is_instance_of::<_DriverTransportError>(py) && !payload.is_none(py) {
+            if (error.is_instance_of::<_DriverTransportError>(py)
+                || error.is_instance_of::<PyTimeoutError>(py))
+                && !payload.is_none(py)
+            {
                 attach_attempt_payload(py, &error, payload);
             }
             Err(error)
@@ -72,9 +110,10 @@ fn attempt_payload_or_error(py: Python<'_>, payload: PyResult<Bound<'_, PyDict>>
 /// Turn the Rust driver's `Result<CosmosResponse, CosmosError>` into a
 /// binding response tuple. A CosmosError carrying a response (404 / 409
 /// / 412 / ...) uses the same tuple shape as success for Python's error mapping.
-/// Without a response, statuses 400 and 412 become synthesized error tuples;
-/// other statuses become `_DriverTransportError`. The latter does not prove a
-/// transport-only failure or that no request was sent.
+/// Without a response, the typed client-operation timeout becomes `TimeoutError`,
+/// and statuses 400 and 412 become synthesized error tuples. Other statuses
+/// become `_DriverTransportError`, which does not prove a transport-only failure
+/// or that no request was sent.
 pub(super) fn tuple_from_result<'py>(
     py: Python<'py>,
     response_result: Result<CosmosResponse, CosmosError>,
@@ -86,6 +125,8 @@ pub(super) fn tuple_from_result<'py>(
                 backend_response_tuple_from_cosmos_error(py, &cosmos_error)?
             {
                 Ok(raw_http_error)
+            } else if let Some(timeout) = client_operation_timeout_error(&cosmos_error) {
+                Err(timeout)
             } else if matches!(u16::from(cosmos_error.status().status_code()), 400 | 412) {
                 let (status, sub_status) = status_code_and_sub_status(cosmos_error.status());
                 let headers = PyDict::new_bound(py);
@@ -130,7 +171,8 @@ pub(super) fn tuple_from_result<'py>(
 /// Convert a query page, or synthesize an empty `{"Documents":[]}` page for `None`.
 /// Unsupported-query status becomes `_UnsupportedQueryFeatureError` without
 /// replaying through legacy. Other errors return an attached response tuple or,
-/// without one, raise `_DriverTransportError`. Unlike the point-operation path,
+/// without one, raise `TimeoutError` for the typed client-operation deadline
+/// or `_DriverTransportError` otherwise. Unlike the point-operation path,
 /// response-less 400/412 errors are not synthesized into tuples here.
 pub(super) fn tuple_from_feed_result<'py>(
     py: Python<'py>,
@@ -152,6 +194,8 @@ pub(super) fn tuple_from_feed_result<'py>(
                 backend_response_tuple_from_cosmos_error_feed(py, &cosmos_error)?
             {
                 Ok(raw_http_error)
+            } else if let Some(timeout) = client_operation_timeout_error(&cosmos_error) {
+                Err(timeout)
             } else {
                 record_diagnostics_for_responseless(&cosmos_error);
                 Err(_DriverTransportError::new_err(format!(
@@ -689,6 +733,20 @@ fn feed_range_to_response_body(payload: &FeedRangeFromPartitionKeyPayload) -> Py
 /// to `_DriverTransportError`.  Do not call for wire-response errors -- those are
 /// already counted by `backend_response_tuple_from_cosmos_error` /
 /// `backend_response_tuple_from_cosmos_error_feed`.
+fn client_operation_timeout_error(error: &CosmosError) -> Option<PyErr> {
+    if error.response().is_none()
+        && error.status().status_code() == azure_core::http::StatusCode::RequestTimeout
+        && error.status().sub_status() == Some(status_codes::substatus::CLIENT_OPERATION_TIMEOUT)
+    {
+        record_diagnostics_for_responseless(error);
+        Some(PyTimeoutError::new_err(format!(
+            "driver operation timed out: {error}"
+        )))
+    } else {
+        None
+    }
+}
+
 fn record_diagnostics_for_responseless(error: &CosmosError) {
     if let Some(diag) = error.diagnostics() {
         record_diagnostics(diag);
@@ -809,6 +867,7 @@ mod tests {
         EffectivePartitionKey, ResponseBody,
     };
     use pyo3::prelude::*;
+    use pyo3::exceptions::PyTimeoutError;
     use pyo3::types::PyDict;
 
     use super::super::diagnostics::{BINDING_ATTEMPT_COUNT, BINDING_RETRY_COUNT};
@@ -841,7 +900,7 @@ mod tests {
         let runtime = emulator.runtime_builder().build().await.unwrap();
         let driver = runtime
             .create_driver(
-                DriverOptions::builder(AccountReference::with_master_key(url, "ZW11bGF0b3Ita2V5"))
+                DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
                     .with_operation_options(
                         OperationOptionsBuilder::new()
                             .with_binary_encoding(BinaryEncodingOptions::new().with_enabled(false))
@@ -1677,6 +1736,90 @@ def record_unraisable(args):
                 py_error.is_instance_of::<_DriverTransportError>(py),
                 "response-less CosmosError must raise _DriverTransportError"
             );
+        });
+    }
+
+    #[test]
+    fn client_operation_timeout_requires_exact_status_without_message_matching() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let timeout = CosmosStatus::new(azure_core::http::StatusCode::RequestTimeout)
+                .with_sub_status(status_codes::substatus::CLIENT_OPERATION_TIMEOUT.value());
+            for status in [
+                timeout,
+                CosmosStatus::new(azure_core::http::StatusCode::RequestTimeout),
+                CosmosStatus::new(azure_core::http::StatusCode::RequestTimeout)
+                    .with_sub_status(status_codes::substatus::TRANSIT_TIMEOUT.value()),
+                CosmosStatus::new(azure_core::http::StatusCode::ServiceUnavailable)
+                    .with_sub_status(status_codes::substatus::CLIENT_OPERATION_TIMEOUT.value()),
+                status_codes::TRANSPORT_CONNECTION_FAILED,
+            ] {
+                for message in ["opaque detail", "408/20008 ClientOperationTimeout"] {
+                    for feed in [false, true] {
+                        let error = CosmosError::builder()
+                            .with_status(status)
+                            .with_message(message)
+                            .build();
+                        let error = if feed {
+                            tuple_from_feed_result(py, Err(error))
+                        } else {
+                            tuple_from_result(py, Err(error))
+                        }
+                        .unwrap_err();
+                        assert_eq!(error.is_instance_of::<PyTimeoutError>(py), status == timeout);
+                        assert_eq!(
+                            error.is_instance_of::<_DriverTransportError>(py),
+                            status != timeout
+                        );
+                        assert!(error.to_string().contains(message));
+                    }
+                }
+            }
+        });
+    }
+
+    #[tokio::test]
+    async fn client_operation_timeout_preserves_attached_response_and_diagnostics() {
+        pyo3::prepare_freethreaded_python();
+        let (_, _, conflict) = create_read_and_conflict().await;
+        let diagnostics = conflict.diagnostics().unwrap();
+        let timeout = CosmosStatus::new(azure_core::http::StatusCode::RequestTimeout)
+            .with_sub_status(status_codes::substatus::CLIENT_OPERATION_TIMEOUT.value());
+        Python::with_gil(|py| {
+            let attached = CosmosError::builder()
+                .with_status(timeout)
+                .with_response(conflict.response().unwrap().clone())
+                .build();
+            let expected = tuple_from_result(py, Err(conflict.clone())).unwrap();
+            assert!(tuple_from_result(py, Err(attached.clone())).unwrap().eq(expected).unwrap());
+            let expected_feed = tuple_from_feed_result(py, Err(conflict)).unwrap();
+            assert!(tuple_from_feed_result(py, Err(attached)).unwrap().eq(expected_feed).unwrap());
+
+            let error = CosmosError::builder()
+                .with_status(timeout)
+                .with_diagnostics(diagnostics.clone())
+                .build();
+            let before = BINDING_ATTEMPT_COUNT.load(Ordering::Relaxed);
+            let ordinary = tuple_from_result(py, Err(error.clone())).unwrap_err();
+            let traced = tuple_from_result_with_attempts(py, Err(error.clone())).unwrap_err();
+            let fault = super::tuple_from_result_with_fault_diagnostics(py, Err(error.clone())).unwrap_err();
+            let feed = tuple_from_feed_result(py, Err(error)).unwrap_err();
+            assert!(feed.is_instance_of::<PyTimeoutError>(py));
+            assert_eq!(feed.to_string(), ordinary.to_string());
+            for (observed, attribute) in [
+                (traced, "_cosmos_attempt_payload"),
+                (fault, "_cosmos_fault_diagnostics"),
+            ] {
+                assert!(observed.is_instance_of::<PyTimeoutError>(py));
+                assert_eq!(observed.to_string(), ordinary.to_string());
+                let payload = observed.value_bound(py).getattr(attribute).unwrap();
+                assert_eq!(
+                    payload.get_item("request_count").unwrap().extract::<usize>().unwrap(),
+                    diagnostics.request_count()
+                );
+            }
+            assert!(BINDING_ATTEMPT_COUNT.load(Ordering::Relaxed)
+                >= before + 4 * diagnostics.request_count() as u64);
         });
     }
 

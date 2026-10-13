@@ -24,8 +24,10 @@ same factory and customers move between them.
 """
 
 import inspect
+from pathlib import Path
+import runpy
 from typing import Any
-from unittest.mock import patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -373,3 +375,35 @@ def test_connection_string_preserves_subclass_factory(client_type):
     constructor.assert_called_once_with(
         url=ENDPOINT, credential="test-key==", consistency_level=None
     )
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+def test_connection_string_samples_use_default_backend_and_close_client(
+    asynchronous, monkeypatch, capsys,
+):
+    monkeypatch.setenv("AZURE_COSMOS_CONNECTION_STRING", CONNECTION_STRING)
+    client = MagicMock()
+    client.__enter__.return_value = client
+    client.__aenter__.return_value = client
+    orders = client.get_database_client.return_value.get_container_client.return_value
+    if asynchronous:
+        orders.read_item = AsyncMock(return_value={"id": "order-42"})
+    else:
+        orders.read_item.return_value = {"id": "order-42"}
+    client_class = AsyncCosmosClient if asynchronous else CosmosClient
+    suffix = "_async" if asynchronous else ""
+    sample = Path(__file__).resolve().parents[2] / "samples" / f"client_from_connection_string{suffix}.py"
+
+    with patch.object(client_class, "from_connection_string", return_value=client) as factory:
+        runpy.run_path(str(sample), run_name="__main__")
+
+    factory.assert_called_once_with(CONNECTION_STRING, consistency_level="Session")
+    client.get_database_client.assert_called_once_with("sales")
+    client.get_database_client.return_value.get_container_client.assert_called_once_with("orders")
+    if asynchronous:
+        orders.read_item.assert_awaited_once_with("order-42", partition_key="customer-17")
+        client.__aexit__.assert_awaited_once_with(None, None, None)
+    else:
+        orders.read_item.assert_called_once_with("order-42", partition_key="customer-17")
+        client.__exit__.assert_called_once_with(None, None, None)
+    assert capsys.readouterr().out == "Order ID: order-42\n"

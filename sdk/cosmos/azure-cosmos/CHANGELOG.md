@@ -10,7 +10,9 @@
 
 #### Breaking Changes
 
-* For the Rust-backed release, reject trigger options and headers and exclude Cosmos user/permission APIs and stored-procedure, trigger, and UDF definition APIs, including stored-procedure execution; SQL invocation of deployed UDFs remains supported.
+* For the Rust-backed release, reject trigger options and headers and exclude stored-procedure, trigger, and UDF definition APIs, including stored-procedure execution; SQL invocation of deployed UDFs remains supported.
+* Removed Cosmos database-user and resource-permission APIs from synchronous and asynchronous clients on both backends, including `UserProxy`, `Permission`, `PermissionMode`, and the `resource_token_expiry_seconds` option.
+* Removed resource-token and permission-feed authentication from both backends. Synchronous and asynchronous clients now reject these credentials during construction; account-key strings, `masterKey` dictionaries, and Microsoft Entra credentials remain supported.
 * Rust-backed client and per-operation hedging configuration now rejects `threshold_steps_ms`; use `threshold_ms` for one alternate attempt.
 * Synchronous `ContainerProxy.query_items()` now enables cross-partition execution by default when no partition key or feed range is supplied, matching async; explicit `enable_cross_partition_query=False` remains honored.
 * For v5, removed `DatabaseProxy.read_offer()` and `ContainerProxy.read_offer()`; use `get_throughput()` to read the same configured throughput.

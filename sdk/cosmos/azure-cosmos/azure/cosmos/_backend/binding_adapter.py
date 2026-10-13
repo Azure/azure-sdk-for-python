@@ -255,7 +255,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
             # Never raise from object finalization.
             pass
 
-    def execute(
+    def execute(  # pylint: disable=too-many-branches
         self, prepared: PreparedRequest, *, deadline: Optional[float] = None
     ) -> BackendResponse:
         """Send one prepared operation and return a BackendResponse.
@@ -309,6 +309,8 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
                 binding_kwargs["include_attempts"] = True
             raw_response = binding_function(driver_handle, prepared, **binding_kwargs)
         except TimeoutError as exc:
+            if contribution is not None:
+                contribution.error(exc)
             if deadline is None:
                 raise
             raise CosmosClientTimeoutError(error=exc) from exc

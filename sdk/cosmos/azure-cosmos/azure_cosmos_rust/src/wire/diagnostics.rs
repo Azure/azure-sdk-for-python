@@ -27,6 +27,37 @@ fn epoch_nanos(
     u64::try_from(nanos).map_err(|_| "attempt timestamp exceeds u64 nanoseconds")
 }
 
+/// Internal fault-test evidence, separate from the endpoint-free telemetry POC.
+pub(super) fn fault_payload<'py>(
+    py: Python<'py>,
+    diagnostics: &DiagnosticsContext,
+) -> PyResult<Bound<'py, PyDict>> {
+    let payload = PyDict::new_bound(py);
+    payload.set_item("activity_id", diagnostics.activity_id().to_string())?;
+    payload.set_item("request_count", diagnostics.request_count())?;
+    payload.set_item("retained_request_count", diagnostics.retained_request_count())?;
+    let requests = PyList::empty_bound(py);
+    for request in diagnostics.requests().iter() {
+        let row = PyDict::new_bound(py);
+        row.set_item("endpoint", request.endpoint())?;
+        row.set_item("region", request.region().map(|region| region.as_str()))?;
+        row.set_item("pipeline", request.pipeline_type().as_str())?;
+        row.set_item("status", u16::from(request.status().status_code()))?;
+        row.set_item("sub_status", request.status().sub_status().map(|status| status.value()).unwrap_or(0))?;
+        let evaluations = PyList::empty_bound(py);
+        for evaluation in request.fault_injection_evaluations() {
+            let entry = PyDict::new_bound(py);
+            entry.set_item("rule_id", evaluation.rule_id())?;
+            entry.set_item("applied", evaluation.was_applied())?;
+            evaluations.append(entry)?;
+        }
+        row.set_item("evaluations", evaluations)?;
+        requests.append(row)?;
+    }
+    payload.set_item("requests", requests)?;
+    Ok(payload)
+}
+
 /// Private POC contract. Never export bodies, keys, or endpoints.
 /// Timing failures are reported as data so telemetry cannot change the
 /// database operation's outcome.

@@ -216,16 +216,6 @@ class ConnectionMode:
     """
 
 
-class PermissionMode:
-    """Applicability of a permission."""
-    NoneMode: Literal["none"] = "none"  # None is python's key word.
-    """None"""
-    Read: Literal["read"] = "read"
-    """Permission applicable for read operations only."""
-    All: Literal["all"] = "all"
-    """Permission applicable for all operations."""
-
-
 class TriggerType:
     """Specifies the type of trigger."""
     Pre: Literal["pre"] = "pre"

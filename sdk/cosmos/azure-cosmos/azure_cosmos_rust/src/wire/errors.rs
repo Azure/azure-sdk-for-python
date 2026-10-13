@@ -4,7 +4,9 @@
 // Raised when this error path has no driver response to return. That does not
 // prove no request was sent: a failure or timeout can follow service work.
 // The Python backend translates this RuntimeError subclass to ServiceResponseError;
-// that translation does not run legacy retry policies. Callers format the Rust
+// that translation does not run legacy retry policies. The point and item-feed
+// converters use TimeoutError for the typed client-operation deadline (408/20008).
+// Callers format the Rust
 // error into a message, not a structured Python cause chain. Python can chain the
 // binding exception, but it does not receive the original Rust error object.
 // pyo3's `create_exception!` expansion references `cfg(feature = "gil-refs")`,

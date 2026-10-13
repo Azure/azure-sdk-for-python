@@ -22,6 +22,7 @@ from contextlib import asynccontextmanager, contextmanager
 from typing import Any, AsyncIterator, Awaitable, Callable, Iterator, Optional, TypeVar, overload
 
 from ._constants import _Constants, TimeoutScope
+from ._telemetry import bind_operation_task
 from .exceptions import CosmosClientTimeoutError
 
 _T = TypeVar("_T")
@@ -94,7 +95,7 @@ async def run_with_deadline(operation: Callable[[], Awaitable[_T]], deadline: Op
     timeout = remaining_timeout(deadline)
     if timeout is None:
         return await operation()
-    task = asyncio.ensure_future(operation())
+    task = asyncio.ensure_future(bind_operation_task(operation)())
     try:
         done, _ = await asyncio.wait({task}, timeout=timeout)
     except BaseException:

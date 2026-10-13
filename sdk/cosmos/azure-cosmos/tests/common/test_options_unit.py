@@ -61,7 +61,6 @@ class TestCommonOptionsTableContent(unittest.TestCase):
         "post_trigger_include": "postTriggerInclude",
         "access_condition": "accessCondition",
         "session_token": "sessionToken",
-        "resource_token_expiry_seconds": "resourceTokenExpirySeconds",
         "offer_enable_ru_per_minute_throughput": "offerEnableRUPerMinuteThroughput",
         "disable_ru_per_minute_usage": "disableRUPerMinuteUsage",
         "continuation": "continuation",

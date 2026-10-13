@@ -39,6 +39,21 @@ def _load_plugin():
     return mod
 
 
+@pytest.mark.parametrize("paged_type,wrapper_name,other_type", [
+    (ItemPaged, "_CapturedSyncPagedResult", AsyncItemPaged),
+    (AsyncItemPaged, "_CapturedAsyncPagedResult", ItemPaged),
+])
+def test_paged_capture_preserves_actual_isinstance(paged_type, wrapper_name, other_type):
+    plugin = _load_plugin()
+    result = paged_type()
+    wrapper = getattr(plugin, wrapper_name)
+    captured = wrapper(result, None, None)
+    assert isinstance(captured, paged_type)
+    assert not isinstance(captured, other_type)
+    assert captured.__class__ is result.__class__
+    assert not isinstance(wrapper(object(), None, None), paged_type)
+
+
 @pytest.mark.parametrize("op", ["get_latest_session_token", "read_item"])
 @pytest.mark.parametrize("native,fallback", [(0, 0), (1, 0), (0, 1), (None, None)])
 def test_local_token_capture_is_narrow_and_requires_zero_counters(capsys, op, native, fallback):
@@ -396,7 +411,12 @@ class PluginRegistryTests(unittest.TestCase):
 
 
 @pytest.fixture(params=[False, True], ids=["sync", "async"])
-def captured_listing(request, monkeypatch):
+def async_surface(request):
+    return request.param
+
+
+@pytest.fixture(params=["list_databases", "query_items"])
+def captured_listing(request, monkeypatch, async_surface):
     plugin = _load_plugin()
     monkeypatch.setattr(plugin, "_STATE", plugin._CaptureState())
     emitted = []
@@ -426,13 +446,14 @@ def captured_listing(request, monkeypatch):
     async def async_extract(block):
         return block
 
-    def original(_client):
-        if request.param:
+    def original(_client, **kwargs):
+        if async_surface:
             return AsyncItemPaged(async_fetch, async_extract)
         return ItemPaged(fetch, lambda block: block)
 
-    wrapper = plugin._build_sync_wrapper("list_databases", "aio" if request.param else "sync", original)
-    return wrapper(client), emitted, fetches, request.param
+    wrapper = plugin._build_sync_wrapper(request.param, "aio" if async_surface else "sync", original)
+    kwargs = {"query": "SELECT c.id FROM c", "partition_key": "customer-501"} if request.param == "query_items" else {}
+    return wrapper(client, **kwargs), emitted, fetches, async_surface
 
 
 @pytest.mark.asyncio
@@ -494,6 +515,317 @@ async def test_paged_capture_preserves_continuation_replay_empty_pages_and_error
     assert all(block["rust_operation_delta"] == 1 for block in emitted)
     assert all(block["rust_fallback_delta"] == 0 for block in emitted)
     assert [block["ordinal"] for block in emitted] == list(range(5))
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("terminal_response", [False, True])
+async def test_query_capture_distinguishes_local_drain_from_empty_response(
+    monkeypatch, async_surface, terminal_response
+):
+    plugin = _load_plugin()
+    emitted = []
+    calls = []
+    client = SimpleNamespace(client_connection=SimpleNamespace(
+        _backend=SimpleNamespace(name="rust"), last_response_headers={}
+    ))
+    monkeypatch.setattr(plugin, "_STATE", plugin._CaptureState())
+    monkeypatch.setattr(plugin._STATE, "current_nodeid", "tests/test_query.py::TestQuery::test_drain")
+    monkeypatch.setattr(plugin, "_emit_block", emitted.append)
+    monkeypatch.setattr(plugin, "_rust_operation_count", lambda: len(calls))
+    monkeypatch.setattr(plugin, "_rust_fallback_count", lambda: 0)
+
+    class Pages:
+        def __init__(self):
+            self.state = SimpleNamespace(responses=0)
+            self.continuation_token = None
+
+        def __iter__(self):
+            return self
+
+        def __next__(self):
+            calls.append("binding")
+            if len(calls) == 1:
+                self.state.responses = 1
+                self.continuation_token = "drain"
+                client.client_connection.last_response_headers = {"activity": "first"}
+                return iter([{"id": "order-1"}])
+            self.state.responses = int(terminal_response)
+            self.continuation_token = None
+            if terminal_response:
+                # A real empty response is evidence even with an in-place update.
+                client.client_connection.last_response_headers["activity"] = "empty"
+            raise StopIteration
+
+    class AsyncPages(Pages):
+        def __aiter__(self):
+            return self
+
+        async def __anext__(self):
+            try:
+                rows = next(self)
+            except StopIteration:
+                raise StopAsyncIteration from None
+
+            async def items():
+                for row in rows:
+                    yield row
+
+            return items()
+
+    class Paged:
+        def by_page(self):
+            return AsyncPages() if async_surface else Pages()
+
+    class AsyncPaged(Paged):
+        def __aiter__(self):
+            raise AssertionError("capture must use by_page")
+
+    result = AsyncPaged() if async_surface else Paged()
+    wrapped = plugin._build_sync_wrapper(
+        "query_items", "aio" if async_surface else "sync", lambda _client: result
+    )(client)
+    rows = [row async for row in wrapped] if async_surface else list(wrapped)
+    assert rows == [{"id": "order-1"}]
+    assert len(calls) == 2
+    assert [block["return_value"] for block in emitted] == (
+        [[{"id": "order-1"}], []] if terminal_response else [[{"id": "order-1"}]]
+    )
+    assert [block["response_headers"]["activity"] for block in emitted] == (
+        ["first", "empty"] if terminal_response else ["first"]
+    )
+    assert all(block["rust_operation_delta"] == 1 for block in emitted)
+
+
+def test_query_capture_next_aliases_do_not_bypass_recording(monkeypatch):
+    plugin = _load_plugin()
+    emitted = []
+    fetches = []
+    client = SimpleNamespace(client_connection=SimpleNamespace(
+        _backend=SimpleNamespace(name="rust"), last_response_headers={}
+    ))
+    monkeypatch.setattr(plugin, "_STATE", plugin._CaptureState())
+    monkeypatch.setattr(plugin._STATE, "current_nodeid", "tests/test_query.py::TestQuery::test_paging")
+    monkeypatch.setattr(plugin, "_emit_block", emitted.append)
+    monkeypatch.setattr(plugin, "_rust_operation_count", lambda: len(fetches))
+    monkeypatch.setattr(plugin, "_rust_fallback_count", lambda: 0)
+
+    def fetch(token):
+        fetches.append(token)
+        return ("second" if token is None else None), [{"id": "1" if token is None else "2"}]
+
+    wrapper = plugin._build_sync_wrapper(
+        "query_items", "sync", lambda _client: ItemPaged(fetch, lambda block: block)
+    )
+    result = wrapper(client)
+    pages = result.by_page()
+    assert list(pages.next()) == [{"id": "1"}]
+    token = pages.continuation_token
+    assert list(pages.next()) == [{"id": "2"}]
+    assert list(result.by_page(token).next()) == [{"id": "2"}]
+    assert result.next() == {"id": "1"}
+    assert fetches == [None, "second", "second", None]
+    assert [block["return_value"] for block in emitted] == [
+        [{"id": "1"}], [{"id": "2"}], [{"id": "2"}], [{"id": "1"}],
+    ]
+    assert [block["ordinal"] for block in emitted] == list(range(4))
+    assert all(block["rust_operation_delta"] == 1 for block in emitted)
+
+
+@pytest.mark.asyncio
+async def test_query_capture_allows_nonresumable_iteration(monkeypatch, async_surface):
+    plugin = _load_plugin()
+    emitted = []
+    fetches = []
+    client = SimpleNamespace(client_connection=SimpleNamespace(
+        _backend=SimpleNamespace(name="rust"), last_response_headers={}
+    ))
+    monkeypatch.setattr(plugin, "_STATE", plugin._CaptureState())
+    monkeypatch.setattr(plugin._STATE, "current_nodeid", "tests/test_query.py::TestQuery::test_distinct")
+    monkeypatch.setattr(plugin, "_emit_block", emitted.append)
+    monkeypatch.setattr(plugin, "_rust_operation_count", lambda: len(fetches))
+    monkeypatch.setattr(plugin, "_rust_fallback_count", lambda: 0)
+
+    class Pages:
+        def __init__(self):
+            self.index = 0
+
+        @property
+        def continuation_token(self):
+            if self.index:
+                raise NotImplementedError("This query cannot be bookmarked")
+            return None
+
+        def __iter__(self):
+            return self
+
+        def __next__(self):
+            if self.index == 2:
+                raise StopIteration
+            self.index += 1
+            fetches.append(self.index)
+            return iter([self.index])
+
+    class AsyncPages(Pages):
+        def __aiter__(self):
+            return self
+
+        async def __anext__(self):
+            try:
+                rows = next(self)
+            except StopIteration:
+                raise StopAsyncIteration from None
+
+            async def items():
+                for row in rows:
+                    yield row
+
+            return items()
+
+    result = SimpleNamespace(by_page=lambda: AsyncPages() if async_surface else Pages())
+    wrapper = plugin._build_sync_wrapper("query_items", "aio" if async_surface else "sync", lambda _client: result)
+    pages = wrapper(client).by_page()
+    if async_surface:
+        actual = [row async for page in pages async for row in page]
+    else:
+        actual = [row for page in pages for row in page]
+    assert actual == [1, 2]
+    assert fetches == [1, 2]
+    assert [block["return_value"] for block in emitted] == [[1], [2]]
+    assert emitted[1]["request"]["continuation"]["unavailable"]["type"] == "NotImplementedError"
+    with pytest.raises(NotImplementedError, match="cannot be bookmarked"):
+        _ = pages.continuation_token
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("server_response", [False, True])
+async def test_query_page_error_preserves_exception_headers(monkeypatch, async_surface, server_response):
+    from azure.cosmos.exceptions import CosmosHttpResponseError
+
+    plugin = _load_plugin()
+    emitted = []
+    client = SimpleNamespace(client_connection=SimpleNamespace(
+        _backend=SimpleNamespace(name="rust"), last_response_headers={"stale": "old"}
+    ))
+    error = CosmosHttpResponseError(status_code=400, message="bad SQL") if server_response else ValueError("bad option")
+    if server_response:
+        error.headers = {"x-ms-activity-id": "failed-query"}
+    calls = []
+    monkeypatch.setattr(plugin, "_STATE", plugin._CaptureState())
+    monkeypatch.setattr(plugin._STATE, "current_nodeid", "tests/test_query.py::TestQuery::test_error")
+    monkeypatch.setattr(plugin, "_emit_block", emitted.append)
+    monkeypatch.setattr(plugin, "_rust_operation_count", lambda: len(calls))
+    monkeypatch.setattr(plugin, "_rust_fallback_count", lambda: 0)
+
+    def fetch(_token):
+        if server_response:
+            calls.append("rust")
+        raise error
+
+    async def async_fetch(token):
+        return fetch(token)
+
+    async def async_extract(block):
+        return block
+
+    def original(_client):
+        return AsyncItemPaged(async_fetch, async_extract) if async_surface else ItemPaged(fetch, lambda block: block)
+
+    result = plugin._build_sync_wrapper("query_items", "aio" if async_surface else "sync", original)(client)
+    with pytest.raises(type(error)) as caught:
+        if async_surface:
+            await result.__anext__()
+        else:
+            next(result)
+    assert caught.value is error
+    assert len(emitted) == 1
+    assert emitted[0]["status"] == "raised"
+    assert emitted[0]["return_value"] is None
+    assert emitted[0]["response_headers"] == ({"x-ms-activity-id": "failed-query"} if server_response else {})
+    assert emitted[0]["executed_engine"] == ("rust" if server_response else "no-rust-operation")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("different_amount", [False, True])
+async def test_query_page_captures_feed_the_reporter(
+    monkeypatch, tmp_path, capsys, async_surface, different_amount
+):
+    reporter_path = _REPO_ROOT / "scripts" / "v5" / "build_legacy_parity_audit.py"
+    spec = importlib.util.spec_from_file_location("_query_capture_reporter", reporter_path)
+    assert spec is not None and spec.loader is not None
+    reporter = importlib.util.module_from_spec(spec)
+    monkeypatch.setitem(sys.modules, spec.name, reporter)
+    spec.loader.exec_module(reporter)
+
+    plugin = _load_plugin()
+    monkeypatch.delenv(plugin.ENV_BACKEND_LABEL_OVERRIDE, raising=False)
+    surface = "aio" if async_surface else "sync"
+    suffix = "_async" if async_surface else ""
+    class_name = "TestQueryAsync" if async_surface else "TestQuery"
+    paths = []
+    for backend in ("core-python", "rust"):
+        counter = []
+        client = SimpleNamespace(client_connection=SimpleNamespace(
+            _backend=SimpleNamespace(name=backend), last_response_headers={}
+        ))
+        filename = f"test_query{suffix}.py"
+        prefix = "tests" if backend == "core-python" else f"tests/query_items/{surface}/legacy"
+        nodeid = f"{prefix}/{filename}::{class_name}::test_paging{suffix}"
+        monkeypatch.setattr(plugin, "_STATE", plugin._CaptureState())
+        monkeypatch.setattr(plugin._STATE, "current_nodeid", nodeid)
+        monkeypatch.setattr(plugin, "_rust_operation_count", lambda: len(counter))
+        monkeypatch.setattr(plugin, "_rust_fallback_count", lambda: 0)
+
+        def fetch(token):
+            if backend == "rust":
+                counter.append("query")
+            client.client_connection.last_response_headers = {"x-ms-request-charge": "1.0"}
+            amount = 61 if backend == "rust" and different_amount else 60
+            return (None, [{"amount": amount}]) if token else ("next", [{"amount": 40}])
+
+        async def async_fetch(token):
+            return fetch(token)
+
+        async def async_extract(block):
+            return block
+
+        def original(_client, **kwargs):
+            return AsyncItemPaged(async_fetch, async_extract) if async_surface else ItemPaged(fetch, lambda block: block)
+
+        result = plugin._build_sync_wrapper("query_items", surface, original)(
+            client, query="SELECT c.amount FROM c", partition_key="customer-501", max_item_count=1
+        )
+        assert capsys.readouterr().out == ""
+        pages = result.by_page()
+        if async_surface:
+            assert [row async for row in await pages.__anext__()] == [{"amount": 40}]
+            token = pages.continuation_token
+            second = [row async for row in await pages.__anext__()]
+            replay = [row async for row in await result.by_page(token).__anext__()]
+        else:
+            assert list(pages.next()) == [{"amount": 40}]
+            token = pages.continuation_token
+            second = list(pages.next())
+            replay = list(result.by_page(token).next())
+        assert replay == second
+        path = tmp_path / f"{backend}.txt"
+        path.write_text(
+            nodeid + "\n" + capsys.readouterr().out + "PASSED\n=== 1 passed in 0.1s ===\n",
+            encoding="utf-8",
+        )
+        blocks = reporter.parse_captures(str(path))
+        assert len(blocks) == 3
+        assert [block.ordinal for block in blocks] == [0, 1, 2]
+        assert all(block.executed_engine == backend for block in blocks)
+        assert all(block.request_kwargs["partition_key"] == "customer-501" for block in blocks)
+        paths.append(str(path))
+
+    exit_code = reporter.main([
+        "--op", "query_items", "--corepy", paths[0], "--rust", paths[1],
+        "--expected-count", "1", "--out", str(tmp_path / "audit.md"),
+    ])
+    assert exit_code == (1 if different_amount else 0)
+    report = (tmp_path / "audit.md").read_text(encoding="utf-8")
+    assert ("return_value:" in report) is different_amount
 
 
 if __name__ == "__main__":
