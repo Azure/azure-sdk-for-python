@@ -4,6 +4,8 @@
 """Tests for the GET /readiness health-check endpoint."""
 import pytest
 import httpx
+from starlette.requests import Request
+from starlette.responses import JSONResponse, Response
 
 from azure.ai.agentserver.core import AgentServerHost
 
@@ -30,6 +32,27 @@ async def test_readiness_content_type(client: httpx.AsyncClient) -> None:
     """GET /readiness returns application/json content type."""
     resp = await client.get("/readiness")
     assert "application/json" in resp.headers["content-type"]
+
+
+@pytest.mark.asyncio
+async def test_readiness_handler_replaces_default_response() -> None:
+    agent = AgentServerHost()
+
+    @agent.readiness_handler
+    async def readiness(request: Request) -> Response:
+        assert request.url.path == "/readiness"
+        return JSONResponse({"status": "not_ready"}, status_code=503)
+
+    assert agent._readiness_fn is readiness  # pylint: disable=protected-access
+
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=agent),
+        base_url="http://testserver",
+    ) as readiness_client:
+        resp = await readiness_client.get("/readiness")
+
+    assert resp.status_code == 503
+    assert resp.json() == {"status": "not_ready"}
 
 
 @pytest.mark.asyncio

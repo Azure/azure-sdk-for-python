@@ -57,9 +57,12 @@ class TestCognitiveServicesManagementWorkbenchesOperationsAsync(AzureMgmtRecorde
                                 "target": "str",
                             }
                         ],
+                        "gpuCount": 0,
                         "idleTimeBeforeShutdown": "str",
+                        "instanceType": "str",
                         "provisioningState": "str",
                         "sshSettings": {"adminEnabled": bool, "sshPublicKey": "str"},
+                        "status": "str",
                         "webEndpoint": "str",
                     },
                     "etag": "str",
@@ -70,7 +73,6 @@ class TestCognitiveServicesManagementWorkbenchesOperationsAsync(AzureMgmtRecorde
                         "type": "str",
                         "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                     },
-                    "location": "str",
                     "name": "str",
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -80,7 +82,6 @@ class TestCognitiveServicesManagementWorkbenchesOperationsAsync(AzureMgmtRecorde
                         "lastModifiedBy": "str",
                         "lastModifiedByType": "str",
                     },
-                    "tags": {"str": "str"},
                     "type": "str",
                 },
             )
@@ -91,57 +92,27 @@ class TestCognitiveServicesManagementWorkbenchesOperationsAsync(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_workbenches_begin_update(self, resource_group):
-        response = await (
-            await self.client.workbenches.begin_update(
-                resource_group_name=resource_group.name,
-                account_name="str",
-                project_name="str",
-                workbench_name="str",
-                properties={
-                    "properties": {
-                        "imageLink": "str",
-                        "targetClusterId": "str",
-                        "connectivityEndpoints": {"publicIpAddress": "str", "sshPort": 0},
-                        "creationTime": "2020-02-20 00:00:00",
-                        "datasetId": "str",
-                        "errors": [
-                            {
-                                "additionalInfo": [{"info": {}, "type": "str"}],
-                                "code": "str",
-                                "details": [...],
-                                "message": "str",
-                                "target": "str",
-                            }
-                        ],
-                        "idleTimeBeforeShutdown": "str",
-                        "provisioningState": "str",
-                        "sshSettings": {"adminEnabled": bool, "sshPublicKey": "str"},
-                        "webEndpoint": "str",
-                    },
-                    "etag": "str",
-                    "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "location": "str",
-                    "name": "str",
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str",
-                    },
-                    "tags": {"str": "str"},
+    async def test_workbenches_update(self, resource_group):
+        response = await self.client.workbenches.update(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            project_name="str",
+            workbench_name="str",
+            properties={
+                "identity": {
+                    "principalId": "str",
+                    "tenantId": "str",
                     "type": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
-            )
-        ).result()  # call '.result()' to poll until service return final result
+                "properties": {
+                    "gpuCount": 0,
+                    "idleTimeBeforeShutdown": "str",
+                    "instanceType": "str",
+                    "targetClusterId": "str",
+                },
+            },
+        )
 
         # please add some check logic here by yourself
         # ...

@@ -924,6 +924,18 @@ class TestBaggageLogRecordProcessor:
         attrs = log_data.log_record.attributes
         assert attrs["microsoft.session.id"] == "session-from-baggage"
 
+    def test_refreshes_fallback_session_id_from_environment(self) -> None:
+        proc = _BaggageLogRecordProcessor(session_id="captured-session")
+        log_data = _FakeLogData({})
+
+        with mock.patch.dict(
+            os.environ,
+            {"FOUNDRY_AGENT_SESSION_ID": "restored-session"},
+        ):
+            proc.on_emit(log_data)
+
+        assert log_data.log_record.attributes["microsoft.session.id"] == "restored-session"
+
     def test_does_not_overwrite_existing_log_attributes(self) -> None:
         proc = _BaggageLogRecordProcessor(
             agent_name="agent-a",
