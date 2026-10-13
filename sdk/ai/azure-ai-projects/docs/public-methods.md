@@ -6,24 +6,23 @@ This document lists all public methods available on `AIProjectClient` and its su
 
 ## Summary
 
-There are a total of 192 unique public methods:
+There are a total of 181 unique public methods:
 
-- 5 stable methods on the client
-- 84 stable methods on top-level sub-clients
-- 103 beta methods on nested beta sub-clients
+- 4 stable methods on the client
+- 78 stable methods on top-level sub-clients
+- 99 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
 
 | Subclient | Class Name | Methods Count |
 | --- | --- | --- |
-| `agents` | AgentsOperations | 35 |
-| `connections` | ConnectionsOperations | 3 |
-| `datasets` | DatasetsOperations | 14 |
+| `agents` | AgentsOperations | 34 |
+| `connections` | ConnectionsOperations | 1 |
+| `datasets` | DatasetsOperations | 12 |
 | `deployments` | DeploymentsOperations | 2 |
 | `evaluation_rules` | EvaluationRulesOperations | 4 |
 | `evaluators` | EvaluatorsOperations | 11 |
 | `indexes` | IndexesOperations | 5 |
-| `telemetry` | TelemetryOperations | 1 |
 | `toolboxes` | ToolboxesOperations | 9 |
 
 ### Nested sub-clients (beta operations)
@@ -35,14 +34,13 @@ There are a total of 192 unique public methods:
 | `beta.evaluation_taxonomies` | BetaEvaluationTaxonomiesOperations | 5 |
 | `beta.evaluators` | BetaEvaluatorsOperations | 2 |
 | `beta.insights` | BetaInsightsOperations | 3 |
-| `beta.memory_stores` | BetaMemoryStoresOperations | 13 |
-| `beta.models` | BetaModelsOperations | 9 |
+| `beta.memory_stores` | BetaMemoryStoresOperations | 11 |
+| `beta.models` | BetaModelsOperations | 8 |
 | `beta.red_teams` | BetaRedTeamsOperations | 3 |
 | `beta.routines` | BetaRoutinesOperations | 8 |
 | `beta.schedules` | BetaSchedulesOperations | 6 |
 | `beta.skills` | BetaSkillsOperations | 11 |
 | `beta.voice_agents.conversations` | BetaVoiceAgentsConversationsOperations | 14 |
-| `beta.voice_agents.realtime` | BetaRealtime | 1 |
 | `beta.voice_agents.telephony` | BetaVoiceAgentsTelephonyOperations | 14 |
 
 ## Stable methods on the client
@@ -53,7 +51,6 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .__enter__
 .__exit__
 .close
-.get_openai_client*
 .send_request
 ```
 
@@ -62,11 +59,10 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 Alphabetically sorted. An asterisk at the end of the method name means it is a hand-written method.
 
 ```text
-.agents.begin_create_optimization_job*
+.agents.begin_create_optimization_job
 .agents.cancel_optimization_job
 .agents.create_session
-.agents.create_version*
-.agents.create_version_from_code*
+.agents.create_version
 .agents.create_version_from_manifest
 .agents.delete
 .agents.delete_optimization_job
@@ -98,34 +94,30 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .agents.update_details
 .agents.upload_session_file
 
-.connections.get*
-.connections.get_default*
 .connections.list
 
-.datasets.begin_create_generation_job*
-.datasets.cancel_generation_job*
+.datasets.begin_create_generation_job
+.datasets.cancel_generation_job
 .datasets.create_or_update
 .datasets.delete
-.datasets.delete_generation_job*
+.datasets.delete_generation_job
 .datasets.get
 .datasets.get_credentials
-.datasets.get_generation_job*
+.datasets.get_generation_job
 .datasets.list
-.datasets.list_generation_jobs*
+.datasets.list_generation_jobs
 .datasets.list_versions
 .datasets.pending_upload
-.datasets.upload_file*
-.datasets.upload_folder*
 
 .deployments.get
 .deployments.list
 
-.evaluation_rules.create_or_update*
+.evaluation_rules.create_or_update
 .evaluation_rules.delete
 .evaluation_rules.get
 .evaluation_rules.list
 
-.evaluators.begin_create_generation_job*
+.evaluators.begin_create_generation_job
 .evaluators.cancel_generation_job
 .evaluators.create_version
 .evaluators.delete_generation_job
@@ -143,8 +135,6 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .indexes.list
 .indexes.list_versions
 
-.telemetry.get_application_insights_connection_string*
-
 .toolboxes.create_version
 .toolboxes.delete
 .toolboxes.delete_version
@@ -161,7 +151,7 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 Alphabetically sorted. An asterisk at the end of the method name means it is a hand-written method.
 
 ```text
-.beta.agent_insight_monitors.begin_create_run*
+.beta.agent_insight_monitors.begin_create_run
 .beta.agent_insight_monitors.cancel_run
 .beta.agent_insight_monitors.create
 .beta.agent_insight_monitors.delete
@@ -190,7 +180,6 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.insights.get
 .beta.insights.list
 
-.beta.memory_stores.begin_update_memories*
 .beta.memory_stores.create
 .beta.memory_stores.create_memory
 .beta.memory_stores.delete
@@ -200,11 +189,9 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.memory_stores.get_memory
 .beta.memory_stores.list
 .beta.memory_stores.list_memories
-.beta.memory_stores.search_memories*
 .beta.memory_stores.update
 .beta.memory_stores.update_memory
 
-.beta.models.create*
 .beta.models.delete
 .beta.models.get
 .beta.models.get_credentials
@@ -260,8 +247,6 @@ Alphabetically sorted. An asterisk at the end of the method name means it is a h
 .beta.voice_agents.conversations.list_items
 .beta.voice_agents.conversations.list_response_items
 .beta.voice_agents.conversations.list_responses
-
-.beta.voice_agents.realtime.connect*
 
 .beta.voice_agents.telephony.cancel_call_job
 .beta.voice_agents.telephony.create_binding

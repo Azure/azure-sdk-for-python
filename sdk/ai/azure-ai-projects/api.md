@@ -1,13 +1,14 @@
 ```py
 namespace azure.ai.projects
 
-    class azure.ai.projects.AIProjectClient(AIProjectClientGenerated): implements ContextManager 
+    class azure.ai.projects.AIProjectClient: implements ContextManager 
         agents: AgentsOperations
         beta: BetaOperations
         connections: ConnectionsOperations
         datasets: DatasetsOperations
         deployments: DeploymentsOperations
         evaluation_rules: EvaluationRulesOperations
+        evaluators: EvaluatorsOperations
         indexes: IndexesOperations
         toolboxes: ToolboxesOperations
 
@@ -15,22 +16,14 @@ namespace azure.ai.projects
                 self, 
                 endpoint: str, 
                 credential: TokenCredential, 
+                allow_preview: Optional[bool] = None, 
                 *, 
-                allow_preview: bool = False, 
                 api_version: str = ..., 
                 polling_interval: Optional[int] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
         def close(self) -> None: ...
-
-        @distributed_trace
-        def get_openai_client(
-                self, 
-                *, 
-                agent_name: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> OpenAI: ...
 
         def send_request(
                 self, 
@@ -43,13 +36,14 @@ namespace azure.ai.projects
 
 namespace azure.ai.projects.aio
 
-    class azure.ai.projects.aio.AIProjectClient(AIProjectClientGenerated): implements AsyncContextManager 
+    class azure.ai.projects.aio.AIProjectClient: implements AsyncContextManager 
         agents: AgentsOperations
         beta: BetaOperations
         connections: ConnectionsOperations
         datasets: DatasetsOperations
         deployments: DeploymentsOperations
         evaluation_rules: EvaluationRulesOperations
+        evaluators: EvaluatorsOperations
         indexes: IndexesOperations
         toolboxes: ToolboxesOperations
 
@@ -57,22 +51,14 @@ namespace azure.ai.projects.aio
                 self, 
                 endpoint: str, 
                 credential: AsyncTokenCredential, 
+                allow_preview: Optional[bool] = None, 
                 *, 
-                allow_preview: bool = False, 
                 api_version: str = ..., 
                 polling_interval: Optional[int] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
         async def close(self) -> None: ...
-
-        @distributed_trace
-        def get_openai_client(
-                self, 
-                *, 
-                agent_name: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AsyncOpenAI: ...
 
         def send_request(
                 self, 
@@ -85,7 +71,7 @@ namespace azure.ai.projects.aio
 
 namespace azure.ai.projects.aio.operations
 
-    class azure.ai.projects.aio.operations.AgentsOperations(GeneratedAgentsOperations):
+    class azure.ai.projects.aio.operations.AgentsOperations:
 
         def __init__(
                 self, 
@@ -101,7 +87,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncAgentOptimizationLROPoller: ...
+            ) -> AsyncLROPoller[AgentOptimizationJobResult]: ...
 
         @overload
         async def begin_create_optimization_job(
@@ -111,7 +97,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncAgentOptimizationLROPoller: ...
+            ) -> AsyncLROPoller[AgentOptimizationJobResult]: ...
 
         @overload
         async def begin_create_optimization_job(
@@ -121,7 +107,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncAgentOptimizationLROPoller: ...
+            ) -> AsyncLROPoller[AgentOptimizationJobResult]: ...
 
         @distributed_trace_async
         async def cancel_optimization_job(
@@ -170,6 +156,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 definition: AgentDefinition, 
                 description: Optional[str] = ..., 
+                digital_worker_type: Optional[Union[str, DigitalWorkerType]] = ..., 
                 draft: Optional[bool] = ..., 
                 metadata: Optional[dict[str, str]] = ..., 
                 **kwargs: Any
@@ -192,19 +179,6 @@ namespace azure.ai.projects.aio.operations
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AgentVersionDetails: ...
-
-        @distributed_trace_async
-        async def create_version_from_code(
-                self, 
-                agent_name: str, 
-                *, 
-                code: IO[bytes], 
-                code_zip_sha256: Optional[str] = ..., 
-                definition: HostedAgentDefinition, 
-                description: Optional[str] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
@@ -635,76 +609,7 @@ namespace azure.ai.projects.aio.operations
             ) -> SessionFileWriteResult: ...
 
 
-    class azure.ai.projects.aio.operations.AsyncBetaRealtime:
-
-        def __init__(
-                self, 
-                *args: Any, 
-                **kwargs: Any
-            ) -> None: ...
-
-        def connect(
-                self, 
-                *, 
-                agent_name: str, 
-                agent_session_id: Optional[str] = ..., 
-                api_version: Optional[str] = ..., 
-                connection_url: Optional[str] = ..., 
-                credential_scopes: Optional[List[str]] = ..., 
-                extra_headers: Optional[Mapping[str, str]] = ..., 
-                extra_query: Optional[Mapping[str, str]] = ..., 
-                structured_inputs: Optional[Mapping[str, Any]] = ..., 
-                **kwargs: Any
-            ) -> AsyncBetaRealtimeConnectionManager: ...
-
-
-    class azure.ai.projects.aio.operations.AsyncBetaRealtimeConnection: implements AsyncContextManager 
-        property closed: bool    # Read-only
-
-        def __aiter__(self) -> AsyncIterator[ServerEvent]: ...
-
-        def __init__(
-                self, 
-                connection: ClientWebSocketResponse, 
-                session: ClientSession
-            ) -> None: ...
-
-        def __repr__(self) -> str: ...
-
-        async def close(
-                self, 
-                *, 
-                code: int = 1000, 
-                reason: str = ""
-            ) -> None: ...
-
-        async def recv(self) -> ServerEvent: ...
-
-        async def send(self, event: ClientEvent) -> None: ...
-
-
-    class azure.ai.projects.aio.operations.AsyncBetaRealtimeConnectionManager: implements AsyncContextManager 
-
-        def __init__(
-                self, 
-                *, 
-                agent_name: str, 
-                agent_session_id: Optional[str] = ..., 
-                api_version: str, 
-                connection_url: Optional[str] = ..., 
-                credential: AsyncTokenCredential, 
-                credential_scopes: List[str], 
-                endpoint: str, 
-                extra_headers: Optional[Mapping[str, str]] = ..., 
-                extra_query: Optional[Mapping[str, str]] = ..., 
-                structured_inputs: Optional[Mapping[str, Any]] = ..., 
-                **kwargs: Any
-            ) -> None: ...
-
-        async def enter(self) -> AsyncBetaRealtimeConnection: ...
-
-
-    class azure.ai.projects.aio.operations.BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGenerated):
+    class azure.ai.projects.aio.operations.BetaOperations:
 
         def __init__(
                 self, 
@@ -712,1765 +617,14 @@ namespace azure.ai.projects.aio.operations
                 **kwargs
             ) -> None: ...
 
-        @overload
-        async def begin_create_run(
-                self, 
-                monitor_id: str, 
-                run: AgentInsightRunCreate, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AsyncAgentInsightRunLROPoller: ...
 
-        @overload
-        async def begin_create_run(
-                self, 
-                monitor_id: str, 
-                run: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AsyncAgentInsightRunLROPoller: ...
-
-        @overload
-        async def begin_create_run(
-                self, 
-                monitor_id: str, 
-                run: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AsyncAgentInsightRunLROPoller: ...
-
-        @distributed_trace_async
-        async def cancel_run(
-                self, 
-                monitor_id: str, 
-                run_id: str, 
-                **kwargs: Any
-            ) -> AgentInsightRun: ...
-
-        @overload
-        async def create(
-                self, 
-                monitor: AgentInsightMonitorCreate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AgentInsightMonitor: ...
-
-        @overload
-        async def create(
-                self, 
-                monitor: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AgentInsightMonitor: ...
-
-        @overload
-        async def create(
-                self, 
-                monitor: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AgentInsightMonitor: ...
-
-        @distributed_trace_async
-        async def delete(
-                self, 
-                monitor_id: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def get(
-                self, 
-                monitor_id: str, 
-                **kwargs: Any
-            ) -> AgentInsightMonitor: ...
-
-        @distributed_trace_async
-        async def get_insight(
-                self, 
-                monitor_id: str, 
-                insight_id: str, 
-                *, 
-                include_details: Optional[bool] = ..., 
-                **kwargs: Any
-            ) -> AgentInsight: ...
-
-        @distributed_trace_async
-        async def get_run(
-                self, 
-                monitor_id: str, 
-                run_id: str, 
-                **kwargs: Any
-            ) -> AgentInsightRun: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                *, 
-                agent_name: Optional[str] = ..., 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[AgentInsightMonitorListItem]: ...
-
-        @distributed_trace
-        def list_insights(
-                self, 
-                monitor_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                category: Optional[str] = ..., 
-                include_details: Optional[bool] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                severity: Optional[Union[str, AgentInsightSeverity]] = ..., 
-                status: Optional[Union[str, AgentInsightStatus]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[AgentInsight]: ...
-
-        @distributed_trace
-        def list_runs(
-                self, 
-                monitor_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                status: Optional[Union[str, JobStatus]] = ..., 
-                trigger: Optional[Union[str, AgentInsightRunTrigger]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[AgentInsightRun]: ...
-
-        @distributed_trace_async
-        async def reset(
-                self, 
-                monitor_id: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @overload
-        async def update(
-                self, 
-                monitor_id: str, 
-                monitor: AgentInsightMonitorUpdate, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                **kwargs: Any
-            ) -> AgentInsightMonitor: ...
-
-        @overload
-        async def update(
-                self, 
-                monitor_id: str, 
-                monitor: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                **kwargs: Any
-            ) -> AgentInsightMonitor: ...
-
-        @overload
-        async def update(
-                self, 
-                monitor_id: str, 
-                monitor: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                **kwargs: Any
-            ) -> AgentInsightMonitor: ...
-
-        @overload
-        async def update_insight(
-                self, 
-                monitor_id: str, 
-                insight_id: str, 
-                update: AgentInsightUpdate, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                **kwargs: Any
-            ) -> AgentInsight: ...
-
-        @overload
-        async def update_insight(
-                self, 
-                monitor_id: str, 
-                insight_id: str, 
-                update: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                **kwargs: Any
-            ) -> AgentInsight: ...
-
-        @overload
-        async def update_insight(
-                self, 
-                monitor_id: str, 
-                insight_id: str, 
-                update: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                **kwargs: Any
-            ) -> AgentInsight: ...
-
-
-    class azure.ai.projects.aio.operations.BetaAgentsOperations(BetaAgentsOperationsGenerated):
+    class azure.ai.projects.aio.operations.ConnectionsOperations:
 
         def __init__(
                 self, 
                 *args, 
                 **kwargs
             ) -> None: ...
-
-        @distributed_trace_async
-        async def create_from_prompt(
-                self, 
-                body: GenerateAgentRequest, 
-                **kwargs: Any
-            ) -> AgentDetails: ...
-
-
-    class azure.ai.projects.aio.operations.BetaEvaluationTaxonomiesOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def create(
-                self, 
-                name: str, 
-                taxonomy: EvaluationTaxonomy, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluationTaxonomy: ...
-
-        @overload
-        async def create(
-                self, 
-                name: str, 
-                taxonomy: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluationTaxonomy: ...
-
-        @overload
-        async def create(
-                self, 
-                name: str, 
-                taxonomy: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluationTaxonomy: ...
-
-        @distributed_trace_async
-        async def delete(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def get(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> EvaluationTaxonomy: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                *, 
-                input_name: Optional[str] = ..., 
-                input_type: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[EvaluationTaxonomy]: ...
-
-        @overload
-        async def update(
-                self, 
-                name: str, 
-                taxonomy: EvaluationTaxonomy, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluationTaxonomy: ...
-
-        @overload
-        async def update(
-                self, 
-                name: str, 
-                taxonomy: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluationTaxonomy: ...
-
-        @overload
-        async def update(
-                self, 
-                name: str, 
-                taxonomy: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluationTaxonomy: ...
-
-
-    class azure.ai.projects.aio.operations.BetaInsightsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def generate(
-                self, 
-                insight: Insight, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> Insight: ...
-
-        @overload
-        async def generate(
-                self, 
-                insight: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> Insight: ...
-
-        @overload
-        async def generate(
-                self, 
-                insight: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> Insight: ...
-
-        @distributed_trace_async
-        async def get(
-                self, 
-                insight_id: str, 
-                *, 
-                include_coordinates: Optional[bool] = ..., 
-                **kwargs: Any
-            ) -> Insight: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                *, 
-                agent_name: Optional[str] = ..., 
-                eval_id: Optional[str] = ..., 
-                include_coordinates: Optional[bool] = ..., 
-                run_id: Optional[str] = ..., 
-                type: Optional[Union[str, InsightType]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[Insight]: ...
-
-
-    class azure.ai.projects.aio.operations.BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def begin_update_memories(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                items: Optional[Union[str, ResponseInputParam]] = ..., 
-                previous_update_id: Optional[str] = ..., 
-                scope: str, 
-                update_delay: Optional[int] = ..., 
-                **kwargs: Any
-            ) -> AsyncUpdateMemoriesLROPoller: ...
-
-        @overload
-        async def begin_update_memories(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncUpdateMemoriesLROPoller: ...
-
-        @overload
-        async def begin_update_memories(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncUpdateMemoriesLROPoller: ...
-
-        @overload
-        async def create(
-                self, 
-                *, 
-                content_type: str = "application/json", 
-                definition: MemoryStoreDefinition, 
-                description: Optional[str] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
-                name: str, 
-                **kwargs: Any
-            ) -> MemoryStoreDetails: ...
-
-        @overload
-        async def create(
-                self, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryStoreDetails: ...
-
-        @overload
-        async def create(
-                self, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryStoreDetails: ...
-
-        @overload
-        async def create_memory(
-                self, 
-                name: str, 
-                *, 
-                content: str, 
-                content_type: str = "application/json", 
-                kind: Union[str, MemoryItemKind], 
-                scope: str, 
-                **kwargs: Any
-            ) -> MemoryItem: ...
-
-        @overload
-        async def create_memory(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryItem: ...
-
-        @overload
-        async def create_memory(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryItem: ...
-
-        @distributed_trace_async
-        async def delete(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> DeleteMemoryStoreResult: ...
-
-        @distributed_trace_async
-        async def delete_memory(
-                self, 
-                name: str, 
-                memory_id: str, 
-                **kwargs: Any
-            ) -> DeleteMemoryResult: ...
-
-        @overload
-        async def delete_scope(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                scope: str, 
-                **kwargs: Any
-            ) -> MemoryStoreDeleteScopeResult: ...
-
-        @overload
-        async def delete_scope(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryStoreDeleteScopeResult: ...
-
-        @overload
-        async def delete_scope(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryStoreDeleteScopeResult: ...
-
-        @distributed_trace_async
-        async def get(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> MemoryStoreDetails: ...
-
-        @distributed_trace_async
-        async def get_memory(
-                self, 
-                name: str, 
-                memory_id: str, 
-                **kwargs: Any
-            ) -> MemoryItem: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[MemoryStoreDetails]: ...
-
-        @overload
-        def list_memories(
-                self, 
-                name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                content_type: str = "application/json", 
-                kind: Optional[Union[str, MemoryItemKind]] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                scope: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[MemoryItem]: ...
-
-        @overload
-        def list_memories(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                before: Optional[str] = ..., 
-                content_type: str = "application/json", 
-                kind: Optional[Union[str, MemoryItemKind]] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[MemoryItem]: ...
-
-        @overload
-        def list_memories(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                before: Optional[str] = ..., 
-                content_type: str = "application/json", 
-                kind: Optional[Union[str, MemoryItemKind]] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[MemoryItem]: ...
-
-        @overload
-        async def search_memories(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                items: Optional[Union[str, ResponseInputParam]] = ..., 
-                options: Optional[MemorySearchOptions] = ..., 
-                previous_search_id: Optional[str] = ..., 
-                scope: str, 
-                **kwargs: Any
-            ) -> MemoryStoreSearchResult: ...
-
-        @overload
-        async def search_memories(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryStoreSearchResult: ...
-
-        @overload
-        async def search_memories(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryStoreSearchResult: ...
-
-        @overload
-        async def update(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                description: Optional[str] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
-                **kwargs: Any
-            ) -> MemoryStoreDetails: ...
-
-        @overload
-        async def update(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryStoreDetails: ...
-
-        @overload
-        async def update(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryStoreDetails: ...
-
-        @overload
-        async def update_memory(
-                self, 
-                name: str, 
-                memory_id: str, 
-                *, 
-                content: str, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryItem: ...
-
-        @overload
-        async def update_memory(
-                self, 
-                name: str, 
-                memory_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryItem: ...
-
-        @overload
-        async def update_memory(
-                self, 
-                name: str, 
-                memory_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryItem: ...
-
-
-    class azure.ai.projects.aio.operations.BetaModelsOperations(BetaModelsOperationsGenerated):
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def create(
-                self, 
-                *, 
-                base_model: Optional[str] = ..., 
-                description: Optional[str] = ..., 
-                name: str, 
-                polling_interval: float = 2.0, 
-                polling_timeout: float = 300.0, 
-                source: Union[str, PathLike[str]], 
-                tags: Optional[dict[str, str]] = ..., 
-                version: str, 
-                wait_for_commit: Literal[True] = True, 
-                weight_type: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> ModelVersion: ...
-
-        @overload
-        async def create(
-                self, 
-                *, 
-                base_model: Optional[str] = ..., 
-                description: Optional[str] = ..., 
-                name: str, 
-                polling_interval: float = 2.0, 
-                polling_timeout: float = 300.0, 
-                source: Union[str, PathLike[str]], 
-                tags: Optional[dict[str, str]] = ..., 
-                version: str, 
-                wait_for_commit: Literal[False], 
-                weight_type: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def delete(
-                self, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def get(
-                self, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> ModelVersion: ...
-
-        @overload
-        async def get_credentials(
-                self, 
-                name: str, 
-                version: str, 
-                credential_request: ModelCredentialRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DatasetCredential: ...
-
-        @overload
-        async def get_credentials(
-                self, 
-                name: str, 
-                version: str, 
-                credential_request: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DatasetCredential: ...
-
-        @overload
-        async def get_credentials(
-                self, 
-                name: str, 
-                version: str, 
-                credential_request: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DatasetCredential: ...
-
-        @distributed_trace
-        def list(self, **kwargs: Any) -> AsyncItemPaged[ModelVersion]: ...
-
-        @distributed_trace
-        def list_versions(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[ModelVersion]: ...
-
-        @overload
-        async def pending_create_version(
-                self, 
-                name: str, 
-                version: str, 
-                model_version: ModelVersion, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> CreateAsyncResponse: ...
-
-        @overload
-        async def pending_create_version(
-                self, 
-                name: str, 
-                version: str, 
-                model_version: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> CreateAsyncResponse: ...
-
-        @overload
-        async def pending_create_version(
-                self, 
-                name: str, 
-                version: str, 
-                model_version: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> CreateAsyncResponse: ...
-
-        @overload
-        async def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: ModelPendingUploadRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ModelPendingUploadResponse: ...
-
-        @overload
-        async def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ModelPendingUploadResponse: ...
-
-        @overload
-        async def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ModelPendingUploadResponse: ...
-
-        @overload
-        async def update(
-                self, 
-                name: str, 
-                version: str, 
-                model_version_update: UpdateModelVersionRequest, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                **kwargs: Any
-            ) -> ModelVersion: ...
-
-        @overload
-        async def update(
-                self, 
-                name: str, 
-                version: str, 
-                model_version_update: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                **kwargs: Any
-            ) -> ModelVersion: ...
-
-        @overload
-        async def update(
-                self, 
-                name: str, 
-                version: str, 
-                model_version_update: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                **kwargs: Any
-            ) -> ModelVersion: ...
-
-
-    class azure.ai.projects.aio.operations.BetaOperations(GeneratedBetaOperations):
-        agent_insight_monitors: BetaAgentInsightMonitorsOperations
-        agents: BetaAgentsOperations
-        evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
-        insights: BetaInsightsOperations
-        memory_stores: BetaMemoryStoresOperations
-        models: BetaModelsOperations
-        red_teams: BetaRedTeamsOperations
-        routines: BetaRoutinesOperations
-        schedules: BetaSchedulesOperations
-        skills: BetaSkillsOperations
-        voice_agents: BetaVoiceAgentsOperations
-
-        def __init__(
-                self, 
-                *args: Any, 
-                **kwargs: Any
-            ) -> None: ...
-
-
-    class azure.ai.projects.aio.operations.BetaRedTeamsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def create(
-                self, 
-                red_team: RedTeam, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RedTeam: ...
-
-        @overload
-        async def create(
-                self, 
-                red_team: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RedTeam: ...
-
-        @overload
-        async def create(
-                self, 
-                red_team: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RedTeam: ...
-
-        @distributed_trace_async
-        async def get(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> RedTeam: ...
-
-        @distributed_trace
-        def list(self, **kwargs: Any) -> AsyncItemPaged[RedTeam]: ...
-
-
-    class azure.ai.projects.aio.operations.BetaRoutinesOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def create_or_update(
-                self, 
-                routine_name: str, 
-                *, 
-                action: Optional[RoutineAction] = ..., 
-                authorization: Optional[RoutineAuthorization] = ..., 
-                content_type: str = "application/json", 
-                description: Optional[str] = ..., 
-                enabled: Optional[bool] = ..., 
-                triggers: Optional[dict[str, RoutineTrigger]] = ..., 
-                **kwargs: Any
-            ) -> Routine: ...
-
-        @overload
-        async def create_or_update(
-                self, 
-                routine_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> Routine: ...
-
-        @overload
-        async def create_or_update(
-                self, 
-                routine_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> Routine: ...
-
-        @distributed_trace_async
-        async def delete(
-                self, 
-                routine_name: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def disable(
-                self, 
-                routine_name: str, 
-                **kwargs: Any
-            ) -> Routine: ...
-
-        @overload
-        async def dispatch(
-                self, 
-                routine_name: str, 
-                *, 
-                content_type: str = "application/json", 
-                payload: Optional[RoutineDispatchPayload] = ..., 
-                **kwargs: Any
-            ) -> DispatchRoutineResult: ...
-
-        @overload
-        async def dispatch(
-                self, 
-                routine_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DispatchRoutineResult: ...
-
-        @overload
-        async def dispatch(
-                self, 
-                routine_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DispatchRoutineResult: ...
-
-        @distributed_trace_async
-        async def enable(
-                self, 
-                routine_name: str, 
-                **kwargs: Any
-            ) -> Routine: ...
-
-        @distributed_trace_async
-        async def get(
-                self, 
-                routine_name: str, 
-                **kwargs: Any
-            ) -> Routine: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                *, 
-                after: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[Routine]: ...
-
-        @distributed_trace
-        def list_runs(
-                self, 
-                routine_name: str, 
-                *, 
-                after: Optional[str] = ..., 
-                filter: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[RoutineRun]: ...
-
-
-    class azure.ai.projects.aio.operations.BetaSchedulesOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def create_or_update(
-                self, 
-                schedule_id: str, 
-                schedule: Schedule, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> Schedule: ...
-
-        @overload
-        async def create_or_update(
-                self, 
-                schedule_id: str, 
-                schedule: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> Schedule: ...
-
-        @overload
-        async def create_or_update(
-                self, 
-                schedule_id: str, 
-                schedule: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> Schedule: ...
-
-        @distributed_trace_async
-        async def delete(
-                self, 
-                schedule_id: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def get(
-                self, 
-                schedule_id: str, 
-                **kwargs: Any
-            ) -> Schedule: ...
-
-        @distributed_trace_async
-        async def get_run(
-                self, 
-                schedule_id: str, 
-                run_id: str, 
-                **kwargs: Any
-            ) -> ScheduleRun: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                *, 
-                enabled: Optional[bool] = ..., 
-                type: Optional[Union[str, ScheduleTaskType]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[Schedule]: ...
-
-        @distributed_trace
-        def list_runs(
-                self, 
-                schedule_id: str, 
-                *, 
-                enabled: Optional[bool] = ..., 
-                type: Optional[Union[str, ScheduleTaskType]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[ScheduleRun]: ...
-
-
-    class azure.ai.projects.aio.operations.BetaSkillsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def create(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                default: Optional[bool] = ..., 
-                inline_content: Optional[SkillInlineContent] = ..., 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @overload
-        async def create(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @overload
-        async def create(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @overload
-        async def create_from_files(
-                self, 
-                name: str, 
-                content: CreateSkillVersionFromFilesBody, 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @overload
-        async def create_from_files(
-                self, 
-                name: str, 
-                content: JSON, 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @distributed_trace_async
-        async def delete(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> DeleteSkillResult: ...
-
-        @distributed_trace_async
-        async def delete_version(
-                self, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> DeleteSkillVersionResult: ...
-
-        @distributed_trace_async
-        async def download(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> AsyncIterator[bytes]: ...
-
-        @distributed_trace_async
-        async def download_version(
-                self, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> AsyncIterator[bytes]: ...
-
-        @distributed_trace_async
-        async def get(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> SkillDetails: ...
-
-        @distributed_trace_async
-        async def get_version(
-                self, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[SkillDetails]: ...
-
-        @distributed_trace
-        def list_versions(
-                self, 
-                name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[SkillVersion]: ...
-
-        @overload
-        async def update(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                default_version: str, 
-                **kwargs: Any
-            ) -> SkillDetails: ...
-
-        @overload
-        async def update(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> SkillDetails: ...
-
-        @overload
-        async def update(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> SkillDetails: ...
-
-
-    class azure.ai.projects.aio.operations.BetaVoiceAgentsConversationsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def delete(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def download_audio(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> AsyncIterator[bytes]: ...
-
-        @distributed_trace_async
-        async def download_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> AsyncIterator[bytes]: ...
-
-        @distributed_trace_async
-        async def download_generated_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> AsyncIterator[bytes]: ...
-
-        @distributed_trace_async
-        async def get(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> VoiceConversation: ...
-
-        @distributed_trace_async
-        async def get_audio(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> VoiceRecording: ...
-
-        @distributed_trace_async
-        async def get_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> VoiceAudioItem: ...
-
-        @distributed_trace_async
-        async def get_generated_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> VoiceGeneratedAudioItem: ...
-
-        @distributed_trace_async
-        async def get_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> RealtimeConversationItem: ...
-
-        @distributed_trace_async
-        async def get_response(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                response_id: str, 
-                **kwargs: Any
-            ) -> VoiceResponse: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[VoiceConversation]: ...
-
-        @distributed_trace
-        def list_items(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[RealtimeConversationItem]: ...
-
-        @distributed_trace
-        def list_response_items(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                response_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[RealtimeConversationItem]: ...
-
-        @distributed_trace
-        def list_responses(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[VoiceResponse]: ...
-
-
-    class azure.ai.projects.aio.operations.BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
-        conversations: BetaVoiceAgentsConversationsOperations
-        realtime: AsyncBetaRealtime
-        telephony: BetaVoiceAgentsTelephonyOperations
-
-        def __init__(
-                self, 
-                *args: Any, 
-                **kwargs: Any
-            ) -> None: ...
-
-
-    class azure.ai.projects.aio.operations.BetaVoiceAgentsTelephonyOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def cancel_call_job(
-                self, 
-                agent_name: str, 
-                call_job_id: str, 
-                *, 
-                etag: str, 
-                match_condition: MatchConditions, 
-                **kwargs: Any
-            ) -> TelephonyCallJob: ...
-
-        @overload
-        async def create_binding(
-                self, 
-                agent_name: str, 
-                telephony_binding: CreateTelephonyBindingRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> TelephonyBinding: ...
-
-        @overload
-        async def create_binding(
-                self, 
-                agent_name: str, 
-                telephony_binding: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> TelephonyBinding: ...
-
-        @overload
-        async def create_binding(
-                self, 
-                agent_name: str, 
-                telephony_binding: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> TelephonyBinding: ...
-
-        @overload
-        async def create_call_job(
-                self, 
-                agent_name: str, 
-                body: CreateTelephonyCallJobRequest, 
-                *, 
-                content_type: str = "application/json", 
-                idempotency_key: str, 
-                **kwargs: Any
-            ) -> TelephonyCallJob: ...
-
-        @overload
-        async def create_call_job(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                idempotency_key: str, 
-                **kwargs: Any
-            ) -> TelephonyCallJob: ...
-
-        @overload
-        async def create_call_job(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                idempotency_key: str, 
-                **kwargs: Any
-            ) -> TelephonyCallJob: ...
-
-        @distributed_trace_async
-        async def delete_binding(
-                self, 
-                agent_name: str, 
-                binding_id: str, 
-                *, 
-                etag: str, 
-                match_condition: MatchConditions, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def end_call(
-                self, 
-                agent_name: str, 
-                call_id: str, 
-                **kwargs: Any
-            ) -> TelephonyCallRecord: ...
-
-        @distributed_trace_async
-        async def get_binding(
-                self, 
-                agent_name: str, 
-                binding_id: str, 
-                **kwargs: Any
-            ) -> TelephonyBinding: ...
-
-        @distributed_trace_async
-        async def get_call(
-                self, 
-                agent_name: str, 
-                call_id: str, 
-                **kwargs: Any
-            ) -> TelephonyCallRecord: ...
-
-        @distributed_trace_async
-        async def get_call_job(
-                self, 
-                agent_name: str, 
-                call_job_id: str, 
-                **kwargs: Any
-            ) -> TelephonyCallJob: ...
-
-        @distributed_trace_async
-        async def get_transfer_targets(
-                self, 
-                agent_name: str, 
-                **kwargs: Any
-            ) -> TelephonyTransferTargets: ...
-
-        @distributed_trace
-        def list_bindings(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                provider: Optional[Union[str, TelephonyProvider]] = ..., 
-                status: Optional[Union[str, TelephonyBindingStatus]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[TelephonyBindingListItem]: ...
-
-        @distributed_trace
-        def list_calls(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                provider: Optional[Union[str, TelephonyProvider]] = ..., 
-                started_after_time: Optional[datetime] = ..., 
-                started_before_time: Optional[datetime] = ..., 
-                status: Optional[Union[str, TelephonyCallStatus]] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[TelephonyCallSummary]: ...
-
-        @overload
-        async def replace_transfer_targets(
-                self, 
-                agent_name: str, 
-                *, 
-                content_type: str = "application/json", 
-                etag: str, 
-                match_condition: MatchConditions, 
-                transfer_targets: List[TelephonyTransferTarget], 
-                **kwargs: Any
-            ) -> TelephonyTransferTargets: ...
-
-        @overload
-        async def replace_transfer_targets(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                etag: str, 
-                match_condition: MatchConditions, 
-                **kwargs: Any
-            ) -> TelephonyTransferTargets: ...
-
-        @overload
-        async def replace_transfer_targets(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                etag: str, 
-                match_condition: MatchConditions, 
-                **kwargs: Any
-            ) -> TelephonyTransferTargets: ...
-
-        @overload
-        async def transfer_call(
-                self, 
-                agent_name: str, 
-                call_id: str, 
-                *, 
-                content_type: str = "application/json", 
-                target: str, 
-                **kwargs: Any
-            ) -> TelephonyCallRecord: ...
-
-        @overload
-        async def transfer_call(
-                self, 
-                agent_name: str, 
-                call_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> TelephonyCallRecord: ...
-
-        @overload
-        async def transfer_call(
-                self, 
-                agent_name: str, 
-                call_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> TelephonyCallRecord: ...
-
-        @overload
-        async def update_binding(
-                self, 
-                agent_name: str, 
-                binding_id: str, 
-                body: UpdateTelephonyBindingRequest, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: str, 
-                match_condition: MatchConditions, 
-                **kwargs: Any
-            ) -> TelephonyBinding: ...
-
-        @overload
-        async def update_binding(
-                self, 
-                agent_name: str, 
-                binding_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: str, 
-                match_condition: MatchConditions, 
-                **kwargs: Any
-            ) -> TelephonyBinding: ...
-
-        @overload
-        async def update_binding(
-                self, 
-                agent_name: str, 
-                binding_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: str, 
-                match_condition: MatchConditions, 
-                **kwargs: Any
-            ) -> TelephonyBinding: ...
-
-
-    class azure.ai.projects.aio.operations.ConnectionsOperations(ConnectionsOperationsGenerated):
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace_async
-        async def get(
-                self, 
-                name: str, 
-                *, 
-                include_credentials: Optional[bool] = False, 
-                **kwargs: Any
-            ) -> Connection: ...
-
-        @distributed_trace_async
-        async def get_default(
-                self, 
-                connection_type: Union[str, ConnectionType], 
-                *, 
-                include_credentials: Optional[bool] = False, 
-                **kwargs: Any
-            ) -> Connection: ...
 
         @distributed_trace
         def list(
@@ -2482,7 +636,7 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncItemPaged[Connection]: ...
 
 
-    class azure.ai.projects.aio.operations.DatasetsOperations(_DatasetsOperationsWithGeneration):
+    class azure.ai.projects.aio.operations.DatasetsOperations:
 
         def __init__(
                 self, 
@@ -2498,7 +652,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncDatasetGenerationLROPoller: ...
+            ) -> AsyncLROPoller[DataGenerationJobResult]: ...
 
         @overload
         async def begin_create_generation_job(
@@ -2508,7 +662,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncDatasetGenerationLROPoller: ...
+            ) -> AsyncLROPoller[DataGenerationJobResult]: ...
 
         @overload
         async def begin_create_generation_job(
@@ -2518,7 +672,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncDatasetGenerationLROPoller: ...
+            ) -> AsyncLROPoller[DataGenerationJobResult]: ...
 
         @distributed_trace_async
         async def cancel_generation_job(
@@ -2651,29 +805,6 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> PendingUploadResponse: ...
 
-        @distributed_trace_async
-        async def upload_file(
-                self, 
-                *, 
-                connection_name: Optional[str] = ..., 
-                file_path: str, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> FileDatasetVersion: ...
-
-        @distributed_trace_async
-        async def upload_folder(
-                self, 
-                *, 
-                connection_name: Optional[str] = ..., 
-                file_pattern: Optional[Pattern] = ..., 
-                folder: str, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> FolderDatasetVersion: ...
-
 
     class azure.ai.projects.aio.operations.DeploymentsOperations:
 
@@ -2701,7 +832,7 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncItemPaged[Deployment]: ...
 
 
-    class azure.ai.projects.aio.operations.EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
+    class azure.ai.projects.aio.operations.EvaluationRulesOperations:
 
         def __init__(
                 self, 
@@ -2764,7 +895,7 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncItemPaged[EvaluationRule]: ...
 
 
-    class azure.ai.projects.aio.operations.EvaluatorsOperations(EvaluatorsOperationsGenerated):
+    class azure.ai.projects.aio.operations.EvaluatorsOperations:
 
         def __init__(
                 self, 
@@ -2780,7 +911,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncEvaluatorGenerationLROPoller: ...
+            ) -> AsyncLROPoller[EvaluatorVersion]: ...
 
         @overload
         async def begin_create_generation_job(
@@ -2790,7 +921,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncEvaluatorGenerationLROPoller: ...
+            ) -> AsyncLROPoller[EvaluatorVersion]: ...
 
         @overload
         async def begin_create_generation_job(
@@ -2800,7 +931,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncEvaluatorGenerationLROPoller: ...
+            ) -> AsyncLROPoller[EvaluatorVersion]: ...
 
         @distributed_trace_async
         async def cancel_generation_job(
@@ -2998,14 +1129,6 @@ namespace azure.ai.projects.aio.operations
                 name: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[Index]: ...
-
-
-    class azure.ai.projects.aio.operations.TelemetryOperations:
-
-        def __init__(self, outer_instance: AIProjectClient) -> None: ...
-
-        @distributed_trace_async
-        async def get_application_insights_connection_string(self) -> str: ...
 
 
     class azure.ai.projects.aio.operations.ToolboxesOperations:
@@ -3828,28 +1951,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.AgentInsightRunLROPoller(LROPoller[AgentInsightRunResult]):
-        property details: Mapping[str, Any]    # Read-only
-
-        def __init__(
-                self, 
-                client: Any, 
-                initial_response: Any, 
-                deserialization_callback: Any, 
-                polling_method: Any
-            ) -> None: ...
-
-        @classmethod
-        def from_continuation_token(
-                cls, 
-                polling_method: PollingMethod[AgentInsightRunResult], 
-                continuation_token: str, 
-                **kwargs: Any
-            ) -> AgentInsightRunLROPoller: ...
-
-        def status(self) -> str: ...
-
-
     class azure.ai.projects.models.AgentInsightRunResult(_Model):
         insights_created: int
         insights_reopened: int
@@ -4463,26 +2564,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.AgentOptimizationLROPoller(LROPoller[AgentOptimizationJobResult]):
-        property details: Mapping[str, Any]    # Read-only
-
-        def __init__(
-                self, 
-                client: Any, 
-                initial_response: Any, 
-                deserialization_callback: Any, 
-                polling_method: Any
-            ) -> None: ...
-
-        @classmethod
-        def from_continuation_token(
-                cls, 
-                polling_method: PollingMethod[AgentOptimizationJobResult], 
-                continuation_token: str, 
-                **kwargs: Any
-            ) -> AgentOptimizationLROPoller: ...
-
-
     class azure.ai.projects.models.AgentOptimizationModelConfiguration(_Model):
         model: str
 
@@ -5053,101 +3134,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.AsyncAgentInsightRunLROPoller(AsyncLROPoller[AgentInsightRunResult]):
-        property details: Mapping[str, Any]    # Read-only
-
-        def __init__(
-                self, 
-                client: Any, 
-                initial_response: Any, 
-                deserialization_callback: Any, 
-                polling_method: Any
-            ) -> None: ...
-
-        @classmethod
-        def from_continuation_token(
-                cls, 
-                polling_method: AsyncPollingMethod[AgentInsightRunResult], 
-                continuation_token: str, 
-                **kwargs: Any
-            ) -> AsyncAgentInsightRunLROPoller: ...
-
-        def status(self) -> str: ...
-
-
-    class azure.ai.projects.models.AsyncAgentOptimizationLROPoller(AsyncLROPoller[AgentOptimizationJobResult]):
-        property details: Mapping[str, Any]    # Read-only
-
-        def __init__(
-                self, 
-                client: Any, 
-                initial_response: Any, 
-                deserialization_callback: Any, 
-                polling_method: Any
-            ) -> None: ...
-
-        @classmethod
-        def from_continuation_token(
-                cls, 
-                polling_method: AsyncPollingMethod[AgentOptimizationJobResult], 
-                continuation_token: str, 
-                **kwargs: Any
-            ) -> AsyncAgentOptimizationLROPoller: ...
-
-
-    class azure.ai.projects.models.AsyncDatasetGenerationLROPoller(AsyncLROPoller[DataGenerationJobResult]):
-        property details: Mapping[str, Any]    # Read-only
-
-        def __init__(
-                self, 
-                client: Any, 
-                initial_response: Any, 
-                deserialization_callback: Any, 
-                polling_method: Any
-            ) -> None: ...
-
-        @classmethod
-        def from_continuation_token(
-                cls, 
-                polling_method: AsyncPollingMethod[DataGenerationJobResult], 
-                continuation_token: str, 
-                **kwargs: Any
-            ) -> AsyncDatasetGenerationLROPoller: ...
-
-
-    class azure.ai.projects.models.AsyncEvaluatorGenerationLROPoller(AsyncLROPoller[EvaluatorVersion]):
-        property details: Mapping[str, Any]    # Read-only
-
-        def __init__(
-                self, 
-                client: Any, 
-                initial_response: Any, 
-                deserialization_callback: Any, 
-                polling_method: Any
-            ) -> None: ...
-
-        @classmethod
-        def from_continuation_token(
-                cls, 
-                polling_method: AsyncPollingMethod[EvaluatorVersion], 
-                continuation_token: str, 
-                **kwargs: Any
-            ) -> AsyncEvaluatorGenerationLROPoller: ...
-
-
-    class azure.ai.projects.models.AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResult]):
-        property superseded_by: Optional[str]    # Read-only
-        property update_id: str    # Read-only
-
-        @classmethod
-        def from_continuation_token(
-                cls, 
-                polling_method: AsyncPollingMethod[MemoryStoreUpdateCompletedResult], 
-                continuation_token: str, 
-                **kwargs: Any
-            ) -> AsyncUpdateMemoriesLROPoller: ...
-
-
     class azure.ai.projects.models.AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ANSI_ATTACK = "ansi_attack"
         ASCII_ART = "ascii_art"
@@ -5177,6 +3163,30 @@ namespace azure.ai.projects.models
         UNICODE_CONFUSABLE = "unicode_confusable"
         UNICODE_SUBSTITUTION = "unicode_substitution"
         URL = "url"
+
+
+    class azure.ai.projects.models.AudioTranscription(_Model):
+        delay: Optional[Literal["minimal", "low", "medium", "high", "xhigh"]]
+        keywords: Optional[list[str]]
+        language: Optional[str]
+        languages: Optional[list[str]]
+        model: Optional[Union[Literal["whisper-1"], Literal["gpt-transcribe"], Literal["gpt-live-transcribe"], Literal["gpt-4o-mini-transcribe"], Literal["gpt-4o-mini-transcribe-2025-12-15"], Literal["gpt-4o-transcribe"], Literal["gpt-4o-transcribe-diarize"], Literal["gpt-realtime-whisper"], str]]
+        prompt: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                delay: Optional[Literal[minimal, low, medium, high, xhigh]] = ..., 
+                keywords: Optional[list[str]] = ..., 
+                language: Optional[str] = ..., 
+                languages: Optional[list[str]] = ..., 
+                model: Optional[Union[Literal[whisper-1], Literal[gpt-transcribe], Literal[gpt-live-transcribe], Literal[gpt-4o-mini-transcribe], Literal[gpt-4o-mini-transcribe-2025-12-15], Literal[gpt-4o-transcribe], Literal[gpt-4o-transcribe-diarize], Literal[gpt-realtime-whisper], str]] = ..., 
+                prompt: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.AutoCodeInterpreterToolParam(_Model):
@@ -5219,24 +3229,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.AzureAIAgentTargetParam(TypedDict, total=False):
-        key "name": Required[str]
-        key "tool_descriptions": List[ToolDescriptionParam]
-        key "type": Required[Literal["azure_ai_agent"]]
-        key "version": str
-
-
-    class azure.ai.projects.models.AzureAIBenchmarkPreviewEvalRunDataSource(TypedDict, total=False):
-        key "input_messages": InputMessagesItemReference
-        key "target": Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
-        key "type": Required[Literal["azure_ai_benchmark_preview"]]
-
-
-    class azure.ai.projects.models.AzureAIDataSourceConfig(TypedDict, total=False):
-        key "scenario": Required[str]
-        key "type": Required[Literal["azure_ai_source"]]
-
-
     class azure.ai.projects.models.AzureAIModelTarget(EvaluationTarget, discriminator='azure_ai_model'):
         model: Optional[str]
         sampling_params: Optional[ModelSamplingParams]
@@ -5252,19 +3244,6 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.AzureAIModelTargetParam(TypedDict, total=False):
-        key "model": str
-        key "sampling_params": ModelSamplingConfigParam
-        key "type": Required[Literal["azure_ai_model"]]
-
-
-    class azure.ai.projects.models.AzureAIResponsesEvalRunDataSource(TypedDict, total=False):
-        key "event_configuration_id": str
-        key "item_generation_params": Required[ResponseRetrievalItemGenerationParams]
-        key "max_runs_hourly": int
-        key "type": Required[Literal["azure_ai_responses"]]
 
 
     class azure.ai.projects.models.AzureAISearchIndex(Index, discriminator='AzureSearch'):
@@ -6256,11 +4235,11 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.CreateTeamsPhoneExtensionTelephonyBindingRequest(CreateTelephonyBindingRequest, discriminator='teams_phone_extension'):
+    class azure.ai.projects.models.CreateTeamsPhoneExtensibilityTelephonyBindingRequest(CreateTelephonyBindingRequest, discriminator='teams_phone_extensibility'):
         connection_name: str
         label: str
         phone_number: Optional[str]
-        provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSION]
+        provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY]
         resource_account_object_id: str
 
         @overload
@@ -6389,15 +4368,14 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.CustomCredential(CustomCredentialGenerated, discriminator='CustomKeys'):
-        credential_keys: Dict[str, str]
-        type: Union[str, CredentialType]
+    class azure.ai.projects.models.CustomCredential(BaseCredentials, discriminator='CustomKeys'):
+        type: Literal[CredentialType.CUSTOM]
 
-        def __init__(
-                self, 
-                *args: Any, 
-                **kwargs: Any
-            ) -> None: ...
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.CustomGrammarFormatParam(CustomToolParamFormat, discriminator='grammar'):
@@ -6715,26 +4693,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.DatasetGenerationLROPoller(LROPoller[DataGenerationJobResult]):
-        property details: Mapping[str, Any]    # Read-only
-
-        def __init__(
-                self, 
-                client: Any, 
-                initial_response: Any, 
-                deserialization_callback: Any, 
-                polling_method: Any
-            ) -> None: ...
-
-        @classmethod
-        def from_continuation_token(
-                cls, 
-                polling_method: PollingMethod[DataGenerationJobResult], 
-                continuation_token: str, 
-                **kwargs: Any
-            ) -> DatasetGenerationLROPoller: ...
-
-
     class azure.ai.projects.models.DatasetReference(_Model):
         name: str
         version: str
@@ -7023,16 +4981,6 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.EvalCsvFileIdSource(TypedDict, total=False):
-        key "id": Required[str]
-        key "type": Required[Literal["file_id"]]
-
-
-    class azure.ai.projects.models.EvalCsvRunDataSource(TypedDict, total=False):
-        key "source": Required[EvalCsvFileIdSource]
-        key "type": Required[Literal["csv"]]
 
 
     class azure.ai.projects.models.EvalResult(_Model):
@@ -7610,26 +5558,6 @@ namespace azure.ai.projects.models
         DATASET = "dataset"
         PROMPT = "prompt"
         TRACES = "traces"
-
-
-    class azure.ai.projects.models.EvaluatorGenerationLROPoller(LROPoller[EvaluatorVersion]):
-        property details: Mapping[str, Any]    # Read-only
-
-        def __init__(
-                self, 
-                client: Any, 
-                initial_response: Any, 
-                deserialization_callback: Any, 
-                polling_method: Any
-            ) -> None: ...
-
-        @classmethod
-        def from_continuation_token(
-                cls, 
-                polling_method: PollingMethod[EvaluatorVersion], 
-                continuation_token: str, 
-                **kwargs: Any
-            ) -> EvaluatorGenerationLROPoller: ...
 
 
     class azure.ai.projects.models.EvaluatorGenerationTokenUsage(_Model):
@@ -9573,13 +7501,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.ModelSamplingConfigParam(TypedDict, total=False):
-        key "max_completion_tokens": int
-        key "seed": int
-        key "temperature": float
-        key "top_p": float
-
-
     class azure.ai.projects.models.ModelSamplingParams(_Model):
         max_completion_tokens: Optional[int]
         seed: Optional[int]
@@ -10989,6 +8910,70 @@ namespace azure.ai.projects.models
         XHIGH = "xhigh"
 
 
+    class azure.ai.projects.models.RealtimeResponse(_Model):
+        audio: Optional[RealtimeResponseAudio]
+        conversation_id: Optional[str]
+        id: Optional[str]
+        max_output_tokens: Optional[Union[int, Literal["inf"]]]
+        metadata: Optional[Metadata]
+        object: Optional[Literal["response"]]
+        output: Optional[list[RealtimeConversationItem]]
+        output_modalities: Optional[list[Literal["text", "audio"]]]
+        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]]
+        status_details: Optional[RealtimeResponseStatusDetails]
+        usage: Optional[RealtimeResponseUsage]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio: Optional[RealtimeResponseAudio] = ..., 
+                conversation_id: Optional[str] = ..., 
+                id: Optional[str] = ..., 
+                max_output_tokens: Optional[Union[int, Literal[inf]]] = ..., 
+                metadata: Optional[Metadata] = ..., 
+                object: Optional[Literal[response]] = ..., 
+                output: Optional[list[RealtimeConversationItem]] = ..., 
+                output_modalities: Optional[list[Literal[text, audio]]] = ..., 
+                status: Optional[Literal[completed, cancelled, failed, incomplete, in_progress]] = ..., 
+                status_details: Optional[RealtimeResponseStatusDetails] = ..., 
+                usage: Optional[RealtimeResponseUsage] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeResponseAudio(_Model):
+        output: Optional[RealtimeResponseAudioOutput]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                output: Optional[RealtimeResponseAudioOutput] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeResponseAudioOutput(_Model):
+        format: Optional[RealtimeAudioFormats]
+        voice: Optional[Union[str, VoiceIdsShared]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                format: Optional[RealtimeAudioFormats] = ..., 
+                voice: Optional[Union[str, VoiceIdsShared]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.RealtimeResponseStatusDetails(_Model):
         error: Optional[RealtimeResponseStatusDetailsError]
         reason: Optional[Literal["turn_detected", "client_cancelled", "max_output_tokens", "content_filter"]]
@@ -12275,12 +10260,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.RedTeamEvalRunDataSource(TypedDict, total=False):
-        key "item_generation_params": Required[Any]
-        key "target": Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
-        key "type": Required[Literal["azure_ai_red_team"]]
-
-
     class azure.ai.projects.models.RedTeamTargetConfig(_Model):
         type: str
 
@@ -12378,13 +10357,6 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.ResponseRetrievalItemGenerationParams(TypedDict, total=False):
-        key "data_mapping": Required[Dict[str, str]]
-        key "max_num_turns": int
-        key "source": Required[Union[SourceFileContent, SourceFileID]]
-        key "type": Required[Literal["response_retrieval"]]
 
 
     class azure.ai.projects.models.ResponseUsageInputTokensDetails(_Model):
@@ -13240,13 +11212,6 @@ namespace azure.ai.projects.models
         TOOLS = "tools"
 
 
-    class azure.ai.projects.models.TargetCompletionEvalRunDataSource(TypedDict, total=False):
-        key "input_messages": Required[InputMessagesItemReference]
-        key "source": Required[Union[SourceFileContent, SourceFileID]]
-        key "target": Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
-        key "type": Required[Literal["azure_ai_target_completions"]]
-
-
     class azure.ai.projects.models.TaxonomyCategory(_Model):
         description: Optional[str]
         id: str
@@ -13293,13 +11258,13 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.TeamsPhoneExtensionTelephonyBinding(TelephonyBinding, discriminator='teams_phone_extension'):
+    class azure.ai.projects.models.TeamsPhoneExtensibilityTelephonyBinding(TelephonyBinding, discriminator='teams_phone_extensibility'):
         connection_name: str
         id: str
         incoming_call_url: str
         label: str
         phone_number: Optional[str]
-        provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSION]
+        provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY]
         resource_account_object_id: str
         status: Union[str, TelephonyBindingStatus]
 
@@ -13320,14 +11285,14 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.TeamsPhoneExtensionTelephonyBindingListItem(TelephonyBindingListItem, discriminator='teams_phone_extension'):
+    class azure.ai.projects.models.TeamsPhoneExtensibilityTelephonyBindingListItem(TelephonyBindingListItem, discriminator='teams_phone_extensibility'):
         connection_name: str
         etag: str
         id: str
         incoming_call_url: str
         label: str
         phone_number: Optional[str]
-        provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSION]
+        provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY]
         resource_account_object_id: str
         status: Union[str, TelephonyBindingStatus]
 
@@ -13735,7 +11700,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.TelephonyCallLifecycleEventSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         GATEWAY = "gateway"
-        TEAMS_PHONE_EXTENSION = "teams_phone_extension"
+        TEAMS_PHONE_EXTENSIBILITY = "teams_phone_extensibility"
         TWILIO = "twilio"
         VOICE_AGENT = "voice_agent"
 
@@ -13997,7 +11962,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.TelephonyProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        TEAMS_PHONE_EXTENSION = "teams_phone_extension"
+        TEAMS_PHONE_EXTENSIBILITY = "teams_phone_extensibility"
         TWILIO = "twilio"
 
 
@@ -14051,15 +12016,6 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.TestingCriterionAzureAIEvaluator(TypedDict, total=False):
-        key "data_mapping": Dict[str, str]
-        key "evaluator_name": Required[str]
-        key "evaluator_version": str
-        key "initialization_parameters": Dict[str, Any]
-        key "name": Required[str]
-        key "type": Required[Literal["azure_ai_evaluator"]]
 
 
     class azure.ai.projects.models.TextResponseFormat(_Model):
@@ -14364,11 +12320,6 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.ToolDescriptionParam(TypedDict, total=False):
-        key "description": str
-        key "name": str
 
 
     class azure.ai.projects.models.ToolProjectConnection(_Model):
@@ -14801,17 +12752,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.TracesPreviewEvalRunDataSource(TypedDict, total=False):
-        key "agent_id": str
-        key "agent_name": str
-        key "end_time": datetime
-        key "ingestion_delay_seconds": int
-        key "lookback_hours": int
-        key "max_traces": int
-        key "trace_ids": List[str]
-        key "type": Required[Literal["azure_ai_traces_preview"]]
-
-
     class azure.ai.projects.models.TranscriptTextUsageDuration(CreateTranscriptionResponseJsonUsage, discriminator='duration'):
         seconds: timedelta
         type: Literal[CreateTranscriptionResponseJsonUsageType.DURATION]
@@ -14955,19 +12895,6 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.UpdateMemoriesLROPoller(LROPoller[MemoryStoreUpdateCompletedResult]):
-        property superseded_by: Optional[str]    # Read-only
-        property update_id: str    # Read-only
-
-        @classmethod
-        def from_continuation_token(
-                cls, 
-                polling_method: PollingMethod[MemoryStoreUpdateCompletedResult], 
-                continuation_token: str, 
-                **kwargs: Any
-            ) -> UpdateMemoriesLROPoller: ...
 
 
     class azure.ai.projects.models.UpdateModelVersionRequest(_Model):
@@ -15780,15 +13707,15 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.VoiceAgentInputTranscription(_Model):
+    class azure.ai.projects.models.VoiceAgentInputTranscription(AudioTranscription):
         custom_speech: Optional[dict[str, str]]
-        delay: Optional[Literal["minimal", "low", "medium", "high", "xhigh"]]
-        keywords: Optional[list[str]]
-        language: Optional[str]
-        languages: Optional[list[str]]
+        delay: Union[str, str, str, str, str]
+        keywords: list[str]
+        language: str
+        languages: list[str]
         model: Union[str, VoiceAgentInputTranscriptionModel]
         phrase_list: Optional[list[str]]
-        prompt: Optional[str]
+        prompt: str
 
         @overload
         def __init__(
@@ -15940,14 +13867,14 @@ namespace azure.ai.projects.models
         NEAR_FIELD = "near_field"
 
 
-    class azure.ai.projects.models.VoiceAgentRealtimeResponse(VoiceAgentRealtimeResponseBase):
+    class azure.ai.projects.models.VoiceAgentRealtimeResponse(RealtimeResponse):
         audio: Optional[VoiceResponseAudio]
         conversation_id: str
         id: str
         max_output_tokens: Union[int, str]
         metadata: Metadata
         object: str
-        output: Optional[list[RealtimeConversationItem]]
+        output: list[RealtimeConversationItem]
         output_modalities: Union[list[str, str]]
         status: Union[str, str, str, str, str]
         status_details: RealtimeResponseStatusDetails
@@ -15964,36 +13891,6 @@ namespace azure.ai.projects.models
                 metadata: Optional[Metadata] = ..., 
                 object: Optional[Literal[response]] = ..., 
                 output: Optional[list[RealtimeConversationItem]] = ..., 
-                output_modalities: Optional[list[Literal[text, audio]]] = ..., 
-                status: Optional[Literal[completed, cancelled, failed, incomplete, in_progress]] = ..., 
-                status_details: Optional[RealtimeResponseStatusDetails] = ..., 
-                usage: Optional[RealtimeResponseUsage] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.VoiceAgentRealtimeResponseBase(_Model):
-        conversation_id: Optional[str]
-        id: Optional[str]
-        max_output_tokens: Optional[Union[int, Literal["inf"]]]
-        metadata: Optional[Metadata]
-        object: Optional[Literal["response"]]
-        output_modalities: Optional[list[Literal["text", "audio"]]]
-        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]]
-        status_details: Optional[RealtimeResponseStatusDetails]
-        usage: Optional[RealtimeResponseUsage]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                conversation_id: Optional[str] = ..., 
-                id: Optional[str] = ..., 
-                max_output_tokens: Optional[Union[int, Literal[inf]]] = ..., 
-                metadata: Optional[Metadata] = ..., 
-                object: Optional[Literal[response]] = ..., 
                 output_modalities: Optional[list[Literal[text, audio]]] = ..., 
                 status: Optional[Literal[completed, cancelled, failed, incomplete, in_progress]] = ..., 
                 status_details: Optional[RealtimeResponseStatusDetails] = ..., 
@@ -16814,6 +14711,11 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentTransport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        WEBRTC = "webrtc"
+        WEBSOCKET = "websocket"
+
+
     class azure.ai.projects.models.VoiceAgentTurnDetectionConfig(_Model):
         auto_truncate: Optional[bool]
         type: str
@@ -16981,6 +14883,19 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceIdsShared(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ALLOY = "alloy"
+        ASH = "ash"
+        BALLAD = "ballad"
+        CEDAR = "cedar"
+        CORAL = "coral"
+        ECHO = "echo"
+        MARIN = "marin"
+        SAGE = "sage"
+        SHIMMER = "shimmer"
+        VERSE = "verse"
+
+
     class azure.ai.projects.models.VoiceModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         MANAGED = "managed"
         SELF_DEPLOYED = "self_deployed"
@@ -17030,16 +14945,16 @@ namespace azure.ai.projects.models
             ) -> None: ...
 
 
-    class azure.ai.projects.models.VoiceResponse(VoiceResponseBase):
-        audio: Optional[VoiceResponseAudio]
+    class azure.ai.projects.models.VoiceResponse(RealtimeResponse):
+        audio: RealtimeResponseAudio
         completed_at: Optional[datetime]
         conversation_id: str
         created_at: Optional[datetime]
         id: str
         max_output_tokens: Union[int, str]
-        metadata: Optional[dict[str, str]]
+        metadata: Metadata
         object: str
-        output: Optional[list[RealtimeConversationItem]]
+        output: list[RealtimeConversationItem]
         output_modalities: Union[list[str, str]]
         status: Union[str, str, str, str, str]
         status_details: RealtimeResponseStatusDetails
@@ -17050,13 +14965,13 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
-                audio: Optional[VoiceResponseAudio] = ..., 
+                audio: Optional[RealtimeResponseAudio] = ..., 
                 completed_at: Optional[datetime] = ..., 
-                conversation_id: str, 
+                conversation_id: Optional[str] = ..., 
                 created_at: Optional[datetime] = ..., 
-                id: str, 
+                id: Optional[str] = ..., 
                 max_output_tokens: Optional[Union[int, Literal[inf]]] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
+                metadata: Optional[Metadata] = ..., 
                 object: Optional[Literal[response]] = ..., 
                 output: Optional[list[RealtimeConversationItem]] = ..., 
                 output_modalities: Optional[list[Literal[text, audio]]] = ..., 
@@ -17098,30 +15013,6 @@ namespace azure.ai.projects.models
                 voice: Optional[str] = ..., 
                 voice_locale: Optional[str] = ..., 
                 voice_type: Optional[Union[str, VoiceType]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.VoiceResponseBase(_Model):
-        max_output_tokens: Optional[Union[int, Literal["inf"]]]
-        object: Optional[Literal["response"]]
-        output_modalities: Optional[list[Literal["text", "audio"]]]
-        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]]
-        status_details: Optional[RealtimeResponseStatusDetails]
-        usage: Optional[RealtimeResponseUsage]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                max_output_tokens: Optional[Union[int, Literal[inf]]] = ..., 
-                object: Optional[Literal[response]] = ..., 
-                output_modalities: Optional[list[Literal[text, audio]]] = ..., 
-                status: Optional[Literal[completed, cancelled, failed, incomplete, in_progress]] = ..., 
-                status_details: Optional[RealtimeResponseStatusDetails] = ..., 
-                usage: Optional[RealtimeResponseUsage] = ...
             ) -> None: ...
 
         @overload
@@ -17379,7 +15270,7 @@ namespace azure.ai.projects.models
 
 namespace azure.ai.projects.operations
 
-    class azure.ai.projects.operations.AgentsOperations(GeneratedAgentsOperations):
+    class azure.ai.projects.operations.AgentsOperations:
 
         def __init__(
                 self, 
@@ -17395,7 +15286,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AgentOptimizationLROPoller: ...
+            ) -> LROPoller[AgentOptimizationJobResult]: ...
 
         @overload
         def begin_create_optimization_job(
@@ -17405,7 +15296,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AgentOptimizationLROPoller: ...
+            ) -> LROPoller[AgentOptimizationJobResult]: ...
 
         @overload
         def begin_create_optimization_job(
@@ -17415,7 +15306,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AgentOptimizationLROPoller: ...
+            ) -> LROPoller[AgentOptimizationJobResult]: ...
 
         @distributed_trace
         def cancel_optimization_job(
@@ -17464,6 +15355,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 definition: AgentDefinition, 
                 description: Optional[str] = ..., 
+                digital_worker_type: Optional[Union[str, DigitalWorkerType]] = ..., 
                 draft: Optional[bool] = ..., 
                 metadata: Optional[dict[str, str]] = ..., 
                 **kwargs: Any
@@ -17486,19 +15378,6 @@ namespace azure.ai.projects.operations
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AgentVersionDetails: ...
-
-        @distributed_trace
-        def create_version_from_code(
-                self, 
-                agent_name: str, 
-                *, 
-                code: IO[bytes], 
-                code_zip_sha256: Optional[str] = ..., 
-                definition: HostedAgentDefinition, 
-                description: Optional[str] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
@@ -17929,7 +15808,7 @@ namespace azure.ai.projects.operations
             ) -> SessionFileWriteResult: ...
 
 
-    class azure.ai.projects.operations.BetaAgentInsightMonitorsOperations(BetaAgentInsightMonitorsOperationsGenerated):
+    class azure.ai.projects.operations.BetaOperations:
 
         def __init__(
                 self, 
@@ -17937,1836 +15816,14 @@ namespace azure.ai.projects.operations
                 **kwargs
             ) -> None: ...
 
-        @overload
-        def begin_create_run(
-                self, 
-                monitor_id: str, 
-                run: AgentInsightRunCreate, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AgentInsightRunLROPoller: ...
 
-        @overload
-        def begin_create_run(
-                self, 
-                monitor_id: str, 
-                run: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AgentInsightRunLROPoller: ...
-
-        @overload
-        def begin_create_run(
-                self, 
-                monitor_id: str, 
-                run: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                operation_id: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> AgentInsightRunLROPoller: ...
-
-        @distributed_trace
-        def cancel_run(
-                self, 
-                monitor_id: str, 
-                run_id: str, 
-                **kwargs: Any
-            ) -> AgentInsightRun: ...
-
-        @overload
-        def create(
-                self, 
-                monitor: AgentInsightMonitorCreate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AgentInsightMonitor: ...
-
-        @overload
-        def create(
-                self, 
-                monitor: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AgentInsightMonitor: ...
-
-        @overload
-        def create(
-                self, 
-                monitor: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AgentInsightMonitor: ...
-
-        @distributed_trace
-        def delete(
-                self, 
-                monitor_id: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace
-        def get(
-                self, 
-                monitor_id: str, 
-                **kwargs: Any
-            ) -> AgentInsightMonitor: ...
-
-        @distributed_trace
-        def get_insight(
-                self, 
-                monitor_id: str, 
-                insight_id: str, 
-                *, 
-                include_details: Optional[bool] = ..., 
-                **kwargs: Any
-            ) -> AgentInsight: ...
-
-        @distributed_trace
-        def get_run(
-                self, 
-                monitor_id: str, 
-                run_id: str, 
-                **kwargs: Any
-            ) -> AgentInsightRun: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                *, 
-                agent_name: Optional[str] = ..., 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[AgentInsightMonitorListItem]: ...
-
-        @distributed_trace
-        def list_insights(
-                self, 
-                monitor_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                category: Optional[str] = ..., 
-                include_details: Optional[bool] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                severity: Optional[Union[str, AgentInsightSeverity]] = ..., 
-                status: Optional[Union[str, AgentInsightStatus]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[AgentInsight]: ...
-
-        @distributed_trace
-        def list_runs(
-                self, 
-                monitor_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                status: Optional[Union[str, JobStatus]] = ..., 
-                trigger: Optional[Union[str, AgentInsightRunTrigger]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[AgentInsightRun]: ...
-
-        @distributed_trace
-        def reset(
-                self, 
-                monitor_id: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @overload
-        def update(
-                self, 
-                monitor_id: str, 
-                monitor: AgentInsightMonitorUpdate, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                **kwargs: Any
-            ) -> AgentInsightMonitor: ...
-
-        @overload
-        def update(
-                self, 
-                monitor_id: str, 
-                monitor: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                **kwargs: Any
-            ) -> AgentInsightMonitor: ...
-
-        @overload
-        def update(
-                self, 
-                monitor_id: str, 
-                monitor: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                **kwargs: Any
-            ) -> AgentInsightMonitor: ...
-
-        @overload
-        def update_insight(
-                self, 
-                monitor_id: str, 
-                insight_id: str, 
-                update: AgentInsightUpdate, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                **kwargs: Any
-            ) -> AgentInsight: ...
-
-        @overload
-        def update_insight(
-                self, 
-                monitor_id: str, 
-                insight_id: str, 
-                update: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                **kwargs: Any
-            ) -> AgentInsight: ...
-
-        @overload
-        def update_insight(
-                self, 
-                monitor_id: str, 
-                insight_id: str, 
-                update: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                **kwargs: Any
-            ) -> AgentInsight: ...
-
-
-    class azure.ai.projects.operations.BetaAgentsOperations(BetaAgentsOperationsGenerated):
+    class azure.ai.projects.operations.ConnectionsOperations:
 
         def __init__(
                 self, 
                 *args, 
                 **kwargs
             ) -> None: ...
-
-        @distributed_trace
-        def create_from_prompt(
-                self, 
-                body: GenerateAgentRequest, 
-                **kwargs: Any
-            ) -> AgentDetails: ...
-
-
-    class azure.ai.projects.operations.BetaEvaluationTaxonomiesOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def create(
-                self, 
-                name: str, 
-                taxonomy: EvaluationTaxonomy, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluationTaxonomy: ...
-
-        @overload
-        def create(
-                self, 
-                name: str, 
-                taxonomy: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluationTaxonomy: ...
-
-        @overload
-        def create(
-                self, 
-                name: str, 
-                taxonomy: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluationTaxonomy: ...
-
-        @distributed_trace
-        def delete(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace
-        def get(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> EvaluationTaxonomy: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                *, 
-                input_name: Optional[str] = ..., 
-                input_type: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[EvaluationTaxonomy]: ...
-
-        @overload
-        def update(
-                self, 
-                name: str, 
-                taxonomy: EvaluationTaxonomy, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluationTaxonomy: ...
-
-        @overload
-        def update(
-                self, 
-                name: str, 
-                taxonomy: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluationTaxonomy: ...
-
-        @overload
-        def update(
-                self, 
-                name: str, 
-                taxonomy: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> EvaluationTaxonomy: ...
-
-
-    class azure.ai.projects.operations.BetaInsightsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def generate(
-                self, 
-                insight: Insight, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> Insight: ...
-
-        @overload
-        def generate(
-                self, 
-                insight: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> Insight: ...
-
-        @overload
-        def generate(
-                self, 
-                insight: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> Insight: ...
-
-        @distributed_trace
-        def get(
-                self, 
-                insight_id: str, 
-                *, 
-                include_coordinates: Optional[bool] = ..., 
-                **kwargs: Any
-            ) -> Insight: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                *, 
-                agent_name: Optional[str] = ..., 
-                eval_id: Optional[str] = ..., 
-                include_coordinates: Optional[bool] = ..., 
-                run_id: Optional[str] = ..., 
-                type: Optional[Union[str, InsightType]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[Insight]: ...
-
-
-    class azure.ai.projects.operations.BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def begin_update_memories(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                items: Optional[Union[str, ResponseInputParam]] = ..., 
-                previous_update_id: Optional[str] = ..., 
-                scope: str, 
-                update_delay: Optional[int] = ..., 
-                **kwargs: Any
-            ) -> UpdateMemoriesLROPoller: ...
-
-        @overload
-        def begin_update_memories(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> UpdateMemoriesLROPoller: ...
-
-        @overload
-        def begin_update_memories(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> UpdateMemoriesLROPoller: ...
-
-        @overload
-        def create(
-                self, 
-                *, 
-                content_type: str = "application/json", 
-                definition: MemoryStoreDefinition, 
-                description: Optional[str] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
-                name: str, 
-                **kwargs: Any
-            ) -> MemoryStoreDetails: ...
-
-        @overload
-        def create(
-                self, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryStoreDetails: ...
-
-        @overload
-        def create(
-                self, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryStoreDetails: ...
-
-        @overload
-        def create_memory(
-                self, 
-                name: str, 
-                *, 
-                content: str, 
-                content_type: str = "application/json", 
-                kind: Union[str, MemoryItemKind], 
-                scope: str, 
-                **kwargs: Any
-            ) -> MemoryItem: ...
-
-        @overload
-        def create_memory(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryItem: ...
-
-        @overload
-        def create_memory(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryItem: ...
-
-        @distributed_trace
-        def delete(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> DeleteMemoryStoreResult: ...
-
-        @distributed_trace
-        def delete_memory(
-                self, 
-                name: str, 
-                memory_id: str, 
-                **kwargs: Any
-            ) -> DeleteMemoryResult: ...
-
-        @overload
-        def delete_scope(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                scope: str, 
-                **kwargs: Any
-            ) -> MemoryStoreDeleteScopeResult: ...
-
-        @overload
-        def delete_scope(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryStoreDeleteScopeResult: ...
-
-        @overload
-        def delete_scope(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryStoreDeleteScopeResult: ...
-
-        @distributed_trace
-        def get(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> MemoryStoreDetails: ...
-
-        @distributed_trace
-        def get_memory(
-                self, 
-                name: str, 
-                memory_id: str, 
-                **kwargs: Any
-            ) -> MemoryItem: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[MemoryStoreDetails]: ...
-
-        @overload
-        def list_memories(
-                self, 
-                name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                content_type: str = "application/json", 
-                kind: Optional[Union[str, MemoryItemKind]] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                scope: str, 
-                **kwargs: Any
-            ) -> ItemPaged[MemoryItem]: ...
-
-        @overload
-        def list_memories(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                before: Optional[str] = ..., 
-                content_type: str = "application/json", 
-                kind: Optional[Union[str, MemoryItemKind]] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[MemoryItem]: ...
-
-        @overload
-        def list_memories(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                before: Optional[str] = ..., 
-                content_type: str = "application/json", 
-                kind: Optional[Union[str, MemoryItemKind]] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[MemoryItem]: ...
-
-        @overload
-        def search_memories(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                items: Optional[Union[str, ResponseInputParam]] = ..., 
-                options: Optional[MemorySearchOptions] = ..., 
-                previous_search_id: Optional[str] = ..., 
-                scope: str, 
-                **kwargs: Any
-            ) -> MemoryStoreSearchResult: ...
-
-        @overload
-        def search_memories(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryStoreSearchResult: ...
-
-        @overload
-        def search_memories(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryStoreSearchResult: ...
-
-        @overload
-        def update(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                description: Optional[str] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
-                **kwargs: Any
-            ) -> MemoryStoreDetails: ...
-
-        @overload
-        def update(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryStoreDetails: ...
-
-        @overload
-        def update(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryStoreDetails: ...
-
-        @overload
-        def update_memory(
-                self, 
-                name: str, 
-                memory_id: str, 
-                *, 
-                content: str, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryItem: ...
-
-        @overload
-        def update_memory(
-                self, 
-                name: str, 
-                memory_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryItem: ...
-
-        @overload
-        def update_memory(
-                self, 
-                name: str, 
-                memory_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MemoryItem: ...
-
-
-    class azure.ai.projects.operations.BetaModelsOperations(BetaModelsOperationsGenerated):
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def create(
-                self, 
-                *, 
-                azcopy_path: Optional[str] = ..., 
-                base_model: Optional[str] = ..., 
-                description: Optional[str] = ..., 
-                name: str, 
-                polling_interval: float = 2.0, 
-                polling_timeout: float = 300.0, 
-                source: Union[str, PathLike[str]], 
-                tags: Optional[dict[str, str]] = ..., 
-                version: str, 
-                wait_for_commit: Literal[True] = True, 
-                weight_type: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> ModelVersion: ...
-
-        @overload
-        def create(
-                self, 
-                *, 
-                azcopy_path: Optional[str] = ..., 
-                base_model: Optional[str] = ..., 
-                description: Optional[str] = ..., 
-                name: str, 
-                polling_interval: float = 2.0, 
-                polling_timeout: float = 300.0, 
-                source: Union[str, PathLike[str]], 
-                tags: Optional[dict[str, str]] = ..., 
-                version: str, 
-                wait_for_commit: Literal[False], 
-                weight_type: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace
-        def delete(
-                self, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace
-        def get(
-                self, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> ModelVersion: ...
-
-        @overload
-        def get_credentials(
-                self, 
-                name: str, 
-                version: str, 
-                credential_request: ModelCredentialRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DatasetCredential: ...
-
-        @overload
-        def get_credentials(
-                self, 
-                name: str, 
-                version: str, 
-                credential_request: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DatasetCredential: ...
-
-        @overload
-        def get_credentials(
-                self, 
-                name: str, 
-                version: str, 
-                credential_request: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DatasetCredential: ...
-
-        @distributed_trace
-        def list(self, **kwargs: Any) -> ItemPaged[ModelVersion]: ...
-
-        @distributed_trace
-        def list_versions(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> ItemPaged[ModelVersion]: ...
-
-        @overload
-        def pending_create_version(
-                self, 
-                name: str, 
-                version: str, 
-                model_version: ModelVersion, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> CreateAsyncResponse: ...
-
-        @overload
-        def pending_create_version(
-                self, 
-                name: str, 
-                version: str, 
-                model_version: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> CreateAsyncResponse: ...
-
-        @overload
-        def pending_create_version(
-                self, 
-                name: str, 
-                version: str, 
-                model_version: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> CreateAsyncResponse: ...
-
-        @overload
-        def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: ModelPendingUploadRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ModelPendingUploadResponse: ...
-
-        @overload
-        def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ModelPendingUploadResponse: ...
-
-        @overload
-        def pending_upload(
-                self, 
-                name: str, 
-                version: str, 
-                pending_upload_request: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ModelPendingUploadResponse: ...
-
-        @overload
-        def update(
-                self, 
-                name: str, 
-                version: str, 
-                model_version_update: UpdateModelVersionRequest, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                **kwargs: Any
-            ) -> ModelVersion: ...
-
-        @overload
-        def update(
-                self, 
-                name: str, 
-                version: str, 
-                model_version_update: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                **kwargs: Any
-            ) -> ModelVersion: ...
-
-        @overload
-        def update(
-                self, 
-                name: str, 
-                version: str, 
-                model_version_update: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                **kwargs: Any
-            ) -> ModelVersion: ...
-
-
-    class azure.ai.projects.operations.BetaOperations(GeneratedBetaOperations):
-        agent_insight_monitors: BetaAgentInsightMonitorsOperations
-        agents: BetaAgentsOperations
-        evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
-        insights: BetaInsightsOperations
-        memory_stores: BetaMemoryStoresOperations
-        models: BetaModelsOperations
-        red_teams: BetaRedTeamsOperations
-        routines: BetaRoutinesOperations
-        schedules: BetaSchedulesOperations
-        skills: BetaSkillsOperations
-        voice_agents: BetaVoiceAgentsOperations
-
-        def __init__(
-                self, 
-                *args: Any, 
-                **kwargs: Any
-            ) -> None: ...
-
-
-    class azure.ai.projects.operations.BetaRealtime:
-
-        def __init__(
-                self, 
-                *args: Any, 
-                **kwargs: Any
-            ) -> None: ...
-
-        def connect(
-                self, 
-                *, 
-                agent_name: str, 
-                agent_session_id: Optional[str] = ..., 
-                api_version: Optional[str] = ..., 
-                connection_url: Optional[str] = ..., 
-                credential_scopes: Optional[List[str]] = ..., 
-                extra_headers: Optional[Mapping[str, str]] = ..., 
-                extra_query: Optional[Mapping[str, str]] = ..., 
-                structured_inputs: Optional[Mapping[str, Any]] = ..., 
-                **kwargs: Any
-            ) -> BetaRealtimeConnectionManager: ...
-
-
-    class azure.ai.projects.operations.BetaRealtimeConnection: implements ContextManager 
-        property closed: bool    # Read-only
-
-        def __init__(self, connection: ClientConnection) -> None: ...
-
-        def __iter__(self) -> Iterator[ServerEvent]: ...
-
-        def __repr__(self) -> str: ...
-
-        def close(
-                self, 
-                *, 
-                code: int = 1000, 
-                reason: str = ""
-            ) -> None: ...
-
-        def recv(
-                self, 
-                *, 
-                timeout: Optional[float] = ...
-            ) -> ServerEvent: ...
-
-        def send(self, event: ClientEvent) -> None: ...
-
-
-    class azure.ai.projects.operations.BetaRealtimeConnectionManager: implements ContextManager 
-
-        def __init__(
-                self, 
-                *, 
-                agent_name: str, 
-                agent_session_id: Optional[str] = ..., 
-                api_version: str, 
-                connection_url: Optional[str] = ..., 
-                credential: TokenCredential, 
-                credential_scopes: List[str], 
-                endpoint: str, 
-                extra_headers: Optional[Mapping[str, str]] = ..., 
-                extra_query: Optional[Mapping[str, str]] = ..., 
-                structured_inputs: Optional[Mapping[str, Any]] = ..., 
-                **kwargs: Any
-            ) -> None: ...
-
-        def enter(self) -> BetaRealtimeConnection: ...
-
-
-    class azure.ai.projects.operations.BetaRedTeamsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def create(
-                self, 
-                red_team: RedTeam, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RedTeam: ...
-
-        @overload
-        def create(
-                self, 
-                red_team: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RedTeam: ...
-
-        @overload
-        def create(
-                self, 
-                red_team: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> RedTeam: ...
-
-        @distributed_trace
-        def get(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> RedTeam: ...
-
-        @distributed_trace
-        def list(self, **kwargs: Any) -> ItemPaged[RedTeam]: ...
-
-
-    class azure.ai.projects.operations.BetaRoutinesOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def create_or_update(
-                self, 
-                routine_name: str, 
-                *, 
-                action: Optional[RoutineAction] = ..., 
-                authorization: Optional[RoutineAuthorization] = ..., 
-                content_type: str = "application/json", 
-                description: Optional[str] = ..., 
-                enabled: Optional[bool] = ..., 
-                triggers: Optional[dict[str, RoutineTrigger]] = ..., 
-                **kwargs: Any
-            ) -> Routine: ...
-
-        @overload
-        def create_or_update(
-                self, 
-                routine_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> Routine: ...
-
-        @overload
-        def create_or_update(
-                self, 
-                routine_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> Routine: ...
-
-        @distributed_trace
-        def delete(
-                self, 
-                routine_name: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace
-        def disable(
-                self, 
-                routine_name: str, 
-                **kwargs: Any
-            ) -> Routine: ...
-
-        @overload
-        def dispatch(
-                self, 
-                routine_name: str, 
-                *, 
-                content_type: str = "application/json", 
-                payload: Optional[RoutineDispatchPayload] = ..., 
-                **kwargs: Any
-            ) -> DispatchRoutineResult: ...
-
-        @overload
-        def dispatch(
-                self, 
-                routine_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DispatchRoutineResult: ...
-
-        @overload
-        def dispatch(
-                self, 
-                routine_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DispatchRoutineResult: ...
-
-        @distributed_trace
-        def enable(
-                self, 
-                routine_name: str, 
-                **kwargs: Any
-            ) -> Routine: ...
-
-        @distributed_trace
-        def get(
-                self, 
-                routine_name: str, 
-                **kwargs: Any
-            ) -> Routine: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                *, 
-                after: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[Routine]: ...
-
-        @distributed_trace
-        def list_runs(
-                self, 
-                routine_name: str, 
-                *, 
-                after: Optional[str] = ..., 
-                filter: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[RoutineRun]: ...
-
-
-    class azure.ai.projects.operations.BetaSchedulesOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def create_or_update(
-                self, 
-                schedule_id: str, 
-                schedule: Schedule, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> Schedule: ...
-
-        @overload
-        def create_or_update(
-                self, 
-                schedule_id: str, 
-                schedule: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> Schedule: ...
-
-        @overload
-        def create_or_update(
-                self, 
-                schedule_id: str, 
-                schedule: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> Schedule: ...
-
-        @distributed_trace
-        def delete(
-                self, 
-                schedule_id: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace
-        def get(
-                self, 
-                schedule_id: str, 
-                **kwargs: Any
-            ) -> Schedule: ...
-
-        @distributed_trace
-        def get_run(
-                self, 
-                schedule_id: str, 
-                run_id: str, 
-                **kwargs: Any
-            ) -> ScheduleRun: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                *, 
-                enabled: Optional[bool] = ..., 
-                type: Optional[Union[str, ScheduleTaskType]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[Schedule]: ...
-
-        @distributed_trace
-        def list_runs(
-                self, 
-                schedule_id: str, 
-                *, 
-                enabled: Optional[bool] = ..., 
-                type: Optional[Union[str, ScheduleTaskType]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[ScheduleRun]: ...
-
-
-    class azure.ai.projects.operations.BetaSkillsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def create(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                default: Optional[bool] = ..., 
-                inline_content: Optional[SkillInlineContent] = ..., 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @overload
-        def create(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @overload
-        def create(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @overload
-        def create_from_files(
-                self, 
-                name: str, 
-                content: CreateSkillVersionFromFilesBody, 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @overload
-        def create_from_files(
-                self, 
-                name: str, 
-                content: JSON, 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @distributed_trace
-        def delete(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> DeleteSkillResult: ...
-
-        @distributed_trace
-        def delete_version(
-                self, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> DeleteSkillVersionResult: ...
-
-        @distributed_trace
-        def download(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> Iterator[bytes]: ...
-
-        @distributed_trace
-        def download_version(
-                self, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> Iterator[bytes]: ...
-
-        @distributed_trace
-        def get(
-                self, 
-                name: str, 
-                **kwargs: Any
-            ) -> SkillDetails: ...
-
-        @distributed_trace
-        def get_version(
-                self, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> SkillVersion: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[SkillDetails]: ...
-
-        @distributed_trace
-        def list_versions(
-                self, 
-                name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[SkillVersion]: ...
-
-        @overload
-        def update(
-                self, 
-                name: str, 
-                *, 
-                content_type: str = "application/json", 
-                default_version: str, 
-                **kwargs: Any
-            ) -> SkillDetails: ...
-
-        @overload
-        def update(
-                self, 
-                name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> SkillDetails: ...
-
-        @overload
-        def update(
-                self, 
-                name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> SkillDetails: ...
-
-
-    class azure.ai.projects.operations.BetaVoiceAgentsConversationsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        def delete(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace
-        def download_audio(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> Iterator[bytes]: ...
-
-        @distributed_trace
-        def download_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> Iterator[bytes]: ...
-
-        @distributed_trace
-        def download_generated_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> Iterator[bytes]: ...
-
-        @distributed_trace
-        def get(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> VoiceConversation: ...
-
-        @distributed_trace
-        def get_audio(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                **kwargs: Any
-            ) -> VoiceRecording: ...
-
-        @distributed_trace
-        def get_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> VoiceAudioItem: ...
-
-        @distributed_trace
-        def get_generated_audio_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> VoiceGeneratedAudioItem: ...
-
-        @distributed_trace
-        def get_item(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                item_id: str, 
-                **kwargs: Any
-            ) -> RealtimeConversationItem: ...
-
-        @distributed_trace
-        def get_response(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                response_id: str, 
-                **kwargs: Any
-            ) -> VoiceResponse: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[VoiceConversation]: ...
-
-        @distributed_trace
-        def list_items(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[RealtimeConversationItem]: ...
-
-        @distributed_trace
-        def list_response_items(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                response_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[RealtimeConversationItem]: ...
-
-        @distributed_trace
-        def list_responses(
-                self, 
-                agent_name: str, 
-                conversation_id: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[VoiceResponse]: ...
-
-
-    class azure.ai.projects.operations.BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
-        conversations: BetaVoiceAgentsConversationsOperations
-        realtime: BetaRealtime
-        telephony: BetaVoiceAgentsTelephonyOperations
-
-        def __init__(
-                self, 
-                *args: Any, 
-                **kwargs: Any
-            ) -> None: ...
-
-
-    class azure.ai.projects.operations.BetaVoiceAgentsTelephonyOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        def cancel_call_job(
-                self, 
-                agent_name: str, 
-                call_job_id: str, 
-                *, 
-                etag: str, 
-                match_condition: MatchConditions, 
-                **kwargs: Any
-            ) -> TelephonyCallJob: ...
-
-        @overload
-        def create_binding(
-                self, 
-                agent_name: str, 
-                telephony_binding: CreateTelephonyBindingRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> TelephonyBinding: ...
-
-        @overload
-        def create_binding(
-                self, 
-                agent_name: str, 
-                telephony_binding: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> TelephonyBinding: ...
-
-        @overload
-        def create_binding(
-                self, 
-                agent_name: str, 
-                telephony_binding: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> TelephonyBinding: ...
-
-        @overload
-        def create_call_job(
-                self, 
-                agent_name: str, 
-                body: CreateTelephonyCallJobRequest, 
-                *, 
-                content_type: str = "application/json", 
-                idempotency_key: str, 
-                **kwargs: Any
-            ) -> TelephonyCallJob: ...
-
-        @overload
-        def create_call_job(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                idempotency_key: str, 
-                **kwargs: Any
-            ) -> TelephonyCallJob: ...
-
-        @overload
-        def create_call_job(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                idempotency_key: str, 
-                **kwargs: Any
-            ) -> TelephonyCallJob: ...
-
-        @distributed_trace
-        def delete_binding(
-                self, 
-                agent_name: str, 
-                binding_id: str, 
-                *, 
-                etag: str, 
-                match_condition: MatchConditions, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace
-        def end_call(
-                self, 
-                agent_name: str, 
-                call_id: str, 
-                **kwargs: Any
-            ) -> TelephonyCallRecord: ...
-
-        @distributed_trace
-        def get_binding(
-                self, 
-                agent_name: str, 
-                binding_id: str, 
-                **kwargs: Any
-            ) -> TelephonyBinding: ...
-
-        @distributed_trace
-        def get_call(
-                self, 
-                agent_name: str, 
-                call_id: str, 
-                **kwargs: Any
-            ) -> TelephonyCallRecord: ...
-
-        @distributed_trace
-        def get_call_job(
-                self, 
-                agent_name: str, 
-                call_job_id: str, 
-                **kwargs: Any
-            ) -> TelephonyCallJob: ...
-
-        @distributed_trace
-        def get_transfer_targets(
-                self, 
-                agent_name: str, 
-                **kwargs: Any
-            ) -> TelephonyTransferTargets: ...
-
-        @distributed_trace
-        def list_bindings(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                provider: Optional[Union[str, TelephonyProvider]] = ..., 
-                status: Optional[Union[str, TelephonyBindingStatus]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[TelephonyBindingListItem]: ...
-
-        @distributed_trace
-        def list_calls(
-                self, 
-                agent_name: str, 
-                *, 
-                before: Optional[str] = ..., 
-                limit: Optional[int] = ..., 
-                order: Optional[Union[str, PageOrder]] = ..., 
-                provider: Optional[Union[str, TelephonyProvider]] = ..., 
-                started_after_time: Optional[datetime] = ..., 
-                started_before_time: Optional[datetime] = ..., 
-                status: Optional[Union[str, TelephonyCallStatus]] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[TelephonyCallSummary]: ...
-
-        @overload
-        def replace_transfer_targets(
-                self, 
-                agent_name: str, 
-                *, 
-                content_type: str = "application/json", 
-                etag: str, 
-                match_condition: MatchConditions, 
-                transfer_targets: List[TelephonyTransferTarget], 
-                **kwargs: Any
-            ) -> TelephonyTransferTargets: ...
-
-        @overload
-        def replace_transfer_targets(
-                self, 
-                agent_name: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                etag: str, 
-                match_condition: MatchConditions, 
-                **kwargs: Any
-            ) -> TelephonyTransferTargets: ...
-
-        @overload
-        def replace_transfer_targets(
-                self, 
-                agent_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                etag: str, 
-                match_condition: MatchConditions, 
-                **kwargs: Any
-            ) -> TelephonyTransferTargets: ...
-
-        @overload
-        def transfer_call(
-                self, 
-                agent_name: str, 
-                call_id: str, 
-                *, 
-                content_type: str = "application/json", 
-                target: str, 
-                **kwargs: Any
-            ) -> TelephonyCallRecord: ...
-
-        @overload
-        def transfer_call(
-                self, 
-                agent_name: str, 
-                call_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> TelephonyCallRecord: ...
-
-        @overload
-        def transfer_call(
-                self, 
-                agent_name: str, 
-                call_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> TelephonyCallRecord: ...
-
-        @overload
-        def update_binding(
-                self, 
-                agent_name: str, 
-                binding_id: str, 
-                body: UpdateTelephonyBindingRequest, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: str, 
-                match_condition: MatchConditions, 
-                **kwargs: Any
-            ) -> TelephonyBinding: ...
-
-        @overload
-        def update_binding(
-                self, 
-                agent_name: str, 
-                binding_id: str, 
-                body: JSON, 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: str, 
-                match_condition: MatchConditions, 
-                **kwargs: Any
-            ) -> TelephonyBinding: ...
-
-        @overload
-        def update_binding(
-                self, 
-                agent_name: str, 
-                binding_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/merge-patch+json", 
-                etag: str, 
-                match_condition: MatchConditions, 
-                **kwargs: Any
-            ) -> TelephonyBinding: ...
-
-
-    class azure.ai.projects.operations.ConnectionsOperations(ConnectionsOperationsGenerated):
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        def get(
-                self, 
-                name: str, 
-                *, 
-                include_credentials: Optional[bool] = False, 
-                **kwargs: Any
-            ) -> Connection: ...
-
-        @distributed_trace
-        def get_default(
-                self, 
-                connection_type: Union[str, ConnectionType], 
-                *, 
-                include_credentials: Optional[bool] = False, 
-                **kwargs: Any
-            ) -> Connection: ...
 
         @distributed_trace
         def list(
@@ -19778,7 +15835,7 @@ namespace azure.ai.projects.operations
             ) -> ItemPaged[Connection]: ...
 
 
-    class azure.ai.projects.operations.DatasetsOperations(_DatasetsOperationsWithGeneration):
+    class azure.ai.projects.operations.DatasetsOperations:
 
         def __init__(
                 self, 
@@ -19794,7 +15851,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> DatasetGenerationLROPoller: ...
+            ) -> LROPoller[DataGenerationJobResult]: ...
 
         @overload
         def begin_create_generation_job(
@@ -19804,7 +15861,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> DatasetGenerationLROPoller: ...
+            ) -> LROPoller[DataGenerationJobResult]: ...
 
         @overload
         def begin_create_generation_job(
@@ -19814,7 +15871,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> DatasetGenerationLROPoller: ...
+            ) -> LROPoller[DataGenerationJobResult]: ...
 
         @distributed_trace
         def cancel_generation_job(
@@ -19947,29 +16004,6 @@ namespace azure.ai.projects.operations
                 **kwargs: Any
             ) -> PendingUploadResponse: ...
 
-        @distributed_trace
-        def upload_file(
-                self, 
-                *, 
-                connection_name: Optional[str] = ..., 
-                file_path: str, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> FileDatasetVersion: ...
-
-        @distributed_trace
-        def upload_folder(
-                self, 
-                *, 
-                connection_name: Optional[str] = ..., 
-                file_pattern: Optional[Pattern] = ..., 
-                folder: str, 
-                name: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> FolderDatasetVersion: ...
-
 
     class azure.ai.projects.operations.DeploymentsOperations:
 
@@ -19997,7 +16031,7 @@ namespace azure.ai.projects.operations
             ) -> ItemPaged[Deployment]: ...
 
 
-    class azure.ai.projects.operations.EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
+    class azure.ai.projects.operations.EvaluationRulesOperations:
 
         def __init__(
                 self, 
@@ -20060,7 +16094,7 @@ namespace azure.ai.projects.operations
             ) -> ItemPaged[EvaluationRule]: ...
 
 
-    class azure.ai.projects.operations.EvaluatorsOperations(EvaluatorsOperationsGenerated):
+    class azure.ai.projects.operations.EvaluatorsOperations:
 
         def __init__(
                 self, 
@@ -20076,7 +16110,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> EvaluatorGenerationLROPoller: ...
+            ) -> LROPoller[EvaluatorVersion]: ...
 
         @overload
         def begin_create_generation_job(
@@ -20086,7 +16120,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> EvaluatorGenerationLROPoller: ...
+            ) -> LROPoller[EvaluatorVersion]: ...
 
         @overload
         def begin_create_generation_job(
@@ -20096,7 +16130,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> EvaluatorGenerationLROPoller: ...
+            ) -> LROPoller[EvaluatorVersion]: ...
 
         @distributed_trace
         def cancel_generation_job(
@@ -20296,14 +16330,6 @@ namespace azure.ai.projects.operations
             ) -> ItemPaged[Index]: ...
 
 
-    class azure.ai.projects.operations.TelemetryOperations:
-
-        def __init__(self, outer_instance: AIProjectClient) -> None: ...
-
-        @distributed_trace
-        def get_application_insights_connection_string(self) -> str: ...
-
-
     class azure.ai.projects.operations.ToolboxesOperations:
 
         def __init__(
@@ -20434,29 +16460,6 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> ToolboxObject: ...
-
-
-namespace azure.ai.projects.telemetry
-
-    def azure.ai.projects.telemetry.trace_function(span_name: Optional[str] = None) -> Callable: ...
-
-
-    class azure.ai.projects.telemetry.AIProjectInstrumentor:
-
-        def __init__(self) -> None: ...
-
-        def instrument(
-                self, 
-                enable_content_recording: Optional[bool] = None, 
-                enable_trace_context_propagation: Optional[bool] = None, 
-                enable_baggage_propagation: Optional[bool] = None
-            ) -> None: ...
-
-        def is_content_recording_enabled(self) -> bool: ...
-
-        def is_instrumented(self) -> bool: ...
-
-        def uninstrument(self) -> None: ...
 
 
 ```
