@@ -161,6 +161,8 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
             to_remove_operation.on_execute_operation_complete(
                 mgmt_result, status_code, status_description, message, response_detail.get(b"error-condition")
             )
+        else:
+            _LOGGER.debug("Ignoring response for a management operation that is no longer pending.")
 
     def _on_send_complete(self, message_delivery, reason, state):  # todo: reason is never used, should check spec
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED and SEND_DISPOSITION_REJECT in state:
@@ -244,10 +246,18 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
 
         on_send_complete = partial(self._on_send_complete, message_delivery)
 
-        self._request_link.send_transfer(message, on_send_complete=on_send_complete, timeout=timeout)
         pending_operation = PendingManagementOperation(message, on_execute_operation_complete)
         with self.lock:
             self._pending_operations.append(pending_operation)
+        sent = False
+        try:
+            self._request_link.send_transfer(message, on_send_complete=on_send_complete, timeout=timeout)
+            sent = True
+        finally:
+            if not sent:
+                with self.lock:
+                    if pending_operation in self._pending_operations:
+                        self._pending_operations.remove(pending_operation)
         return pending_operation
 
     def cancel_operation(self, pending_operation):

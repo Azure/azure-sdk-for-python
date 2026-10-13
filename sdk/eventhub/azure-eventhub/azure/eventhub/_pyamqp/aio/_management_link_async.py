@@ -145,6 +145,7 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
         for operation in self._pending_operations:
             if operation.message.properties.message_id == correlation_id:
                 to_remove_operation = operation
+                self._pending_operations.remove(operation)
                 break
         if to_remove_operation:
             mgmt_result = (
@@ -155,7 +156,8 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
             await to_remove_operation.on_execute_operation_complete(
                 mgmt_result, status_code, status_description, message, response_detail.get(b"error-condition")
             )
-            self._pending_operations.remove(to_remove_operation)
+        else:
+            _LOGGER.debug("Ignoring response for a management operation that is no longer pending.")
 
     async def _on_send_complete(self, message_delivery, reason, state):
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED and SEND_DISPOSITION_REJECT in state:
@@ -237,8 +239,15 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
 
         on_send_complete = partial(self._on_send_complete, message_delivery)
 
-        await self._request_link.send_transfer(message, on_send_complete=on_send_complete, timeout=timeout)
-        self._pending_operations.append(PendingManagementOperation(message, on_execute_operation_complete))
+        pending_operation = PendingManagementOperation(message, on_execute_operation_complete)
+        self._pending_operations.append(pending_operation)
+        sent = False
+        try:
+            await self._request_link.send_transfer(message, on_send_complete=on_send_complete, timeout=timeout)
+            sent = True
+        finally:
+            if not sent and pending_operation in self._pending_operations:
+                self._pending_operations.remove(pending_operation)
 
     async def close(self):
         if self.state != ManagementLinkState.IDLE:

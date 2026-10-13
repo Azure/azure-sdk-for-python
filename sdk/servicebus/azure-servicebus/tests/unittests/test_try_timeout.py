@@ -869,6 +869,77 @@ class TestManagementLinkSettlementIsBounded:
 class TestPyamqpManagementRequestReadiness:
     """Management links must not depend on the associated receiver link remaining attached."""
 
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("asynchronous", [False, True])
+    @pytest.mark.parametrize("response_path", ["pending", "message", "rejection"])
+    async def test_management_registration_handle_survives_early_completion(self, asynchronous, response_path):
+        from azure.servicebus._pyamqp.aio._management_link_async import ManagementLink as AsyncManagementLink
+        from azure.servicebus._pyamqp.constants import LinkDeliverySettleReason, SEND_DISPOSITION_REJECT
+        from azure.servicebus._pyamqp.management_link import ManagementLink
+        from azure.servicebus._pyamqp.message import Message
+
+        kind = AsyncManagementLink if asynchronous else ManagementLink
+        link = kind.__new__(kind)
+        link.lock = Lock()
+        link._pending_operations = []
+        link._status_code_field = b"statusCode"
+        link._status_description_field = b"statusDescription"
+        callback = AsyncMock() if asynchronous else MagicMock()
+        registered = []
+        rejection = {SEND_DISPOSITION_REJECT: [[b"amqp:not-allowed", b"rejected", None]]}
+
+        def capture_registration(message):
+            assert len(link._pending_operations) == 1
+            pending = link._pending_operations[0]
+            assert pending.message is message
+            registered.append(pending)
+            return message._replace(
+                properties=message.properties._replace(correlation_id=message.properties.message_id),
+                application_properties={b"statusCode": 200},
+            )
+
+        def send(message, *, on_send_complete, timeout):
+            response = capture_registration(message)
+            if response_path == "message":
+                link._on_message_received(None, response)
+            elif response_path == "rejection":
+                on_send_complete(LinkDeliverySettleReason.DISPOSITION_RECEIVED, rejection)
+
+        async def async_send(message, *, on_send_complete, timeout):
+            response = capture_registration(message)
+            if response_path == "message":
+                await link._on_message_received(None, response)
+            elif response_path == "rejection":
+                await on_send_complete(LinkDeliverySettleReason.DISPOSITION_RECEIVED, rejection)
+
+        link._request_link = MagicMock()
+        link._request_link.send_transfer = AsyncMock(side_effect=async_send) if asynchronous else MagicMock(side_effect=send)
+        message = Message(application_properties={})
+        if asynchronous:
+            pending = await link.execute_operation(message, callback)
+        else:
+            pending = link.execute_operation(message, callback)
+
+        assert pending is registered[0]
+        assert link._pending_operations == ([pending] if response_path == "pending" else [])
+        link.cancel_operation(pending)
+        link.cancel_operation(pending)
+        assert link._pending_operations == []
+
+        response = pending.message._replace(
+            properties=pending.message.properties._replace(correlation_id=pending.message.properties.message_id),
+            application_properties={b"statusCode": 200},
+        )
+        delivery = MagicMock(message=pending.message)
+        if asynchronous:
+            await link._on_message_received(None, response)
+            await link._on_send_complete(delivery, LinkDeliverySettleReason.DISPOSITION_RECEIVED, rejection)
+            assert callback.await_count == (0 if response_path == "pending" else 1)
+        else:
+            link._on_message_received(None, response)
+            link._on_send_complete(delivery, LinkDeliverySettleReason.DISPOSITION_RECEIVED, rejection)
+            assert callback.call_count == (0 if response_path == "pending" else 1)
+
     @pytest.mark.parametrize("response_path", ["message", "rejection"])
     def test_sync_management_selection_cannot_skip_response_during_cancellation(self, response_path):
         from azure.servicebus._pyamqp.constants import LinkDeliverySettleReason, SEND_DISPOSITION_REJECT
