@@ -20,7 +20,7 @@ FHA admits new requests after successful restore.
 
 Author startup task submissions are not queued or replayed by this integration.
 No session-start callback or launch-intent registry is included. Local tests are
-not proof of hosted golden restoration. See the [design specification](docs/memory-snapshot-task-integration.md)
+not proof of hosted golden restoration. See the [design specification](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/memory-snapshot-task-integration.md)
 for lifecycle ordering, launcher compatibility requirements, validation, and
 the unresolved startup-submission options.
 
