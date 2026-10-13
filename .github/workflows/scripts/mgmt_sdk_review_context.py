@@ -35,6 +35,7 @@ MAX_PAGES = 30
 MAX_API_REQUESTS = 500
 API_TIMEOUT_SECONDS = 30
 PACKAGE_PATTERN = re.compile(r"^(sdk/[^/]+/azure-mgmt-[^/]+)(?:/|$)")
+MANAGEMENT_RULES_PATH = ".github/instructions/reviewer/management.instructions.md"
 REPOSITORY_PATTERN = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 SHA_PATTERN = re.compile(r"^[0-9a-f]{40}$")
 RELEASE_HEADING = re.compile(r"^##\s+(.+?)\s*$")
@@ -593,16 +594,10 @@ def collect():
     rules_revision = os.environ.get("REVIEW_TOOLING_SHA")
     if not isinstance(rules_revision, str) or not SHA_PATTERN.fullmatch(rules_revision):
         raise GitHubApiError("REVIEW_TOOLING_SHA must pin review rules to the trusted workflow commit.")
-    rules_file = client.read_file(".github/copilot-instructions.md", rules_revision)
+    rules_file = client.read_file(MANAGEMENT_RULES_PATH, rules_revision)
     if rules_file.get("status") != "available":
         raise GitHubApiError(rules_file.get("error", "Could not load review rules"))
-    lines = rules_file["content"].splitlines()
-    heading = "## MGMT SDK Code Review Rules"
-    try:
-        start = lines.index(heading)
-    except ValueError as error:
-        raise GitHubApiError(f"{heading} was not found in .github/copilot-instructions.md") from error
-    end = next((index for index in range(start + 1, len(lines)) if lines[index].startswith("## ")), len(lines))
+    management_review_rules = rules_file["content"].strip()
 
     pull_request = client.get(f"/repos/{repository}/pulls/{pr_number}")
     expected_changed_files = pull_request.get("changed_files")
@@ -860,8 +855,8 @@ def collect():
         "repository": repository,
         "pullRequestNumber": pr_number,
         "toolingRevision": os.environ.get("REVIEW_TOOLING_SHA"),
-        "rulesSource": f".github/copilot-instructions.md@{rules_revision}",
-        "mgmtSdkCodeReviewRules": "\n".join(lines[start:end]).strip(),
+        "rulesSource": f"{MANAGEMENT_RULES_PATH}@{rules_revision}",
+        "mgmtSdkCodeReviewRules": management_review_rules,
         "packageDiscovery": {
             "status": "complete" if package_discovery_complete else "unverified",
             "expectedChangedFiles": expected_changed_files,
