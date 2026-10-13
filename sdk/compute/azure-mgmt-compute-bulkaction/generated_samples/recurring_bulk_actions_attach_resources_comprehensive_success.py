@@ -16,7 +16,7 @@ from azure.mgmt.compute.bulkaction import ComputeBulkActionsMgmtClient
     pip install azure-identity
     pip install azure-mgmt-compute-bulkaction
 # USAGE
-    python scheduled_actions_attach_resources_comprehensive_success.py
+    python recurring_bulk_actions_attach_resources_comprehensive_success.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -65,6 +65,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-10-06-preview/ScheduledActions_AttachResources_ComprehensiveSuccess.json
+# x-ms-original-file: 2026-10-06-preview/RecurringBulkActions_AttachResources_ComprehensiveSuccess.json
 if __name__ == "__main__":
     main()
