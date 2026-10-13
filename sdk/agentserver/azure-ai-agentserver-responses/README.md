@@ -18,7 +18,7 @@ resilient tasks are enabled. Capture/snapshot startup defers task initialization
 until the after-restore hook. Intentional opt-out still uses the non-durable
 path; while initialization is deferred (the variable is absent or `true`), an
 enabled but uninitialized runtime does not silently fall back.
-See the [task snapshot design](../azure-ai-agentserver-core/docs/memory-snapshot-task-integration.md)
+See the [task snapshot design](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/memory-snapshot-task-integration.md)
 for compatibility requirements and unresolved startup-submission options.
 
 ### Prerequisites
