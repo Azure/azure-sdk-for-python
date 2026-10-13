@@ -6933,7 +6933,6 @@ class ComparisonFilter(_Model):  # pylint: disable=docstring-keyword-should-matc
      * `in`: in
      * `nin`: not in. Required. Is one of the following types: Literal["eq"], Literal["ne"],
        Literal["gt"], Literal["gte"], Literal["lt"], Literal["lte"], Literal["in"], Literal["nin"]
-
     :vartype type: str or str or str or str or str or str or str or str
     :ivar key: The key to compare against the value. Required.
     :vartype key: str
@@ -13731,7 +13730,6 @@ class MCPTool(Tool, discriminator="mcp"):  # pylint: disable=docstring-keyword-s
        Literal["connector_googledrive"], Literal["connector_microsoftteams"],
        Literal["connector_outlookcalendar"], Literal["connector_outlookemail"],
        Literal["connector_sharepoint"]
-
     :vartype connector_id: str or str or str or str or str or str or str or str
     :ivar tunnel_id: The Secure MCP Tunnel ID to use instead of a direct server URL. One of
      ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided.
@@ -13905,7 +13903,6 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):  # pylint: disable=docst
        Literal["connector_googledrive"], Literal["connector_microsoftteams"],
        Literal["connector_outlookcalendar"], Literal["connector_outlookemail"],
        Literal["connector_sharepoint"]
-
     :vartype connector_id: str or str or str or str or str or str or str or str
     :ivar tunnel_id: The Secure MCP Tunnel ID to use instead of a direct server URL. One of
      ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided.
@@ -19030,12 +19027,14 @@ class RealtimeServerEventConversationItemAdded(
     several cases:
 
     * When the client sends a `conversation.item.create` event.
-    * When the input audio buffer is committed. In this case the item will be a user message containing the audio from
-      the buffer.
-    * When the model is generating a Response. In this case the `conversation.item.added` event will be sent when the
-      model starts generating a specific Item, and thus it will not yet have any content (and `status` will be
-      `in_progress`). The event will include the full content of the Item (except when model is generating a Response)
-      except for audio data, which can be retrieved separately with a `conversation.item.retrieve` event if necessary.
+    * When the input audio buffer is committed. In this case the item will be a user message
+    containing the audio from the buffer.
+    * When the model is generating a Response. In this case the `conversation.item.added` event
+    will be sent when the model starts generating a specific Item, and thus it will not yet have
+    any content (and `status` will be `in_progress`).
+    The event will include the full content of the Item (except when model is generating a
+    Response) except for audio data, which can be retrieved separately with a
+    `conversation.item.retrieve` event if necessary.
 
     :ivar event_id: The unique ID of the server event. Required.
     :vartype event_id: str
@@ -19083,11 +19082,14 @@ class RealtimeServerEventConversationItemCreated(
     """Returned when a conversation item is created. There are several scenarios that produce this
     event:
 
-    * The server is generating a Response, which if successful will produce either one or two Items, which will be of
-      type `message` (role `assistant`) or type `function_call`.
-    * The input audio buffer has been committed, either by the client or the server (in `server_vad` mode). The server
-      will take the content of the input audio buffer and add it to a new user message Item.
-    * The client has sent a `conversation.item.create` event to add a new Item to the Conversation.
+    * The server is generating a Response, which if successful will produce
+    either one or two Items, which will be of type `message`
+    (role `assistant`) or type `function_call`.
+    * The input audio buffer has been committed, either by the client or the
+    server (in `server_vad` mode). The server will take the content of the
+    input audio buffer and add it to a new user message Item.
+    * The client has sent a `conversation.item.create` event to add a new Item
+    to the Conversation.
 
     :ivar event_id: The unique ID of the server event. Required.
     :vartype event_id: str
@@ -22740,10 +22742,12 @@ class SessionLogEvent(_Model):  # pylint: disable=docstring-keyword-should-match
     .. code-block::
 
        event: log
-       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server on port 18080"}
+       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server
+    on port 18080"}
 
        event: log
-       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
+       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+    connected to container"}
 
     :ivar event: The SSE event type. Currently ``log``, but additional event types may be added in
      the future. Clients should ignore unrecognized event types. Required. "log"
@@ -27674,14 +27678,15 @@ class VoiceAgentAudioOutputConfig(_Model):  # pylint: disable=docstring-keyword-
     Provider-specific fields are selected by ``voice_type``:
 
     * `openai`: `voice` and `speed`.
-    * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`, `custom_lexicon_url`,
-      `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
+    * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`,
+    `custom_lexicon_url`,
+    `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
     * `azure-custom`: all `azure-standard` fields except `style`, plus `custom_voice_endpoint_id`.
     * `azure-personal`: all `azure-standard` fields except `style`, plus `personal_voice_model`.
-    * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus `personal_voice_model`; the
-      voice name is derived from the avatar.
-    * `azure-realtime-native`: `voice` and `speed`. `format` and `output_audio_timestamp_types` apply to every voice
-      type.
+    * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus
+    `personal_voice_model`; the voice name is derived from the avatar.
+    * `azure-realtime-native`: `voice` and `speed`.
+    `format` and `output_audio_timestamp_types` apply to every voice type.
 
     :ivar format: The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz
      PCM.
@@ -29347,10 +29352,14 @@ class VoiceAgentLlmInterimResponseConfig(
 class VoiceAgentMcpTool(
     VoiceAgentTool, discriminator="mcp"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """An MCP tool available to a voice agent.
+    """An MCP tool available to a voice agent. Server endpoints use ``server_url``; connector and
+    tunnel identifiers are not supported.
 
     :ivar server_label: A label for this MCP server, used to identify it in tool calls. Required.
     :vartype server_label: str
+    :ivar server_url: The URL for the MCP server. One of ``server_url``, ``connector_id``, or
+     ``tunnel_id`` must be provided.
+    :vartype server_url: str
     :ivar authorization: An OAuth access token that can be used with a remote MCP server, either
      with a custom MCP server URL or a service connector. Your application must handle the OAuth
      authorization flow and provide the token here.
@@ -29377,8 +29386,6 @@ class VoiceAgentMcpTool(
     :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar type: Required. Default value is "mcp".
     :vartype type: str
-    :ivar server_url: The URL for the MCP server.
-    :vartype server_url: str
     :ivar response_scheduling: When the MCP invocation creates a follow-up response. Defaults to
      ``when_idle``. Known values are: "silent", "when_idle", "interrupt", and "skip_if_busy".
     :vartype response_scheduling: str or ~azure.ai.projects.models.VoiceAgentToolResponseScheduling
@@ -29386,6 +29393,9 @@ class VoiceAgentMcpTool(
 
     server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A label for this MCP server, used to identify it in tool calls. Required."""
+    server_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The URL for the MCP server. One of ``server_url``, ``connector_id``, or ``tunnel_id`` must be
+     provided."""
     authorization: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An OAuth access token that can be used with a remote MCP server, either with a custom MCP
      server URL or a service connector. Your application must handle the OAuth authorization flow
@@ -29415,8 +29425,6 @@ class VoiceAgentMcpTool(
     """Deprecated. This property is deprecated and will be removed in a future version."""
     type: Literal["mcp"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Default value is \"mcp\"."""
-    server_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The URL for the MCP server."""
     response_scheduling: Optional[Union[str, "_models.VoiceAgentToolResponseScheduling"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -29428,6 +29436,7 @@ class VoiceAgentMcpTool(
         self,
         *,
         server_label: str,
+        server_url: Optional[str] = None,
         authorization: Optional[str] = None,
         server_description: Optional[str] = None,
         headers: Optional[dict[str, str]] = None,
@@ -29437,7 +29446,6 @@ class VoiceAgentMcpTool(
         defer_loading: Optional[bool] = None,
         project_connection_id: Optional[str] = None,
         tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
-        server_url: Optional[str] = None,
         response_scheduling: Optional[Union[str, "_models.VoiceAgentToolResponseScheduling"]] = None,
     ) -> None: ...
 
@@ -29485,8 +29493,9 @@ class VoiceAgentNoiseReduction(_Model):  # pylint: disable=docstring-keyword-sho
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentRealtimeResponseBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties shared by realtime responses returned by the voice-agent service.
+class VoiceAgentRealtimeResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A live realtime response returned by the voice-agent service in both ``response.created`` and
+    ``response.done`` events.
 
     :ivar id: The unique ID of the response, will look like ``resp_1234``.
     :vartype id: str
@@ -29499,6 +29508,8 @@ class VoiceAgentRealtimeResponseBase(_Model):  # pylint: disable=docstring-keywo
     :vartype status: str or str or str or str or str
     :ivar status_details: Additional details about the status.
     :vartype status_details: ~azure.ai.projects.models.RealtimeResponseStatusDetails
+    :ivar output: The list of output items generated by the response.
+    :vartype output: list[~azure.ai.projects.models.RealtimeConversationItem]
     :ivar metadata:
     :vartype metadata: ~azure.ai.projects.models.Metadata
     :ivar usage: Usage statistics for the Response, this will correspond to billing. A Realtime API
@@ -29520,6 +29531,9 @@ class VoiceAgentRealtimeResponseBase(_Model):  # pylint: disable=docstring-keywo
      inclusive of tool calls, that was used in this response. Is either a int type or a
      Literal["inf"] type.
     :vartype max_output_tokens: int or str
+    :ivar audio: The audio configuration used by the live response, including flat voice provider,
+     locale, and format fields under ``output``.
+    :vartype audio: ~azure.ai.projects.models.VoiceResponseAudio
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -29538,6 +29552,10 @@ class VoiceAgentRealtimeResponseBase(_Model):  # pylint: disable=docstring-keywo
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional details about the status."""
+    output: Optional[list["_models.RealtimeConversationItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of output items generated by the response."""
     metadata: Optional["_models.Metadata"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     usage: Optional["_models.RealtimeResponseUsage"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -29563,87 +29581,11 @@ class VoiceAgentRealtimeResponseBase(_Model):  # pylint: disable=docstring-keywo
     )
     """Maximum number of output tokens for a single assistant response, inclusive of tool calls, that
      was used in this response. Is either a int type or a Literal[\"inf\"] type."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        object: Optional[Literal["realtime.response"]] = None,
-        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = None,
-        status_details: Optional["_models.RealtimeResponseStatusDetails"] = None,
-        metadata: Optional["_models.Metadata"] = None,
-        usage: Optional["_models.RealtimeResponseUsage"] = None,
-        conversation_id: Optional[str] = None,
-        output_modalities: Optional[list[Literal["text", "audio"]]] = None,
-        max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class VoiceAgentRealtimeResponse(
-    VoiceAgentRealtimeResponseBase
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A live realtime response returned by the voice-agent service in both ``response.created`` and
-    ``response.done`` events.
-
-    :ivar id: The unique ID of the response, will look like ``resp_1234``.
-    :vartype id: str
-    :ivar object: The object type, must be ``realtime.response``. Default value is
-     "realtime.response".
-    :vartype object: str
-    :ivar status: The final status of the response (``completed``, ``cancelled``, ``failed``, or
-     ``incomplete``, ``in_progress``). Is one of the following types: Literal["completed"],
-     Literal["cancelled"], Literal["failed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: str or str or str or str or str
-    :ivar status_details: Additional details about the status.
-    :vartype status_details: ~azure.ai.projects.models.RealtimeResponseStatusDetails
-    :ivar metadata:
-    :vartype metadata: ~azure.ai.projects.models.Metadata
-    :ivar usage: Usage statistics for the Response, this will correspond to billing. A Realtime API
-     session will maintain a conversation context and append new Items to the Conversation, thus
-     output from previous turns (text and audio tokens) will become the input for later turns.
-    :vartype usage: ~azure.ai.projects.models.RealtimeResponseUsage
-    :ivar conversation_id: Which conversation the response is added to, determined by the
-     ``conversation`` field in the ``response.create`` event. If ``auto``, the response will be
-     added to the default conversation and the value of ``conversation_id`` will be an id like
-     ``conv_1234``. If ``none``, the response will not be added to any conversation and the value of
-     ``conversation_id`` will be ``null``. If responses are being triggered automatically by VAD the
-     response will be added to the default conversation.
-    :vartype conversation_id: str
-    :ivar output_modalities: The set of modalities the model used to respond, currently the only
-     possible values are ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text
-     transcript. Setting the output to mode ``text`` will disable audio output from the model.
-    :vartype output_modalities: list[str or str]
-    :ivar max_output_tokens: Maximum number of output tokens for a single assistant response,
-     inclusive of tool calls, that was used in this response. Is either a int type or a
-     Literal["inf"] type.
-    :vartype max_output_tokens: int or str
-    :ivar audio: The audio configuration used by the live response, including flat voice provider,
-     locale, and format fields under ``output``.
-    :vartype audio: ~azure.ai.projects.models.VoiceResponseAudio
-    :ivar output: The items produced by the live response.
-    :vartype output: list[~azure.ai.projects.models.RealtimeConversationItem]
-    """
-
     audio: Optional["_models.VoiceResponseAudio"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The audio configuration used by the live response, including flat voice provider, locale, and
      format fields under ``output``."""
-    output: Optional[list["_models.RealtimeConversationItem"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The items produced by the live response."""
 
     @overload
     def __init__(
@@ -29653,13 +29595,13 @@ class VoiceAgentRealtimeResponse(
         object: Optional[Literal["realtime.response"]] = None,
         status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = None,
         status_details: Optional["_models.RealtimeResponseStatusDetails"] = None,
+        output: Optional[list["_models.RealtimeConversationItem"]] = None,
         metadata: Optional["_models.Metadata"] = None,
         usage: Optional["_models.RealtimeResponseUsage"] = None,
         conversation_id: Optional[str] = None,
         output_modalities: Optional[list[Literal["text", "audio"]]] = None,
         max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
         audio: Optional["_models.VoiceResponseAudio"] = None,
-        output: Optional[list["_models.RealtimeConversationItem"]] = None,
     ) -> None: ...
 
     @overload
@@ -29711,12 +29653,15 @@ class VoiceAgentResponseCreateParams(_Model):  # pylint: disable=docstring-keywo
     :vartype conversation: str or str or str
     :ivar metadata:
     :vartype metadata: ~azure.ai.projects.models.Metadata
+    :ivar input: Input items to include in the prompt for the model. Using this field creates a new
+     context for this Response instead of using the default conversation. An empty array ``[]`` will
+     clear the context for this Response. Note that this can include references to items that
+     previously appeared in the session using their id.
+    :vartype input: list[~azure.ai.projects.models.RealtimeConversationItem]
     :ivar output_modalities: Modalities that the response may return.
     :vartype output_modalities: list[str or ~azure.ai.projects.models.VoiceOutputModality]
     :ivar audio: Response-specific audio settings.
     :vartype audio: ~azure.ai.projects.models.PickPropertiesVoiceAgentAudioConfig
-    :ivar input: Conversation items used as inline response input.
-    :vartype input: list[~azure.ai.projects.models.RealtimeConversationItem]
     :ivar pre_generated_assistant_message: A pre-generated assistant message used to begin the
      response.
     :vartype pre_generated_assistant_message: ~azure.ai.projects.models.RealtimeConversationItem
@@ -29765,6 +29710,13 @@ class VoiceAgentResponseCreateParams(_Model):  # pylint: disable=docstring-keywo
      response which will not add items to default conversation. Is one of the following types:
      Literal[\"auto\"], Literal[\"none\"], str"""
     metadata: Optional["_models.Metadata"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    input: Optional[list["_models.RealtimeConversationItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Input items to include in the prompt for the model. Using this field creates a new context for
+     this Response instead of using the default conversation. An empty array ``[]`` will clear the
+     context for this Response. Note that this can include references to items that previously
+     appeared in the session using their id."""
     output_modalities: Optional[list[Union[str, "_models.VoiceOutputModality"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -29773,10 +29725,6 @@ class VoiceAgentResponseCreateParams(_Model):  # pylint: disable=docstring-keywo
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Response-specific audio settings."""
-    input: Optional[list["_models.RealtimeConversationItem"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Conversation items used as inline response input."""
     pre_generated_assistant_message: Optional["_models.RealtimeConversationItem"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -29800,9 +29748,9 @@ class VoiceAgentResponseCreateParams(_Model):  # pylint: disable=docstring-keywo
         max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
         conversation: Optional[Union[Literal["auto"], Literal["none"], str]] = None,
         metadata: Optional["_models.Metadata"] = None,
+        input: Optional[list["_models.RealtimeConversationItem"]] = None,
         output_modalities: Optional[list[Union[str, "_models.VoiceOutputModality"]]] = None,
         audio: Optional["_models.PickPropertiesVoiceAgentAudioConfig"] = None,
-        input: Optional[list["_models.RealtimeConversationItem"]] = None,
         pre_generated_assistant_message: Optional["_models.RealtimeConversationItem"] = None,
         interim_response: Optional["_models.VoiceAgentInterimResponseConfig"] = None,
     ) -> None: ...
@@ -32050,9 +31998,15 @@ class VoiceRecordingChannelLayout(_Model):  # pylint: disable=docstring-missing-
         self.right: Literal["agent"] = "agent"
 
 
-class VoiceResponseBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties shared by persisted voice responses.
+class VoiceResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A persisted voice response representing one model inference turn within a conversation. In list
+    results the ``output`` projection may be omitted; retrieve the full response (``GET
+    .../responses/{response_id}``) or the paged response-items route (``GET
+    .../responses/{response_id}/items``) for its output items. ``created_at``/``completed_at`` are
+    Foundry durable ordering extensions.
 
+    :ivar id: The unique ID of the response, will look like ``resp_1234``.
+    :vartype id: str
     :ivar object: The object type, must be ``realtime.response``. Default value is
      "realtime.response".
     :vartype object: str
@@ -32062,10 +32016,21 @@ class VoiceResponseBase(_Model):  # pylint: disable=docstring-keyword-should-mat
     :vartype status: str or str or str or str or str
     :ivar status_details: Additional details about the status.
     :vartype status_details: ~azure.ai.projects.models.RealtimeResponseStatusDetails
+    :ivar output: The list of output items generated by the response.
+    :vartype output: list[~azure.ai.projects.models.RealtimeConversationItem]
+    :ivar metadata:
+    :vartype metadata: ~azure.ai.projects.models.Metadata
     :ivar usage: Usage statistics for the Response, this will correspond to billing. A Realtime API
      session will maintain a conversation context and append new Items to the Conversation, thus
      output from previous turns (text and audio tokens) will become the input for later turns.
     :vartype usage: ~azure.ai.projects.models.RealtimeResponseUsage
+    :ivar conversation_id: Which conversation the response is added to, determined by the
+     ``conversation`` field in the ``response.create`` event. If ``auto``, the response will be
+     added to the default conversation and the value of ``conversation_id`` will be an id like
+     ``conv_1234``. If ``none``, the response will not be added to any conversation and the value of
+     ``conversation_id`` will be ``null``. If responses are being triggered automatically by VAD the
+     response will be added to the default conversation.
+    :vartype conversation_id: str
     :ivar output_modalities: The set of modalities the model used to respond, currently the only
      possible values are ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text
      transcript. Setting the output to mode ``text`` will disable audio output from the model.
@@ -32074,8 +32039,19 @@ class VoiceResponseBase(_Model):  # pylint: disable=docstring-keyword-should-mat
      inclusive of tool calls, that was used in this response. Is either a int type or a
      Literal["inf"] type.
     :vartype max_output_tokens: int or str
+    :ivar audio: The audio configuration used for the response, including the voice and audio
+     format used for output.
+    :vartype audio: ~azure.ai.projects.models.VoiceResponseAudio
+    :ivar temperature: The sampling temperature used for the response.
+    :vartype temperature: float
+    :ivar created_at: The Unix timestamp (in seconds) for when the response was created.
+    :vartype created_at: ~datetime.datetime
+    :ivar completed_at: The Unix timestamp (in seconds) for when the response completed.
+    :vartype completed_at: ~datetime.datetime
     """
 
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the response, will look like ``resp_1234``."""
     object: Optional[Literal["realtime.response"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -32090,12 +32066,24 @@ class VoiceResponseBase(_Model):  # pylint: disable=docstring-keyword-should-mat
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional details about the status."""
+    output: Optional[list["_models.RealtimeConversationItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of output items generated by the response."""
+    metadata: Optional["_models.Metadata"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     usage: Optional["_models.RealtimeResponseUsage"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Usage statistics for the Response, this will correspond to billing. A Realtime API session will
      maintain a conversation context and append new Items to the Conversation, thus output from
      previous turns (text and audio tokens) will become the input for later turns."""
+    conversation_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Which conversation the response is added to, determined by the ``conversation`` field in the
+     ``response.create`` event. If ``auto``, the response will be added to the default conversation
+     and the value of ``conversation_id`` will be an id like ``conv_1234``. If ``none``, the
+     response will not be added to any conversation and the value of ``conversation_id`` will be
+     ``null``. If responses are being triggered automatically by VAD the response will be added to
+     the default conversation."""
     output_modalities: Optional[list[Literal["text", "audio"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -32107,98 +32095,11 @@ class VoiceResponseBase(_Model):  # pylint: disable=docstring-keyword-should-mat
     )
     """Maximum number of output tokens for a single assistant response, inclusive of tool calls, that
      was used in this response. Is either a int type or a Literal[\"inf\"] type."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        object: Optional[Literal["realtime.response"]] = None,
-        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = None,
-        status_details: Optional["_models.RealtimeResponseStatusDetails"] = None,
-        usage: Optional["_models.RealtimeResponseUsage"] = None,
-        output_modalities: Optional[list[Literal["text", "audio"]]] = None,
-        max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class VoiceResponse(VoiceResponseBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A persisted voice response representing one model inference turn within a conversation. In list
-    results the ``output`` projection may be omitted; retrieve the full response (``GET
-    .../responses/{response_id}``) or the paged response-items route (``GET
-    .../responses/{response_id}/items``) for its output items. ``created_at``/``completed_at`` are
-    Foundry durable ordering extensions.
-
-    :ivar object: The object type, must be ``realtime.response``. Default value is
-     "realtime.response".
-    :vartype object: str
-    :ivar status: The final status of the response (``completed``, ``cancelled``, ``failed``, or
-     ``incomplete``, ``in_progress``). Is one of the following types: Literal["completed"],
-     Literal["cancelled"], Literal["failed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: str or str or str or str or str
-    :ivar status_details: Additional details about the status.
-    :vartype status_details: ~azure.ai.projects.models.RealtimeResponseStatusDetails
-    :ivar usage: Usage statistics for the Response, this will correspond to billing. A Realtime API
-     session will maintain a conversation context and append new Items to the Conversation, thus
-     output from previous turns (text and audio tokens) will become the input for later turns.
-    :vartype usage: ~azure.ai.projects.models.RealtimeResponseUsage
-    :ivar output_modalities: The set of modalities the model used to respond, currently the only
-     possible values are ``[\\"audio\\"]``, ``[\\"text\\"]``. Audio output always include a text
-     transcript. Setting the output to mode ``text`` will disable audio output from the model.
-    :vartype output_modalities: list[str or str]
-    :ivar max_output_tokens: Maximum number of output tokens for a single assistant response,
-     inclusive of tool calls, that was used in this response. Is either a int type or a
-     Literal["inf"] type.
-    :vartype max_output_tokens: int or str
-    :ivar id: The unique id of the response. Required.
-    :vartype id: str
-    :ivar output: The output items produced by the response. May be omitted in list results;
-     retrieve the full response (GET .../responses/{response_id}) or use the paged response-items
-     route (GET .../responses/{response_id}/items) for its output items. Each item's ``response_id``
-     also links it back to this response in the conversation-level items list.
-    :vartype output: list[~azure.ai.projects.models.RealtimeConversationItem]
-    :ivar conversation_id: The id of the conversation this response belongs to. Required.
-    :vartype conversation_id: str
-    :ivar audio: The audio configuration used for the response, including the voice and audio
-     format used for output.
-    :vartype audio: ~azure.ai.projects.models.VoiceResponseAudio
-    :ivar metadata: A set of key-value pairs attached to the response.
-    :vartype metadata: dict[str, str]
-    :ivar temperature: The sampling temperature used for the response.
-    :vartype temperature: float
-    :ivar created_at: The Unix timestamp (in seconds) for when the response was created.
-    :vartype created_at: ~datetime.datetime
-    :ivar completed_at: The Unix timestamp (in seconds) for when the response completed.
-    :vartype completed_at: ~datetime.datetime
-    """
-
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The unique id of the response. Required."""
-    output: Optional[list["_models.RealtimeConversationItem"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The output items produced by the response. May be omitted in list results; retrieve the full
-     response (GET .../responses/{response_id}) or use the paged response-items route (GET
-     .../responses/{response_id}/items) for its output items. Each item's ``response_id`` also links
-     it back to this response in the conversation-level items list."""
-    conversation_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The id of the conversation this response belongs to. Required."""
     audio: Optional["_models.VoiceResponseAudio"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The audio configuration used for the response, including the voice and audio format used for
      output."""
-    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A set of key-value pairs attached to the response."""
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The sampling temperature used for the response."""
     created_at: Optional[datetime.datetime] = rest_field(
@@ -32214,17 +32115,17 @@ class VoiceResponse(VoiceResponseBase):  # pylint: disable=docstring-keyword-sho
     def __init__(
         self,
         *,
-        id: str,  # pylint: disable=redefined-builtin
-        conversation_id: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         object: Optional[Literal["realtime.response"]] = None,
         status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = None,
         status_details: Optional["_models.RealtimeResponseStatusDetails"] = None,
+        output: Optional[list["_models.RealtimeConversationItem"]] = None,
+        metadata: Optional["_models.Metadata"] = None,
         usage: Optional["_models.RealtimeResponseUsage"] = None,
+        conversation_id: Optional[str] = None,
         output_modalities: Optional[list[Literal["text", "audio"]]] = None,
         max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
-        output: Optional[list["_models.RealtimeConversationItem"]] = None,
         audio: Optional["_models.VoiceResponseAudio"] = None,
-        metadata: Optional[dict[str, str]] = None,
         temperature: Optional[float] = None,
         created_at: Optional[datetime.datetime] = None,
         completed_at: Optional[datetime.datetime] = None,
