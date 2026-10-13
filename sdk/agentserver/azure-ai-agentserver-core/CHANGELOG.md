@@ -20,6 +20,9 @@
   the restored session through the ambient request context during callbacks.
   Environment-backed `AgentConfig` values and active durable-task leases are
   also rebound to the restored process before callbacks run.
+### Other Changes
+
+- Changed the default SSE keep-alive interval to 15 seconds. Set `SSE_KEEPALIVE_INTERVAL=0` to disable keep-alive comments.
 
 ## 2.2.0 (2026-09-23)
 
