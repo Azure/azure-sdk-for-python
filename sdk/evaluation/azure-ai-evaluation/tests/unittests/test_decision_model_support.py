@@ -5,6 +5,7 @@
 """Offline tests for shared decision-model runners, base selection, and evaluation strategy."""
 
 import asyncio
+import hashlib
 import json
 import threading
 from dataclasses import FrozenInstanceError
@@ -588,11 +589,48 @@ class TestSharedDecisionStrategy:
         assert raised.value.properties["total_tokens"] == 123
         assert raised.value.properties["decision_model"]["deployment"] == "Decision-1"
 
+    @pytest.mark.parametrize("status", [float("nan"), float("inf"), float("-inf"), "invalid", None, True, -0.1, 1.1])
+    def test_invalid_status_error_properties_are_strict_json_with_known_metadata(self, client, status):
+        client.response = FakeResponse(body=json.dumps(level_payload(4, status=status)).encode())
+        strategy = DecisionEvaluationStrategy(
+            DecisionModelRunner(DECISION_CONFIG),
+            result_key="tool_call_accuracy",
+            error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+            questions=QUESTIONS,
+            scoring=LikertScoring(5),
+            threshold=3,
+            timeout=5,
+        )
+        with pytest.raises(EvaluationException) as raised:
+            asyncio.run(strategy.evaluate({}))
+        properties = raised.value.properties
+        assert json.loads(json.dumps(properties, allow_nan=False)) == properties
+        assert (properties["prompt_tokens"], properties["completion_tokens"], properties["total_tokens"]) == (
+            120,
+            3,
+            123,
+        )
+        assert properties["model"] == "microsoft-decision-1"
+        provenance = properties["decision_model"]
+        assert provenance["deployment"] == "Decision-1"
+        assert provenance["model"] == "microsoft-decision-1"
+        for field, question_id in (("rubric_hash", "tool_call_accuracy"), ("status_rubric_hash", "status")):
+            assert (
+                provenance[field]
+                == hashlib.sha256(json.dumps(QUESTIONS[question_id], sort_keys=True).encode("utf-8")).hexdigest()
+            )
+        assert "native_status_answer" not in provenance
+        assert "status_completion_probability" not in provenance
+
     @pytest.mark.parametrize("status, expected", [(0.4999, "skipped"), (0.5, "completed")])
     def test_applicability_cutoff_remains_fixed(self, status, expected):
-        result = asyncio.run(strategy_with(level_payload(4, status=status), LikertScoring(5)).evaluate({}))
+        payload = level_payload(4, status=status)
+        result = asyncio.run(strategy_with(payload, LikertScoring(5)).evaluate({}))
         assert result["tool_call_accuracy_status"] == expected
         assert result["tool_call_accuracy_properties"]["decision_model"]["status_probability_threshold"] == 0.5
+        assert result["tool_call_accuracy_properties"]["decision_model"]["native_status_answer"] == (
+            payload["answers"]["status"]
+        )
 
     def test_successful_properties_preserve_common_metadata_shape(self):
         properties = asyncio.run(strategy_with(level_payload(4), LikertScoring(5)).evaluate({}))[

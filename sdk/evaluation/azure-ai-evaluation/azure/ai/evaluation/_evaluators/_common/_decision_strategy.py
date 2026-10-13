@@ -165,7 +165,6 @@ class DecisionEvaluationStrategy:
             "model": response["model"],
             "rubric_hash": _digest(self.questions[key]),
             "status_rubric_hash": _digest(self.questions["status"]),
-            "native_status_answer": response["answers"]["status"],
             "status_probability_threshold": STATUS_CUTOFF,
             "reason_type": "templated",
         }
@@ -181,6 +180,7 @@ class DecisionEvaluationStrategy:
             properties["decision_model"]["status_completion_probability"] = decision_probability(
                 response, "status", self.error_target
             )
+            properties["decision_model"]["native_status_answer"] = response["answers"]["status"]
             if skip_reason:
                 result = not_applicable_result(key, skip_reason, self.threshold)
                 result[f"{key}_properties"] = properties
