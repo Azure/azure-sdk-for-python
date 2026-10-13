@@ -119,6 +119,14 @@
   their ownership cannot be verified. Drain active work before upgrading.
   Anonymous lifecycle keys retain their previous format.
 
+### Other Changes
+
+- Require Core's snapshot lifecycle integration. While task startup is deferred
+  (`FOUNDRY_MEMORY_SNAPSHOT_ENABLED` absent or `true`), enabled-but-uninitialized
+  task errors are propagated instead of running non-durably; intentional opt-out
+  and `false` keep the existing in-process fallback. No new HTTP 503 mapping or
+  author startup-task replay is introduced.
+
 ## 2.3.0 (2026-10-05)
 
 ### Bugs Fixed
