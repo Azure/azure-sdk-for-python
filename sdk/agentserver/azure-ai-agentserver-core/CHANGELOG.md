@@ -1,5 +1,11 @@
 # Release History
 
+## 2.3.0b1 (Unreleased)
+
+### Other Changes
+
+- Changed the default SSE keep-alive interval to 15 seconds. Set `SSE_KEEPALIVE_INTERVAL=0` to disable keep-alive comments.
+
 ## 2.2.0 (2026-09-23)
 
 ### Other Changes

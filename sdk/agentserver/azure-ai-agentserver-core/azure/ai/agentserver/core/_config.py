@@ -20,6 +20,8 @@ from typing import Optional
 
 from typing_extensions import Self
 
+from ._constants import Constants
+
 # ======================================================================
 # Environment variable keys (internal — users access values via AgentConfig)
 # ======================================================================
@@ -42,7 +44,6 @@ _ENV_SSE_KEEPALIVE_INTERVAL = "SSE_KEEPALIVE_INTERVAL"
 _ENV_WS_KEEPALIVE_INTERVAL = "WS_KEEPALIVE_INTERVAL"
 
 _DEFAULT_PORT = 8088
-_DEFAULT_SSE_KEEPALIVE_INTERVAL = 0
 _DEFAULT_WS_PING_INTERVAL = 0.0
 
 
@@ -441,7 +442,7 @@ def resolve_sse_keepalive_interval(interval: Optional[int] = None) -> int:
     """Resolve the SSE keep-alive interval from argument, env var, or default.
 
     Resolution order: explicit *interval* → ``SSE_KEEPALIVE_INTERVAL`` env var
-    → ``0`` (seconds).  A value of ``0`` disables keep-alive.
+    → ``15`` (seconds).  A value of ``0`` disables keep-alive.
 
     :param interval: Explicitly requested interval in seconds, or None.
     :type interval: Optional[int]
@@ -453,7 +454,7 @@ def resolve_sse_keepalive_interval(interval: Optional[int] = None) -> int:
     env_val = _parse_int_env(_ENV_SSE_KEEPALIVE_INTERVAL)
     if env_val is not None:
         return max(0, env_val)
-    return _DEFAULT_SSE_KEEPALIVE_INTERVAL
+    return Constants.DEFAULT_SSE_KEEPALIVE_INTERVAL
 
 
 def resolve_otlp_endpoint() -> Optional[str]:
