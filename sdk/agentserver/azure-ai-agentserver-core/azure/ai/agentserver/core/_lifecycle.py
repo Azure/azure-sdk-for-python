@@ -9,7 +9,10 @@ from dataclasses import dataclass, field
 from types import MappingProxyType
 from typing import Awaitable, Callable, Optional
 
+from ._experimental import experimental
 
+
+@experimental
 @dataclass(frozen=True, init=False)
 class AgentSessionContext:
     """Session context supplied after a process is restored from a snapshot.

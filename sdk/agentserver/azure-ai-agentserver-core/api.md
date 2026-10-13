@@ -146,6 +146,7 @@ namespace azure.ai.agentserver.core
         def shutdown_handler(self, fn: Callable[[], Awaitable[None]]) -> Callable[[], Awaitable[None]]: ...
 
 
+    @experimental
     @dataclass(frozen=True, init=False)
     class azure.ai.agentserver.core.AgentSessionContext:
         restore_id: str

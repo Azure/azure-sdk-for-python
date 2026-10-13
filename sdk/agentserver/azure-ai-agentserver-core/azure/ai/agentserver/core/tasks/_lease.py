@@ -76,7 +76,7 @@ def generate_instance_id() -> str:
     return f"worker-{os.getpid()}-{uuid.uuid4().hex[:8]}-{int(time.time())}"
 
 
-async def lease_renewal_loop(  # pylint: disable=too-many-statements,too-many-branches
+async def lease_renewal_loop(  # pylint: disable=too-many-statements
     provider: TaskProvider,
     task_id: str,
     *,
@@ -88,7 +88,6 @@ async def lease_renewal_loop(  # pylint: disable=too-many-statements,too-many-br
     on_cancel_callback: asyncio.Event | None = None,
     steering_poll_callback: Callable[[], Awaitable[None]] | None = None,
     last_refresh_provider: Callable[[], float] | None = None,
-    lease_identity_provider: Callable[[], tuple[str, str]] | None = None,
     update_via_queue: Callable[[str, "TaskPatchRequest"], Awaitable[Any]] | None = None,
 ) -> None:
     """Run a background lease renewal loop at half the lease duration.
@@ -129,11 +128,6 @@ async def lease_renewal_loop(  # pylint: disable=too-many-statements,too-many-br
             network round-trip. ``None`` preserves the legacy fixed-tick
             behaviour for tests.
         :paramtype last_refresh_provider: Callable[[], float] | None
-        :keyword lease_identity_provider: Optional callable returning the current
-            lease owner and instance ID. When provided, each heartbeat resolves
-            the identity at write time so restored processes do not keep using
-            identity values captured before snapshot.
-        :paramtype lease_identity_provider: Callable[[], tuple[str, str]] | None
     :keyword update_via_queue:   — optional callable
             through which the heartbeat PATCH MUST be issued so that it
             acquires the per-task write lock (and is etag-aware). When
@@ -180,15 +174,9 @@ async def lease_renewal_loop(  # pylint: disable=too-many-statements,too-many-br
                         continue  # re-check on the next iteration
 
         try:
-            current_lease_owner = lease_owner
-            current_lease_instance_id = lease_instance_id
-            if lease_identity_provider is not None:
-                current_lease_owner, current_lease_instance_id = (
-                    lease_identity_provider()
-                )
             patch = TaskPatchRequest(
-                lease_owner=current_lease_owner,
-                lease_instance_id=current_lease_instance_id,
+                lease_owner=lease_owner,
+                lease_instance_id=lease_instance_id,
                 lease_duration_seconds=lease_duration_seconds,
             )
             if update_via_queue is not None:

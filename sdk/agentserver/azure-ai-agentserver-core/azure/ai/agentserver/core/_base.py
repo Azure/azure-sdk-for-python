@@ -842,7 +842,7 @@ class AgentServerHost(Starlette):
                 restored_config = _config.AgentConfig.from_env()
                 vars(self.config).update(vars(restored_config))
                 if task_manager is not None:
-                    await task_manager._rehydrate_session_state(  # pylint: disable=protected-access
+                    task_manager._rehydrate_session_state(  # pylint: disable=protected-access
                         context.restore_id
                     )
 
@@ -861,7 +861,7 @@ class AgentServerHost(Starlette):
                 finally:
                     reset_request_context(request_context_token)
             except asyncio.CancelledError:
-                await AgentServerHost._restore_lifecycle_environment(
+                AgentServerHost._restore_lifecycle_environment(
                     self,
                     previous_environment,
                     previous_config,
@@ -869,7 +869,7 @@ class AgentServerHost(Starlette):
                 )
                 raise
             except Exception:  # pylint: disable=broad-exception-caught
-                await AgentServerHost._restore_lifecycle_environment(
+                AgentServerHost._restore_lifecycle_environment(
                     self,
                     previous_environment,
                     previous_config,
@@ -902,7 +902,7 @@ class AgentServerHost(Starlette):
         self._lifecycle.applied_environment_variables.update(effective_environment)
         self._lifecycle.before_snapshot_completed = False
 
-    async def _restore_lifecycle_environment(
+    def _restore_lifecycle_environment(
         self,
         previous_environment: dict[str, object],
         previous_config: dict[str, Any],
@@ -915,7 +915,7 @@ class AgentServerHost(Starlette):
                 os.environ[key] = str(value)
         vars(self.config).update(previous_config)
         if task_manager is not None:
-            await task_manager._rehydrate_session_state()  # pylint: disable=protected-access
+            task_manager._rehydrate_session_state()  # pylint: disable=protected-access
 
     # ------------------------------------------------------------------
     # Run helpers
