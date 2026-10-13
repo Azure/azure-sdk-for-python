@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.1 (Unreleased)
+## 1.3.0b1 (Unreleased)
 
 ### Bugs Fixed
 
@@ -8,7 +8,7 @@
 
 ### Other Changes
 
-- Updated the minimum `azure-ai-agentserver-core` dependency to `>=2.2.1`.
+- Updated the minimum `azure-ai-agentserver-core` dependency to `>=2.3.0b1`.
 
 ## 1.2.0 (2026-09-29)
 

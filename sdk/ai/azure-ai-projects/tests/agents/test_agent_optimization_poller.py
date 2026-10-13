@@ -7,12 +7,12 @@
 from unittest.mock import MagicMock
 
 from azure.ai.projects.models import AgentOptimizationLROPoller
-from azure.ai.projects.operations._patch_agents import BetaAgentsOperations
+from azure.ai.projects.operations._patch_agents import AgentsOperations
 
 
 def test_begin_create_optimization_job_exposes_job_id():
     """The sync create operation exposes its job ID without SDK polling."""
-    operation = BetaAgentsOperations.__new__(BetaAgentsOperations)
+    operation = AgentsOperations.__new__(AgentsOperations)
     operation._client = MagicMock()  # pylint: disable=protected-access
     operation._config = MagicMock(polling_interval=0)  # pylint: disable=protected-access
     operation._serialize = MagicMock()  # pylint: disable=protected-access

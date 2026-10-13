@@ -17,7 +17,6 @@ from ._sse import encode_sse_event
 from .. import models as _public_models
 
 
-
 def strip_nulls(d: dict) -> dict:
     """Recursively remove keys whose values are ``None`` from a dict.
 
@@ -224,11 +223,7 @@ def _extract_response_snapshot_from_events(
             snapshot.setdefault("id", response_id)
             snapshot.setdefault("response_id", response_id)
             existing_agent_reference = snapshot.get("agent_reference")
-            if (
-                not isinstance(existing_agent_reference, MutableMapping)
-                or not existing_agent_reference
-                or (_internals.is_default_agent_reference(existing_agent_reference) and bool(agent_reference))
-            ):
+            if _internals.should_replace_agent_reference(existing_agent_reference, agent_reference):
                 snapshot["agent_reference"] = _internals.response_agent_reference(agent_reference)
             snapshot.setdefault("object", "response")
             snapshot.setdefault("output", [])

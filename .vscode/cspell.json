@@ -361,9 +361,11 @@
     "nbytes",
     "nbsp",
     "noarch",
+    "nocae",
     "NOPERM",
     "norecursedirs",
     "northcentralus",
+    "npmjs",
     "nspkg",
     "OAEP",
     "oauthlib",
@@ -419,6 +421,7 @@
     "RAGRS",
     "rdbms",
     "rgeraghty",
+    "ROPC",
     "Rohit",
     "rohitganguly",
     "reauthenticated",
@@ -1682,6 +1685,16 @@
       ]
     },
     {
+      "filename": "sdk/dataai/azure-data-ai/**",
+      "words": [
+        "aisearch",
+        "dataai",
+        "rerank",
+        "reranker",
+        "reranks"
+      ]
+    },
+    {
       "filename": "sdk/cosmos/azure-cosmos/**",
       "words": [
         "colls",
@@ -2192,7 +2205,7 @@
     },
     {
       "filename": ".github/**",
-      "words": ["llms", "DIFC", "XPIA", "svcowner", "toddysm", "chenkennt", "sffamily"]
+      "words": ["llms", "DIFC", "XPIA", "svcowner", "toddysm", "chenkennt", "sffamily", "pygen"]
     },
     {
       "filename": "sdk/agentserver/azure-ai-agentserver-githubcopilot/**",

@@ -19,38 +19,6 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
-class AllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The allocation strategy for VM size selection."""
-
-    LOWEST_PRICE = "LowestPrice"
-    """Platform prioritizes VM sizes with the lowest hourly cost."""
-    PRIORITIZED = "Prioritized"
-    """Customer specifies a rank for each VM size, platform uses VM sizes in rank order."""
-    CAPACITY_OPTIMIZED = "CapacityOptimized"
-    """Platform prioritizes VM sizes with the highest available capacity first."""
-
-
-class BulkCreateCustomAllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The allocation strategy for VM size selection in BulkCreateCustom."""
-
-    LOWEST_PRICE = "LowestPrice"
-    """Platform prioritizes VM sizes with the lowest hourly cost."""
-    PRIORITIZED = "Prioritized"
-    """Customer specifies a rank for each VM size, platform uses VM sizes in rank order."""
-
-
-class BulkCreateCustomDistributionStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The distribution strategy for zone allocation in BulkCreateCustom."""
-
-    BEST_EFFORT_SINGLE_ZONE = "BestEffortSingleZone"
-    """Platform attempts to place as many VMs as possible in a single zone, falls back to multiple
-    zones if needed."""
-    PRIORITIZED = "Prioritized"
-    """Platform uses customer-provided zone rankings to allocate VMs."""
-    BEST_EFFORT_BALANCED = "BestEffortBalanced"
-    """Platform attempts to evenly distribute VMs across all available zones with best effort."""
-
-
 class CachingTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the caching requirements. Possible values are: **None,** **ReadOnly,** **ReadWrite.**
     The default values are: **None for Standard storage. ReadOnly for Premium storage**.
@@ -103,12 +71,12 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DeadlineType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The types of deadlines supported by Bulkactions."""
+    """The deadline behavior for a bulk action."""
 
     INITIATE_AT = "InitiateAt"
-    """Initiate the operation at the given deadline."""
+    """Bulk Actions attempts to start the operation at the specified deadline."""
     COMPLETE_BY = "CompleteBy"
-    """Complete the operation by the given deadline."""
+    """Bulk Actions attempts to complete the operation by the specified deadline."""
 
 
 class DeleteOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -216,21 +184,6 @@ class DiskDetachOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     FORCE_DETACH = "ForceDetach"
     """ForceDetach the disk."""
-
-
-class DistributionStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The distribution strategy for zone allocation."""
-
-    BEST_EFFORT_SINGLE_ZONE = "BestEffortSingleZone"
-    """Platform attempts to place as many VMs as possible in a single zone, falls back to multiple
-    zones if needed."""
-    PRIORITIZED = "Prioritized"
-    """Platform uses customer-provided zone rankings to allocate VMs."""
-    BEST_EFFORT_BALANCED = "BestEffortBalanced"
-    """Platform attempts to evenly distribute VMs across all available zones with best effort."""
-    STRICT_BALANCED = "StrictBalanced"
-    """Platform must evenly distribute VMs across zones, request is rejected if exact balance cannot
-    be achieved."""
 
 
 class DomainNameLabelScopeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -490,20 +443,20 @@ class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Values that define the states of operations in Bulkactions."""
+    """The current state of a bulk action."""
 
     SCHEDULED = "Scheduled"
-    """Operations that have been scheduled."""
+    """The operation has been scheduled."""
     EXECUTING = "Executing"
-    """Operations that are in the process of being executed."""
+    """The operation is in progress."""
     SUCCEEDED = "Succeeded"
-    """Operations that succeeded."""
+    """The operation completed successfully."""
     FAILED = "Failed"
-    """Operations that have failed."""
+    """The operation failed."""
     CANCELLED = "Cancelled"
-    """Operations that have been Cancelled by the user."""
+    """The operation was canceled by the caller."""
     BLOCKED = "Blocked"
-    """Operations that are blocked."""
+    """The operation cannot currently make progress."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -543,12 +496,12 @@ class PartialFulfillmentReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class PriorityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The priority type for VM allocation."""
+    """The priority type for virtual machine allocation."""
 
     REGULAR = "Regular"
-    """Regular priority VMs."""
+    """Regular, non-Spot virtual machines."""
     SPOT = "Spot"
-    """Spot priority VMs."""
+    """Azure Spot Virtual Machines."""
 
 
 class ProtocolTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -628,18 +581,18 @@ class ResourceOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ResourceOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of bulk operation that can be performed on resources using Bulkactions API."""
+    """The type of operation performed by Bulk Actions."""
 
     START = "Start"
-    """Start operations on the resources."""
+    """Starts the specified virtual machines."""
     DEALLOCATE = "Deallocate"
-    """Deallocate operations on the resources."""
+    """Deallocates the specified virtual machines."""
     HIBERNATE = "Hibernate"
-    """Hibernate operations on the resources."""
+    """Hibernates the specified virtual machines."""
     CREATE = "Create"
-    """Create operations on the resources."""
+    """Creates the specified virtual machines."""
     DELETE = "Delete"
-    """Delete operations on the resources."""
+    """Deletes the specified virtual machines."""
 
 
 class ResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
