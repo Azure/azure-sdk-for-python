@@ -31,5 +31,6 @@ extends:
     Artifacts:
     - name: azure-cosmos
       safeName: azurecosmos
+      signBinaries: true
     - name: azure-mgmt-cosmosdb
       safeName: azuremgmtcosmosdb
