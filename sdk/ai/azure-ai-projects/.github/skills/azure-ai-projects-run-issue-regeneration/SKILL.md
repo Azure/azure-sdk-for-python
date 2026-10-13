@@ -116,8 +116,10 @@ themselves to apply these overrides.
     reports hundreds of errors in existing samples that CI never sees. `--isolate` builds a
     separate environment (under `.venv/`) from the Azure SDK package feed, which is reachable from
     this session, and leaves the shared `.venv` untouched. If that environment cannot be created
-    (for example `401 Unauthorized` for a package file the feed has not cached), the command has
-    failed: stop and report it instead of retrying or falling back to the non-isolated form.
+    (for example `401 Unauthorized` for a package file the feed has not cached), the check cannot
+    run: stop and report it instead of retrying or falling back to the non-isolated form. This
+    applies only when the check cannot run. Errors it reports once it does run are source problems
+    to fix (see "Run the skills in order").
 - **`azure-ai-projects-author-samples` Step 6 and `azure-ai-projects-author-tests` Step 4
   (hand off):** keep their reporting requirements, but skip their follow-on skill invocations.
   This orchestrator runs samples and tests in the order below and never invokes
@@ -139,6 +141,18 @@ order:
 Do not proceed to the next skill until the current skill's success criteria pass. Apply every
 STOP condition from the three skills: on failure, preserve the working tree for diagnosis, do not
 publish partial manual branches or pull requests, and report the failing command and its output.
+
+A STOP condition is a failure of the workflow itself, not a finding in the code you are updating:
+a tool or environment that cannot run (for example, the isolated mypy environment cannot be
+created), a failing emit or post-emitter script, or a needed change outside the files these skills
+may edit (for example, generated code under `azure/`). A finding that Black, mypy, or test
+collection reports in a sample or test is a "source problem" to fix, as
+`azure-ai-projects-author-samples` Step 5 already says; the tests skill works the same way. For
+example, when the emitted API makes a model field optional and mypy reports `str | None` passed
+where `str` is required, guard the value in the sample or assert it in the test. Fix the code,
+rerun the failed command, and continue. Never silence a finding with `# type: ignore`, a lint
+suppression, or relaxed settings. If the same command still fails after two fix attempts, stop and
+report the command, its output, and the fixes you tried.
 
 Samples and tests are conditional. A step may be a documented no-op when the API diff contains
 no qualifying surface; state that explicitly in the pull request rather than creating
