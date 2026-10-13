@@ -56,7 +56,7 @@ COST_CONTROL_RESPONSE = {
                 "period": "month",
                 "recurring": True,
                 "match": {
-                    "foundry.project.id": [
+                    "projectIds": [
                         "/subscriptions/sub/resourceGroups/rg/providers/"
                         "Microsoft.CognitiveServices/accounts/acct/projects/project"
                     ]
@@ -150,7 +150,7 @@ def test_create_serializes_thresholds_and_if_none_match():
         {"type": "percentage", "value": 80, "action": "alert"},
         {"type": "absolute", "value": 100, "action": "block"},
     ]
-    assert body["properties"]["rules"][0]["match"]["foundry.project.id"]
+    assert body["properties"]["rules"][0]["match"]["projectIds"]
     assert result.properties.rules[0].thresholds[1].action == "block"
 
 

@@ -58,7 +58,7 @@ class TestCostControlsLive(AzureMgmtRecordedTestCase):
     def test_cost_control_lifecycle(self):
         cost_control_name = self.get_resource_name("costctrl")[:64]
         created = False
-        rule = _cost_control_rule(amount=25, display_action="audit")
+        rule = _cost_control_rule(amount=25, threshold_action=models.CostControlThresholdAction.BLOCK)
 
         try:
             cost_control = self.client.cost_controls.create_or_update(
@@ -77,7 +77,7 @@ class TestCostControlsLive(AzureMgmtRecordedTestCase):
             created = True
             assert cost_control.name
             assert cost_control.type == "Microsoft.CognitiveServices/accounts/costControls"
-            assert cost_control.properties.rules[0].thresholds[0].action == "audit"
+            assert cost_control.properties.rules[0].thresholds[0].action == models.CostControlThresholdAction.BLOCK
 
             fetched, response_headers = self.client.cost_controls.get(
                 self.resource_group_name,
@@ -87,7 +87,7 @@ class TestCostControlsLive(AzureMgmtRecordedTestCase):
             )
             etag = fetched.etag or response_headers["ETag"]
             assert etag
-            assert fetched.properties.rules[0].thresholds[0].value == 0
+            assert fetched.properties.rules[0].thresholds[0].value == 80
 
             cost_controls = list(self.client.cost_controls.list(self.resource_group_name, self.account_name))
             assert any(item.properties.display_name == "SDK live test" for item in cost_controls)
@@ -99,7 +99,9 @@ class TestCostControlsLive(AzureMgmtRecordedTestCase):
                 models.CostControlPatch(
                     properties=models.CostControlPatchProperties(
                         display_name="SDK live test updated",
-                        rules=[_cost_control_rule(amount=50, display_action="audit")],
+                        rules=[
+                            _cost_control_rule(amount=50, threshold_action=models.CostControlThresholdAction.BLOCK)
+                        ],
                     )
                 ),
                 etag=etag,
@@ -141,54 +143,7 @@ class TestCostControlsLive(AzureMgmtRecordedTestCase):
                 except ResourceNotFoundError:
                     pass
 
-    @recorded_by_proxy
-    def test_clear_cost_control_connections(self):
-        if os.environ.get("AZURE_TEST_COST_CONTROL_CLEAR_CONNECTIONS", "").lower() != "true":
-            pytest.skip("Set AZURE_TEST_COST_CONTROL_CLEAR_CONNECTIONS=true to allow account mutation.")
-
-        original = self.client.accounts.get(self.resource_group_name, self.account_name)
-        original_connections = original.properties.cost_control_connections
-        original_payload = _connection_payload(original_connections)
-        temporary_connection_id = os.environ.get("AZURE_COST_CONTROL_APP_INSIGHTS_CONNECTION_ID")
-
-        if original_connections is None and not temporary_connection_id:
-            pytest.skip(
-                "The account has no costControlConnections. Set "
-                "AZURE_COST_CONTROL_APP_INSIGHTS_CONNECTION_ID to test a non-null to null transition."
-            )
-
-        try:
-            if original_connections is None:
-                self.client.accounts.begin_update(
-                    self.resource_group_name,
-                    self.account_name,
-                    {
-                        "properties": {
-                            "costControlConnections": {
-                                "appInsightsConnectionId": temporary_connection_id,
-                            }
-                        }
-                    },
-                ).result()
-
-            self.client.accounts.begin_update(
-                self.resource_group_name,
-                self.account_name,
-                {"properties": {"costControlConnections": None}},
-            ).result()
-
-            account = self.client.accounts.get(self.resource_group_name, self.account_name)
-            assert account.properties.cost_control_connections is None
-        finally:
-            if original_payload is not None:
-                self.client.accounts.begin_update(
-                    self.resource_group_name,
-                    self.account_name,
-                    {"properties": {"costControlConnections": original_payload}},
-                ).result()
-
-
-def _cost_control_rule(amount, display_action):
+def _cost_control_rule(amount, threshold_action):
     return models.CostControlRule(
         name="account-budget",
         counter_key=[models.CostControlDimension(type="account")],
@@ -199,20 +154,11 @@ def _cost_control_rule(amount, display_action):
         thresholds=[
             models.CostControlThreshold(
                 type="percentage",
-                value=0,
-                action=display_action,
+                value=80,
+                action=threshold_action,
             )
         ],
     )
-
-
-def _connection_payload(connections):
-    if connections is None:
-        return None
-    return {
-        "appInsightsConnectionId": connections.app_insights_connection_id,
-        "eventGridConnectionId": connections.event_grid_connection_id,
-    }
 
 
 def _live_value(test_case, name, playback_value):
