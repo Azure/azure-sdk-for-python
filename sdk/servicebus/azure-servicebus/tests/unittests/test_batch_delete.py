@@ -128,7 +128,7 @@ def test_failed_management_link_open_is_evicted_before_retry():
     client._mgmt_links = {}
     client._mgmt_link_lock = threading.Lock()
     client._session = MagicMock()
-    client.client_ready = MagicMock(return_value=True)
+    client.auth_complete = MagicMock(return_value=True)
     failed_link = MagicMock()
     failed_link.open.side_effect = RuntimeError("attach failed")
     ready_link = MagicMock()
@@ -162,7 +162,7 @@ async def test_cancelled_management_link_open_is_evicted_before_retry():
     client._mgmt_links = {}
     client._mgmt_link_lock_async = asyncio.Lock()
     client._session = MagicMock()
-    client.client_ready_async = AsyncMock(return_value=True)
+    client.auth_complete_async = AsyncMock(return_value=True)
     failed_link = MagicMock()
     failed_link.open = AsyncMock(side_effect=asyncio.CancelledError())
     failed_link.close = AsyncMock()

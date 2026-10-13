@@ -895,7 +895,7 @@ try:
         def drain_and_release_messages(handler: "ReceiveClient") -> None:
             """
             No-op for uamqp: drain-on-close is only implemented for the pyamqp
-            transport (the default). uamqp is deprecated.
+            transport (the default).
             :param ~uamqp.ReceiveClient handler: The handler.
             :rtype: None
             """

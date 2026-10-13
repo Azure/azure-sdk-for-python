@@ -6,6 +6,7 @@
 """
 Examples to show basic async use case of python azure-servicebus SDK, including:
     - Create ServiceBusClient
+    - Configure a per-attempt timeout
     - Create ServiceBusSender/ServiceBusReceiver
     - Send single message and batch messages
     - Peek, receive and settle messages
@@ -48,6 +49,7 @@ def example_create_servicebus_client_async():
     servicebus_client = ServiceBusClient(
         fully_qualified_namespace=fully_qualified_namespace,
         credential=DefaultAzureCredential(),
+        try_timeout=30,
     )
     # [END create_sb_client_async]
     return servicebus_client

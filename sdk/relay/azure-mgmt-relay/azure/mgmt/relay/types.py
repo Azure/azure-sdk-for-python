@@ -20,9 +20,6 @@ if TYPE_CHECKING:
         NetworkRuleIPAction,
         PrivateLinkConnectionStatus,
         PublicNetworkAccess,
-        RelayClusterProvisioningState,
-        RelayClusterSkuName,
-        RelayClusterSkuTier,
         Relaytype,
         SkuName,
         SkuTier,
@@ -368,118 +365,6 @@ class TrackedResource(Resource):
     """Resource tags."""
     location: Required[str]
     """The geo-location where the resource lives. Required."""
-
-
-class RelayCluster(TrackedResource):
-    """A Relay dedicated cluster.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: "RelayClusterProperties"
-    :ivar sku: The Relay cluster SKU. Required.
-    :vartype sku: "RelayClusterSku"
-    """
-
-    properties: "RelayClusterProperties"
-    """The resource-specific properties for this resource."""
-    sku: Required["RelayClusterSku"]
-    """The Relay cluster SKU. Required."""
-
-
-class RelayClusterProperties(TypedDict, total=False):
-    """Relay cluster properties.
-
-    :ivar provisioningState: The provisioning state of the Relay cluster. Known values are:
-     "Succeeded", "Failed", "Canceled", "Creating", "Deleting", and "Scaling".
-    :vartype provisioningState: Union[str, "RelayClusterProvisioningState"]
-    :ivar metricId: The metric ID of the Relay cluster.
-    :vartype metricId: str
-    :ivar status: The status of the Relay cluster.
-    :vartype status: str
-    :ivar supportsScaling: Indicates whether the Relay cluster supports capacity scaling.
-    :vartype supportsScaling: bool
-    :ivar zoneRedundant: Indicates whether the Relay cluster was created as zone redundant.
-    :vartype zoneRedundant: bool
-    """
-
-    provisioningState: Union[str, "RelayClusterProvisioningState"]
-    """The provisioning state of the Relay cluster. Known values are: \"Succeeded\", \"Failed\",
-     \"Canceled\", \"Creating\", \"Deleting\", and \"Scaling\"."""
-    metricId: str
-    """The metric ID of the Relay cluster."""
-    status: str
-    """The status of the Relay cluster."""
-    supportsScaling: bool
-    """Indicates whether the Relay cluster supports capacity scaling."""
-    zoneRedundant: bool
-    """Indicates whether the Relay cluster was created as zone redundant."""
-
-
-class RelayClusterSku(TypedDict, total=False):
-    """SKU parameters for a Relay cluster.
-
-    :ivar name: Name of the Relay cluster SKU. Required. "Dedicated"
-    :vartype name: Union[str, "RelayClusterSkuName"]
-    :ivar tier: Tier of the Relay cluster SKU. "Dedicated"
-    :vartype tier: Union[str, "RelayClusterSkuTier"]
-    :ivar capacity: The number of capacity units assigned to the Relay cluster.
-    :vartype capacity: int
-    """
-
-    name: Required[Union[str, "RelayClusterSkuName"]]
-    """Name of the Relay cluster SKU. Required. \"Dedicated\""""
-    tier: Union[str, "RelayClusterSkuTier"]
-    """Tier of the Relay cluster SKU. \"Dedicated\""""
-    capacity: int
-    """The number of capacity units assigned to the Relay cluster."""
-
-
-class RelayClusterSkuUpdate(TypedDict, total=False):
-    """Mutable Relay cluster SKU parameters.
-
-    :ivar name: Name of the Relay cluster SKU. "Dedicated"
-    :vartype name: Union[str, "RelayClusterSkuName"]
-    :ivar tier: Tier of the Relay cluster SKU. "Dedicated"
-    :vartype tier: Union[str, "RelayClusterSkuTier"]
-    :ivar capacity: The number of capacity units assigned to the Relay cluster.
-    :vartype capacity: int
-    """
-
-    name: Union[str, "RelayClusterSkuName"]
-    """Name of the Relay cluster SKU. \"Dedicated\""""
-    tier: Union[str, "RelayClusterSkuTier"]
-    """Tier of the Relay cluster SKU. \"Dedicated\""""
-    capacity: int
-    """The number of capacity units assigned to the Relay cluster."""
-
-
-class RelayClusterUpdate(TypedDict, total=False):
-    """Parameters for updating a Relay cluster.
-
-    :ivar sku: The Relay cluster SKU.
-    :vartype sku: "RelayClusterSkuUpdate"
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    """
-
-    sku: "RelayClusterSkuUpdate"
-    """The Relay cluster SKU."""
-    tags: dict[str, str]
-    """Resource tags."""
 
 
 class RelayNamespace(TrackedResource):

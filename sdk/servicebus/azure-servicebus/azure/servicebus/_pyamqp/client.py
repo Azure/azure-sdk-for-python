@@ -58,6 +58,18 @@ Outcomes = Union[Received, Rejected, Released, Accepted, Modified]
 _logger = logging.getLogger(__name__)
 
 
+def _get_mgmt_request_remaining_timeout(timeout, started):
+    if timeout and timeout > 0:
+        elapsed = time.monotonic() - started
+        remaining = timeout - elapsed
+        if remaining <= 0:
+            raise TimeoutError(
+                "Management request timed out after {:.3f} seconds (timeout: {} seconds).".format(elapsed, timeout)
+            )
+        return remaining
+    return timeout
+
+
 class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
     """An AMQP client.
     :param hostname: The AMQP endpoint to connect to.
@@ -455,12 +467,20 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
         :rtype: ~pyamqp.message.Message
         """
 
-        mgmt_link = self.open_mgmt_link(node=node, timeout=timeout, **kwargs)
-
+        started = time.monotonic()
+        mgmt_link = self.open_mgmt_link(
+            node=node,
+            timeout=_get_mgmt_request_remaining_timeout(timeout, started),
+            **kwargs
+        )
         operation_type = operation_type or b"empty"
         status, description, response = mgmt_link.execute(
-            message, operation=operation, operation_type=operation_type, timeout=timeout
+            message,
+            operation=operation,
+            operation_type=operation_type,
+            timeout=_get_mgmt_request_remaining_timeout(timeout, started),
         )
+        _get_mgmt_request_remaining_timeout(timeout, started)
         return status, description, response
 
     def open_mgmt_link(self, node: str = "$management", timeout: float = 0, **kwargs):
@@ -481,14 +501,16 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
                     mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
                     self._mgmt_links[node] = mgmt_link
                     mgmt_link.open()
-            while not self.client_ready():
-                if timeout and time.monotonic() - start_time >= timeout:
-                    raise TimeoutError("Management link setup timed out.")
-                time.sleep(0.05)
+            while True:
+                _get_mgmt_request_remaining_timeout(timeout, start_time)
+                authenticated = self.auth_complete()
+                remaining = _get_mgmt_request_remaining_timeout(timeout, start_time)
+                if authenticated:
+                    break
+                time.sleep(min(0.05, remaining) if remaining else 0.05)
 
             while not mgmt_link.ready():
-                if timeout and time.monotonic() - start_time >= timeout:
-                    raise TimeoutError("Management link setup timed out.")
+                _get_mgmt_request_remaining_timeout(timeout, start_time)
                 self._connection.listen(wait=False)
             return mgmt_link
         except Exception:

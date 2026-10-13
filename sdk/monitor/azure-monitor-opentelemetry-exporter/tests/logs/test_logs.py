@@ -15,6 +15,7 @@ from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_STACKTRACE,
     EXCEPTION_TYPE,
 )
+from opentelemetry.semconv._incubating.attributes import session_attributes
 from opentelemetry.sdk import _logs
 from opentelemetry._logs import LogRecord
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
@@ -110,6 +111,7 @@ class TestAzureLogExporter(unittest.TestCase):
                     "test": "attribute",
                     "enduser.id": "test-auth",
                     "enduser.pseudo.id": "test-user",
+                    session_attributes.SESSION_ID: "test-session",
                 },
             ),
             resource=Resource.create(attributes={"asd": "test_resource"}),
@@ -472,8 +474,10 @@ class TestAzureLogExporter(unittest.TestCase):
 
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_USER_AUTH_USER_ID), "test-auth")
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_USER_ID), "test-user")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_SESSION_ID), "test-session")
         self.assertNotIn("enduser.id", envelope.data.base_data.properties)
         self.assertNotIn("enduser.pseudo.id", envelope.data.base_data.properties)
+        self.assertNotIn(session_attributes.SESSION_ID, envelope.data.base_data.properties)
         self.assertEqual(envelope.data.base_data.properties.get("logger_name"), "test_name")
 
     def test_log_to_envelope_log_none(self):

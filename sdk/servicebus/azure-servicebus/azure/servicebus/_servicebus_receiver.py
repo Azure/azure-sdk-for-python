@@ -34,6 +34,7 @@ from ._common.tracing import (
 from ._common.constants import (
     CONSUMER_IDENTIFIER,
     DEFAULT_RECEIVE_WAIT_TIME_SECS,
+    DEFAULT_SERVER_TIMEOUT_MS,
     REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
     REQUEST_RESPONSE_RENEWLOCK_OPERATION,
@@ -629,9 +630,16 @@ class ServiceBusReceiver(
         if dead_letter_details:
             message.update(dead_letter_details)
 
-        # We don't do retry here, retry is done in the ServiceBusReceivedMessage._settle_message
+        # We don't do retry here, retry is done in ServiceBusReceiver._settle_message_with_retry.
         return self._mgmt_request_response(
-            REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION, message, mgmt_handlers.default
+            REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
+            message,
+            mgmt_handlers.default,
+            timeout=(
+                self._config.try_timeout
+                if self._config.try_timeout is not None
+                else DEFAULT_SERVER_TIMEOUT_MS / 1000
+            ),
         )
 
     def _renew_locks(self, *lock_tokens: str, **kwargs: Any) -> Any:

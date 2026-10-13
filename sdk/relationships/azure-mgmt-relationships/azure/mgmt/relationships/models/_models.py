@@ -62,7 +62,85 @@ class ExtensionResource(Resource):
     """
 
 
-class DependencyOfRelationship(ExtensionResource):
+class ContainsRelationship(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Defines a contains relationship resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.relationships.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.relationships.models.ContainsRelationshipProperties
+    """
+
+    properties: Optional["_models.ContainsRelationshipProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ContainsRelationshipProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainsRelationshipProperties(_Model):
+    """contains relationship properties.
+
+    :ivar source_id: The relationship source resource id. Must be a subscription or resource group.
+    :vartype source_id: str
+    :ivar target_id: The relationship target resource id. Required.
+    :vartype target_id: str
+    :ivar target_tenant: The relationship target tenant id.
+    :vartype target_tenant: str
+    :ivar origin_information: Information about the origin of the relationship.
+    :vartype origin_information: ~azure.mgmt.relationships.models.RelationshipOriginInformation
+    :ivar metadata: Metadata about the relationship.
+    :vartype metadata: ~azure.mgmt.relationships.models.RelationshipMetadata
+    :ivar provisioning_state: The provisioning state of the relationship. Known values are:
+     "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.relationships.models.ProvisioningState
+    """
+
+    source_id: Optional[str] = rest_field(name="sourceId", visibility=["read"])
+    """The relationship source resource id. Must be a subscription or resource group."""
+    target_id: str = rest_field(name="targetId", visibility=["read"])
+    """The relationship target resource id. Required."""
+    target_tenant: Optional[str] = rest_field(name="targetTenant", visibility=["read"])
+    """The relationship target tenant id."""
+    origin_information: Optional["_models.RelationshipOriginInformation"] = rest_field(
+        name="originInformation", visibility=["read"]
+    )
+    """Information about the origin of the relationship."""
+    metadata: Optional["_models.RelationshipMetadata"] = rest_field(visibility=["read"])
+    """Metadata about the relationship."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the relationship. Known values are: \"Succeeded\", \"Failed\",
+     \"Canceled\", \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
+
+
+class DependencyOfRelationship(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a dependencyOf relationship resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -103,38 +181,38 @@ class DependencyOfRelationship(ExtensionResource):
         super().__init__(*args, **kwargs)
 
 
-class DependencyOfRelationshipProperties(_Model):
+class DependencyOfRelationshipProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """dependencyOf relationship properties.
 
-    :ivar source_id: The relationship source resource id. Required.
+    :ivar source_id: The relationship source resource id.
     :vartype source_id: str
     :ivar target_id: The relationship target resource id. Required.
     :vartype target_id: str
     :ivar target_tenant: The relationship target tenant id.
     :vartype target_tenant: str
-    :ivar origin_information: Information about the origin of the relationship. Required.
+    :ivar origin_information: Information about the origin of the relationship.
     :vartype origin_information: ~azure.mgmt.relationships.models.RelationshipOriginInformation
-    :ivar metadata: Metadata about the relationship. Required.
+    :ivar metadata: Metadata about the relationship.
     :vartype metadata: ~azure.mgmt.relationships.models.RelationshipMetadata
     :ivar provisioning_state: The provisioning state of the relationship. Known values are:
      "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
     :vartype provisioning_state: str or ~azure.mgmt.relationships.models.ProvisioningState
     """
 
-    source_id: str = rest_field(name="sourceId", visibility=["read"])
-    """The relationship source resource id. Required."""
+    source_id: Optional[str] = rest_field(name="sourceId", visibility=["read"])
+    """The relationship source resource id."""
     target_id: str = rest_field(name="targetId", visibility=["read", "create", "update", "delete", "query"])
     """The relationship target resource id. Required."""
     target_tenant: Optional[str] = rest_field(
         name="targetTenant", visibility=["read", "create", "update", "delete", "query"]
     )
     """The relationship target tenant id."""
-    origin_information: "_models.RelationshipOriginInformation" = rest_field(
+    origin_information: Optional["_models.RelationshipOriginInformation"] = rest_field(
         name="originInformation", visibility=["read"]
     )
-    """Information about the origin of the relationship. Required."""
-    metadata: "_models.RelationshipMetadata" = rest_field(visibility=["read"])
-    """Metadata about the relationship. Required."""
+    """Information about the origin of the relationship."""
+    metadata: Optional["_models.RelationshipMetadata"] = rest_field(visibility=["read"])
+    """Metadata about the relationship."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -204,7 +282,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -232,7 +310,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -356,7 +434,7 @@ class RelationshipOriginInformation(_Model):
     """The name of the discovery engine that created the relationship."""
 
 
-class ServiceGroupMemberRelationship(ExtensionResource):
+class ServiceGroupMemberRelationship(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a ServiceGroupMember relationship resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -371,10 +449,11 @@ class ServiceGroupMemberRelationship(ExtensionResource):
      information.
     :vartype system_data: ~azure.mgmt.relationships.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.relationships.models.ServiceGroupMemberRelationshipProperties
+    :vartype properties:
+     ~azure.mgmt.relationships.models.ServiceGroupMemberRelationshipPropertiesV2
     """
 
-    properties: Optional["_models.ServiceGroupMemberRelationshipProperties"] = rest_field(
+    properties: Optional["_models.ServiceGroupMemberRelationshipPropertiesV2"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource-specific properties for this resource."""
@@ -383,7 +462,7 @@ class ServiceGroupMemberRelationship(ExtensionResource):
     def __init__(
         self,
         *,
-        properties: Optional["_models.ServiceGroupMemberRelationshipProperties"] = None,
+        properties: Optional["_models.ServiceGroupMemberRelationshipPropertiesV2"] = None,
     ) -> None: ...
 
     @overload
@@ -397,38 +476,40 @@ class ServiceGroupMemberRelationship(ExtensionResource):
         super().__init__(*args, **kwargs)
 
 
-class ServiceGroupMemberRelationshipProperties(_Model):
+class ServiceGroupMemberRelationshipPropertiesV2(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """ServiceGroupMember relationship properties.
 
-    :ivar source_id: The relationship source resource id. Required.
+    :ivar source_id: The relationship source resource id. Must be a service group. Required.
     :vartype source_id: str
-    :ivar target_id: The relationship target resource id. Required.
+    :ivar target_id: The relationship target resource id. Server-derived from the scoped resource.
     :vartype target_id: str
-    :ivar target_tenant: The relationship target tenant id.
-    :vartype target_tenant: str
-    :ivar origin_information: Information about the origin of the relationship. Required.
+    :ivar source_tenant: The relationship source tenant id.
+    :vartype source_tenant: str
+    :ivar origin_information: Information about the origin of the relationship.
     :vartype origin_information: ~azure.mgmt.relationships.models.RelationshipOriginInformation
-    :ivar metadata: Metadata about the relationship. Required.
+    :ivar metadata: Metadata about the relationship.
     :vartype metadata: ~azure.mgmt.relationships.models.RelationshipMetadata
     :ivar provisioning_state: The provisioning state of the relationship. Known values are:
      "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
     :vartype provisioning_state: str or ~azure.mgmt.relationships.models.ProvisioningState
     """
 
-    source_id: str = rest_field(name="sourceId", visibility=["read"])
-    """The relationship source resource id. Required."""
-    target_id: str = rest_field(name="targetId", visibility=["read", "create", "update", "delete", "query"])
-    """The relationship target resource id. Required."""
-    target_tenant: Optional[str] = rest_field(
-        name="targetTenant", visibility=["read", "create", "update", "delete", "query"]
+    source_id: str = rest_field(name="sourceId", visibility=["read", "create", "update", "delete", "query"])
+    """The relationship source resource id. Must be a service group. Required."""
+    target_id: Optional[str] = rest_field(name="targetId", visibility=["read"])
+    """The relationship target resource id. Server-derived from the scoped resource."""
+    source_tenant: Optional[str] = rest_field(
+        name="sourceTenant", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The relationship target tenant id."""
-    origin_information: "_models.RelationshipOriginInformation" = rest_field(
+    """The relationship source tenant id."""
+    origin_information: Optional["_models.RelationshipOriginInformation"] = rest_field(
         name="originInformation", visibility=["read"]
     )
-    """Information about the origin of the relationship. Required."""
-    metadata: "_models.RelationshipMetadata" = rest_field(visibility=["read"])
-    """Metadata about the relationship. Required."""
+    """Information about the origin of the relationship."""
+    metadata: Optional["_models.RelationshipMetadata"] = rest_field(visibility=["read"])
+    """Metadata about the relationship."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -439,8 +520,8 @@ class ServiceGroupMemberRelationshipProperties(_Model):
     def __init__(
         self,
         *,
-        target_id: str,
-        target_tenant: Optional[str] = None,
+        source_id: str,
+        source_tenant: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -454,7 +535,7 @@ class ServiceGroupMemberRelationshipProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.

@@ -1,5 +1,12 @@
 # Release History
 
+## 2.1.0 (2026-09-16)
+
+### Features Added
+
+  - Model `RelayNamespaceProperties` added property `minimum_tls_version`
+  - Added enum `TlsVersion`
+
 ## 2.1.0b1 (2026-08-05)
 
 ### Features Added

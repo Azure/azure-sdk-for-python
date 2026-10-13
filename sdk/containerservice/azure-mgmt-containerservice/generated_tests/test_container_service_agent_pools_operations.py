@@ -59,7 +59,12 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                     "gpuProfile": {
                         "driver": "str",
                         "driverType": "str",
-                        "nvidia": {"driverMode": "str", "managementMode": "str", "migStrategy": "str"},
+                        "nvidia": {
+                            "driverMode": "str",
+                            "managementMode": "str",
+                            "migProfiles": ["str"],
+                            "migStrategy": "str",
+                        },
                     },
                     "hostGroupID": "str",
                     "kubeletConfig": {
@@ -220,6 +225,7 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                         "maxUnavailable": "str",
                         "nodeSoakDurationInMinutes": 0,
                         "undrainableNodeBehavior": "str",
+                        "upgradeGateSettings": {"enabled": bool},
                     },
                     "upgradeSettingsBlueGreen": {
                         "batchSoakDurationInMinutes": 0,

@@ -40,6 +40,7 @@ def main():
             "properties": {
                 "options": {},
                 "resource": {
+                    "analyticalStorageTtl": 500,
                     "defaultTtl": 100,
                     "id": "tableName",
                     "schema": {
@@ -55,6 +56,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-15/CosmosDBCassandraTableCreateUpdate.json
+# x-ms-original-file: 2026-04-01-preview/CosmosDBCassandraTableCreateUpdate.json
 if __name__ == "__main__":
     main()
