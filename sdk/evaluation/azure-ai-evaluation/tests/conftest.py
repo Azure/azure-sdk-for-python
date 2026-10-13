@@ -3,20 +3,23 @@ from .__openai_patcher import TestProxyConfig, TestProxyHttpxClientBase  # isort
 import re
 import os
 import json
+import hashlib
 import multiprocessing
 import time
 from datetime import datetime, timedelta
+from io import BytesIO
 import jwt
 from copy import deepcopy
 from logging import Logger
 from enum import Enum
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any, Dict, Final, Generator, Mapping, Literal, Optional
 from unittest.mock import patch
+from zipfile import ZipFile
+import nltk
 import requests
 
 import pytest
-from ci_tools.variables import in_ci
 from devtools_testutils import (
     add_body_key_sanitizer,
     add_general_regex_sanitizer,
@@ -34,7 +37,6 @@ from azure.ai.evaluation._legacy._adapters.client import PFClient
 from pytest_mock import MockerFixture
 
 from azure.ai.evaluation import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
-from azure.ai.evaluation._common.utils import ensure_nltk_data_downloaded
 from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._azure._clients import LiteMLClient
 from azure.core.credentials import TokenCredential
@@ -50,6 +52,58 @@ KEY_ONE_DP_AZURE_MODEL_CONFIG = "azure_openai_model_config_onedp"
 KEY_OPENAI_MODEL_CONFIG = "openai_model_config"
 KEY_AZURE_PROJECT_SCOPE = "azure_ai_project_scope"
 KEY_ONE_DP_PROJECT_SCOPE = "azure_ai_one_dp_project_scope"
+
+# Pin official test data so setup does not depend on NLTK's proxy-restricted downloader.
+_NLTK_TEST_PACKAGES = {
+    "corpora/wordnet.zip": ("cbda5ea6eef7f36a97a43d4a75f85e07fccbb4f23657d27b4ccbc93e2646ab59", False),
+    "misc/perluniprops.zip": ("57d54f591c4ed299b3cdf348eecf774ab2858f19e66955352d94ae555e2050ef", True),
+    "tokenizers/punkt.zip": ("51c3078994aeaf650bfc8e028be4fb42b4a0d177d41c012b6a983979653660ec", True),
+    "tokenizers/punkt_tab.zip": ("e57f64187974277726a3417ca6f181ec5403676c717672eef6a748a7b20e0106", True),
+}
+
+
+def _prepare_nltk_test_data(data_dir: Path) -> None:
+    for resource, (checksum, unpack) in _NLTK_TEST_PACKAGES.items():
+        archive_path = data_dir.joinpath(*resource.split("/"))
+        if archive_path.is_file():
+            contents = archive_path.read_bytes()
+        else:
+            url = f"https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/{resource}"
+            with requests.get(url, timeout=60, allow_redirects=False) as response:
+                response.raise_for_status()
+                if response.status_code != 200:
+                    raise RuntimeError(
+                        f"Unexpected HTTP status {response.status_code} for NLTK test data '{resource}'."
+                    )
+                contents = response.content
+
+        if hashlib.sha256(contents).hexdigest() != checksum:
+            raise RuntimeError(f"SHA-256 checksum mismatch for NLTK test data '{resource}'.")
+
+        if not archive_path.is_file():
+            archive_path.parent.mkdir(parents=True, exist_ok=True)
+            temporary_path = archive_path.with_suffix(".zip.tmp")
+            try:
+                temporary_path.write_bytes(contents)
+                temporary_path.replace(archive_path)
+            finally:
+                temporary_path.unlink(missing_ok=True)
+
+        if unpack:
+            with ZipFile(BytesIO(contents)) as archive:
+                members = archive.infolist()
+                for member in members:
+                    member_path = PurePosixPath(member.filename)
+                    if (
+                        not member_path.parts
+                        or member_path.parts[0] != archive_path.stem
+                        or ".." in member_path.parts
+                        or "\\" in member.filename
+                        or any(":" in part for part in member_path.parts)
+                    ):
+                        raise RuntimeError(f"Unexpected member in NLTK test data '{resource}': {member.filename!r}.")
+                if any(not (archive_path.parent / member.filename).exists() for member in members):
+                    archive.extractall(archive_path.parent)
 
 
 def pytest_configure(config: pytest.Config) -> None:
@@ -73,18 +127,18 @@ class SanitizedValues:
 
 
 @pytest.fixture(scope="session", autouse=True)
-def ensure_nltk_data() -> None:
-    """Ensures that nltk data has been downloaded."""
+def ensure_nltk_data() -> Generator[None, None, None]:
+    """Provision verified NLTK test data in the package cache without relaxing downloader security."""
+    cache_dir = Path(__file__).resolve().parent.parent / ".pytest_cache"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    data_dir = cache_dir / "nltk_data"
+    with FileLock(cache_dir / "nltk_data.lock"):
+        _prepare_nltk_test_data(data_dir)
 
-    def try_download_nltk():
-        for _ in range(3):
-            ensure_nltk_data_downloaded()
-
-    if in_ci():
-        with FileLock(Path.home() / "azure_ai_evaluation_nltk_data.txt"):
-            try_download_nltk()
-    else:
-        try_download_nltk()
+    with pytest.MonkeyPatch.context() as monkeypatch:
+        monkeypatch.setenv("NLTK_DATA", str(data_dir), prepend=os.pathsep)
+        monkeypatch.setattr(nltk.data, "path", [str(data_dir), *nltk.data.path])
+        yield
 
 
 @pytest.fixture(scope="session", autouse=True)
