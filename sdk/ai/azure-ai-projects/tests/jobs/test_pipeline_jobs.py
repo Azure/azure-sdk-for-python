@@ -1061,7 +1061,7 @@ def test_dsl_folder_handoff_with_pipeline_file_input_and_output(tmp_path: Path) 
     job = workflow(source=dsl.Input(type="uri_file", path=uri, mode="ReadOnlyMount"))
     try:
         assert job.inputs["source"] == {"jobInputType": "uri_file", "uri": uri, "mode": "ReadOnlyMount"}
-        assert job.outputs["receipt"]["type"] == "uri_file"
+        assert job.outputs["receipt"]["jobOutputType"] == "uri_file"
         assert job.jobs["produce"]["component"]["outputs"]["parts"]["type"] == "uri_folder"
         assert job.jobs["produce"]["outputs"]["parts"] == {
             "job_output_type": "uri_folder",
