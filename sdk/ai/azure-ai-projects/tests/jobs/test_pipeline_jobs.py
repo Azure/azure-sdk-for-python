@@ -1029,6 +1029,71 @@ def test_dsl_typed_primitives_and_remote_file_input(tmp_path: Path) -> None:
             directory.cleanup()
 
 
+def test_dsl_folder_handoff_with_pipeline_file_input_and_output(tmp_path: Path) -> None:
+    @dsl.component
+    def produce(source: dsl.Input(type="uri_file"), parts: dsl.Output(type="uri_folder")) -> None:
+        from pathlib import Path
+
+        folder = Path(parts)
+        folder.mkdir(parents=True, exist_ok=True)
+        for index, word in enumerate(Path(source).read_text(encoding="utf-8").split()):
+            (folder / f"part-{index:04d}.txt").write_text(word, encoding="utf-8")
+
+    @dsl.component
+    def consume(parts: dsl.Input(type="uri_folder"), receipt: dsl.Output(type="uri_file")) -> None:
+        from pathlib import Path
+
+        words = [path.read_text(encoding="utf-8") for path in sorted(Path(parts).glob("part-*.txt"))]
+        Path(receipt).write_text(" ".join(words).upper() + "\n", encoding="utf-8")
+
+    @dsl.pipeline(
+        compute_id=_COMPUTE,
+        environment_image_reference="example.azurecr.io/train:latest",
+        user_assigned_identity_id="/subscriptions/test/identities/hello",
+        instance_type="Singularity.D4_v3",
+    )
+    def workflow(source: dsl.Input(type="uri_file")):
+        first = produce(source=source)
+        second = consume(parts=first.outputs.parts)
+        return {"receipt": second.outputs.receipt}
+
+    uri = "azureai://accounts/test/projects/demo/data/message/versions/1"
+    job = workflow(source=dsl.Input(type="uri_file", path=uri, mode="ReadOnlyMount"))
+    try:
+        assert job.inputs["source"] == {"jobInputType": "uri_file", "uri": uri, "mode": "ReadOnlyMount"}
+        assert job.outputs["receipt"]["type"] == "uri_file"
+        assert job.jobs["produce"]["component"]["outputs"]["parts"]["type"] == "uri_folder"
+        assert job.jobs["produce"]["outputs"]["parts"] == {
+            "job_output_type": "uri_folder",
+            "mode": "ReadWriteMount",
+        }
+        assert job.jobs["consume"]["component"]["inputs"]["parts"]["type"] == "uri_folder"
+        assert job.jobs["consume"]["inputs"]["parts"]["value"] == "${{parent.jobs.produce.outputs.parts}}"
+        assert job.jobs["consume"]["outputs"]["receipt"]["path"] == "${{parent.outputs.receipt}}"
+
+        source = tmp_path / "message.txt"
+        source.write_text("hello foundry", encoding="utf-8")
+        folder = tmp_path / "parts"
+        receipt = tmp_path / "receipt.txt"
+        code = _dsl_code_paths(job)
+        subprocess.run(
+            [sys.executable, str(code["produce"] / "component.py"), str(source), str(folder)],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        subprocess.run(
+            [sys.executable, str(code["consume"] / "component.py"), str(folder), str(receipt)],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        assert receipt.read_text(encoding="utf-8") == "HELLO FOUNDRY\n"
+    finally:
+        for directory in job._component_code_dirs:
+            directory.cleanup()
+
+
 def test_dsl_rejects_unsupported_module_globals_and_outside_calls() -> None:
     @dsl.component
     def write_with_global(result: dsl.Output(type="uri_file")) -> None:
