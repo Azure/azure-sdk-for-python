@@ -8,6 +8,7 @@ import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos import http_constants, exceptions, PartitionKey
+import test_config
 from test_config import TestConfig
 
 
@@ -62,7 +63,7 @@ class TestUserConfigs(unittest.TestCase):
             self.assertEqual(e.status_code, http_constants.StatusCodes.UNAUTHORIZED)
 
     def test_default_account_consistency(self):
-        database_id = "PythonSDKUserConfigTesters-" + str(uuid.uuid4())
+        database_id = test_config.unique_database_id("user-config")
         container_id = "PythonSDKTestContainer-" + str(uuid.uuid4())
         database_account = self.key_client.get_database_account()
         account_consistency_level = database_account.ConsistencyPolicy["defaultConsistencyLevel"]
@@ -70,6 +71,7 @@ class TestUserConfigs(unittest.TestCase):
 
         # Testing the session token logic works without user passing in Session explicitly
         database = self.key_client.create_database(database_id)
+        self.addCleanup(TestConfig.try_delete_database_with_id, self.key_client, database_id)
         database.create_container(id=container_id, partition_key=PartitionKey(path="/id"))
         container = self.data_client.get_database_client(database_id).get_container_client(container_id)
         create_response = container.create_item(body=get_test_item())
@@ -114,4 +116,3 @@ class TestUserConfigs(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

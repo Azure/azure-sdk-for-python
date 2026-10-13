@@ -10,6 +10,24 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AccessRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Direction of Access Rule."""
+
+    INBOUND = "Inbound"
+    """Applies to inbound network traffic to the secured resources."""
+    OUTBOUND = "Outbound"
+    """Applies to outbound network traffic from the secured resources."""
+
+
+class AllocationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allocation state of the cluster and data center resources."""
+
+    ACTIVE = "Active"
+    """Active implies the virtual machines of the cluster are allocated."""
+    DEALLOCATED = "Deallocated"
+    """Deallocated implies virtual machines and resources are deallocated."""
+
+
 class AnalyticalStorageSchemaType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes the types of schema for analytical storage."""
 
@@ -92,6 +110,19 @@ class BackupPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CONTINUOUS."""
 
 
+class BackupState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current state of the backup."""
+
+    INITIATED = "Initiated"
+    """INITIATED."""
+    IN_PROGRESS = "InProgress"
+    """IN_PROGRESS."""
+    SUCCEEDED = "Succeeded"
+    """SUCCEEDED."""
+    FAILED = "Failed"
+    """FAILED."""
+
+
 class BackupStorageRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to indicate type of backup storage redundancy."""
 
@@ -101,6 +132,58 @@ class BackupStorageRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """LOCAL."""
     ZONE = "Zone"
     """ZONE."""
+
+
+class CapacityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the capacity mode of the account."""
+
+    NONE = "None"
+    """NONE."""
+    PROVISIONED = "Provisioned"
+    """PROVISIONED."""
+    SERVERLESS = "Serverless"
+    """SERVERLESS."""
+
+
+class CapacityModeTransitionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The transition status of capacity mode."""
+
+    INVALID = "Invalid"
+    """INVALID."""
+    INITIALIZED = "Initialized"
+    """INITIALIZED."""
+    IN_PROGRESS = "InProgress"
+    """IN_PROGRESS."""
+    COMPLETED = "Completed"
+    """COMPLETED."""
+    FAILED = "Failed"
+    """FAILED."""
+
+
+class ClusterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the cluster. If set to Production, some operations might not be permitted on cluster."""
+
+    PRODUCTION = "Production"
+    """PRODUCTION."""
+    NON_PRODUCTION = "NonProduction"
+    """NON_PRODUCTION."""
+
+
+class CommandStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the command."""
+
+    DONE = "Done"
+    """DONE."""
+    RUNNING = "Running"
+    """RUNNING."""
+    ENQUEUE = "Enqueue"
+    """ENQUEUE."""
+    PROCESSING = "Processing"
+    """PROCESSING."""
+    FINISHED = "Finished"
+    """FINISHED."""
+    FAILED = "Failed"
+    """FAILED."""
 
 
 class CompositePathSortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -152,6 +235,53 @@ class ContinuousTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CONTINUOUS7_DAYS."""
     CONTINUOUS30_DAYS = "Continuous30Days"
     """CONTINUOUS30_DAYS."""
+    CONTINUOUS35_DAYS = "Continuous35Days"
+    """Continuous 35 Days backup tier."""
+
+
+class CopyJobMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Mode of job execution."""
+
+    OFFLINE = "Offline"
+    """OFFLINE."""
+    ONLINE = "Online"
+    """ONLINE."""
+
+
+class CopyJobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Job Status."""
+
+    PENDING = "Pending"
+    """PENDING."""
+    PARTITIONING = "Partitioning"
+    """PARTITIONING."""
+    RUNNING = "Running"
+    """RUNNING."""
+    PAUSED = "Paused"
+    """PAUSED."""
+    COMPLETED = "Completed"
+    """COMPLETED."""
+    FAULTED = "Faulted"
+    """FAULTED."""
+    CANCELLED = "Cancelled"
+    """CANCELLED."""
+
+
+class CopyJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Copy Job Type."""
+
+    CASSANDRA_RU_TO_CASSANDRA_RU = "CassandraRUToCassandraRU"
+    """CASSANDRA_RU_TO_CASSANDRA_RU."""
+    CASSANDRA_RU_TO_AZURE_BLOB_STORAGE = "CassandraRUToAzureBlobStorage"
+    """CASSANDRA_RU_TO_AZURE_BLOB_STORAGE."""
+    AZURE_BLOB_STORAGE_TO_CASSANDRA_RU = "AzureBlobStorageToCassandraRU"
+    """AZURE_BLOB_STORAGE_TO_CASSANDRA_RU."""
+    MONGO_RU_TO_MONGO_RU = "MongoRUToMongoRU"
+    """MONGO_RU_TO_MONGO_RU."""
+    MONGO_RU_TO_MONGO_V_CORE = "MongoRUToMongoVCore"
+    """MONGO_RU_TO_MONGO_V_CORE."""
+    NO_SQL_RU_TO_NO_SQL_RU = "NoSqlRUToNoSqlRU"
+    """NO_SQL_RU_TO_NO_SQL_RU."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -185,6 +315,32 @@ class DatabaseAccountKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MONGO_DB."""
     PARSE = "Parse"
     """PARSE."""
+
+
+class DataTransferComponent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of DataTransferComponent."""
+
+    COSMOS_DB_CASSANDRA = "CosmosDBCassandra"
+    """COSMOS_DB_CASSANDRA."""
+    COSMOS_DB_MONGO = "CosmosDBMongo"
+    """COSMOS_DB_MONGO."""
+    COSMOS_DB_MONGO_V_CORE = "CosmosDBMongoVCore"
+    """COSMOS_DB_MONGO_V_CORE."""
+    COSMOS_DB_SQL = "CosmosDBSql"
+    """COSMOS_DB_SQL."""
+    AZURE_BLOB_STORAGE = "AzureBlobStorage"
+    """AZURE_BLOB_STORAGE."""
+    BASE_COSMOS_DATA_TRANSFER_DATA_SOURCE_SINK = "BaseCosmosDataTransferDataSourceSink"
+    """BASE_COSMOS_DATA_TRANSFER_DATA_SOURCE_SINK."""
+
+
+class DataTransferJobMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Mode of job execution."""
+
+    OFFLINE = "Offline"
+    """OFFLINE."""
+    ONLINE = "Online"
+    """ONLINE."""
 
 
 class DataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -248,6 +404,28 @@ class DistanceFunction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DOTPRODUCT."""
 
 
+class EnableFullTextQuery(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describe the level of detail with which queries are to be logged."""
+
+    NONE = "None"
+    """NONE."""
+    TRUE = "True"
+    """TRUE."""
+    FALSE = "False"
+    """FALSE."""
+
+
+class FleetAnalyticsPropertiesStorageLocationType(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The type of the fleet analytics resource."""
+
+    STORAGE_ACCOUNT = "StorageAccount"
+    """STORAGE_ACCOUNT."""
+    FABRIC_LAKEHOUSE = "FabricLakehouse"
+    """FABRIC_LAKEHOUSE."""
+
+
 class FleetspacePropertiesFleetspaceApiKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of API this fleetspace belongs to. Acceptable values: 'NoSQL'."""
 
@@ -264,6 +442,30 @@ class FleetspacePropertiesServiceTier(str, Enum, metaclass=CaseInsensitiveEnumMe
     """GENERAL_PURPOSE."""
     BUSINESS_CRITICAL = "BusinessCritical"
     """BUSINESS_CRITICAL."""
+
+
+class GarnetAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication method used for the Garnet cluster."""
+
+    ENTRA = "Entra"
+    """Microsoft Entra authentication."""
+
+
+class GarnetCacheProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the resource at the time the operation was called."""
+
+    CREATING = "Creating"
+    """Creating."""
+    UPDATING = "Updating"
+    """Updating."""
+    DELETING = "Deleting"
+    """Deleting."""
+    SUCCEEDED = "Succeeded"
+    """Succeeded."""
+    FAILED = "Failed"
+    """Failed."""
+    CANCELED = "Canceled"
+    """Canceled."""
 
 
 class IndexingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -286,6 +488,22 @@ class IndexKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RANGE."""
     SPATIAL = "Spatial"
     """SPATIAL."""
+
+
+class IssueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of issue."""
+
+    UNKNOWN = "Unknown"
+    """Unknown issue type."""
+    CONFIGURATION_PROPAGATION_FAILURE = "ConfigurationPropagationFailure"
+    """An error occurred while applying the network security perimeter (NSP) configuration."""
+    MISSING_PERIMETER_CONFIGURATION = "MissingPerimeterConfiguration"
+    """A network connectivity issue is happening on the resource which could be addressed either by
+    adding new resources to the network security perimeter (NSP) or by modifying access rules."""
+    MISSING_IDENTITY_CONFIGURATION = "MissingIdentityConfiguration"
+    """An managed identity hasn't been associated with the resource. The resource will still be able
+    to validate inbound traffic from the network security perimeter (NSP) or matching inbound
+    access rules, but it won't be able to perform outbound access as a member of the NSP."""
 
 
 class KeyKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -371,6 +589,29 @@ class NetworkAclBypass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AZURE_SERVICES."""
 
 
+class NetworkSecurityPerimeterConfigurationProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Provisioning state of a network security perimeter configuration that is being created or
+    updated.
+    """
+
+    SUCCEEDED = "Succeeded"
+    """The configuration was provisioned successfully."""
+    CREATING = "Creating"
+    """The configuration is being created."""
+    UPDATING = "Updating"
+    """The configuration is being updated."""
+    DELETING = "Deleting"
+    """The configuration is being deleted."""
+    ACCEPTED = "Accepted"
+    """The configuration request was accepted and provisioning has not started yet."""
+    FAILED = "Failed"
+    """The configuration failed to provision."""
+    CANCELED = "Canceled"
+    """The configuration provisioning was canceled."""
+
+
 class NodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state of the node in Cassandra ring."""
 
@@ -447,6 +688,17 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DISABLED."""
     SECURED_BY_PERIMETER = "SecuredByPerimeter"
     """SECURED_BY_PERIMETER."""
+
+
+class ResourceAssociationAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Access mode of the resource association."""
+
+    ENFORCED = "Enforced"
+    """Enforced access mode - traffic to the resource that failed access checks is blocked."""
+    LEARNING = "Learning"
+    """Learning access mode - traffic to the resource is enabled for analysis but not blocked."""
+    AUDIT = "Audit"
+    """Audit access mode - traffic to the resource that fails access checks is logged but not blocked."""
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -552,6 +804,24 @@ class ServiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MATERIALIZED_VIEWS_BUILDER."""
 
 
+class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Severity of the issue."""
+
+    WARNING = "Warning"
+    """The issue is a warning and does not prevent the configuration from being applied."""
+    ERROR = "Error"
+    """The issue is an error and prevents the configuration from being applied."""
+
+
+class SoftDeleteActionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of soft delete action to perform."""
+
+    RESTORE_SOFT_DELETED_RESOURCE = "RestoreSoftDeletedResource"
+    """Restores the soft-deleted resource to active/online state."""
+    PERMANENT_DELETE_RESOURCE = "PermanentDeleteResource"
+    """Permanently deletes the soft-deleted resource."""
+
+
 class SpatialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the spatial type of index."""
 
@@ -588,6 +858,26 @@ class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """UPDATING."""
     CREATING = "Creating"
     """CREATING."""
+
+
+class SupportedActions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether what action to take for the Chaos Fault."""
+
+    ENABLE = "Enable"
+    """ENABLE."""
+    DISABLE = "Disable"
+    """DISABLE."""
+
+
+class ThroughputPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ThroughputPolicy to apply for throughput redistribution."""
+
+    NONE = "none"
+    """NONE."""
+    EQUAL = "equal"
+    """EQUAL."""
+    CUSTOM = "custom"
+    """CUSTOM."""
 
 
 class TriggerOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):

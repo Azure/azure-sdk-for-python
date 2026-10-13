@@ -66,6 +66,23 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a key."""
 
 
+class CustomAIModelProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of a CustomAIModel resource."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+    CREATING = "Creating"
+    """Resource is being created."""
+    UPDATING = "Updating"
+    """Resource is updating."""
+    DELETING = "Deleting"
+    """Resource is deleting."""
+
+
 class DeletePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Delete options of the AI Manager."""
 
@@ -136,6 +153,10 @@ class ModelSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     HUGGING_FACE = "HuggingFace"
     """A Hugging Face model registry."""
+    MICROSOFT_FOUNDRY = "MicrosoftFoundry"
+    """A Microsoft Foundry project. Tenant-private models produced by internal training pipelines.
+    Authenticated via a user-assigned managed identity (referenced in the credential and granted
+    the ``Foundry User`` role on the project)."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):

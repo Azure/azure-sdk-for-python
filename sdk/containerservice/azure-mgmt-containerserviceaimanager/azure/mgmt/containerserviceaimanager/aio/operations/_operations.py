@@ -37,7 +37,6 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
-from ..._validation import api_version_validation
 from ...operations._operations import (
     build_ai_manager_namespaces_create_or_update_request,
     build_ai_manager_namespaces_delete_request,
@@ -56,6 +55,11 @@ from ...operations._operations import (
     build_ai_models_calculate_cost_request,
     build_ai_models_get_request,
     build_ai_models_list_request,
+    build_custom_ai_models_calculate_cost_request,
+    build_custom_ai_models_create_or_update_request,
+    build_custom_ai_models_delete_request,
+    build_custom_ai_models_get_request,
+    build_custom_ai_models_list_request,
     build_model_deployments_create_or_update_request,
     build_model_deployments_delete_request,
     build_model_deployments_get_request,
@@ -1905,20 +1909,6 @@ class AIManagerNamespacesOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-05-02-preview",
-        params_added_on={
-            "2026-05-02-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "ai_manager_name",
-                "namespace_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-05-02-preview"],
-    )
     async def list_access_keys(
         self, resource_group_name: str, ai_manager_name: str, namespace_name: str, **kwargs: Any
     ) -> _models.NamespaceAccessInfo:
@@ -1994,20 +1984,6 @@ class AIManagerNamespacesOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-05-02-preview",
-        params_added_on={
-            "2026-05-02-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "ai_manager_name",
-                "namespace_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-05-02-preview"],
-    )
     async def rotate_keys(
         self, resource_group_name: str, ai_manager_name: str, namespace_name: str, **kwargs: Any
     ) -> _models.NamespaceAccessInfo:
@@ -2105,13 +2081,6 @@ class AIModelsOperations:  # pylint: disable=docstring-missing-param
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-05-02-preview",
-        params_added_on={
-            "2026-05-02-preview": ["api_version", "subscription_id", "location", "ai_model_name", "accept"]
-        },
-        api_versions_list=["2026-05-02-preview"],
-    )
     async def get(self, location: str, ai_model_name: str, **kwargs: Any) -> _models.AIModel:
         """Get a AIModel.
 
@@ -2186,11 +2155,6 @@ class AIModelsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-05-02-preview",
-        params_added_on={"2026-05-02-preview": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2026-05-02-preview"],
-    )
     def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.AIModel"]:
         """List AIModel resources by SubscriptionLocationResource.
 
@@ -2287,127 +2251,8 @@ class AIModelsOperations:  # pylint: disable=docstring-missing-param
 
         return AsyncItemPaged(get_next, extract_data)
 
-    @overload
-    async def calculate_cost(
-        self,
-        location: str,
-        ai_model_name: str,
-        body: _models.CalculateCostRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.CalculateCostResponse:
-        """Returns a ranked list of GPU SKU pricing plans for deploying this model in the target region,
-        each annotated with feasibility, per-replica hourly cost, and estimated relative performance.
-        No Azure or Kubernetes resources are provisioned.
-
-        :param location: The name of the Azure region. Required.
-        :type location: str
-        :param ai_model_name: The name of the AI model resource. A stable, format-defined identifier
-         derived from ``modelId`` as the lowercase hex of the first 8 bytes (16 characters) of
-         ``SHA-256(modelId)`` (e.g. upstream ``microsoft/Phi-4-mini-instruct`` produces
-         ``9806f0c862fdd920``). Callers should treat the name as opaque and use the ``modelId`` property
-         as the human-readable reference. The encoding is a permanent contract of this resource provider
-         and does not depend on any upstream naming policy. Required.
-        :type ai_model_name: str
-        :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.containerserviceaimanager.models.CalculateCostRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: CalculateCostResponse. The CalculateCostResponse is compatible with MutableMapping
-        :rtype: ~azure.mgmt.containerserviceaimanager.models.CalculateCostResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def calculate_cost(
-        self,
-        location: str,
-        ai_model_name: str,
-        body: _types.CalculateCostRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.CalculateCostResponse:
-        """Returns a ranked list of GPU SKU pricing plans for deploying this model in the target region,
-        each annotated with feasibility, per-replica hourly cost, and estimated relative performance.
-        No Azure or Kubernetes resources are provisioned.
-
-        :param location: The name of the Azure region. Required.
-        :type location: str
-        :param ai_model_name: The name of the AI model resource. A stable, format-defined identifier
-         derived from ``modelId`` as the lowercase hex of the first 8 bytes (16 characters) of
-         ``SHA-256(modelId)`` (e.g. upstream ``microsoft/Phi-4-mini-instruct`` produces
-         ``9806f0c862fdd920``). Callers should treat the name as opaque and use the ``modelId`` property
-         as the human-readable reference. The encoding is a permanent contract of this resource provider
-         and does not depend on any upstream naming policy. Required.
-        :type ai_model_name: str
-        :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.containerserviceaimanager.types.CalculateCostRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: CalculateCostResponse. The CalculateCostResponse is compatible with MutableMapping
-        :rtype: ~azure.mgmt.containerserviceaimanager.models.CalculateCostResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def calculate_cost(
-        self,
-        location: str,
-        ai_model_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.CalculateCostResponse:
-        """Returns a ranked list of GPU SKU pricing plans for deploying this model in the target region,
-        each annotated with feasibility, per-replica hourly cost, and estimated relative performance.
-        No Azure or Kubernetes resources are provisioned.
-
-        :param location: The name of the Azure region. Required.
-        :type location: str
-        :param ai_model_name: The name of the AI model resource. A stable, format-defined identifier
-         derived from ``modelId`` as the lowercase hex of the first 8 bytes (16 characters) of
-         ``SHA-256(modelId)`` (e.g. upstream ``microsoft/Phi-4-mini-instruct`` produces
-         ``9806f0c862fdd920``). Callers should treat the name as opaque and use the ``modelId`` property
-         as the human-readable reference. The encoding is a permanent contract of this resource provider
-         and does not depend on any upstream naming policy. Required.
-        :type ai_model_name: str
-        :param body: The content of the action request. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: CalculateCostResponse. The CalculateCostResponse is compatible with MutableMapping
-        :rtype: ~azure.mgmt.containerserviceaimanager.models.CalculateCostResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-05-02-preview",
-        params_added_on={
-            "2026-05-02-preview": [
-                "api_version",
-                "subscription_id",
-                "location",
-                "ai_model_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-05-02-preview"],
-    )
-    async def calculate_cost(
-        self,
-        location: str,
-        ai_model_name: str,
-        body: Union[_models.CalculateCostRequest, _types.CalculateCostRequest, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.CalculateCostResponse:
+    async def calculate_cost(self, location: str, ai_model_name: str, **kwargs: Any) -> _models.CalculateCostResponse:
         """Returns a ranked list of GPU SKU pricing plans for deploying this model in the target region,
         each annotated with feasibility, per-replica hourly cost, and estimated relative performance.
         No Azure or Kubernetes resources are provisioned.
@@ -2421,10 +2266,6 @@ class AIModelsOperations:  # pylint: disable=docstring-missing-param
          as the human-readable reference. The encoding is a permanent contract of this resource provider
          and does not depend on any upstream naming policy. Required.
         :type ai_model_name: str
-        :param body: The content of the action request. Is either a CalculateCostRequest type or a
-         IO[bytes] type. Required.
-        :type body: ~azure.mgmt.containerserviceaimanager.models.CalculateCostRequest or
-         ~azure.mgmt.containerserviceaimanager.types.CalculateCostRequest or IO[bytes]
         :return: CalculateCostResponse. The CalculateCostResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.containerserviceaimanager.models.CalculateCostResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2437,26 +2278,16 @@ class AIModelsOperations:  # pylint: disable=docstring-missing-param
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CalculateCostResponse] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_ai_models_calculate_cost_request(
             location=location,
             ai_model_name=ai_model_name,
             subscription_id=self._config.subscription_id,
-            content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -2517,20 +2348,6 @@ class ModelSourcesOperations:  # pylint: disable=docstring-missing-param
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-05-02-preview",
-        params_added_on={
-            "2026-05-02-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "ai_manager_name",
-                "model_source_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-05-02-preview"],
-    )
     async def get(
         self, resource_group_name: str, ai_manager_name: str, model_source_name: str, **kwargs: Any
     ) -> _models.ModelSource:
@@ -2605,23 +2422,6 @@ class ModelSourcesOperations:  # pylint: disable=docstring-missing-param
 
         return deserialized  # type: ignore
 
-    @api_version_validation(
-        method_added_on="2026-05-02-preview",
-        params_added_on={
-            "2026-05-02-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "ai_manager_name",
-                "model_source_name",
-                "content_type",
-                "accept",
-                "etag",
-                "match_condition",
-            ]
-        },
-        api_versions_list=["2026-05-02-preview"],
-    )
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
@@ -2839,23 +2639,6 @@ class ModelSourcesOperations:  # pylint: disable=docstring-missing-param
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-05-02-preview",
-        params_added_on={
-            "2026-05-02-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "ai_manager_name",
-                "model_source_name",
-                "content_type",
-                "accept",
-                "etag",
-                "match_condition",
-            ]
-        },
-        api_versions_list=["2026-05-02-preview"],
-    )
     async def begin_create_or_update(
         self,
         resource_group_name: str,
@@ -2949,21 +2732,6 @@ class ModelSourcesOperations:  # pylint: disable=docstring-missing-param
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        method_added_on="2026-05-02-preview",
-        params_added_on={
-            "2026-05-02-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "ai_manager_name",
-                "model_source_name",
-                "etag",
-                "match_condition",
-            ]
-        },
-        api_versions_list=["2026-05-02-preview"],
-    )
     async def _delete_initial(
         self,
         resource_group_name: str,
@@ -3042,21 +2810,6 @@ class ModelSourcesOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-05-02-preview",
-        params_added_on={
-            "2026-05-02-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "ai_manager_name",
-                "model_source_name",
-                "etag",
-                "match_condition",
-            ]
-        },
-        api_versions_list=["2026-05-02-preview"],
-    )
     async def begin_delete(
         self,
         resource_group_name: str,
@@ -3133,13 +2886,6 @@ class ModelSourcesOperations:  # pylint: disable=docstring-missing-param
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-05-02-preview",
-        params_added_on={
-            "2026-05-02-preview": ["api_version", "subscription_id", "resource_group_name", "ai_manager_name", "accept"]
-        },
-        api_versions_list=["2026-05-02-preview"],
-    )
     def list(
         self, resource_group_name: str, ai_manager_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.ModelSource"]:
@@ -3263,21 +3009,6 @@ class ModelDeploymentsOperations:  # pylint: disable=docstring-missing-param
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-05-02-preview",
-        params_added_on={
-            "2026-05-02-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "ai_manager_name",
-                "namespace_name",
-                "model_deployment_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-05-02-preview"],
-    )
     async def get(
         self,
         resource_group_name: str,
@@ -3360,24 +3091,6 @@ class ModelDeploymentsOperations:  # pylint: disable=docstring-missing-param
 
         return deserialized  # type: ignore
 
-    @api_version_validation(
-        method_added_on="2026-05-02-preview",
-        params_added_on={
-            "2026-05-02-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "ai_manager_name",
-                "namespace_name",
-                "model_deployment_name",
-                "content_type",
-                "accept",
-                "etag",
-                "match_condition",
-            ]
-        },
-        api_versions_list=["2026-05-02-preview"],
-    )
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
@@ -3606,24 +3319,6 @@ class ModelDeploymentsOperations:  # pylint: disable=docstring-missing-param
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-05-02-preview",
-        params_added_on={
-            "2026-05-02-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "ai_manager_name",
-                "namespace_name",
-                "model_deployment_name",
-                "content_type",
-                "accept",
-                "etag",
-                "match_condition",
-            ]
-        },
-        api_versions_list=["2026-05-02-preview"],
-    )
     async def begin_create_or_update(
         self,
         resource_group_name: str,
@@ -3721,22 +3416,6 @@ class ModelDeploymentsOperations:  # pylint: disable=docstring-missing-param
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        method_added_on="2026-05-02-preview",
-        params_added_on={
-            "2026-05-02-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "ai_manager_name",
-                "namespace_name",
-                "model_deployment_name",
-                "etag",
-                "match_condition",
-            ]
-        },
-        api_versions_list=["2026-05-02-preview"],
-    )
     async def _delete_initial(
         self,
         resource_group_name: str,
@@ -3820,22 +3499,6 @@ class ModelDeploymentsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-05-02-preview",
-        params_added_on={
-            "2026-05-02-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "ai_manager_name",
-                "namespace_name",
-                "model_deployment_name",
-                "etag",
-                "match_condition",
-            ]
-        },
-        api_versions_list=["2026-05-02-preview"],
-    )
     async def begin_delete(
         self,
         resource_group_name: str,
@@ -3916,20 +3579,6 @@ class ModelDeploymentsOperations:  # pylint: disable=docstring-missing-param
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-05-02-preview",
-        params_added_on={
-            "2026-05-02-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "ai_manager_name",
-                "namespace_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-05-02-preview"],
-    )
     def list_by_ai_manager_namespace(
         self, resource_group_name: str, ai_manager_name: str, namespace_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.ModelDeployment"]:
@@ -4034,3 +3683,747 @@ class ModelDeploymentsOperations:  # pylint: disable=docstring-missing-param
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+
+class CustomAIModelsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.containerserviceaimanager.aio.ContainerServiceAIManagerMgmtClient`'s
+        :attr:`custom_ai_models` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ContainerServiceAIManagerMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def get(
+        self, resource_group_name: str, ai_manager_name: str, custom_ai_model_name: str, **kwargs: Any
+    ) -> _models.CustomAIModel:
+        """Get a CustomAIModel.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_manager_name: The name of the AI Manager resource. Required.
+        :type ai_manager_name: str
+        :param custom_ai_model_name: The name of the custom AI model resource. Required.
+        :type custom_ai_model_name: str
+        :return: CustomAIModel. The CustomAIModel is compatible with MutableMapping
+        :rtype: ~azure.mgmt.containerserviceaimanager.models.CustomAIModel
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.CustomAIModel] = kwargs.pop("cls", None)
+
+        _request = build_custom_ai_models_get_request(
+            resource_group_name=resource_group_name,
+            ai_manager_name=ai_manager_name,
+            custom_ai_model_name=custom_ai_model_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.CustomAIModel, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        ai_manager_name: str,
+        custom_ai_model_name: str,
+        resource: Union[_models.CustomAIModel, _types.CustomAIModel, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_custom_ai_models_create_or_update_request(
+            resource_group_name=resource_group_name,
+            ai_manager_name=ai_manager_name,
+            custom_ai_model_name=custom_ai_model_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        ai_manager_name: str,
+        custom_ai_model_name: str,
+        resource: _models.CustomAIModel,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.CustomAIModel]:
+        """Create or update a ``CustomAIModel``. This is a full-replace operation: any optional property
+        omitted from the request body is reset to its default value, or cleared if it has no default.
+        To safely modify a subset of fields (e.g. ``description``), perform a GET, modify the returned
+        resource, and PUT it back using the returned ETag via the ``If-Match`` header. A PUT that
+        changes the immutable ``modelId`` or ``modelSourceResourceId`` is rejected.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_manager_name: The name of the AI Manager resource. Required.
+        :type ai_manager_name: str
+        :param custom_ai_model_name: The name of the custom AI model resource. Required.
+        :type custom_ai_model_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.containerserviceaimanager.models.CustomAIModel
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns CustomAIModel. The CustomAIModel is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerserviceaimanager.models.CustomAIModel]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        ai_manager_name: str,
+        custom_ai_model_name: str,
+        resource: _types.CustomAIModel,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.CustomAIModel]:
+        """Create or update a ``CustomAIModel``. This is a full-replace operation: any optional property
+        omitted from the request body is reset to its default value, or cleared if it has no default.
+        To safely modify a subset of fields (e.g. ``description``), perform a GET, modify the returned
+        resource, and PUT it back using the returned ETag via the ``If-Match`` header. A PUT that
+        changes the immutable ``modelId`` or ``modelSourceResourceId`` is rejected.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_manager_name: The name of the AI Manager resource. Required.
+        :type ai_manager_name: str
+        :param custom_ai_model_name: The name of the custom AI model resource. Required.
+        :type custom_ai_model_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.containerserviceaimanager.types.CustomAIModel
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns CustomAIModel. The CustomAIModel is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerserviceaimanager.models.CustomAIModel]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        ai_manager_name: str,
+        custom_ai_model_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.CustomAIModel]:
+        """Create or update a ``CustomAIModel``. This is a full-replace operation: any optional property
+        omitted from the request body is reset to its default value, or cleared if it has no default.
+        To safely modify a subset of fields (e.g. ``description``), perform a GET, modify the returned
+        resource, and PUT it back using the returned ETag via the ``If-Match`` header. A PUT that
+        changes the immutable ``modelId`` or ``modelSourceResourceId`` is rejected.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_manager_name: The name of the AI Manager resource. Required.
+        :type ai_manager_name: str
+        :param custom_ai_model_name: The name of the custom AI model resource. Required.
+        :type custom_ai_model_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns CustomAIModel. The CustomAIModel is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerserviceaimanager.models.CustomAIModel]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        ai_manager_name: str,
+        custom_ai_model_name: str,
+        resource: Union[_models.CustomAIModel, _types.CustomAIModel, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.CustomAIModel]:
+        """Create or update a ``CustomAIModel``. This is a full-replace operation: any optional property
+        omitted from the request body is reset to its default value, or cleared if it has no default.
+        To safely modify a subset of fields (e.g. ``description``), perform a GET, modify the returned
+        resource, and PUT it back using the returned ETag via the ``If-Match`` header. A PUT that
+        changes the immutable ``modelId`` or ``modelSourceResourceId`` is rejected.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_manager_name: The name of the AI Manager resource. Required.
+        :type ai_manager_name: str
+        :param custom_ai_model_name: The name of the custom AI model resource. Required.
+        :type custom_ai_model_name: str
+        :param resource: Resource create parameters. Is either a CustomAIModel type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.containerserviceaimanager.models.CustomAIModel or
+         ~azure.mgmt.containerserviceaimanager.types.CustomAIModel or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns CustomAIModel. The CustomAIModel is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerserviceaimanager.models.CustomAIModel]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CustomAIModel] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                ai_manager_name=ai_manager_name,
+                custom_ai_model_name=custom_ai_model_name,
+                resource=resource,
+                etag=etag,
+                match_condition=match_condition,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.CustomAIModel, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.CustomAIModel].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.CustomAIModel](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    async def _delete_initial(
+        self,
+        resource_group_name: str,
+        ai_manager_name: str,
+        custom_ai_model_name: str,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_custom_ai_models_delete_request(
+            resource_group_name=resource_group_name,
+            ai_manager_name=ai_manager_name,
+            custom_ai_model_name=custom_ai_model_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def begin_delete(
+        self,
+        resource_group_name: str,
+        ai_manager_name: str,
+        custom_ai_model_name: str,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a CustomAIModel.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_manager_name: The name of the AI Manager resource. Required.
+        :type ai_manager_name: str
+        :param custom_ai_model_name: The name of the custom AI model resource. Required.
+        :type custom_ai_model_name: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                ai_manager_name=ai_manager_name,
+                custom_ai_model_name=custom_ai_model_name,
+                etag=etag,
+                match_condition=match_condition,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    def list(
+        self, resource_group_name: str, ai_manager_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.CustomAIModel"]:
+        """List CustomAIModel resources by AIManager.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_manager_name: The name of the AI Manager resource. Required.
+        :type ai_manager_name: str
+        :return: An iterator like instance of CustomAIModel
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerserviceaimanager.models.CustomAIModel]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.CustomAIModel]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_custom_ai_models_list_request(
+                    resource_group_name=resource_group_name,
+                    ai_manager_name=ai_manager_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.CustomAIModel],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def calculate_cost(
+        self, resource_group_name: str, ai_manager_name: str, custom_ai_model_name: str, **kwargs: Any
+    ) -> _models.CalculateCostResponse:
+        """Returns a ranked list of GPU SKU pricing plans for deploying this custom model in the target
+        region, each annotated with feasibility and per-replica hourly cost. Feasibility is determined
+        by region availability, GPU quota, and model architecture fit (verified at registration time).
+        ``servingPerformanceEstimation`` is omitted for custom models. No Azure or Kubernetes resources
+        are provisioned.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_manager_name: The name of the AI Manager resource. Required.
+        :type ai_manager_name: str
+        :param custom_ai_model_name: The name of the custom AI model resource. Required.
+        :type custom_ai_model_name: str
+        :return: CalculateCostResponse. The CalculateCostResponse is compatible with MutableMapping
+        :rtype: ~azure.mgmt.containerserviceaimanager.models.CalculateCostResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.CalculateCostResponse] = kwargs.pop("cls", None)
+
+        _request = build_custom_ai_models_calculate_cost_request(
+            resource_group_name=resource_group_name,
+            ai_manager_name=ai_manager_name,
+            custom_ai_model_name=custom_ai_model_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.CalculateCostResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore

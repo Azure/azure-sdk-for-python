@@ -82,16 +82,16 @@ class TestCosmosResponses(unittest.TestCase):
         assert int(lsn) + 1 < int(batch_response.get_response_headers()['lsn'])
 
     def test_create_database_headers(self):
-        first_response = self.client.create_database(id="responses_test" + str(uuid.uuid4()), return_properties=True)
+        first_response = self.client.create_database(id=test_config.unique_database_id("responses"), return_properties=True)
 
         assert len(first_response[1].get_response_headers()) > 0
 
     def test_create_database_returns_database_proxy(self):
-        first_response = self.client.create_database(id="responses_test" + str(uuid.uuid4()))
+        first_response = self.client.create_database(id=test_config.unique_database_id("responses"))
         assert isinstance(first_response, DatabaseProxy)
 
     def test_create_database_if_not_exists_headers(self):
-        database_id = "responses_test" + str(uuid.uuid4())
+        database_id = test_config.unique_database_id("responses")
         first_response = self.client.create_database_if_not_exists(id=database_id, return_properties=True)
         try:
             assert first_response[1]["id"] == database_id
@@ -100,7 +100,7 @@ class TestCosmosResponses(unittest.TestCase):
             self.client.delete_database(database_id)
 
     def test_create_database_if_not_exists_headers_negative(self):
-        database_id = "responses_test" + str(uuid.uuid4())
+        database_id = test_config.unique_database_id("responses-negative")
         _, existing = self.client.create_database(id=database_id, return_properties=True)
         try:
             first_response = self.client.create_database_if_not_exists(id=database_id, return_properties=True)
@@ -141,7 +141,7 @@ class TestCosmosResponses(unittest.TestCase):
         assert len(second_response[1].get_response_headers()) > 0
 
     def test_database_read_headers(self):
-        db = self.client.create_database(id="responses_test" + str(uuid.uuid4()))
+        db = self.client.create_database(id=test_config.unique_database_id("responses"))
         first_response = db.read()
         assert len(first_response.get_response_headers()) > 0
 
@@ -160,7 +160,7 @@ class TestCosmosResponses(unittest.TestCase):
         assert replace_throughput_value == container.get_throughput().offer_throughput
 
     def test_database_replace_throughput(self):
-        db = self.client.create_database(id="responses_test" + str(uuid.uuid4()), offer_throughput=400)
+        db = self.client.create_database(id=test_config.unique_database_id("responses"), offer_throughput=400)
         replace_throughput_value = 500
         first_response = db.replace_throughput(replace_throughput_value)
         assert len(first_response.get_response_headers()) > 0

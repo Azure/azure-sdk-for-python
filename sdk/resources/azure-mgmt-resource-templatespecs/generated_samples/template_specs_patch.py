@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Resources/templateSpecs/stable/2021-05-01/examples/TemplateSpecsPatch.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Resources/templateSpecs/stable/2022-02-01/examples/TemplateSpecsPatch.json
 if __name__ == "__main__":
     main()

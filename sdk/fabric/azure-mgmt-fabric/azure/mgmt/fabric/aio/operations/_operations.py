@@ -1531,7 +1531,7 @@ class FabricCapacitiesOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2025-01-15-preview",
         params_added_on={"2025-01-15-preview": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2025-01-15-preview", "2026-08-01-preview"],
+        api_versions_list=["2025-01-15-preview", "2026-09-01-preview"],
     )
     def list_usages(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.Quota"]:
         """List the current consumption and limit in this location for the provided subscription.

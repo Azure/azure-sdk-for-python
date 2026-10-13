@@ -27,12 +27,12 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperationsAsync(Azur
             location="str",
             request_body={
                 "executionParameters": {
+                    "additionalCreateParameters": {"str": {}},
                     "capacityRecommendationParameters": {
                         "availabilityZones": bool,
                         "desiredLocations": ["str"],
                         "desiredSizes": ["str"],
                     },
-                    "optimizationPreference": "str",
                     "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                     "verifyVmAgentHealth": bool,
                 },
@@ -52,12 +52,12 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperationsAsync(Azur
             location="str",
             request_body={
                 "executionParameters": {
+                    "additionalCreateParameters": {"str": {}},
                     "capacityRecommendationParameters": {
                         "availabilityZones": bool,
                         "desiredLocations": ["str"],
                         "desiredSizes": ["str"],
                     },
-                    "optimizationPreference": "str",
                     "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                     "verifyVmAgentHealth": bool,
                 },
@@ -77,90 +77,17 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperationsAsync(Azur
             location="str",
             request_body={
                 "executionParameters": {
+                    "additionalCreateParameters": {"str": {}},
                     "capacityRecommendationParameters": {
                         "availabilityZones": bool,
                         "desiredLocations": ["str"],
                         "desiredSizes": ["str"],
                     },
-                    "optimizationPreference": "str",
                     "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                     "verifyVmAgentHealth": bool,
                 },
                 "resources": {"ids": ["str"]},
                 "resourcesWithContext": {"resources": [{"resourceContext": "str", "resourceId": "str"}]},
-            },
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_bulk_operations_bulk_create_operation(self, resource_group):
-        response = await self.client.virtual_machine_bulk_operations.bulk_create_operation(
-            resource_group_name=resource_group.name,
-            location="str",
-            request_body={
-                "executionParameters": {
-                    "capacityRecommendationParameters": {
-                        "availabilityZones": bool,
-                        "desiredLocations": ["str"],
-                        "desiredSizes": ["str"],
-                    },
-                    "optimizationPreference": "str",
-                    "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
-                    "verifyVmAgentHealth": bool,
-                },
-                "resourceConfigParameters": {
-                    "resourceCount": 0,
-                    "baseProfile": {"str": {}},
-                    "resourceOverrides": [{"str": {}}],
-                    "resourcePrefix": "str",
-                },
-            },
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_virtual_machine_bulk_operations_bulk_vdi_flex_create_operation(self, resource_group):
-        response = await self.client.virtual_machine_bulk_operations.bulk_vdi_flex_create_operation(
-            resource_group_name=resource_group.name,
-            location="str",
-            request_body={
-                "executionParameters": {
-                    "capacityRecommendationParameters": {
-                        "availabilityZones": bool,
-                        "desiredLocations": ["str"],
-                        "desiredSizes": ["str"],
-                    },
-                    "optimizationPreference": "str",
-                    "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
-                    "verifyVmAgentHealth": bool,
-                },
-                "resourceConfigParameters": {
-                    "flexProperties": {
-                        "osType": "str",
-                        "priorityProfile": {
-                            "allocationStrategy": "str",
-                            "evictionPolicy": "str",
-                            "maxPricePerVM": 0.0,
-                            "type": "str",
-                        },
-                        "vmSizeProfiles": [{"name": "str", "rank": 0}],
-                        "minCapacity": 0,
-                        "zoneAllocationPolicy": {
-                            "distributionStrategy": "str",
-                            "zonePreferences": [{"rank": 0, "zone": "str"}],
-                        },
-                    },
-                    "resourceCount": 0,
-                    "baseProfile": {"str": {}},
-                    "resourceOverrides": [{"str": {}}],
-                    "resourcePrefix": "str",
-                },
             },
         )
 
@@ -175,12 +102,12 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperationsAsync(Azur
             location="str",
             request_body={
                 "executionParameters": {
+                    "additionalCreateParameters": {"str": {}},
                     "capacityRecommendationParameters": {
                         "availabilityZones": bool,
                         "desiredLocations": ["str"],
                         "desiredSizes": ["str"],
                     },
-                    "optimizationPreference": "str",
                     "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                     "verifyVmAgentHealth": bool,
                 },
@@ -225,12 +152,12 @@ class TestComputeBulkActionsMgmtVirtualMachineBulkOperationsOperationsAsync(Azur
             location="str",
             request_body={
                 "executionParameters": {
+                    "additionalCreateParameters": {"str": {}},
                     "capacityRecommendationParameters": {
                         "availabilityZones": bool,
                         "desiredLocations": ["str"],
                         "desiredSizes": ["str"],
                     },
-                    "optimizationPreference": "str",
                     "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                     "verifyVmAgentHealth": bool,
                 },

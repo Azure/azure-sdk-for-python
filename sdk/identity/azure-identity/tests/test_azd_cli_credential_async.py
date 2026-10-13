@@ -342,11 +342,7 @@ async def test_claims_challenge_raises_error(get_token_method):
     claims = '{"access_token":{"acrs":{"essential":true,"values":["p1"]}}}'
     credential = AzureDeveloperCliCredential()
 
-    expected_message = (
-        "ERROR: fetching token: AADSTS50076: Due to a configuration change made by your administrator, "
-        "or because you moved to a new location, you must use multi-factor authentication to access "
-        "'tenant-id'. Trace ID: trace-id Correlation ID: correlation-id Timestamp: 2025-08-18 22:08:14Z"
-    )
+    expected_message = "Suggestion: re-authentication required, run `azd auth login` to acquire a new token."
     error_output = """\
 {"data":{"message":"\\nERROR: fetching token: AADSTS50076: Due to a configuration change made by your administrator, or because you moved to a new location, you must use multi-factor authentication to access 'tenant-id'. Trace ID: trace-id Correlation ID: correlation-id Timestamp: 2025-08-18 22:08:14Z\\n"}}
 {"data":{"message":"Suggestion: re-authentication required, run `azd auth login` to acquire a new token.\\n"}}"""

@@ -39,6 +39,7 @@ build/
 TestResults/
 ENV_DIR/
 .assets/
+/.github/aw/logs/
 
 # Perf test profiling
 cProfile-*.pstats
