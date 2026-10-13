@@ -609,7 +609,6 @@
         "azure.ai.projects.models.VoiceAgentLlmInterimResponseConfig": "Azure.AI.Projects.VoiceAgentLlmInterimResponseConfig",
         "azure.ai.projects.models.VoiceAgentMcpTool": "Azure.AI.Projects.VoiceAgentMcpTool",
         "azure.ai.projects.models.VoiceAgentNoiseReduction": "Azure.AI.Projects.VoiceAgentNoiseReduction",
-        "azure.ai.projects.models.VoiceAgentRealtimeResponseBase": "Azure.AI.Projects.VoiceAgentRealtimeResponseBase",
         "azure.ai.projects.models.VoiceAgentRealtimeResponse": "Azure.AI.Projects.VoiceAgentRealtimeResponse",
         "azure.ai.projects.models.VoiceAgentResponseCreateParams": "Azure.AI.Projects.VoiceAgentResponseCreateParams",
         "azure.ai.projects.models.VoiceAgentRtcCallErrorDetails": "Azure.AI.Projects.VoiceAgentRtcCallErrorDetails",
@@ -650,7 +649,6 @@
         "azure.ai.projects.models.VoiceHostedAgentConversationEngine": "Azure.AI.Projects.VoiceHostedAgentConversationEngine",
         "azure.ai.projects.models.VoiceRecording": "Azure.AI.Projects.VoiceRecording",
         "azure.ai.projects.models.VoiceRecordingChannelLayout": "Azure.AI.Projects.VoiceRecordingChannelLayout",
-        "azure.ai.projects.models.VoiceResponseBase": "Azure.AI.Projects.VoiceResponseBase",
         "azure.ai.projects.models.VoiceResponse": "Azure.AI.Projects.VoiceResponse",
         "azure.ai.projects.models.VoiceResponseAudio": "Azure.AI.Projects.VoiceResponseAudio",
         "azure.ai.projects.models.VoiceResponseAudioOutput": "Azure.AI.Projects.VoiceResponseAudioOutput",
@@ -996,5 +994,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "9d5cdbd4dd0a"
+    "CrossLanguageVersion": "45e1fe3689e2"
 }
