@@ -26,7 +26,7 @@ __all__ = ["Output", "component", "pipeline"]
 
 @dataclass(frozen=True)
 class Output:
-    """A writable file output in a Python component signature.
+    """A writable file or folder output in a Python component signature.
 
     The parameter name becomes the output asset name. Outputs are read-write mounted
     unless ``mode`` is specified.
@@ -61,6 +61,7 @@ class _OutputRef:
 
 
 _ACTIVE_PIPELINE: ContextVar[Optional["_PipelineContext"]] = ContextVar("foundry_pipeline", default=None)
+_DATA_PORT_TYPES = (AssetTypes.URI_FILE, AssetTypes.URI_FOLDER)
 _PRIMITIVES: Dict[Any, Tuple[str, str]] = {
     str: ("string", "str"),
     int: ("integer", "int"),
@@ -78,22 +79,25 @@ def _component_ports(func: Callable[..., Any]) -> Tuple[List[_Port], List[_Port]
             raise TypeError(f"Component '{func.__name__}' supports only named parameters.")
         annotation = annotations.get(parameter.name, parameter.annotation)
         if isinstance(annotation, Output):
-            if annotation.type != AssetTypes.URI_FILE:
-                raise ValueError(f"Component output '{parameter.name}' must be a uri_file.")
+            if annotation.type not in _DATA_PORT_TYPES:
+                raise ValueError(f"Component output '{parameter.name}' must be a uri_file or uri_folder.")
             if parameter.default is not inspect.Parameter.empty:
                 raise TypeError(f"Component output '{parameter.name}' cannot have a default.")
             outputs.append(
                 _Port(
                     parameter.name,
-                    AssetTypes.URI_FILE,
+                    annotation.type,
                     "str",
                     annotation.mode if annotation.mode is not None else InputOutputModes.READ_WRITE_MOUNT,
                 )
             )
         elif isinstance(annotation, Input):
-            if annotation.type != AssetTypes.URI_FILE or annotation.path or annotation.value or annotation.mode:
-                raise ValueError(f"Component input '{parameter.name}' supports only Input(type='uri_file').")
-            inputs.append(_Port(parameter.name, AssetTypes.URI_FILE, "str"))
+            if annotation.type not in _DATA_PORT_TYPES or annotation.path or annotation.value or annotation.mode:
+                raise ValueError(
+                    f"Component input '{parameter.name}' supports only Input(type='uri_file') "
+                    "or Input(type='uri_folder')."
+                )
+            inputs.append(_Port(parameter.name, annotation.type, "str"))
         elif annotation in _PRIMITIVES:
             component_type, conversion = _PRIMITIVES[annotation]
             inputs.append(_Port(parameter.name, component_type, conversion))
@@ -198,13 +202,13 @@ class _PipelineContext:
                 if value.owner is not self or value.type != port.type:
                     raise ValueError(f"Component input '{port.name}' has an incompatible node output.")
                 serialized = f"${{{{parent.jobs.{value.node}.outputs.{value.name}}}}}"
-            elif port.type == AssetTypes.URI_FILE:
-                raise TypeError(f"Component input '{port.name}' needs a pipeline input or node file output.")
+            elif port.type in _DATA_PORT_TYPES:
+                raise TypeError(f"Component input '{port.name}' needs a pipeline input or node data output.")
             elif type(value) in _PRIMITIVES and _PRIMITIVES[type(value)][1] == port.conversion:
                 serialized = str(value)
             else:
                 raise TypeError(f"Component input '{port.name}' has an incompatible primitive value.")
-            input_type = AssetTypes.URI_FILE if port.type == AssetTypes.URI_FILE else AssetTypes.LITERAL
+            input_type = port.type if port.type in _DATA_PORT_TYPES else AssetTypes.LITERAL
             bound_inputs[port.name] = Input(type=input_type, value=serialized)
 
         arguments_in_command = " ".join(
@@ -251,7 +255,7 @@ class _PipelineContext:
         )
         node = PipelineJob._command_node(name, job, self.compute_id)  # pylint: disable=protected-access
         for port in inputs:
-            if port.type != AssetTypes.URI_FILE:
+            if port.type not in _DATA_PORT_TYPES:
                 node["component"]["inputs"][port.name]["type"] = port.type
         self.jobs[name] = node
         return SimpleNamespace(
