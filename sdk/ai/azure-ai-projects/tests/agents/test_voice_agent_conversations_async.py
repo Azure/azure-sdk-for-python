@@ -167,14 +167,15 @@ class TestVoiceAgentConversationsAsync(TestBase):
                 # The responses (model inference turns) in the conversation.
                 responses = [r async for r in conversations.list_responses(_AGENT_NAME, conversation_id)]
                 assert len(responses) >= 1
-                first_response = responses[0]
-                response_detail = await conversations.get_response(_AGENT_NAME, conversation_id, first_response.id)
-                assert response_detail.id == first_response.id
+                first_response_id = responses[0].id
+                assert first_response_id
+                response_detail = await conversations.get_response(_AGENT_NAME, conversation_id, first_response_id)
+                assert response_detail.id == first_response_id
 
                 # The items produced by that response (does not raise; count may be 0 or more).
                 _ = [
                     item
-                    async for item in conversations.list_response_items(_AGENT_NAME, conversation_id, first_response.id)
+                    async for item in conversations.list_response_items(_AGENT_NAME, conversation_id, first_response_id)
                 ]
 
                 # The ordered conversation items -- the full transcript (user + assistant + tool events).

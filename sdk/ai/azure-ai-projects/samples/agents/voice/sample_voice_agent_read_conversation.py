@@ -109,16 +109,21 @@ with (
         # The responses (model inference turns) in the conversation.
         print("Responses:")
         for response in conversations.list_responses(agent_name, conversation_id):
-            print(f"  - {response.id}: status={response.status}")
+            response_id = response.id
+            print(f"  - {response_id}: status={response.status}")
+
+            # The id is typed as optional, but a response can only be read back by id.
+            if not response_id:
+                continue
 
             # Read a single response back, with its output and token usage.
-            detail = conversations.get_response(agent_name, conversation_id, response.id)
+            detail = conversations.get_response(agent_name, conversation_id, response_id)
             print(f"      usage={detail.usage}")
 
             # The items produced by this specific response. Conversation items
             # belong to an open union, so on read they surface as mappings
             # keyed by their wire fields (``type``, ``id``, ...).
-            for response_item in conversations.list_response_items(agent_name, conversation_id, response.id):
+            for response_item in conversations.list_response_items(agent_name, conversation_id, response_id):
                 print(f"      item {response_item.get('type')} id={response_item.get('id')}")
 
         # The ordered conversation items -- the full transcript (user + assistant + tool events).
