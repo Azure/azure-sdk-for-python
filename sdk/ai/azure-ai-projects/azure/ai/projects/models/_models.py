@@ -3762,7 +3762,7 @@ class JobProperties(_Model):
     """Base properties of a Job.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    CommandJob
+    CommandJob, PipelineJob
 
     :ivar job_type: Job type. Required. Default value is None.
     :vartype job_type: str
@@ -12515,6 +12515,116 @@ class PendingUploadResponse(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class PipelineJob(JobProperties, discriminator="Pipeline"):
+    """Properties of a Pipeline Job.
+
+    :ivar job_type: Job type. Required. Default value is "Pipeline".
+    :vartype job_type: str
+    :ivar display_name: Display name of the job.
+    :vartype display_name: str
+    :ivar description: The asset description text.
+    :vartype description: str
+    :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
+    :vartype tags: dict[str, str]
+    :ivar properties: The asset property dictionary.
+    :vartype properties: dict[str, str]
+    :ivar experiment_name: Name of the experiment the job belongs to. If omitted, the service uses
+     "Default".
+    :vartype experiment_name: str
+    :ivar services: Services exposed by the job.
+    :vartype services: dict[str, ~azure.ai.projects.models.JobService]
+    :ivar compute_id: Compute resource ID.
+    :vartype compute_id: str
+    :ivar settings: Pipeline settings.
+    :vartype settings: dict[str, any]
+    :ivar jobs: Pipeline nodes keyed by name. Node objects preserve their original field names.
+    :vartype jobs: dict[str, dict[str, any]]
+    :ivar inputs: Graph inputs keyed by name.
+    :vartype inputs: dict[str, dict[str, any]]
+    :ivar outputs: Graph outputs keyed by name.
+    :vartype outputs: dict[str, dict[str, any]]
+    :ivar source_job_id: ARM resource ID of the source job.
+    :vartype source_job_id: str
+    :ivar is_archived: Is the job archived?.
+    :vartype is_archived: bool
+    :ivar status: Status of the job.
+    :vartype status: str
+    """
+
+    job_type: Literal["Pipeline"] = rest_discriminator(name="jobType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Job type. Required. Default value is \"Pipeline\"."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Display name of the job."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The asset description text."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tag dictionary. Tags can be added, removed, and updated."""
+    properties: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The asset property dictionary."""
+    experiment_name: Optional[str] = rest_field(
+        name="experimentName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the experiment the job belongs to. If omitted, the service uses \"Default\"."""
+    services: Optional[dict[str, "_models.JobService"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Services exposed by the job."""
+    compute_id: Optional[str] = rest_field(name="computeId", visibility=["read", "create", "update", "delete", "query"])
+    """Compute resource ID."""
+    settings: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Pipeline settings."""
+    jobs: Optional[dict[str, dict[str, Any]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Pipeline nodes keyed by name. Node objects preserve their original field names."""
+    inputs: Optional[dict[str, dict[str, Any]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Graph inputs keyed by name."""
+    outputs: Optional[dict[str, dict[str, Any]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Graph outputs keyed by name."""
+    source_job_id: Optional[str] = rest_field(
+        name="sourceJobId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the source job."""
+    is_archived: Optional[bool] = rest_field(
+        name="isArchived", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is the job archived?."""
+    status: Optional[str] = rest_field(visibility=["read"])
+    """Status of the job."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional[dict[str, str]] = None,
+        experiment_name: Optional[str] = None,
+        services: Optional[dict[str, "_models.JobService"]] = None,
+        compute_id: Optional[str] = None,
+        settings: Optional[dict[str, Any]] = None,
+        jobs: Optional[dict[str, dict[str, Any]]] = None,
+        inputs: Optional[dict[str, dict[str, Any]]] = None,
+        outputs: Optional[dict[str, dict[str, Any]]] = None,
+        source_job_id: Optional[str] = None,
+        is_archived: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.job_type = "Pipeline"  # type: ignore
 
 
 class ProceduralMemoryItem(MemoryItem, discriminator="procedural"):

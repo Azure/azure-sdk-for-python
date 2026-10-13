@@ -267,6 +267,7 @@
         "azure.ai.projects.models.Output": "Azure.AI.Projects.Output",
         "azure.ai.projects.models.PendingUploadRequest": "Azure.AI.Projects.PendingUploadRequest",
         "azure.ai.projects.models.PendingUploadResponse": "Azure.AI.Projects.PendingUploadResponse",
+        "azure.ai.projects.models.PipelineJob": "Azure.AI.Projects.PipelineJob",
         "azure.ai.projects.models.ProceduralMemoryItem": "Azure.AI.Projects.ProceduralMemoryItem",
         "azure.ai.projects.models.PromoteCandidateRequest": "Azure.AI.Projects.PromoteCandidateRequest",
         "azure.ai.projects.models.PromoteCandidateResponse": "Azure.AI.Projects.PromoteCandidateResponse",
@@ -503,5 +504,5 @@
         "azure.ai.projects.operations.IndexesOperations.create_or_update": "Azure.AI.Projects.Indexes.createOrUpdateVersion",
         "azure.ai.projects.aio.operations.IndexesOperations.create_or_update": "Azure.AI.Projects.Indexes.createOrUpdateVersion"
     },
-    "CrossLanguageVersion": "454439a0b62a"
+    "CrossLanguageVersion": "33bdc2e1e817"
 }

@@ -7,8 +7,10 @@
 
 import datetime
 import json
+from collections.abc import Mapping
 from os import PathLike
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import IO, Any, AnyStr, Dict, List, Optional, Union
 
 from ._models import (
@@ -19,6 +21,7 @@ from ._models import (
     JobResourceConfiguration,
     MpiDistribution,
     Output,
+    PipelineJob as _RestPipelineJob,
     PyTorchDistribution,
     QueueSettings,
     ServiceInstance as _RestServiceInstance,
@@ -101,6 +104,185 @@ class CommandJob(_RestCommandJob):
         if isinstance(limits_obj, _RestCommandJobLimits) and limits_obj._data.get("timeout"):
             limits_obj._data["timeout"] = limits_obj.timeout
         return obj
+
+
+class PipelineJob(_RestPipelineJob):
+    """A pipeline job with graph nodes, inputs, and outputs.
+
+    When constructing a pipeline, ``jobs`` accepts raw graph node dictionaries
+    or :class:`CommandJob` instances with value-bound literal, URI file, and
+    URI folder inputs, code, and outputs. Command jobs are converted to inline
+    command nodes; use raw dictionaries for other features.
+
+    :ivar name: The name of the job. Read-only; populated after the job is created.
+    :vartype name: str or None
+    :ivar id: The resource ID of the job. Read-only; populated after the job is created.
+    :vartype id: str or None
+    :ivar system_data: Metadata pertaining to creation and last modification of the job.
+    :vartype system_data: ~azure.ai.projects.models.SystemData or None
+    """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        fields = args[0] if args and isinstance(args[0], Mapping) else kwargs
+        jobs = fields.get("jobs")
+        if isinstance(jobs, dict) and any(isinstance(node, CommandJob) for node in jobs.values()):
+            settings = fields.get("settings")
+            default_compute = settings.get("default_compute") if isinstance(settings, dict) else None
+            default_compute = default_compute or fields.get("computeId" if args else "compute_id")
+            converted = dict(fields)
+            converted["jobs"] = self._convert_jobs(jobs, default_compute)
+            if args:
+                args = (converted,) + args[1:]
+            else:
+                kwargs = converted
+        super().__init__(*args, **kwargs)
+        self._name: Optional[str] = None
+        self._id: Optional[str] = None
+        self._system_data: Optional[SystemData] = None
+        self._component_code_dirs: List[TemporaryDirectory] = []
+
+    @classmethod
+    def _convert_jobs(cls, jobs: Dict[str, Any], default_compute: Optional[str]) -> Dict[str, Any]:
+        return {
+            name: cls._command_node(name, node, default_compute) if isinstance(node, CommandJob) else node
+            for name, node in jobs.items()
+        }
+
+    @staticmethod
+    def _command_node(name: str, job: CommandJob, default_compute: Optional[str]) -> Dict[str, Any]:
+        unsupported = set(job.as_dict(exclude_readonly=True)) - {
+            "jobType",
+            "command",
+            "environmentImageReference",
+            "computeId",
+            "codeId",
+            "inputs",
+            "outputs",
+            "resources",
+            "userAssignedIdentityId",
+        }
+        if unsupported:
+            raise ValueError(
+                f"Pipeline node '{name}' cannot convert CommandJob fields {sorted(unsupported)}; "
+                "use a raw graph node for these fields."
+            )
+        if not job.command or not job.environment_image_reference:
+            raise ValueError(f"Pipeline node '{name}' requires a command and environment image.")
+        if not default_compute or job.compute != default_compute:
+            raise ValueError(
+                f"Pipeline node '{name}' must use the pipeline's default compute; "
+                "use a raw graph node for another compute."
+            )
+
+        inputs: Dict[str, Any] = {}
+        component_inputs: Dict[str, Any] = {}
+        for input_name, job_input in (job.inputs or {}).items():
+            if (
+                not isinstance(job_input, Input)
+                or job_input.type not in (
+                    "literal",
+                    "uri_file",
+                    "uri_folder",
+                )
+                or job_input.value is None
+                or set(job_input.as_dict()) - {"jobInputType", "value"}
+            ):
+                raise ValueError(
+                    f"Pipeline node '{name}' cannot convert input '{input_name}'; "
+                    "only value-bound literal, uri_file, and uri_folder "
+                    "CommandJob inputs are supported. "
+                    "Use a raw graph node for other inputs."
+                )
+            inputs[input_name] = {"job_input_type": "literal", "value": job_input.value}
+            component_inputs[input_name] = {"type": "string" if job_input.type == "literal" else job_input.type}
+
+        outputs: Dict[str, Any] = {}
+        component_outputs: Dict[str, Any] = {}
+        for output_name, job_output in (job.outputs or {}).items():
+            if not isinstance(job_output, Output) or set(job_output.as_dict()) - {
+                "jobOutputType",
+                "assetName",
+                "mode",
+            }:
+                raise ValueError(
+                    f"Pipeline node '{name}' cannot convert output '{output_name}'; "
+                    "use a raw graph node for other output fields."
+                )
+            component_outputs[output_name] = {"type": job_output.type}
+            outputs[output_name] = {"job_output_type": job_output.type}
+            if job_output.mode is not None:
+                outputs[output_name]["mode"] = job_output.mode
+
+        node: Dict[str, Any] = {
+            "type": "command",
+            "component": {
+                "name": name,
+                "version": "1",
+                "type": "command",
+                "command": job.command,
+                "environment": {"image": job.environment_image_reference},
+                "inputs": component_inputs,
+                "outputs": component_outputs,
+            },
+            "inputs": inputs,
+            "outputs": outputs,
+        }
+        if job.code is not None:
+            node["component"]["code"] = job.code
+        if job.user_assigned_identity_id is not None:
+            node["identity"] = {"type": "managed", "msi_resource_id": job.user_assigned_identity_id}
+
+        if job.resources is not None:
+            unsupported_resources = set(job.resources.as_dict()) - {"instanceCount", "instanceType", "properties"}
+            if unsupported_resources:
+                raise ValueError(
+                    f"Pipeline node '{name}' cannot convert resource fields {sorted(unsupported_resources)}; "
+                    "use a raw graph node for these fields."
+                )
+            resources: Dict[str, Any] = {}
+            if job.resources.instance_count is not None:
+                resources["instance_count"] = job.resources.instance_count
+            if job.resources.instance_type is not None:
+                resources["instance_type"] = job.resources.instance_type
+            if job.resources.properties is not None:
+                resources["properties"] = job.resources.properties
+            node["resources"] = resources
+        return node
+
+    @property
+    def name(self) -> Optional[str]:
+        """The name of the job."""
+        return self._name
+
+    @property
+    def id(self) -> Optional[str]:
+        """The resource ID of the job."""
+        return self._id
+
+    @property
+    def system_data(self) -> Optional[SystemData]:
+        """Metadata pertaining to creation and last modification of the job."""
+        return self._system_data
+
+    @classmethod
+    def _from_rest_object(cls, rest_obj: _RestJob) -> "PipelineJob":
+        props = rest_obj.properties
+        if not isinstance(props, _RestPipelineJob):
+            raise TypeError(
+                f"Cannot convert REST Job to PipelineJob: expected properties of type "
+                f"PipelineJob, but got {type(props).__name__}."
+            )
+        obj = cls(props)
+        obj._name = rest_obj.name
+        obj._id = rest_obj.id
+        obj._system_data = rest_obj.system_data
+        return obj
+
+
+def _from_rest_job(rest_obj: _RestJob) -> Union[CommandJob, PipelineJob]:
+    if isinstance(rest_obj.properties, _RestPipelineJob):
+        return PipelineJob._from_rest_object(rest_obj)
+    return CommandJob._from_rest_object(rest_obj)
 
 
 class CommandJobLimits(_RestCommandJobLimits):

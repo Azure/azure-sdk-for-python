@@ -3,8 +3,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Customized jobs operations — flat CommandJob UX, no envelope required."""
+"""Customized jobs operations — flat CommandJob and PipelineJob UX, no envelope required."""
 
+from copy import copy
 import json
 import logging
 import sys
@@ -12,8 +13,9 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, overload
 from urllib.parse import urlparse
+from uuid import uuid4
 
 from azure.core.exceptions import ResourceNotFoundError
 
@@ -65,7 +67,7 @@ from ..models._models import Input as _Input
 from ..models._models import Output as _Output
 from ..models._models import ModelCredentialRequest as _ModelCredentialRequest
 from ..models._enums import AssetTypes
-from ..models._patch_jobs import CommandJob, ServiceInstance, ValidationResult
+from ..models._patch_jobs import CommandJob, PipelineJob, ServiceInstance, ValidationResult, _from_rest_job
 from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 from ..models._enums import _FoundryFeaturesOptInKeys
 
@@ -73,8 +75,8 @@ _logger = logging.getLogger(__name__)
 
 
 class JobsOperations(_GeneratedJobsOps):
-    """Patched Jobs operations that expose a flat :class:`~azure.ai.projects.models.CommandJob`
-    interface — no ``Job`` envelope wrapping required by callers.
+    """Patched Jobs operations that expose flat :class:`~azure.ai.projects.models.CommandJob`
+    and :class:`~azure.ai.projects.models.PipelineJob` objects without a ``Job`` envelope.
 
     Also automatically injects the ``Foundry-Features: Jobs=V1Preview`` preview opt-in header
     into every request so callers do not need to supply it manually.
@@ -89,8 +91,13 @@ class JobsOperations(_GeneratedJobsOps):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self._datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self._models = _GeneratedModelsOps(self._client, self._config, self._serialize, self._deserialize)
+        original_config = self._config
+        # Generated Jobs operations use config.api_version; keep the existing preview route
+        # without changing the shared v1 config used by datasets and models.
+        self._config = copy(original_config)
+        self._config.api_version = "2026-01-15-preview"
+        self._datasets = DatasetsOperations(self._client, original_config, self._serialize, self._deserialize)
+        self._models = _GeneratedModelsOps(self._client, original_config, self._serialize, self._deserialize)
 
     @distributed_trace
     def validate(
@@ -238,6 +245,31 @@ class JobsOperations(_GeneratedJobsOps):
         self._resolve_code(name, job)
         self._resolve_input_paths(name, job)
 
+    def _resolve_pipeline_code(self, name: str, job: PipelineJob) -> None:
+        """Resolve local code folders on inline command nodes to dataset asset URIs.
+
+        :param name: Name of the pipeline job.
+        :type name: str
+        :param job: Pipeline job containing inline command nodes.
+        :type job: ~azure.ai.projects.models.PipelineJob
+        """
+        try:
+            resolved_code: Dict[str, str] = {}
+            for node_name, node in (job.jobs or {}).items():
+                if not isinstance(node, dict) or node.get("type") != "command":
+                    continue
+                component = node.get("component")
+                if not isinstance(component, dict) or not isinstance(component.get("code"), str):
+                    continue
+                code = component["code"]
+                if code not in resolved_code:
+                    resolved_code[code] = self._resolve_asset_uri(code, f"{name}-{node_name}-code")
+                component["code"] = resolved_code[code]
+        finally:
+            for directory in job._component_code_dirs:
+                directory.cleanup()
+            job._component_code_dirs.clear()
+
     def _inject_preview_header(self, kwargs: dict) -> None:
         """Add the Jobs preview feature header if not already present.
 
@@ -284,11 +316,10 @@ class JobsOperations(_GeneratedJobsOps):
         list_view_type: Optional[Union[str, Any]] = None,
         properties: Optional[str] = None,
         **kwargs: Any,
-    ) -> ItemPaged[CommandJob]:
-        """List all training jobs as flat :class:`~azure.ai.projects.models.CommandJob`
-        objects with ``name`` and ``id`` promoted from the Job resource envelope.
+    ) -> ItemPaged[Union[CommandJob, PipelineJob]]:
+        """List Command and Pipeline jobs with ``name`` and ``id`` promoted from the Job envelope.
 
-        :keyword job_type: Filter by job type (e.g. ``'Command'``). Default value is None.
+        :keyword job_type: Filter by job type (``'Command'`` or ``'Pipeline'``). Default value is None.
         :paramtype job_type: str or ~azure.ai.projects.models.JobType
         :keyword tag: Filter by tag in the format ``'key=value'``. Default value is None.
         :paramtype tag: str
@@ -296,14 +327,14 @@ class JobsOperations(_GeneratedJobsOps):
         :paramtype list_view_type: str or ~azure.ai.projects.models.ListViewType
         :keyword properties: Comma-separated user properties filter. Default value is None.
         :paramtype properties: str
-        :return: An iterator like instance of :class:`~azure.ai.projects.models.CommandJob`.
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.CommandJob]
+        :return: An iterator of CommandJob or PipelineJob objects.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.CommandJob or ~azure.ai.projects.models.PipelineJob]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._inject_preview_header(kwargs)
 
-        def _convert_page(page: List) -> List[CommandJob]:
-            return [CommandJob._from_rest_object(item) for item in page]
+        def _convert_page(page: List[_RestJob]) -> List[Union[CommandJob, PipelineJob]]:
+            return [_from_rest_job(item) for item in page]
 
         return super().list(
             job_type=job_type,
@@ -315,51 +346,91 @@ class JobsOperations(_GeneratedJobsOps):
         )  # type: ignore[return-value]
 
     @distributed_trace
-    def get(self, name: str, **kwargs: Any) -> CommandJob:  # type: ignore[override]
+    def get(self, name: str, **kwargs: Any) -> Union[CommandJob, PipelineJob]:  # type: ignore[override]
         """Get a training job by name.
 
         :param name: The name of the job. Required.
         :type name: str
-        :return: The job as a flat :class:`~azure.ai.projects.models.CommandJob` with
-            ``name`` and ``id`` promoted from the Job resource envelope.
-        :rtype: ~azure.ai.projects.models.CommandJob
+        :return: The CommandJob or PipelineJob with ``name`` and ``id`` from the Job envelope.
+        :rtype: ~azure.ai.projects.models.CommandJob or ~azure.ai.projects.models.PipelineJob
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         self._inject_preview_header(kwargs)
         rest_result = super().get(name=name, **kwargs)
-        return CommandJob._from_rest_object(rest_result)
+        return _from_rest_job(rest_result)
+
+    @overload  # type: ignore[override]
+    def create_or_update(
+        self,
+        name: PipelineJob,
+        job: None = None,
+        *,
+        experiment_name: Optional[str] = None,
+        skip_validation: bool = False,
+        **kwargs: Any,
+    ) -> PipelineJob: ...
+
+    @overload
+    def create_or_update(
+        self,
+        name: str,
+        job: Union[CommandJob, PipelineJob],
+        *,
+        skip_validation: bool = False,
+        **kwargs: Any,
+    ) -> Union[CommandJob, PipelineJob]: ...
 
     @distributed_trace
     def create_or_update(  # type: ignore[override]
         self,
-        name: str,
-        job: CommandJob,
+        name: Union[str, PipelineJob],
+        job: Optional[Union[CommandJob, PipelineJob]] = None,
         *,
+        experiment_name: Optional[str] = None,
         skip_validation: bool = False,
         **kwargs: Any,
-    ) -> CommandJob:
+    ) -> Union[CommandJob, PipelineJob]:
         """Create or update a training job.
 
-        :param name: The name of the job. Required.
-        :type name: str
-        :param job: The command job to create or update. Required.
-        :type job: ~azure.ai.projects.models.CommandJob
-        :keyword skip_validation: If ``True``, skip the local validation step.
-            Defaults to ``False``.
+        :param name: The job name, or a PipelineJob for a unique autogenerated name.
+        :type name: str or ~azure.ai.projects.models.PipelineJob
+        :param job: The Command or Pipeline job. Required when ``name`` is a string.
+        :type job: ~azure.ai.projects.models.CommandJob or ~azure.ai.projects.models.PipelineJob or None
+        :keyword experiment_name: Experiment name for a job-only PipelineJob submission.
+        :paramtype experiment_name: str or None
+        :keyword skip_validation: If ``True``, skip local CommandJob validation.
+            PipelineJob nodes are not locally validated. Defaults to ``False``.
         :paramtype skip_validation: bool
         :return: The created/updated job.
-        :rtype: ~azure.ai.projects.models.CommandJob
+        :rtype: ~azure.ai.projects.models.CommandJob or ~azure.ai.projects.models.PipelineJob
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises ValueError: If required fields are missing or empty.
         """
-        if not skip_validation:
-            _emit_validation_warnings(_validate_command_job(job).try_raise(raise_on_failure=True))
-        self._resolve_local_paths(name, job)
+        if isinstance(name, PipelineJob):
+            if job is not None:
+                raise TypeError("A job cannot be supplied when the first argument is a PipelineJob.")
+            job = name
+            name = f"pipeline-{uuid4().hex}"
+            if experiment_name is not None:
+                job.experiment_name = experiment_name
+        elif not isinstance(name, str) or job is None:
+            raise TypeError("create_or_update requires a job name and job, or one PipelineJob.")
+        elif experiment_name is not None:
+            raise TypeError("Set job.experiment_name when submitting a job with an explicit name.")
+
+        if isinstance(job, CommandJob):
+            if not skip_validation:
+                _emit_validation_warnings(_validate_command_job(job).try_raise(raise_on_failure=True))
+            self._resolve_local_paths(name, job)
+        elif isinstance(job, PipelineJob):
+            self._resolve_pipeline_code(name, job)
+        else:
+            raise TypeError("job must be a CommandJob or PipelineJob")
         self._inject_preview_header(kwargs)
-        # Wrap the flat CommandJob inside the Job envelope required by the wire format
+        # Wrap the flat job inside the Job envelope required by the wire format.
         rest_body = _RestJob(properties=job)
         rest_result = super().create_or_update(name=name, job=rest_body, **kwargs)
-        return CommandJob._from_rest_object(rest_result)
+        return _from_rest_job(rest_result)
 
     # LRO is implemented here rather than via TypeSpec @pollingOperation because the backend
     # uses pure HTTP-status-code Location polling (202=in-progress, 200/204=done) with no
