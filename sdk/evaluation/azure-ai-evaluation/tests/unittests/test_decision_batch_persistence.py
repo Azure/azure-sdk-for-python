@@ -59,7 +59,7 @@ def batch_client():
         client._thread_pool.shutdown(wait=True)
 
 
-def convert_batch(client, judge, tmp_path, rows=1):
+def convert_batch(client, judge, tmp_path, rows=1, criteria=None):
     data = pd.DataFrame([{"query": "synthetic", "response": "synthetic", "ground_truth": "synthetic"}] * rows)
     judge_run = client.run(judge, data, evaluator_name="judge", column_mapping={"query": "${data.query}"})
     f1_run = client.run(
@@ -79,7 +79,7 @@ def convert_batch(client, judge, tmp_path, rows=1):
                 row[key.replace("outputs.", f"outputs.{name}.", 1)] = value
         converted.append(
             _convert_single_row_to_aoai_format(
-                row, index, None, None, 0, CRITERIA, summaries, logging.getLogger("test")
+                row, index, None, None, 0, criteria or CRITERIA, summaries, logging.getLogger("test")
             )
         )
     path = tmp_path / "persisted.json"
@@ -105,6 +105,134 @@ def strategy(runner):
 
 
 class TestDecisionBatchPersistence:
+    @pytest.mark.parametrize("members", [5, 6])
+    @pytest.mark.parametrize("case", ["completed", "skipped", "mixed", "semantic_error"])
+    @pytest.mark.parametrize("primary_first", [False, True])
+    def test_shared_composite_request_is_counted_once_for_all_parsed_members(
+        self, batch_client, tmp_path, monkeypatch, members, case, primary_first
+    ):
+        calls = []
+        keys = [f"member_{index}" for index in range(members)]
+        questions = {
+            key: {"type": "noul", "instructions": key} for member in keys for key in (member, f"{member}_status")
+        }
+        answers = {}
+        for index, key in enumerate(keys):
+            status = 0.1 if case == "skipped" or (case == "mixed" and index == 0) else 0.9
+            score = (
+                float("nan")
+                if case == "semantic_error" and index == members - 1
+                else 0.1 if case == "mixed" and index == members - 1 else 0.9
+            )
+            answers[key] = {"type": "noul", "noul": score}
+            answers[f"{key}_status"] = {"type": "noul", "noul": status}
+
+        class Response(HttpResponse):
+            def __init__(self, request):
+                super().__init__(request, None)
+                self.status_code = 200
+                self.headers = {}
+
+            def body(self):
+                return json.dumps(
+                    {
+                        "model": "decision-native",
+                        "answers": answers,
+                        "usage": {
+                            "input_tokens": 120,
+                            "output_tokens": 3,
+                        },
+                    }
+                ).encode()
+
+        class Transport(AsyncHttpTransport):
+            async def open(self):
+                pass
+
+            async def close(self):
+                pass
+
+            async def __aexit__(self, *_):
+                await self.close()
+
+            async def send(self, request, **kwargs):
+                calls.append(json.loads(request.body))
+                return Response(request)
+
+        monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: AsyncHttpPipeline(transport=Transport()))
+
+        async def judge(query):
+            runner = DecisionModelRunner(CONFIG, max_retries=0)
+            shared = await runner(state={"query": query}, questions=questions, timeout=2)
+            result = {}
+            for key in keys:
+                member_strategy = DecisionEvaluationStrategy(
+                    runner,
+                    result_key=key,
+                    error_target=ErrorTarget.EVALUATE,
+                    questions={"status": questions[f"{key}_status"], key: questions[key]},
+                    scoring=BinaryScoring(0.75),
+                    threshold=1,
+                    timeout=2,
+                )
+                member_response = {
+                    **shared,
+                    "answers": {
+                        "status": shared["answers"][f"{key}_status"],
+                        key: shared["answers"][key],
+                    },
+                }
+                result.update(member_strategy.parse(member_response, {"query": query}))
+            result.update(
+                {
+                    "overall": None if case == "skipped" else float(case == "completed"),
+                    "overall_status": "skipped" if case == "skipped" else "completed",
+                    "overall_passed": None if case == "skipped" else case == "completed",
+                    "overall_prompt_tokens": 120,
+                    "overall_completion_tokens": 3,
+                    "overall_total_tokens": 123,
+                    "overall_model": shared["model"],
+                }
+            )
+            return result
+
+        criteria = {
+            **CRITERIA,
+            "judge": {
+                "metrics": ["overall", *keys] if primary_first else [*keys, "overall"],
+                "type": "azure_ai_evaluator",
+                "evaluator_name": "builtin.overall",
+            },
+        }
+        _, rows = convert_batch(batch_client, judge, tmp_path, criteria=criteria)
+        assert len(calls) == 1 and len(calls[0]["questions"]) == members * 2
+        for result in rows[0]["results"]:
+            if case == "semantic_error" and result["name"] == "judge":
+                assert result["status"] == "error" and result["score"] is None and result["passed"] is None
+                assert result["sample"]["error"]["blame"] == "SystemError"
+                assert result["properties"]["total_tokens"] == 123
+                assert "native_answer" not in result["properties"]["decision_model"]
+            elif result["metric"] in keys:
+                assert "usage" not in (result.get("sample") or {})
+                assert result["properties"]["total_tokens"] == 123
+                assert len(result["properties"]["decision_model"]["rubric_hash"]) == 64
+                if case == "skipped":
+                    assert result["status"] == "skipped" and result["score"] is None and result["passed"] is None
+        assert sum("usage" in (result.get("sample") or {}) for result in rows[0]["results"]) == 1
+        overall = next(result for result in rows[0]["results"] if result["metric"] == "overall")
+        assert overall["sample"]["usage"]["total_tokens"] == 123
+        rollup = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), criteria)
+        assert rollup["per_model_usage"] == [
+            {
+                "model_name": "decision-native",
+                "invocation_count": 1,
+                "prompt_tokens": 120,
+                "completion_tokens": 3,
+                "total_tokens": 123,
+                "cached_tokens": 0,
+            }
+        ]
+
     @pytest.mark.parametrize("status", [float("nan"), float("inf"), "bad"])
     def test_semantic_failure_retains_measured_usage_and_hashes(self, batch_client, tmp_path, status):
         class Runner:

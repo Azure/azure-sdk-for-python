@@ -529,6 +529,18 @@ def strategy_with(payload, scoring, key="tool_call_accuracy", extra_properties=N
 
 
 class TestSharedDecisionStrategy:
+    @pytest.mark.parametrize("status", [0.1, 0.9])
+    def test_parse_reuses_shared_response_without_http_or_usage_suffixes(self, status):
+        strategy = strategy_with(level_payload(4, status=status), LikertScoring(5))
+        strategy.runner = Mock(deployment="Decision-1")
+        parsed = strategy.parse(level_payload(4, status=status), {})
+        assert parsed["tool_call_accuracy_status"] == ("skipped" if status < 0.5 else "completed")
+        assert parsed["tool_call_accuracy_properties"]["total_tokens"] == 123
+        assert not any(
+            key.endswith(("_prompt_tokens", "_completion_tokens", "_total_tokens", "_model")) for key in parsed
+        )
+        strategy.runner.assert_not_called()
+
     @pytest.mark.parametrize("probability, score", [(0.6, 1.0), (0.5999, 0.0)])
     def test_binary_scoring_uses_its_own_cutoff(self, probability, score):
         strategy = strategy_with(completion_payload(probability), BinaryScoring(0.6), key="task_completion")

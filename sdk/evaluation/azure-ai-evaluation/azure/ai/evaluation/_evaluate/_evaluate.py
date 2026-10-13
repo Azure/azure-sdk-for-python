@@ -3384,6 +3384,12 @@ def _add_error_summaries(
 
         metrics = testing_criteria_metadata.get(criteria_name, {}).get("metrics", [])
         criteria_type = testing_criteria_metadata.get(criteria_name, {}).get("type", "azure_ai_evaluator")
+        if decision_error_metadata is not None:
+            evaluator_name = testing_criteria_metadata.get(criteria_name, {}).get("evaluator_name")
+            if isinstance(evaluator_name, str) and evaluator_name.startswith("builtin."):
+                primary_metric = evaluator_name.removeprefix("builtin.")
+                metrics = sorted(metrics, key=lambda metric: metric != primary_metric)
+        decision_usage_added = False
 
         for metric in metrics:
             if not _should_add_error_summary(run_output_results, criteria_name, metric):
@@ -3404,15 +3410,19 @@ def _add_error_summaries(
             if decision_error_metadata is not None:
                 properties = decision_error_metadata["properties"]
                 error_result["properties"] = properties
+                # One failed evaluator invocation may produce several metric errors, but only one billed usage.
+                error_result["sample"] = {"error": error_info}
                 usage = {
                     key: properties[key]
                     for key in ("prompt_tokens", "completion_tokens", "total_tokens")
                     if key in properties
                 }
-                if usage:
-                    sample["usage"] = usage
-                if "model" in properties:
-                    sample["model"] = properties["model"]
+                if not decision_usage_added:
+                    if usage:
+                        error_result["sample"]["usage"] = usage
+                    if "model" in properties:
+                        error_result["sample"]["model"] = properties["model"]
+                    decision_usage_added = True
             run_output_results.append(error_result)
 
 

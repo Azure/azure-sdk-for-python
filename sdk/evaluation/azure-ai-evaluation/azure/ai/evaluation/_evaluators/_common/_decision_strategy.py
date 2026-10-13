@@ -156,8 +156,26 @@ class DecisionEvaluationStrategy:
         self.extra_properties = extra_properties
 
     async def evaluate(self, eval_input: Dict[str, Any]) -> Dict[str, Any]:
-        key = self.result_key
         response = await self.runner(state=dict(eval_input), questions=self.questions, timeout=self.timeout)
+        result = self.parse(response, eval_input)
+        tokens = decision_token_counts(response)
+        result.update(
+            {
+                f"{self.result_key}_prompt_tokens": tokens["input_token_count"],
+                f"{self.result_key}_completion_tokens": tokens["output_token_count"],
+                f"{self.result_key}_total_tokens": tokens["total_token_count"],
+                f"{self.result_key}_model": tokens["model_id"],
+            }
+        )
+        return result
+
+    def parse(self, response: Dict[str, Any], eval_input: Dict[str, Any]) -> Dict[str, Any]:
+        """Interpret a validated response without making a request.
+
+        Known shared-response usage remains in properties. Only the request-owning result emits standard
+        usage fields, so composites can parse multiple members without counting the same request repeatedly.
+        """
+        key = self.result_key
         properties = self.extra_properties(eval_input) if self.extra_properties else {}
         properties["decision_model"] = {
             "deployment": self.runner.deployment,
@@ -174,10 +192,6 @@ class DecisionEvaluationStrategy:
             total_tokens=tokens["total_token_count"],
             model=tokens["model_id"],
         )
-        usage_fields = {
-            f"{key}_{name}": properties[name]
-            for name in ("prompt_tokens", "completion_tokens", "total_tokens", "model")
-        }
         try:
             skip_reason = decision_skip_reason(response, STATUS_CUTOFF, self.error_target)
             properties["decision_model"]["status_completion_probability"] = decision_probability(
@@ -187,7 +201,6 @@ class DecisionEvaluationStrategy:
             if skip_reason:
                 result = not_applicable_result(key, skip_reason, self.threshold)
                 result[f"{key}_properties"] = properties
-                result.update(usage_fields)
                 return result
             score, reason, details = self.scoring.interpret(response, key, self.error_target)
         except EvaluationException as exc:
@@ -206,5 +219,4 @@ class DecisionEvaluationStrategy:
             f"{key}_status": "completed",
             f"{key}_threshold": self.threshold,
             f"{key}_properties": properties,
-            **usage_fields,
         }
