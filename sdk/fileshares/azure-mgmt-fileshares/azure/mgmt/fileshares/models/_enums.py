@@ -11,7 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
@@ -79,16 +79,56 @@ class FileShareProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The resource is being posted."""
 
 
+class InfrastructureEncryption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """(Optional) Discouraged to include in resource definition. Only needed where it is possible to
+    disable platform (AKA infrastructure) encryption. Azure SQL TDE is an example of this. Values
+    are enabled and disabled.
+    """
+
+    ENABLED = "enabled"
+    """Encryption is enabled."""
+    DISABLED = "disabled"
+    """Encryption is disabled."""
+
+
+class KeyEncryptionKeyIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity to use."""
+
+    SYSTEM_ASSIGNED_IDENTITY = "systemAssignedIdentity"
+    """System assigned identity."""
+    USER_ASSIGNED_IDENTITY = "userAssignedIdentity"
+    """User assigned identity."""
+    DELEGATED_RESOURCE_IDENTITY = "delegatedResourceIdentity"
+    """Delegated identity."""
+
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
+
+    NONE = "None"
+    """No managed identity."""
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """System assigned managed identity."""
+    USER_ASSIGNED = "UserAssigned"
+    """User assigned managed identity."""
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+    """System and user assigned managed identity."""
+
+
 class MediaTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Media Tier enum."""
 
     SSD = "SSD"
     """SSD media tier."""
+    HDD = "HDD"
+    """HDD media tier."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"
@@ -148,6 +188,28 @@ class Redundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Local redundancy."""
     ZONE = "Zone"
     """Zone redundancy."""
+
+
+class RedundancyConversionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the redundancy conversion."""
+
+    SUBMITTED_FOR_CONVERSION = "SubmittedForConversion"
+    """The redundancy conversion has been submitted."""
+    IN_PROGRESS = "InProgress"
+    """The redundancy conversion is in progress."""
+    COMPLETE = "Complete"
+    """The redundancy conversion has completed."""
+    FAILED = "Failed"
+    """The redundancy conversion has failed."""
+
+
+class ScaleMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Scale mode for a file share."""
+
+    COMPATIBILITY = "Compatibility"
+    """Compatibility scale mode."""
+    SCALE = "Scale"
+    """Scale mode."""
 
 
 class ShareRootSquash(str, Enum, metaclass=CaseInsensitiveEnumMeta):
