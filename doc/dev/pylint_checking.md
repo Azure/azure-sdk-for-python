@@ -36,7 +36,7 @@ If you don't want to use `azpysdk`, you can also install and run pylint on its o
         .../azure-sdk-for-python>SET PYLINTRC="./pylintrc"
         .../azure-sdk-for-python>pylint ./sdk/eventgrid/azure-eventgrid
 
-    Note that you may see different errors if running a different version of [pylint](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/azpysdk/pylint.py#L17) or [azure-pylint-guidelines-checker](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/azpysdk/pylint.py#L61) than the one in CI.
+    Note that you may see different errors if running a different version of [pylint](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/azpysdk/pylint.py#L17) or [azure-pylint-guidelines-checker](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/azpysdk/pylint.py#L18) than the one in CI.
 
 # Ignoring Pylint Checkers
 

@@ -166,7 +166,7 @@ with DefaultAzureCredential() as credential:
 
 ### Errors
 
-All errors thrown by `.raise_for_error()` are [exceptions defined in `azure-core`][azure_core_exceptions].
+All errors thrown by `.raise_for_status()` are [exceptions defined in `azure-core`][azure_core_exceptions].
 
 ### Logging
 
@@ -209,7 +209,7 @@ You can file issues [here][issues] in our repo.
 [azure_core_http_request]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html#azure.core.rest.HttpRequest
 [azure_core_http_response]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html#azure.core.rest.HttpResponse
 [azure_core_async_http_response]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html#azure.core.rest.AsyncHttpResponse
-[azure_core_raise_for_status]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html#azure.core.rest.AsyncHttpResponse.raise_for_status
+[azure_core_raise_for_status]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html#azure.core.rest.HttpResponse.raise_for_status
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
