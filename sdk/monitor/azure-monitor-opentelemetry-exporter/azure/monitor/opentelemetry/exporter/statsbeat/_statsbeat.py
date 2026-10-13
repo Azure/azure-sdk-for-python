@@ -34,7 +34,14 @@ def collect_statsbeat_metrics(exporter: "BaseExporter") -> None:  # pyright: ign
 
 
 def _initialize_statsbeat_from_initial_configuration(base_config: StatsbeatConfig, settings: Dict[str, str]) -> None:
-    """Initialize SDK Stats after the first OneSettings request attempt."""
+    """Initialize SDK Stats after the first OneSettings request attempt.
+
+    :param base_config: The base statsbeat configuration derived from the exporter.
+    :type base_config: StatsbeatConfig
+    :param settings: Configuration settings from OneSettings, or an empty dictionary when the
+        first attempt could not produce configuration.
+    :type settings: Dict[str, str]
+    """
     manager = get_statsbeat_manager()
     if settings:
         sdk_stats_enabled = evaluate_feature(_ONE_SETTINGS_FEATURE_SDK_STATS, settings)

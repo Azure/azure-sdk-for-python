@@ -78,7 +78,11 @@ class _ConfigurationManager(metaclass=Singleton):
             self._initialized = True
 
     def is_initialized(self) -> bool:
-        """Return whether the OneSettings worker has been started."""
+        """Return whether the OneSettings worker has been started.
+
+        :return: True if the worker has been started, False otherwise.
+        :rtype: bool
+        """
         with self._state_lock:
             return self._initialized
 
@@ -112,6 +116,10 @@ class _ConfigurationManager(metaclass=Singleton):
 
         The callback receives the fetched settings, or an empty dictionary when the first attempt
         could not produce configuration. Registration after completion immediately replays the result.
+
+        :param callback: Callback to invoke with the settings once the initial configuration
+            attempt completes.
+        :type callback: Callable[[Dict[str, str]], None]
         """
         with self._state_lock:
             if not self._initial_configuration_complete:
