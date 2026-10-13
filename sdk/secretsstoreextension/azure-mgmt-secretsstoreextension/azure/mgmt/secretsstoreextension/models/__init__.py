@@ -38,6 +38,7 @@ from ._models import (  # type: ignore
 
 from ._enums import (  # type: ignore
     ActionType,
+    AzureCloudName,
     CreatedByType,
     ExtendedLocationType,
     KubernetesSecretType,
@@ -71,6 +72,7 @@ __all__ = [
     "SystemData",
     "TrackedResource",
     "ActionType",
+    "AzureCloudName",
     "CreatedByType",
     "ExtendedLocationType",
     "KubernetesSecretType",

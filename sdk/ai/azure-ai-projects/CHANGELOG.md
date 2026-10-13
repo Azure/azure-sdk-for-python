@@ -1,5 +1,59 @@
 # Release History
 
+## 2.9.0 (Unreleased)
+
+### Sample updates
+
+* Updated Voice Agent samples to use `FOUNDRY_VOICE_AGENT_MODEL` for model configuration, retaining `FOUNDRY_VOICE_MODEL` as a deprecated fallback in `sample_voice_agent_with_tools.py`.
+* Renamed Voice Agent realtime samples from `sample_voice_agent_live_*` to `sample_voice_agent_realtime_*`, updating usage instructions and cross-references.
+* Updated `sample_multiturn_trace_evaluation_agent_filter.py` to use the supported agent-name/version filter, remove unsupported command-line filtering options, and configure trace lookback and maximum trace count through `TRACE_LOOKBACK_HOURS` and `TRACE_MAX_TRACES`.
+
+## 2.8.0 (2026-10-02)
+
+### Features Added
+
+* Agent Optimization APIs are now GA, including job management, cost estimation, candidate retrieval, and candidate promotion.
+* Added typed Agent Optimization models for agent and prompt optimization, configuration, evaluation, candidate search and mutations, cost estimates, latency, token usage, and termination details.
+* Data generation job APIs are now GA.
+* Added scenario-specific data generation models for evaluation, supervised fine-tuning, reinforcement fine-tuning, and user-conversation simulation.
+* Evaluator lifecycle and generation job APIs are now GA.
+* Added GA Agent tools `BrowserAutomationTool` and `BrowserAutomationToolboxTool`, with `ToolboxToolType.BROWSER_AUTOMATION`.
+* Added `ChatCompletionTool`, `FunctionObject`, and `FunctionParameters` for describing function tools used by chat completions.
+* Added optional `async_property` to `CustomToolParam`, `FunctionTool`, and `FunctionToolParam`.
+* Added `ConnectionType.OPEN_API` and `ConnectionType.REMOTE_A2A`.
+* Added optional `ApiError.misalignment` with `MisalignmentErrorDetailsResource`, `MisalignmentErrorType`, and `MisalignmentSteer`.
+* Added `gpt-image-2` and `gpt-image-2-2026-04-21` as known `ImageGenTool.model` values.
+
+### Breaking Changes
+
+All breaking changes affect preview APIs.
+
+Breaking changes in preview methods:
+
+* `list_optimization_jobs` now returns `ItemPaged[AgentOptimizationJob]` instead of `ItemPaged[AgentOptimizationJobListItem]`.
+* `.datasets.begin_create_generation_job` now accepts `DataGenerationJobInputs` instead of `DataGenerationJob`.
+* `.evaluators.begin_create_generation_job` now accepts `EvaluatorGenerationInputs` directly instead of an `EvaluatorGenerationJob` wrapping the inputs under an `inputs` property.
+
+Breaking changes in preview classes:
+
+* Restructured `AgentOptimizationCandidate`, `AgentOptimizationJob`, and `AgentOptimizationJobResult` around typed configuration, candidate output, evaluation, usage, latency, and termination models.
+* `DataGenerationJob` now requires `name`, `sources`, `generation_configuration`, and `scenario` instead of `inputs`.
+* `DataGenerationJobInputs` now uses `generation_configuration` and the scenario-specific input models for output configuration.
+* Renamed `DataGenerationJobOptions` to `DataGenerationJobConfiguration`, along with its derived classes: `SimpleQnADataGenerationJobOptions` to `SimpleQnADataGenerationJobConfiguration`, `SimulationSeedDataGenerationJobOptions` to `SimulationSeedDataGenerationJobConfiguration`, `ToolUseFineTuningDataGenerationJobOptions` to `ToolUseFineTuningDataGenerationJobConfiguration`, and `TracesDataGenerationJobOptions` to `TracesDataGenerationJobConfiguration`.
+* Replaced `DataGenerationJobOutputOptions` with scenario-specific `EvaluationDataGenerationJobOutputConfiguration`, `SupervisedFineTuningDataGenerationJobOutputConfiguration`, and `ReinforcementFineTuningDataGenerationJobOutputConfiguration` models.
+* Renamed the supervised and reinforcement fine-tuning `DataGenerationJobScenario` values with a `_PREVIEW` suffix. Their wire values now also end in `_preview`.
+* `EvaluatorGenerationJob` now exposes `sources`, `model`, `evaluator_name`, `evaluator_display_name`, and `evaluator_description` as top-level properties and no longer has an `inputs` property.
+
+### Sample updates
+
+* Added `sample_dataset_generation_job_management.py` demonstrating `begin_create_generation_job` without SDK polling, `list_generation_jobs`, `get_generation_job` and `cancel_generation_job` on `.datasets`.
+* Added `sample_dataset_generation_job_traces_for_evaluation_merge.py` demonstrating growing a traces-based evaluation dataset with `DataGenerationJobOutputWriteMode.MERGE`, which creates the next dataset version with merged, de-duplicated rows.
+* Added `sample_dataset_generation_job_simulation_seed_for_evaluation.py` demonstrating `SimulationSeedDataGenerationJobConfiguration` to generate multi-turn evaluation seeds from a prompt source.
+* Replaced `sample_quality_grader.py` with `sample_output_quality.py` for the `builtin.output_quality` composite evaluator, and added `sample_tool_use_quality.py` for the `builtin.tool_use_quality` composite evaluator.
+* Updated `sample_multiturn_conversation_simulation.py` to use the GA `azure_ai_user_conversation_simulation` data source.
+* Updated `sample_synthetic_multiturn_evaluation.py` to use the GA `azure_ai_synthetic_data_generation_with_simulation` data source, generating scenarios and simulating conversations in a single eval run.
+* Updated the trace-based evaluation samples (`sample_multiturn_trace_evaluation_by_id.py`, `sample_multiturn_trace_evaluation_agent_filter.py`, `sample_agent_trace_evaluation_smart_filter.py`, `sample_scheduled_agent_traces_evaluation_smart_filter.py`) to use the GA `azure_ai_trace_data_source` type.
+
 ## 2.7.0 (2026-09-18)
 
 ### Features Added

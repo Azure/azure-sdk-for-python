@@ -85,6 +85,11 @@
         "azure.mgmt.storagecache.models.NfsAccessRule": "Microsoft.StorageCache.NfsAccessRule",
         "azure.mgmt.storagecache.models.PrimingJob": "Microsoft.StorageCache.PrimingJob",
         "azure.mgmt.storagecache.models.PrimingJobIdParameter": "Microsoft.StorageCache.PrimingJobIdParameter",
+        "azure.mgmt.storagecache.models.RebalanceJob": "Microsoft.StorageCache.RebalanceJob",
+        "azure.mgmt.storagecache.models.RebalanceJobProperties": "Microsoft.StorageCache.RebalanceJobProperties",
+        "azure.mgmt.storagecache.models.RebalanceJobPropertiesStatus": "Microsoft.StorageCache.RebalanceJobPropertiesStatus",
+        "azure.mgmt.storagecache.models.RebalanceJobUpdate": "Microsoft.StorageCache.RebalanceJobUpdate",
+        "azure.mgmt.storagecache.models.RebalanceJobUpdateProperties": "Microsoft.StorageCache.RebalanceJobUpdateProperties",
         "azure.mgmt.storagecache.models.RequiredAmlFilesystemSubnetsSize": "Microsoft.StorageCache.RequiredAmlFilesystemSubnetsSize",
         "azure.mgmt.storagecache.models.RequiredAmlFilesystemSubnetsSizeInfo": "Microsoft.StorageCache.RequiredAmlFilesystemSubnetsSizeInfo",
         "azure.mgmt.storagecache.models.ResourceSku": "Microsoft.StorageCache.ResourceSku",
@@ -123,6 +128,9 @@
         "azure.mgmt.storagecache.models.AutoImportJobUpdatePropertiesAdminStatus": "Microsoft.StorageCache.AutoImportJobUpdatePropertiesAdminStatus",
         "azure.mgmt.storagecache.models.ExpansionJobPropertiesProvisioningState": "Microsoft.StorageCache.ExpansionJobPropertiesProvisioningState",
         "azure.mgmt.storagecache.models.ExpansionJobStatusType": "Microsoft.StorageCache.ExpansionJobStatusType",
+        "azure.mgmt.storagecache.models.RebalanceJobPropertiesProvisioningState": "Microsoft.StorageCache.RebalanceJobPropertiesProvisioningState",
+        "azure.mgmt.storagecache.models.RebalanceJobAdminStatus": "Microsoft.StorageCache.RebalanceJobAdminStatus",
+        "azure.mgmt.storagecache.models.RebalanceJobStatusType": "Microsoft.StorageCache.RebalanceJobStatusType",
         "azure.mgmt.storagecache.models.HealthStateType": "Microsoft.StorageCache.HealthStateType",
         "azure.mgmt.storagecache.models.ProvisioningStateType": "Microsoft.StorageCache.ProvisioningStateType",
         "azure.mgmt.storagecache.models.FirmwareStatusType": "Microsoft.StorageCache.FirmwareStatusType",
@@ -195,6 +203,14 @@
         "azure.mgmt.storagecache.aio.operations.ExpansionJobsOperations.begin_delete": "Microsoft.StorageCache.ExpansionJobs.delete",
         "azure.mgmt.storagecache.operations.ExpansionJobsOperations.list_by_aml_filesystem": "Microsoft.StorageCache.ExpansionJobs.listByAmlFilesystem",
         "azure.mgmt.storagecache.aio.operations.ExpansionJobsOperations.list_by_aml_filesystem": "Microsoft.StorageCache.ExpansionJobs.listByAmlFilesystem",
+        "azure.mgmt.storagecache.operations.RebalanceJobsOperations.get": "Microsoft.StorageCache.RebalanceJobs.get",
+        "azure.mgmt.storagecache.aio.operations.RebalanceJobsOperations.get": "Microsoft.StorageCache.RebalanceJobs.get",
+        "azure.mgmt.storagecache.operations.RebalanceJobsOperations.begin_update": "Microsoft.StorageCache.RebalanceJobs.update",
+        "azure.mgmt.storagecache.aio.operations.RebalanceJobsOperations.begin_update": "Microsoft.StorageCache.RebalanceJobs.update",
+        "azure.mgmt.storagecache.operations.RebalanceJobsOperations.begin_delete": "Microsoft.StorageCache.RebalanceJobs.delete",
+        "azure.mgmt.storagecache.aio.operations.RebalanceJobsOperations.begin_delete": "Microsoft.StorageCache.RebalanceJobs.delete",
+        "azure.mgmt.storagecache.operations.RebalanceJobsOperations.list_by_aml_filesystem": "Microsoft.StorageCache.RebalanceJobs.listByAmlFilesystem",
+        "azure.mgmt.storagecache.aio.operations.RebalanceJobsOperations.list_by_aml_filesystem": "Microsoft.StorageCache.RebalanceJobs.listByAmlFilesystem",
         "azure.mgmt.storagecache.operations.CachesOperations.get": "Microsoft.StorageCache.Caches.get",
         "azure.mgmt.storagecache.aio.operations.CachesOperations.get": "Microsoft.StorageCache.Caches.get",
         "azure.mgmt.storagecache.operations.CachesOperations.begin_create_or_update": "Microsoft.StorageCache.Caches.createOrUpdate",
@@ -260,5 +276,5 @@
         "azure.mgmt.storagecache.StorageCacheManagementClient.get_required_aml_fs_subnets_size": "Microsoft.StorageCache.getRequiredAmlFSSubnetsSize",
         "azure.mgmt.storagecache.aio.StorageCacheManagementClient.get_required_aml_fs_subnets_size": "Microsoft.StorageCache.getRequiredAmlFSSubnetsSize"
     },
-    "CrossLanguageVersion": "fa957411003b"
+    "CrossLanguageVersion": "6ed57e9fbcd3"
 }

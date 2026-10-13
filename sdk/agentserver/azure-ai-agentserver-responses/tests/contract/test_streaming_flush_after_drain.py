@@ -43,7 +43,10 @@ class TestStreamingFlushAfterDrain:
     @pytest.mark.parametrize(
         "mode, expected_helper",
         [
-            (None, "flush_spans_async"),
+            (None, "schedule_flush_spans"),
+            ("", "schedule_flush_spans"),
+            ("   ", "schedule_flush_spans"),
+            ("invalid-mode", "schedule_flush_spans"),
             ("async", "flush_spans_async"),
             ("background", "schedule_flush_spans"),
             ("sync", "flush_spans"),
