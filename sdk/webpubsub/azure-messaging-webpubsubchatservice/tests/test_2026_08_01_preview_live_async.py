@@ -40,11 +40,9 @@ class TestWebPubSubChatTopicsLiveAsync(WebPubSubChatTest):
     @pytest.mark.asyncio
     async def test_async_topic_lifecycle_and_paging(self, wps_chat_endpoint):
         client = self.create_async_client(wps_chat_endpoint)
-        # Existing operations are not yet routed under the new version on DevINT.
-        setup = self.create_async_client(wps_chat_endpoint, api_version="2026-02-01-preview")
         room_id = "python-async-e2e-topics"
         try:
-            room = await setup.create_or_replace_room(room_id, ChatRoom(title="Async Topic E2E"))
+            room = await client.create_or_replace_room(room_id, ChatRoom(title="Async Topic E2E"))
             assert all(
                 topic.conversation_id == room.default_conversation
                 for topic in await _collect(client.list_topics(room_id))
@@ -57,10 +55,10 @@ class TestWebPubSubChatTopicsLiveAsync(WebPubSubChatTest):
                 assert topic.created_at
                 assert topic.created_by
                 assert topic.etag
-                conversation = await setup.get_conversation(topic.conversation_id)
+                conversation = await client.get_conversation(topic.conversation_id)
                 assert conversation.id == topic.conversation_id
                 assert conversation.parent_room == room_id
-                assert await _collect(setup.list_messages(topic.conversation_id)) == []
+                assert await _collect(client.list_messages(topic.conversation_id)) == []
 
             assert {topic.id async for topic in client.list_topics(room_id, max_page_size=1)}.issuperset(
                 {"first", "second"}
@@ -92,8 +90,7 @@ class TestWebPubSubChatTopicsLiveAsync(WebPubSubChatTest):
                 room_id, "first", etag=archived.etag, match_condition=MatchConditions.IfNotModified
             )
         finally:
-            await self.cleanup_async(setup.delete_room, room_id)
-            await setup.close()
+            await self.cleanup_async(client.delete_room, room_id)
             await client.close()
 
     @WebPubSubChatPreparer()
@@ -101,20 +98,19 @@ class TestWebPubSubChatTopicsLiveAsync(WebPubSubChatTest):
     @pytest.mark.asyncio
     async def test_async_room_user_and_user_room_collections(self, wps_chat_endpoint):
         client = self.create_async_client(wps_chat_endpoint)
-        setup = self.create_async_client(wps_chat_endpoint, api_version="2026-02-01-preview")
         room_ids = ["python-async-e2e-collection-1", "python-async-e2e-collection-2"]
         user_ids = ["python-async-e2e-collection-user-1", "python-async-e2e-collection-user-2"]
         user_role = "user.python_async_e2e_collections"
         room_role = "room.python_async_e2e_collections"
         try:
-            await setup.create_or_replace_role(user_role, ChatRole(permissions=[ChatPermission.USER_CREATE_ROOM]))
-            await setup.create_or_replace_role(room_role, ChatRole(permissions=[ChatPermission.ROOM_PUBLISH_MESSAGE]))
+            await client.create_or_replace_role(user_role, ChatRole(permissions=[ChatPermission.USER_CREATE_ROOM]))
+            await client.create_or_replace_role(room_role, ChatRole(permissions=[ChatPermission.ROOM_PUBLISH_MESSAGE]))
             for user_id in user_ids:
-                await setup.create_or_replace_user(user_id, HumanChatUser(nickname=user_id, role_name=user_role))
+                await client.create_or_replace_user(user_id, HumanChatUser(nickname=user_id, role_name=user_role))
             assert await _collect(client.list_rooms_for_user(user_ids[0])) == []
             for room_id in room_ids:
-                await setup.create_or_replace_room(room_id, ChatRoom(title=room_id))
-                await setup.create_or_replace_room_member(room_id, user_ids[0], ChatRoomMember(role_name=room_role))
+                await client.create_or_replace_room(room_id, ChatRoom(title=room_id))
+                await client.create_or_replace_room_member(room_id, user_ids[0], ChatRoomMember(role_name=room_role))
             assert {room.id async for room in client.list_rooms(max_page_size=1)}.issuperset(room_ids)
             users = await _collect(client.list_users(max_page_size=1))
             assert {user.id for user in users}.issuperset(user_ids)
@@ -123,14 +119,13 @@ class TestWebPubSubChatTopicsLiveAsync(WebPubSubChatTest):
             await _assert_resumable_pages(client.list_rooms(max_page_size=1))
             await _assert_resumable_pages(client.list_users(max_page_size=1))
             await _assert_resumable_pages(client.list_rooms_for_user(user_ids[0], max_page_size=1))
-            await setup.delete_room_member(room_ids[0], user_ids[0])
+            await client.delete_room_member(room_ids[0], user_ids[0])
             assert {room.id async for room in client.list_rooms_for_user(user_ids[0])} == {room_ids[1]}
         finally:
             for room_id in room_ids:
-                await self.cleanup_async(setup.delete_room, room_id)
+                await self.cleanup_async(client.delete_room, room_id)
             for user_id in user_ids:
-                await self.cleanup_async(setup.delete_user, user_id)
-            await self.cleanup_async(setup.delete_role, user_role)
-            await self.cleanup_async(setup.delete_role, room_role)
-            await setup.close()
+                await self.cleanup_async(client.delete_user, user_id)
+            await self.cleanup_async(client.delete_role, user_role)
+            await self.cleanup_async(client.delete_role, room_role)
             await client.close()
