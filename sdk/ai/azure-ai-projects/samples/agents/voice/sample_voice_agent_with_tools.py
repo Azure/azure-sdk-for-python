@@ -91,7 +91,7 @@ end_call = VoiceAgentEndConversationSystemTool()
 
 # An MCP tool is executed by the service against a remote MCP server you own.
 # It references an external server, so it is constructed here for illustration
-# and not attached below. Provide one of server_url, connector_id, or tunnel_id.
+# and not attached below. Provide server_url; connector and tunnel identifiers are not supported.
 _example_mcp_tool = VoiceAgentMcpTool(
     server_label="my-mcp-server",
     server_url="https://example.com/mcp",
