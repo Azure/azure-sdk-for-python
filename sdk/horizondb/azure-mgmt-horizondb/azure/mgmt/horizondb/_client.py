@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -20,6 +20,7 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from ._configuration import HorizonDBMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
+    HorizonDbAdministratorsOperations,
     HorizonDbClustersOperations,
     HorizonDbFirewallRulesOperations,
     HorizonDbParameterGroupsOperations,
@@ -30,13 +31,18 @@ from .operations import (
     Operations,
 )
 
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
+
 if TYPE_CHECKING:
     from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class HorizonDBMgmtClient:  # pylint: disable=too-many-instance-attributes
-    """Azure Resource Provider API for managing HorizonDb clusters, pools, replicas, and firewall
+class HorizonDBMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
+    """Azure Resource Provider API for managing HorizonDB clusters, pools, replicas, and firewall
     rules.
 
     :ivar operations: Operations operations
@@ -60,6 +66,9 @@ class HorizonDBMgmtClient:  # pylint: disable=too-many-instance-attributes
     :ivar horizon_db_parameter_groups: HorizonDbParameterGroupsOperations operations
     :vartype horizon_db_parameter_groups:
      azure.mgmt.horizondb.operations.HorizonDbParameterGroupsOperations
+    :ivar horizon_db_administrators: HorizonDbAdministratorsOperations operations
+    :vartype horizon_db_administrators:
+     azure.mgmt.horizondb.operations.HorizonDbAdministratorsOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -70,8 +79,9 @@ class HorizonDBMgmtClient:  # pylint: disable=too-many-instance-attributes
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-01-20-preview". Default value is "2026-01-20-preview". Note that overriding this default
-     value may result in unsupported behavior.
+     "2026-05-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -142,6 +152,9 @@ class HorizonDBMgmtClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.horizon_db_parameter_groups = HorizonDbParameterGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.horizon_db_administrators = HorizonDbAdministratorsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

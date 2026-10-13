@@ -5,6 +5,7 @@ namespace azure.mgmt.containerserviceaimanager
         ai_manager_namespaces: AIManagerNamespacesOperations
         ai_managers: AIManagersOperations
         ai_models: AIModelsOperations
+        custom_ai_models: CustomAIModelsOperations
         model_deployments: ModelDeploymentsOperations
         model_sources: ModelSourcesOperations
         operations: Operations
@@ -38,6 +39,7 @@ namespace azure.mgmt.containerserviceaimanager.aio
         ai_manager_namespaces: AIManagerNamespacesOperations
         ai_managers: AIManagersOperations
         ai_models: AIModelsOperations
+        custom_ai_models: CustomAIModelsOperations
         model_deployments: ModelDeploymentsOperations
         model_sources: ModelSourcesOperations
         operations: Operations
@@ -139,7 +141,6 @@ namespace azure.mgmt.containerserviceaimanager.aio.operations
             ) -> AIManagerNamespace: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'ai_manager_name', 'namespace_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
         async def list_access_keys(
                 self, 
                 resource_group_name: str, 
@@ -166,7 +167,6 @@ namespace azure.mgmt.containerserviceaimanager.aio.operations
             ) -> CredentialResults: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'ai_manager_name', 'namespace_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
         async def rotate_keys(
                 self, 
                 resource_group_name: str, 
@@ -308,41 +308,15 @@ namespace azure.mgmt.containerserviceaimanager.aio.operations
                 **kwargs
             ) -> None: ...
 
-        @overload
+        @distributed_trace_async
         async def calculate_cost(
                 self, 
                 location: str, 
                 ai_model_name: str, 
-                body: CalculateCostRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> CalculateCostResponse: ...
-
-        @overload
-        async def calculate_cost(
-                self, 
-                location: str, 
-                ai_model_name: str, 
-                body: CalculateCostRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> CalculateCostResponse: ...
-
-        @overload
-        async def calculate_cost(
-                self, 
-                location: str, 
-                ai_model_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
                 **kwargs: Any
             ) -> CalculateCostResponse: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'location', 'ai_model_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
         async def get(
                 self, 
                 location: str, 
@@ -351,12 +325,100 @@ namespace azure.mgmt.containerserviceaimanager.aio.operations
             ) -> AIModel: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-05-02-preview'])
         def list(
                 self, 
                 location: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[AIModel]: ...
+
+
+    class azure.mgmt.containerserviceaimanager.aio.operations.CustomAIModelsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                ai_manager_name: str, 
+                custom_ai_model_name: str, 
+                resource: CustomAIModel, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[CustomAIModel]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                ai_manager_name: str, 
+                custom_ai_model_name: str, 
+                resource: CustomAIModel, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[CustomAIModel]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                ai_manager_name: str, 
+                custom_ai_model_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[CustomAIModel]: ...
+
+        @distributed_trace_async
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                ai_manager_name: str, 
+                custom_ai_model_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        async def calculate_cost(
+                self, 
+                resource_group_name: str, 
+                ai_manager_name: str, 
+                custom_ai_model_name: str, 
+                **kwargs: Any
+            ) -> CalculateCostResponse: ...
+
+        @distributed_trace_async
+        async def get(
+                self, 
+                resource_group_name: str, 
+                ai_manager_name: str, 
+                custom_ai_model_name: str, 
+                **kwargs: Any
+            ) -> CustomAIModel: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                resource_group_name: str, 
+                ai_manager_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[CustomAIModel]: ...
 
 
     class azure.mgmt.containerserviceaimanager.aio.operations.ModelDeploymentsOperations:
@@ -413,7 +475,6 @@ namespace azure.mgmt.containerserviceaimanager.aio.operations
             ) -> AsyncLROPoller[ModelDeployment]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'ai_manager_name', 'namespace_name', 'model_deployment_name', 'etag', 'match_condition']}, api_versions_list=['2026-05-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -427,7 +488,6 @@ namespace azure.mgmt.containerserviceaimanager.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'ai_manager_name', 'namespace_name', 'model_deployment_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -438,7 +498,6 @@ namespace azure.mgmt.containerserviceaimanager.aio.operations
             ) -> ModelDeployment: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'ai_manager_name', 'namespace_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
         def list_by_ai_manager_namespace(
                 self, 
                 resource_group_name: str, 
@@ -499,7 +558,6 @@ namespace azure.mgmt.containerserviceaimanager.aio.operations
             ) -> AsyncLROPoller[ModelSource]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'ai_manager_name', 'model_source_name', 'etag', 'match_condition']}, api_versions_list=['2026-05-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -512,7 +570,6 @@ namespace azure.mgmt.containerserviceaimanager.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'ai_manager_name', 'model_source_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -522,7 +579,6 @@ namespace azure.mgmt.containerserviceaimanager.aio.operations
             ) -> ModelSource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'ai_manager_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -632,6 +688,7 @@ namespace azure.mgmt.containerserviceaimanager.models
 
 
     class azure.mgmt.containerserviceaimanager.models.AIManagerProperties(_Model):
+        cluster_resource_id: Optional[str]
         delete_policy: Optional[Union[str, DeletePolicy]]
         managed_resource_group_name: Optional[str]
         provisioning_state: Optional[Union[str, AIManagerProvisioningState]]
@@ -640,6 +697,7 @@ namespace azure.mgmt.containerserviceaimanager.models
         def __init__(
                 self, 
                 *, 
+                cluster_resource_id: Optional[str] = ..., 
                 delete_policy: Optional[Union[str, DeletePolicy]] = ...
             ) -> None: ...
 
@@ -700,6 +758,24 @@ namespace azure.mgmt.containerserviceaimanager.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.containerserviceaimanager.models.BaseModelReference(_Model):
+        config: Optional[dict[str, Any]]
+        id: str
+        total_weight_size_bytes: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                config: Optional[dict[str, Any]] = ..., 
+                id: str, 
+                total_weight_size_bytes: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.containerserviceaimanager.models.CalculateCostPlan(_Model):
         feasible: bool
         infeasibility_reason: Optional[InfeasibilityReason]
@@ -711,9 +787,6 @@ namespace azure.mgmt.containerserviceaimanager.models
         vm_hourly_price: float
         vm_size: str
         vms_per_replica: int
-
-
-    class azure.mgmt.containerserviceaimanager.models.CalculateCostRequest(_Model):
 
 
     class azure.mgmt.containerserviceaimanager.models.CalculateCostResponse(_Model):
@@ -739,16 +812,74 @@ namespace azure.mgmt.containerserviceaimanager.models
 
     class azure.mgmt.containerserviceaimanager.models.CredentialValue(_Model):
         inline: Optional[InlineCredential]
+        managed_identity: Optional[ManagedIdentityCredential]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                inline: Optional[InlineCredential] = ...
+                inline: Optional[InlineCredential] = ..., 
+                managed_identity: Optional[ManagedIdentityCredential] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerserviceaimanager.models.CustomAIModel(ProxyResource):
+        e_tag: Optional[str]
+        id: str
+        name: str
+        properties: Optional[CustomAIModelProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[CustomAIModelProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerserviceaimanager.models.CustomAIModelProperties(_Model):
+        base_model: BaseModelReference
+        description: Optional[str]
+        model_id: str
+        model_source_resource_id: str
+        provisioning_state: Optional[Union[str, CustomAIModelProvisioningState]]
+        spec: Optional[CustomAIModelSpec]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                base_model: BaseModelReference, 
+                description: Optional[str] = ..., 
+                model_id: str, 
+                model_source_resource_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerserviceaimanager.models.CustomAIModelProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CANCELED = "Canceled"
+        CREATING = "Creating"
+        DELETING = "Deleting"
+        FAILED = "Failed"
+        SUCCEEDED = "Succeeded"
+        UPDATING = "Updating"
+
+
+    class azure.mgmt.containerserviceaimanager.models.CustomAIModelSpec(_Model):
+        is_restricted: bool
+        license: Optional[str]
+        max_context_length: int
 
 
     class azure.mgmt.containerserviceaimanager.models.DeletePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -808,6 +939,20 @@ namespace azure.mgmt.containerserviceaimanager.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.containerserviceaimanager.models.ManagedIdentityCredential(_Model):
+        resource_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                resource_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.containerserviceaimanager.models.ManagedServiceIdentity(_Model):
         principal_id: Optional[str]
         tenant_id: Optional[str]
@@ -841,6 +986,20 @@ namespace azure.mgmt.containerserviceaimanager.models
                 self, 
                 *, 
                 replicas: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerserviceaimanager.models.MicrosoftFoundrySource(_Model):
+        project_resource_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                project_resource_id: str
             ) -> None: ...
 
         @overload
@@ -955,6 +1114,7 @@ namespace azure.mgmt.containerserviceaimanager.models
     class azure.mgmt.containerserviceaimanager.models.ModelSourceProperties(_Model):
         credential: Optional[CredentialValue]
         description: Optional[str]
+        microsoft_foundry: Optional[MicrosoftFoundrySource]
         provisioning_state: Optional[Union[str, ResourceProvisioningState]]
         source_type: Union[str, ModelSourceType]
 
@@ -964,6 +1124,7 @@ namespace azure.mgmt.containerserviceaimanager.models
                 *, 
                 credential: Optional[CredentialValue] = ..., 
                 description: Optional[str] = ..., 
+                microsoft_foundry: Optional[MicrosoftFoundrySource] = ..., 
                 source_type: Union[str, ModelSourceType]
             ) -> None: ...
 
@@ -973,6 +1134,7 @@ namespace azure.mgmt.containerserviceaimanager.models
 
     class azure.mgmt.containerserviceaimanager.models.ModelSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         HUGGING_FACE = "HuggingFace"
+        MICROSOFT_FOUNDRY = "MicrosoftFoundry"
 
 
     class azure.mgmt.containerserviceaimanager.models.ModelSpec(_Model):
@@ -1183,7 +1345,6 @@ namespace azure.mgmt.containerserviceaimanager.operations
             ) -> AIManagerNamespace: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'ai_manager_name', 'namespace_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
         def list_access_keys(
                 self, 
                 resource_group_name: str, 
@@ -1210,7 +1371,6 @@ namespace azure.mgmt.containerserviceaimanager.operations
             ) -> CredentialResults: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'ai_manager_name', 'namespace_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
         def rotate_keys(
                 self, 
                 resource_group_name: str, 
@@ -1352,41 +1512,15 @@ namespace azure.mgmt.containerserviceaimanager.operations
                 **kwargs
             ) -> None: ...
 
-        @overload
+        @distributed_trace
         def calculate_cost(
                 self, 
                 location: str, 
                 ai_model_name: str, 
-                body: CalculateCostRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> CalculateCostResponse: ...
-
-        @overload
-        def calculate_cost(
-                self, 
-                location: str, 
-                ai_model_name: str, 
-                body: CalculateCostRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> CalculateCostResponse: ...
-
-        @overload
-        def calculate_cost(
-                self, 
-                location: str, 
-                ai_model_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
                 **kwargs: Any
             ) -> CalculateCostResponse: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'location', 'ai_model_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
         def get(
                 self, 
                 location: str, 
@@ -1395,12 +1529,100 @@ namespace azure.mgmt.containerserviceaimanager.operations
             ) -> AIModel: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-05-02-preview'])
         def list(
                 self, 
                 location: str, 
                 **kwargs: Any
             ) -> ItemPaged[AIModel]: ...
+
+
+    class azure.mgmt.containerserviceaimanager.operations.CustomAIModelsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                ai_manager_name: str, 
+                custom_ai_model_name: str, 
+                resource: CustomAIModel, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[CustomAIModel]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                ai_manager_name: str, 
+                custom_ai_model_name: str, 
+                resource: CustomAIModel, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[CustomAIModel]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                ai_manager_name: str, 
+                custom_ai_model_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[CustomAIModel]: ...
+
+        @distributed_trace
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                ai_manager_name: str, 
+                custom_ai_model_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        def calculate_cost(
+                self, 
+                resource_group_name: str, 
+                ai_manager_name: str, 
+                custom_ai_model_name: str, 
+                **kwargs: Any
+            ) -> CalculateCostResponse: ...
+
+        @distributed_trace
+        def get(
+                self, 
+                resource_group_name: str, 
+                ai_manager_name: str, 
+                custom_ai_model_name: str, 
+                **kwargs: Any
+            ) -> CustomAIModel: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                resource_group_name: str, 
+                ai_manager_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[CustomAIModel]: ...
 
 
     class azure.mgmt.containerserviceaimanager.operations.ModelDeploymentsOperations:
@@ -1457,7 +1679,6 @@ namespace azure.mgmt.containerserviceaimanager.operations
             ) -> LROPoller[ModelDeployment]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'ai_manager_name', 'namespace_name', 'model_deployment_name', 'etag', 'match_condition']}, api_versions_list=['2026-05-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1471,7 +1692,6 @@ namespace azure.mgmt.containerserviceaimanager.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'ai_manager_name', 'namespace_name', 'model_deployment_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -1482,7 +1702,6 @@ namespace azure.mgmt.containerserviceaimanager.operations
             ) -> ModelDeployment: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'ai_manager_name', 'namespace_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
         def list_by_ai_manager_namespace(
                 self, 
                 resource_group_name: str, 
@@ -1543,7 +1762,6 @@ namespace azure.mgmt.containerserviceaimanager.operations
             ) -> LROPoller[ModelSource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'ai_manager_name', 'model_source_name', 'etag', 'match_condition']}, api_versions_list=['2026-05-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1556,7 +1774,6 @@ namespace azure.mgmt.containerserviceaimanager.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'ai_manager_name', 'model_source_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -1566,7 +1783,6 @@ namespace azure.mgmt.containerserviceaimanager.operations
             ) -> ModelSource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'ai_manager_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -1638,9 +1854,11 @@ namespace azure.mgmt.containerserviceaimanager.types
 
 
     class azure.mgmt.containerserviceaimanager.types.AIManagerProperties(TypedDict, total=False):
+        key "clusterResourceId": str
         key "deletePolicy": Union[str, DeletePolicy]
         key "managedResourceGroupName": str
         key "provisioningState": Union[str, AIManagerProvisioningState]
+        clusterResourceId: str
         deletePolicy: Union[str, DeletePolicy]
         managedResourceGroupName: str
         provisioningState: Union[str, AIManagerProvisioningState]
@@ -1653,17 +1871,68 @@ namespace azure.mgmt.containerserviceaimanager.types
         minReplicas: int
 
 
-    class azure.mgmt.containerserviceaimanager.types.CalculateCostRequest(TypedDict, total=False):
+    class azure.mgmt.containerserviceaimanager.types.BaseModelReference(TypedDict, total=False):
+        key "id": Required[str]
+        key "totalWeightSizeBytes": int
+        config: dict[str, Any]
+        id: str
+        totalWeightSizeBytes: int
 
 
     class azure.mgmt.containerserviceaimanager.types.CredentialValue(TypedDict, total=False):
         key "inline": ForwardRef('InlineCredential', module='types')
+        key "managedIdentity": ForwardRef('ManagedIdentityCredential', module='types')
         inline: InlineCredential
+        managedIdentity: ManagedIdentityCredential
+
+
+    class azure.mgmt.containerserviceaimanager.types.CustomAIModel(ProxyResource):
+        key "eTag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('CustomAIModelProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        eTag: str
+        id: str
+        name: str
+        properties: CustomAIModelProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.containerserviceaimanager.types.CustomAIModelProperties(TypedDict, total=False):
+        key "baseModel": Required[BaseModelReference]
+        key "description": str
+        key "modelId": Required[str]
+        key "modelSourceResourceId": Required[str]
+        key "provisioningState": Union[str, CustomAIModelProvisioningState]
+        key "spec": ForwardRef('CustomAIModelSpec', module='types')
+        baseModel: BaseModelReference
+        description: str
+        modelId: str
+        modelSourceResourceId: str
+        provisioningState: Union[str, CustomAIModelProvisioningState]
+        spec: CustomAIModelSpec
+
+
+    class azure.mgmt.containerserviceaimanager.types.CustomAIModelSpec(TypedDict, total=False):
+        key "isRestricted": Required[bool]
+        key "license": str
+        key "maxContextLength": Required[int]
+        isRestricted: bool
+        license: str
+        maxContextLength: int
 
 
     class azure.mgmt.containerserviceaimanager.types.InlineCredential(TypedDict, total=False):
         key "value": Required[str]
         value: str
+
+
+    class azure.mgmt.containerserviceaimanager.types.ManagedIdentityCredential(TypedDict, total=False):
+        key "resourceId": Required[str]
+        resourceId: str
 
 
     class azure.mgmt.containerserviceaimanager.types.ManagedServiceIdentity(TypedDict, total=False):
@@ -1679,6 +1948,11 @@ namespace azure.mgmt.containerserviceaimanager.types
     class azure.mgmt.containerserviceaimanager.types.ManualScalingProfile(TypedDict, total=False):
         key "replicas": Required[int]
         replicas: int
+
+
+    class azure.mgmt.containerserviceaimanager.types.MicrosoftFoundrySource(TypedDict, total=False):
+        key "projectResourceId": Required[str]
+        projectResourceId: str
 
 
     class azure.mgmt.containerserviceaimanager.types.ModelDeployment(ProxyResource):
@@ -1758,10 +2032,12 @@ namespace azure.mgmt.containerserviceaimanager.types
     class azure.mgmt.containerserviceaimanager.types.ModelSourceProperties(TypedDict, total=False):
         key "credential": ForwardRef('CredentialValue', module='types')
         key "description": str
+        key "microsoftFoundry": ForwardRef('MicrosoftFoundrySource', module='types')
         key "provisioningState": Union[str, ResourceProvisioningState]
         key "sourceType": Required[Union[str, ModelSourceType]]
         credential: CredentialValue
         description: str
+        microsoftFoundry: MicrosoftFoundrySource
         provisioningState: Union[str, ResourceProvisioningState]
         sourceType: Union[str, ModelSourceType]
 

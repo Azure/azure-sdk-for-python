@@ -37,6 +37,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2026-07-01/Common/TriggerCancelJob.json
+# x-ms-original-file: 2026-08-01/Common/TriggerCancelJob.json
 if __name__ == "__main__":
     main()

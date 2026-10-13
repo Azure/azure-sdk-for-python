@@ -39,9 +39,9 @@ if TYPE_CHECKING:
 class ApprovalActionRequest(TypedDict, total=False):
     """Request body for calling post-action.
 
-    :ivar approval_status: Approval status indicating 'Approved' or 'Rejected'. Required. Is one of
+    :ivar approvalStatus: Approval status indicating 'Approved' or 'Rejected'. Required. Is one of
      the following types: Literal["Approved"], Literal["Rejected"], str
-    :vartype approval_status: Union[Literal["Approved"], Literal["Rejected"], str]
+    :vartype approvalStatus: Union[Literal["Approved"], Literal["Rejected"], str]
     """
 
     approvalStatus: Required[Union[Literal["Approved"], Literal["Rejected"], str]]
@@ -52,16 +52,16 @@ class ApprovalActionRequest(TypedDict, total=False):
 class ApprovalCallbackRequest(TypedDict, total=False):
     """Request body for calling post-action.
 
-    :ivar resource_request_action: Resource request action indicating action which needed to be
+    :ivar resourceRequestAction: Resource request action indicating action which needed to be
      performed upon calling approval-callback post action. Required. Is one of the following types:
      Literal["Create"], Literal["Delete"], Literal["Update"], Literal["Reset"], str
-    :vartype resource_request_action: Union[Literal["Create"], Literal["Delete"],
-     Literal["Update"], Literal["Reset"], str]
-    :ivar approval_status: Approval status indicating 'Approved' or 'Rejected'. Required. Is one of
+    :vartype resourceRequestAction: Union[Literal["Create"], Literal["Delete"], Literal["Update"],
+     Literal["Reset"], str]
+    :ivar approvalStatus: Approval status indicating 'Approved' or 'Rejected'. Required. Is one of
      the following types: Literal["Approved"], Literal["Rejected"], str
-    :vartype approval_status: Union[Literal["Approved"], Literal["Rejected"], str]
-    :ivar approval_callback_payload: Payload requested by client upon approval action.
-    :vartype approval_callback_payload: str
+    :vartype approvalStatus: Union[Literal["Approved"], Literal["Rejected"], str]
+    :ivar approvalCallbackPayload: Payload requested by client upon approval action.
+    :vartype approvalCallbackPayload: str
     """
 
     resourceRequestAction: Required[
@@ -80,11 +80,11 @@ class ApprovalCallbackRequest(TypedDict, total=False):
 class ApprovalDeletionCallbackRequest(TypedDict, total=False):
     """Request body for calling post-action.
 
-    :ivar resource_request_action: Resource request action indicating action which needed to be
+    :ivar resourceRequestAction: Resource request action indicating action which needed to be
      performed upon calling approval-deletion-callback post action. Required. Is one of the
      following types: Literal["Create"], Literal["Delete"], Literal["Update"], str
-    :vartype resource_request_action: Union[Literal["Create"], Literal["Delete"],
-     Literal["Update"], str]
+    :vartype resourceRequestAction: Union[Literal["Create"], Literal["Delete"], Literal["Update"],
+     str]
     """
 
     resourceRequestAction: Required[Union[Literal["Create"], Literal["Delete"], Literal["Update"], str]]
@@ -107,21 +107,21 @@ class ApprovalPatchModel(TypedDict, total=False):
 class ApprovalPatchProperties(TypedDict, total=False):
     """Approvals patch properties.
 
-    :ivar parent_resource_id: Parameter for optimizing query results.
-    :vartype parent_resource_id: str
-    :ivar grandparent_resource_id: Parameter for optimizing query results.
-    :vartype grandparent_resource_id: str
+    :ivar parentResourceId: Parameter for optimizing query results.
+    :vartype parentResourceId: str
+    :ivar grandparentResourceId: Parameter for optimizing query results.
+    :vartype grandparentResourceId: str
     :ivar approvers: List of approvers for the approval request.
     :vartype approvers: list["Approver"]
-    :ivar ticket_id: Ticket ID for the approval request.
-    :vartype ticket_id: str
-    :ivar created_at: Approval request creation time.
-    :vartype created_at: str
-    :ivar state_changed_at: Approval request state change time, time at which approval request
-     state changed from pending to approved or rejected.
-    :vartype state_changed_at: str
-    :ivar request_metadata: Request metadata for the approval request. Required.
-    :vartype request_metadata: "RequestMetadataUpdatableProperties"
+    :ivar ticketId: Ticket ID for the approval request.
+    :vartype ticketId: str
+    :ivar createdAt: Approval request creation time.
+    :vartype createdAt: str
+    :ivar stateChangedAt: Approval request state change time, time at which approval request state
+     changed from pending to approved or rejected.
+    :vartype stateChangedAt: str
+    :ivar requestMetadata: Request metadata for the approval request. Required.
+    :vartype requestMetadata: "RequestMetadataUpdatableProperties"
     """
 
     parentResourceId: str
@@ -144,37 +144,35 @@ class ApprovalPatchProperties(TypedDict, total=False):
 class ApprovalProperties(TypedDict, total=False):
     """Approval Base model.
 
-    :ivar provisioning_state: Provisioning State. Known values are: "Succeeded", "Failed",
+    :ivar provisioningState: Provisioning State. Known values are: "Succeeded", "Failed",
      "Canceled", "Accepted", "Creating", "Deleting", "NotSpecified", "Running", and "Updating".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar parent_resource_id: Parameter for optimizing query results.
-    :vartype parent_resource_id: str
-    :ivar grandparent_resource_id: Parameter for optimizing query results.
-    :vartype grandparent_resource_id: str
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar parentResourceId: Parameter for optimizing query results.
+    :vartype parentResourceId: str
+    :ivar grandparentResourceId: Parameter for optimizing query results.
+    :vartype grandparentResourceId: str
     :ivar approvers: List of approvers for the approval request.
     :vartype approvers: list["Approver"]
-    :ivar ticket_id: Ticket ID for the approval request.
-    :vartype ticket_id: str
-    :ivar created_at: Approval request creation time.
-    :vartype created_at: str
-    :ivar state_changed_at: Approval request state change time, time at which approval request
-     state changed from pending to approved or rejected.
-    :vartype state_changed_at: str
-    :ivar mandatory_approvers: List of mandatory approvers for the approval request.
-    :vartype mandatory_approvers: list["MandatoryApprover"]
-    :ivar minimum_approvers_required: Minimum number of approvers required for the approval
+    :ivar ticketId: Ticket ID for the approval request.
+    :vartype ticketId: str
+    :ivar createdAt: Approval request creation time.
+    :vartype createdAt: str
+    :ivar stateChangedAt: Approval request state change time, time at which approval request state
+     changed from pending to approved or rejected.
+    :vartype stateChangedAt: str
+    :ivar mandatoryApprovers: List of mandatory approvers for the approval request.
+    :vartype mandatoryApprovers: list["MandatoryApprover"]
+    :ivar minimumApproversRequired: Minimum number of approvers required for the approval request.
+    :vartype minimumApproversRequired: int
+    :ivar approversApprovedCount: Current count of minimum approvers required.
+    :vartype approversApprovedCount: int
+    :ivar mandatoryApproversApprovedCount: Current count of mandatory approvers that have approved.
+    :vartype mandatoryApproversApprovedCount: int
+    :ivar approvedByEntraIds: Array of Entra IDs of approvers who have approved the approval
      request.
-    :vartype minimum_approvers_required: int
-    :ivar approvers_approved_count: Current count of minimum approvers required.
-    :vartype approvers_approved_count: int
-    :ivar mandatory_approvers_approved_count: Current count of mandatory approvers that have
-     approved.
-    :vartype mandatory_approvers_approved_count: int
-    :ivar approved_by_entra_ids: Array of Entra IDs of approvers who have approved the approval
-     request.
-    :vartype approved_by_entra_ids: list[str]
-    :ivar request_metadata: Request metadata for the approval request. Required.
-    :vartype request_metadata: "RequestMetadata"
+    :vartype approvedByEntraIds: list[str]
+    :ivar requestMetadata: Request metadata for the approval request. Required.
+    :vartype requestMetadata: "RequestMetadata"
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -218,9 +216,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -246,9 +244,9 @@ class ExtensionResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -263,9 +261,9 @@ class ApprovalResource(ExtensionResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "ApprovalProperties"
     """
@@ -278,14 +276,13 @@ class ApprovalSettingConfiguration(TypedDict, total=False):
     """Granular approval setting configuration with policy, minimum approvers, and mandatory
     approvers.
 
-    :ivar approval_policy: Approval policy (Required or NotRequired). Known values are: "Required"
+    :ivar approvalPolicy: Approval policy (Required or NotRequired). Known values are: "Required"
      and "NotRequired".
-    :vartype approval_policy: Union[str, "ApprovalPolicy"]
-    :ivar minimum_approvers_required: Minimum number of approvers required for this approval
-     setting.
-    :vartype minimum_approvers_required: int
-    :ivar mandatory_approvers: List of mandatory approvers for this approval setting.
-    :vartype mandatory_approvers: list["MandatoryApprover"]
+    :vartype approvalPolicy: Union[str, "ApprovalPolicy"]
+    :ivar minimumApproversRequired: Minimum number of approvers required for this approval setting.
+    :vartype minimumApproversRequired: int
+    :ivar mandatoryApprovers: List of mandatory approvers for this approval setting.
+    :vartype mandatoryApprovers: list["MandatoryApprover"]
     """
 
     approvalPolicy: Union[str, "ApprovalPolicy"]
@@ -299,20 +296,20 @@ class ApprovalSettingConfiguration(TypedDict, total=False):
 class ApprovalSettings(TypedDict, total=False):
     """Granular ApprovalSettings Properties for 2025-11-01-preview and later versions.
 
-    :ivar community_endpoint_update: Approval configuration for community endpoint updates.
-    :vartype community_endpoint_update: "ApprovalSettingConfiguration"
-    :ivar enclave_endpoint_update: Approval configuration for enclave endpoint updates.
-    :vartype enclave_endpoint_update: "ApprovalSettingConfiguration"
-    :ivar enclave_creation: Approval configuration for enclave creation.
-    :vartype enclave_creation: "ApprovalSettingConfiguration"
-    :ivar connection_creation: Approval configuration for connection creation.
-    :vartype connection_creation: "ApprovalSettingConfiguration"
-    :ivar connection_update: Approval configuration for connection updates.
-    :vartype connection_update: "ApprovalSettingConfiguration"
-    :ivar community_maintenance_mode: Approval configuration for community maintenance mode.
-    :vartype community_maintenance_mode: "ApprovalSettingConfiguration"
-    :ivar enclave_maintenance_mode: Approval configuration for enclave maintenance mode.
-    :vartype enclave_maintenance_mode: "ApprovalSettingConfiguration"
+    :ivar communityEndpointUpdate: Approval configuration for community endpoint updates.
+    :vartype communityEndpointUpdate: "ApprovalSettingConfiguration"
+    :ivar enclaveEndpointUpdate: Approval configuration for enclave endpoint updates.
+    :vartype enclaveEndpointUpdate: "ApprovalSettingConfiguration"
+    :ivar enclaveCreation: Approval configuration for enclave creation.
+    :vartype enclaveCreation: "ApprovalSettingConfiguration"
+    :ivar connectionCreation: Approval configuration for connection creation.
+    :vartype connectionCreation: "ApprovalSettingConfiguration"
+    :ivar connectionUpdate: Approval configuration for connection updates.
+    :vartype connectionUpdate: "ApprovalSettingConfiguration"
+    :ivar communityMaintenanceMode: Approval configuration for community maintenance mode.
+    :vartype communityMaintenanceMode: "ApprovalSettingConfiguration"
+    :ivar enclaveMaintenanceMode: Approval configuration for enclave maintenance mode.
+    :vartype enclaveMaintenanceMode: "ApprovalSettingConfiguration"
     """
 
     communityEndpointUpdate: "ApprovalSettingConfiguration"
@@ -334,20 +331,20 @@ class ApprovalSettings(TypedDict, total=False):
 class ApprovalSettingsPatchProperties(TypedDict, total=False):
     """Granular ApprovalSettings Patch Properties.
 
-    :ivar community_endpoint_update: Approval configuration for community endpoint updates.
-    :vartype community_endpoint_update: "ApprovalSettingConfiguration"
-    :ivar enclave_endpoint_update: Approval configuration for enclave endpoint updates.
-    :vartype enclave_endpoint_update: "ApprovalSettingConfiguration"
-    :ivar enclave_creation: Approval configuration for enclave creation.
-    :vartype enclave_creation: "ApprovalSettingConfiguration"
-    :ivar connection_creation: Approval configuration for connection creation.
-    :vartype connection_creation: "ApprovalSettingConfiguration"
-    :ivar connection_update: Approval configuration for connection updates.
-    :vartype connection_update: "ApprovalSettingConfiguration"
-    :ivar community_maintenance_mode: Approval configuration for community maintenance mode.
-    :vartype community_maintenance_mode: "ApprovalSettingConfiguration"
-    :ivar enclave_maintenance_mode: Approval configuration for enclave maintenance mode.
-    :vartype enclave_maintenance_mode: "ApprovalSettingConfiguration"
+    :ivar communityEndpointUpdate: Approval configuration for community endpoint updates.
+    :vartype communityEndpointUpdate: "ApprovalSettingConfiguration"
+    :ivar enclaveEndpointUpdate: Approval configuration for enclave endpoint updates.
+    :vartype enclaveEndpointUpdate: "ApprovalSettingConfiguration"
+    :ivar enclaveCreation: Approval configuration for enclave creation.
+    :vartype enclaveCreation: "ApprovalSettingConfiguration"
+    :ivar connectionCreation: Approval configuration for connection creation.
+    :vartype connectionCreation: "ApprovalSettingConfiguration"
+    :ivar connectionUpdate: Approval configuration for connection updates.
+    :vartype connectionUpdate: "ApprovalSettingConfiguration"
+    :ivar communityMaintenanceMode: Approval configuration for community maintenance mode.
+    :vartype communityMaintenanceMode: "ApprovalSettingConfiguration"
+    :ivar enclaveMaintenanceMode: Approval configuration for enclave maintenance mode.
+    :vartype enclaveMaintenanceMode: "ApprovalSettingConfiguration"
     """
 
     communityEndpointUpdate: "ApprovalSettingConfiguration"
@@ -369,16 +366,16 @@ class ApprovalSettingsPatchProperties(TypedDict, total=False):
 class Approver(TypedDict, total=False):
     """Approver Metadata for approvals request.
 
-    :ivar approver_entra_id: Entra ObjectID of the approver. Required.
-    :vartype approver_entra_id: str
-    :ivar action_performed: Action Performed by approver. Known values are: "Approved" and
+    :ivar approverEntraId: Entra ObjectID of the approver. Required.
+    :vartype approverEntraId: str
+    :ivar actionPerformed: Action Performed by approver. Known values are: "Approved" and
      "Rejected".
-    :vartype action_performed: Union[str, "ActionPerformed"]
-    :ivar last_updated_at: approval request last updated at. Required.
-    :vartype last_updated_at: str
-    :ivar mandatory_approval_group_membership_ids: Indicates if this approver is part of a
-     mandatory approver group with list of Entra IDs.
-    :vartype mandatory_approval_group_membership_ids: list[str]
+    :vartype actionPerformed: Union[str, "ActionPerformed"]
+    :ivar lastUpdatedAt: approval request last updated at. Required.
+    :vartype lastUpdatedAt: str
+    :ivar mandatoryApprovalGroupMembershipIds: Indicates if this approver is part of a mandatory
+     approver group with list of Entra IDs.
+    :vartype mandatoryApprovalGroupMembershipIds: list[str]
     """
 
     approverEntraId: Required[str]
@@ -394,10 +391,10 @@ class Approver(TypedDict, total=False):
 class CheckAddressSpaceAvailabilityRequest(TypedDict, total=False):
     """Request to the action call to check address space availability.
 
-    :ivar community_resource_id: Resource Id of the Community. Required.
-    :vartype community_resource_id: str
-    :ivar enclave_virtual_network: Information about the enclave virtual network. Required.
-    :vartype enclave_virtual_network: "EnclaveVirtualNetworkModel"
+    :ivar communityResourceId: Resource Id of the Community. Required.
+    :vartype communityResourceId: str
+    :ivar enclaveVirtualNetwork: Information about the enclave virtual network. Required.
+    :vartype enclaveVirtualNetwork: "EnclaveVirtualNetworkModel"
     """
 
     communityResourceId: Required[str]
@@ -409,15 +406,15 @@ class CheckAddressSpaceAvailabilityRequest(TypedDict, total=False):
 class CommunityEndpointDestinationRule(TypedDict, total=False):
     """Base type for destination rules.
 
-    :ivar destination_type: Destination Type. Known values are: "FQDN", "FQDNTag", "IPAddress",
+    :ivar destinationType: Destination Type. Known values are: "FQDN", "FQDNTag", "IPAddress",
      "PrivateNetwork", and "ServiceTag".
-    :vartype destination_type: Union[str, "DestinationType"]
+    :vartype destinationType: Union[str, "DestinationType"]
     :ivar protocols: Protocols. Options specified by Endpoint Protocol Enum.
     :vartype protocols: list[Union[str, "CommunityEndpointProtocol"]]
-    :ivar transit_hub_resource_id: Transit Hub Resource Id.
-    :vartype transit_hub_resource_id: str
-    :ivar endpoint_rule_name: Endpoint Rule Name.
-    :vartype endpoint_rule_name: str
+    :ivar transitHubResourceId: Transit Hub Resource Id.
+    :vartype transitHubResourceId: str
+    :ivar endpointRuleName: Endpoint Rule Name.
+    :vartype endpointRuleName: str
     :ivar destination: Destination address. Can include multiple CIDR/IP Addresses or fqdn tags or
      fqdns (for community endpoint) separated by commas.
     :vartype destination: str
@@ -460,11 +457,11 @@ class CommunityEndpointPatchModel(TypedDict, total=False):
 class CommunityEndpointPatchProperties(TypedDict, total=False):
     """Community Endpoint patchable Properties.
 
-    :ivar rule_collection: Community Endpoint Rule Collection. Required.
-    :vartype rule_collection: list["CommunityEndpointDestinationRule"]
-    :ivar update_mode: Whether update mode is automatic or manual. Known values are: "Automatic"
-     and "Manual".
-    :vartype update_mode: Union[str, "UpdateMode"]
+    :ivar ruleCollection: Community Endpoint Rule Collection. Required.
+    :vartype ruleCollection: list["CommunityEndpointDestinationRule"]
+    :ivar updateMode: Whether update mode is automatic or manual. Known values are: "Automatic" and
+     "Manual".
+    :vartype updateMode: Union[str, "UpdateMode"]
     """
 
     ruleCollection: Required[list["CommunityEndpointDestinationRule"]]
@@ -476,16 +473,16 @@ class CommunityEndpointPatchProperties(TypedDict, total=False):
 class CommunityEndpointProperties(TypedDict, total=False):
     """Community Endpoint Resource properties.
 
-    :ivar rule_collection: Community Endpoint Rule Collection. Required.
-    :vartype rule_collection: list["CommunityEndpointDestinationRule"]
-    :ivar resource_collection: List of resource ids created by community endpoint.
-    :vartype resource_collection: list[str]
-    :ivar provisioning_state: Provisioning State. Known values are: "Succeeded", "Failed",
+    :ivar ruleCollection: Community Endpoint Rule Collection. Required.
+    :vartype ruleCollection: list["CommunityEndpointDestinationRule"]
+    :ivar resourceCollection: List of resource ids created by community endpoint.
+    :vartype resourceCollection: list[str]
+    :ivar provisioningState: Provisioning State. Known values are: "Succeeded", "Failed",
      "Canceled", "Accepted", "Creating", "Deleting", "NotSpecified", "Running", and "Updating".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar update_mode: Whether update mode is automatic or manual. Known values are: "Automatic"
-     and "Manual".
-    :vartype update_mode: Union[str, "UpdateMode"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar updateMode: Whether update mode is automatic or manual. Known values are: "Automatic" and
+     "Manual".
+    :vartype updateMode: Union[str, "UpdateMode"]
     """
 
     ruleCollection: Required[list["CommunityEndpointDestinationRule"]]
@@ -510,9 +507,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -536,9 +533,9 @@ class CommunityEndpointResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -573,29 +570,29 @@ class CommunityPatchModel(TypedDict, total=False):
 class CommunityPatchProperties(TypedDict, total=False):
     """Community Resource Properties without default values.
 
-    :ivar dns_servers: DNS Servers.
-    :vartype dns_servers: list[str]
-    :ivar governed_service_list: List of services governed by a community.
-    :vartype governed_service_list: list["GovernedServiceItem"]
-    :ivar policy_override: Policy override setting for the community. Specifies whether to apply
+    :ivar dnsServers: DNS Servers.
+    :vartype dnsServers: list[str]
+    :ivar governedServiceList: List of services governed by a community.
+    :vartype governedServiceList: list["GovernedServiceItem"]
+    :ivar policyOverride: Policy override setting for the community. Specifies whether to apply
      enclave-specific policies or disable policy enforcement. Is one of the following types:
      Literal["Enclave"], Literal["None"], str
-    :vartype policy_override: Union[Literal["Enclave"], Literal["None"], str]
-    :ivar community_role_assignments: Community role assignments.
-    :vartype community_role_assignments: list["RoleAssignmentItem"]
-    :ivar firewall_sku: SKU of the community's Azure Firewall (Basic, Standard, Premium). Standard
+    :vartype policyOverride: Union[Literal["Enclave"], Literal["None"], str]
+    :ivar communityRoleAssignments: Community role assignments.
+    :vartype communityRoleAssignments: list["RoleAssignmentItem"]
+    :ivar firewallSku: SKU of the community's Azure Firewall (Basic, Standard, Premium). Standard
      is the default. Known values are: "Basic", "Standard", and "Premium".
-    :vartype firewall_sku: Union[str, "FirewallSKU"]
-    :ivar granular_approval_settings: Granular approval requirements for various actions on the
-     community's resources.
-    :vartype granular_approval_settings: "ApprovalSettingsPatchProperties"
-    :ivar maintenance_mode_configuration: Maintenance Mode configuration.
-    :vartype maintenance_mode_configuration: "MaintenanceModeConfigurationPatchModel"
-    :ivar monitoring_settings: Community Monitoring Settings for diagnostic and virtual network
-     flow logs.
-    :vartype monitoring_settings: "MonitoringSettingsPatchModel"
-    :ivar address_spaces: Address spaces list.
-    :vartype address_spaces: list[str]
+    :vartype firewallSku: Union[str, "FirewallSKU"]
+    :ivar approvalSettings: Granular approval requirements for various actions on the community's
+     resources.
+    :vartype approvalSettings: "ApprovalSettingsPatchProperties"
+    :ivar maintenanceModeConfiguration: Maintenance Mode configuration.
+    :vartype maintenanceModeConfiguration: "MaintenanceModeConfigurationPatchModel"
+    :ivar monitoringSettings: Community Monitoring Settings for diagnostic and virtual network flow
+     logs.
+    :vartype monitoringSettings: "MonitoringSettingsPatchModel"
+    :ivar addressSpaces: Address spaces list.
+    :vartype addressSpaces: list[str]
     """
 
     dnsServers: list[str]
@@ -624,42 +621,42 @@ class CommunityPatchProperties(TypedDict, total=False):
 class CommunityProperties(TypedDict, total=False):
     """Community Resource Properties.
 
-    :ivar address_space: Address Space.
-    :vartype address_space: str
-    :ivar dns_servers: DNS Servers.
-    :vartype dns_servers: list[str]
-    :ivar provisioning_state: Provisioning State. Known values are: "Succeeded", "Failed",
+    :ivar addressSpace: Address Space.
+    :vartype addressSpace: str
+    :ivar dnsServers: DNS Servers.
+    :vartype dnsServers: list[str]
+    :ivar provisioningState: Provisioning State. Known values are: "Succeeded", "Failed",
      "Canceled", "Accepted", "Creating", "Deleting", "NotSpecified", "Running", and "Updating".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar resource_collection: List of resource ids created by communities.
-    :vartype resource_collection: list[str]
-    :ivar managed_resource_group_name: Managed resource group name.
-    :vartype managed_resource_group_name: str
-    :ivar managed_on_behalf_of_configuration: Managed On Behalf Of Configuration.
-    :vartype managed_on_behalf_of_configuration: "ManagedOnBehalfOfConfiguration"
-    :ivar governed_service_list: List of services governed by a community.
-    :vartype governed_service_list: list["GovernedServiceItem"]
-    :ivar policy_override: Policy override setting for the community. Specifies whether to apply
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar resourceCollection: List of resource ids created by communities.
+    :vartype resourceCollection: list[str]
+    :ivar managedResourceGroupName: Managed resource group name.
+    :vartype managedResourceGroupName: str
+    :ivar managedOnBehalfOfConfiguration: Managed On Behalf Of Configuration.
+    :vartype managedOnBehalfOfConfiguration: "ManagedOnBehalfOfConfiguration"
+    :ivar governedServiceList: List of services governed by a community.
+    :vartype governedServiceList: list["GovernedServiceItem"]
+    :ivar policyOverride: Policy override setting for the community. Specifies whether to apply
      enclave-specific policies or disable policy enforcement. Is one of the following types:
      Literal["Enclave"], Literal["None"], str
-    :vartype policy_override: Union[Literal["Enclave"], Literal["None"], str]
-    :ivar community_role_assignments: Community role assignments.
-    :vartype community_role_assignments: list["RoleAssignmentItem"]
-    :ivar firewall_sku: SKU of the community's Azure Firewall (Basic, Standard, Premium). Standard
+    :vartype policyOverride: Union[Literal["Enclave"], Literal["None"], str]
+    :ivar communityRoleAssignments: Community role assignments.
+    :vartype communityRoleAssignments: list["RoleAssignmentItem"]
+    :ivar firewallSku: SKU of the community's Azure Firewall (Basic, Standard, Premium). Standard
      is the default. Known values are: "Basic", "Standard", and "Premium".
-    :vartype firewall_sku: Union[str, "FirewallSKU"]
-    :ivar granular_approval_settings: Granular approval requirements for various actions on the
-     community's resources.
-    :vartype granular_approval_settings: "ApprovalSettings"
-    :ivar maintenance_mode_configuration: Maintenance Mode configuration.
-    :vartype maintenance_mode_configuration: "MaintenanceModeConfigurationModel"
-    :ivar dedicated_hub_list: DedicatedHub List.
-    :vartype dedicated_hub_list: list["DedicatedHubResource"]
-    :ivar monitoring_settings: Community Monitoring Settings for diagnostic and virtual network
-     flow logs.
-    :vartype monitoring_settings: "MonitoringSettingsModel"
-    :ivar address_spaces: Address spaces list.
-    :vartype address_spaces: list[str]
+    :vartype firewallSku: Union[str, "FirewallSKU"]
+    :ivar approvalSettings: Granular approval requirements for various actions on the community's
+     resources.
+    :vartype approvalSettings: "ApprovalSettings"
+    :ivar maintenanceModeConfiguration: Maintenance Mode configuration.
+    :vartype maintenanceModeConfiguration: "MaintenanceModeConfigurationModel"
+    :ivar dedicatedHubList: DedicatedHub List.
+    :vartype dedicatedHubList: list["DedicatedHubResource"]
+    :ivar monitoringSettings: Community Monitoring Settings for diagnostic and virtual network flow
+     logs.
+    :vartype monitoringSettings: "MonitoringSettingsModel"
+    :ivar addressSpaces: Address spaces list.
+    :vartype addressSpaces: list[str]
     """
 
     addressSpace: str
@@ -709,9 +706,9 @@ class CommunityResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -759,19 +756,19 @@ class DedicatedHubPatchProperties(TypedDict, total=False):
 class DedicatedHubProperties(TypedDict, total=False):
     """Describes the properties of a Dedicated Hub.
 
-    :ivar v_hub_resource_id: Virtual Hub Resource ID.
-    :vartype v_hub_resource_id: str
-    :ivar firewall_resource_id: Firewall Resource ID.
-    :vartype firewall_resource_id: str
-    :ivar firewall_policy_resource_id: Firewall Policy Resource ID.
-    :vartype firewall_policy_resource_id: str
+    :ivar vHubResourceId: Virtual Hub Resource ID.
+    :vartype vHubResourceId: str
+    :ivar firewallResourceId: Firewall Resource ID.
+    :vartype firewallResourceId: str
+    :ivar firewallPolicyResourceId: Firewall Policy Resource ID.
+    :vartype firewallPolicyResourceId: str
     :ivar designation: Designation of hub resource allocation (Pooled or Reserved). Known values
      are: "Pooled" and "Reserved".
     :vartype designation: Union[str, "Designation"]
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Accepted", "Creating", "Deleting", "NotSpecified", "Running", and
      "Updating".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     vHubResourceId: str
@@ -799,9 +796,9 @@ class DedicatedHubResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -817,10 +814,10 @@ class DedicatedHubResource(TrackedResource):
 class EnclaveAddressSpacesModel(TypedDict, total=False):
     """Enclave Address Spaces.
 
-    :ivar enclave_address_space: Enclave Address Space.
-    :vartype enclave_address_space: str
-    :ivar managed_address_space: Managed Address Space.
-    :vartype managed_address_space: str
+    :ivar enclaveAddressSpace: Enclave Address Space.
+    :vartype enclaveAddressSpace: str
+    :ivar managedAddressSpace: Managed Address Space.
+    :vartype managedAddressSpace: str
     """
 
     enclaveAddressSpace: str
@@ -847,8 +844,8 @@ class EnclaveConnectionPatchModel(TypedDict, total=False):
 class EnclaveConnectionPatchProperties(TypedDict, total=False):
     """Enclave Connection patchable Properties.
 
-    :ivar source_cidr: Source CIDR.
-    :vartype source_cidr: str
+    :ivar sourceCidr: Source CIDR.
+    :vartype sourceCidr: str
     """
 
     sourceCidr: str
@@ -861,22 +858,22 @@ class EnclaveConnectionProperties(TypedDict, total=False):
     :ivar state: The state of the enclaveConnection. Known values are: "PendingApproval",
      "PendingUpdate", "Approved", "Active", "Failed", "Connected", and "Disconnected".
     :vartype state: Union[str, "EnclaveConnectionState"]
-    :ivar community_resource_id: Community Resource Id. Required.
-    :vartype community_resource_id: str
-    :ivar source_resource_id: Source Resource Id. Required.
-    :vartype source_resource_id: str
-    :ivar source_cidr: Source CIDR.
-    :vartype source_cidr: str
-    :ivar destination_endpoint_id: Destination Endpoint Resource Id. Required.
-    :vartype destination_endpoint_id: str
-    :ivar provisioning_state: Provisioning State. Known values are: "Succeeded", "Failed",
+    :ivar communityResourceId: Community Resource Id. Required.
+    :vartype communityResourceId: str
+    :ivar sourceResourceId: Source Resource Id. Required.
+    :vartype sourceResourceId: str
+    :ivar sourceCidr: Source CIDR.
+    :vartype sourceCidr: str
+    :ivar destinationEndpointId: Destination Endpoint Resource Id. Required.
+    :vartype destinationEndpointId: str
+    :ivar provisioningState: Provisioning State. Known values are: "Succeeded", "Failed",
      "Canceled", "Accepted", "Creating", "Deleting", "NotSpecified", "Running", and "Updating".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar resource_collection: List of resource ids modified by enclave Connections.
-    :vartype resource_collection: list[str]
-    :ivar update_mode: Destination Endpoint supports automatic or manual updates. Known values are:
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar resourceCollection: List of resource ids modified by enclave Connections.
+    :vartype resourceCollection: list[str]
+    :ivar updateMode: Destination Endpoint supports automatic or manual updates. Known values are:
      "Automatic" and "Manual".
-    :vartype update_mode: Union[str, "UpdateMode"]
+    :vartype updateMode: Union[str, "UpdateMode"]
     """
 
     state: Union[str, "EnclaveConnectionState"]
@@ -911,9 +908,9 @@ class EnclaveConnectionResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -929,15 +926,15 @@ class EnclaveConnectionResource(TrackedResource):
 class EnclaveDefaultSettingsModel(TypedDict, total=False):
     """Virtual Enclave Default Settings.
 
-    :ivar key_vault_resource_id: Key Vault Resource Id.
-    :vartype key_vault_resource_id: str
-    :ivar storage_account_resource_id: Storage Account Resource Id.
-    :vartype storage_account_resource_id: str
-    :ivar log_analytics_resource_id_collection: Log Analytics Resource Ids.
-    :vartype log_analytics_resource_id_collection: list[str]
-    :ivar diagnostic_destination: Diagnostic Destination. Known values are: "CommunityOnly",
+    :ivar keyVaultResourceId: Key Vault Resource Id.
+    :vartype keyVaultResourceId: str
+    :ivar storageAccountResourceId: Storage Account Resource Id.
+    :vartype storageAccountResourceId: str
+    :ivar logAnalyticsResourceIdCollection: Log Analytics Resource Ids.
+    :vartype logAnalyticsResourceIdCollection: list[str]
+    :ivar diagnosticDestination: Diagnostic Destination. Known values are: "CommunityOnly",
      "EnclaveOnly", and "Both".
-    :vartype diagnostic_destination: Union[str, "DiagnosticDestination"]
+    :vartype diagnosticDestination: Union[str, "DiagnosticDestination"]
     """
 
     keyVaultResourceId: str
@@ -953,9 +950,9 @@ class EnclaveDefaultSettingsModel(TypedDict, total=False):
 class EnclaveDefaultSettingsPatchModel(TypedDict, total=False):
     """Virtual Enclave Default Settings.
 
-    :ivar diagnostic_destination: Diagnostic Destination. Known values are: "CommunityOnly",
+    :ivar diagnosticDestination: Diagnostic Destination. Known values are: "CommunityOnly",
      "EnclaveOnly", and "Both".
-    :vartype diagnostic_destination: Union[str, "DiagnosticDestination"]
+    :vartype diagnosticDestination: Union[str, "DiagnosticDestination"]
     """
 
     diagnosticDestination: Union[str, "DiagnosticDestination"]
@@ -967,8 +964,8 @@ class EnclaveEndpointDestinationRule(TypedDict, total=False):
 
     :ivar protocols: Protocols. Options specified by Endpoint Protocol Enum.
     :vartype protocols: list[Union[str, "EnclaveEndpointProtocol"]]
-    :ivar endpoint_rule_name: Endpoint Rule Name.
-    :vartype endpoint_rule_name: str
+    :ivar endpointRuleName: Endpoint Rule Name.
+    :vartype endpointRuleName: str
     :ivar destination: Destination address. Can include multiple CIDR/IP Addresses or fqdn tags or
      fqdns (for community endpoint) separated by commas.
     :vartype destination: str
@@ -1006,11 +1003,11 @@ class EnclaveEndpointPatchModel(TypedDict, total=False):
 class EnclaveEndpointPatchProperties(TypedDict, total=False):
     """Enclave Endpoint patchable Properties.
 
-    :ivar rule_collection: Enclave Endpoint Rule Collection. Required.
-    :vartype rule_collection: list["EnclaveEndpointDestinationRule"]
-    :ivar update_mode: Whether update mode is automatic or manual. Known values are: "Automatic"
-     and "Manual".
-    :vartype update_mode: Union[str, "UpdateMode"]
+    :ivar ruleCollection: Enclave Endpoint Rule Collection. Required.
+    :vartype ruleCollection: list["EnclaveEndpointDestinationRule"]
+    :ivar updateMode: Whether update mode is automatic or manual. Known values are: "Automatic" and
+     "Manual".
+    :vartype updateMode: Union[str, "UpdateMode"]
     """
 
     ruleCollection: Required[list["EnclaveEndpointDestinationRule"]]
@@ -1022,16 +1019,16 @@ class EnclaveEndpointPatchProperties(TypedDict, total=False):
 class EnclaveEndpointProperties(TypedDict, total=False):
     """Enclave Endpoint Resource properties.
 
-    :ivar rule_collection: Enclave Endpoint Rule Collection. Required.
-    :vartype rule_collection: list["EnclaveEndpointDestinationRule"]
-    :ivar resource_collection: List of resource ids created by community endpoint.
-    :vartype resource_collection: list[str]
-    :ivar provisioning_state: Provisioning State. Known values are: "Succeeded", "Failed",
+    :ivar ruleCollection: Enclave Endpoint Rule Collection. Required.
+    :vartype ruleCollection: list["EnclaveEndpointDestinationRule"]
+    :ivar resourceCollection: List of resource ids created by community endpoint.
+    :vartype resourceCollection: list[str]
+    :ivar provisioningState: Provisioning State. Known values are: "Succeeded", "Failed",
      "Canceled", "Accepted", "Creating", "Deleting", "NotSpecified", "Running", and "Updating".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar update_mode: Whether update mode is automatic or manual. Known values are: "Automatic"
-     and "Manual".
-    :vartype update_mode: Union[str, "UpdateMode"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar updateMode: Whether update mode is automatic or manual. Known values are: "Automatic" and
+     "Manual".
+    :vartype updateMode: Union[str, "UpdateMode"]
     """
 
     ruleCollection: Required[list["EnclaveEndpointDestinationRule"]]
@@ -1056,9 +1053,9 @@ class EnclaveEndpointResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1082,9 +1079,9 @@ class EnclaveResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1104,16 +1101,16 @@ class EnclaveResource(TrackedResource):
 class EnclaveVirtualNetworkModel(TypedDict, total=False):
     """Enclave Virtual Network Properties.
 
-    :ivar network_name: Network Name.
-    :vartype network_name: str
-    :ivar network_size: Network Size.
-    :vartype network_size: str
-    :ivar custom_cidr_range: Custom CIDR Range.
-    :vartype custom_cidr_range: str
-    :ivar subnet_configurations: Subnet Configurations.
-    :vartype subnet_configurations: list["SubnetConfiguration"]
-    :ivar allow_subnet_communication: Allow Subnet Communication.
-    :vartype allow_subnet_communication: bool
+    :ivar networkName: Network Name.
+    :vartype networkName: str
+    :ivar networkSize: Network Size.
+    :vartype networkSize: str
+    :ivar customCidrRange: Custom CIDR Range.
+    :vartype customCidrRange: str
+    :ivar subnetConfigurations: Subnet Configurations.
+    :vartype subnetConfigurations: list["SubnetConfiguration"]
+    :ivar allowSubnetCommunication: Allow Subnet Communication.
+    :vartype allowSubnetCommunication: bool
     """
 
     networkName: str
@@ -1131,13 +1128,12 @@ class EnclaveVirtualNetworkModel(TypedDict, total=False):
 class GovernedServiceItem(TypedDict, total=False):
     """GovernedServiceItem Properties.
 
-    :ivar service_id: Service ID. Required. Known values are: "AKS", "AppService",
-     "AzureFirewalls", "ContainerRegistry", "CosmosDB", "DataConnectors", "Insights", "KeyVault",
-     "Logic", "MicrosoftSQL", "Monitoring", "PostgreSQL", "PrivateDNSZones", "ServiceBus", and
-     "Storage".
-    :vartype service_id: Union[str, "ServiceIdentifier"]
-    :ivar service_name: Service name.
-    :vartype service_name: str
+    :ivar serviceId: Service ID. Required. Known values are: "AKS", "AppService", "AzureFirewalls",
+     "ContainerRegistry", "CosmosDB", "DataConnectors", "Insights", "KeyVault", "Logic",
+     "MicrosoftSQL", "Monitoring", "PostgreSQL", "PrivateDNSZones", "ServiceBus", and "Storage".
+    :vartype serviceId: Union[str, "ServiceIdentifier"]
+    :ivar serviceName: Service name.
+    :vartype serviceName: str
     :ivar option: Governance option for this service (Allow, Deny, ExceptionOnly, or
      NotApplicable). Is one of the following types: Literal["Allow"], Literal["Deny"],
      Literal["ExceptionOnly"], Literal["NotApplicable"], str
@@ -1146,9 +1142,9 @@ class GovernedServiceItem(TypedDict, total=False):
     :ivar enforcement: Initiative enforcement (Enabled or Disabled). Is one of the following types:
      Literal["Enabled"], Literal["Disabled"], str
     :vartype enforcement: Union[Literal["Enabled"], Literal["Disabled"], str]
-    :ivar policy_action: Enforcement mode for policy. AuditOnly, Enforce, or None. Is one of the
+    :ivar policyAction: Enforcement mode for policy. AuditOnly, Enforce, or None. Is one of the
      following types: Literal["AuditOnly"], Literal["Enforce"], Literal["None"], str
-    :vartype policy_action: Union[Literal["AuditOnly"], Literal["Enforce"], Literal["None"], str]
+    :vartype policyAction: Union[Literal["AuditOnly"], Literal["Enforce"], Literal["None"], str]
     :ivar initiatives: Initiatives associated with this service.
     :vartype initiatives: list[str]
     """
@@ -1236,8 +1232,8 @@ class ManagedOnBehalfOfConfiguration(TypedDict, total=False):
     """Managed-On-Behalf-Of configuration properties. This configuration exists for the resources
     where a resource provider manages those resources on behalf of the resource owner.
 
-    :ivar mobo_broker_resources: Managed-On-Behalf-Of broker resources.
-    :vartype mobo_broker_resources: list["MoboBrokerResource"]
+    :ivar moboBrokerResources: Managed-On-Behalf-Of broker resources.
+    :vartype moboBrokerResources: list["MoboBrokerResource"]
     """
 
     moboBrokerResources: list["MoboBrokerResource"]
@@ -1247,17 +1243,17 @@ class ManagedOnBehalfOfConfiguration(TypedDict, total=False):
 class ManagedServiceIdentity(TypedDict, total=False):
     """Managed service identity (system assigned and/or user assigned identities).
 
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+    :ivar principalId: The service principal ID of the system assigned identity. This property will
+     only be provided for a system assigned identity.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
-    :vartype tenant_id: str
+    :vartype tenantId: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
      "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
     :vartype type: Union[str, "ManagedServiceIdentityType"]
-    :ivar user_assigned_identities: The identities assigned to this resource by the user.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :ivar userAssignedIdentities: The identities assigned to this resource by the user.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     principalId: str
@@ -1276,8 +1272,8 @@ class ManagedServiceIdentity(TypedDict, total=False):
 class MandatoryApprover(TypedDict, total=False):
     """Approver Metadata for approvals request.
 
-    :ivar approver_entra_id: EntraId of the approver. Required.
-    :vartype approver_entra_id: str
+    :ivar approverEntraId: EntraId of the approver. Required.
+    :vartype approverEntraId: str
     """
 
     approverEntraId: Required[str]
@@ -1299,13 +1295,13 @@ class MoboBrokerResource(TypedDict, total=False):
 class MonitoringDestination(TypedDict, total=False):
     """Monitoring destination configuration with multiple workspaces.
 
-    :ivar destination_type: The type of monitoring workspace destination. Required. Known values
+    :ivar destinationType: The type of monitoring workspace destination. Required. Known values
      are: "CommunityWorkspace", "EnclaveWorkspace", and "CustomWorkspace".
-    :vartype destination_type: Union[str, "MonitoringDestinationType"]
-    :ivar custom_workspace_resource_id: Log analytics workspace resource ID for custom workspace.
-    :vartype custom_workspace_resource_id: str
-    :ivar diagnostic_settings_name: Custom name for diagnostic settings.
-    :vartype diagnostic_settings_name: str
+    :vartype destinationType: Union[str, "MonitoringDestinationType"]
+    :ivar customWorkspaceResourceId: Log analytics workspace resource ID for custom workspace.
+    :vartype customWorkspaceResourceId: str
+    :ivar diagnosticSettingsName: Custom name for diagnostic settings.
+    :vartype diagnosticSettingsName: str
     """
 
     destinationType: Required[Union[str, "MonitoringDestinationType"]]
@@ -1320,13 +1316,13 @@ class MonitoringDestination(TypedDict, total=False):
 class MonitoringDestinationPatchModel(TypedDict, total=False):
     """Monitoring Destination Patch Model.
 
-    :ivar destination_type: The type of monitoring workspace destination. Required. Known values
+    :ivar destinationType: The type of monitoring workspace destination. Required. Known values
      are: "CommunityWorkspace", "EnclaveWorkspace", and "CustomWorkspace".
-    :vartype destination_type: Union[str, "MonitoringDestinationType"]
-    :ivar custom_workspace_resource_id: Log analytics workspace resource ID for custom workspace.
-    :vartype custom_workspace_resource_id: str
-    :ivar diagnostic_settings_name: Custom name for diagnostic settings.
-    :vartype diagnostic_settings_name: str
+    :vartype destinationType: Union[str, "MonitoringDestinationType"]
+    :ivar customWorkspaceResourceId: Log analytics workspace resource ID for custom workspace.
+    :vartype customWorkspaceResourceId: str
+    :ivar diagnosticSettingsName: Custom name for diagnostic settings.
+    :vartype diagnosticSettingsName: str
     """
 
     destinationType: Required[Union[str, "MonitoringDestinationType"]]
@@ -1341,12 +1337,12 @@ class MonitoringDestinationPatchModel(TypedDict, total=False):
 class MonitoringSettingsModel(TypedDict, total=False):
     """Monitoring Settings.
 
-    :ivar diagnostic_destinations: Log Analytics workspace destinations where diagnostic logs will
+    :ivar diagnosticDestinations: Log Analytics workspace destinations where diagnostic logs will
      be stored.
-    :vartype diagnostic_destinations: list["MonitoringDestination"]
-    :ivar flow_log_destination: Log Analytics workspace destination where virtual network flow logs
+    :vartype diagnosticDestinations: list["MonitoringDestination"]
+    :ivar flowLogDestination: Log Analytics workspace destination where virtual network flow logs
      will be stored.
-    :vartype flow_log_destination: "MonitoringDestination"
+    :vartype flowLogDestination: "MonitoringDestination"
     """
 
     diagnosticDestinations: list["MonitoringDestination"]
@@ -1358,12 +1354,12 @@ class MonitoringSettingsModel(TypedDict, total=False):
 class MonitoringSettingsPatchModel(TypedDict, total=False):
     """Monitoring Settings Patch Model.
 
-    :ivar diagnostic_destinations: Log Analytics workspace destinations where diagnostic logs will
+    :ivar diagnosticDestinations: Log Analytics workspace destinations where diagnostic logs will
      be stored.
-    :vartype diagnostic_destinations: list["MonitoringDestinationPatchModel"]
-    :ivar flow_log_destination: Log Analytics workspace destination where virtual network flow logs
+    :vartype diagnosticDestinations: list["MonitoringDestinationPatchModel"]
+    :ivar flowLogDestination: Log Analytics workspace destination where virtual network flow logs
      will be stored.
-    :vartype flow_log_destination: "MonitoringDestinationPatchModel"
+    :vartype flowLogDestination: "MonitoringDestinationPatchModel"
     """
 
     diagnosticDestinations: list["MonitoringDestinationPatchModel"]
@@ -1394,15 +1390,15 @@ class Principal(TypedDict, total=False):
 class RequestMetadata(TypedDict, total=False):
     """Request Metadata for approvals request.
 
-    :ivar resource_action: Resource Action of the item being approved or declined. Required.
-    :vartype resource_action: str
-    :ivar approval_callback_route: Route name for the approval callback.
-    :vartype approval_callback_route: str
-    :ivar approval_callback_payload: Payload to be sent upon any action on approval request.
-    :vartype approval_callback_payload: str
-    :ivar approval_status: Status of the approval. Uses ApprovalStatus enum. Known values are:
+    :ivar resourceAction: Resource Action of the item being approved or declined. Required.
+    :vartype resourceAction: str
+    :ivar approvalCallbackRoute: Route name for the approval callback.
+    :vartype approvalCallbackRoute: str
+    :ivar approvalCallbackPayload: Payload to be sent upon any action on approval request.
+    :vartype approvalCallbackPayload: str
+    :ivar approvalStatus: Status of the approval. Uses ApprovalStatus enum. Known values are:
      "Approved", "Rejected", "Pending", "Deleted", and "Expired".
-    :vartype approval_status: Union[str, "ApprovalStatus"]
+    :vartype approvalStatus: Union[str, "ApprovalStatus"]
     """
 
     resourceAction: Required[str]
@@ -1419,15 +1415,15 @@ class RequestMetadata(TypedDict, total=False):
 class RequestMetadataUpdatableProperties(TypedDict, total=False):
     """Request Metadata patch properties.
 
-    :ivar resource_action: Resource Action of the item being approved or declined. Required.
-    :vartype resource_action: str
-    :ivar approval_callback_route: Route name for the approval callback.
-    :vartype approval_callback_route: str
-    :ivar approval_callback_payload: Payload to be sent upon any action on approval request.
-    :vartype approval_callback_payload: str
-    :ivar approval_status: Status of the approval. Uses ApprovalStatus enum. Known values are:
+    :ivar resourceAction: Resource Action of the item being approved or declined. Required.
+    :vartype resourceAction: str
+    :ivar approvalCallbackRoute: Route name for the approval callback.
+    :vartype approvalCallbackRoute: str
+    :ivar approvalCallbackPayload: Payload to be sent upon any action on approval request.
+    :vartype approvalCallbackPayload: str
+    :ivar approvalStatus: Status of the approval. Uses ApprovalStatus enum. Known values are:
      "Approved", "Rejected", "Pending", "Deleted", and "Expired".
-    :vartype approval_status: Union[str, "ApprovalStatus"]
+    :vartype approvalStatus: Union[str, "ApprovalStatus"]
     """
 
     resourceAction: Required[str]
@@ -1444,8 +1440,8 @@ class RequestMetadataUpdatableProperties(TypedDict, total=False):
 class RoleAssignmentItem(TypedDict, total=False):
     """Role assignment item that indicates which principals should be assigned this role definition.
 
-    :ivar role_definition_id: Role definition identifier. Required.
-    :vartype role_definition_id: str
+    :ivar roleDefinitionId: Role definition identifier. Required.
+    :vartype roleDefinitionId: str
     :ivar principals: List of principal IDs to which to assign this role definition.
     :vartype principals: list["Principal"]
     :ivar condition: Condition under which the principal can be granted permission.
@@ -1463,18 +1459,18 @@ class RoleAssignmentItem(TypedDict, total=False):
 class SubnetConfiguration(TypedDict, total=False):
     """Subnet Configuration.
 
-    :ivar subnet_name: Subnet name. Required.
-    :vartype subnet_name: str
-    :ivar subnet_resource_id: Subnet Resource ID.
-    :vartype subnet_resource_id: str
-    :ivar network_prefix_size: Network prefix size. Required.
-    :vartype network_prefix_size: int
-    :ivar subnet_delegation: Subnet delegation.
-    :vartype subnet_delegation: str
-    :ivar address_prefix: Address prefix.
-    :vartype address_prefix: str
-    :ivar network_security_group_resource_id: Network security group ID.
-    :vartype network_security_group_resource_id: str
+    :ivar subnetName: Subnet name. Required.
+    :vartype subnetName: str
+    :ivar subnetResourceId: Subnet Resource ID.
+    :vartype subnetResourceId: str
+    :ivar networkPrefixSize: Network prefix size. Required.
+    :vartype networkPrefixSize: int
+    :ivar subnetDelegation: Subnet delegation.
+    :vartype subnetDelegation: str
+    :ivar addressPrefix: Address prefix.
+    :vartype addressPrefix: str
+    :ivar networkSecurityGroupResourceId: Network security group ID.
+    :vartype networkSecurityGroupResourceId: str
     """
 
     subnetName: Required[str]
@@ -1494,20 +1490,20 @@ class SubnetConfiguration(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -1547,11 +1543,11 @@ class TransitHubPatchProperties(TypedDict, total=False):
     :ivar state: The state of the transitHub. Known values are: "PendingApproval", "Approved",
      "PendingUpdate", "Active", and "Failed".
     :vartype state: Union[str, "TransitHubState"]
-    :ivar transit_option: The TransitOption of the transitHub.
-    :vartype transit_option: "TransitOption"
-    :ivar security_provider: Specifies the security provider for the transit hub. Known values are:
+    :ivar transitOption: The TransitOption of the transitHub.
+    :vartype transitOption: "TransitOption"
+    :ivar securityProvider: Specifies the security provider for the transit hub. Known values are:
      "None" and "AzureFirewall".
-    :vartype security_provider: Union[str, "SecurityProvider"]
+    :vartype securityProvider: Union[str, "SecurityProvider"]
     """
 
     state: Union[str, "TransitHubState"]
@@ -1567,20 +1563,20 @@ class TransitHubPatchProperties(TypedDict, total=False):
 class TransitHubProperties(TypedDict, total=False):
     """Describes the properties of an Transit Hub.
 
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Accepted", "Creating", "Deleting", "NotSpecified", "Running", and
      "Updating".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar state: The state of the transitHub. Known values are: "PendingApproval", "Approved",
      "PendingUpdate", "Active", and "Failed".
     :vartype state: Union[str, "TransitHubState"]
-    :ivar transit_option: The TransitOption of the transitHub.
-    :vartype transit_option: "TransitOption"
-    :ivar resource_collection: List of resource ids modified by transitHubs.
-    :vartype resource_collection: list[str]
-    :ivar security_provider: Specifies the security provider for the transit hub. Known values are:
+    :ivar transitOption: The TransitOption of the transitHub.
+    :vartype transitOption: "TransitOption"
+    :ivar resourceCollection: List of resource ids modified by transitHubs.
+    :vartype resourceCollection: list[str]
+    :ivar securityProvider: Specifies the security provider for the transit hub. Known values are:
      "None" and "AzureFirewall".
-    :vartype security_provider: Union[str, "SecurityProvider"]
+    :vartype securityProvider: Union[str, "SecurityProvider"]
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -1609,9 +1605,9 @@ class TransitHubResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1642,10 +1638,10 @@ class TransitOption(TypedDict, total=False):
 class TransitOptionParams(TypedDict, total=False):
     """TransitOptionParams Properties.
 
-    :ivar scale_units: Transit Option Params scaleUnits.
-    :vartype scale_units: int
-    :ivar remote_virtual_network_id: Transit Option Params remoteVirtualNetworkId.
-    :vartype remote_virtual_network_id: str
+    :ivar scaleUnits: Transit Option Params scaleUnits.
+    :vartype scaleUnits: int
+    :ivar remoteVirtualNetworkId: Transit Option Params remoteVirtualNetworkId.
+    :vartype remoteVirtualNetworkId: str
     """
 
     scaleUnits: int
@@ -1657,10 +1653,10 @@ class TransitOptionParams(TypedDict, total=False):
 class UserAssignedIdentity(TypedDict, total=False):
     """User assigned identity properties.
 
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
@@ -1672,14 +1668,14 @@ class UserAssignedIdentity(TypedDict, total=False):
 class VirtualEnclaveApprovalSettings(TypedDict, total=False):
     """Virtual Enclave ApprovalSettings Properties for 2025-11-01-preview and later versions.
 
-    :ivar enclave_endpoint_update: Approval configuration for enclave endpoint updates.
-    :vartype enclave_endpoint_update: "ApprovalSettingConfiguration"
-    :ivar connection_creation: Approval configuration for connection creation.
-    :vartype connection_creation: "ApprovalSettingConfiguration"
-    :ivar connection_update: Approval configuration for connection updates.
-    :vartype connection_update: "ApprovalSettingConfiguration"
-    :ivar enclave_maintenance_mode: Approval configuration for enclave maintenance mode.
-    :vartype enclave_maintenance_mode: "ApprovalSettingConfiguration"
+    :ivar enclaveEndpointUpdate: Approval configuration for enclave endpoint updates.
+    :vartype enclaveEndpointUpdate: "ApprovalSettingConfiguration"
+    :ivar connectionCreation: Approval configuration for connection creation.
+    :vartype connectionCreation: "ApprovalSettingConfiguration"
+    :ivar connectionUpdate: Approval configuration for connection updates.
+    :vartype connectionUpdate: "ApprovalSettingConfiguration"
+    :ivar enclaveMaintenanceMode: Approval configuration for enclave maintenance mode.
+    :vartype enclaveMaintenanceMode: "ApprovalSettingConfiguration"
     """
 
     enclaveEndpointUpdate: "ApprovalSettingConfiguration"
@@ -1695,14 +1691,14 @@ class VirtualEnclaveApprovalSettings(TypedDict, total=False):
 class VirtualEnclaveApprovalSettingsPatchProperties(TypedDict, total=False):  # pylint: disable=name-too-long
     """Virtual Enclave ApprovalSettings Patch Properties.
 
-    :ivar enclave_endpoint_update: Approval configuration for enclave endpoint updates.
-    :vartype enclave_endpoint_update: "ApprovalSettingConfiguration"
-    :ivar connection_creation: Approval configuration for connection creation.
-    :vartype connection_creation: "ApprovalSettingConfiguration"
-    :ivar connection_update: Approval configuration for connection updates.
-    :vartype connection_update: "ApprovalSettingConfiguration"
-    :ivar enclave_maintenance_mode: Approval configuration for enclave maintenance mode.
-    :vartype enclave_maintenance_mode: "ApprovalSettingConfiguration"
+    :ivar enclaveEndpointUpdate: Approval configuration for enclave endpoint updates.
+    :vartype enclaveEndpointUpdate: "ApprovalSettingConfiguration"
+    :ivar connectionCreation: Approval configuration for connection creation.
+    :vartype connectionCreation: "ApprovalSettingConfiguration"
+    :ivar connectionUpdate: Approval configuration for connection updates.
+    :vartype connectionUpdate: "ApprovalSettingConfiguration"
+    :ivar enclaveMaintenanceMode: Approval configuration for enclave maintenance mode.
+    :vartype enclaveMaintenanceMode: "ApprovalSettingConfiguration"
     """
 
     enclaveEndpointUpdate: "ApprovalSettingConfiguration"
@@ -1737,33 +1733,33 @@ class VirtualEnclavePatchModel(TypedDict, total=False):
 class VirtualEnclavePatchProperties(TypedDict, total=False):
     """Virtual Enclave Patchable Properties.
 
-    :ivar enclave_virtual_network: Virtual Network. Required.
-    :vartype enclave_virtual_network: "EnclaveVirtualNetworkModel"
-    :ivar bastion_enabled: Deploy Bastion service (True or False).
-    :vartype bastion_enabled: bool
-    :ivar workload_resource_visibility: Specifies whether resources in the workload resource
-     group(s) are visible through standard RBAC. Known values are: "Enabled" and "Disabled".
-    :vartype workload_resource_visibility: Union[str, "ResourceVisibilityMode"]
-    :ivar rbac_inheritance: Controls whether standard Azure RBAC role inheritance applies to the
+    :ivar enclaveVirtualNetwork: Virtual Network. Required.
+    :vartype enclaveVirtualNetwork: "EnclaveVirtualNetworkModel"
+    :ivar bastionEnabled: Deploy Bastion service (True or False).
+    :vartype bastionEnabled: bool
+    :ivar workloadResourceVisibility: Specifies whether resources in the workload resource group(s)
+     are visible through standard RBAC. Known values are: "Enabled" and "Disabled".
+    :vartype workloadResourceVisibility: Union[str, "ResourceVisibilityMode"]
+    :ivar rbacInheritance: Controls whether standard Azure RBAC role inheritance applies to the
      workload resource group(s). Known values are: "Enabled" and "Disabled".
-    :vartype rbac_inheritance: Union[str, "RbacInheritanceMode"]
-    :ivar enclave_role_assignments: Enclave role assignments.
-    :vartype enclave_role_assignments: list["RoleAssignmentItem"]
-    :ivar workload_role_assignments: Workload role assignments.
-    :vartype workload_role_assignments: list["RoleAssignmentItem"]
-    :ivar governed_service_list: Enclave specific policies.
-    :vartype governed_service_list: list["GovernedServiceItem"]
-    :ivar enclave_default_settings: Enclave default settings.
-    :vartype enclave_default_settings: "EnclaveDefaultSettingsPatchModel"
-    :ivar maintenance_mode_configuration: Maintenance Mode configuration.
-    :vartype maintenance_mode_configuration: "MaintenanceModeConfigurationPatchModel"
-    :ivar dedicated_hub_resource_id: DedicatedHub Resource ID.
-    :vartype dedicated_hub_resource_id: str
-    :ivar approval_settings: Approval requirements for various actions on the enclave's resources.
-    :vartype approval_settings: "VirtualEnclaveApprovalSettingsPatchProperties"
-    :ivar monitoring_settings: Virtual Enclave Monitoring Settings for diagnostic and virtual
+    :vartype rbacInheritance: Union[str, "RbacInheritanceMode"]
+    :ivar enclaveRoleAssignments: Enclave role assignments.
+    :vartype enclaveRoleAssignments: list["RoleAssignmentItem"]
+    :ivar workloadRoleAssignments: Workload role assignments.
+    :vartype workloadRoleAssignments: list["RoleAssignmentItem"]
+    :ivar governedServiceList: Enclave specific policies.
+    :vartype governedServiceList: list["GovernedServiceItem"]
+    :ivar enclaveDefaultSettings: Enclave default settings.
+    :vartype enclaveDefaultSettings: "EnclaveDefaultSettingsPatchModel"
+    :ivar maintenanceModeConfiguration: Maintenance Mode configuration.
+    :vartype maintenanceModeConfiguration: "MaintenanceModeConfigurationPatchModel"
+    :ivar dedicatedHubResourceId: DedicatedHub Resource ID.
+    :vartype dedicatedHubResourceId: str
+    :ivar approvalSettings: Approval requirements for various actions on the enclave's resources.
+    :vartype approvalSettings: "VirtualEnclaveApprovalSettingsPatchProperties"
+    :ivar monitoringSettings: Virtual Enclave Monitoring Settings for diagnostic and virtual
      network flow logs.
-    :vartype monitoring_settings: "MonitoringSettingsPatchModel"
+    :vartype monitoringSettings: "MonitoringSettingsPatchModel"
     """
 
     enclaveVirtualNetwork: Required["EnclaveVirtualNetworkModel"]
@@ -1797,46 +1793,46 @@ class VirtualEnclavePatchProperties(TypedDict, total=False):
 class VirtualEnclaveProperties(TypedDict, total=False):
     """Virtual Enclave Resource properties.
 
-    :ivar provisioning_state: Provisioning State. Known values are: "Succeeded", "Failed",
+    :ivar provisioningState: Provisioning State. Known values are: "Succeeded", "Failed",
      "Canceled", "Accepted", "Creating", "Deleting", "NotSpecified", "Running", and "Updating".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar enclave_virtual_network: Virtual Network. Required.
-    :vartype enclave_virtual_network: "EnclaveVirtualNetworkModel"
-    :ivar enclave_address_spaces: Enclave Address Spaces.
-    :vartype enclave_address_spaces: "EnclaveAddressSpacesModel"
-    :ivar community_resource_id: Community Resource Id. Required.
-    :vartype community_resource_id: str
-    :ivar resource_collection: List of resource ids created by Virtual Enclave.
-    :vartype resource_collection: list[str]
-    :ivar managed_resource_group_name: Managed resource group name.
-    :vartype managed_resource_group_name: str
-    :ivar managed_on_behalf_of_configuration: Managed On Behalf Of Configuration.
-    :vartype managed_on_behalf_of_configuration: "ManagedOnBehalfOfConfiguration"
-    :ivar bastion_enabled: Deploy Bastion service (True or False).
-    :vartype bastion_enabled: bool
-    :ivar workload_resource_visibility: Specifies whether resources in the workload resource
-     group(s) are visible through standard RBAC. Known values are: "Enabled" and "Disabled".
-    :vartype workload_resource_visibility: Union[str, "ResourceVisibilityMode"]
-    :ivar rbac_inheritance: Controls whether standard Azure RBAC role inheritance applies to the
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar enclaveVirtualNetwork: Virtual Network. Required.
+    :vartype enclaveVirtualNetwork: "EnclaveVirtualNetworkModel"
+    :ivar enclaveAddressSpaces: Enclave Address Spaces.
+    :vartype enclaveAddressSpaces: "EnclaveAddressSpacesModel"
+    :ivar communityResourceId: Community Resource Id. Required.
+    :vartype communityResourceId: str
+    :ivar resourceCollection: List of resource ids created by Virtual Enclave.
+    :vartype resourceCollection: list[str]
+    :ivar managedResourceGroupName: Managed resource group name.
+    :vartype managedResourceGroupName: str
+    :ivar managedOnBehalfOfConfiguration: Managed On Behalf Of Configuration.
+    :vartype managedOnBehalfOfConfiguration: "ManagedOnBehalfOfConfiguration"
+    :ivar bastionEnabled: Deploy Bastion service (True or False).
+    :vartype bastionEnabled: bool
+    :ivar workloadResourceVisibility: Specifies whether resources in the workload resource group(s)
+     are visible through standard RBAC. Known values are: "Enabled" and "Disabled".
+    :vartype workloadResourceVisibility: Union[str, "ResourceVisibilityMode"]
+    :ivar rbacInheritance: Controls whether standard Azure RBAC role inheritance applies to the
      workload resource group(s). Known values are: "Enabled" and "Disabled".
-    :vartype rbac_inheritance: Union[str, "RbacInheritanceMode"]
-    :ivar enclave_role_assignments: Enclave role assignments.
-    :vartype enclave_role_assignments: list["RoleAssignmentItem"]
-    :ivar workload_role_assignments: Workload role assignments.
-    :vartype workload_role_assignments: list["RoleAssignmentItem"]
-    :ivar governed_service_list: Enclave specific policies.
-    :vartype governed_service_list: list["GovernedServiceItem"]
-    :ivar enclave_default_settings: Enclave default settings.
-    :vartype enclave_default_settings: "EnclaveDefaultSettingsModel"
-    :ivar maintenance_mode_configuration: Maintenance Mode configuration.
-    :vartype maintenance_mode_configuration: "MaintenanceModeConfigurationModel"
-    :ivar dedicated_hub_resource_id: DedicatedHub Resource ID.
-    :vartype dedicated_hub_resource_id: str
-    :ivar approval_settings: Approval requirements for various actions on the enclave's resources.
-    :vartype approval_settings: "VirtualEnclaveApprovalSettings"
-    :ivar monitoring_settings: Virtual Enclave Monitoring Settings for diagnostic and virtual
+    :vartype rbacInheritance: Union[str, "RbacInheritanceMode"]
+    :ivar enclaveRoleAssignments: Enclave role assignments.
+    :vartype enclaveRoleAssignments: list["RoleAssignmentItem"]
+    :ivar workloadRoleAssignments: Workload role assignments.
+    :vartype workloadRoleAssignments: list["RoleAssignmentItem"]
+    :ivar governedServiceList: Enclave specific policies.
+    :vartype governedServiceList: list["GovernedServiceItem"]
+    :ivar enclaveDefaultSettings: Enclave default settings.
+    :vartype enclaveDefaultSettings: "EnclaveDefaultSettingsModel"
+    :ivar maintenanceModeConfiguration: Maintenance Mode configuration.
+    :vartype maintenanceModeConfiguration: "MaintenanceModeConfigurationModel"
+    :ivar dedicatedHubResourceId: DedicatedHub Resource ID.
+    :vartype dedicatedHubResourceId: str
+    :ivar approvalSettings: Approval requirements for various actions on the enclave's resources.
+    :vartype approvalSettings: "VirtualEnclaveApprovalSettings"
+    :ivar monitoringSettings: Virtual Enclave Monitoring Settings for diagnostic and virtual
      network flow logs.
-    :vartype monitoring_settings: "MonitoringSettingsModel"
+    :vartype monitoringSettings: "MonitoringSettingsModel"
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -1898,8 +1894,8 @@ class WorkloadPatchModel(TypedDict, total=False):
 class WorkloadPatchProperties(TypedDict, total=False):
     """Workload patchable Properties.
 
-    :ivar resource_group_collection: List of resource group ids.
-    :vartype resource_group_collection: list[str]
+    :ivar resourceGroupCollection: List of resource group ids.
+    :vartype resourceGroupCollection: list[str]
     """
 
     resourceGroupCollection: list[str]
@@ -1909,13 +1905,13 @@ class WorkloadPatchProperties(TypedDict, total=False):
 class WorkloadProperties(TypedDict, total=False):
     """Workload Resource properties.
 
-    :ivar provisioning_state: Provisioning State. Known values are: "Succeeded", "Failed",
+    :ivar provisioningState: Provisioning State. Known values are: "Succeeded", "Failed",
      "Canceled", "Accepted", "Creating", "Deleting", "NotSpecified", "Running", and "Updating".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar resource_group_collection: List of resource group ids.
-    :vartype resource_group_collection: list[str]
-    :ivar managed_on_behalf_of_configuration: Managed On Behalf Of Configuration.
-    :vartype managed_on_behalf_of_configuration: "ManagedOnBehalfOfConfiguration"
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar resourceGroupCollection: List of resource group ids.
+    :vartype resourceGroupCollection: list[str]
+    :ivar managedOnBehalfOfConfiguration: Managed On Behalf Of Configuration.
+    :vartype managedOnBehalfOfConfiguration: "ManagedOnBehalfOfConfiguration"
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -1938,9 +1934,9 @@ class WorkloadResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.

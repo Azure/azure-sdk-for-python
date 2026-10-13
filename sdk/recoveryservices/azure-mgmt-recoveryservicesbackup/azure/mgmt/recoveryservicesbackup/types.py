@@ -4276,6 +4276,19 @@ class InquiryValidation(TypedDict, total=False):
     """Dictionary to store the count of ProtectableItems with key POType."""
 
 
+class InstantItemRecoveryOperationResultRequest(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Parameters for the listInstantItemRecoveryOperationResult action.
+
+    :ivar provisionInstantItemRecoveryOperationId: Operation ID returned by the prior
+     provisionInstantItemRecovery action whose iSCSI mount scripts are to be retrieved. Required.
+    :vartype provisionInstantItemRecoveryOperationId: str
+    """
+
+    provisionInstantItemRecoveryOperationId: Required[str]
+    """Operation ID returned by the prior provisionInstantItemRecovery action whose iSCSI mount
+     scripts are to be retrieved. Required."""
+
+
 class InstantRPAdditionalDetails(TypedDict, total=False):
     """InstantRPAdditionalDetails.
 

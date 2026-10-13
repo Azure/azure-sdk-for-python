@@ -34,10 +34,9 @@ def main():
         resource_group_name="myResourceGroup",
         resource_name="myFirstProvisioningService",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: 2025-02-01-preview/DPSListPrivateLinkResources.json
+# x-ms-original-file: 2026-08-31/DPSListPrivateLinkResources.json
 if __name__ == "__main__":
     main()

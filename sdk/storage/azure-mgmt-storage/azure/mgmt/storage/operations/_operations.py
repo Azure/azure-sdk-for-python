@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import StorageManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -42,7 +42,6 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -53,7 +52,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -74,7 +73,7 @@ def build_blob_containers_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -104,7 +103,7 @@ def build_blob_containers_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -136,7 +135,7 @@ def build_blob_containers_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -166,7 +165,7 @@ def build_blob_containers_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}"
     path_format_arguments = {
@@ -191,7 +190,7 @@ def build_blob_containers_set_legal_hold_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -223,7 +222,7 @@ def build_blob_containers_clear_legal_hold_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -255,7 +254,7 @@ def build_blob_containers_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -285,7 +284,7 @@ def build_blob_containers_object_level_worm_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/blobServices/default/containers/{containerName}/migrate"
     path_format_arguments = {
@@ -316,7 +315,7 @@ def build_blob_containers_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -357,7 +356,7 @@ def build_blob_containers_get_immutability_policy_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -400,7 +399,7 @@ def build_blob_containers_create_or_update_immutability_policy_request(  # pylin
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -444,7 +443,7 @@ def build_blob_containers_delete_immutability_policy_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -486,7 +485,7 @@ def build_blob_containers_lock_immutability_policy_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -529,7 +528,7 @@ def build_blob_containers_extend_immutability_policy_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -566,7 +565,7 @@ def build_blob_services_get_service_properties_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -595,7 +594,7 @@ def build_blob_services_set_service_properties_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -625,7 +624,7 @@ def build_blob_services_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -654,7 +653,7 @@ def build_storage_accounts_check_name_availability_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -687,7 +686,7 @@ def build_storage_accounts_get_properties_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -718,7 +717,7 @@ def build_storage_accounts_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -749,7 +748,7 @@ def build_storage_accounts_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -778,7 +777,7 @@ def build_storage_accounts_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}"
     path_format_arguments = {
@@ -801,7 +800,7 @@ def build_storage_accounts_list_by_resource_group_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -828,7 +827,7 @@ def build_storage_accounts_list_request(subscription_id: str, **kwargs: Any) -> 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -859,7 +858,7 @@ def build_storage_accounts_list_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -890,7 +889,7 @@ def build_storage_accounts_regenerate_key_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -921,7 +920,7 @@ def build_storage_accounts_list_account_sas_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -952,7 +951,7 @@ def build_storage_accounts_list_service_sas_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -986,7 +985,7 @@ def build_storage_accounts_failover_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/failover"
     path_format_arguments = {
@@ -1010,7 +1009,7 @@ def build_storage_accounts_hierarchical_namespace_migration_request(  # pylint: 
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/hnsonmigration"
     path_format_arguments = {
@@ -1033,7 +1032,7 @@ def build_storage_accounts_abort_hierarchical_namespace_migration_request(  # py
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/aborthnsonmigration"
     path_format_arguments = {
@@ -1057,7 +1056,7 @@ def build_storage_accounts_customer_initiated_migration_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/startAccountMigration"
     path_format_arguments = {
@@ -1085,7 +1084,7 @@ def build_storage_accounts_restore_blob_ranges_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1114,7 +1113,7 @@ def build_storage_accounts_revoke_user_delegation_keys_request(  # pylint: disab
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/revokeUserDelegationKeys"
     path_format_arguments = {
@@ -1141,7 +1140,7 @@ def build_storage_accounts_get_customer_initiated_migration_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1177,7 +1176,7 @@ def build_file_shares_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1217,7 +1216,7 @@ def build_file_shares_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1251,7 +1250,7 @@ def build_file_shares_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1289,7 +1288,7 @@ def build_file_shares_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/default/shares/{shareName}"
     path_format_arguments = {
@@ -1320,7 +1319,7 @@ def build_file_shares_restore_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/default/shares/{shareName}/restore"
     path_format_arguments = {
@@ -1355,7 +1354,7 @@ def build_file_shares_lease_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1395,7 +1394,7 @@ def build_file_shares_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1429,7 +1428,7 @@ def build_file_services_get_service_properties_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1458,7 +1457,7 @@ def build_file_services_set_service_properties_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1488,7 +1487,7 @@ def build_file_services_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1516,7 +1515,7 @@ def build_file_services_get_service_usage_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1549,7 +1548,7 @@ def build_file_services_list_service_usages_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1579,7 +1578,7 @@ def build_queue_services_get_service_properties_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1608,7 +1607,7 @@ def build_queue_services_set_service_properties_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1638,7 +1637,7 @@ def build_queue_services_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1666,7 +1665,7 @@ def build_deleted_accounts_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1692,7 +1691,7 @@ def build_deleted_accounts_list_request(subscription_id: str, **kwargs: Any) -> 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1722,7 +1721,7 @@ def build_management_policies_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1756,7 +1755,7 @@ def build_management_policies_create_or_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1790,7 +1789,7 @@ def build_management_policies_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/managementPolicies/{managementPolicyName}"
     path_format_arguments = {
@@ -1818,7 +1817,7 @@ def build_blob_inventory_policies_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1852,7 +1851,7 @@ def build_blob_inventory_policies_create_or_update_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1886,7 +1885,7 @@ def build_blob_inventory_policies_delete_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/inventoryPolicies/{blobInventoryPolicyName}"
     path_format_arguments = {
@@ -1910,7 +1909,7 @@ def build_blob_inventory_policies_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1942,7 +1941,7 @@ def build_private_endpoint_connections_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1978,7 +1977,7 @@ def build_private_endpoint_connections_put_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2014,7 +2013,7 @@ def build_private_endpoint_connections_delete_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}"
     path_format_arguments = {
@@ -2040,7 +2039,7 @@ def build_private_endpoint_connections_list_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2068,7 +2067,7 @@ def build_encryption_scopes_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2098,7 +2097,7 @@ def build_encryption_scopes_put_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2130,7 +2129,7 @@ def build_encryption_scopes_patch_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2168,7 +2167,7 @@ def build_encryption_scopes_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2202,7 +2201,7 @@ def build_table_services_get_service_properties_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2231,7 +2230,7 @@ def build_table_services_set_service_properties_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2261,7 +2260,7 @@ def build_table_services_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2293,7 +2292,7 @@ def build_network_security_perimeter_configurations_get_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2324,7 +2323,7 @@ def build_network_security_perimeter_configurations_list_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2355,7 +2354,7 @@ def build_network_security_perimeter_configurations_reconcile_request(  # pylint
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/networkSecurityPerimeterConfigurations/{networkSecurityPerimeterConfigurationName}/reconcile"
     path_format_arguments = {
@@ -2381,7 +2380,7 @@ def build_storage_task_assignments_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2413,7 +2412,7 @@ def build_storage_task_assignments_create_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2447,7 +2446,7 @@ def build_storage_task_assignments_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2479,7 +2478,7 @@ def build_storage_task_assignments_delete_request(  # pylint: disable=name-too-l
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/storageTaskAssignments/{storageTaskAssignmentName}"
     path_format_arguments = {
@@ -2505,7 +2504,7 @@ def build_storage_task_assignments_list_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2534,7 +2533,7 @@ def build_storage_task_assignments_stop_assignment_request(  # pylint: disable=n
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/storageTaskAssignments/{storageTaskAssignmentName}/stopAssignment"
     path_format_arguments = {
@@ -2560,7 +2559,7 @@ def build_connectors_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2590,7 +2589,7 @@ def build_connectors_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2622,7 +2621,7 @@ def build_connectors_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2652,7 +2651,7 @@ def build_connectors_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/connectors/{connectorName}"
     path_format_arguments = {
@@ -2676,7 +2675,7 @@ def build_connectors_list_by_storage_account_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2705,7 +2704,7 @@ def build_connectors_test_existing_connection_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2736,7 +2735,7 @@ def build_data_shares_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2766,7 +2765,7 @@ def build_data_shares_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2798,7 +2797,7 @@ def build_data_shares_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2828,7 +2827,7 @@ def build_data_shares_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/dataShares/{dataShareName}"
     path_format_arguments = {
@@ -2852,7 +2851,7 @@ def build_data_shares_list_by_storage_account_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2861,6 +2860,341 @@ def build_data_shares_list_by_storage_account_request(  # pylint: disable=name-t
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "accountName": _SERIALIZER.url("account_name", account_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_context_caches_get_request(
+    resource_group_name: str, context_cache_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/contextCaches/{contextCacheName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "contextCacheName": _SERIALIZER.url("context_cache_name", context_cache_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_context_caches_create_or_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, context_cache_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/contextCaches/{contextCacheName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "contextCacheName": _SERIALIZER.url("context_cache_name", context_cache_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_context_caches_update_request(
+    resource_group_name: str, context_cache_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/contextCaches/{contextCacheName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "contextCacheName": _SERIALIZER.url("context_cache_name", context_cache_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_context_caches_delete_request(
+    resource_group_name: str, context_cache_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/contextCaches/{contextCacheName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "contextCacheName": _SERIALIZER.url("context_cache_name", context_cache_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_context_caches_list_by_resource_group_request(  # pylint: disable=name-too-long
+    resource_group_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = (
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/contextCaches"
+    )
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_context_caches_list_by_subscription_request(  # pylint: disable=name-too-long
+    subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.Storage/contextCaches"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_context_cache_containers_get_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    context_cache_name: str,
+    context_cache_container_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/contextCaches/{contextCacheName}/contextCacheContainers/{contextCacheContainerName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "contextCacheName": _SERIALIZER.url("context_cache_name", context_cache_name, "str"),
+        "contextCacheContainerName": _SERIALIZER.url(
+            "context_cache_container_name", context_cache_container_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_context_cache_containers_create_or_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    context_cache_name: str,
+    context_cache_container_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/contextCaches/{contextCacheName}/contextCacheContainers/{contextCacheContainerName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "contextCacheName": _SERIALIZER.url("context_cache_name", context_cache_name, "str"),
+        "contextCacheContainerName": _SERIALIZER.url(
+            "context_cache_container_name", context_cache_container_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_context_cache_containers_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    context_cache_name: str,
+    context_cache_container_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/contextCaches/{contextCacheName}/contextCacheContainers/{contextCacheContainerName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "contextCacheName": _SERIALIZER.url("context_cache_name", context_cache_name, "str"),
+        "contextCacheContainerName": _SERIALIZER.url(
+            "context_cache_container_name", context_cache_container_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_context_cache_containers_delete_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    context_cache_name: str,
+    context_cache_container_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/contextCaches/{contextCacheName}/contextCacheContainers/{contextCacheContainerName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "contextCacheName": _SERIALIZER.url("context_cache_name", context_cache_name, "str"),
+        "contextCacheContainerName": _SERIALIZER.url(
+            "context_cache_container_name", context_cache_container_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_context_cache_containers_list_by_context_cache_request(  # pylint: disable=name-too-long
+    resource_group_name: str, context_cache_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/contextCaches/{contextCacheName}/contextCacheContainers"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "contextCacheName": _SERIALIZER.url("context_cache_name", context_cache_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -2884,7 +3218,7 @@ def build_advanced_platform_metrics_get_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2920,7 +3254,7 @@ def build_advanced_platform_metrics_create_or_update_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2956,7 +3290,7 @@ def build_advanced_platform_metrics_delete_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/advancedPlatformMetrics/{advancedPlatformMetricsRuleType}"
     path_format_arguments = {
@@ -2982,7 +3316,7 @@ def build_advanced_platform_metrics_list_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3010,7 +3344,7 @@ def build_private_link_resources_list_by_storage_account_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3044,7 +3378,7 @@ def build_storage_task_assignments_instances_report_list_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3082,7 +3416,7 @@ def build_queue_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3114,7 +3448,7 @@ def build_queue_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3144,7 +3478,7 @@ def build_queue_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3176,7 +3510,7 @@ def build_queue_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3206,7 +3540,7 @@ def build_queue_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/queueServices/default/queues/{queueName}"
     path_format_arguments = {
@@ -3230,7 +3564,7 @@ def build_object_replication_policies_get_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3262,7 +3596,7 @@ def build_object_replication_policies_create_or_update_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3294,7 +3628,7 @@ def build_object_replication_policies_delete_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/objectReplicationPolicies/{objectReplicationPolicyId}"
     path_format_arguments = {
@@ -3320,7 +3654,7 @@ def build_object_replication_policies_list_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3348,7 +3682,7 @@ def build_local_users_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3378,7 +3712,7 @@ def build_local_users_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3408,7 +3742,7 @@ def build_local_users_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/localUsers/{username}"
     path_format_arguments = {
@@ -3439,7 +3773,7 @@ def build_local_users_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3473,7 +3807,7 @@ def build_local_users_list_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3502,7 +3836,7 @@ def build_local_users_regenerate_password_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3531,7 +3865,7 @@ def build_table_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3561,7 +3895,7 @@ def build_table_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3593,7 +3927,7 @@ def build_table_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3623,7 +3957,7 @@ def build_table_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/tableServices/default/tables/{tableName}"
     path_format_arguments = {
@@ -3647,7 +3981,7 @@ def build_table_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3682,7 +4016,7 @@ def build_storage_task_assignment_instances_report_list_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3715,7 +4049,7 @@ def build_skus_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3739,7 +4073,7 @@ def build_usages_list_by_location_request(location: str, subscription_id: str, *
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3760,7 +4094,7 @@ def build_usages_list_by_location_request(location: str, subscription_id: str, *
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3870,7 +4204,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class BlobContainersOperations:
+class BlobContainersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4010,7 +4344,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        blob_container: JSON,
+        blob_container: _types.BlobContainer,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4032,7 +4366,7 @@ class BlobContainersOperations:
          by a letter or number. Required.
         :type container_name: str
         :param blob_container: Properties of the blob container to create. Required.
-        :type blob_container: JSON
+        :type blob_container: ~azure.mgmt.storage.types.BlobContainer
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4084,7 +4418,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        blob_container: Union[_models.BlobContainer, JSON, IO[bytes]],
+        blob_container: Union[_models.BlobContainer, _types.BlobContainer, IO[bytes]],
         **kwargs: Any
     ) -> _models.BlobContainer:
         """Creates a new container under the specified account as described by request body. The container
@@ -4103,9 +4437,10 @@ class BlobContainersOperations:
          letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
          by a letter or number. Required.
         :type container_name: str
-        :param blob_container: Properties of the blob container to create. Is one of the following
-         types: BlobContainer, JSON, IO[bytes] Required.
-        :type blob_container: ~azure.mgmt.storage.models.BlobContainer or JSON or IO[bytes]
+        :param blob_container: Properties of the blob container to create. Is either a BlobContainer
+         type or a IO[bytes] type. Required.
+        :type blob_container: ~azure.mgmt.storage.models.BlobContainer or
+         ~azure.mgmt.storage.types.BlobContainer or IO[bytes]
         :return: BlobContainer. The BlobContainer is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.BlobContainer
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4220,7 +4555,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        blob_container: JSON,
+        blob_container: _types.BlobContainer,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4241,7 +4576,7 @@ class BlobContainersOperations:
          by a letter or number. Required.
         :type container_name: str
         :param blob_container: Properties to update for the blob container. Required.
-        :type blob_container: JSON
+        :type blob_container: ~azure.mgmt.storage.types.BlobContainer
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4292,7 +4627,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        blob_container: Union[_models.BlobContainer, JSON, IO[bytes]],
+        blob_container: Union[_models.BlobContainer, _types.BlobContainer, IO[bytes]],
         **kwargs: Any
     ) -> _models.BlobContainer:
         """Updates container properties as specified in request body. Properties not mentioned in the
@@ -4310,9 +4645,10 @@ class BlobContainersOperations:
          letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
          by a letter or number. Required.
         :type container_name: str
-        :param blob_container: Properties to update for the blob container. Is one of the following
-         types: BlobContainer, JSON, IO[bytes] Required.
-        :type blob_container: ~azure.mgmt.storage.models.BlobContainer or JSON or IO[bytes]
+        :param blob_container: Properties to update for the blob container. Is either a BlobContainer
+         type or a IO[bytes] type. Required.
+        :type blob_container: ~azure.mgmt.storage.models.BlobContainer or
+         ~azure.mgmt.storage.types.BlobContainer or IO[bytes]
         :return: BlobContainer. The BlobContainer is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.BlobContainer
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4495,7 +4831,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        legal_hold: JSON,
+        legal_hold: _types.LegalHold,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4517,7 +4853,7 @@ class BlobContainersOperations:
          by a letter or number. Required.
         :type container_name: str
         :param legal_hold: The LegalHold property that will be set to a blob container. Required.
-        :type legal_hold: JSON
+        :type legal_hold: ~azure.mgmt.storage.types.LegalHold
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4569,7 +4905,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        legal_hold: Union[_models.LegalHold, JSON, IO[bytes]],
+        legal_hold: Union[_models.LegalHold, _types.LegalHold, IO[bytes]],
         **kwargs: Any
     ) -> _models.LegalHold:
         """Sets legal hold tags. Setting the same tag results in an idempotent operation. SetLegalHold
@@ -4588,9 +4924,10 @@ class BlobContainersOperations:
          letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
          by a letter or number. Required.
         :type container_name: str
-        :param legal_hold: The LegalHold property that will be set to a blob container. Is one of the
-         following types: LegalHold, JSON, IO[bytes] Required.
-        :type legal_hold: ~azure.mgmt.storage.models.LegalHold or JSON or IO[bytes]
+        :param legal_hold: The LegalHold property that will be set to a blob container. Is either a
+         LegalHold type or a IO[bytes] type. Required.
+        :type legal_hold: ~azure.mgmt.storage.models.LegalHold or ~azure.mgmt.storage.types.LegalHold
+         or IO[bytes]
         :return: LegalHold. The LegalHold is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.LegalHold
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4705,7 +5042,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        legal_hold: JSON,
+        legal_hold: _types.LegalHold,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4726,7 +5063,7 @@ class BlobContainersOperations:
          by a letter or number. Required.
         :type container_name: str
         :param legal_hold: The LegalHold property that will be clear from a blob container. Required.
-        :type legal_hold: JSON
+        :type legal_hold: ~azure.mgmt.storage.types.LegalHold
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4777,7 +5114,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        legal_hold: Union[_models.LegalHold, JSON, IO[bytes]],
+        legal_hold: Union[_models.LegalHold, _types.LegalHold, IO[bytes]],
         **kwargs: Any
     ) -> _models.LegalHold:
         """Clears legal hold tags. Clearing the same or non-existent tag results in an idempotent
@@ -4795,9 +5132,10 @@ class BlobContainersOperations:
          letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
          by a letter or number. Required.
         :type container_name: str
-        :param legal_hold: The LegalHold property that will be clear from a blob container. Is one of
-         the following types: LegalHold, JSON, IO[bytes] Required.
-        :type legal_hold: ~azure.mgmt.storage.models.LegalHold or JSON or IO[bytes]
+        :param legal_hold: The LegalHold property that will be clear from a blob container. Is either a
+         LegalHold type or a IO[bytes] type. Required.
+        :type legal_hold: ~azure.mgmt.storage.models.LegalHold or ~azure.mgmt.storage.types.LegalHold
+         or IO[bytes]
         :return: LegalHold. The LegalHold is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.LegalHold
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4912,7 +5250,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.LeaseContainerRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4933,7 +5271,7 @@ class BlobContainersOperations:
          by a letter or number. Required.
         :type container_name: str
         :param parameters: The content of the action request. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.storage.types.LeaseContainerRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4984,7 +5322,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        parameters: Optional[Union[_models.LeaseContainerRequest, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.LeaseContainerRequest, _types.LeaseContainerRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.LeaseContainerResponse:
         """The Lease Container operation establishes and manages a lock on a container for delete
@@ -5002,9 +5340,10 @@ class BlobContainersOperations:
          letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
          by a letter or number. Required.
         :type container_name: str
-        :param parameters: The content of the action request. Is one of the following types:
-         LeaseContainerRequest, JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.storage.models.LeaseContainerRequest or JSON or IO[bytes]
+        :param parameters: The content of the action request. Is either a LeaseContainerRequest type or
+         a IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.storage.models.LeaseContainerRequest or
+         ~azure.mgmt.storage.types.LeaseContainerRequest or IO[bytes]
         :return: LeaseContainerResponse. The LeaseContainerResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.LeaseContainerResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5488,7 +5827,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.ImmutabilityPolicy] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -5512,7 +5851,7 @@ class BlobContainersOperations:
         :type container_name: str
         :param parameters: The ImmutabilityPolicy Properties that will be created or updated to a blob
          container. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.storage.types.ImmutabilityPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5576,7 +5915,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        parameters: Optional[Union[_models.ImmutabilityPolicy, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.ImmutabilityPolicy, _types.ImmutabilityPolicy, IO[bytes]]] = None,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -5598,9 +5937,9 @@ class BlobContainersOperations:
          by a letter or number. Required.
         :type container_name: str
         :param parameters: The ImmutabilityPolicy Properties that will be created or updated to a blob
-         container. Is one of the following types: ImmutabilityPolicy, JSON, IO[bytes] Default value is
-         None.
-        :type parameters: ~azure.mgmt.storage.models.ImmutabilityPolicy or JSON or IO[bytes]
+         container. Is either a ImmutabilityPolicy type or a IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.storage.models.ImmutabilityPolicy or
+         ~azure.mgmt.storage.types.ImmutabilityPolicy or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -5950,7 +6289,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.ImmutabilityPolicy] = None,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -5974,7 +6313,7 @@ class BlobContainersOperations:
          by a letter or number. Required.
         :type container_name: str
         :param parameters: The content of the action request. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.storage.types.ImmutabilityPolicy
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -6036,7 +6375,7 @@ class BlobContainersOperations:
         resource_group_name: str,
         account_name: str,
         container_name: str,
-        parameters: Optional[Union[_models.ImmutabilityPolicy, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.ImmutabilityPolicy, _types.ImmutabilityPolicy, IO[bytes]]] = None,
         *,
         etag: str,
         match_condition: MatchConditions,
@@ -6058,9 +6397,10 @@ class BlobContainersOperations:
          letters and dash (-) only. Every dash (-) character must be immediately preceded and followed
          by a letter or number. Required.
         :type container_name: str
-        :param parameters: The content of the action request. Is one of the following types:
-         ImmutabilityPolicy, JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.storage.models.ImmutabilityPolicy or JSON or IO[bytes]
+        :param parameters: The content of the action request. Is either a ImmutabilityPolicy type or a
+         IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.storage.models.ImmutabilityPolicy or
+         ~azure.mgmt.storage.types.ImmutabilityPolicy or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Required.
@@ -6153,7 +6493,7 @@ class BlobContainersOperations:
         return deserialized  # type: ignore
 
 
-class BlobServicesOperations:
+class BlobServicesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6281,7 +6621,7 @@ class BlobServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: JSON,
+        parameters: _types.BlobServiceProperties,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6298,7 +6638,7 @@ class BlobServicesOperations:
         :type account_name: str
         :param parameters: The properties of a storage account’s Blob service, including properties for
          Storage Analytics and CORS (Cross-Origin Resource Sharing) rules. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.storage.types.BlobServiceProperties
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6343,7 +6683,7 @@ class BlobServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.BlobServiceProperties, JSON, IO[bytes]],
+        parameters: Union[_models.BlobServiceProperties, _types.BlobServiceProperties, IO[bytes]],
         **kwargs: Any
     ) -> _models.BlobServiceProperties:
         """Sets the properties of a storage account’s Blob service, including properties for Storage
@@ -6357,9 +6697,10 @@ class BlobServicesOperations:
          lower-case letters only. Required.
         :type account_name: str
         :param parameters: The properties of a storage account’s Blob service, including properties for
-         Storage Analytics and CORS (Cross-Origin Resource Sharing) rules. Is one of the following
-         types: BlobServiceProperties, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.storage.models.BlobServiceProperties or JSON or IO[bytes]
+         Storage Analytics and CORS (Cross-Origin Resource Sharing) rules. Is either a
+         BlobServiceProperties type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.storage.models.BlobServiceProperties or
+         ~azure.mgmt.storage.types.BlobServiceProperties or IO[bytes]
         :return: BlobServiceProperties. The BlobServiceProperties is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.BlobServiceProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6536,7 +6877,7 @@ class BlobServicesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
+class StorageAccountsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6576,12 +6917,16 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def check_name_availability(
-        self, account_name: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        account_name: _types.StorageAccountCheckNameAvailabilityParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
         """Checks that the storage account name is valid and is not already in use.
 
         :param account_name: The request body. Required.
-        :type account_name: JSON
+        :type account_name: ~azure.mgmt.storage.types.StorageAccountCheckNameAvailabilityParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6610,14 +6955,20 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def check_name_availability(
-        self, account_name: Union[_models.StorageAccountCheckNameAvailabilityParameters, JSON, IO[bytes]], **kwargs: Any
+        self,
+        account_name: Union[
+            _models.StorageAccountCheckNameAvailabilityParameters,
+            _types.StorageAccountCheckNameAvailabilityParameters,
+            IO[bytes],
+        ],
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
         """Checks that the storage account name is valid and is not already in use.
 
-        :param account_name: The request body. Is one of the following types:
-         StorageAccountCheckNameAvailabilityParameters, JSON, IO[bytes] Required.
+        :param account_name: The request body. Is either a
+         StorageAccountCheckNameAvailabilityParameters type or a IO[bytes] type. Required.
         :type account_name: ~azure.mgmt.storage.models.StorageAccountCheckNameAvailabilityParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.storage.types.StorageAccountCheckNameAvailabilityParameters or IO[bytes]
         :return: CheckNameAvailabilityResult. The CheckNameAvailabilityResult is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.storage.models.CheckNameAvailabilityResult
@@ -6779,7 +7130,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.StorageAccountCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.StorageAccountCreateParameters, _types.StorageAccountCreateParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6888,7 +7239,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: JSON,
+        parameters: _types.StorageAccountCreateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6906,7 +7257,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
          lower-case letters only. Required.
         :type account_name: str
         :param parameters: The parameters to provide for the created account. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.storage.types.StorageAccountCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6954,7 +7305,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.StorageAccountCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.StorageAccountCreateParameters, _types.StorageAccountCreateParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.StorageAccount]:
         """Asynchronously creates a new storage account with the specified parameters. If an account is
@@ -6969,10 +7320,10 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :param parameters: The parameters to provide for the created account. Is one of the following
-         types: StorageAccountCreateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.storage.models.StorageAccountCreateParameters or JSON or
-         IO[bytes]
+        :param parameters: The parameters to provide for the created account. Is either a
+         StorageAccountCreateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.storage.models.StorageAccountCreateParameters or
+         ~azure.mgmt.storage.types.StorageAccountCreateParameters or IO[bytes]
         :return: An instance of LROPoller that returns StorageAccount. The StorageAccount is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.StorageAccount]
@@ -7071,7 +7422,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: JSON,
+        parameters: _types.StorageAccountUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7093,7 +7444,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
          lower-case letters only. Required.
         :type account_name: str
         :param parameters: The parameters to provide for the updated account. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.storage.types.StorageAccountUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7143,7 +7494,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.StorageAccountUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.StorageAccountUpdateParameters, _types.StorageAccountUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.StorageAccount:
         """The update operation can be used to update the SKU, encryption, access tier, or tags for a
@@ -7162,10 +7513,10 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :param parameters: The parameters to provide for the updated account. Is one of the following
-         types: StorageAccountUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.storage.models.StorageAccountUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: The parameters to provide for the updated account. Is either a
+         StorageAccountUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.storage.models.StorageAccountUpdateParameters or
+         ~azure.mgmt.storage.types.StorageAccountUpdateParameters or IO[bytes]
         :return: StorageAccount. The StorageAccount is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.StorageAccount
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7606,7 +7957,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        regenerate_key: JSON,
+        regenerate_key: _types.StorageAccountRegenerateKeyParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7622,7 +7973,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         :type account_name: str
         :param regenerate_key: Specifies name of the key which should be regenerated -- key1, key2,
          kerb1, kerb2. Required.
-        :type regenerate_key: JSON
+        :type regenerate_key: ~azure.mgmt.storage.types.StorageAccountRegenerateKeyParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7668,7 +8019,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        regenerate_key: Union[_models.StorageAccountRegenerateKeyParameters, JSON, IO[bytes]],
+        regenerate_key: Union[
+            _models.StorageAccountRegenerateKeyParameters, _types.StorageAccountRegenerateKeyParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.StorageAccountListKeysResult:
         """Regenerates one of the access keys or Kerberos keys for the specified storage account.
@@ -7681,10 +8034,10 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
          lower-case letters only. Required.
         :type account_name: str
         :param regenerate_key: Specifies name of the key which should be regenerated -- key1, key2,
-         kerb1, kerb2. Is one of the following types: StorageAccountRegenerateKeyParameters, JSON,
-         IO[bytes] Required.
-        :type regenerate_key: ~azure.mgmt.storage.models.StorageAccountRegenerateKeyParameters or JSON
-         or IO[bytes]
+         kerb1, kerb2. Is either a StorageAccountRegenerateKeyParameters type or a IO[bytes] type.
+         Required.
+        :type regenerate_key: ~azure.mgmt.storage.models.StorageAccountRegenerateKeyParameters or
+         ~azure.mgmt.storage.types.StorageAccountRegenerateKeyParameters or IO[bytes]
         :return: StorageAccountListKeysResult. The StorageAccountListKeysResult is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.storage.models.StorageAccountListKeysResult
@@ -7792,7 +8145,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: JSON,
+        parameters: _types.AccountSasParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7808,7 +8161,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         :type account_name: str
         :param parameters: The parameters to provide to list SAS credentials for the storage account.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.storage.types.AccountSasParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7852,7 +8205,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.AccountSasParameters, JSON, IO[bytes]],
+        parameters: Union[_models.AccountSasParameters, _types.AccountSasParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.ListAccountSasResponse:
         """List SAS credentials of a storage account.
@@ -7865,8 +8218,9 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
          lower-case letters only. Required.
         :type account_name: str
         :param parameters: The parameters to provide to list SAS credentials for the storage account.
-         Is one of the following types: AccountSasParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.storage.models.AccountSasParameters or JSON or IO[bytes]
+         Is either a AccountSasParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.storage.models.AccountSasParameters or
+         ~azure.mgmt.storage.types.AccountSasParameters or IO[bytes]
         :return: ListAccountSasResponse. The ListAccountSasResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.ListAccountSasResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7972,7 +8326,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: JSON,
+        parameters: _types.ServiceSasParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7987,7 +8341,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
          lower-case letters only. Required.
         :type account_name: str
         :param parameters: The parameters to provide to list service SAS credentials. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.storage.types.ServiceSasParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8030,7 +8384,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.ServiceSasParameters, JSON, IO[bytes]],
+        parameters: Union[_models.ServiceSasParameters, _types.ServiceSasParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.ListServiceSasResponse:
         """List service SAS credentials of a specific resource.
@@ -8042,9 +8396,10 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :param parameters: The parameters to provide to list service SAS credentials. Is one of the
-         following types: ServiceSasParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.storage.models.ServiceSasParameters or JSON or IO[bytes]
+        :param parameters: The parameters to provide to list service SAS credentials. Is either a
+         ServiceSasParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.storage.models.ServiceSasParameters or
+         ~azure.mgmt.storage.types.ServiceSasParameters or IO[bytes]
         :return: ListServiceSasResponse. The ListServiceSasResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.ListServiceSasResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8519,7 +8874,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.StorageAccountMigration, JSON, IO[bytes]],
+        parameters: Union[_models.StorageAccountMigration, _types.StorageAccountMigration, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8629,7 +8984,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: JSON,
+        parameters: _types.StorageAccountMigration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8649,7 +9004,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         :type account_name: str
         :param parameters: The request parameters required to perform storage account migration.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.storage.types.StorageAccountMigration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8697,7 +9052,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.StorageAccountMigration, JSON, IO[bytes]],
+        parameters: Union[_models.StorageAccountMigration, _types.StorageAccountMigration, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Account Migration request can be triggered for a storage account to change its redundancy
@@ -8713,9 +9068,10 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :param parameters: The request parameters required to perform storage account migration. Is one
-         of the following types: StorageAccountMigration, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.storage.models.StorageAccountMigration or JSON or IO[bytes]
+        :param parameters: The request parameters required to perform storage account migration. Is
+         either a StorageAccountMigration type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.storage.models.StorageAccountMigration or
+         ~azure.mgmt.storage.types.StorageAccountMigration or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8771,7 +9127,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.BlobRestoreParameters, JSON, IO[bytes]],
+        parameters: Union[_models.BlobRestoreParameters, _types.BlobRestoreParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8877,7 +9233,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: JSON,
+        parameters: _types.BlobRestoreParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8892,7 +9248,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
          lower-case letters only. Required.
         :type account_name: str
         :param parameters: The parameters to provide for restore blob ranges. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.storage.types.BlobRestoreParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8937,7 +9293,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.BlobRestoreParameters, JSON, IO[bytes]],
+        parameters: Union[_models.BlobRestoreParameters, _types.BlobRestoreParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.BlobRestoreStatus]:
         """Restore blobs in the specified blob ranges.
@@ -8949,9 +9305,10 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :param parameters: The parameters to provide for restore blob ranges. Is one of the following
-         types: BlobRestoreParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.storage.models.BlobRestoreParameters or JSON or IO[bytes]
+        :param parameters: The parameters to provide for restore blob ranges. Is either a
+         BlobRestoreParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.storage.models.BlobRestoreParameters or
+         ~azure.mgmt.storage.types.BlobRestoreParameters or IO[bytes]
         :return: An instance of LROPoller that returns BlobRestoreStatus. The BlobRestoreStatus is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.BlobRestoreStatus]
@@ -9153,7 +9510,7 @@ class StorageAccountsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class FileSharesOperations:
+class FileSharesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9312,7 +9669,7 @@ class FileSharesOperations:
         resource_group_name: str,
         account_name: str,
         share_name: str,
-        file_share: JSON,
+        file_share: _types.FileShare,
         *,
         expand: Optional[str] = None,
         content_type: str = "application/json",
@@ -9335,7 +9692,7 @@ class FileSharesOperations:
          or number. Required.
         :type share_name: str
         :param file_share: Properties of the file share to create. Required.
-        :type file_share: JSON
+        :type file_share: ~azure.mgmt.storage.types.FileShare
         :keyword expand: Optional, used to expand the properties within share's properties. Valid
          values are: snapshots. Should be passed as a string with delimiter ','. Default value is None.
         :paramtype expand: str
@@ -9394,7 +9751,7 @@ class FileSharesOperations:
         resource_group_name: str,
         account_name: str,
         share_name: str,
-        file_share: Union[_models.FileShare, JSON, IO[bytes]],
+        file_share: Union[_models.FileShare, _types.FileShare, IO[bytes]],
         *,
         expand: Optional[str] = None,
         **kwargs: Any
@@ -9415,9 +9772,10 @@ class FileSharesOperations:
          dash (-) only. Every dash (-) character must be immediately preceded and followed by a letter
          or number. Required.
         :type share_name: str
-        :param file_share: Properties of the file share to create. Is one of the following types:
-         FileShare, JSON, IO[bytes] Required.
-        :type file_share: ~azure.mgmt.storage.models.FileShare or JSON or IO[bytes]
+        :param file_share: Properties of the file share to create. Is either a FileShare type or a
+         IO[bytes] type. Required.
+        :type file_share: ~azure.mgmt.storage.models.FileShare or ~azure.mgmt.storage.types.FileShare
+         or IO[bytes]
         :keyword expand: Optional, used to expand the properties within share's properties. Valid
          values are: snapshots. Should be passed as a string with delimiter ','. Default value is None.
         :paramtype expand: str
@@ -9536,7 +9894,7 @@ class FileSharesOperations:
         resource_group_name: str,
         account_name: str,
         share_name: str,
-        file_share: JSON,
+        file_share: _types.FileShare,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9557,7 +9915,7 @@ class FileSharesOperations:
          or number. Required.
         :type share_name: str
         :param file_share: Properties to update for the file share. Required.
-        :type file_share: JSON
+        :type file_share: ~azure.mgmt.storage.types.FileShare
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9608,7 +9966,7 @@ class FileSharesOperations:
         resource_group_name: str,
         account_name: str,
         share_name: str,
-        file_share: Union[_models.FileShare, JSON, IO[bytes]],
+        file_share: Union[_models.FileShare, _types.FileShare, IO[bytes]],
         **kwargs: Any
     ) -> _models.FileShare:
         """Updates share properties as specified in request body. Properties not mentioned in the request
@@ -9626,9 +9984,10 @@ class FileSharesOperations:
          dash (-) only. Every dash (-) character must be immediately preceded and followed by a letter
          or number. Required.
         :type share_name: str
-        :param file_share: Properties to update for the file share. Is one of the following types:
-         FileShare, JSON, IO[bytes] Required.
-        :type file_share: ~azure.mgmt.storage.models.FileShare or JSON or IO[bytes]
+        :param file_share: Properties to update for the file share. Is either a FileShare type or a
+         IO[bytes] type. Required.
+        :type file_share: ~azure.mgmt.storage.models.FileShare or ~azure.mgmt.storage.types.FileShare
+         or IO[bytes]
         :return: FileShare. The FileShare is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.FileShare
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9828,7 +10187,7 @@ class FileSharesOperations:
         resource_group_name: str,
         account_name: str,
         share_name: str,
-        deleted_share: JSON,
+        deleted_share: _types.DeletedShare,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9848,7 +10207,7 @@ class FileSharesOperations:
          or number. Required.
         :type share_name: str
         :param deleted_share: Required.
-        :type deleted_share: JSON
+        :type deleted_share: ~azure.mgmt.storage.types.DeletedShare
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9898,7 +10257,7 @@ class FileSharesOperations:
         resource_group_name: str,
         account_name: str,
         share_name: str,
-        deleted_share: Union[_models.DeletedShare, JSON, IO[bytes]],
+        deleted_share: Union[_models.DeletedShare, _types.DeletedShare, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Restore a file share within a valid retention days if share soft delete is enabled.
@@ -9915,8 +10274,9 @@ class FileSharesOperations:
          dash (-) only. Every dash (-) character must be immediately preceded and followed by a letter
          or number. Required.
         :type share_name: str
-        :param deleted_share: Is one of the following types: DeletedShare, JSON, IO[bytes] Required.
-        :type deleted_share: ~azure.mgmt.storage.models.DeletedShare or JSON or IO[bytes]
+        :param deleted_share: Is either a DeletedShare type or a IO[bytes] type. Required.
+        :type deleted_share: ~azure.mgmt.storage.models.DeletedShare or
+         ~azure.mgmt.storage.types.DeletedShare or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10022,7 +10382,7 @@ class FileSharesOperations:
         resource_group_name: str,
         account_name: str,
         share_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.LeaseShareRequest] = None,
         *,
         x_ms_snapshot: Optional[str] = None,
         content_type: str = "application/json",
@@ -10044,7 +10404,7 @@ class FileSharesOperations:
          or number. Required.
         :type share_name: str
         :param parameters: The content of the action request. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.storage.types.LeaseShareRequest
         :keyword x_ms_snapshot: Optional. Specify the snapshot time to lease a snapshot. Default value
          is None.
         :paramtype x_ms_snapshot: str
@@ -10102,7 +10462,7 @@ class FileSharesOperations:
         resource_group_name: str,
         account_name: str,
         share_name: str,
-        parameters: Optional[Union[_models.LeaseShareRequest, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.LeaseShareRequest, _types.LeaseShareRequest, IO[bytes]]] = None,
         *,
         x_ms_snapshot: Optional[str] = None,
         **kwargs: Any
@@ -10122,9 +10482,10 @@ class FileSharesOperations:
          dash (-) only. Every dash (-) character must be immediately preceded and followed by a letter
          or number. Required.
         :type share_name: str
-        :param parameters: The content of the action request. Is one of the following types:
-         LeaseShareRequest, JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.storage.models.LeaseShareRequest or JSON or IO[bytes]
+        :param parameters: The content of the action request. Is either a LeaseShareRequest type or a
+         IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.storage.models.LeaseShareRequest or
+         ~azure.mgmt.storage.types.LeaseShareRequest or IO[bytes]
         :keyword x_ms_snapshot: Optional. Specify the snapshot time to lease a snapshot. Default value
          is None.
         :paramtype x_ms_snapshot: str
@@ -10330,7 +10691,7 @@ class FileSharesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class FileServicesOperations:
+class FileServicesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10458,7 +10819,7 @@ class FileServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: JSON,
+        parameters: _types.FileServiceProperties,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10475,7 +10836,7 @@ class FileServicesOperations:
         :type account_name: str
         :param parameters: The properties of file services in storage accounts, including CORS
          (Cross-Origin Resource Sharing) rules. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.storage.types.FileServiceProperties
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10520,7 +10881,7 @@ class FileServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.FileServiceProperties, JSON, IO[bytes]],
+        parameters: Union[_models.FileServiceProperties, _types.FileServiceProperties, IO[bytes]],
         **kwargs: Any
     ) -> _models.FileServiceProperties:
         """Sets the properties of file services in storage accounts, including CORS (Cross-Origin Resource
@@ -10534,9 +10895,10 @@ class FileServicesOperations:
          lower-case letters only. Required.
         :type account_name: str
         :param parameters: The properties of file services in storage accounts, including CORS
-         (Cross-Origin Resource Sharing) rules. Is one of the following types: FileServiceProperties,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.storage.models.FileServiceProperties or JSON or IO[bytes]
+         (Cross-Origin Resource Sharing) rules. Is either a FileServiceProperties type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.storage.models.FileServiceProperties or
+         ~azure.mgmt.storage.types.FileServiceProperties or IO[bytes]
         :return: FileServiceProperties. The FileServiceProperties is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.FileServiceProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10860,7 +11222,7 @@ class FileServicesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class QueueServicesOperations:
+class QueueServicesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10988,7 +11350,7 @@ class QueueServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: JSON,
+        parameters: _types.QueueServiceProperties,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11005,7 +11367,7 @@ class QueueServicesOperations:
         :type account_name: str
         :param parameters: The properties of a storage account’s Queue service, only properties for
          Storage Analytics and CORS (Cross-Origin Resource Sharing) rules can be specified. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.storage.types.QueueServiceProperties
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11050,7 +11412,7 @@ class QueueServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.QueueServiceProperties, JSON, IO[bytes]],
+        parameters: Union[_models.QueueServiceProperties, _types.QueueServiceProperties, IO[bytes]],
         **kwargs: Any
     ) -> _models.QueueServiceProperties:
         """Sets the properties of a storage account’s Queue service, including properties for Storage
@@ -11064,9 +11426,10 @@ class QueueServicesOperations:
          lower-case letters only. Required.
         :type account_name: str
         :param parameters: The properties of a storage account’s Queue service, only properties for
-         Storage Analytics and CORS (Cross-Origin Resource Sharing) rules can be specified. Is one of
-         the following types: QueueServiceProperties, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.storage.models.QueueServiceProperties or JSON or IO[bytes]
+         Storage Analytics and CORS (Cross-Origin Resource Sharing) rules can be specified. Is either a
+         QueueServiceProperties type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.storage.models.QueueServiceProperties or
+         ~azure.mgmt.storage.types.QueueServiceProperties or IO[bytes]
         :return: QueueServiceProperties. The QueueServiceProperties is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.QueueServiceProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11211,7 +11574,7 @@ class QueueServicesOperations:
         return deserialized  # type: ignore
 
 
-class DeletedAccountsOperations:
+class DeletedAccountsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11251,7 +11614,7 @@ class DeletedAccountsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
         cls: ClsType[_models.DeletedAccount] = kwargs.pop("cls", None)
 
         _request = build_deleted_accounts_get_request(
@@ -11392,7 +11755,7 @@ class DeletedAccountsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ManagementPoliciesOperations:
+class ManagementPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11530,7 +11893,7 @@ class ManagementPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         management_policy_name: Union[str, _models.ManagementPolicyName],
-        properties: JSON,
+        properties: _types.ManagementPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11548,7 +11911,7 @@ class ManagementPoliciesOperations:
          always be 'default'. "default" Required.
         :type management_policy_name: str or ~azure.mgmt.storage.models.ManagementPolicyName
         :param properties: The ManagementPolicy set to a storage account. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.storage.types.ManagementPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11596,7 +11959,7 @@ class ManagementPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         management_policy_name: Union[str, _models.ManagementPolicyName],
-        properties: Union[_models.ManagementPolicy, JSON, IO[bytes]],
+        properties: Union[_models.ManagementPolicy, _types.ManagementPolicy, IO[bytes]],
         **kwargs: Any
     ) -> _models.ManagementPolicy:
         """Sets the managementpolicy to the specified storage account.
@@ -11611,9 +11974,10 @@ class ManagementPoliciesOperations:
         :param management_policy_name: The name of the Storage Account Management Policy. It should
          always be 'default'. "default" Required.
         :type management_policy_name: str or ~azure.mgmt.storage.models.ManagementPolicyName
-        :param properties: The ManagementPolicy set to a storage account. Is one of the following
-         types: ManagementPolicy, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.storage.models.ManagementPolicy or JSON or IO[bytes]
+        :param properties: The ManagementPolicy set to a storage account. Is either a ManagementPolicy
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.storage.models.ManagementPolicy or
+         ~azure.mgmt.storage.types.ManagementPolicy or IO[bytes]
         :return: ManagementPolicy. The ManagementPolicy is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.ManagementPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11756,7 +12120,7 @@ class ManagementPoliciesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BlobInventoryPoliciesOperations:
+class BlobInventoryPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11894,7 +12258,7 @@ class BlobInventoryPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         blob_inventory_policy_name: Union[str, _models.BlobInventoryPolicyName],
-        properties: JSON,
+        properties: _types.BlobInventoryPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11912,7 +12276,7 @@ class BlobInventoryPoliciesOperations:
          should always be 'default'. "default" Required.
         :type blob_inventory_policy_name: str or ~azure.mgmt.storage.models.BlobInventoryPolicyName
         :param properties: The blob inventory policy set to a storage account. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.storage.types.BlobInventoryPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11960,7 +12324,7 @@ class BlobInventoryPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         blob_inventory_policy_name: Union[str, _models.BlobInventoryPolicyName],
-        properties: Union[_models.BlobInventoryPolicy, JSON, IO[bytes]],
+        properties: Union[_models.BlobInventoryPolicy, _types.BlobInventoryPolicy, IO[bytes]],
         **kwargs: Any
     ) -> _models.BlobInventoryPolicy:
         """Sets the blob inventory policy to the specified storage account.
@@ -11975,9 +12339,10 @@ class BlobInventoryPoliciesOperations:
         :param blob_inventory_policy_name: The name of the storage account blob inventory policy. It
          should always be 'default'. "default" Required.
         :type blob_inventory_policy_name: str or ~azure.mgmt.storage.models.BlobInventoryPolicyName
-        :param properties: The blob inventory policy set to a storage account. Is one of the following
-         types: BlobInventoryPolicy, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.storage.models.BlobInventoryPolicy or JSON or IO[bytes]
+        :param properties: The blob inventory policy set to a storage account. Is either a
+         BlobInventoryPolicy type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.storage.models.BlobInventoryPolicy or
+         ~azure.mgmt.storage.types.BlobInventoryPolicy or IO[bytes]
         :return: BlobInventoryPolicy. The BlobInventoryPolicy is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.BlobInventoryPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12224,7 +12589,7 @@ class BlobInventoryPoliciesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12360,7 +12725,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         account_name: str,
         private_endpoint_connection_name: str,
-        properties: JSON,
+        properties: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12378,7 +12743,7 @@ class PrivateEndpointConnectionsOperations:
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
         :param properties: The private endpoint connection properties. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.storage.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12428,7 +12793,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         account_name: str,
         private_endpoint_connection_name: str,
-        properties: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        properties: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> _models.PrivateEndpointConnection:
         """Update the state of specified private endpoint connection associated with the storage account.
@@ -12443,9 +12808,10 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
-        :param properties: The private endpoint connection properties. Is one of the following types:
-         PrivateEndpointConnection, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.storage.models.PrivateEndpointConnection or JSON or IO[bytes]
+        :param properties: The private endpoint connection properties. Is either a
+         PrivateEndpointConnection type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.storage.models.PrivateEndpointConnection or
+         ~azure.mgmt.storage.types.PrivateEndpointConnection or IO[bytes]
         :return: PrivateEndpointConnection. The PrivateEndpointConnection is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.storage.models.PrivateEndpointConnection
@@ -12689,7 +13055,7 @@ class PrivateEndpointConnectionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class EncryptionScopesOperations:
+class EncryptionScopesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12830,7 +13196,7 @@ class EncryptionScopesOperations:
         resource_group_name: str,
         account_name: str,
         encryption_scope_name: str,
-        encryption_scope: JSON,
+        encryption_scope: _types.EncryptionScope,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12853,7 +13219,7 @@ class EncryptionScopesOperations:
         :type encryption_scope_name: str
         :param encryption_scope: Encryption scope properties to be used for the create or update.
          Required.
-        :type encryption_scope: JSON
+        :type encryption_scope: ~azure.mgmt.storage.types.EncryptionScope
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12906,7 +13272,7 @@ class EncryptionScopesOperations:
         resource_group_name: str,
         account_name: str,
         encryption_scope_name: str,
-        encryption_scope: Union[_models.EncryptionScope, JSON, IO[bytes]],
+        encryption_scope: Union[_models.EncryptionScope, _types.EncryptionScope, IO[bytes]],
         **kwargs: Any
     ) -> _models.EncryptionScope:
         """Synchronously creates or updates an encryption scope under the specified storage account. If an
@@ -12926,8 +13292,9 @@ class EncryptionScopesOperations:
          followed by a letter or number. Required.
         :type encryption_scope_name: str
         :param encryption_scope: Encryption scope properties to be used for the create or update. Is
-         one of the following types: EncryptionScope, JSON, IO[bytes] Required.
-        :type encryption_scope: ~azure.mgmt.storage.models.EncryptionScope or JSON or IO[bytes]
+         either a EncryptionScope type or a IO[bytes] type. Required.
+        :type encryption_scope: ~azure.mgmt.storage.models.EncryptionScope or
+         ~azure.mgmt.storage.types.EncryptionScope or IO[bytes]
         :return: EncryptionScope. The EncryptionScope is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.EncryptionScope
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13042,7 +13409,7 @@ class EncryptionScopesOperations:
         resource_group_name: str,
         account_name: str,
         encryption_scope_name: str,
-        encryption_scope: JSON,
+        encryption_scope: _types.EncryptionScope,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13063,7 +13430,7 @@ class EncryptionScopesOperations:
          followed by a letter or number. Required.
         :type encryption_scope_name: str
         :param encryption_scope: Encryption scope properties to be used for the update. Required.
-        :type encryption_scope: JSON
+        :type encryption_scope: ~azure.mgmt.storage.types.EncryptionScope
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13114,7 +13481,7 @@ class EncryptionScopesOperations:
         resource_group_name: str,
         account_name: str,
         encryption_scope_name: str,
-        encryption_scope: Union[_models.EncryptionScope, JSON, IO[bytes]],
+        encryption_scope: Union[_models.EncryptionScope, _types.EncryptionScope, IO[bytes]],
         **kwargs: Any
     ) -> _models.EncryptionScope:
         """Update encryption scope properties as specified in the request body. Update fails if the
@@ -13132,9 +13499,10 @@ class EncryptionScopesOperations:
          lower-case letters and dash (-) only. Every dash (-) character must be immediately preceded and
          followed by a letter or number. Required.
         :type encryption_scope_name: str
-        :param encryption_scope: Encryption scope properties to be used for the update. Is one of the
-         following types: EncryptionScope, JSON, IO[bytes] Required.
-        :type encryption_scope: ~azure.mgmt.storage.models.EncryptionScope or JSON or IO[bytes]
+        :param encryption_scope: Encryption scope properties to be used for the update. Is either a
+         EncryptionScope type or a IO[bytes] type. Required.
+        :type encryption_scope: ~azure.mgmt.storage.models.EncryptionScope or
+         ~azure.mgmt.storage.types.EncryptionScope or IO[bytes]
         :return: EncryptionScope. The EncryptionScope is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.EncryptionScope
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13329,7 +13697,7 @@ class EncryptionScopesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class TableServicesOperations:
+class TableServicesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13457,7 +13825,7 @@ class TableServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: JSON,
+        parameters: _types.TableServiceProperties,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13474,7 +13842,7 @@ class TableServicesOperations:
         :type account_name: str
         :param parameters: The properties of a storage account’s Table service, only properties for
          Storage Analytics and CORS (Cross-Origin Resource Sharing) rules can be specified. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.storage.types.TableServiceProperties
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13519,7 +13887,7 @@ class TableServicesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        parameters: Union[_models.TableServiceProperties, JSON, IO[bytes]],
+        parameters: Union[_models.TableServiceProperties, _types.TableServiceProperties, IO[bytes]],
         **kwargs: Any
     ) -> _models.TableServiceProperties:
         """Sets the properties of a storage account’s Table service, including properties for Storage
@@ -13533,9 +13901,10 @@ class TableServicesOperations:
          lower-case letters only. Required.
         :type account_name: str
         :param parameters: The properties of a storage account’s Table service, only properties for
-         Storage Analytics and CORS (Cross-Origin Resource Sharing) rules can be specified. Is one of
-         the following types: TableServiceProperties, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.storage.models.TableServiceProperties or JSON or IO[bytes]
+         Storage Analytics and CORS (Cross-Origin Resource Sharing) rules can be specified. Is either a
+         TableServiceProperties type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.storage.models.TableServiceProperties or
+         ~azure.mgmt.storage.types.TableServiceProperties or IO[bytes]
         :return: TableServiceProperties. The TableServiceProperties is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.TableServiceProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13680,7 +14049,7 @@ class TableServicesOperations:
         return deserialized  # type: ignore
 
 
-class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14020,7 +14389,7 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class StorageTaskAssignmentsOperations:
+class StorageTaskAssignmentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14121,7 +14490,7 @@ class StorageTaskAssignmentsOperations:
         resource_group_name: str,
         account_name: str,
         storage_task_assignment_name: str,
-        parameters: Union[_models.StorageTaskAssignment, JSON, IO[bytes]],
+        parameters: Union[_models.StorageTaskAssignment, _types.StorageTaskAssignment, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -14244,7 +14613,7 @@ class StorageTaskAssignmentsOperations:
         resource_group_name: str,
         account_name: str,
         storage_task_assignment_name: str,
-        parameters: JSON,
+        parameters: _types.StorageTaskAssignment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14267,7 +14636,7 @@ class StorageTaskAssignmentsOperations:
          length and use numbers and lower-case letters only. Required.
         :type storage_task_assignment_name: str
         :param parameters: The parameters to create a Storage Task Assignment. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.storage.types.StorageTaskAssignment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14322,7 +14691,7 @@ class StorageTaskAssignmentsOperations:
         resource_group_name: str,
         account_name: str,
         storage_task_assignment_name: str,
-        parameters: Union[_models.StorageTaskAssignment, JSON, IO[bytes]],
+        parameters: Union[_models.StorageTaskAssignment, _types.StorageTaskAssignment, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.StorageTaskAssignment]:
         """Asynchronously creates a new storage task assignment sub-resource with the specified
@@ -14342,9 +14711,10 @@ class StorageTaskAssignmentsOperations:
          specified resource group. Storage task assignment names must be between 3 and 24 characters in
          length and use numbers and lower-case letters only. Required.
         :type storage_task_assignment_name: str
-        :param parameters: The parameters to create a Storage Task Assignment. Is one of the following
-         types: StorageTaskAssignment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.storage.models.StorageTaskAssignment or JSON or IO[bytes]
+        :param parameters: The parameters to create a Storage Task Assignment. Is either a
+         StorageTaskAssignment type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.storage.models.StorageTaskAssignment or
+         ~azure.mgmt.storage.types.StorageTaskAssignment or IO[bytes]
         :return: An instance of LROPoller that returns StorageTaskAssignment. The StorageTaskAssignment
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.StorageTaskAssignment]
@@ -14408,7 +14778,9 @@ class StorageTaskAssignmentsOperations:
         resource_group_name: str,
         account_name: str,
         storage_task_assignment_name: str,
-        parameters: Union[_models.StorageTaskAssignmentUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.StorageTaskAssignmentUpdateParameters, _types.StorageTaskAssignmentUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -14524,7 +14896,7 @@ class StorageTaskAssignmentsOperations:
         resource_group_name: str,
         account_name: str,
         storage_task_assignment_name: str,
-        parameters: JSON,
+        parameters: _types.StorageTaskAssignmentUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14543,7 +14915,7 @@ class StorageTaskAssignmentsOperations:
          length and use numbers and lower-case letters only. Required.
         :type storage_task_assignment_name: str
         :param parameters: The parameters to update a Storage Task Assignment. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.storage.types.StorageTaskAssignmentUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14594,7 +14966,9 @@ class StorageTaskAssignmentsOperations:
         resource_group_name: str,
         account_name: str,
         storage_task_assignment_name: str,
-        parameters: Union[_models.StorageTaskAssignmentUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.StorageTaskAssignmentUpdateParameters, _types.StorageTaskAssignmentUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.StorageTaskAssignment]:
         """Update storage task assignment properties.
@@ -14610,10 +14984,10 @@ class StorageTaskAssignmentsOperations:
          specified resource group. Storage task assignment names must be between 3 and 24 characters in
          length and use numbers and lower-case letters only. Required.
         :type storage_task_assignment_name: str
-        :param parameters: The parameters to update a Storage Task Assignment. Is one of the following
-         types: StorageTaskAssignmentUpdateParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.storage.models.StorageTaskAssignmentUpdateParameters or JSON or
-         IO[bytes]
+        :param parameters: The parameters to update a Storage Task Assignment. Is either a
+         StorageTaskAssignmentUpdateParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.storage.models.StorageTaskAssignmentUpdateParameters or
+         ~azure.mgmt.storage.types.StorageTaskAssignmentUpdateParameters or IO[bytes]
         :return: An instance of LROPoller that returns StorageTaskAssignment. The StorageTaskAssignment
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.StorageTaskAssignment]
@@ -14922,7 +15296,7 @@ class StorageTaskAssignmentsOperations:
                 "storage_task_assignment_name",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
     )
     def _stop_assignment_initial(
         self, resource_group_name: str, account_name: str, storage_task_assignment_name: str, **kwargs: Any
@@ -15001,7 +15375,7 @@ class StorageTaskAssignmentsOperations:
                 "storage_task_assignment_name",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
     )
     def begin_stop_assignment(
         self, resource_group_name: str, account_name: str, storage_task_assignment_name: str, **kwargs: Any
@@ -15069,7 +15443,7 @@ class StorageTaskAssignmentsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ConnectorsOperations:
+class ConnectorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15099,7 +15473,7 @@ class ConnectorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
     )
     def get(self, resource_group_name: str, account_name: str, connector_name: str, **kwargs: Any) -> _models.Connector:
         """Get the specified Storage Connector.
@@ -15188,14 +15562,14 @@ class ConnectorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
     )
     def _create_initial(
         self,
         resource_group_name: str,
         account_name: str,
         connector_name: str,
-        resource: Union[_models.Connector, JSON, IO[bytes]],
+        resource: Union[_models.Connector, _types.Connector, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -15310,7 +15684,7 @@ class ConnectorsOperations:
         resource_group_name: str,
         account_name: str,
         connector_name: str,
-        resource: JSON,
+        resource: _types.Connector,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15329,7 +15703,7 @@ class ConnectorsOperations:
         :type connector_name: str
         :param resource: Create a Storage Connector if it does not already exist; otherwise, error out.
          This API will not allow you to replace an already existing resource. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.storage.types.Connector
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15388,14 +15762,14 @@ class ConnectorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
     )
     def begin_create(
         self,
         resource_group_name: str,
         account_name: str,
         connector_name: str,
-        resource: Union[_models.Connector, JSON, IO[bytes]],
+        resource: Union[_models.Connector, _types.Connector, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Connector]:
         """Create a Storage Connector if it does not already exist; otherwise, error out. This API will
@@ -15411,9 +15785,10 @@ class ConnectorsOperations:
         :param connector_name: The name of the Storage Connector. Required.
         :type connector_name: str
         :param resource: Create a Storage Connector if it does not already exist; otherwise, error out.
-         This API will not allow you to replace an already existing resource. Is one of the following
-         types: Connector, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.storage.models.Connector or JSON or IO[bytes]
+         This API will not allow you to replace an already existing resource. Is either a Connector type
+         or a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.storage.models.Connector or ~azure.mgmt.storage.types.Connector or
+         IO[bytes]
         :return: An instance of LROPoller that returns Connector. The Connector is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.Connector]
@@ -15485,14 +15860,14 @@ class ConnectorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
     )
     def _update_initial(
         self,
         resource_group_name: str,
         account_name: str,
         connector_name: str,
-        properties: Union[_models.ConnectorUpdate, JSON, IO[bytes]],
+        properties: Union[_models.ConnectorUpdate, _types.ConnectorUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -15603,7 +15978,7 @@ class ConnectorsOperations:
         resource_group_name: str,
         account_name: str,
         connector_name: str,
-        properties: JSON,
+        properties: _types.ConnectorUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15620,7 +15995,7 @@ class ConnectorsOperations:
         :param connector_name: The name of the Storage Connector. Required.
         :type connector_name: str
         :param properties: The updated properties of the Storage Connector. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.storage.types.ConnectorUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15677,14 +16052,14 @@ class ConnectorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
     )
     def begin_update(
         self,
         resource_group_name: str,
         account_name: str,
         connector_name: str,
-        properties: Union[_models.ConnectorUpdate, JSON, IO[bytes]],
+        properties: Union[_models.ConnectorUpdate, _types.ConnectorUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Connector]:
         """Update a Storage Connector.
@@ -15698,9 +16073,10 @@ class ConnectorsOperations:
         :type account_name: str
         :param connector_name: The name of the Storage Connector. Required.
         :type connector_name: str
-        :param properties: The updated properties of the Storage Connector. Is one of the following
-         types: ConnectorUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.storage.models.ConnectorUpdate or JSON or IO[bytes]
+        :param properties: The updated properties of the Storage Connector. Is either a ConnectorUpdate
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.storage.models.ConnectorUpdate or
+         ~azure.mgmt.storage.types.ConnectorUpdate or IO[bytes]
         :return: An instance of LROPoller that returns Connector. The Connector is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.Connector]
@@ -15764,7 +16140,7 @@ class ConnectorsOperations:
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "connector_name"]
         },
-        api_versions_list=["2025-08-01", "2026-04-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
     )
     def _delete_initial(
         self, resource_group_name: str, account_name: str, connector_name: str, **kwargs: Any
@@ -15834,7 +16210,7 @@ class ConnectorsOperations:
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "connector_name"]
         },
-        api_versions_list=["2025-08-01", "2026-04-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
     )
     def begin_delete(
         self, resource_group_name: str, account_name: str, connector_name: str, **kwargs: Any
@@ -15905,7 +16281,7 @@ class ConnectorsOperations:
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
-        api_versions_list=["2025-08-01", "2026-04-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
     )
     def list_by_storage_account(
         self, resource_group_name: str, account_name: str, **kwargs: Any
@@ -16023,14 +16399,14 @@ class ConnectorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
     )
     def _test_existing_connection_initial(
         self,
         resource_group_name: str,
         account_name: str,
         connector_name: str,
-        body: Union[_models.TestExistingConnectionRequest, JSON, IO[bytes]],
+        body: Union[_models.TestExistingConnectionRequest, _types.TestExistingConnectionRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -16149,7 +16525,7 @@ class ConnectorsOperations:
         resource_group_name: str,
         account_name: str,
         connector_name: str,
-        body: JSON,
+        body: _types.TestExistingConnectionRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16174,7 +16550,7 @@ class ConnectorsOperations:
          perspective, this method does the following: Calls List on the backing data store, attempting
          to list up to one blob/object/etc. If the above succeeds, and if a blob/object/etc is found,
          calls Get on that object, attempting to download one byte. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.storage.types.TestExistingConnectionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16239,14 +16615,14 @@ class ConnectorsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
     )
     def begin_test_existing_connection(
         self,
         resource_group_name: str,
         account_name: str,
         connector_name: str,
-        body: Union[_models.TestExistingConnectionRequest, JSON, IO[bytes]],
+        body: Union[_models.TestExistingConnectionRequest, _types.TestExistingConnectionRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.TestConnectionResponse]:
         """This method is used to verify that the connection to the backing data store works. This API is
@@ -16268,9 +16644,10 @@ class ConnectorsOperations:
          This API is designed to be used for monitoring and debugging purposes. From the caller’s
          perspective, this method does the following: Calls List on the backing data store, attempting
          to list up to one blob/object/etc. If the above succeeds, and if a blob/object/etc is found,
-         calls Get on that object, attempting to download one byte. Is one of the following types:
-         TestExistingConnectionRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.storage.models.TestExistingConnectionRequest or JSON or IO[bytes]
+         calls Get on that object, attempting to download one byte. Is either a
+         TestExistingConnectionRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.storage.models.TestExistingConnectionRequest or
+         ~azure.mgmt.storage.types.TestExistingConnectionRequest or IO[bytes]
         :return: An instance of LROPoller that returns TestConnectionResponse. The
          TestConnectionResponse is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.TestConnectionResponse]
@@ -16330,7 +16707,7 @@ class ConnectorsOperations:
         )
 
 
-class DataSharesOperations:
+class DataSharesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16360,7 +16737,7 @@ class DataSharesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
     )
     def get(
         self, resource_group_name: str, account_name: str, data_share_name: str, **kwargs: Any
@@ -16451,14 +16828,14 @@ class DataSharesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
     )
     def _create_initial(
         self,
         resource_group_name: str,
         account_name: str,
         data_share_name: str,
-        resource: Union[_models.DataShare, JSON, IO[bytes]],
+        resource: Union[_models.DataShare, _types.DataShare, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -16573,7 +16950,7 @@ class DataSharesOperations:
         resource_group_name: str,
         account_name: str,
         data_share_name: str,
-        resource: JSON,
+        resource: _types.DataShare,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16592,7 +16969,7 @@ class DataSharesOperations:
         :type data_share_name: str
         :param resource: Create a Storage DataShare if it does not already exist; otherwise, error out.
          This API will not allow you to replace an already existing resource. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.storage.types.DataShare
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16651,14 +17028,14 @@ class DataSharesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
     )
     def begin_create(
         self,
         resource_group_name: str,
         account_name: str,
         data_share_name: str,
-        resource: Union[_models.DataShare, JSON, IO[bytes]],
+        resource: Union[_models.DataShare, _types.DataShare, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.DataShare]:
         """Create a Storage DataShare if it does not already exist; otherwise, error out. This API will
@@ -16674,9 +17051,10 @@ class DataSharesOperations:
         :param data_share_name: The name of the Storage DataShare. Required.
         :type data_share_name: str
         :param resource: Create a Storage DataShare if it does not already exist; otherwise, error out.
-         This API will not allow you to replace an already existing resource. Is one of the following
-         types: DataShare, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.storage.models.DataShare or JSON or IO[bytes]
+         This API will not allow you to replace an already existing resource. Is either a DataShare type
+         or a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.storage.models.DataShare or ~azure.mgmt.storage.types.DataShare or
+         IO[bytes]
         :return: An instance of LROPoller that returns DataShare. The DataShare is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.DataShare]
@@ -16748,14 +17126,14 @@ class DataSharesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
     )
     def _update_initial(
         self,
         resource_group_name: str,
         account_name: str,
         data_share_name: str,
-        properties: Union[_models.DataShareUpdate, JSON, IO[bytes]],
+        properties: Union[_models.DataShareUpdate, _types.DataShareUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -16866,7 +17244,7 @@ class DataSharesOperations:
         resource_group_name: str,
         account_name: str,
         data_share_name: str,
-        properties: JSON,
+        properties: _types.DataShareUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16883,7 +17261,7 @@ class DataSharesOperations:
         :param data_share_name: The name of the Storage DataShare. Required.
         :type data_share_name: str
         :param properties: The updated properties of the Storage DataShare. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.storage.types.DataShareUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16940,14 +17318,14 @@ class DataSharesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2026-04-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
     )
     def begin_update(
         self,
         resource_group_name: str,
         account_name: str,
         data_share_name: str,
-        properties: Union[_models.DataShareUpdate, JSON, IO[bytes]],
+        properties: Union[_models.DataShareUpdate, _types.DataShareUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.DataShare]:
         """Update a Storage DataShare.
@@ -16961,9 +17339,10 @@ class DataSharesOperations:
         :type account_name: str
         :param data_share_name: The name of the Storage DataShare. Required.
         :type data_share_name: str
-        :param properties: The updated properties of the Storage DataShare. Is one of the following
-         types: DataShareUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.storage.models.DataShareUpdate or JSON or IO[bytes]
+        :param properties: The updated properties of the Storage DataShare. Is either a DataShareUpdate
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.storage.models.DataShareUpdate or
+         ~azure.mgmt.storage.types.DataShareUpdate or IO[bytes]
         :return: An instance of LROPoller that returns DataShare. The DataShare is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.DataShare]
@@ -17027,7 +17406,7 @@ class DataSharesOperations:
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "data_share_name"]
         },
-        api_versions_list=["2025-08-01", "2026-04-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
     )
     def _delete_initial(
         self, resource_group_name: str, account_name: str, data_share_name: str, **kwargs: Any
@@ -17097,7 +17476,7 @@ class DataSharesOperations:
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "data_share_name"]
         },
-        api_versions_list=["2025-08-01", "2026-04-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
     )
     def begin_delete(
         self, resource_group_name: str, account_name: str, data_share_name: str, **kwargs: Any
@@ -17168,7 +17547,7 @@ class DataSharesOperations:
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
-        api_versions_list=["2025-08-01", "2026-04-01"],
+        api_versions_list=["2025-08-01", "2026-04-01", "2026-06-01"],
     )
     def list_by_storage_account(
         self, resource_group_name: str, account_name: str, **kwargs: Any
@@ -17274,7 +17653,1884 @@ class DataSharesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AdvancedPlatformMetricsOperations:
+class ContextCachesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.storage.StorageManagementClient`'s
+        :attr:`context_caches` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: StorageManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": ["api_version", "subscription_id", "resource_group_name", "context_cache_name", "accept"]
+        },
+        api_versions_list=["2026-06-01"],
+    )
+    def get(self, resource_group_name: str, context_cache_name: str, **kwargs: Any) -> _models.ContextCache:
+        """Get a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :return: ContextCache. The ContextCache is compatible with MutableMapping
+        :rtype: ~azure.mgmt.storage.models.ContextCache
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ContextCache] = kwargs.pop("cls", None)
+
+        _request = build_context_caches_get_request(
+            resource_group_name=resource_group_name,
+            context_cache_name=context_cache_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ContextCache, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "context_cache_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-01"],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        context_cache_name: str,
+        resource: Union[_models.ContextCache, _types.ContextCache, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_context_caches_create_or_update_request(
+            resource_group_name=resource_group_name,
+            context_cache_name=context_cache_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        context_cache_name: str,
+        resource: _models.ContextCache,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ContextCache]:
+        """Create or update a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.storage.models.ContextCache
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ContextCache. The ContextCache is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.ContextCache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        context_cache_name: str,
+        resource: _types.ContextCache,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ContextCache]:
+        """Create or update a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.storage.types.ContextCache
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ContextCache. The ContextCache is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.ContextCache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        context_cache_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ContextCache]:
+        """Create or update a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ContextCache. The ContextCache is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.ContextCache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "context_cache_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-01"],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        context_cache_name: str,
+        resource: Union[_models.ContextCache, _types.ContextCache, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ContextCache]:
+        """Create or update a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :param resource: Resource create parameters. Is either a ContextCache type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.storage.models.ContextCache or
+         ~azure.mgmt.storage.types.ContextCache or IO[bytes]
+        :return: An instance of LROPoller that returns ContextCache. The ContextCache is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.ContextCache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ContextCache] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                context_cache_name=context_cache_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ContextCache, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ContextCache].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ContextCache](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "context_cache_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-01"],
+    )
+    def _update_initial(
+        self,
+        resource_group_name: str,
+        context_cache_name: str,
+        properties: Union[_models.ContextCacheUpdate, _types.ContextCacheUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_context_caches_update_request(
+            resource_group_name=resource_group_name,
+            context_cache_name=context_cache_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        context_cache_name: str,
+        properties: _models.ContextCacheUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ContextCache]:
+        """Update a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.storage.models.ContextCacheUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ContextCache. The ContextCache is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.ContextCache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        context_cache_name: str,
+        properties: _types.ContextCacheUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ContextCache]:
+        """Update a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.storage.types.ContextCacheUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ContextCache. The ContextCache is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.ContextCache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        context_cache_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ContextCache]:
+        """Update a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ContextCache. The ContextCache is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.ContextCache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "context_cache_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-01"],
+    )
+    def begin_update(
+        self,
+        resource_group_name: str,
+        context_cache_name: str,
+        properties: Union[_models.ContextCacheUpdate, _types.ContextCacheUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ContextCache]:
+        """Update a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :param properties: The resource properties to be updated. Is either a ContextCacheUpdate type
+         or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.storage.models.ContextCacheUpdate or
+         ~azure.mgmt.storage.types.ContextCacheUpdate or IO[bytes]
+        :return: An instance of LROPoller that returns ContextCache. The ContextCache is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.ContextCache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ContextCache] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                context_cache_name=context_cache_name,
+                properties=properties,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ContextCache, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ContextCache].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ContextCache](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={"2026-06-01": ["api_version", "subscription_id", "resource_group_name", "context_cache_name"]},
+        api_versions_list=["2026-06-01"],
+    )
+    def _delete_initial(self, resource_group_name: str, context_cache_name: str, **kwargs: Any) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_context_caches_delete_request(
+            resource_group_name=resource_group_name,
+            context_cache_name=context_cache_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={"2026-06-01": ["api_version", "subscription_id", "resource_group_name", "context_cache_name"]},
+        api_versions_list=["2026-06-01"],
+    )
+    def begin_delete(self, resource_group_name: str, context_cache_name: str, **kwargs: Any) -> LROPoller[None]:
+        """Delete a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                context_cache_name=context_cache_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={"2026-06-01": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-06-01"],
+    )
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.ContextCache"]:
+        """List Context Caches by resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of ContextCache
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.storage.models.ContextCache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ContextCache]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_context_caches_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ContextCache],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponseAutoGenerated,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={"2026-06-01": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-06-01"],
+    )
+    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.ContextCache"]:
+        """List Context Caches by subscription.
+
+        :return: An iterator like instance of ContextCache
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.storage.models.ContextCache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ContextCache]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_context_caches_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ContextCache],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponseAutoGenerated,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class ContextCacheContainersOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.storage.StorageManagementClient`'s
+        :attr:`context_cache_containers` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: StorageManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "context_cache_name",
+                "context_cache_container_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-01"],
+    )
+    def get(
+        self, resource_group_name: str, context_cache_name: str, context_cache_container_name: str, **kwargs: Any
+    ) -> _models.ContextCacheContainer:
+        """Get a container in a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :param context_cache_container_name: The name of the context cache container. Required.
+        :type context_cache_container_name: str
+        :return: ContextCacheContainer. The ContextCacheContainer is compatible with MutableMapping
+        :rtype: ~azure.mgmt.storage.models.ContextCacheContainer
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ContextCacheContainer] = kwargs.pop("cls", None)
+
+        _request = build_context_cache_containers_get_request(
+            resource_group_name=resource_group_name,
+            context_cache_name=context_cache_name,
+            context_cache_container_name=context_cache_container_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ContextCacheContainer, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "context_cache_name",
+                "context_cache_container_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-01"],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        context_cache_name: str,
+        context_cache_container_name: str,
+        resource: Union[_models.ContextCacheContainer, _types.ContextCacheContainer, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_context_cache_containers_create_or_update_request(
+            resource_group_name=resource_group_name,
+            context_cache_name=context_cache_name,
+            context_cache_container_name=context_cache_container_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        context_cache_name: str,
+        context_cache_container_name: str,
+        resource: _models.ContextCacheContainer,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ContextCacheContainer]:
+        """Create or update a container in a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :param context_cache_container_name: The name of the context cache container. Required.
+        :type context_cache_container_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.storage.models.ContextCacheContainer
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ContextCacheContainer. The ContextCacheContainer
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.ContextCacheContainer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        context_cache_name: str,
+        context_cache_container_name: str,
+        resource: _types.ContextCacheContainer,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ContextCacheContainer]:
+        """Create or update a container in a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :param context_cache_container_name: The name of the context cache container. Required.
+        :type context_cache_container_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.storage.types.ContextCacheContainer
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ContextCacheContainer. The ContextCacheContainer
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.ContextCacheContainer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        context_cache_name: str,
+        context_cache_container_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ContextCacheContainer]:
+        """Create or update a container in a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :param context_cache_container_name: The name of the context cache container. Required.
+        :type context_cache_container_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ContextCacheContainer. The ContextCacheContainer
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.ContextCacheContainer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "context_cache_name",
+                "context_cache_container_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-01"],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        context_cache_name: str,
+        context_cache_container_name: str,
+        resource: Union[_models.ContextCacheContainer, _types.ContextCacheContainer, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ContextCacheContainer]:
+        """Create or update a container in a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :param context_cache_container_name: The name of the context cache container. Required.
+        :type context_cache_container_name: str
+        :param resource: Resource create parameters. Is either a ContextCacheContainer type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.storage.models.ContextCacheContainer or
+         ~azure.mgmt.storage.types.ContextCacheContainer or IO[bytes]
+        :return: An instance of LROPoller that returns ContextCacheContainer. The ContextCacheContainer
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.ContextCacheContainer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ContextCacheContainer] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                context_cache_name=context_cache_name,
+                context_cache_container_name=context_cache_container_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ContextCacheContainer, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ContextCacheContainer].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ContextCacheContainer](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "context_cache_name",
+                "context_cache_container_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-01"],
+    )
+    def _update_initial(
+        self,
+        resource_group_name: str,
+        context_cache_name: str,
+        context_cache_container_name: str,
+        properties: Union[_models.ContextCacheContainerUpdate, _types.ContextCacheContainerUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_context_cache_containers_update_request(
+            resource_group_name=resource_group_name,
+            context_cache_name=context_cache_name,
+            context_cache_container_name=context_cache_container_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        context_cache_name: str,
+        context_cache_container_name: str,
+        properties: _models.ContextCacheContainerUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ContextCacheContainer]:
+        """Update a container in a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :param context_cache_container_name: The name of the context cache container. Required.
+        :type context_cache_container_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.storage.models.ContextCacheContainerUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ContextCacheContainer. The ContextCacheContainer
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.ContextCacheContainer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        context_cache_name: str,
+        context_cache_container_name: str,
+        properties: _types.ContextCacheContainerUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ContextCacheContainer]:
+        """Update a container in a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :param context_cache_container_name: The name of the context cache container. Required.
+        :type context_cache_container_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.storage.types.ContextCacheContainerUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ContextCacheContainer. The ContextCacheContainer
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.ContextCacheContainer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        context_cache_name: str,
+        context_cache_container_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ContextCacheContainer]:
+        """Update a container in a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :param context_cache_container_name: The name of the context cache container. Required.
+        :type context_cache_container_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ContextCacheContainer. The ContextCacheContainer
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.ContextCacheContainer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "context_cache_name",
+                "context_cache_container_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-01"],
+    )
+    def begin_update(
+        self,
+        resource_group_name: str,
+        context_cache_name: str,
+        context_cache_container_name: str,
+        properties: Union[_models.ContextCacheContainerUpdate, _types.ContextCacheContainerUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ContextCacheContainer]:
+        """Update a container in a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :param context_cache_container_name: The name of the context cache container. Required.
+        :type context_cache_container_name: str
+        :param properties: The resource properties to be updated. Is either a
+         ContextCacheContainerUpdate type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.storage.models.ContextCacheContainerUpdate or
+         ~azure.mgmt.storage.types.ContextCacheContainerUpdate or IO[bytes]
+        :return: An instance of LROPoller that returns ContextCacheContainer. The ContextCacheContainer
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.storage.models.ContextCacheContainer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ContextCacheContainer] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                context_cache_name=context_cache_name,
+                context_cache_container_name=context_cache_container_name,
+                properties=properties,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ContextCacheContainer, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ContextCacheContainer].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ContextCacheContainer](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "context_cache_name",
+                "context_cache_container_name",
+            ]
+        },
+        api_versions_list=["2026-06-01"],
+    )
+    def _delete_initial(
+        self, resource_group_name: str, context_cache_name: str, context_cache_container_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_context_cache_containers_delete_request(
+            resource_group_name=resource_group_name,
+            context_cache_name=context_cache_name,
+            context_cache_container_name=context_cache_container_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "context_cache_name",
+                "context_cache_container_name",
+            ]
+        },
+        api_versions_list=["2026-06-01"],
+    )
+    def begin_delete(
+        self, resource_group_name: str, context_cache_name: str, context_cache_container_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Delete a container from a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :param context_cache_container_name: The name of the context cache container. Required.
+        :type context_cache_container_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                context_cache_name=context_cache_name,
+                context_cache_container_name=context_cache_container_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": ["api_version", "subscription_id", "resource_group_name", "context_cache_name", "accept"]
+        },
+        api_versions_list=["2026-06-01"],
+    )
+    def list_by_context_cache(
+        self, resource_group_name: str, context_cache_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.ContextCacheContainer"]:
+        """List all containers in a Context Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param context_cache_name: The name of the context cache. Required.
+        :type context_cache_name: str
+        :return: An iterator like instance of ContextCacheContainer
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.storage.models.ContextCacheContainer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ContextCacheContainer]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_context_cache_containers_list_by_context_cache_request(
+                    resource_group_name=resource_group_name,
+                    context_cache_name=context_cache_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ContextCacheContainer],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponseAutoGenerated,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class AdvancedPlatformMetricsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17304,7 +19560,7 @@ class AdvancedPlatformMetricsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01"],
+        api_versions_list=["2026-04-01", "2026-06-01"],
     )
     def get(
         self,
@@ -17430,7 +19686,7 @@ class AdvancedPlatformMetricsOperations:
         resource_group_name: str,
         account_name: str,
         advanced_platform_metrics_rule_type: Union[str, _models.AdvancedPlatformMetricsRuleType],
-        resource: JSON,
+        resource: _types.AdvancedPlatformMetricsRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17449,7 +19705,7 @@ class AdvancedPlatformMetricsOperations:
         :type advanced_platform_metrics_rule_type: str or
          ~azure.mgmt.storage.models.AdvancedPlatformMetricsRuleType
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.storage.types.AdvancedPlatformMetricsRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17508,14 +19764,14 @@ class AdvancedPlatformMetricsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01"],
+        api_versions_list=["2026-04-01", "2026-06-01"],
     )
     def create_or_update(
         self,
         resource_group_name: str,
         account_name: str,
         advanced_platform_metrics_rule_type: Union[str, _models.AdvancedPlatformMetricsRuleType],
-        resource: Union[_models.AdvancedPlatformMetricsRule, JSON, IO[bytes]],
+        resource: Union[_models.AdvancedPlatformMetricsRule, _types.AdvancedPlatformMetricsRule, IO[bytes]],
         **kwargs: Any
     ) -> _models.AdvancedPlatformMetricsRule:
         """Create or update the advanced platform metrics rule for the storage account.
@@ -17531,9 +19787,10 @@ class AdvancedPlatformMetricsOperations:
          "ContainerLevelCapacityMetrics" Required.
         :type advanced_platform_metrics_rule_type: str or
          ~azure.mgmt.storage.models.AdvancedPlatformMetricsRuleType
-        :param resource: Resource create parameters. Is one of the following types:
-         AdvancedPlatformMetricsRule, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.storage.models.AdvancedPlatformMetricsRule or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a AdvancedPlatformMetricsRule type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.storage.models.AdvancedPlatformMetricsRule or
+         ~azure.mgmt.storage.types.AdvancedPlatformMetricsRule or IO[bytes]
         :return: AdvancedPlatformMetricsRule. The AdvancedPlatformMetricsRule is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.storage.models.AdvancedPlatformMetricsRule
@@ -17619,7 +19876,7 @@ class AdvancedPlatformMetricsOperations:
                 "advanced_platform_metrics_rule_type",
             ]
         },
-        api_versions_list=["2026-04-01"],
+        api_versions_list=["2026-04-01", "2026-06-01"],
     )
     def delete(  # pylint: disable=inconsistent-return-statements
         self,
@@ -17696,7 +19953,7 @@ class AdvancedPlatformMetricsOperations:
         params_added_on={
             "2026-04-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
-        api_versions_list=["2026-04-01"],
+        api_versions_list=["2026-04-01", "2026-06-01"],
     )
     def list(
         self, resource_group_name: str, account_name: str, **kwargs: Any
@@ -17802,7 +20059,7 @@ class AdvancedPlatformMetricsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17895,7 +20152,7 @@ class PrivateLinkResourcesOperations:
         return deserialized  # type: ignore
 
 
-class StorageTaskAssignmentsInstancesReportOperations:  # pylint: disable=name-too-long
+class StorageTaskAssignmentsInstancesReportOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18025,7 +20282,7 @@ class StorageTaskAssignmentsInstancesReportOperations:  # pylint: disable=name-t
         return ItemPaged(get_next, extract_data)
 
 
-class QueueOperations:
+class QueueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18271,7 +20528,7 @@ class QueueOperations:
         resource_group_name: str,
         account_name: str,
         queue_name: str,
-        queue: JSON,
+        queue: _types.StorageQueue,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18291,7 +20548,7 @@ class QueueOperations:
          dash(-) characters. Required.
         :type queue_name: str
         :param queue: Queue properties and metadata to be created with. Required.
-        :type queue: JSON
+        :type queue: ~azure.mgmt.storage.types.StorageQueue
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18341,7 +20598,7 @@ class QueueOperations:
         resource_group_name: str,
         account_name: str,
         queue_name: str,
-        queue: Union[_models.StorageQueue, JSON, IO[bytes]],
+        queue: Union[_models.StorageQueue, _types.StorageQueue, IO[bytes]],
         **kwargs: Any
     ) -> _models.StorageQueue:
         """Creates a new queue with the specified queue name, under the specified account.
@@ -18358,9 +20615,10 @@ class QueueOperations:
          it should begin and end with an alphanumeric character and it cannot have two consecutive
          dash(-) characters. Required.
         :type queue_name: str
-        :param queue: Queue properties and metadata to be created with. Is one of the following types:
-         StorageQueue, JSON, IO[bytes] Required.
-        :type queue: ~azure.mgmt.storage.models.StorageQueue or JSON or IO[bytes]
+        :param queue: Queue properties and metadata to be created with. Is either a StorageQueue type
+         or a IO[bytes] type. Required.
+        :type queue: ~azure.mgmt.storage.models.StorageQueue or ~azure.mgmt.storage.types.StorageQueue
+         or IO[bytes]
         :return: StorageQueue. The StorageQueue is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.StorageQueue
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -18474,7 +20732,7 @@ class QueueOperations:
         resource_group_name: str,
         account_name: str,
         queue_name: str,
-        queue: JSON,
+        queue: _types.StorageQueue,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18494,7 +20752,7 @@ class QueueOperations:
          dash(-) characters. Required.
         :type queue_name: str
         :param queue: Queue properties and metadata to be created with. Required.
-        :type queue: JSON
+        :type queue: ~azure.mgmt.storage.types.StorageQueue
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18544,7 +20802,7 @@ class QueueOperations:
         resource_group_name: str,
         account_name: str,
         queue_name: str,
-        queue: Union[_models.StorageQueue, JSON, IO[bytes]],
+        queue: Union[_models.StorageQueue, _types.StorageQueue, IO[bytes]],
         **kwargs: Any
     ) -> _models.StorageQueue:
         """Creates a new queue with the specified queue name, under the specified account.
@@ -18561,9 +20819,10 @@ class QueueOperations:
          it should begin and end with an alphanumeric character and it cannot have two consecutive
          dash(-) characters. Required.
         :type queue_name: str
-        :param queue: Queue properties and metadata to be created with. Is one of the following types:
-         StorageQueue, JSON, IO[bytes] Required.
-        :type queue: ~azure.mgmt.storage.models.StorageQueue or JSON or IO[bytes]
+        :param queue: Queue properties and metadata to be created with. Is either a StorageQueue type
+         or a IO[bytes] type. Required.
+        :type queue: ~azure.mgmt.storage.models.StorageQueue or ~azure.mgmt.storage.types.StorageQueue
+         or IO[bytes]
         :return: StorageQueue. The StorageQueue is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.StorageQueue
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -18704,7 +20963,7 @@ class QueueOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ObjectReplicationPoliciesOperations:
+class ObjectReplicationPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18843,7 +21102,7 @@ class ObjectReplicationPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         object_replication_policy_id: str,
-        properties: JSON,
+        properties: _types.ObjectReplicationPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18864,7 +21123,7 @@ class ObjectReplicationPoliciesOperations:
         :type object_replication_policy_id: str
         :param properties: The object replication policy set to a storage account. A unique policy ID
          will be created if absent. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.storage.types.ObjectReplicationPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18915,7 +21174,7 @@ class ObjectReplicationPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         object_replication_policy_id: str,
-        properties: Union[_models.ObjectReplicationPolicy, JSON, IO[bytes]],
+        properties: Union[_models.ObjectReplicationPolicy, _types.ObjectReplicationPolicy, IO[bytes]],
         **kwargs: Any
     ) -> _models.ObjectReplicationPolicy:
         """Create or update the object replication policy of the storage account.
@@ -18933,9 +21192,10 @@ class ObjectReplicationPoliciesOperations:
          destination account. The policy is downloaded as a JSON file. Required.
         :type object_replication_policy_id: str
         :param properties: The object replication policy set to a storage account. A unique policy ID
-         will be created if absent. Is one of the following types: ObjectReplicationPolicy, JSON,
-         IO[bytes] Required.
-        :type properties: ~azure.mgmt.storage.models.ObjectReplicationPolicy or JSON or IO[bytes]
+         will be created if absent. Is either a ObjectReplicationPolicy type or a IO[bytes] type.
+         Required.
+        :type properties: ~azure.mgmt.storage.models.ObjectReplicationPolicy or
+         ~azure.mgmt.storage.types.ObjectReplicationPolicy or IO[bytes]
         :return: ObjectReplicationPolicy. The ObjectReplicationPolicy is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.ObjectReplicationPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -19180,7 +21440,7 @@ class ObjectReplicationPoliciesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class LocalUsersOperations:
+class LocalUsersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -19313,7 +21573,7 @@ class LocalUsersOperations:
         resource_group_name: str,
         account_name: str,
         username: str,
-        properties: JSON,
+        properties: _types.LocalUser,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19332,7 +21592,7 @@ class LocalUsersOperations:
          numbers only. It must be unique only within the storage account. Required.
         :type username: str
         :param properties: The local user associated with a storage account. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.storage.types.LocalUser
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19381,7 +21641,7 @@ class LocalUsersOperations:
         resource_group_name: str,
         account_name: str,
         username: str,
-        properties: Union[_models.LocalUser, JSON, IO[bytes]],
+        properties: Union[_models.LocalUser, _types.LocalUser, IO[bytes]],
         **kwargs: Any
     ) -> _models.LocalUser:
         """Create or update the properties of a local user associated with the storage account. Properties
@@ -19397,9 +21657,10 @@ class LocalUsersOperations:
         :param username: The name of local user. The username must contain lowercase letters and
          numbers only. It must be unique only within the storage account. Required.
         :type username: str
-        :param properties: The local user associated with a storage account. Is one of the following
-         types: LocalUser, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.storage.models.LocalUser or JSON or IO[bytes]
+        :param properties: The local user associated with a storage account. Is either a LocalUser type
+         or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.storage.models.LocalUser or ~azure.mgmt.storage.types.LocalUser
+         or IO[bytes]
         :return: LocalUser. The LocalUser is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.LocalUser
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -19815,7 +22076,7 @@ class LocalUsersOperations:
         return deserialized  # type: ignore
 
 
-class TableOperations:
+class TableOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -19949,7 +22210,7 @@ class TableOperations:
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.Table] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19968,7 +22229,7 @@ class TableOperations:
          with a numeric character. Required.
         :type table_name: str
         :param parameters: The parameters to provide to create a table. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.storage.types.Table
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20017,7 +22278,7 @@ class TableOperations:
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        parameters: Optional[Union[_models.Table, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.Table, _types.Table, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.Table:
         """Creates a new table with the specified table name, under the specified account.
@@ -20033,9 +22294,10 @@ class TableOperations:
          and 63 characters.The name must comprise of only alphanumeric characters and it cannot begin
          with a numeric character. Required.
         :type table_name: str
-        :param parameters: The parameters to provide to create a table. Is one of the following types:
-         Table, JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.storage.models.Table or JSON or IO[bytes]
+        :param parameters: The parameters to provide to create a table. Is either a Table type or a
+         IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.storage.models.Table or ~azure.mgmt.storage.types.Table or
+         IO[bytes]
         :return: Table. The Table is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.Table
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -20152,7 +22414,7 @@ class TableOperations:
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.Table] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20171,7 +22433,7 @@ class TableOperations:
          with a numeric character. Required.
         :type table_name: str
         :param parameters: The parameters to provide to create a table. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.storage.types.Table
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20220,7 +22482,7 @@ class TableOperations:
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        parameters: Optional[Union[_models.Table, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.Table, _types.Table, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.Table:
         """Creates a new table with the specified table name, under the specified account.
@@ -20236,9 +22498,10 @@ class TableOperations:
          and 63 characters.The name must comprise of only alphanumeric characters and it cannot begin
          with a numeric character. Required.
         :type table_name: str
-        :param parameters: The parameters to provide to create a table. Is one of the following types:
-         Table, JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.storage.models.Table or JSON or IO[bytes]
+        :param parameters: The parameters to provide to create a table. Is either a Table type or a
+         IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.storage.models.Table or ~azure.mgmt.storage.types.Table or
+         IO[bytes]
         :return: Table. The Table is compatible with MutableMapping
         :rtype: ~azure.mgmt.storage.models.Table
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -20484,7 +22747,7 @@ class TableOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class StorageTaskAssignmentInstancesReportOperations:  # pylint: disable=name-too-long
+class StorageTaskAssignmentInstancesReportOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -20625,7 +22888,7 @@ class StorageTaskAssignmentInstancesReportOperations:  # pylint: disable=name-to
         return ItemPaged(get_next, extract_data)
 
 
-class SkusOperations:
+class SkusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -20736,7 +22999,7 @@ class SkusOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class UsagesOperations:
+class UsagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

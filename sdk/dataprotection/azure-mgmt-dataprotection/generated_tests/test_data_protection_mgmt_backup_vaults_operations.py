@@ -39,6 +39,7 @@ class TestDataProtectionMgmtBackupVaultsOperations(AzureMgmtRecordedTestCase):
                 "location": "str",
                 "properties": {
                     "bcdrSecurityLevel": "str",
+                    "costManagementSettings": {"granularityLevel": "str"},
                     "featureSettings": {
                         "crossRegionRestoreSettings": {"state": "str"},
                         "crossSubscriptionRestoreSettings": {"state": "str"},
@@ -64,7 +65,7 @@ class TestDataProtectionMgmtBackupVaultsOperations(AzureMgmtRecordedTestCase):
                             "keyVaultProperties": {"keyUri": "str"},
                             "state": "str",
                         },
-                        "immutabilitySettings": {"state": "str"},
+                        "immutabilitySettings": {"configuration": {"durationInDays": 0, "type": "str"}, "state": "str"},
                         "softDeleteSettings": {"retentionDurationInDays": 0.0, "state": "str"},
                     },
                     "storageSettings": [{"datastoreType": "str", "type": "str"}],
@@ -108,6 +109,7 @@ class TestDataProtectionMgmtBackupVaultsOperations(AzureMgmtRecordedTestCase):
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
                 "properties": {
+                    "costManagementSettings": {"granularityLevel": "str"},
                     "featureSettings": {
                         "crossRegionRestoreSettings": {"state": "str"},
                         "crossSubscriptionRestoreSettings": {"state": "str"},
@@ -121,7 +123,7 @@ class TestDataProtectionMgmtBackupVaultsOperations(AzureMgmtRecordedTestCase):
                             "keyVaultProperties": {"keyUri": "str"},
                             "state": "str",
                         },
-                        "immutabilitySettings": {"state": "str"},
+                        "immutabilitySettings": {"configuration": {"durationInDays": 0, "type": "str"}, "state": "str"},
                         "softDeleteSettings": {"retentionDurationInDays": 0.0, "state": "str"},
                     },
                 },

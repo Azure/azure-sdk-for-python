@@ -14,10 +14,13 @@ Invalid environment variable values raise ``ValueError`` immediately so
 misconfiguration is surfaced at startup rather than silently masked.
 """
 import os
+import re
 from pathlib import Path
 from typing import Optional
 
 from typing_extensions import Self
+
+from ._constants import Constants
 
 # ======================================================================
 # Environment variable keys (internal — users access values via AgentConfig)
@@ -33,6 +36,7 @@ _ENV_FOUNDRY_HOSTING_ENVIRONMENT = "FOUNDRY_HOSTING_ENVIRONMENT"
 _ENV_FOUNDRY_PROJECT_ENDPOINT = "FOUNDRY_PROJECT_ENDPOINT"
 _ENV_FOUNDRY_PROJECT_ARM_ID = "FOUNDRY_PROJECT_ARM_ID"
 _ENV_FOUNDRY_AGENT_SESSION_ID = "FOUNDRY_AGENT_SESSION_ID"
+_ENV_FOUNDRY_AGENT_SESSION_GUID = "FOUNDRY_AGENT_SESSION_GUID"
 _ENV_PORT = "PORT"
 _ENV_APPLICATIONINSIGHTS_CONNECTION_STRING = "APPLICATIONINSIGHTS_CONNECTION_STRING"
 _ENV_OTEL_EXPORTER_OTLP_ENDPOINT = "OTEL_EXPORTER_OTLP_ENDPOINT"
@@ -40,8 +44,14 @@ _ENV_SSE_KEEPALIVE_INTERVAL = "SSE_KEEPALIVE_INTERVAL"
 _ENV_WS_KEEPALIVE_INTERVAL = "WS_KEEPALIVE_INTERVAL"
 
 _DEFAULT_PORT = 8088
-_DEFAULT_SSE_KEEPALIVE_INTERVAL = 0
 _DEFAULT_WS_PING_INTERVAL = 0.0
+
+
+def _validate_session_guid(session_guid: str, is_hosted: bool) -> None:
+    if is_hosted and session_guid and re.fullmatch(r"[0-9a-f]{32}", session_guid) is None:
+        raise ValueError(
+            "FOUNDRY_AGENT_SESSION_GUID must be a 32-character lowercase hexadecimal GUID"
+        )
 
 
 # ======================================================================
@@ -68,6 +78,8 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
     :param project_endpoint: Foundry project endpoint from ``FOUNDRY_PROJECT_ENDPOINT``.
     :param project_id: Foundry project ARM resource ID from ``FOUNDRY_PROJECT_ARM_ID``.
     :param session_id: Default session ID from ``FOUNDRY_AGENT_SESSION_ID``.
+    :param session_guid: System-generated session incarnation GUID from
+        ``FOUNDRY_AGENT_SESSION_GUID``.
     :param port: Server port from ``PORT`` (default 8088).
     :param appinsights_connection_string: Application Insights connection string.
     :param otlp_endpoint: OTLP exporter endpoint.
@@ -92,6 +104,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
         otlp_endpoint: str,
         sse_keepalive_interval: int,
         ws_ping_interval: float = 0.0,
+        session_guid: str = "",
     ) -> None:
         self.agent_name = agent_name
         self.agent_version = agent_version
@@ -101,6 +114,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
         self.project_endpoint = project_endpoint
         self.project_id = project_id
         self.session_id = session_id
+        self.session_guid = session_guid
         self.port = port
         self.appinsights_connection_string = appinsights_connection_string
         self.otlp_endpoint = otlp_endpoint
@@ -124,15 +138,20 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
         else:
             agent_id = ""
 
+        is_hosted = bool(os.environ.get(_ENV_FOUNDRY_HOSTING_ENVIRONMENT, ""))
+        session_guid = os.environ.get(_ENV_FOUNDRY_AGENT_SESSION_GUID, "")
+        _validate_session_guid(session_guid, is_hosted)
+
         return cls(
             agent_name=agent_name,
             agent_version=agent_version,
             agent_id=agent_id,
             agent_guid=os.environ.get(_ENV_FOUNDRY_AGENT_ID, ""),
-            is_hosted=bool(os.environ.get(_ENV_FOUNDRY_HOSTING_ENVIRONMENT, "")),
+            is_hosted=is_hosted,
             project_endpoint=os.environ.get(_ENV_FOUNDRY_PROJECT_ENDPOINT, ""),
             project_id=os.environ.get(_ENV_FOUNDRY_PROJECT_ARM_ID, ""),
             session_id=os.environ.get(_ENV_FOUNDRY_AGENT_SESSION_ID, ""),
+            session_guid=session_guid,
             port=resolve_port(None),
             appinsights_connection_string=os.environ.get(
                 _ENV_APPLICATIONINSIGHTS_CONNECTION_STRING, ""),
@@ -427,7 +446,7 @@ def resolve_sse_keepalive_interval(interval: Optional[int] = None) -> int:
     """Resolve the SSE keep-alive interval from argument, env var, or default.
 
     Resolution order: explicit *interval* → ``SSE_KEEPALIVE_INTERVAL`` env var
-    → ``0`` (seconds).  A value of ``0`` disables keep-alive.
+    → ``15`` (seconds).  A value of ``0`` disables keep-alive.
 
     :param interval: Explicitly requested interval in seconds, or None.
     :type interval: Optional[int]
@@ -439,7 +458,7 @@ def resolve_sse_keepalive_interval(interval: Optional[int] = None) -> int:
     env_val = _parse_int_env(_ENV_SSE_KEEPALIVE_INTERVAL)
     if env_val is not None:
         return max(0, env_val)
-    return _DEFAULT_SSE_KEEPALIVE_INTERVAL
+    return Constants.DEFAULT_SSE_KEEPALIVE_INTERVAL
 
 
 def resolve_otlp_endpoint() -> Optional[str]:

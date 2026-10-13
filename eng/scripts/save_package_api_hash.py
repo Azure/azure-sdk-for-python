@@ -46,7 +46,7 @@ def main() -> None:
             ["pwsh", str(export_script), "-TokenJsonPath", str(token_file), "-OutputPath", str(package_artifact_dir)],
             check=True,
         )
-        extract_metadata(package_artifact_dir / "api.md")
+        extract_metadata(package_artifact_dir / "api.md", package_info["Version"])
 
         update_package_info(package_artifact_dir / "api.metadata.yml", package_info_path)
 

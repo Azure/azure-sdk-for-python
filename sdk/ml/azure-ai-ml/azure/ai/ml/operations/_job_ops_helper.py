@@ -12,13 +12,14 @@ import subprocess
 import sys
 import time
 from typing import Any, Dict, Iterable, List, Optional, TextIO, Union
+from urllib.parse import parse_qs
 
 from azure.ai.ml._artifacts._artifact_utilities import get_datastore_info, list_logs_in_datastore
-from azure.ai.ml._restclient.runhistory.models import Run, RunDetails, TypedAssetReference
-from azure.ai.ml._restclient.arm_ml_service.models import DataType
+from azure.ai.ml._restclient.arm_ml_service.models import DataType, JobBase
 from azure.ai.ml._restclient.arm_ml_service.models import JobType as RestJobType
-from azure.ai.ml._restclient.arm_ml_service.models import JobBase
+from azure.ai.ml._restclient.runhistory.models import Run, RunDetails, TypedAssetReference
 from azure.ai.ml._utils._http_utils import HttpPipeline
+from azure.ai.ml._utils._storage_utils import AzureMLDatastorePathUri
 from azure.ai.ml._utils.utils import create_requests_pipeline_with_retry, download_text_from_url
 from azure.ai.ml.constants._common import GitProperties
 from azure.ai.ml.constants._job.job import JobLogPattern, JobType
@@ -32,6 +33,27 @@ from azure.ai.ml.operations._run_operations import RunOperations
 STATUS_KEY = "status"
 
 module_logger = logging.getLogger(__name__)
+
+
+def _normalize_asset_type(asset_type: Optional[str]) -> str:
+    """Normalizes an asset type so it can be compared across REST contracts.
+
+    The RunHistory dataplane reports asset types in PascalCase (e.g. ``"UriFolder"``, ``"MLFlowModel"``) while the
+    ARM/Machine Learning Services contract uses snake_case (e.g. ``"uri_folder"``, ``"mlflow_model"``). Stripping
+    underscores and lower-casing makes both spellings comparable.
+
+    :param asset_type: The asset type reported by a service.
+    :type asset_type: Optional[str]
+    :return: The normalized asset type.
+    :rtype: str
+    """
+    return (asset_type or "").replace("_", "").lower()
+
+
+_DATA_ASSET_TYPES = {
+    _normalize_asset_type(data_type) for data_type in (DataType.URI_FILE, DataType.URI_FOLDER, DataType.MLTABLE)
+}
+_MODEL_ASSET_TYPES = {_normalize_asset_type(t) for t in ("CustomModel", "MLFlowModel", "TritonModel")}
 
 
 def _get_sorted_filtered_logs(
@@ -247,11 +269,23 @@ def stream_logs_until_completion(
         )
         is_uri_folder = default_output and default_output.job_output_type == DataType.URI_FOLDER
         if is_uri_folder:
-            output_uri = default_output.uri  # type: ignore
-            # Parse the uri format
-            output_uri = output_uri.split("datastores/")[1]
-            datastore_name, prefix = output_uri.split("/", 1)
+            output_uri = AzureMLDatastorePathUri(default_output.uri)  # type: ignore
+            datastore_name = output_uri.datastore
+            prefix = output_uri.path
             ds_properties = get_datastore_info(datastore_operations, datastore_name)
+            credential = ds_properties.get("credential")
+            # A SAS token authorizes access but cannot sign another SAS.
+            if (
+                not isinstance(credential, str)
+                or not credential
+                or "sig" in parse_qs(credential.lstrip("?"), keep_blank_values=True)
+            ):
+                module_logger.debug(
+                    "Datastore '%s' has no account key; streaming logs from RunHistory instead.",
+                    datastore_name,
+                )
+                ds_properties = None
+                prefix = None
 
     try:
         file_handle.write("RunId: {}\n".format(job_name))
@@ -495,14 +529,14 @@ def get_job_output_uris_from_dataplane(
     dataset_ids = [
         run_outputs[output_name].asset_id
         for output_name in output_names
-        if run_outputs[output_name].type in [o.value for o in DataType]
+        if _normalize_asset_type(run_outputs[output_name].type) in _DATA_ASSET_TYPES
     ]
 
     # Collect all output ids that correspond to models
     model_ids = [
         run_outputs[output_name].asset_id
         for output_name in output_names
-        if run_outputs[output_name].type in ["CustomModel", "MLFlowModel", "TritonModel"]
+        if _normalize_asset_type(run_outputs[output_name].type) in _MODEL_ASSET_TYPES
     ]
 
     output_name_to_dataset_uri = {}

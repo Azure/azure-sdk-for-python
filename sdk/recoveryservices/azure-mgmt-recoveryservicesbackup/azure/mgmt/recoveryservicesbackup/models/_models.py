@@ -12984,6 +12984,40 @@ class InquiryValidation(_Model):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
+class InstantItemRecoveryOperationResultRequest(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Parameters for the listInstantItemRecoveryOperationResult action.
+
+    :ivar provision_instant_item_recovery_operation_id: Operation ID returned by the prior
+     provisionInstantItemRecovery action whose iSCSI mount scripts are to be retrieved. Required.
+    :vartype provision_instant_item_recovery_operation_id: str
+    """
+
+    provision_instant_item_recovery_operation_id: str = rest_field(
+        name="provisionInstantItemRecoveryOperationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Operation ID returned by the prior provisionInstantItemRecovery action whose iSCSI mount
+     scripts are to be retrieved. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        provision_instant_item_recovery_operation_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class InstantItemRecoveryTarget(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Target details for file / folder restore.
 

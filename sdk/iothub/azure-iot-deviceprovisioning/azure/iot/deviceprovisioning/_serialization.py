@@ -561,7 +561,7 @@ class Serializer(object):
             "[]": self.serialize_iter,
             "{}": self.serialize_dict,
         }
-        self.dependencies: Dict[str, Type[ModelType]] = dict(classes) if classes else {}
+        self.dependencies: Dict[str, Type[ModelType]] = dict(classes) if classes else {}  # type: ignore
         self.key_transformer = full_restapi_key_transformer
         self.client_side_validation = True
 
@@ -814,7 +814,7 @@ class Serializer(object):
             # If dependencies is empty, try with current data class
             # It has to be a subclass of Enum anyway
             enum_type = self.dependencies.get(data_type, data.__class__)
-            if issubclass(enum_type, Enum):
+            if issubclass(enum_type, Enum):  # type: ignore
                 return Serializer.serialize_enum(data, enum_obj=enum_type)
 
             iter_type = data_type[0] + data_type[-1]
@@ -1381,7 +1381,7 @@ class Deserializer(object):
             "duration": (isodate.Duration, datetime.timedelta),
             "iso-8601": (datetime.datetime),
         }
-        self.dependencies: Dict[str, Type[ModelType]] = dict(classes) if classes else {}
+        self.dependencies: Dict[str, Type[ModelType]] = dict(classes) if classes else {}  # type: ignore
         self.key_extractors = [rest_key_extractor, xml_key_extractor]
         # Additional properties only works if the "rest_key_extractor" is used to
         # extract the keys. Making it to work whatever the key extractor is too much
@@ -1581,14 +1581,14 @@ class Deserializer(object):
         if callable(response):
             subtype = getattr(response, "_subtype_map", {})
             try:
-                readonly = [k for k, v in response._validation.items() if v.get("readonly")]
-                const = [k for k, v in response._validation.items() if v.get("constant")]
+                readonly = [k for k, v in response._validation.items() if v.get("readonly")]  # type: ignore
+                const = [k for k, v in response._validation.items() if v.get("constant")]  # type: ignore
                 kwargs = {k: v for k, v in attrs.items() if k not in subtype and k not in readonly + const}
                 response_obj = response(**kwargs)
                 for attr in readonly:
                     setattr(response_obj, attr, attrs.get(attr))
                 if additional_properties:
-                    response_obj.additional_properties = additional_properties
+                    response_obj.additional_properties = additional_properties  # type: ignore
                 return response_obj
             except TypeError as err:
                 msg = "Unable to deserialize {} into model {}. ".format(kwargs, response)  # type: ignore
@@ -1900,7 +1900,7 @@ class Deserializer(object):
         if re.search(r"[^\W\d_]", attr, re.I + re.U):  # type: ignore
             raise DeserializationError("Date must have only digits and -. Received: %s" % attr)
         # This must NOT use defaultmonth/defaultday. Using None ensure this raises an exception.
-        return isodate.parse_date(attr, defaultmonth=None, defaultday=None)
+        return isodate.parse_date(attr, defaultmonth=None, defaultday=None)  # type: ignore
 
     @staticmethod
     def deserialize_time(attr):

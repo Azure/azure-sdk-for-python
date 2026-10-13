@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import datetime
+import json
 import platform
 import time
 import unittest
@@ -109,6 +110,87 @@ class TestUtils(unittest.TestCase):
             with self.subTest(key=key):
                 self.assertIn(key, filtered)
                 self.assertEqual(len(filtered[key]), max_length_for_gen_ai_attributes)
+
+    def test_filter_custom_measurements(self):
+        measurements = _utils._filter_custom_measurements(
+            {"microsoft.custom_measurements": '{"itemsProcessed": 42.0, "queueDepth": 7}'}
+        )
+        self.assertEqual(measurements, {"itemsProcessed": 42.0, "queueDepth": 7.0})
+
+    def test_filter_custom_measurements_accepts_mapping(self):
+        measurements = _utils._filter_custom_measurements({"microsoft.custom_measurements": {"itemsProcessed": 42.0}})
+        self.assertEqual(measurements, {"itemsProcessed": 42.0})
+
+    def test_filter_custom_measurements_invalid_json(self):
+        self.assertEqual(_utils._filter_custom_measurements({"microsoft.custom_measurements": "not json"}), {})
+        self.assertEqual(_utils._filter_custom_measurements({"microsoft.custom_measurements": "[1, 2]"}), {})
+        self.assertEqual(_utils._filter_custom_measurements({"microsoft.custom_measurements": 42}), {})
+
+    def test_filter_custom_measurements_deeply_nested_json(self):
+        # Deeply nested payloads raise RecursionError from json.loads and must be ignored
+        deeply_nested = "[" * 200000 + "]" * 200000
+        self.assertEqual(_utils._filter_custom_measurements({"microsoft.custom_measurements": deeply_nested}), {})
+
+    def test_filter_custom_measurements_drops_invalid_entries(self):
+        measurements = _utils._filter_custom_measurements(
+            {
+                "microsoft.custom_measurements": json.dumps(
+                    {
+                        "valid": 1.5,
+                        "string_value": "asd",
+                        "none_value": None,
+                        "bool_value": True,
+                        "": 1.0,
+                    }
+                )
+            }
+        )
+        self.assertEqual(measurements, {"valid": 1.5})
+
+    def test_filter_custom_measurements_drops_non_finite(self):
+        measurements = _utils._filter_custom_measurements(
+            {"microsoft.custom_measurements": {"nan": float("nan"), "inf": float("inf"), "valid": 1.0}}
+        )
+        self.assertEqual(measurements, {"valid": 1.0})
+
+    def test_filter_custom_measurements_drops_int_outside_double_range(self):
+        # A JSON integer too large to convert to a double must be dropped, not raised
+        measurements = _utils._filter_custom_measurements(
+            {"microsoft.custom_measurements": '{{"huge": {}, "valid": 1.0}}'.format(14**600)}
+        )
+        self.assertEqual(measurements, {"valid": 1.0})
+
+    def test_filter_custom_measurements_truncates_key(self):
+        measurements = _utils._filter_custom_measurements({"microsoft.custom_measurements": {"k" * 151: 1.0}})
+        self.assertEqual(measurements, {"k" * 150: 1.0})
+
+    def test_filter_custom_measurements_key_must_match_exactly(self):
+        # Near-miss attribute names are ignored, even when they carry a valid payload
+        for key in ("microsoft.custom_measurement", "custom_measurements", "Microsoft.Custom_Measurements"):
+            with self.subTest(key=key):
+                self.assertEqual(_utils._filter_custom_measurements({key: '{"itemsProcessed": 42.0}'}), {})
+
+    def test_filter_custom_measurements_attribute_value_not_present(self):
+        for attributes in (None, {}, {"test": "asd"}, {"microsoft.custom_measurements": None}):
+            with self.subTest(attributes=attributes):
+                self.assertEqual(_utils._filter_custom_measurements(attributes), {})
+
+    def test_filter_custom_measurements_keeps_valid_drops_invalid(self):
+        measurements = _utils._filter_custom_measurements(
+            {
+                "microsoft.custom_measurements": json.dumps(
+                    {
+                        "itemsProcessed": 42.0,
+                        "queueDepth": 7,
+                        "retries": "3",
+                        "succeeded": True,
+                        "unset": None,
+                        "nested": {"a": 1},
+                    }
+                )
+            }
+        )
+        self.assertEqual(measurements, {"itemsProcessed": 42.0, "queueDepth": 7.0})
 
     def test_nanoseconds_to_duration(self):
         ns_to_duration = _utils.ns_to_duration

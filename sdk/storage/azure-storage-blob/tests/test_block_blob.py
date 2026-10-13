@@ -75,8 +75,8 @@ class _RecordingBlockBlobService:
         self._lock = threading.Lock()
         self.blocks = {}  # block_id -> staged bytes
 
-    def stage_block(self, block_id, length, data, **kwargs):  # pylint: disable=unused-argument
-        content = data.read() if hasattr(data, "read") else data
+    def stage_block(self, body, *, block_id, content_length, **kwargs):  # pylint: disable=unused-argument
+        content = body.read() if hasattr(body, "read") else body
         with self._lock:
             self.blocks[block_id] = content
 

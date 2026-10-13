@@ -59,6 +59,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-15-preview/Buckets_UpdateWithAkv.json
+# x-ms-original-file: 2026-06-15-preview/Buckets_UpdateWithAkv.json
 if __name__ == "__main__":
     main()

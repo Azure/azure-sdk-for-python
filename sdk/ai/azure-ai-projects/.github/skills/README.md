@@ -49,7 +49,18 @@ This skill creates a new topic branch, emits SDK from TypeSpec, runs some post-p
 
 This skill updates the file CHANGELOG.md, comparing the source in the current branch which the source of the latest public release. It does not create a new topic branch or a PR.
 
+### azure-ai-projects-author-samples
 
+This skill compares a newly emitted or merged public API surface with its selected base, then creates or updates idiomatic synchronous and asynchronous Python samples. It also keeps unrecorded samples excluded from the recorded sample harness.
 
+### azure-ai-projects-author-tests
 
+This skill updates existing pytest coverage and authors complete sync/async Test Proxy tests for new behavior. New recorded service tests remain enabled so missing-recording errors surface in PR validation and authors can contact the SDK maintainer for help.
 
+### azure-ai-projects-model-reference-graph
+
+This skill generates structured and readable graphs that trace every generated model through direct references, inheritance, runtime ownership, and public operation methods. It supports model-usage investigation and TypeSpec removal analysis without treating static reachability as proof that a model is safe to remove.
+
+### azure-ai-projects-run-issue-regeneration
+
+This skill orchestrates an unattended TypeSpec regeneration for a GitHub issue already assigned to Copilot (an issue labeled with a `TypeSpec commit` and `Base branch`). It validates those inputs, then runs `azure-ai-projects-emit-from-typespec`, `azure-ai-projects-author-samples`, `azure-ai-projects-author-tests`, and `azure-ai-projects-update-changelog` in order against the issue assignment's existing working branch and draft pull request, instead of the interactive branch/PR creation those skills use for a human developer. Use the other skills directly for interactive, local regeneration.

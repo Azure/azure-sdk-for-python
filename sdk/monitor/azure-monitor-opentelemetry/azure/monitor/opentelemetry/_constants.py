@@ -79,6 +79,7 @@ _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES = (
     "fastapi",
     "flask",
     "httpx",
+    "httpx2",
     "psycopg2",
     "requests",
     "urllib",

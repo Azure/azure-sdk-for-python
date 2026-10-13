@@ -5977,7 +5977,7 @@ def build_galleries_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6009,7 +6009,7 @@ def build_galleries_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6040,7 +6040,7 @@ def build_galleries_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6070,7 +6070,7 @@ def build_galleries_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}"
     path_format_arguments = {
@@ -6093,7 +6093,7 @@ def build_galleries_list_by_resource_group_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6118,7 +6118,7 @@ def build_galleries_list_request(subscription_id: str, **kwargs: Any) -> HttpReq
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6144,7 +6144,7 @@ def build_gallery_images_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6173,7 +6173,7 @@ def build_gallery_images_create_or_update_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6205,7 +6205,7 @@ def build_gallery_images_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6236,7 +6236,7 @@ def build_gallery_images_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}"
     path_format_arguments = {
@@ -6260,7 +6260,7 @@ def build_gallery_images_list_by_gallery_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6295,7 +6295,7 @@ def build_gallery_image_versions_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6332,7 +6332,7 @@ def build_gallery_image_versions_create_or_update_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6370,7 +6370,7 @@ def build_gallery_image_versions_update_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6403,11 +6403,13 @@ def build_gallery_image_versions_delete_request(  # pylint: disable=name-too-lon
     gallery_image_name: str,
     gallery_image_version_name: str,
     subscription_id: str,
+    *,
+    bypass_soft_delete: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}/versions/{galleryImageVersionName}"
     path_format_arguments = {
@@ -6422,6 +6424,8 @@ def build_gallery_image_versions_delete_request(  # pylint: disable=name-too-lon
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if bypass_soft_delete is not None:
+        _params["bypassSoftDelete"] = _SERIALIZER.query("bypass_soft_delete", bypass_soft_delete, "bool")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
@@ -6432,7 +6436,7 @@ def build_gallery_image_versions_list_by_gallery_image_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6461,7 +6465,7 @@ def build_gallery_applications_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6490,7 +6494,7 @@ def build_gallery_applications_create_or_update_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6522,7 +6526,7 @@ def build_gallery_applications_update_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6553,7 +6557,7 @@ def build_gallery_applications_delete_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/applications/{galleryApplicationName}"
     path_format_arguments = {
@@ -6577,7 +6581,7 @@ def build_gallery_applications_list_by_gallery_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6612,7 +6616,7 @@ def build_gallery_application_versions_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6651,7 +6655,7 @@ def build_gallery_application_versions_create_or_update_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6691,7 +6695,7 @@ def build_gallery_application_versions_update_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6730,7 +6734,7 @@ def build_gallery_application_versions_delete_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/applications/{galleryApplicationName}/versions/{galleryApplicationVersionName}"
     path_format_arguments = {
@@ -6757,7 +6761,7 @@ def build_gallery_application_versions_list_by_gallery_application_request(  # p
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6786,7 +6790,7 @@ def build_gallery_scripts_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6815,7 +6819,7 @@ def build_gallery_scripts_create_or_update_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6847,7 +6851,7 @@ def build_gallery_scripts_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -6878,7 +6882,7 @@ def build_gallery_scripts_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/scripts/{galleryScriptName}"
     path_format_arguments = {
@@ -6902,7 +6906,7 @@ def build_gallery_scripts_list_by_gallery_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6935,7 +6939,7 @@ def build_gallery_script_versions_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6970,7 +6974,7 @@ def build_gallery_script_versions_create_or_update_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -7008,7 +7012,7 @@ def build_gallery_script_versions_update_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -7045,7 +7049,7 @@ def build_gallery_script_versions_delete_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/scripts/{galleryScriptName}/versions/{galleryScriptVersionName}"
     path_format_arguments = {
@@ -7070,7 +7074,7 @@ def build_gallery_script_versions_list_by_gallery_script_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7103,7 +7107,7 @@ def build_gallery_in_vm_access_control_profiles_get_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7138,7 +7142,7 @@ def build_gallery_in_vm_access_control_profiles_create_or_update_request(  # pyl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -7176,7 +7180,7 @@ def build_gallery_in_vm_access_control_profiles_update_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -7213,7 +7217,7 @@ def build_gallery_in_vm_access_control_profiles_delete_request(  # pylint: disab
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{inVMAccessControlProfileName}"
     path_format_arguments = {
@@ -7239,7 +7243,7 @@ def build_gallery_in_vm_access_control_profiles_list_by_gallery_request(  # pyli
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7272,7 +7276,7 @@ def build_gallery_in_vm_access_control_profile_versions_get_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7311,7 +7315,7 @@ def build_gallery_in_vm_access_control_profile_versions_create_or_update_request
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -7353,7 +7357,7 @@ def build_gallery_in_vm_access_control_profile_versions_update_request(  # pylin
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -7394,7 +7398,7 @@ def build_gallery_in_vm_access_control_profile_versions_delete_request(  # pylin
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/inVMAccessControlProfiles/{inVMAccessControlProfileName}/versions/{inVMAccessControlProfileVersionName}"
     path_format_arguments = {
@@ -7427,7 +7431,7 @@ def build_gallery_in_vm_access_control_profile_versions_list_by_gallery_in_vm_ac
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7458,7 +7462,7 @@ def build_shared_galleries_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7490,7 +7494,7 @@ def build_shared_galleries_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7519,7 +7523,7 @@ def build_shared_gallery_images_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7553,7 +7557,7 @@ def build_shared_gallery_images_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7588,7 +7592,7 @@ def build_shared_gallery_image_versions_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7624,7 +7628,7 @@ def build_shared_gallery_image_versions_list_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7655,7 +7659,7 @@ def build_community_galleries_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7683,7 +7687,7 @@ def build_community_gallery_images_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7712,7 +7716,7 @@ def build_community_gallery_images_list_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7745,7 +7749,7 @@ def build_community_gallery_image_versions_get_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7775,7 +7779,7 @@ def build_community_gallery_image_versions_list_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7803,7 +7807,7 @@ def build_shared_gallery_invites_gallery_sharing_accept_request(  # pylint: disa
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/sharedGallerySubscriptions/{sharedGallerySubscriptionId}/sharedGalleries/{sharedGalleryName}/accept"
     path_format_arguments = {
@@ -7828,7 +7832,7 @@ def build_shared_gallery_invites_gallery_sharing_reject_request(  # pylint: disa
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/sharedGallerySubscriptions/{sharedGallerySubscriptionId}/sharedGalleries/{sharedGalleryName}/reject"
     path_format_arguments = {
@@ -7853,7 +7857,7 @@ def build_tenant_level_shared_gallery_invites_tenant_level_gallery_sharing_accep
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     # Construct URL
     _url = "/providers/Microsoft.Compute/locations/{location}/tenantLevelSharedGallerySubscriptions/{sharedGallerySubscriptionId}/sharedGalleries/{sharedGalleryName}/accept"
     path_format_arguments = {
@@ -7877,7 +7881,7 @@ def build_tenant_level_shared_gallery_invites_tenant_level_gallery_sharing_rejec
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     # Construct URL
     _url = "/providers/Microsoft.Compute/locations/{location}/tenantLevelSharedGallerySubscriptions/{sharedGallerySubscriptionId}/sharedGalleries/{sharedGalleryName}/reject"
     path_format_arguments = {
@@ -9427,7 +9431,7 @@ def build_soft_deleted_resource_list_by_artifact_name_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -9457,7 +9461,7 @@ def build_gallery_sharing_profile_update_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -39896,7 +39900,7 @@ class GalleriesOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[_models.Gallery] = kwargs.pop("cls", None)
 
         _request = build_galleries_get_request(
@@ -39963,7 +39967,7 @@ class GalleriesOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -40139,7 +40143,7 @@ class GalleriesOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Gallery] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -40208,7 +40212,7 @@ class GalleriesOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -40376,7 +40380,7 @@ class GalleriesOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Gallery] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -40443,7 +40447,7 @@ class GalleriesOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_galleries_delete_request(
@@ -40507,7 +40511,7 @@ class GalleriesOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -40564,7 +40568,7 @@ class GalleriesOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[List[_models.Gallery]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -40645,7 +40649,7 @@ class GalleriesOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[List[_models.Gallery]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -40760,7 +40764,7 @@ class GalleryImagesOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[_models.GalleryImage] = kwargs.pop("cls", None)
 
         _request = build_gallery_images_get_request(
@@ -40827,7 +40831,7 @@ class GalleryImagesOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -41016,7 +41020,7 @@ class GalleryImagesOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryImage] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -41087,7 +41091,7 @@ class GalleryImagesOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -41268,7 +41272,7 @@ class GalleryImagesOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryImage] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -41338,7 +41342,7 @@ class GalleryImagesOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_gallery_images_delete_request(
@@ -41407,7 +41411,7 @@ class GalleryImagesOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -41469,7 +41473,7 @@ class GalleryImagesOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[List[_models.GalleryImage]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -41599,7 +41603,7 @@ class GalleryImageVersionsOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[_models.GalleryImageVersion] = kwargs.pop("cls", None)
 
         _request = build_gallery_image_versions_get_request(
@@ -41669,7 +41673,7 @@ class GalleryImageVersionsOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -41875,7 +41879,7 @@ class GalleryImageVersionsOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryImageVersion] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -41948,7 +41952,7 @@ class GalleryImageVersionsOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -42149,7 +42153,7 @@ class GalleryImageVersionsOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryImageVersion] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -42206,12 +42210,18 @@ class GalleryImageVersionsOperations:  # pylint: disable=docstring-missing-param
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        params_added_on={"2026-03-03": ["bypass_soft_delete"]},
+        api_versions_list=["2024-03-03", "2025-03-03", "2025-12-03", "2026-03-03"],
+    )
     def _delete_initial(
         self,
         resource_group_name: str,
         gallery_name: str,
         gallery_image_name: str,
         gallery_image_version_name: str,
+        *,
+        bypass_soft_delete: Optional[bool] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -42225,7 +42235,7 @@ class GalleryImageVersionsOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_gallery_image_versions_delete_request(
@@ -42234,6 +42244,7 @@ class GalleryImageVersionsOperations:  # pylint: disable=docstring-missing-param
             gallery_image_name=gallery_image_name,
             gallery_image_version_name=gallery_image_version_name,
             subscription_id=self._config.subscription_id,
+            bypass_soft_delete=bypass_soft_delete,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -42276,12 +42287,18 @@ class GalleryImageVersionsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2026-03-03": ["bypass_soft_delete"]},
+        api_versions_list=["2024-03-03", "2025-03-03", "2025-12-03", "2026-03-03"],
+    )
     def begin_delete(
         self,
         resource_group_name: str,
         gallery_name: str,
         gallery_image_name: str,
         gallery_image_version_name: str,
+        *,
+        bypass_soft_delete: Optional[bool] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Delete a gallery image version.
@@ -42296,6 +42313,12 @@ class GalleryImageVersionsOperations:  # pylint: disable=docstring-missing-param
         :param gallery_image_version_name: The name of the gallery image version to be retrieved.
          Required.
         :type gallery_image_version_name: str
+        :keyword bypass_soft_delete: Specifies whether to bypass the gallery's soft-delete policy and
+         permanently delete the gallery image version. If true, the version is not retained in the
+         recycle bin and cannot be restored. If false or omitted, the version is soft-deleted when the
+         gallery's soft-delete policy is enabled and permanently deleted when the policy is disabled.
+         Default value is None.
+        :paramtype bypass_soft_delete: bool
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -42303,7 +42326,7 @@ class GalleryImageVersionsOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -42314,6 +42337,7 @@ class GalleryImageVersionsOperations:  # pylint: disable=docstring-missing-param
                 gallery_name=gallery_name,
                 gallery_image_name=gallery_image_name,
                 gallery_image_version_name=gallery_image_version_name,
+                bypass_soft_delete=bypass_soft_delete,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -42368,7 +42392,7 @@ class GalleryImageVersionsOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[List[_models.GalleryImageVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -42487,7 +42511,7 @@ class GalleryApplicationsOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[_models.GalleryApplication] = kwargs.pop("cls", None)
 
         _request = build_gallery_applications_get_request(
@@ -42554,7 +42578,7 @@ class GalleryApplicationsOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -42747,7 +42771,7 @@ class GalleryApplicationsOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryApplication] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -42818,7 +42842,7 @@ class GalleryApplicationsOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -43006,7 +43030,7 @@ class GalleryApplicationsOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryApplication] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -43076,7 +43100,7 @@ class GalleryApplicationsOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_gallery_applications_delete_request(
@@ -43146,7 +43170,7 @@ class GalleryApplicationsOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -43208,7 +43232,7 @@ class GalleryApplicationsOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[List[_models.GalleryApplication]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -43340,7 +43364,7 @@ class GalleryApplicationVersionsOperations:  # pylint: disable=docstring-missing
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[_models.GalleryApplicationVersion] = kwargs.pop("cls", None)
 
         _request = build_gallery_application_versions_get_request(
@@ -43412,7 +43436,7 @@ class GalleryApplicationVersionsOperations:  # pylint: disable=docstring-missing
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -43625,7 +43649,7 @@ class GalleryApplicationVersionsOperations:  # pylint: disable=docstring-missing
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryApplicationVersion] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -43700,7 +43724,7 @@ class GalleryApplicationVersionsOperations:  # pylint: disable=docstring-missing
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -43908,7 +43932,7 @@ class GalleryApplicationVersionsOperations:  # pylint: disable=docstring-missing
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryApplicationVersion] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -43984,7 +44008,7 @@ class GalleryApplicationVersionsOperations:  # pylint: disable=docstring-missing
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_gallery_application_versions_delete_request(
@@ -44063,7 +44087,7 @@ class GalleryApplicationVersionsOperations:  # pylint: disable=docstring-missing
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -44129,7 +44153,7 @@ class GalleryApplicationVersionsOperations:  # pylint: disable=docstring-missing
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[List[_models.GalleryApplicationVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -44232,7 +44256,7 @@ class GalleryScriptsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-03-03", "2025-12-03"],
+        api_versions_list=["2025-03-03", "2025-12-03", "2026-03-03"],
     )
     def get(
         self, resource_group_name: str, gallery_name: str, gallery_script_name: str, **kwargs: Any
@@ -44262,7 +44286,7 @@ class GalleryScriptsOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[_models.GalleryScript] = kwargs.pop("cls", None)
 
         _request = build_gallery_scripts_get_request(
@@ -44323,7 +44347,7 @@ class GalleryScriptsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-03-03", "2025-12-03"],
+        api_versions_list=["2025-03-03", "2025-12-03", "2026-03-03"],
     )
     def _create_or_update_initial(
         self,
@@ -44344,7 +44368,7 @@ class GalleryScriptsOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -44519,7 +44543,7 @@ class GalleryScriptsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-03-03", "2025-12-03"],
+        api_versions_list=["2025-03-03", "2025-12-03", "2026-03-03"],
     )
     def begin_create_or_update(
         self,
@@ -44552,7 +44576,7 @@ class GalleryScriptsOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryScript] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -44617,7 +44641,7 @@ class GalleryScriptsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-03-03", "2025-12-03"],
+        api_versions_list=["2025-03-03", "2025-12-03", "2026-03-03"],
     )
     def _update_initial(
         self,
@@ -44638,7 +44662,7 @@ class GalleryScriptsOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -44807,7 +44831,7 @@ class GalleryScriptsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-03-03", "2025-12-03"],
+        api_versions_list=["2025-03-03", "2025-12-03", "2026-03-03"],
     )
     def begin_update(
         self,
@@ -44839,7 +44863,7 @@ class GalleryScriptsOperations:  # pylint: disable=docstring-missing-param
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryScript] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -44902,7 +44926,7 @@ class GalleryScriptsOperations:  # pylint: disable=docstring-missing-param
                 "gallery_script_name",
             ]
         },
-        api_versions_list=["2025-03-03", "2025-12-03"],
+        api_versions_list=["2025-03-03", "2025-12-03", "2026-03-03"],
     )
     def _delete_initial(
         self, resource_group_name: str, gallery_name: str, gallery_script_name: str, **kwargs: Any
@@ -44918,7 +44942,7 @@ class GalleryScriptsOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_gallery_scripts_delete_request(
@@ -44979,7 +45003,7 @@ class GalleryScriptsOperations:  # pylint: disable=docstring-missing-param
                 "gallery_script_name",
             ]
         },
-        api_versions_list=["2025-03-03", "2025-12-03"],
+        api_versions_list=["2025-03-03", "2025-12-03", "2026-03-03"],
     )
     def begin_delete(
         self, resource_group_name: str, gallery_name: str, gallery_script_name: str, **kwargs: Any
@@ -45001,7 +45025,7 @@ class GalleryScriptsOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -45051,7 +45075,7 @@ class GalleryScriptsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2025-03-03": ["api_version", "subscription_id", "resource_group_name", "gallery_name", "accept"]
         },
-        api_versions_list=["2025-03-03", "2025-12-03"],
+        api_versions_list=["2025-03-03", "2025-12-03", "2026-03-03"],
     )
     def list_by_gallery(
         self, resource_group_name: str, gallery_name: str, **kwargs: Any
@@ -45070,7 +45094,7 @@ class GalleryScriptsOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[List[_models.GalleryScript]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -45173,7 +45197,7 @@ class GalleryScriptVersionsOperations:  # pylint: disable=docstring-missing-para
                 "accept",
             ]
         },
-        api_versions_list=["2025-03-03", "2025-12-03"],
+        api_versions_list=["2025-03-03", "2025-12-03", "2026-03-03"],
     )
     def get(
         self,
@@ -45211,7 +45235,7 @@ class GalleryScriptVersionsOperations:  # pylint: disable=docstring-missing-para
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[_models.GalleryScriptVersion] = kwargs.pop("cls", None)
 
         _request = build_gallery_script_versions_get_request(
@@ -45274,7 +45298,7 @@ class GalleryScriptVersionsOperations:  # pylint: disable=docstring-missing-para
                 "accept",
             ]
         },
-        api_versions_list=["2025-03-03", "2025-12-03"],
+        api_versions_list=["2025-03-03", "2025-12-03", "2026-03-03"],
     )
     def _create_or_update_initial(
         self,
@@ -45296,7 +45320,7 @@ class GalleryScriptVersionsOperations:  # pylint: disable=docstring-missing-para
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -45485,7 +45509,7 @@ class GalleryScriptVersionsOperations:  # pylint: disable=docstring-missing-para
                 "accept",
             ]
         },
-        api_versions_list=["2025-03-03", "2025-12-03"],
+        api_versions_list=["2025-03-03", "2025-12-03", "2026-03-03"],
     )
     def begin_create_or_update(
         self,
@@ -45521,7 +45545,7 @@ class GalleryScriptVersionsOperations:  # pylint: disable=docstring-missing-para
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryScriptVersion] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -45588,7 +45612,7 @@ class GalleryScriptVersionsOperations:  # pylint: disable=docstring-missing-para
                 "accept",
             ]
         },
-        api_versions_list=["2025-03-03", "2025-12-03"],
+        api_versions_list=["2025-03-03", "2025-12-03", "2026-03-03"],
     )
     def _update_initial(
         self,
@@ -45610,7 +45634,7 @@ class GalleryScriptVersionsOperations:  # pylint: disable=docstring-missing-para
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -45799,7 +45823,7 @@ class GalleryScriptVersionsOperations:  # pylint: disable=docstring-missing-para
                 "accept",
             ]
         },
-        api_versions_list=["2025-03-03", "2025-12-03"],
+        api_versions_list=["2025-03-03", "2025-12-03", "2026-03-03"],
     )
     def begin_update(
         self,
@@ -45835,7 +45859,7 @@ class GalleryScriptVersionsOperations:  # pylint: disable=docstring-missing-para
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryScriptVersion] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -45900,7 +45924,7 @@ class GalleryScriptVersionsOperations:  # pylint: disable=docstring-missing-para
                 "gallery_script_version_name",
             ]
         },
-        api_versions_list=["2025-03-03", "2025-12-03"],
+        api_versions_list=["2025-03-03", "2025-12-03", "2026-03-03"],
     )
     def _delete_initial(
         self,
@@ -45921,7 +45945,7 @@ class GalleryScriptVersionsOperations:  # pylint: disable=docstring-missing-para
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_gallery_script_versions_delete_request(
@@ -45987,7 +46011,7 @@ class GalleryScriptVersionsOperations:  # pylint: disable=docstring-missing-para
                 "gallery_script_version_name",
             ]
         },
-        api_versions_list=["2025-03-03", "2025-12-03"],
+        api_versions_list=["2025-03-03", "2025-12-03", "2026-03-03"],
     )
     def begin_delete(
         self,
@@ -46017,7 +46041,7 @@ class GalleryScriptVersionsOperations:  # pylint: disable=docstring-missing-para
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -46075,7 +46099,7 @@ class GalleryScriptVersionsOperations:  # pylint: disable=docstring-missing-para
                 "accept",
             ]
         },
-        api_versions_list=["2025-03-03", "2025-12-03"],
+        api_versions_list=["2025-03-03", "2025-12-03", "2026-03-03"],
     )
     def list_by_gallery_script(
         self, resource_group_name: str, gallery_name: str, gallery_script_name: str, **kwargs: Any
@@ -46097,7 +46121,7 @@ class GalleryScriptVersionsOperations:  # pylint: disable=docstring-missing-para
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[List[_models.GalleryScriptVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -46217,7 +46241,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=docstring-m
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[_models.GalleryInVMAccessControlProfile] = kwargs.pop("cls", None)
 
         _request = build_gallery_in_vm_access_control_profiles_get_request(
@@ -46286,7 +46310,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=docstring-m
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -46485,7 +46509,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=docstring-m
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryInVMAccessControlProfile] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -46558,7 +46582,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=docstring-m
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -46756,7 +46780,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=docstring-m
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryInVMAccessControlProfile] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -46826,7 +46850,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=docstring-m
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_gallery_in_vm_access_control_profiles_delete_request(
@@ -46898,7 +46922,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=docstring-m
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -46961,7 +46985,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=docstring-m
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[List[_models.GalleryInVMAccessControlProfile]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -47088,7 +47112,7 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=docs
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[_models.GalleryInVMAccessControlProfileVersion] = kwargs.pop("cls", None)
 
         _request = build_gallery_in_vm_access_control_profile_versions_get_request(
@@ -47159,7 +47183,7 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=docs
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -47375,7 +47399,7 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=docs
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryInVMAccessControlProfileVersion] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -47452,7 +47476,7 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=docs
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -47669,7 +47693,7 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=docs
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GalleryInVMAccessControlProfileVersion] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -47745,7 +47769,7 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=docs
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_gallery_in_vm_access_control_profile_versions_delete_request(
@@ -47826,7 +47850,7 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=docs
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -47893,7 +47917,7 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=docs
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[List[_models.GalleryInVMAccessControlProfileVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -48006,7 +48030,7 @@ class SharedGalleriesOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[_models.SharedGallery] = kwargs.pop("cls", None)
 
         _request = build_shared_galleries_get_request(
@@ -48071,7 +48095,7 @@ class SharedGalleriesOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[List[_models.SharedGallery]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -48188,7 +48212,7 @@ class SharedGalleryImagesOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[_models.SharedGalleryImage] = kwargs.pop("cls", None)
 
         _request = build_shared_gallery_images_get_request(
@@ -48261,7 +48285,7 @@ class SharedGalleryImagesOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[List[_models.SharedGalleryImage]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -48390,7 +48414,7 @@ class SharedGalleryImageVersionsOperations:  # pylint: disable=docstring-missing
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[_models.SharedGalleryImageVersion] = kwargs.pop("cls", None)
 
         _request = build_shared_gallery_image_versions_get_request(
@@ -48468,7 +48492,7 @@ class SharedGalleryImageVersionsOperations:  # pylint: disable=docstring-missing
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[List[_models.SharedGalleryImageVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -48582,7 +48606,7 @@ class CommunityGalleriesOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[_models.CommunityGallery] = kwargs.pop("cls", None)
 
         _request = build_community_galleries_get_request(
@@ -48674,7 +48698,7 @@ class CommunityGalleryImagesOperations:  # pylint: disable=docstring-missing-par
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[_models.CommunityGalleryImage] = kwargs.pop("cls", None)
 
         _request = build_community_gallery_images_get_request(
@@ -48739,7 +48763,7 @@ class CommunityGalleryImagesOperations:  # pylint: disable=docstring-missing-par
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[List[_models.CommunityGalleryImage]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -48866,7 +48890,7 @@ class CommunityGalleryImageVersionsOperations:  # pylint: disable=docstring-miss
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[_models.CommunityGalleryImageVersion] = kwargs.pop("cls", None)
 
         _request = build_community_gallery_image_versions_get_request(
@@ -48934,7 +48958,7 @@ class CommunityGalleryImageVersionsOperations:  # pylint: disable=docstring-miss
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[List[_models.CommunityGalleryImageVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -49035,7 +49059,7 @@ class SharedGalleryInvitesOperations:  # pylint: disable=docstring-missing-param
                 "shared_gallery_name",
             ]
         },
-        api_versions_list=["2025-12-03"],
+        api_versions_list=["2025-12-03", "2026-03-03"],
     )
     def _gallery_sharing_accept_initial(
         self, location: str, shared_gallery_subscription_id: str, shared_gallery_name: str, **kwargs: Any
@@ -49051,7 +49075,7 @@ class SharedGalleryInvitesOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_shared_gallery_invites_gallery_sharing_accept_request(
@@ -49112,7 +49136,7 @@ class SharedGalleryInvitesOperations:  # pylint: disable=docstring-missing-param
                 "shared_gallery_name",
             ]
         },
-        api_versions_list=["2025-12-03"],
+        api_versions_list=["2025-12-03", "2026-03-03"],
     )
     def begin_gallery_sharing_accept(
         self, location: str, shared_gallery_subscription_id: str, shared_gallery_name: str, **kwargs: Any
@@ -49132,7 +49156,7 @@ class SharedGalleryInvitesOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -49187,7 +49211,7 @@ class SharedGalleryInvitesOperations:  # pylint: disable=docstring-missing-param
                 "shared_gallery_name",
             ]
         },
-        api_versions_list=["2025-12-03"],
+        api_versions_list=["2025-12-03", "2026-03-03"],
     )
     def _gallery_sharing_reject_initial(
         self, location: str, shared_gallery_subscription_id: str, shared_gallery_name: str, **kwargs: Any
@@ -49203,7 +49227,7 @@ class SharedGalleryInvitesOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_shared_gallery_invites_gallery_sharing_reject_request(
@@ -49264,7 +49288,7 @@ class SharedGalleryInvitesOperations:  # pylint: disable=docstring-missing-param
                 "shared_gallery_name",
             ]
         },
-        api_versions_list=["2025-12-03"],
+        api_versions_list=["2025-12-03", "2026-03-03"],
     )
     def begin_gallery_sharing_reject(
         self, location: str, shared_gallery_subscription_id: str, shared_gallery_name: str, **kwargs: Any
@@ -49284,7 +49308,7 @@ class SharedGalleryInvitesOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -49351,7 +49375,7 @@ class TenantLevelSharedGalleryInvitesOperations:  # pylint: disable=docstring-mi
         params_added_on={
             "2025-12-03": ["api_version", "location", "shared_gallery_subscription_id", "shared_gallery_name"]
         },
-        api_versions_list=["2025-12-03"],
+        api_versions_list=["2025-12-03", "2026-03-03"],
     )
     def _tenant_level_gallery_sharing_accept_initial(  # pylint: disable=name-too-long
         self, location: str, shared_gallery_subscription_id: str, shared_gallery_name: str, **kwargs: Any
@@ -49367,7 +49391,7 @@ class TenantLevelSharedGalleryInvitesOperations:  # pylint: disable=docstring-mi
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_tenant_level_shared_gallery_invites_tenant_level_gallery_sharing_accept_request(
@@ -49421,7 +49445,7 @@ class TenantLevelSharedGalleryInvitesOperations:  # pylint: disable=docstring-mi
         params_added_on={
             "2025-12-03": ["api_version", "location", "shared_gallery_subscription_id", "shared_gallery_name"]
         },
-        api_versions_list=["2025-12-03"],
+        api_versions_list=["2025-12-03", "2026-03-03"],
     )
     def begin_tenant_level_gallery_sharing_accept(  # pylint: disable=name-too-long
         self, location: str, shared_gallery_subscription_id: str, shared_gallery_name: str, **kwargs: Any
@@ -49441,7 +49465,7 @@ class TenantLevelSharedGalleryInvitesOperations:  # pylint: disable=docstring-mi
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -49490,7 +49514,7 @@ class TenantLevelSharedGalleryInvitesOperations:  # pylint: disable=docstring-mi
         params_added_on={
             "2025-12-03": ["api_version", "location", "shared_gallery_subscription_id", "shared_gallery_name"]
         },
-        api_versions_list=["2025-12-03"],
+        api_versions_list=["2025-12-03", "2026-03-03"],
     )
     def _tenant_level_gallery_sharing_reject_initial(  # pylint: disable=name-too-long
         self, location: str, shared_gallery_subscription_id: str, shared_gallery_name: str, **kwargs: Any
@@ -49506,7 +49530,7 @@ class TenantLevelSharedGalleryInvitesOperations:  # pylint: disable=docstring-mi
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_tenant_level_shared_gallery_invites_tenant_level_gallery_sharing_reject_request(
@@ -49560,7 +49584,7 @@ class TenantLevelSharedGalleryInvitesOperations:  # pylint: disable=docstring-mi
         params_added_on={
             "2025-12-03": ["api_version", "location", "shared_gallery_subscription_id", "shared_gallery_name"]
         },
-        api_versions_list=["2025-12-03"],
+        api_versions_list=["2025-12-03", "2026-03-03"],
     )
     def begin_tenant_level_gallery_sharing_reject(  # pylint: disable=name-too-long
         self, location: str, shared_gallery_subscription_id: str, shared_gallery_name: str, **kwargs: Any
@@ -49580,7 +49604,7 @@ class TenantLevelSharedGalleryInvitesOperations:  # pylint: disable=docstring-mi
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -56085,7 +56109,7 @@ class SoftDeletedResourceOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         cls: ClsType[List[_models.GallerySoftDeletedResource]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -56194,7 +56218,7 @@ class GallerySharingProfileOperations:  # pylint: disable=docstring-missing-para
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
@@ -56363,7 +56387,7 @@ class GallerySharingProfileOperations:  # pylint: disable=docstring-missing-para
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-12-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-03"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SharingUpdate] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)

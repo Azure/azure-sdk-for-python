@@ -519,12 +519,6 @@ class AsyncFunctionCallingClient:
             # Stop current assistant audio playback (interruption handling)
             await ap.stop_playback()
 
-            # Cancel any ongoing response
-            try:
-                await connection.response.cancel()
-            except Exception as e:
-                logger.debug(f"No response to cancel: {e}")
-
         elif event.type == ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED:
             logger.info("🎤 User stopped speaking")
             print("🤔 Processing...")

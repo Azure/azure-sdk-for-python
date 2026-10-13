@@ -467,10 +467,19 @@ namespace azure.ai.agentserver.invocations.voice
 
     @experimental
     class azure.ai.agentserver.invocations.voice.Session:
+        property termination: SessionTermination | None    # Read-only
 
         def __init__(self) -> None: ...
 
         async def send(self, message: OutboundVoiceMessage) -> None: ...
+
+        def start_target_turn(
+                self,
+                *,
+                input_count: int,
+                origin: TargetTurnOrigin | str,
+                trigger_context: SpanContext | None = ...
+            ) -> TargetTurn: ...
 
 
     @experimental
@@ -586,19 +595,71 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
+                self,
+                *,
+                caller: Mapping[str, Any] | None = ...,
+                greeting: str | None = ...,
                 id: str,
-                ts: str,
+                no_input_timeout_ms: int | None = ...,
                 protocol_version: str,
                 reconnect: bool,
                 response_timeouts: ResponseTimeouts,
-                greeting: str | None = None,
-                no_input_timeout_ms: int | None = None,
-                caller: Mapping = None
+                ts: str
             ) -> None: ...
 
         def __setattr__() -> None: ...
 
         def _voice_model_repr(self: Any) -> str: ...
+
+
+    @experimental
+    class azure.ai.agentserver.invocations.voice.SessionTermination(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACCEPT_ERROR = "accept_error"
+        CALLBACK_ERROR = "callback_error"
+        CANCELLED = "cancelled"
+        COMPLETED = "completed"
+        INTERNAL_ERROR = "internal_error"
+        PROTOCOL_ERROR = "protocol_error"
+        TRANSPORT_ERROR = "transport_error"
+
+
+    @experimental
+    class azure.ai.agentserver.invocations.voice.TargetTurn:
+        property is_completed: bool    # Read-only
+
+        def __init__(self) -> None: ...
+
+        def activate(self) -> ContextManager[None]: ...
+
+        def complete(
+                self,
+                *,
+                outcome: TargetTurnOutcome | str,
+                output_item_count: int | None = ...,
+                response_id: str | None = ...
+            ) -> None: ...
+
+
+    @experimental
+    class azure.ai.agentserver.invocations.voice.TargetTurnOrigin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        NO_INPUT = "no_input"
+        OTHER = "other"
+        PROACTIVE = "proactive"
+        RECOVERY = "recovery"
+        USER = "user"
+
+
+    @experimental
+    class azure.ai.agentserver.invocations.voice.TargetTurnOutcome(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ABANDONED = "abandoned"
+        CANCELLED = "cancelled"
+        END_CALL = "end_call"
+        ERROR = "error"
+        NONE = "none"
+        OTHER = "other"
+        RESPONSE = "response"
+        TIMEOUT = "timeout"
+        TRANSPORT_ERROR = "transport_error"
 
 
     @experimental
@@ -679,6 +740,13 @@ namespace azure.ai.agentserver.invocations.voice
     class azure.ai.agentserver.invocations.voice.VoiceAgentServerHost(InvocationAgentServerHost):
         property routes: list[BaseRoute]    # Read-only
         property ws_ping_interval: float    # Read-only
+
+        async def __call__(
+                self,
+                scope: Scope,
+                receive: Receive,
+                send: Send
+            ) -> None: ...
 
         def __init__(
                 self,

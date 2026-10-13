@@ -8,6 +8,7 @@ namespace azure.ai.agentserver.core
             *, 
             connection_string: Optional[str] = ..., 
             enable_sensitive_data: bool = False, 
+            instrumentation_options: Optional[dict[str, dict[str, Any]]] = ..., 
             log_level: Optional[str] = ...
         ) -> None: ...
 
@@ -40,6 +41,10 @@ namespace azure.ai.agentserver.core
     def azure.ai.agentserver.core.flush_spans(timeout_millis: int = 5000) -> None: ...
 
 
+    @experimental
+    async def azure.ai.agentserver.core.flush_spans_async:async(timeout_millis: int = 5000) -> None: ...
+
+
     def azure.ai.agentserver.core.get_request_context() -> FoundryAgentRequestContext: ...
 
 
@@ -53,6 +58,10 @@ namespace azure.ai.agentserver.core
 
 
     def azure.ai.agentserver.core.resolve_state_subdir(name: str) -> Path: ...
+
+
+    @experimental
+    def azure.ai.agentserver.core.schedule_flush_spans(timeout_millis: int = 5000) -> None: ...
 
 
     def azure.ai.agentserver.core.set_current_span(span: Any) -> Any: ...
@@ -79,6 +88,7 @@ namespace azure.ai.agentserver.core
                 port: int, 
                 project_endpoint: str, 
                 project_id: str, 
+                session_guid: str = "", 
                 session_id: str, 
                 sse_keepalive_interval: int, 
                 ws_ping_interval: float = 0.0
@@ -111,6 +121,12 @@ namespace azure.ai.agentserver.core
                 **kwargs: kwargs
             ) -> None: ...
 
+        def after_restore_handler(self, fn: Callable[[AgentSessionContext], Awaitable[None]]) -> Callable[[AgentSessionContext], Awaitable[None]]: ...
+
+        def before_snapshot_handler(self, fn: Callable[[], Awaitable[None]]) -> Callable[[], Awaitable[None]]: ...
+
+        def readiness_handler(self, fn: Callable[[Request], Awaitable[Response]]) -> Callable[[Request], Awaitable[Response]]: ...
+
         def register_pre_shutdown_callback(self, fn: Callable[[], None]) -> None: ...
 
         def register_server_version(self, version_segment: str) -> None: ...
@@ -128,6 +144,31 @@ namespace azure.ai.agentserver.core
             ) -> None: ...
 
         def shutdown_handler(self, fn: Callable[[], Awaitable[None]]) -> Callable[[], Awaitable[None]]: ...
+
+
+    @experimental
+    @dataclass(frozen=True, init=False)
+    class azure.ai.agentserver.core.AgentSessionContext:
+        restore_id: str
+        session_env_overrides: Mapping[str, str]
+        session_id: str
+
+        def __delattr__() -> None: ...
+
+        def __eq__() -> None: ...
+
+        def __hash__() -> None: ...
+
+        def __init__(
+                self,
+                session_id: str,
+                restore_id: str,
+                session_env_overrides: Optional[Mapping[str, str]] = None
+            ) -> None: ...
+
+        def __repr__() -> None: ...
+
+        def __setattr__() -> None: ...
 
 
     class azure.ai.agentserver.core.FoundryAgentRequestContext:
@@ -514,7 +555,7 @@ namespace azure.ai.agentserver.core.storage
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    @dataclass(eq = True, frozen = False, init = True, kw_only = False, match_args = True, order = False, repr = True, slots = False, unsafe_hash = False, weakref_slot = False)
+    @dataclass(eq = True, frozen = False, init = True, order = False, repr = True, unsafe_hash = False)
     class azure.ai.agentserver.core.storage.StateStoreItemKeyPage:
         first_id: Optional[str]
         has_more: bool = field(compare = True, default = False, hash = None, init = True, kw_only = False, metadata = {}, name = "has_more", repr = True, type = "bool")
