@@ -4,7 +4,7 @@ license: MIT
 metadata:
   version: "1.0.0"
   distribution: local
-description: "Runs the issue-assigned azure-ai-projects TypeSpec regeneration workflow from required issue-description inputs through a reviewable draft pull request, without the interactive prompts the per-step skills normally ask a human developer. WHEN: \"regen from <commit> against <branch>\", \"regenerate azure-ai-projects\" issue assignment, issue titled \"[azure-ai-projects] regen from ... against ...\". DO NOT USE FOR: other Azure SDK packages, interactive/local regeneration where a human can answer the emit skill's questions directly (use azure-ai-projects-emit-from-typespec instead). INVOKES: azure-ai-projects-emit-from-typespec, azure-ai-projects-author-samples, azure-ai-projects-author-tests, azure-ai-projects-update-changelog, git, gh CLI."
+description: "Runs the issue-assigned azure-ai-projects TypeSpec regeneration workflow from required issue-description inputs through a reviewable draft pull request, without the interactive prompts the per-step skills normally ask a human developer. WHEN: \"regen from <commit> against <branch>\", \"regenerate azure-ai-projects\" issue assignment, issue titled \"[azure-ai-projects] regen from ... against ...\". DO NOT USE FOR: other Azure SDK packages, interactive/local regeneration where a human can answer the emit skill's questions directly (use azure-ai-projects-emit-from-typespec instead). INVOKES: azure-ai-projects-emit-from-typespec, azure-ai-projects-author-samples, azure-ai-projects-author-tests, git, gh CLI."
 compatibility:
   requires: "local azure-sdk-for-python clone, git, gh CLI, an already-assigned working branch and draft pull request (as created by GitHub issue assignment to Copilot)"
 ---
@@ -17,9 +17,13 @@ setup commands.
 
 This skill is a thin orchestrator: it does not duplicate the step-by-step instructions already
 defined in `azure-ai-projects-emit-from-typespec`, `azure-ai-projects-author-samples`,
-`azure-ai-projects-author-tests`, and `azure-ai-projects-update-changelog`. It validates the
-issue inputs, then runs those four skills in order with the specific overrides below so they
-behave correctly for an unattended, issue-assigned session instead of an interactive one.
+and `azure-ai-projects-author-tests`. It validates the issue inputs, then runs those three
+skills in order with the specific overrides below so they behave correctly for an unattended,
+issue-assigned session instead of an interactive one.
+
+Changelog updates are outside this workflow. Do not invoke
+`azure-ai-projects-update-changelog` or update `CHANGELOG.md`; the SDK maintainer runs that
+skill separately at their discretion.
 
 ## Validate the assignment
 
@@ -51,7 +55,7 @@ of creating a new branch or pull request.
 
 ## Managed-session overrides for the called skills
 
-The four skills below were written for an interactive human developer. Apply these overrides
+The three skills below were written for an interactive human developer. Apply these overrides
 so they run correctly for this unattended, issue-assigned session. Do not edit the skill files
 themselves to apply these overrides.
 
@@ -114,28 +118,14 @@ themselves to apply these overrides.
     this session, and leaves the shared `.venv` untouched. If that environment cannot be created
     (for example `401 Unauthorized` for a package file the feed has not cached), the command has
     failed: stop and report it instead of retrying or falling back to the non-isolated form.
-- **`azure-ai-projects-update-changelog` Step 2 (fetch the latest released version):** do not
-  call the PyPI JSON API; `pypi.org` is not reachable from this firewalled session. Derive
-  `LATEST_PYPI_VERSION` instead from the same release tags this skill's own Step 4 already
-  treats as the source of truth for a released version's code. Use `git ls-remote` rather than
-  `git fetch`/`git tag` so this only lists matching ref names from `origin` (likely GitHub,
-  already reachable for this session's git and `gh` operations) instead of downloading tag
-  objects into what may be a shallow clone. Filter to stable `X.Y.Z` tags only (excluding
-  pre-releases like `2.0.0b1`), matching what PyPI's `info.version` itself would report:
+- **`azure-ai-projects-author-samples` Step 6 and `azure-ai-projects-author-tests` Step 4
+  (hand off):** keep their reporting requirements, but skip their follow-on skill invocations.
+  This orchestrator runs samples and tests in the order below and never invokes
+  `azure-ai-projects-update-changelog`.
 
-  ```bash
-  LATEST_PYPI_VERSION="$(git ls-remote --tags origin 'azure-ai-projects_*' \
-    | sed -n 's#.*refs/tags/azure-ai-projects_\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)$#\1#p' \
-    | sort -V | tail -1)"
-  ```
-
-  Verified against the real repository's tags: this returns `2.8.0`, matching
-  `https://pypi.org/pypi/azure-ai-projects/json`'s current `info.version`.
-
-`azure-ai-projects-author-samples`, `azure-ai-projects-author-tests`, and
-`azure-ai-projects-update-changelog` do not create branches or pull requests, so they need no
-branch/PR overrides. None of the three commit their own changes; stage, commit, and push
-everything yourself after `azure-ai-projects-update-changelog` finishes (see below).
+`azure-ai-projects-author-samples` and `azure-ai-projects-author-tests` do not create branches
+or pull requests, so they need no branch/PR overrides. Neither skill commits its own changes;
+stage, commit, and push any remaining changes yourself after both finish (see below).
 
 ## Run the skills in order
 
@@ -145,26 +135,27 @@ order:
 1. `.github/skills/azure-ai-projects-emit-from-typespec/SKILL.md`, with the overrides above.
 2. `.github/skills/azure-ai-projects-author-samples/SKILL.md`.
 3. `.github/skills/azure-ai-projects-author-tests/SKILL.md`.
-4. `.github/skills/azure-ai-projects-update-changelog/SKILL.md`. Neither it nor the two skills
-   before it (`azure-ai-projects-author-samples`, `azure-ai-projects-author-tests`) commit their
-   own edits. When it finishes, stage every remaining change — samples, tests, and
-   `CHANGELOG.md` — commit, and push:
-
-   ```bash
-   git add -A -- ':!.env*'
-   git commit -m "Part 4: Update changelog
-
-   Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
-   git push
-   ```
 
 Do not proceed to the next skill until the current skill's success criteria pass. Apply every
-STOP condition from the four skills: on failure, preserve the working tree for diagnosis, do not
+STOP condition from the three skills: on failure, preserve the working tree for diagnosis, do not
 publish partial manual branches or pull requests, and report the failing command and its output.
 
 Samples and tests are conditional. A step may be a documented no-op when the API diff contains
 no qualifying surface; state that explicitly in the pull request rather than creating
 placeholder files.
+
+## Commit the remaining changes
+
+After the sample and test skills finish, stage, commit, and push any remaining changes,
+including refreshed API artifacts:
+
+```bash
+git add -A -- ':!.env*'
+git commit -m "Part 4: Update samples and tests" -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+git push -u origin HEAD
+```
+
+If there are no remaining changes, skip this commit and report the no-op in the pull request.
 
 ## Finish the managed pull request
 
@@ -186,12 +177,13 @@ gh pr edit <number> \
 The description must:
 
 - Link the full upstream commit.
-- Summarize public API changes from the changelog entry just written.
+- Summarize public API changes from the API diff against the validated base branch.
 - Explain any sample or test no-ops.
-- Report each validation command from the four skills honestly, including any that were skipped
+- State that changelog updates are deferred to the SDK maintainer's discretion.
+- Report each validation command from the three skills honestly, including any that were skipped
   and why.
 
 Before finishing, verify that no diff3 conflict markers remain under `azure/`, that the package
 installs cleanly from source (`azure-ai-projects-emit-from-typespec` Step 12 already did this),
-and that the changelog entry is non-empty. Never report the regeneration as complete while any
-required skill is pending or failed.
+and that all remaining changes were committed and pushed. Never report the regeneration as
+complete while any required skill is pending or failed.
