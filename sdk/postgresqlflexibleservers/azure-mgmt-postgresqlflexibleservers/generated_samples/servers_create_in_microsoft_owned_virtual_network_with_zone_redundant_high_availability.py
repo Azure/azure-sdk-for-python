@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -54,6 +53,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-01-preview/ServersCreateInMicrosoftOwnedVirtualNetworkWithZoneRedundantHighAvailability.json
+# x-ms-original-file: 2026-10-01/ServersCreateInMicrosoftOwnedVirtualNetworkWithZoneRedundantHighAvailability.json
 if __name__ == "__main__":
     main()

@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -163,43 +162,6 @@ class DataEncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_KEY_VAULT = "AzureKeyVault"
     """Encryption using customer managed keys stored in Azure Key Vault for enhanced control and
     security."""
-
-
-class DbAgentForUpdateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The database agent states accepted in a write request."""
-
-    ENABLED = "Enabled"
-    """Enable the database agent."""
-    DISABLED = "Disabled"
-    """Disable the database agent."""
-
-
-class DbAgentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state of the database agent resource."""
-
-    SUCCEEDED = "Succeeded"
-    """Resource has been created."""
-    FAILED = "Failed"
-    """Resource creation failed."""
-    CANCELED = "Canceled"
-    """Resource creation was canceled."""
-    IN_PROGRESS = "InProgress"
-    """The database agent lifecycle operation is in progress."""
-
-
-class DbAgentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of the database agent."""
-
-    ENABLING = "Enabling"
-    """The database agent is being enabled."""
-    ENABLED = "Enabled"
-    """The database agent is enabled."""
-    DISABLING = "Disabling"
-    """The database agent is being disabled."""
-    DISABLED = "Disabled"
-    """The database agent is disabled."""
-    FAILED = "Failed"
-    """The database agent lifecycle operation failed."""
 
 
 class EncryptionKeyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -595,29 +557,6 @@ class PasswordBasedAuth(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Server supports password based authentication."""
     DISABLED = "Disabled"
     """Server does not support password based authentication."""
-
-
-class PostgresMajorVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Major version of PostgreSQL database engine."""
-
-    ENUM_19 = "19"
-    """PostgreSQL 19."""
-    EIGHTEEN = "18"
-    """PostgreSQL 18."""
-    SEVENTEEN = "17"
-    """PostgreSQL 17."""
-    SIXTEEN = "16"
-    """PostgreSQL 16."""
-    FIFTEEN = "15"
-    """PostgreSQL 15."""
-    FOURTEEN = "14"
-    """PostgreSQL 14."""
-    THIRTEEN = "13"
-    """PostgreSQL 13."""
-    TWELVE = "12"
-    """PostgreSQL 12."""
-    ELEVEN = "11"
-    """PostgreSQL 11."""
 
 
 class PostgreSqlFlexibleServerHighAvailabilityMode(  # pylint: disable=name-too-long
