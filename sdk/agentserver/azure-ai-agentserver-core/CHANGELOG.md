@@ -2,13 +2,33 @@
 
 ## 2.3.0b1 (Unreleased)
 
+### Features Added
+
+- Added `AgentServerHost.readiness_handler` for replacing the default
+  `GET /readiness` response with application-specific readiness logic. When no
+  handler is registered, the existing healthy response remains unchanged.
+- Added the private `POST /_agent/before-snapshot` and
+  `POST /_agent/after-restore` lifecycle endpoints, with equivalent
+  `POST /_before_snapshot` and `POST /_after_restore` aliases, for safely
+  capturing and restoring hosted agent processes. Applications can register
+  `before_snapshot_handler` and `after_restore_handler` callbacks; lifecycle
+  calls are serialized and idempotent, and restored session environment
+  overrides are applied before the after-restore callback runs. Protocol
+  subclasses can extend the lifecycle through protected hooks without
+  bypassing the host's required hydration and rollback behavior. Later
+  materializations reset omitted overrides to their captured values and expose
+  the restored session through the ambient request context during callbacks.
+  Environment-backed `AgentConfig` values are refreshed in place before
+  callbacks run, and `AgentSessionContext` is marked experimental.
+
 ### Bugs Fixed
 
 - Extended W3C trace context and baggage propagation to WebSocket connections so spans created by `invocations_ws` handlers inherit caller context and A365 correlation data.
 
 ### Other Changes
 
-- Changed the default SSE keep-alive interval to 15 seconds. Set `SSE_KEEPALIVE_INTERVAL=0` to disable keep-alive comments.
+- Changed the default SSE keep-alive interval to 15 seconds. Set
+  `SSE_KEEPALIVE_INTERVAL=0` to disable keep-alive comments.
 
 ## 2.2.0 (2026-09-23)
 

@@ -5,7 +5,7 @@ import asyncio
 import inspect
 import logging
 
-from azure.ai.agentserver.core import experimental
+from azure.ai.agentserver.core import AgentSessionContext, experimental
 from azure.ai.agentserver.core._experimental import (
     DISABLE_EXPERIMENTAL_WARNING_ENV_VAR,
     EXPERIMENTAL_CLASS_MESSAGE,
@@ -167,3 +167,14 @@ def test_resilient_task_decorator_factories_are_experimental(caplog) -> None:
     assert task.__doc__.startswith(".. note::")
     assert multi_turn_task.__doc__.startswith(".. note::")
     assert len(caplog.records) == 2
+
+
+def test_agent_session_context_is_experimental(caplog) -> None:
+    _warning_cache.clear()
+
+    with caplog.at_level(logging.WARNING, logger=experimental.__module__):
+        AgentSessionContext("session", "restore")
+
+    assert AgentSessionContext.__doc__.startswith(".. note::")
+    assert EXPERIMENTAL_CLASS_MESSAGE in AgentSessionContext.__doc__
+    assert len(caplog.records) == 1
