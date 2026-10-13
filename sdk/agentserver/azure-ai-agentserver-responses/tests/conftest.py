@@ -16,6 +16,10 @@ _PROJECT_ROOT = str(Path(__file__).resolve().parent.parent)
 if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
+# Tests host servers in-process and expect tasks to start during ordinary cold
+# startup, not to wait for a memory-snapshot after-restore hook.
+os.environ.setdefault("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "false")
+
 
 def pytest_configure(config):
     """Register custom pytest markers used by this package."""
