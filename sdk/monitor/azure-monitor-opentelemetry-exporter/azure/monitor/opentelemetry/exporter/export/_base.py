@@ -523,11 +523,13 @@ class BaseExporter:
                             redirect_has_headers = False
                         if redirect_has_headers and url.scheme and url.netloc:  # pylint: disable=E0606
                             current_url = urlparse(self.client._config.host)  # pylint: disable=W0212
-                            # Refuse cross-origin redirects so an attacker-controlled
-                            # `Location` header cannot cause the auth policy to attach
-                            # a freshly-signed Authorization header for a foreign host
-                            # on the recursive _transmit call.
-                            if not self._is_same_registered_domain(current_url.netloc, url.netloc):
+                            # Refuse non-HTTPS and cross-origin redirects so an attacker-controlled
+                            # `Location` header cannot downgrade telemetry to plaintext or cause the
+                            # auth policy to attach a freshly-signed Authorization header for a foreign
+                            # host on the recursive _transmit call.
+                            if url.scheme.lower() != "https" or not self._is_same_registered_domain(
+                                current_url.netloc, url.netloc
+                            ):
                                 if not self._is_stats_exporter():
                                     if self._should_collect_customer_sdkstats():
                                         track_dropped_items(
@@ -536,7 +538,7 @@ class BaseExporter:
                                             _exception_categories.CLIENT_EXCEPTION.value,
                                         )
                                     logger.error(
-                                        "Refusing cross-origin redirect to %s://%s.",
+                                        "Refusing redirect to %s://%s.",
                                         url.scheme,
                                         url.netloc,
                                     )

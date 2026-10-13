@@ -990,6 +990,24 @@ class TestBaseExporter(unittest.TestCase):
             self.assertEqual(post.call_count, 1)
             self.assertEqual(self._base.client._config.host, prev_host)
 
+    def test_transmit_http_error_redirect_refuses_non_https(self):
+        """A redirect to the same registered domain over http:// must be refused
+        so a server (or man-in-the-middle) cannot downgrade telemetry transmission
+        to plaintext by issuing a redirect."""
+        response = HttpResponse(None, None)
+        response.status_code = 307
+        # Same registered domain as the default ingestion host, but http:// instead
+        # of https://. The host check alone would permit this.
+        response.headers = {"location": "http://westus.services.visualstudio.com"}
+        prev_host = self._base.client._config.host
+        error = HttpResponseError(response=response)
+        with mock.patch.object(AzureMonitorClient, "track") as post:
+            post.side_effect = error
+            result = self._base._transmit(self._envelopes_to_export)
+            self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+            self.assertEqual(post.call_count, 1)
+            self.assertEqual(self._base.client._config.host, prev_host)
+
     def test_is_same_registered_domain(self):
         same = self._base._is_same_registered_domain
         # Same host (exact match) is always safe, even when not under a
