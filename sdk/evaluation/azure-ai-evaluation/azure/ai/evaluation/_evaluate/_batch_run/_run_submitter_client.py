@@ -7,6 +7,7 @@ import logging
 import pandas as pd
 import sys
 import itertools
+import math
 from collections import defaultdict
 from concurrent.futures import Future
 from os import PathLike
@@ -21,11 +22,64 @@ from ..._legacy._adapters.types import AttrDict
 from ..._legacy._common._thread_pool_executor_with_context import ThreadPoolExecutorWithContext
 from ..._evaluate._utils import _has_aggregator
 from ..._constants import Prefixes, PF_BATCH_TIMEOUT_SEC
+from ..._evaluators._common._decision_execution import DecisionEvaluationException
 
 from .._utils import get_int_env_var as get_int
 
 LOGGER = logging.getLogger("run")
 MISSING_VALUE: Final[int] = sys.maxsize
+
+
+def _decision_error_metadata(exception: DecisionEvaluationException) -> Dict[str, Any]:
+    """Keep only measured usage, validated provenance, and transport receipts for failed Decision rows."""
+    properties: Dict[str, Any] = {}
+    semantic_properties = exception.properties or {}
+    for key in ("prompt_tokens", "completion_tokens", "total_tokens"):
+        value = semantic_properties.get(key)
+        if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
+            properties[key] = value
+    model = semantic_properties.get("model")
+    if isinstance(model, str) and model.strip():
+        properties["model"] = model
+    native = semantic_properties.get("decision_model")
+    if isinstance(native, dict):
+        provenance = {
+            key: native[key]
+            for key in ("deployment", "model", "rubric_hash", "status_rubric_hash", "reason_type")
+            if isinstance(native.get(key), str)
+        }
+        for key in ("status_completion_probability", "status_probability_threshold"):
+            value = native.get(key)
+            if (
+                isinstance(value, (int, float))
+                and not isinstance(value, bool)
+                and math.isfinite(value)
+                and 0 <= value <= 1
+            ):
+                provenance[key] = value
+        if provenance:
+            properties["decision_model"] = provenance
+    if exception.observations:
+        receipts = []
+        for observation in exception.observations:
+            receipt = {
+                "attempt": observation.attempt,
+                "outcome": observation.outcome,
+                "http_status": (
+                    observation.http_status
+                    if isinstance(observation.http_status, int) and not isinstance(observation.http_status, bool)
+                    else None
+                ),
+                "model": (
+                    observation.model if isinstance(observation.model, str) and observation.model.strip() else None
+                ),
+            }
+            for key in ("input_tokens", "output_tokens"):
+                value = getattr(observation, key)
+                receipt[key] = value if isinstance(value, int) and not isinstance(value, bool) and value >= 0 else None
+            receipts.append(receipt)
+        properties["decision_request_observations"] = receipts
+    return {"code": exception.category.value, "blame": exception.blame.value, "properties": properties}
 
 
 class RunSubmitterClient:
@@ -154,12 +208,15 @@ class RunSubmitterClient:
 
         # Collect per-line error messages for failed lines
         per_line_errors: Dict[int, str] = {}
+        per_line_error_metadata: Dict[int, Dict[str, Any]] = {}
         if run.result and run.result.details:
             for detail in run.result.details:
                 if detail.error and detail.error.exception:
                     per_line_errors[detail.index] = str(detail.error.exception)
+                    if isinstance(detail.error.exception, DecisionEvaluationException):
+                        per_line_error_metadata[detail.index] = _decision_error_metadata(detail.error.exception)
 
-        return {
+        summary = {
             "status": run.status.value,
             "duration": str(run.duration),
             "completed_lines": total_lines - failed_lines,
@@ -177,6 +234,9 @@ class RunSubmitterClient:
                 else None
             ),
         }
+        if per_line_error_metadata:
+            summary["per_line_error_metadata"] = per_line_error_metadata
+        return summary
 
     @staticmethod
     def _get_run(run: BatchClientRun) -> Run:

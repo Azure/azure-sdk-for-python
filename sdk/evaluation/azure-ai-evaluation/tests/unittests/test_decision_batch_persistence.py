@@ -1,0 +1,311 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
+"""Decision failure metadata through the actual batch summary and row conversion."""
+
+import asyncio
+import json
+import logging
+
+import pandas as pd
+import pytest
+from azure.core.pipeline.transport import AsyncHttpTransport, HttpResponse
+
+from azure.ai.evaluation import F1ScoreEvaluator
+from azure.ai.evaluation._evaluate._batch_run import RunSubmitterClient
+from azure.ai.evaluation._evaluate._evaluate import _convert_single_row_to_aoai_format
+from azure.ai.evaluation._evaluators._common import DecisionExecutionPolicy, DecisionRequestObservation
+from azure.ai.evaluation._evaluators._common._decision_execution import DecisionEvaluationException
+from azure.ai.evaluation._evaluators._common._decision_strategy import BinaryScoring, DecisionEvaluationStrategy
+from azure.ai.evaluation._evaluators._common._model_runners import DecisionModelRunner
+from azure.ai.evaluation._evaluators._common import _model_runners
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._http_utils import AsyncHttpPipeline
+
+pytestmark = pytest.mark.unittest
+
+CONFIG = {
+    "type": "decision",
+    "azure_endpoint": "https://example.services.ai.azure.com",
+    "azure_deployment": "Decision-1",
+    "api_key": "test-key-not-for-persistence",
+}
+QUESTIONS = {
+    "status": {"type": "noul", "instructions": "Applicable?"},
+    "task_completion": {"type": "noul", "instructions": "Completed?"},
+}
+CRITERIA = {
+    "judge": {"metrics": ["task_completion"], "type": "azure_ai_evaluator"},
+    "f1": {"metrics": ["f1_score"], "type": "azure_ai_evaluator"},
+}
+
+
+def payload(status=0.9):
+    return {
+        "model": "decision-native",
+        "answers": {"status": {"type": "noul", "noul": status}, "task_completion": {"type": "noul", "noul": 0.9}},
+        "usage": {"input_tokens": 120, "output_tokens": 3},
+    }
+
+
+@pytest.fixture
+def batch_client():
+    client = RunSubmitterClient()
+    try:
+        yield client
+    finally:
+        client._thread_pool.shutdown(wait=True)
+
+
+def convert_batch(client, judge, tmp_path, rows=1):
+    data = pd.DataFrame([{"query": "synthetic", "response": "synthetic", "ground_truth": "synthetic"}] * rows)
+    judge_run = client.run(judge, data, evaluator_name="judge", column_mapping={"query": "${data.query}"})
+    f1_run = client.run(
+        F1ScoreEvaluator(),
+        data,
+        evaluator_name="f1",
+        column_mapping={"response": "${data.response}", "ground_truth": "${data.ground_truth}"},
+    )
+    judge_details = client.get_details(judge_run, all_results=True)
+    f1_details = client.get_details(f1_run, all_results=True)
+    summaries = {"judge": client.get_run_summary(judge_run), "f1": client.get_run_summary(f1_run)}
+    converted = []
+    for index in range(rows):
+        row = {}
+        for name, details in (("judge", judge_details), ("f1", f1_details)):
+            for key, value in details.to_dict(orient="records")[index].items():
+                row[key.replace("outputs.", f"outputs.{name}.", 1)] = value
+        converted.append(
+            _convert_single_row_to_aoai_format(
+                row, index, None, None, 0, CRITERIA, summaries, logging.getLogger("test")
+            )
+        )
+    path = tmp_path / "persisted.json"
+    path.write_text(json.dumps(converted, allow_nan=False), encoding="utf-8")
+    persisted = json.loads(path.read_text(encoding="utf-8"))
+    for row in persisted:
+        f1 = next(result for result in row["results"] if result["name"] == "f1")
+        assert f1["score"] == 1 and f1["status"] == "completed"
+        assert "error" not in (f1.get("sample") or {})
+    return summaries, persisted
+
+
+def strategy(runner):
+    return DecisionEvaluationStrategy(
+        runner,
+        result_key="task_completion",
+        error_target=ErrorTarget.EVALUATE,
+        questions=QUESTIONS,
+        scoring=BinaryScoring(0.75),
+        threshold=1,
+        timeout=2,
+    )
+
+
+class TestDecisionBatchPersistence:
+    @pytest.mark.parametrize("status", [float("nan"), float("inf"), "bad"])
+    def test_semantic_failure_retains_measured_usage_and_hashes(self, batch_client, tmp_path, status):
+        class Runner:
+            deployment = "Decision-1"
+
+            async def __call__(self, **kwargs):
+                return payload(status)
+
+        async def judge(query):
+            return await strategy(Runner()).evaluate({"query": query})
+
+        summary, rows = convert_batch(batch_client, judge, tmp_path)
+        result = next(item for item in rows[0]["results"] if item["name"] == "judge")
+        assert result["status"] == "error" and result["score"] is None and result["passed"] is None
+        assert result["sample"]["error"]["blame"] == "SystemError"
+        assert result["sample"]["error"]["code"] == "FAILED_EXECUTION"
+        assert result["sample"]["usage"] == {"prompt_tokens": 120, "completion_tokens": 3, "total_tokens": 123}
+        assert result["sample"]["model"] == "decision-native"
+        assert result["properties"]["total_tokens"] == 123
+        assert len(result["properties"]["decision_model"]["rubric_hash"]) == 64
+        assert "native_status_answer" not in result["properties"]["decision_model"]
+        assert summary["judge"]["failed_lines"] == 1
+
+    @pytest.mark.parametrize("status, expected", [(0.9, "completed"), (0.1, "skipped")])
+    def test_success_and_skip_are_not_stamped_as_errors(self, batch_client, tmp_path, status, expected):
+        class Runner:
+            deployment = "Decision-1"
+
+            async def __call__(self, **kwargs):
+                return payload(status)
+
+        async def judge(query):
+            return await strategy(Runner()).evaluate({"query": query})
+
+        summary, rows = convert_batch(batch_client, judge, tmp_path)
+        result = next(item for item in rows[0]["results"] if item["name"] == "judge")
+        assert result["status"] == expected
+        assert "error" not in (result.get("sample") or {})
+        assert "per_line_error_metadata" not in summary["judge"]
+
+    @pytest.mark.parametrize(
+        "case", ["malformed_shape", "invalid_json", "partial_usage", "precancel", "inflight_cancel", "billed_cancel"]
+    )
+    def test_real_pipeline_failure_receipts_survive_batch_conversion(self, batch_client, tmp_path, monkeypatch, case):
+        cancelled = False
+
+        class Response(HttpResponse):
+            def __init__(self, request):
+                super().__init__(request, None)
+                self.status_code = 429 if case == "billed_cancel" else 200
+                self.headers = {"Retry-After": "10"} if case == "billed_cancel" else {}
+
+            def body(self):
+                if case == "invalid_json":
+                    return b"not-json"
+                return json.dumps(
+                    {
+                        "model": "decision-native",
+                        "answers": {},
+                        "usage": {"input_tokens": True if case == "partial_usage" else 12, "output_tokens": 4},
+                    }
+                ).encode()
+
+        class Transport(AsyncHttpTransport):
+            async def open(self):
+                pass
+
+            async def close(self):
+                pass
+
+            async def __aexit__(self, *_):
+                await self.close()
+
+            async def send(self, request, **kwargs):
+                if case == "inflight_cancel":
+                    await asyncio.sleep(10)
+                return Response(request)
+
+        monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: AsyncHttpPipeline(transport=Transport()))
+
+        def observer(receipt):
+            nonlocal cancelled
+            if case == "billed_cancel":
+                cancelled = True
+
+        async def judge(query):
+            nonlocal cancelled
+            cancelled = case == "precancel"
+            handle = None
+            if case == "inflight_cancel":
+
+                def cancel():
+                    nonlocal cancelled
+                    cancelled = True
+
+                handle = asyncio.get_running_loop().call_later(0.02, cancel)
+            try:
+                runner = DecisionModelRunner(
+                    CONFIG,
+                    execution_policy=DecisionExecutionPolicy(
+                        max_retries=1,
+                        cancellation_requested=lambda: cancelled,
+                        observer=observer,
+                    ),
+                )
+                return await strategy(runner).evaluate({"query": query})
+            finally:
+                if handle is not None:
+                    handle.cancel()
+
+        _, rows = convert_batch(batch_client, judge, tmp_path)
+        result = next(item for item in rows[0]["results"] if item["name"] == "judge")
+        assert result["status"] == "error" and result["score"] is None and result["passed"] is None
+        receipts = result["properties"]["decision_request_observations"]
+        assert all(
+            set(receipt) == {"attempt", "outcome", "http_status", "input_tokens", "output_tokens", "model"}
+            for receipt in receipts
+        )
+        assert "usage" not in result["sample"] and "model" not in result["sample"]
+        if case in ("malformed_shape", "partial_usage", "billed_cancel"):
+            assert receipts[0]["input_tokens"] == (None if case == "partial_usage" else 12)
+            assert receipts[0]["output_tokens"] == 4 and receipts[0]["model"] == "decision-native"
+        else:
+            assert receipts[0]["input_tokens"] is None and receipts[0]["output_tokens"] is None
+        if "cancel" in case:
+            assert result["sample"]["error"]["blame"] == "UserError"
+            assert receipts[-1]["outcome"] == "cancelled"
+            assert receipts[-1]["attempt"] == (0 if case == "precancel" else 1)
+        assert "test-key-not-for-persistence" not in json.dumps(result)
+        assert "synthetic" not in json.dumps(result["properties"])
+
+    def test_per_line_classification_and_metadata_do_not_bleed(self, batch_client, tmp_path):
+        calls = 0
+
+        async def judge(query):
+            nonlocal calls
+            index = calls
+            calls += 1
+            if index == 0:
+                raise DecisionEvaluationException(
+                    "Cancelled.",
+                    category=ErrorCategory.FAILED_EXECUTION,
+                    blame=ErrorBlame.USER_ERROR,
+                    observations=(DecisionRequestObservation(0, "cancelled"),),
+                )
+            if index == 1:
+                raise DecisionEvaluationException(
+                    "Invalid.",
+                    category=ErrorCategory.INVALID_VALUE,
+                    blame=ErrorBlame.SYSTEM_ERROR,
+                    properties={
+                        "prompt_tokens": 7,
+                        "completion_tokens": True,
+                        "total_tokens": float("nan"),
+                        "evidence": "secret",
+                        "model": "decision-native",
+                        "decision_model": {"rubric_hash": "known", "native_answer": {"noul": float("nan")}},
+                    },
+                )
+            return {"task_completion": 1, "task_completion_score": 1, "task_completion_passed": True}
+
+        _, rows = convert_batch(batch_client, judge, tmp_path, rows=3)
+        first, second, third = [next(item for item in row["results"] if item["name"] == "judge") for row in rows]
+        assert first["sample"]["error"]["blame"] == "UserError"
+        assert first["sample"]["error"]["code"] == "FAILED_EXECUTION"
+        assert second["sample"]["error"]["blame"] == "SystemError"
+        assert second["sample"]["error"]["code"] == "INVALID VALUE"
+        assert second["sample"]["usage"] == {"prompt_tokens": 7}
+        assert second["properties"] == {
+            "prompt_tokens": 7,
+            "model": "decision-native",
+            "decision_model": {"rubric_hash": "known"},
+        }
+        assert third["status"] == "completed" and "error" not in (third.get("sample") or {})
+
+    def test_other_exceptions_preserve_summary_and_error_row_shape(self, batch_client, tmp_path):
+        async def judge(query):
+            raise EvaluationException(
+                "Ordinary error.", category=ErrorCategory.INVALID_VALUE, blame=ErrorBlame.USER_ERROR
+            )
+
+        summaries, rows = convert_batch(batch_client, judge, tmp_path)
+        assert set(summaries["judge"]) == {
+            "status",
+            "duration",
+            "completed_lines",
+            "failed_lines",
+            "log_path",
+            "per_line_errors",
+            "error_message",
+            "error_code",
+        }
+        result = next(item for item in rows[0]["results"] if item["name"] == "judge")
+        assert result == {
+            "type": "azure_ai_evaluator",
+            "name": "judge",
+            "metric": "task_completion",
+            "score": None,
+            "label": None,
+            "reason": None,
+            "threshold": None,
+            "passed": None,
+            "status": "error",
+            "sample": {"error": {"code": summaries["judge"]["error_code"], "message": "(UserError) Ordinary error."}},
+        }

@@ -3301,6 +3301,8 @@ def _add_error_summaries(
     for criteria that failed during evaluation, ensuring proper error reporting.
     When per-line errors are available, only the error for the current row is used;
     rows that succeeded are not stamped with another row's error.
+    Decision-only per-line metadata preserves known usage/provenance in ``properties`` and the
+    existing ``sample`` schema, without treating failed attempts as completed scoring results.
 
     :param run_output_results: List to append error result objects to
     :type run_output_results: List[Dict[str, Any]]
@@ -3357,6 +3359,7 @@ def _add_error_summaries(
         # Use per-line error if available, otherwise fall back to batch-level error
         per_line_errors = criteria_summary.get("per_line_errors", {})
         per_line_error_msg = per_line_errors.get(row_idx, None)
+        decision_error_metadata = criteria_summary.get("per_line_error_metadata", {}).get(row_idx)
 
         if per_line_error_msg is not None:
             # This row has a specific error
@@ -3364,6 +3367,9 @@ def _add_error_summaries(
                 "code": criteria_summary.get("error_code"),
                 "message": per_line_error_msg,
             }
+            if decision_error_metadata is not None:
+                error_info["code"] = decision_error_metadata["code"]
+                error_info["blame"] = decision_error_metadata["blame"]
         elif per_line_errors:
             # Per-line errors exist but not for this row — this row succeeded, skip error stamping
             continue
@@ -3395,6 +3401,18 @@ def _add_error_summaries(
                 "status": "error",
                 "sample": sample,
             }
+            if decision_error_metadata is not None:
+                properties = decision_error_metadata["properties"]
+                error_result["properties"] = properties
+                usage = {
+                    key: properties[key]
+                    for key in ("prompt_tokens", "completion_tokens", "total_tokens")
+                    if key in properties
+                }
+                if usage:
+                    sample["usage"] = usage
+                if "model" in properties:
+                    sample["model"] = properties["model"]
             run_output_results.append(error_result)
 
 
