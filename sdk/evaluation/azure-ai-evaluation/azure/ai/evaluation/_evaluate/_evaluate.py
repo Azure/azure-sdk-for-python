@@ -1140,6 +1140,14 @@ def _build_internal_log_attributes(
     if event_data.get("threshold") is not None:
         internal_log_attributes["gen_ai.evaluation.threshold"] = str(event_data["threshold"])
 
+    status = event_data.get("status")
+    if isinstance(status, str) and status:
+        internal_log_attributes["gen_ai.evaluation.status"] = status
+
+    passed = event_data.get("passed")
+    if isinstance(passed, bool):
+        internal_log_attributes["gen_ai.evaluation.passed"] = str(passed).lower()
+
     # Add testing criteria details if present
     testing_criteria_name = event_data.get("name")
     if testing_criteria_name:
@@ -2826,6 +2834,9 @@ def _extract_metric_values(
                     criteria_name,
                     type(metric_value).__name__,
                 )
+            continue
+        # Skip per-turn breakdown columns; they are per-turn lists, not scalar AOAI result fields, and misroute by suffix into scalar slots.
+        if metric_key == "evaluation_per_turn" or metric_key.startswith("evaluation_per_turn."):
             continue
         metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
         temp_result_per_metric = {}

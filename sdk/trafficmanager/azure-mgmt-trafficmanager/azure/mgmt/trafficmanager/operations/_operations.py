@@ -30,12 +30,11 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import TrafficManagerManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -54,7 +53,7 @@ def build_endpoints_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -90,7 +89,7 @@ def build_endpoints_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -128,7 +127,7 @@ def build_endpoints_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -165,7 +164,7 @@ def build_endpoints_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -195,7 +194,7 @@ def build_profiles_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -224,7 +223,7 @@ def build_profiles_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -255,7 +254,7 @@ def build_profiles_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -285,7 +284,7 @@ def build_profiles_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -313,7 +312,7 @@ def build_profiles_list_by_subscription_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -339,7 +338,7 @@ def build_profiles_list_by_resource_group_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -367,7 +366,7 @@ def build_profiles_check_traffic_manager_relative_dns_name_availability_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -391,7 +390,7 @@ def build_profiles_check_traffic_manager_name_availability_v2_request(  # pylint
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -417,7 +416,7 @@ def build_geographic_hierarchies_get_default_request(**kwargs: Any) -> HttpReque
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -445,7 +444,7 @@ def build_heat_map_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -478,7 +477,7 @@ def build_traffic_manager_user_metrics_keys_get_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -504,7 +503,7 @@ def build_traffic_manager_user_metrics_keys_create_or_update_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -530,7 +529,7 @@ def build_traffic_manager_user_metrics_keys_delete_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -550,7 +549,7 @@ def build_traffic_manager_user_metrics_keys_delete_request(  # pylint: disable=n
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class EndpointsOperations:
+class EndpointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -695,7 +694,7 @@ class EndpointsOperations:
         profile_name: str,
         endpoint_type: Union[str, _models.EndpointType],
         endpoint_name: str,
-        parameters: JSON,
+        parameters: _types.Endpoint,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -714,7 +713,7 @@ class EndpointsOperations:
         :type endpoint_name: str
         :param parameters: The Traffic Manager endpoint parameters supplied to the CreateOrUpdate
          operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.trafficmanager.types.Endpoint
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -765,7 +764,7 @@ class EndpointsOperations:
         profile_name: str,
         endpoint_type: Union[str, _models.EndpointType],
         endpoint_name: str,
-        parameters: Union[_models.Endpoint, JSON, IO[bytes]],
+        parameters: Union[_models.Endpoint, _types.Endpoint, IO[bytes]],
         **kwargs: Any,
     ) -> _models.Endpoint:
         """Create or update a Traffic Manager endpoint.
@@ -781,8 +780,9 @@ class EndpointsOperations:
         :param endpoint_name: The name of the Traffic Manager endpoint. Required.
         :type endpoint_name: str
         :param parameters: The Traffic Manager endpoint parameters supplied to the CreateOrUpdate
-         operation. Is one of the following types: Endpoint, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.trafficmanager.models.Endpoint or JSON or IO[bytes]
+         operation. Is either a Endpoint type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.trafficmanager.models.Endpoint or
+         ~azure.mgmt.trafficmanager.types.Endpoint or IO[bytes]
         :return: Endpoint. The Endpoint is compatible with MutableMapping
         :rtype: ~azure.mgmt.trafficmanager.models.Endpoint
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -898,7 +898,7 @@ class EndpointsOperations:
         profile_name: str,
         endpoint_type: Union[str, _models.EndpointType],
         endpoint_name: str,
-        parameters: JSON,
+        parameters: _types.Endpoint,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -917,7 +917,7 @@ class EndpointsOperations:
         :type endpoint_name: str
         :param parameters: The Traffic Manager endpoint parameters supplied to the Update operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.trafficmanager.types.Endpoint
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -968,7 +968,7 @@ class EndpointsOperations:
         profile_name: str,
         endpoint_type: Union[str, _models.EndpointType],
         endpoint_name: str,
-        parameters: Union[_models.Endpoint, JSON, IO[bytes]],
+        parameters: Union[_models.Endpoint, _types.Endpoint, IO[bytes]],
         **kwargs: Any,
     ) -> _models.Endpoint:
         """Update a Traffic Manager endpoint.
@@ -984,8 +984,9 @@ class EndpointsOperations:
         :param endpoint_name: The name of the Traffic Manager endpoint. Required.
         :type endpoint_name: str
         :param parameters: The Traffic Manager endpoint parameters supplied to the Update operation. Is
-         one of the following types: Endpoint, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.trafficmanager.models.Endpoint or JSON or IO[bytes]
+         either a Endpoint type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.trafficmanager.models.Endpoint or
+         ~azure.mgmt.trafficmanager.types.Endpoint or IO[bytes]
         :return: Endpoint. The Endpoint is compatible with MutableMapping
         :rtype: ~azure.mgmt.trafficmanager.models.Endpoint
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1147,7 +1148,7 @@ class EndpointsOperations:
         return deserialized  # type: ignore
 
 
-class ProfilesOperations:
+class ProfilesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1269,7 +1270,7 @@ class ProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        parameters: JSON,
+        parameters: _types.Profile,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -1283,7 +1284,7 @@ class ProfilesOperations:
         :type profile_name: str
         :param parameters: The Traffic Manager profile parameters supplied to the CreateOrUpdate
          operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.trafficmanager.types.Profile
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1325,7 +1326,7 @@ class ProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        parameters: Union[_models.Profile, JSON, IO[bytes]],
+        parameters: Union[_models.Profile, _types.Profile, IO[bytes]],
         **kwargs: Any,
     ) -> _models.Profile:
         """Create or update a Traffic Manager profile.
@@ -1336,8 +1337,9 @@ class ProfilesOperations:
         :param profile_name: The name of the Traffic Manager profile. Required.
         :type profile_name: str
         :param parameters: The Traffic Manager profile parameters supplied to the CreateOrUpdate
-         operation. Is one of the following types: Profile, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.trafficmanager.models.Profile or JSON or IO[bytes]
+         operation. Is either a Profile type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.trafficmanager.models.Profile or
+         ~azure.mgmt.trafficmanager.types.Profile or IO[bytes]
         :return: Profile. The Profile is compatible with MutableMapping
         :rtype: ~azure.mgmt.trafficmanager.models.Profile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1442,7 +1444,7 @@ class ProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        parameters: JSON,
+        parameters: _types.Profile,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -1456,7 +1458,7 @@ class ProfilesOperations:
         :type profile_name: str
         :param parameters: The Traffic Manager profile parameters supplied to the Update operation.
          Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.trafficmanager.types.Profile
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1498,7 +1500,7 @@ class ProfilesOperations:
         self,
         resource_group_name: str,
         profile_name: str,
-        parameters: Union[_models.Profile, JSON, IO[bytes]],
+        parameters: Union[_models.Profile, _types.Profile, IO[bytes]],
         **kwargs: Any,
     ) -> _models.Profile:
         """Update a Traffic Manager profile.
@@ -1509,8 +1511,9 @@ class ProfilesOperations:
         :param profile_name: The name of the Traffic Manager profile. Required.
         :type profile_name: str
         :param parameters: The Traffic Manager profile parameters supplied to the Update operation. Is
-         one of the following types: Profile, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.trafficmanager.models.Profile or JSON or IO[bytes]
+         either a Profile type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.trafficmanager.models.Profile or
+         ~azure.mgmt.trafficmanager.types.Profile or IO[bytes]
         :return: Profile. The Profile is compatible with MutableMapping
         :rtype: ~azure.mgmt.trafficmanager.models.Profile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1705,7 +1708,10 @@ class ProfilesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1799,7 +1805,10 @@ class ProfilesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1865,12 +1874,17 @@ class ProfilesOperations:
 
     @overload
     def check_traffic_manager_relative_dns_name_availability(  # pylint: disable=name-too-long
-        self, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        parameters: _types.CheckTrafficManagerRelativeDnsNameAvailabilityParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> _models.TrafficManagerNameAvailability:
         """Checks the availability of a Traffic Manager Relative DNS name.
 
         :param parameters: The request body. Required.
-        :type parameters: JSON
+        :type parameters:
+         ~azure.mgmt.trafficmanager.types.CheckTrafficManagerRelativeDnsNameAvailabilityParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1900,16 +1914,21 @@ class ProfilesOperations:
     @distributed_trace
     def check_traffic_manager_relative_dns_name_availability(  # pylint: disable=name-too-long
         self,
-        parameters: Union[_models.CheckTrafficManagerRelativeDnsNameAvailabilityParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.CheckTrafficManagerRelativeDnsNameAvailabilityParameters,
+            _types.CheckTrafficManagerRelativeDnsNameAvailabilityParameters,
+            IO[bytes],
+        ],
         **kwargs: Any,
     ) -> _models.TrafficManagerNameAvailability:
         """Checks the availability of a Traffic Manager Relative DNS name.
 
-        :param parameters: The request body. Is one of the following types:
-         CheckTrafficManagerRelativeDnsNameAvailabilityParameters, JSON, IO[bytes] Required.
+        :param parameters: The request body. Is either a
+         CheckTrafficManagerRelativeDnsNameAvailabilityParameters type or a IO[bytes] type. Required.
         :type parameters:
          ~azure.mgmt.trafficmanager.models.CheckTrafficManagerRelativeDnsNameAvailabilityParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.trafficmanager.types.CheckTrafficManagerRelativeDnsNameAvailabilityParameters or
+         IO[bytes]
         :return: TrafficManagerNameAvailability. The TrafficManagerNameAvailability is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.trafficmanager.models.TrafficManagerNameAvailability
@@ -2003,12 +2022,17 @@ class ProfilesOperations:
 
     @overload
     def check_traffic_manager_name_availability_v2(  # pylint: disable=name-too-long
-        self, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        parameters: _types.CheckTrafficManagerRelativeDnsNameAvailabilityParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> _models.TrafficManagerNameAvailability:
         """Checks the availability of a Traffic Manager Relative DNS name.
 
         :param parameters: The request body. Required.
-        :type parameters: JSON
+        :type parameters:
+         ~azure.mgmt.trafficmanager.types.CheckTrafficManagerRelativeDnsNameAvailabilityParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2038,16 +2062,21 @@ class ProfilesOperations:
     @distributed_trace
     def check_traffic_manager_name_availability_v2(  # pylint: disable=name-too-long
         self,
-        parameters: Union[_models.CheckTrafficManagerRelativeDnsNameAvailabilityParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.CheckTrafficManagerRelativeDnsNameAvailabilityParameters,
+            _types.CheckTrafficManagerRelativeDnsNameAvailabilityParameters,
+            IO[bytes],
+        ],
         **kwargs: Any,
     ) -> _models.TrafficManagerNameAvailability:
         """Checks the availability of a Traffic Manager Relative DNS name.
 
-        :param parameters: The request body. Is one of the following types:
-         CheckTrafficManagerRelativeDnsNameAvailabilityParameters, JSON, IO[bytes] Required.
+        :param parameters: The request body. Is either a
+         CheckTrafficManagerRelativeDnsNameAvailabilityParameters type or a IO[bytes] type. Required.
         :type parameters:
          ~azure.mgmt.trafficmanager.models.CheckTrafficManagerRelativeDnsNameAvailabilityParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.trafficmanager.types.CheckTrafficManagerRelativeDnsNameAvailabilityParameters or
+         IO[bytes]
         :return: TrafficManagerNameAvailability. The TrafficManagerNameAvailability is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.trafficmanager.models.TrafficManagerNameAvailability
@@ -2119,7 +2148,7 @@ class ProfilesOperations:
         return deserialized  # type: ignore
 
 
-class GeographicHierarchiesOperations:
+class GeographicHierarchiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2202,7 +2231,7 @@ class GeographicHierarchiesOperations:
         return deserialized  # type: ignore
 
 
-class HeatMapOperations:
+class HeatMapOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2312,7 +2341,7 @@ class HeatMapOperations:
         return deserialized  # type: ignore
 
 
-class TrafficManagerUserMetricsKeysOperations:
+class TrafficManagerUserMetricsKeysOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

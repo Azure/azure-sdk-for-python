@@ -321,15 +321,11 @@ class TestComputeBulkActionsMgmtBulkCreateOperations(AzureMgmtRecordedTestCase):
                             }
                         ],
                     },
-                    "priorityProfile": {
-                        "allocationStrategy": "str",
-                        "evictionPolicy": "str",
-                        "maxPricePerVM": 0.0,
-                        "type": "str",
-                    },
+                    "priorityProfile": {"evictionPolicy": "str", "maxPricePerVM": 0.0, "type": "str"},
                     "capacityType": "str",
                     "createdTime": "2020-02-20 00:00:00",
                     "executionParameters": {
+                        "additionalCreateParameters": {"str": {}},
                         "capacityRecommendationParameters": {
                             "availabilityZones": bool,
                             "desiredLocations": ["str"],
@@ -341,11 +337,6 @@ class TestComputeBulkActionsMgmtBulkCreateOperations(AzureMgmtRecordedTestCase):
                     "minCapacity": 0,
                     "partialFulfillmentPolicy": {"fulfilledCapacity": 0, "mode": "str", "reason": "str"},
                     "provisioningState": "str",
-                    "vmSizesProfile": [{"name": "str", "rank": 0}],
-                    "zoneAllocationPolicy": {
-                        "distributionStrategy": "str",
-                        "zonePreferences": [{"rank": 0, "zone": "str", "targetMaxCapacity": 0}],
-                    },
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
