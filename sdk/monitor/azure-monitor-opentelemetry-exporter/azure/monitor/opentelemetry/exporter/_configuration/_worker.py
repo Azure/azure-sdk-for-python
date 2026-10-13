@@ -152,6 +152,8 @@ class _ConfigurationWorker:
                 # Use current interval on error
                 interval = self.get_refresh_interval_s()
             finally:
+                # Release startup-gated consumers after the first attempt regardless of success.
+                # They receive an empty cache on failure and can initialize with their defaults.
                 if not initial_configuration_complete:
                     self._configuration_manager.complete_initial_configuration()
                     initial_configuration_complete = True

@@ -25,11 +25,14 @@ def collect_statsbeat_metrics(exporter: "BaseExporter") -> None:  # pyright: ign
     if config:
         config_manager = get_configuration_manager()
         if config_manager and config_manager.is_initialized():
+            # Do not construct the SDKStats pipeline until the randomized startup delay and first
+            # OneSettings attempt have completed, preventing both short- and long-interval exports.
             config_manager.register_callback(get_statsbeat_configuration_callback)
             config_manager.register_initial_configuration_callback(
                 partial(_initialize_statsbeat_from_initial_configuration, config)
             )
         else:
+            # Control-plane-disabled scenarios have no OneSettings attempt to wait for.
             get_statsbeat_manager().initialize(config)
 
 
@@ -42,6 +45,7 @@ def _initialize_statsbeat_from_initial_configuration(base_config: StatsbeatConfi
             return
         config = StatsbeatConfig.from_config(base_config, settings)
     else:
+        # A failed first request is represented by empty settings, so retain the built-in destination.
         config = base_config
 
     if config:

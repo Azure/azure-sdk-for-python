@@ -51,6 +51,8 @@ class _ConfigurationManager(metaclass=Singleton):
         # Consecutive transient-error count for exponential backoff on change-detection (e2) calls
         self._backoff_attempts = 0
         self._callbacks = []
+        # Unlike change callbacks, these callbacks are released exactly once after the first request
+        # attempt so dependents can wait for OneSettings without blocking the configuration worker.
         self._initial_configuration_callbacks: List[Callable[[Dict[str, str]], None]] = []
         self._initial_configuration_complete = False
         self._initialized = False
@@ -117,6 +119,8 @@ class _ConfigurationManager(metaclass=Singleton):
             if not self._initial_configuration_complete:
                 self._initial_configuration_callbacks.append(callback)
                 return
+            # A late registration must observe the same initial result rather than wait for a future
+            # configuration change, which may never occur.
             settings = self._current_state.settings_cache.copy()
 
         self._invoke_callback(callback, settings)
@@ -129,6 +133,8 @@ class _ConfigurationManager(metaclass=Singleton):
             self._initial_configuration_complete = True
             callbacks = list(self._initial_configuration_callbacks)
             self._initial_configuration_callbacks.clear()
+            # An empty cache intentionally represents a failed or unusable first attempt and tells
+            # consumers to proceed with their built-in fallback.
             settings = self._current_state.settings_cache.copy()
 
         for callback in callbacks:
