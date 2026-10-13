@@ -27,6 +27,7 @@ from __future__ import annotations
 import asyncio
 from collections.abc import Callable
 
+import httpx
 import pytest
 
 from tests.e2e._crash_harness import CrashHarness
@@ -36,6 +37,35 @@ from tests.e2e.resilience_contract.conftest import (
     poll_until_terminal,
     post_and_get_response_id,
 )
+
+
+async def _cancel_with_retry(
+    client: httpx.AsyncClient,
+    response_id: str,
+    *,
+    timeout_seconds: float = 15.0,
+    poll_interval_seconds: float = 0.2,
+) -> httpx.Response:
+    """POST ``/responses/{id}/cancel``, retrying while the recovery scanner
+    catches up.
+
+    Immediately after ``CrashHarness.restart()``, ``/health/live`` reports
+    ready as soon as the HTTP server binds — before the recovery scanner has
+    necessarily re-registered this response in the new process's in-memory
+    runtime state. A cancel that lands in that window gets a transient 404
+    (no live record yet), which a real client would retry rather than treat
+    as a permanent failure. Returns the first non-404 response, or the last
+    404 response if *timeout_seconds* elapses.
+    """
+    deadline = asyncio.get_event_loop().time() + timeout_seconds
+    last_response: httpx.Response | None = None
+    while asyncio.get_event_loop().time() < deadline:
+        last_response = await client.post(f"/responses/{response_id}/cancel")
+        if last_response.status_code != 404:
+            return last_response
+        await asyncio.sleep(poll_interval_seconds)
+    assert last_response is not None  # loop always runs at least once
+    return last_response
 
 
 @pytest.mark.asyncio
@@ -66,9 +96,17 @@ async def test_client_cancel_during_recovery_settles_cancelled(
         await harness.restart()
 
         # Give the recovered handler a beat to re-enter and reach its
-        # interruptible sleep, then issue the REAL client cancel.
+        # interruptible sleep. The recovery scanner re-registers the
+        # response in the new process's in-memory runtime state
+        # asynchronously after ``/health/live`` already reports ready, so a
+        # fixed sleep here is inherently racy under CI load (e.g. the
+        # coverage-instrumented job): if the real cancel lands before the
+        # scanner has re-registered this response, the endpoint can't find
+        # a live record yet and returns 404. A real client hitting that
+        # transient window would retry, so do the same here with the real
+        # cancel endpoint (no mocking) instead of widening a guessed sleep.
         await asyncio.sleep(1.0)
-        cancel_resp = await harness.client.post(f"/responses/{response_id}/cancel")
+        cancel_resp = await _cancel_with_retry(harness.client, response_id, timeout_seconds=15.0)
         assert cancel_resp.status_code in (
             200,
             202,
