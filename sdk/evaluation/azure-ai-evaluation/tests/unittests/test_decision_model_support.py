@@ -7,15 +7,19 @@
 import asyncio
 import json
 import threading
+from dataclasses import FrozenInstanceError
+from concurrent.futures import ThreadPoolExecutor
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport, HttpResponse
+from azure.core.exceptions import ServiceRequestError
 
 from azure.ai.evaluation import FluencyEvaluator
 from azure.ai.evaluation._evaluators._common import EvaluatorBase, ModelEvaluatorBase, PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common import DecisionExecutionPolicy, DecisionRequestObservation
 from azure.ai.evaluation._evaluators._common import _model_runners
 from azure.ai.evaluation._evaluators._common._decision_strategy import (
     BinaryScoring,
@@ -99,8 +103,10 @@ class FakeClient:
     async def __aexit__(self, *_):
         return False
 
-    async def post(self, url, json=None, headers=None, **options):  # pylint: disable=redefined-outer-name
-        self.calls.append({"url": url, "json": json, "headers": dict(headers), "options": options})
+    async def post(self, url, content=None, headers=None, **options):
+        self.calls.append(
+            {"url": url, "json": json.loads(content), "content": content, "headers": dict(headers), "options": options}
+        )
         if self.delay:
             await asyncio.sleep(self.delay)
         return self.response
@@ -248,9 +254,14 @@ class TestDecisionModelRunnerRequests:
 
         transport = Transport()
         monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: AsyncHttpPipeline(transport=transport))
-        result = run(DecisionModelRunner(DECISION_CONFIG))
+        observations = []
+        result = run(
+            DecisionModelRunner(DECISION_CONFIG, execution_policy=DecisionExecutionPolicy(observer=observations.append))
+        )
         assert transport.calls == 2
         assert result["model"] == "microsoft-decision-1"
+        assert [receipt.attempt for receipt in observations] == [1, 2]
+        assert [receipt.http_status for receipt in observations] == [status, 200]
 
     def test_default_credential_token_acquisition_runs_off_event_loop(self, client):
         from azure.ai.evaluation._legacy._common._async_token_provider import AsyncAzureTokenProvider
@@ -551,3 +562,496 @@ class TestSharedDecisionStrategy:
         )
         properties = asyncio.run(strategy.evaluate({"calls": [1, 2]}))["tool_call_accuracy_properties"]
         assert properties["calls"] == 2 and properties["decision_model"]["deployment"] == "Decision-1"
+
+    def test_skipped_unusable_score_retains_known_usage_and_provenance(self):
+        payload = level_payload(4, status=0.1)
+        payload["answers"]["tool_call_accuracy"]["probabilities"] = None
+        result = asyncio.run(strategy_with(payload, LikertScoring(5)).evaluate({}))
+        assert result["tool_call_accuracy_status"] == "skipped"
+        assert result["tool_call_accuracy"] is None
+        properties = result["tool_call_accuracy_properties"]
+        assert (properties["prompt_tokens"], properties["completion_tokens"], properties["total_tokens"]) == (
+            120,
+            3,
+            123,
+        )
+        assert properties["model"] == "microsoft-decision-1"
+        assert properties["decision_model"]["status_completion_probability"] == 0.1
+        assert "native_answer" not in properties["decision_model"]
+        assert "sample_input" not in properties and "finish_reason" not in properties
+
+    def test_semantic_failure_retains_known_usage_and_provenance(self):
+        payload = level_payload(4)
+        payload["answers"]["tool_call_accuracy"]["confidence"] = float("nan")
+        with pytest.raises(EvaluationException) as raised:
+            asyncio.run(strategy_with(payload, LikertScoring(5)).evaluate({}))
+        assert raised.value.properties["total_tokens"] == 123
+        assert raised.value.properties["decision_model"]["deployment"] == "Decision-1"
+
+    @pytest.mark.parametrize("status, expected", [(0.4999, "skipped"), (0.5, "completed")])
+    def test_applicability_cutoff_remains_fixed(self, status, expected):
+        result = asyncio.run(strategy_with(level_payload(4, status=status), LikertScoring(5)).evaluate({}))
+        assert result["tool_call_accuracy_status"] == expected
+        assert result["tool_call_accuracy_properties"]["decision_model"]["status_probability_threshold"] == 0.5
+
+    def test_successful_properties_preserve_common_metadata_shape(self):
+        properties = asyncio.run(strategy_with(level_payload(4), LikertScoring(5)).evaluate({}))[
+            "tool_call_accuracy_properties"
+        ]
+        assert set(properties) == {
+            "decision_model",
+            "prompt_tokens",
+            "completion_tokens",
+            "total_tokens",
+            "finish_reason",
+            "model",
+            "sample_input",
+            "sample_output",
+        }
+        assert {key: value for key, value in properties.items() if key != "decision_model"} == (
+            ModelEvaluatorBase._get_token_metadata(
+                {
+                    "input_token_count": 120,
+                    "output_token_count": 3,
+                    "total_token_count": 123,
+                    "model_id": "microsoft-decision-1",
+                }
+            )
+        )
+
+
+class TestDecisionExecutionPolicy:
+    def test_policy_and_receipts_are_immutable(self):
+        with pytest.raises(FrozenInstanceError):
+            DecisionExecutionPolicy().max_retries = 4
+        with pytest.raises(FrozenInstanceError):
+            DecisionRequestObservation(1, "response").attempt = 2
+
+    @pytest.mark.parametrize(
+        "options",
+        [
+            {"timeout_seconds": 0},
+            {"timeout_seconds": True},
+            {"timeout_seconds": float("nan")},
+            {"deadline_seconds": -1},
+            {"deadline_seconds": float("inf")},
+            {"max_retries": True},
+            {"max_retries": -1},
+            {"max_retries": 1.5},
+            {"max_request_bytes": 0},
+            {"max_state_question_bytes": False},
+            {"max_response_bytes": "100"},
+            {"observer": "callback"},
+            {"cancellation_requested": False},
+        ],
+    )
+    def test_invalid_policy(self, options):
+        with pytest.raises(ValueError):
+            DecisionExecutionPolicy(**options)
+
+    def test_base_forwards_policy_outside_strict_config(self):
+        policy = DecisionExecutionPolicy(max_retries=0)
+        evaluator = ProbeModelEvaluator(
+            result_key="probe", model_config=DECISION_CONFIG, decision_execution_policy=policy
+        )
+        assert evaluator._decision_model_runner._execution_policy is policy
+        with pytest.raises(EvaluationException, match="Unsupported"):
+            DecisionModelRunner({**DECISION_CONFIG, "decision_execution_policy": policy})
+        with pytest.raises(EvaluationException, match="DecisionExecutionPolicy"):
+            DecisionModelRunner(DECISION_CONFIG, execution_policy={})
+
+    def test_explicit_policy_on_prompty_is_rejected_without_loading_a_flow(self):
+        with patch.object(_model_runners.AsyncPrompty, "load") as load:
+            with pytest.raises(EvaluationException, match="only supported"):
+                ProbeModelEvaluator(
+                    result_key="probe",
+                    prompty_file="probe.prompty",
+                    model_config=CHAT_CONFIG,
+                    decision_execution_policy=DecisionExecutionPolicy(),
+                )
+        load.assert_not_called()
+
+    def test_transport_timeout_and_single_retry_policy(self, client):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        policy = DecisionExecutionPolicy(timeout_seconds=2, max_retries=7)
+        run(DecisionModelRunner(DECISION_CONFIG, execution_policy=policy))
+        retry = client.policies["retry_policy"]
+        assert retry.total_retries == retry.connect_retries == retry.read_retries == retry.status_retries == 7
+        assert client.calls[0]["options"]["connection_timeout"] == 2
+        assert client.calls[0]["options"]["read_timeout"] == 2
+
+    @pytest.mark.parametrize("field", ["max_request_bytes", "max_state_question_bytes"])
+    def test_request_budget_exact_boundary_and_no_send_on_overflow(self, client, field):
+        state = {"query": "\u00e9"}
+        if field == "max_request_bytes":
+            body = {"model": "Decision-1", "state": state, "questions": QUESTIONS}
+            size = len(json.dumps(body, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode("utf-8"))
+        else:
+            size = max(
+                len(
+                    json.dumps(
+                        {"state": state, "question": question},
+                        ensure_ascii=False,
+                        separators=(",", ":"),
+                        allow_nan=False,
+                    ).encode("utf-8")
+                )
+                for question in QUESTIONS.values()
+            )
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        run(
+            DecisionModelRunner(DECISION_CONFIG, execution_policy=DecisionExecutionPolicy(**{field: size})), state=state
+        )
+        assert b"\xc3\xa9" in client.calls[0]["content"] and b"\\u00e9" not in client.calls[0]["content"]
+        client.calls.clear()
+        with pytest.raises(EvaluationException, match="byte budget") as raised:
+            run(
+                DecisionModelRunner(DECISION_CONFIG, execution_policy=DecisionExecutionPolicy(**{field: size - 1})),
+                state=state,
+            )
+        assert not client.calls
+        assert raised.value.observations == (DecisionRequestObservation(0, "request_rejected"),)
+
+    def test_non_json_request_is_rejected_before_authentication_or_network(self, client):
+        with pytest.raises(EvaluationException, match="JSON-serializable") as raised:
+            run(DecisionModelRunner(DECISION_CONFIG), state={"value": float("nan")})
+        assert not client.calls and raised.value.observations[0].outcome == "request_rejected"
+
+    def test_response_budget_exact_boundary(self, client):
+        content = json.dumps(level_payload(4)).encode()
+        client.response = FakeResponse(body=content)
+        run(
+            DecisionModelRunner(
+                DECISION_CONFIG, execution_policy=DecisionExecutionPolicy(max_response_bytes=len(content))
+            )
+        )
+        with pytest.raises(EvaluationException, match="byte budget"):
+            run(
+                DecisionModelRunner(
+                    DECISION_CONFIG, execution_policy=DecisionExecutionPolicy(max_response_bytes=len(content) - 1)
+                )
+            )
+
+    def test_structural_failure_preserves_usage_before_answer_validation(self, client):
+        payload = level_payload(4)
+        payload["answers"] = {}
+        client.response = FakeResponse(body=json.dumps(payload).encode())
+        receipts = []
+        with pytest.raises(EvaluationException, match="invalid response") as raised:
+            run(
+                DecisionModelRunner(DECISION_CONFIG, execution_policy=DecisionExecutionPolicy(observer=receipts.append))
+            )
+        assert receipts == list(raised.value.observations)
+        assert receipts[0].input_tokens == 120 and receipts[0].output_tokens == 3
+        assert receipts[0].model == "microsoft-decision-1"
+
+    def test_unknown_or_invalid_usage_is_not_fabricated(self, client):
+        client.response = FakeResponse(body=json.dumps({"usage": {"input_tokens": True, "output_tokens": 3}}).encode())
+        with pytest.raises(EvaluationException) as raised:
+            run(DecisionModelRunner(DECISION_CONFIG))
+        receipt = raised.value.observations[0]
+        assert receipt.input_tokens is None and receipt.output_tokens == 3 and receipt.model is None
+
+    def test_observer_failure_is_explicit_sanitized_and_retains_receipt(self, client):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        observer = Mock(side_effect=RuntimeError("observer-secret"))
+        with pytest.raises(EvaluationException, match="observer failed") as raised:
+            run(DecisionModelRunner(DECISION_CONFIG, execution_policy=DecisionExecutionPolicy(observer=observer)))
+        assert "observer-secret" not in str(raised.value)
+        assert raised.value.observations[0].input_tokens == 120
+
+    def test_deadline_caps_existing_evaluator_timeout(self, client):
+        client.delay = 1
+        with pytest.raises(EvaluationException, match="timed out") as raised:
+            run(DecisionModelRunner(DECISION_CONFIG, execution_policy=DecisionExecutionPolicy(deadline_seconds=0.01)))
+        assert raised.value.observations[-1].outcome == "timeout"
+
+    def test_evaluator_timeout_still_wins_over_longer_policy_deadline(self, client):
+        client.delay = 1
+        with pytest.raises(EvaluationException, match="timed out"):
+            run(
+                DecisionModelRunner(DECISION_CONFIG, execution_policy=DecisionExecutionPolicy(deadline_seconds=5)),
+                timeout=0.01,
+            )
+
+    def test_precancellation_does_not_send(self, client):
+        with pytest.raises(EvaluationException, match="cancelled") as raised:
+            run(
+                DecisionModelRunner(
+                    DECISION_CONFIG, execution_policy=DecisionExecutionPolicy(cancellation_requested=lambda: True)
+                )
+            )
+        assert not client.calls and raised.value.observations[-1].outcome == "cancelled"
+
+    def test_inflight_cancellation_cleans_up_request(self, monkeypatch):
+        cleaned_up = []
+
+        class WaitingClient(FakeClient):
+            async def post(self, *args, **kwargs):
+                try:
+                    await asyncio.sleep(10)
+                finally:
+                    cleaned_up.append(True)
+
+        monkeypatch.setattr(_model_runners, "get_async_http_client", WaitingClient)
+
+        async def request():
+            cancelled = False
+
+            async def cancel():
+                nonlocal cancelled
+                await asyncio.sleep(0.01)
+                cancelled = True
+
+            cancellation = asyncio.create_task(cancel())
+            try:
+                runner = DecisionModelRunner(
+                    DECISION_CONFIG, execution_policy=DecisionExecutionPolicy(cancellation_requested=lambda: cancelled)
+                )
+                with pytest.raises(EvaluationException, match="cancelled") as raised:
+                    await runner(state={}, questions=QUESTIONS, timeout=1)
+                assert raised.value.observations[-1].outcome == "cancelled"
+            finally:
+                await cancellation
+
+        asyncio.run(request())
+        assert cleaned_up == [True]
+
+    @pytest.mark.parametrize("value", [None, "yes", 1])
+    def test_cancellation_callback_requires_boolean(self, client, value):
+        with pytest.raises(EvaluationException, match="boolean"):
+            run(
+                DecisionModelRunner(
+                    DECISION_CONFIG, execution_policy=DecisionExecutionPolicy(cancellation_requested=lambda: value)
+                )
+            )
+        assert not client.calls
+
+    @pytest.mark.parametrize("field", ["max_request_bytes", "max_state_question_bytes"])
+    def test_tiny_positive_budget_rejects_before_send(self, client, field):
+        with pytest.raises(EvaluationException, match="byte budget"):
+            run(DecisionModelRunner(DECISION_CONFIG, execution_policy=DecisionExecutionPolicy(**{field: 1})))
+        assert not client.calls
+
+    def test_callback_failure_during_authentication_retains_error_receipt(self, client):
+        config = {key: value for key, value in DECISION_CONFIG.items() if key != "api_key"}
+        credential = Mock(get_token=Mock(side_effect=RuntimeError("credential-secret")))
+        observer = Mock(side_effect=RuntimeError("observer-secret"))
+        with pytest.raises(EvaluationException, match="observer failed") as raised:
+            run(DecisionModelRunner(config, credential, execution_policy=DecisionExecutionPolicy(observer=observer)))
+        assert raised.value.observations == (DecisionRequestObservation(0, "error"),)
+        assert "secret" not in str(raised.value)
+        assert not client.calls
+
+    @pytest.mark.parametrize("termination", ["timeout", "cancelled"])
+    def test_termination_while_authenticating_does_not_send(self, client, termination):
+        config = {key: value for key, value in DECISION_CONFIG.items() if key != "api_key"}
+        cleaned_up = []
+
+        async def get_token(*_):
+            try:
+                await asyncio.sleep(10)
+            finally:
+                cleaned_up.append(True)
+
+        credential = Mock(get_token=get_token)
+
+        async def request():
+            cancel = asyncio.Event()
+            loop = asyncio.get_running_loop()
+            handle = loop.call_later(0.01, cancel.set)
+            policy = DecisionExecutionPolicy(
+                deadline_seconds=0.02 if termination == "timeout" else 1,
+                cancellation_requested=cancel.is_set if termination == "cancelled" else None,
+            )
+            try:
+                with pytest.raises(EvaluationException) as raised:
+                    await DecisionModelRunner(config, credential, execution_policy=policy)(
+                        state={}, questions=QUESTIONS, timeout=1
+                    )
+                assert raised.value.observations == (DecisionRequestObservation(0, termination),)
+            finally:
+                handle.cancel()
+
+        asyncio.run(request())
+        assert cleaned_up == [True] and not client.calls
+
+    @pytest.mark.parametrize("termination", ["timeout", "cancelled"])
+    def test_queued_default_auth_does_not_create_an_unawaited_coroutine(self, client, termination):
+        config = {key: value for key, value in DECISION_CONFIG.items() if key != "api_key"}
+        entered = threading.Event()
+        release = threading.Event()
+
+        def occupy_worker():
+            entered.set()
+            release.wait(timeout=5)
+
+        async def request():
+            loop = asyncio.get_running_loop()
+            loop.set_default_executor(ThreadPoolExecutor(max_workers=1))
+            occupied = loop.run_in_executor(None, occupy_worker)
+            cancel = asyncio.Event()
+            handle = None
+            try:
+                while not entered.is_set():
+                    await asyncio.sleep(0)
+                handle = loop.call_later(0.01, cancel.set)
+                policy = DecisionExecutionPolicy(
+                    deadline_seconds=0.03 if termination == "timeout" else 1,
+                    cancellation_requested=cancel.is_set if termination == "cancelled" else None,
+                )
+                with patch.object(DecisionModelRunner, "_get_default_token", new_callable=AsyncMock) as get_token:
+                    with pytest.raises(EvaluationException) as raised:
+                        await DecisionModelRunner(config, execution_policy=policy)(
+                            state={}, questions=QUESTIONS, timeout=1
+                        )
+                    assert raised.value.observations == (DecisionRequestObservation(0, termination),)
+                    get_token.assert_not_called()
+            finally:
+                if handle is not None:
+                    handle.cancel()
+                release.set()
+                await occupied
+
+        asyncio.run(request())
+        assert not client.calls
+
+    @pytest.mark.parametrize("termination", ["timeout", "cancelled"])
+    @pytest.mark.parametrize("waiting", ["send", "retry_backoff"])
+    def test_real_pipeline_termination_retains_actual_attempt(self, monkeypatch, termination, waiting):
+        from azure.ai.evaluation._http_utils import AsyncHttpPipeline
+
+        cancelled = False
+        cleaned_up = []
+
+        class Response(HttpResponse):
+            def __init__(self, request):
+                super().__init__(request, None)
+                self.status_code = 429
+                self.headers = {"Retry-After": "10"}
+
+            def body(self):
+                return json.dumps(level_payload(4)).encode()
+
+        class Transport(AsyncHttpTransport):
+            def __init__(self):
+                self.calls = 0
+
+            async def open(self):
+                pass
+
+            async def close(self):
+                pass
+
+            async def __aexit__(self, *_):
+                await self.close()
+
+            async def send(self, request, **kwargs):
+                self.calls += 1
+                if waiting == "retry_backoff":
+                    return Response(request)
+                try:
+                    await asyncio.sleep(10)
+                finally:
+                    cleaned_up.append(True)
+
+        transport = Transport()
+        monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: AsyncHttpPipeline(transport=transport))
+
+        async def request():
+            nonlocal cancelled
+            loop = asyncio.get_running_loop()
+
+            def cancel():
+                nonlocal cancelled
+                cancelled = True
+
+            handle = loop.call_later(0.01, cancel)
+            policy = DecisionExecutionPolicy(
+                deadline_seconds=0.08 if termination == "timeout" else 1,
+                cancellation_requested=(lambda: cancelled) if termination == "cancelled" else None,
+            )
+            try:
+                with pytest.raises(EvaluationException) as raised:
+                    await DecisionModelRunner(DECISION_CONFIG, execution_policy=policy)(
+                        state={}, questions=QUESTIONS, timeout=1
+                    )
+                receipts = raised.value.observations
+                assert receipts[-1] == DecisionRequestObservation(1, termination)
+                if waiting == "retry_backoff":
+                    assert receipts[0].http_status == 429 and receipts[0].input_tokens == 120
+            finally:
+                handle.cancel()
+
+        asyncio.run(request())
+        assert transport.calls == 1
+        assert cleaned_up == ([True] if waiting == "send" else [])
+
+    @pytest.mark.parametrize("observer_fails", [False, True])
+    def test_real_pipeline_transport_errors_retain_each_attempt(self, monkeypatch, observer_fails):
+        from azure.ai.evaluation._http_utils import AsyncHttpPipeline
+
+        class Transport(AsyncHttpTransport):
+            def __init__(self):
+                self.calls = 0
+
+            async def open(self):
+                pass
+
+            async def close(self):
+                pass
+
+            async def __aexit__(self, *_):
+                await self.close()
+
+            async def send(self, request, **kwargs):
+                self.calls += 1
+                raise ServiceRequestError("transport-secret")
+
+        transport = Transport()
+        monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: AsyncHttpPipeline(transport=transport))
+        observer = Mock(side_effect=RuntimeError("observer-secret")) if observer_fails else Mock()
+        policy = DecisionExecutionPolicy(max_retries=1, observer=observer)
+        with pytest.raises(EvaluationException) as raised:
+            run(DecisionModelRunner(DECISION_CONFIG, execution_policy=policy))
+        expected = 1 if observer_fails else 2
+        assert transport.calls == expected
+        assert raised.value.observations == tuple(
+            DecisionRequestObservation(i, "error") for i in range(1, expected + 1)
+        )
+        assert observer.call_count == expected
+        assert "secret" not in str(raised.value)
+
+    def test_real_pipeline_observer_failure_preserves_response_receipt(self, monkeypatch):
+        from azure.ai.evaluation._http_utils import AsyncHttpPipeline
+
+        class Response(HttpResponse):
+            def __init__(self, request):
+                super().__init__(request, None)
+                self.status_code = 200
+                self.headers = {}
+
+            def body(self):
+                return json.dumps(level_payload(4)).encode()
+
+        class Transport(AsyncHttpTransport):
+            async def open(self):
+                pass
+
+            async def close(self):
+                pass
+
+            async def __aexit__(self, *_):
+                await self.close()
+
+            async def send(self, request, **kwargs):
+                return Response(request)
+
+        monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: AsyncHttpPipeline(transport=Transport()))
+        observer = Mock(side_effect=RuntimeError("observer-secret"))
+        with pytest.raises(EvaluationException, match="observer failed") as raised:
+            run(DecisionModelRunner(DECISION_CONFIG, execution_policy=DecisionExecutionPolicy(observer=observer)))
+        assert raised.value.observations == (
+            DecisionRequestObservation(1, "response", 200, 120, 3, "microsoft-decision-1"),
+        )
+        assert observer.call_count == 1 and "secret" not in str(raised.value)

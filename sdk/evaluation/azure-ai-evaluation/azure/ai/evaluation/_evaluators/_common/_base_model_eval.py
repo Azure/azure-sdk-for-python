@@ -9,6 +9,7 @@ from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from . import EvaluatorBase
+from ._decision_execution import DecisionExecutionPolicy
 from ._model_runners import (
     DecisionModelRunner,
     PromptyModelRunner,
@@ -48,6 +49,9 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
     :keyword is_reasoning_model: This parameter is in preview. If True, updates the config parameters in prompty
         file based on reasoning models. Defaults to False.
     :type is_reasoning_model: bool
+    :keyword decision_execution_policy: Optional transport-only limits and receipt callbacks for a decision runner.
+        Rejected for Prompty evaluators; omitted policies preserve existing Prompty behavior.
+    :paramtype decision_execution_policy: Optional[DecisionExecutionPolicy]
     """
 
     _LLM_CALL_TIMEOUT = 600
@@ -67,6 +71,7 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
         eval_last_turn: bool = False,
         threshold: int = 3,
         credential: Optional[TokenCredential] = None,
+        decision_execution_policy: Optional[DecisionExecutionPolicy] = None,
         _higher_is_better: bool = False,
         **kwargs,
     ) -> None:
@@ -88,9 +93,20 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
                     target=ErrorTarget.EVALUATE,
                 )
             self._model_runner: Union[DecisionModelRunner, PromptyModelRunner] = DecisionModelRunner(
-                model_config, credential, binary=self._binary_decision, evaluator_name=subclass_name
+                model_config,
+                credential,
+                binary=self._binary_decision,
+                evaluator_name=subclass_name,
+                execution_policy=decision_execution_policy,
             )
         else:
+            if decision_execution_policy is not None:
+                raise EvaluationException(
+                    message="A decision_execution_policy is only supported by decision model evaluators.",
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=ErrorTarget.EVALUATE,
+                )
             if not prompty_file:
                 raise EvaluationException(
                     message="A prompty_file is required for a chat model evaluator.",

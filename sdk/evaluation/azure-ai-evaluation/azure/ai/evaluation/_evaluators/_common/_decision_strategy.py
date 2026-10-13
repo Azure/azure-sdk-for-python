@@ -13,8 +13,9 @@ import json
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional, Tuple, TypeVar, Union
 
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget
 from ._base_model_eval import ModelEvaluatorBase, not_applicable_result
+from ._decision_execution import DecisionEvaluationException
 from ._model_runners import DecisionModelRunner, validate_noul_answer, validate_score_answer
 
 STATUS_CUTOFF = 0.5
@@ -26,7 +27,7 @@ def _checked_value(validate: Callable[..., T], error_target: ErrorTarget, *args:
         return validate(*args)
     except ValueError as exc:
         message = f"The decision model returned an invalid response: {exc}"
-        raise EvaluationException(
+        raise DecisionEvaluationException(
             message=message,
             internal_message=message,
             blame=ErrorBlame.SYSTEM_ERROR,
@@ -158,10 +159,6 @@ class DecisionEvaluationStrategy:
     async def evaluate(self, eval_input: Dict[str, Any]) -> Dict[str, Any]:
         key = self.result_key
         response = await self.runner(state=dict(eval_input), questions=self.questions, timeout=self.timeout)
-        skip_reason = decision_skip_reason(response, STATUS_CUTOFF, self.error_target)
-        if skip_reason:
-            return not_applicable_result(key, skip_reason, self.threshold)
-        score, reason, details = self.scoring.interpret(response, key, self.error_target)
         properties = self.extra_properties(eval_input) if self.extra_properties else {}
         properties["decision_model"] = {
             "deployment": self.runner.deployment,
@@ -169,13 +166,32 @@ class DecisionEvaluationStrategy:
             "rubric_hash": _digest(self.questions[key]),
             "status_rubric_hash": _digest(self.questions["status"]),
             "native_status_answer": response["answers"]["status"],
-            "status_completion_probability": decision_probability(response, "status", self.error_target),
             "status_probability_threshold": STATUS_CUTOFF,
             "reason_type": "templated",
-            **details,
-            "native_answer": response["answers"][key],
         }
-        properties.update(ModelEvaluatorBase._get_token_metadata(decision_token_counts(response)))
+        tokens = decision_token_counts(response)
+        properties.update(
+            prompt_tokens=tokens["input_token_count"],
+            completion_tokens=tokens["output_token_count"],
+            total_tokens=tokens["total_token_count"],
+            model=tokens["model_id"],
+        )
+        try:
+            skip_reason = decision_skip_reason(response, STATUS_CUTOFF, self.error_target)
+            properties["decision_model"]["status_completion_probability"] = decision_probability(
+                response, "status", self.error_target
+            )
+            if skip_reason:
+                result = not_applicable_result(key, skip_reason, self.threshold)
+                result[f"{key}_properties"] = properties
+                return result
+            score, reason, details = self.scoring.interpret(response, key, self.error_target)
+        except DecisionEvaluationException as exc:
+            exc.properties = properties
+            raise
+        properties["decision_model"].update(details)
+        properties["decision_model"]["native_answer"] = response["answers"][key]
+        properties.update(ModelEvaluatorBase._get_token_metadata(tokens))
         passed = self.scoring.passes(score, self.threshold)
         return {
             key: score,
