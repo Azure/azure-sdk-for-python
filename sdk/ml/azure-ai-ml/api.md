@@ -5437,6 +5437,7 @@ namespace azure.ai.ml.entities
         property created_on: Optional[str]    # Read-only
         property creation_context: Optional[SystemData]    # Read-only
         property id: Optional[str]    # Read-only
+        property pool_name: Optional[str]    # Read-only
         property provisioning_errors: Optional[str]    # Read-only
         property provisioning_state: Optional[str]    # Read-only
         property type: Optional[str]    # Read-only
@@ -5451,7 +5452,6 @@ namespace azure.ai.ml.entities
                 lakehouse_id: Optional[str] = ...,
                 name: str,
                 pool_id: Optional[str] = ...,
-                pool_name: Optional[str] = ...,
                 tags: Optional[Dict[str, str]] = ...,
                 **kwargs: Any
             ) -> None: ...

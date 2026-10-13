@@ -72,6 +72,17 @@ class TestComputeEntity:
         with pytest.raises(ValidationException, match="requires fabric_workspace_id"):
             compute._to_rest_object()
 
+    def test_fabric_spark_pool_name_is_read_only(self):
+        with pytest.raises(ValidationException, match="pool_name is read-only"):
+            FabricSparkCompute(
+                name="fabricpoc01",
+                fabric_workspace_id="workspace-id",
+                lakehouse_id="lakehouse-id",
+                environment_id="environment-id",
+                pool_id="pool-id",
+                pool_name="CustomPool",
+            )
+
     @pytest.mark.parametrize(
         "identity",
         [
@@ -131,6 +142,9 @@ class TestComputeEntity:
             assert result._to_dict()["identity"]["principal_id"] == identity["principalId"]
         assert result.description == "Custom pool"
         assert result.pool_name == "CustomPool"
+        assert result._to_dict()["pool_name"] == "CustomPool"
+        with pytest.raises(AttributeError):
+            result.pool_name = "DifferentPool"
         assert (result.fabric_workspace_id, result.lakehouse_id, result.environment_id, result.pool_id) == (
             "workspace-id",
             "lakehouse-id",

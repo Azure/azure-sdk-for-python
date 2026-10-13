@@ -34,8 +34,6 @@ class FabricSparkCompute(Compute):
     :paramtype pool_id: Optional[str]
     :keyword identity: Optional identity belonging to the AML compute attachment.
     :paramtype identity: Optional[~azure.ai.ml.entities.IdentityConfiguration]
-    :keyword pool_name: Name of the pool returned by the service.
-    :paramtype pool_name: Optional[str]
     :keyword description: Description of the compute attachment.
     :paramtype description: Optional[str]
     :keyword tags: Tags assigned to the compute attachment.
@@ -51,11 +49,18 @@ class FabricSparkCompute(Compute):
         environment_id: Optional[str] = None,
         pool_id: Optional[str] = None,
         identity: Optional[IdentityConfiguration] = None,
-        pool_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs: Any,
     ) -> None:
+        if "pool_name" in kwargs:
+            message = "pool_name is read-only and cannot be specified when attaching Fabric Spark compute."
+            raise ValidationException(
+                message=message,
+                target=ErrorTarget.COMPUTE,
+                no_personal_data_message=message,
+                error_category=ErrorCategory.USER_ERROR,
+            )
         kwargs[TYPE] = ComputeType.FABRICSPARK
         is_attached_compute = kwargs.pop("is_attached_compute", None)
         modified_on = kwargs.pop("modified_on", None)
@@ -65,17 +70,22 @@ class FabricSparkCompute(Compute):
         self.lakehouse_id = lakehouse_id
         self.environment_id = environment_id
         self.pool_id = pool_id
-        self.pool_name = pool_name
+        self._pool_name: Optional[str] = None
         self.identity = identity
         self.is_attached_compute: Optional[bool] = is_attached_compute
         self.modified_on = modified_on
         self.disable_local_auth = disable_local_auth
 
+    @property
+    def pool_name(self) -> Optional[str]:
+        """Name of the attached Fabric Spark pool returned by the service."""
+        return self._pool_name
+
     @classmethod
     def _load_from_rest(cls, rest_obj: ComputeResource) -> "FabricSparkCompute":
         prop = rest_obj.properties
         details = prop.properties
-        return cls(
+        result = cls(
             name=rest_obj.name,
             id=rest_obj.id,
             location=rest_obj.location,
@@ -86,7 +96,7 @@ class FabricSparkCompute(Compute):
             lakehouse_id=details.lakehouse_id if details else None,
             environment_id=details.environment_id if details else None,
             pool_id=details.pool_id if details else None,
-            pool_name=details.pool_name if details else None,
+            # pylint: disable=protected-access
             identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
             created_on=prop.created_on,
             modified_on=prop.modified_on,
@@ -103,6 +113,8 @@ class FabricSparkCompute(Compute):
             ),
             is_attached_compute=prop.is_attached_compute,
         )
+        result._pool_name = details.pool_name if details else None
+        return result
 
     def _to_rest_object(self) -> ComputeResource:
         if not all((self.fabric_workspace_id, self.lakehouse_id, self.environment_id, self.pool_id)):
@@ -119,7 +131,12 @@ class FabricSparkCompute(Compute):
             name=self.name,
             location=self.location,
             tags=self.tags,
-            identity=self.identity._to_compute_rest_object() if self.identity else None,
+            identity=(
+                # pylint: disable=protected-access
+                self.identity._to_compute_rest_object()
+                if self.identity
+                else None
+            ),
             properties=FabricSpark(
                 description=self.description,
                 properties=FabricSparkProperties(
