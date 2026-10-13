@@ -664,6 +664,18 @@ class TestSharedDecisionStrategy:
 
 
 class TestDecisionExecutionControls:
+    def test_overall_timeout_defaults_are_backend_specific(self):
+        decision = ProbeModelEvaluator(result_key="probe", model_config=DECISION_CONFIG)
+        with patch.object(_model_runners.AsyncPrompty, "load"):
+            chat = ProbeModelEvaluator(result_key="probe", prompty_file="probe.prompty", model_config=CHAT_CONFIG)
+        assert decision._LLM_CALL_TIMEOUT == 120
+        assert chat._LLM_CALL_TIMEOUT == 600
+
+    @pytest.mark.parametrize("timeout,expected", [(5, 5), (300, 300), (900, 600)])
+    def test_explicit_overall_timeout_retains_existing_cap(self, timeout, expected):
+        evaluator = ProbeModelEvaluator(result_key="probe", model_config=DECISION_CONFIG, timeout=timeout)
+        assert evaluator._LLM_CALL_TIMEOUT == expected
+
     @pytest.mark.parametrize("name", ["execution_policy", "observer", "deadline_seconds"])
     def test_obsolete_controls_are_not_accepted(self, name):
         with pytest.raises(TypeError, match=name):

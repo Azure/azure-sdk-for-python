@@ -48,7 +48,8 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
     :keyword is_reasoning_model: This parameter is in preview. If True, updates the config parameters in prompty
         file based on reasoning models. Defaults to False.
     :type is_reasoning_model: bool
-    :keyword timeout: Optional overall Decision time limit, including authentication and retries.
+    :keyword timeout: Optional overall Decision time limit, including authentication and retries. Defaults to
+        120 seconds for Decision; an explicit value retains the existing evaluator timeout cap.
         The remaining budget also limits native transport connect/read timeouts. Awaiting is cancelled at the
         deadline, but synchronous credential calls cannot be forcibly interrupted and may delay synchronous return.
     :paramtype timeout: Optional[float]
@@ -133,6 +134,8 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
                         target=ErrorTarget.EVALUATE,
                     )
                 self._LLM_CALL_TIMEOUT = min(self._LLM_CALL_TIMEOUT, timeout)
+            else:
+                self._LLM_CALL_TIMEOUT = min(self._LLM_CALL_TIMEOUT, 120)
             self._model_runner: Union[DecisionModelRunner, PromptyModelRunner] = DecisionModelRunner(
                 model_config,
                 credential,
