@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.aigateway
 
-    class azure.mgmt.aigateway.ApiManagementClient: implements ContextManager 
+    class azure.mgmt.aigateway.AIGatewayMgmtClient: implements ContextManager 
         ai_gateway_resources: AiGatewayResourcesOperations
         operations: Operations
 
@@ -30,7 +30,7 @@ namespace azure.mgmt.aigateway
 
 namespace azure.mgmt.aigateway.aio
 
-    class azure.mgmt.aigateway.aio.ApiManagementClient: implements AsyncContextManager 
+    class azure.mgmt.aigateway.aio.AIGatewayMgmtClient: implements AsyncContextManager 
         ai_gateway_resources: AiGatewayResourcesOperations
         operations: Operations
 

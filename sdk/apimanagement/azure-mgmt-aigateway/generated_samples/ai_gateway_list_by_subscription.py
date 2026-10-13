@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.aigateway import ApiManagementClient
+from azure.mgmt.aigateway import AIGatewayMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.aigateway import ApiManagementClient
 
 
 def main():
-    client = ApiManagementClient(
+    client = AIGatewayMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

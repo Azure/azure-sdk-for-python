@@ -40,5 +40,5 @@
         "azure.mgmt.aigateway.operations.AiGatewayResourcesOperations.list_by_subscription": "Microsoft.ApiManagement.AiGatewayResources.listBySubscription",
         "azure.mgmt.aigateway.aio.operations.AiGatewayResourcesOperations.list_by_subscription": "Microsoft.ApiManagement.AiGatewayResources.listBySubscription"
     },
-    "CrossLanguageVersion": "483cc17398ff"
+    "CrossLanguageVersion": "ff69301aef93"
 }

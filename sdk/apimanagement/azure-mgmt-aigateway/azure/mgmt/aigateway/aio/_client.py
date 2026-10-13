@@ -18,7 +18,7 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import ApiManagementClientConfiguration
+from ._configuration import AIGatewayMgmtClientConfiguration
 from .operations import AiGatewayResourcesOperations, Operations
 
 if sys.version_info >= (3, 11):
@@ -31,8 +31,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ApiManagementClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """ApiManagementClient.
+class AIGatewayMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """AIGatewayMgmtClient.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.aigateway.aio.operations.Operations
@@ -71,7 +71,7 @@ class ApiManagementClient:  # pylint: disable=docstring-keyword-should-match-key
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = ApiManagementClientConfiguration(
+        self._config = AIGatewayMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),
