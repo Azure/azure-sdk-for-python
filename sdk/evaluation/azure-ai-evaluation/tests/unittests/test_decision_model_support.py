@@ -785,6 +785,18 @@ class TestDecisionExecutionControls:
         assert not client.calls
         assert raised.value.blame == ErrorBlame.USER_ERROR
 
+    @pytest.mark.parametrize("request_cap", [None, 10000])
+    def test_uncapped_state_question_pairs_are_not_serialized(self, client, request_cap):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        with patch.object(_model_runners.json, "dumps", wraps=json.dumps) as serialize:
+            run(DecisionModelRunner(DECISION_CONFIG, max_request_bytes=request_cap))
+        serialize.assert_called_once_with(
+            {"model": "Decision-1", "state": {"query": "q"}, "questions": QUESTIONS},
+            ensure_ascii=False,
+            separators=(",", ":"),
+            allow_nan=False,
+        )
+
     def test_non_json_request_is_rejected_before_authentication_or_network(self, client):
         with pytest.raises(EvaluationException, match="JSON-serializable") as raised:
             run(DecisionModelRunner(DECISION_CONFIG), state={"value": float("nan")})

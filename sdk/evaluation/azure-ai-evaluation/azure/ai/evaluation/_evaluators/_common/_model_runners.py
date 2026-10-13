@@ -274,20 +274,22 @@ class DecisionModelRunner:
             body = {"model": self._deployment, "state": state, "questions": questions}
             try:
                 content = json.dumps(body, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode("utf-8")
-                state_question_bytes = max(
-                    (
-                        len(
-                            json.dumps(
-                                {"state": state, "question": question},
-                                ensure_ascii=False,
-                                separators=(",", ":"),
-                                allow_nan=False,
-                            ).encode("utf-8")
-                        )
-                        for question in questions.values()
-                    ),
-                    default=0,
-                )
+                state_question_bytes = 0
+                if self._max_state_question_bytes is not None:
+                    state_question_bytes = max(
+                        (
+                            len(
+                                json.dumps(
+                                    {"state": state, "question": question},
+                                    ensure_ascii=False,
+                                    separators=(",", ":"),
+                                    allow_nan=False,
+                                ).encode("utf-8")
+                            )
+                            for question in questions.values()
+                        ),
+                        default=0,
+                    )
             except (ValueError, TypeError, OverflowError, UnicodeError):
                 raise _failed(
                     "Decision evidence must be finite JSON-serializable data.", ErrorBlame.USER_ERROR
