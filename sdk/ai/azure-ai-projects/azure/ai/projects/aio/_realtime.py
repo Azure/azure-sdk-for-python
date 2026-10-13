@@ -58,7 +58,7 @@ from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_inse
 from .._utils.model_base import Model as _Model, SdkJSONEncoder
 from .._version import VERSION
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("azure.ai.projects.realtime")
 
 # The realtime WebSocket route is voice-agent-specific (see `_to_ws_url`'s
 # `/endpoint/protocols/voice` path), so this is always the correct opt-in value -- callers

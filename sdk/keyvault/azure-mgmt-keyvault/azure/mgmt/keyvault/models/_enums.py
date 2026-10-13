@@ -184,6 +184,8 @@ class JsonWebKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RSA."""
     RSA_HSM = "RSA-HSM"
     """RSA_HSM."""
+    OCT_HSM = "oct-HSM"
+    """OCT_HSM."""
 
 
 class KeyPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -255,15 +257,25 @@ class ManagedHsmSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SKU of the managed HSM Pool."""
 
     STANDARD_B1 = "Standard_B1"
-    """STANDARD_B1."""
+    """Standard_B1 SKU."""
     CUSTOM_B32 = "Custom_B32"
-    """CUSTOM_B32."""
+    """Custom_B32 SKU."""
     CUSTOM_B6 = "Custom_B6"
-    """CUSTOM_B6."""
+    """Custom_B6 SKU."""
     CUSTOM_C42 = "Custom_C42"
-    """CUSTOM_C42."""
+    """Custom_C42 SKU."""
     CUSTOM_C10 = "Custom_C10"
-    """CUSTOM_C10."""
+    """Custom_C10 SKU."""
+    STANDARD_B1_V2 = "Standard_B1v2"
+    """Standard_B1v2 SKU."""
+    STANDARD_B5_V2 = "Standard_B5v2"
+    """Standard_B5v2 SKU."""
+    STANDARD_B10_V2 = "Standard_B10v2"
+    """Standard_B10v2 SKU."""
+    STANDARD_B15_V2 = "Standard_B15v2"
+    """Standard_B15v2 SKU."""
+    STANDARD_B20_V2 = "Standard_B20v2"
+    """Standard_B20v2 SKU."""
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
