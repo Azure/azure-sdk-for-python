@@ -28,7 +28,6 @@ async def _collect(paged):
     return [item async for item in paged]
 
 
-@pytest.mark.skip(reason="Inherited operations await the runtime 2026-08-01-preview routing fix.")
 class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
     @WebPubSubChatPreparer()
     @recorded_by_proxy_async
@@ -278,15 +277,20 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
     ):
         token_client = self.create_async_client(wps_chat_endpoint)
         key_client = None
+        token_user_id = "python-async-e2e-token-access-user"
+        key_user_id = "python-async-e2e-key-access-user"
         try:
-            token_access = await token_client.get_client_access_token(user_id="python-async-e2e-token-access-user")
+            token_access = await token_client.get_client_access_token(user_id=token_user_id)
             await self.assert_client_access_async(token_access, wps_chat_endpoint)
 
             if wps_chat_disable_local_auth.lower() != "true":
                 key_client = self.create_async_key_client(wps_chat_connection_string)
-                key_access = await key_client.get_client_access_token(user_id="python-async-e2e-key-access-user")
+                key_access = await key_client.get_client_access_token(user_id=key_user_id)
                 await self.assert_client_access_async(key_access, wps_chat_endpoint)
         finally:
+            await self.cleanup_async(token_client.delete_user, token_user_id)
+            if key_client:
+                await self.cleanup_async(token_client.delete_user, key_user_id)
             await token_client.close()
             if key_client:
                 await key_client.close()

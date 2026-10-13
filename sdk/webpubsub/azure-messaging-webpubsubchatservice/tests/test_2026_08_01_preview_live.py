@@ -35,11 +35,9 @@ class TestWebPubSubChatTopicsLive(WebPubSubChatTest):
     @recorded_by_proxy
     def test_topic_lifecycle_and_paging(self, wps_chat_endpoint):
         client = self.create_client(wps_chat_endpoint)
-        # Existing operations are not yet routed under the new version on DevINT.
-        setup = self.create_client(wps_chat_endpoint, api_version="2026-02-01-preview")
         room_id = "python-e2e-topics"
         try:
-            room = setup.create_or_replace_room(room_id, ChatRoom(title="Topic E2E"))
+            room = client.create_or_replace_room(room_id, ChatRoom(title="Topic E2E"))
             assert all(topic.conversation_id == room.default_conversation for topic in client.list_topics(room_id))
             for topic_id in ("first", "second"):
                 topic = client.create_or_replace_topic(room_id, topic_id, ChatTopic({"title": topic_id}))
@@ -49,10 +47,10 @@ class TestWebPubSubChatTopicsLive(WebPubSubChatTest):
                 assert topic.created_at
                 assert topic.created_by
                 assert topic.etag
-                conversation = setup.get_conversation(topic.conversation_id)
+                conversation = client.get_conversation(topic.conversation_id)
                 assert conversation.id == topic.conversation_id
                 assert conversation.parent_room == room_id
-                assert list(setup.list_messages(topic.conversation_id)) == []
+                assert list(client.list_messages(topic.conversation_id)) == []
 
             assert {topic.id for topic in client.list_topics(room_id, max_page_size=1)}.issuperset({"first", "second"})
             _assert_resumable_pages(client.list_topics(room_id, max_page_size=1))
@@ -80,28 +78,26 @@ class TestWebPubSubChatTopicsLive(WebPubSubChatTest):
             assert error.value.status_code == 412
             client.delete_topic(room_id, "first", etag=archived.etag, match_condition=MatchConditions.IfNotModified)
         finally:
-            self.cleanup(setup.delete_room, room_id)
-            setup.close()
+            self.cleanup(client.delete_room, room_id)
             client.close()
 
     @WebPubSubChatPreparer()
     @recorded_by_proxy
     def test_room_user_and_user_room_collections(self, wps_chat_endpoint):
         client = self.create_client(wps_chat_endpoint)
-        setup = self.create_client(wps_chat_endpoint, api_version="2026-02-01-preview")
         room_ids = ["python-e2e-collection-1", "python-e2e-collection-2"]
         user_ids = ["python-e2e-collection-user-1", "python-e2e-collection-user-2"]
         user_role = "user.python_e2e_collections"
         room_role = "room.python_e2e_collections"
         try:
-            setup.create_or_replace_role(user_role, ChatRole(permissions=[ChatPermission.USER_CREATE_ROOM]))
-            setup.create_or_replace_role(room_role, ChatRole(permissions=[ChatPermission.ROOM_PUBLISH_MESSAGE]))
+            client.create_or_replace_role(user_role, ChatRole(permissions=[ChatPermission.USER_CREATE_ROOM]))
+            client.create_or_replace_role(room_role, ChatRole(permissions=[ChatPermission.ROOM_PUBLISH_MESSAGE]))
             for user_id in user_ids:
-                setup.create_or_replace_user(user_id, HumanChatUser(nickname=user_id, role_name=user_role))
+                client.create_or_replace_user(user_id, HumanChatUser(nickname=user_id, role_name=user_role))
             assert list(client.list_rooms_for_user(user_ids[0])) == []
             for room_id in room_ids:
-                setup.create_or_replace_room(room_id, ChatRoom(title=room_id))
-                setup.create_or_replace_room_member(room_id, user_ids[0], ChatRoomMember(role_name=room_role))
+                client.create_or_replace_room(room_id, ChatRoom(title=room_id))
+                client.create_or_replace_room_member(room_id, user_ids[0], ChatRoomMember(role_name=room_role))
             assert {room.id for room in client.list_rooms(max_page_size=1)}.issuperset(room_ids)
             users = list(client.list_users(max_page_size=1))
             assert {user.id for user in users}.issuperset(user_ids)
@@ -110,14 +106,13 @@ class TestWebPubSubChatTopicsLive(WebPubSubChatTest):
             _assert_resumable_pages(client.list_rooms(max_page_size=1))
             _assert_resumable_pages(client.list_users(max_page_size=1))
             _assert_resumable_pages(client.list_rooms_for_user(user_ids[0], max_page_size=1))
-            setup.delete_room_member(room_ids[0], user_ids[0])
+            client.delete_room_member(room_ids[0], user_ids[0])
             assert {room.id for room in client.list_rooms_for_user(user_ids[0])} == {room_ids[1]}
         finally:
             for room_id in room_ids:
-                self.cleanup(setup.delete_room, room_id)
+                self.cleanup(client.delete_room, room_id)
             for user_id in user_ids:
-                self.cleanup(setup.delete_user, user_id)
-            self.cleanup(setup.delete_role, user_role)
-            self.cleanup(setup.delete_role, room_role)
-            setup.close()
+                self.cleanup(client.delete_user, user_id)
+            self.cleanup(client.delete_role, user_role)
+            self.cleanup(client.delete_role, room_role)
             client.close()
