@@ -14,6 +14,8 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+from azure.ai.projects.models import VoiceResponse
+
 
 @pytest.fixture
 def sample(monkeypatch):
@@ -113,3 +115,32 @@ def test_conversation_delete_snippet_accepts_no_content_result(capsys) -> None:
 
     conversations.delete.assert_called_once_with("agent-test", "conversation-test")
     assert "Deleted conversation conversation-test" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("response_id", [None, "", "response-test"])
+def test_read_conversation_handles_optional_response_id(monkeypatch, capsys, response_id) -> None:
+    path = Path(__file__).parents[2] / "samples" / "agents" / "voice" / "sample_voice_agent_read_conversation.py"
+    monkeypatch.setenv("FOUNDRY_PROJECT_ENDPOINT", "https://example.com/api/projects/test")
+    monkeypatch.setenv("FOUNDRY_VOICE_AGENT_NAME", "agent-test")
+    monkeypatch.setenv("FOUNDRY_VOICE_CONVERSATION_ID", "conversation-test")
+    monkeypatch.setattr("dotenv.load_dotenv", lambda: None)
+    monkeypatch.setattr("azure.identity.DefaultAzureCredential", MagicMock())
+    client = MagicMock()
+    monkeypatch.setattr("azure.ai.projects.AIProjectClient", MagicMock(return_value=client))
+    conversations = client.__enter__.return_value.beta.voice_agents.conversations
+    conversations.list_responses.return_value = [VoiceResponse(id=response_id, status="completed")]
+    helper = ModuleType("voice_sample_util")
+    setattr(helper, "hold_sample_conversation", MagicMock())
+    monkeypatch.setitem(sys.modules, "voice_sample_util", helper)
+
+    runpy.run_path(str(path))
+
+    if response_id:
+        conversations.get_response.assert_called_once_with("agent-test", "conversation-test", response_id)
+        conversations.list_response_items.assert_called_once_with("agent-test", "conversation-test", response_id)
+    else:
+        conversations.get_response.assert_not_called()
+        conversations.list_response_items.assert_not_called()
+        assert "No response ID available; skipping response details." in capsys.readouterr().out
+    conversations.list_items.assert_called_once_with("agent-test", "conversation-test")
+    client.__enter__.return_value.agents.delete_version.assert_not_called()
