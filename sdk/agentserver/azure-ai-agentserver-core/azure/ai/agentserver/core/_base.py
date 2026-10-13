@@ -829,10 +829,7 @@ class AgentServerHost(Starlette):
                     captured_environment[key] = (
                         None if value is _MISSING_ENV else str(value)
                     )
-            previous_session_id, previous_session_guid = (
-                self.config.session_id,
-                self.config.session_guid,
-            )
+            previous_config = vars(self.config).copy()
             task_manager = _get_active_task_manager()
 
             try:
@@ -842,10 +839,10 @@ class AgentServerHost(Starlette):
                         os.environ.pop(key, None)
                     else:
                         os.environ[key] = value
-                self.config.session_id = context.session_id
-                self.config.session_guid = os.environ.get(_SESSION_GUID_ENV, "")
+                restored_config = _config.AgentConfig.from_env()
+                vars(self.config).update(vars(restored_config))
                 if task_manager is not None:
-                    task_manager._rehydrate_session_state(  # pylint: disable=protected-access
+                    await task_manager._rehydrate_session_state(  # pylint: disable=protected-access
                         context.restore_id
                     )
 
@@ -864,20 +861,18 @@ class AgentServerHost(Starlette):
                 finally:
                     reset_request_context(request_context_token)
             except asyncio.CancelledError:
-                AgentServerHost._restore_lifecycle_environment(
+                await AgentServerHost._restore_lifecycle_environment(
                     self,
                     previous_environment,
-                    previous_session_id,
-                    previous_session_guid,
+                    previous_config,
                     task_manager,
                 )
                 raise
             except Exception:  # pylint: disable=broad-exception-caught
-                AgentServerHost._restore_lifecycle_environment(
+                await AgentServerHost._restore_lifecycle_environment(
                     self,
                     previous_environment,
-                    previous_session_id,
-                    previous_session_guid,
+                    previous_config,
                     task_manager,
                 )
                 logger.exception("The after-restore lifecycle hook failed")
@@ -907,11 +902,10 @@ class AgentServerHost(Starlette):
         self._lifecycle.applied_environment_variables.update(effective_environment)
         self._lifecycle.before_snapshot_completed = False
 
-    def _restore_lifecycle_environment(
+    async def _restore_lifecycle_environment(
         self,
         previous_environment: dict[str, object],
-        previous_session_id: str,
-        previous_session_guid: str,
+        previous_config: dict[str, Any],
         task_manager: Any,
     ) -> None:
         for key, value in previous_environment.items():
@@ -919,10 +913,9 @@ class AgentServerHost(Starlette):
                 os.environ.pop(key, None)
             else:
                 os.environ[key] = str(value)
-        self.config.session_id = previous_session_id
-        self.config.session_guid = previous_session_guid
+        vars(self.config).update(previous_config)
         if task_manager is not None:
-            task_manager._rehydrate_session_state()  # pylint: disable=protected-access
+            await task_manager._rehydrate_session_state()  # pylint: disable=protected-access
 
     # ------------------------------------------------------------------
     # Run helpers

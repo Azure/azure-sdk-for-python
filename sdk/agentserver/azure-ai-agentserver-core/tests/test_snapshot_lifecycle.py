@@ -22,7 +22,9 @@ from azure.ai.agentserver.core import (
     set_request_context,
 )
 from azure.ai.agentserver.core.tasks._lease import derive_lease_owner
+from azure.ai.agentserver.core.tasks._local_provider import LocalFileTaskProvider
 from azure.ai.agentserver.core.tasks._manager import TaskManager, set_task_manager
+from azure.ai.agentserver.core.tasks._models import TaskCreateRequest
 
 
 @pytest.fixture(autouse=True)
@@ -258,8 +260,10 @@ async def test_after_restore_applies_environment_before_callback(
 ) -> None:
     monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "captured-session")
     monkeypatch.setenv("FOUNDRY_AGENT_SESSION_GUID", "captured-guid")
+    monkeypatch.setenv("FOUNDRY_PROJECT_ENDPOINT", "https://captured.example")
     monkeypatch.delenv("RESTORED_VALUE", raising=False)
     agent = AgentServerHost()
+    config = agent.config
     observed: dict[str, object] = {}
 
     @agent.after_restore_handler
@@ -269,6 +273,8 @@ async def test_after_restore_applies_environment_before_callback(
         observed["restored_value"] = os.environ["RESTORED_VALUE"]
         observed["config_session_id"] = agent.config.session_id
         observed["config_session_guid"] = agent.config.session_guid
+        observed["config_project_endpoint"] = agent.config.project_endpoint
+        observed["config_identity_preserved"] = agent.config is config
         observed["context"] = context
 
     async with httpx.AsyncClient(
@@ -281,6 +287,7 @@ async def test_after_restore_applies_environment_before_callback(
                 session_id="restored-session",
                 overrides={
                     "FOUNDRY_AGENT_SESSION_GUID": "restored-guid",
+                    "FOUNDRY_PROJECT_ENDPOINT": "https://restored.example",
                     "RESTORED_VALUE": "available",
                 },
             ),
@@ -292,11 +299,14 @@ async def test_after_restore_applies_environment_before_callback(
     assert observed["restored_value"] == "available"
     assert observed["config_session_id"] == "restored-session"
     assert observed["config_session_guid"] == "restored-guid"
+    assert observed["config_project_endpoint"] == "https://restored.example"
+    assert observed["config_identity_preserved"] is True
     context = observed["context"]
     assert isinstance(context, AgentSessionContext)
     assert isinstance(context.session_env_overrides, MappingProxyType)
     assert context.session_env_overrides == {
         "FOUNDRY_AGENT_SESSION_GUID": "restored-guid",
+        "FOUNDRY_PROJECT_ENDPOINT": "https://restored.example",
         "RESTORED_VALUE": "available",
     }
 
@@ -492,6 +502,89 @@ async def test_after_restore_rehydrates_task_manager_session_state_and_rolls_bac
     )
     assert restored_instance_ids[0] != captured_instance_id
     assert restored_instance_ids == [restored_instance_ids[0]] * 2
+
+
+@pytest.mark.asyncio
+async def test_after_restore_rebinds_active_task_leases(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path,
+) -> None:
+    monkeypatch.setenv("FOUNDRY_AGENT_NAME", "test-agent")
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "captured-session")
+    agent = AgentServerHost()
+    provider = LocalFileTaskProvider(base_dir=tmp_path)
+    task_manager = TaskManager(config=agent.config, provider=provider)
+    task_id = "active-task"
+    captured_lease_owner = task_manager._lease_owner  # pylint: disable=protected-access
+    captured_instance_id = task_manager._instance_id  # pylint: disable=protected-access
+    created = await provider.create(
+        TaskCreateRequest(
+            id=task_id,
+            agent_name="test-agent",
+            session_id="captured-session",
+            status="in_progress",
+            title="active task",
+            lease_owner=captured_lease_owner,
+            lease_instance_id=captured_instance_id,
+            lease_duration_seconds=60,
+        )
+    )
+    active = mock.Mock()
+    active.current_etag = None
+    active.lease_last_refresh_monotonic = 0.0
+    task_manager._active_tasks[task_id] = active  # pylint: disable=protected-access
+    task_manager._track_etag(task_id, created.etag)  # pylint: disable=protected-access
+    set_task_manager(task_manager)
+    callback_count = 0
+    restored_instance_id = ""
+
+    @agent.after_restore_handler
+    async def after_restore(context: AgentSessionContext) -> None:
+        nonlocal callback_count, restored_instance_id
+        callback_count += 1
+        current = await provider.get(task_id)
+        assert current is not None
+        assert current.lease is not None
+        assert current.lease.owner == derive_lease_owner("test-agent", context.session_id)
+        assert (
+            current.lease.instance_id
+            == task_manager._instance_id  # pylint: disable=protected-access
+        )
+        restored_instance_id = current.lease.instance_id
+        if callback_count == 1:
+            raise RuntimeError("restore failed")
+
+    try:
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=agent),
+            base_url="http://testserver",
+        ) as lifecycle_client:
+            failed = await lifecycle_client.post(
+                "/_agent/after-restore",
+                json=_after_restore_payload(session_id="restored-session"),
+            )
+
+            rolled_back = await provider.get(task_id)
+            assert rolled_back is not None
+            assert rolled_back.lease is not None
+            assert rolled_back.lease.owner == captured_lease_owner
+            assert rolled_back.lease.instance_id == restored_instance_id
+
+            retried = await lifecycle_client.post(
+                "/_agent/after-restore",
+                json=_after_restore_payload(session_id="restored-session"),
+            )
+    finally:
+        set_task_manager(None)
+
+    rebound = await provider.get(task_id)
+    assert failed.status_code == 500
+    assert retried.status_code == 200
+    assert rebound is not None
+    assert rebound.lease is not None
+    assert rebound.lease.owner == derive_lease_owner("test-agent", "restored-session")
+    assert rebound.lease.instance_id == restored_instance_id
+    assert restored_instance_id != captured_instance_id
 
 
 @pytest.mark.asyncio
@@ -885,6 +978,7 @@ async def test_after_restore_failure_is_sanitized_and_rolls_back(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "captured-session")
+    monkeypatch.setenv("FOUNDRY_PROJECT_ENDPOINT", "https://captured.example")
     monkeypatch.setenv("RESTORED_VALUE", "captured-value")
     agent = AgentServerHost()
 
@@ -902,7 +996,10 @@ async def test_after_restore_failure_is_sanitized_and_rolls_back(
             "/_agent/after-restore",
             json=_after_restore_payload(
                 session_id="restored-session",
-                overrides={"RESTORED_VALUE": "restored-value"},
+                overrides={
+                    "FOUNDRY_PROJECT_ENDPOINT": "https://restored.example",
+                    "RESTORED_VALUE": "restored-value",
+                },
             ),
         )
 
@@ -917,6 +1014,7 @@ async def test_after_restore_failure_is_sanitized_and_rolls_back(
     assert os.environ["FOUNDRY_AGENT_SESSION_ID"] == "captured-session"
     assert os.environ["RESTORED_VALUE"] == "captured-value"
     assert agent.config.session_id == "captured-session"
+    assert agent.config.project_endpoint == "https://captured.example"
 
 
 @pytest.mark.asyncio
@@ -924,6 +1022,7 @@ async def test_after_restore_cancellation_rolls_back_and_can_be_retried(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "captured-session")
+    monkeypatch.setenv("FOUNDRY_PROJECT_ENDPOINT", "https://captured.example")
     monkeypatch.setenv("RESTORED_VALUE", "captured-value")
     agent = AgentServerHost()
     callback_started = asyncio.Event()
@@ -935,6 +1034,7 @@ async def test_after_restore_cancellation_rolls_back_and_can_be_retried(
         callback_count += 1
         assert os.environ["FOUNDRY_AGENT_SESSION_ID"] == context.session_id
         assert os.environ["RESTORED_VALUE"] == "restored-value"
+        assert agent.config.project_endpoint == "https://restored.example"
         if callback_count == 1:
             callback_started.set()
             await asyncio.Event().wait()
@@ -948,7 +1048,10 @@ async def test_after_restore_cancellation_rolls_back_and_can_be_retried(
                 "/_agent/after-restore",
                 json=_after_restore_payload(
                     session_id="restored-session",
-                    overrides={"RESTORED_VALUE": "restored-value"},
+                    overrides={
+                        "FOUNDRY_PROJECT_ENDPOINT": "https://restored.example",
+                        "RESTORED_VALUE": "restored-value",
+                    },
                 ),
             )
         )
@@ -960,12 +1063,16 @@ async def test_after_restore_cancellation_rolls_back_and_can_be_retried(
         assert os.environ["FOUNDRY_AGENT_SESSION_ID"] == "captured-session"
         assert os.environ["RESTORED_VALUE"] == "captured-value"
         assert agent.config.session_id == "captured-session"
+        assert agent.config.project_endpoint == "https://captured.example"
 
         retried = await lifecycle_client.post(
             "/_agent/after-restore",
             json=_after_restore_payload(
                 session_id="restored-session",
-                overrides={"RESTORED_VALUE": "restored-value"},
+                overrides={
+                    "FOUNDRY_PROJECT_ENDPOINT": "https://restored.example",
+                    "RESTORED_VALUE": "restored-value",
+                },
             ),
         )
 

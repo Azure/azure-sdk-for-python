@@ -15,6 +15,7 @@ import logging
 import os
 import traceback
 from collections.abc import Awaitable, Callable, Mapping
+from contextlib import AsyncExitStack
 from typing import Any, TypeVar
 
 from .._config import AgentConfig
@@ -453,14 +454,149 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # on terminal exit.
         self._timeout_watchdogs: dict[str, asyncio.Task[None]] = {}
 
-    def _rehydrate_session_state(self, restore_id: str | None = None) -> None:
-        self._lease_owner = derive_lease_owner(
+    async def _rehydrate_session_state(self, restore_id: str | None = None) -> None:
+        """Refresh task-manager identity and transfer active leases atomically.
+
+        All active task write locks are held while provider leases move to the
+        restored identity, so payload writes and renewal heartbeats cannot
+        observe a partially rebound manager.
+
+        :param restore_id: Identifier for the restored process materialization.
+        :type restore_id: str | None
+        """
+        previous_lease_owner = self._lease_owner
+        previous_instance_id = self._instance_id
+        previous_restore_id = self._materialization_restore_id
+        restored_lease_owner = derive_lease_owner(
             self._config.agent_name or "unknown-agent",
             self._config.session_id or "local",
         )
+        restored_instance_id = self._instance_id
+        restored_restore_id = self._materialization_restore_id
         if restore_id is not None and restore_id != self._materialization_restore_id:
-            self._instance_id = generate_instance_id()
-            self._materialization_restore_id = restore_id
+            restored_instance_id = generate_instance_id()
+            restored_restore_id = restore_id
+
+        active_task_ids = sorted(self._active_tasks)
+        async with AsyncExitStack() as stack:
+            for task_id in active_task_ids:
+                await stack.enter_async_context(self._get_task_write_lock(task_id))
+
+            self._lease_owner = restored_lease_owner
+            self._instance_id = restored_instance_id
+            self._materialization_restore_id = restored_restore_id
+            rebound_task_ids: list[str] = []
+            try:
+                for task_id in active_task_ids:
+                    if await self._rebind_active_lease_lock_held(
+                        task_id,
+                        previous_lease_owner=previous_lease_owner,
+                        previous_instance_id=previous_instance_id,
+                    ):
+                        rebound_task_ids.append(task_id)
+            except Exception:
+                for task_id in reversed(rebound_task_ids):
+                    try:
+                        await self._rebind_active_lease_lock_held(
+                            task_id,
+                            previous_lease_owner=restored_lease_owner,
+                            previous_instance_id=restored_instance_id,
+                            target_lease_owner=previous_lease_owner,
+                            target_instance_id=previous_instance_id,
+                        )
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        logger.exception(
+                            "Failed to roll back restored lease identity for task %s",
+                            task_id,
+                        )
+                self._lease_owner = previous_lease_owner
+                self._instance_id = previous_instance_id
+                self._materialization_restore_id = previous_restore_id
+                raise
+
+    async def _rebind_active_lease_lock_held(
+        self,
+        task_id: str,
+        *,
+        previous_lease_owner: str,
+        previous_instance_id: str,
+        target_lease_owner: str | None = None,
+        target_instance_id: str | None = None,
+    ) -> bool:
+        """Move one active provider lease between process identities.
+
+        :param task_id: Active task identifier.
+        :type task_id: str
+        :keyword previous_lease_owner: Lease owner currently expected in storage.
+        :paramtype previous_lease_owner: str
+        :keyword previous_instance_id: Lease instance currently expected in storage.
+        :paramtype previous_instance_id: str
+        :keyword target_lease_owner: Lease owner to bind, defaulting to the manager owner.
+        :paramtype target_lease_owner: str | None
+        :keyword target_instance_id: Lease instance to bind, defaulting to the manager instance.
+        :paramtype target_instance_id: str | None
+        :return: Whether the stored lease identity changed.
+        :rtype: bool
+        """
+        target_owner = (
+            self._lease_owner
+            if target_lease_owner is None
+            else target_lease_owner
+        )
+        target_instance = (
+            self._instance_id
+            if target_instance_id is None
+            else target_instance_id
+        )
+        task_info = await self._provider_get_tracked(task_id)
+        if task_info is None or task_info.status != "in_progress":
+            return False
+        if task_info.lease is None:
+            raise TaskConflictError(task_id, "in_progress")
+
+        current_identity = (task_info.lease.owner, task_info.lease.instance_id)
+        target_identity = (target_owner, target_instance)
+        if current_identity == target_identity:
+            return False
+        if current_identity != (previous_lease_owner, previous_instance_id):
+            raise TaskConflictError(task_id, "in_progress")
+
+        if previous_lease_owner != target_owner:
+            await self._provider_update_lock_held(
+                task_id,
+                TaskPatchRequest(
+                    lease_owner=previous_lease_owner,
+                    lease_instance_id=previous_instance_id,
+                    lease_duration_seconds=0,
+                ),
+            )
+        try:
+            await self._provider_update_lock_held(
+                task_id,
+                TaskPatchRequest(
+                    lease_owner=target_owner,
+                    lease_instance_id=target_instance,
+                    lease_duration_seconds=_DEFAULT_LEASE_SECONDS,
+                ),
+            )
+        except Exception:
+            if previous_lease_owner != target_owner:
+                try:
+                    await self._provider_update_lock_held(
+                        task_id,
+                        TaskPatchRequest(
+                            lease_owner=previous_lease_owner,
+                            lease_instance_id=previous_instance_id,
+                            lease_duration_seconds=_DEFAULT_LEASE_SECONDS,
+                        ),
+                    )
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.exception(
+                        "Failed to restore the previous lease identity for task %s",
+                        task_id,
+                    )
+            raise
+        return True
 
     @staticmethod
     def _build_source(fn_name: str) -> dict[str, str]:
@@ -1154,6 +1290,10 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 last_refresh_provider=lambda tid=task_id: (  # type: ignore[misc]
                     self._active_tasks[tid].lease_last_refresh_monotonic if tid in self._active_tasks else 0.0
                 ),
+                lease_identity_provider=lambda: (
+                    self._lease_owner,
+                    self._instance_id,
+                ),
                 #   — heartbeat PATCH MUST be routed
                 # through the per-task write queue so it serializes
                 # with metadata flushes / steering / suspend / fail.
@@ -1561,6 +1701,10 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 steering_poll_callback=steering_poll_cb,
                 last_refresh_provider=lambda tid=task_id: (  # type: ignore[misc]
                     self._active_tasks[tid].lease_last_refresh_monotonic if tid in self._active_tasks else 0.0
+                ),
+                lease_identity_provider=lambda: (
+                    self._lease_owner,
+                    self._instance_id,
                 ),
                 #   — route through the per-task write queue.
                 update_via_queue=self._provider_update_locked,

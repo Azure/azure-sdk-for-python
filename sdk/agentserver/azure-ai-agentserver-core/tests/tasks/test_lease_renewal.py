@@ -24,6 +24,7 @@ from pathlib import Path
 import pytest
 
 from azure.ai.agentserver.core.tasks import TaskContext, task, multi_turn_task
+from azure.ai.agentserver.core.tasks._lease import lease_renewal_loop
 import azure.ai.agentserver.core.tasks._manager as mgr_mod
 from azure.ai.agentserver.core.tasks._local_provider import LocalFileTaskProvider
 from azure.ai.agentserver.core.tasks._manager import TaskManager
@@ -141,3 +142,37 @@ async def test_application_state_writes_do_not_shadow_heartbeats(captured_local,
             heartbeat_count += 1
 
     assert heartbeat_count >= 1, "application state activity must not suppress task lease heartbeats"
+
+
+@pytest.mark.asyncio
+async def test_renewal_loop_resolves_current_lease_identity(captured_local) -> None:
+    identity = ["owner-before-restore", "instance-before-restore"]
+    observed_identities: list[tuple[str | None, str | None]] = []
+    cancel_event = asyncio.Event()
+
+    async def capture_update(task_id, patch):
+        assert task_id == "restored-task"
+        observed_identities.append((patch.lease_owner, patch.lease_instance_id))
+        if len(observed_identities) == 1:
+            identity[:] = ["owner-after-restore", "instance-after-restore"]
+        else:
+            cancel_event.set()
+
+    await asyncio.wait_for(
+        lease_renewal_loop(
+            captured_local,
+            "restored-task",
+            lease_owner=identity[0],
+            lease_instance_id=identity[1],
+            lease_duration_seconds=2,
+            cancel_event=cancel_event,
+            lease_identity_provider=lambda: (identity[0], identity[1]),
+            update_via_queue=capture_update,
+        ),
+        timeout=3.0,
+    )
+
+    assert observed_identities == [
+        ("owner-before-restore", "instance-before-restore"),
+        ("owner-after-restore", "instance-after-restore"),
+    ]

@@ -18,6 +18,8 @@
   bypassing the host's required hydration and rollback behavior. Later
   materializations reset omitted overrides to their captured values and expose
   the restored session through the ambient request context during callbacks.
+  Environment-backed `AgentConfig` values and active durable-task leases are
+  also rebound to the restored process before callbacks run.
 
 ## 2.2.0 (2026-09-23)
 
