@@ -13,6 +13,7 @@ import inspect
 import json
 import math
 import os
+import time
 from typing import Any, Callable, Dict, List, Optional
 
 from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy
@@ -266,6 +267,7 @@ class DecisionModelRunner:
             or timeout <= 0
         ):
             raise _invalid_config("'timeout' must be a positive finite number.")
+        deadline = time.monotonic() + timeout
         for question in questions.values():
             if question.get("type") not in ("noul", "score"):
                 raise _invalid_config(f"Decision question type '{question.get('type')}' is not supported.")
@@ -299,7 +301,9 @@ class DecisionModelRunner:
             ):
                 raise _failed("The decision request exceeds the configured byte budget.", ErrorBlame.USER_ERROR)
             try:
-                payload = await asyncio.wait_for(self._await_request(content), timeout=timeout)
+                payload = await asyncio.wait_for(
+                    self._await_request(content, deadline), timeout=max(0, deadline - time.monotonic())
+                )
             except asyncio.TimeoutError:
                 raise _failed("The decision model request timed out.") from None
             properties = self._response_properties(payload)
@@ -324,12 +328,12 @@ class DecisionModelRunner:
             raise _failed("The decision cancellation callback must return a boolean.", ErrorBlame.USER_ERROR)
         return result
 
-    async def _await_request(self, content: bytes) -> Any:
+    async def _await_request(self, content: bytes, deadline: float) -> Any:
         if self._cancelled():
             raise _failed("The decision model request was cancelled.", ErrorBlame.USER_ERROR)
         if self._cancellation_requested is None:
-            return await self._post(content)
-        task = asyncio.create_task(self._post(content))
+            return await self._post(content, deadline=deadline)
+        task = asyncio.create_task(self._post(content, deadline=deadline))
         try:
             while not task.done():
                 if self._cancelled():
@@ -358,7 +362,7 @@ class DecisionModelRunner:
         async with AsyncAzureTokenProvider() as provider:
             return (await provider.get_token(_DECISION_TOKEN_SCOPE)).token
 
-    async def _post(self, content: bytes) -> Any:
+    async def _post(self, content: bytes, *, deadline: float) -> Any:
         headers = {"x-ms-useragent": self._user_agent, "Content-Type": "application/json"}
         if self._api_key:
             headers["api-key"] = self._api_key
@@ -381,10 +385,17 @@ class DecisionModelRunner:
             ),
             "redirect_policy": AsyncRedirectPolicy(permit_redirects=False),
         }
-        options: Dict[str, Any] = {"retry_on_methods": ["POST"]}
-        if self._timeout_seconds is not None:
-            # The default requests transport uses this scalar for both connect and read timeouts.
-            options["connection_timeout"] = self._timeout_seconds
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise _failed("The decision model request timed out.")
+        # Native retry policy carries this budget across attempts and clamps the scalar connect/read timeout.
+        options: Dict[str, Any] = {
+            "retry_on_methods": ["POST"],
+            "timeout": remaining,
+            "connection_timeout": (
+                min(self._timeout_seconds, remaining) if self._timeout_seconds is not None else remaining
+            ),
+        }
 
         try:
             async with get_async_http_client().with_policies(**policies) as client:
@@ -394,6 +405,8 @@ class DecisionModelRunner:
         except EvaluationException:
             raise
         except Exception:  # pylint: disable=broad-except
+            if time.monotonic() >= deadline:
+                raise _failed("The decision model request timed out.") from None
             raise _failed("The decision model request failed; check the endpoint and network access.") from None
         if self._max_response_bytes is not None and len(content) > self._max_response_bytes:
             if status == 200:

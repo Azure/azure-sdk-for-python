@@ -15,6 +15,7 @@ import requests
 from urllib3.util import connection
 
 from azure.ai.evaluation._evaluators._common._model_runners import DecisionModelRunner
+from azure.ai.evaluation._evaluators._common._base_model_eval import ModelEvaluatorBase
 from azure.ai.evaluation._exceptions import ErrorBlame, EvaluationException
 from azure.ai.evaluation._http_utils import get_async_http_client
 from azure.core.pipeline.policies import AsyncRetryPolicy
@@ -69,6 +70,122 @@ def invoke(endpoint, timeout=3, **controls):
         **controls,
     )
     return asyncio.run(runner(state={"query": "é"}, questions=QUESTIONS, timeout=timeout))
+
+
+class SynchronousDecisionEvaluator(ModelEvaluatorBase):
+    _supports_decision_models = True
+
+    def __call__(self, *, query):
+        return super().__call__(query=query)
+
+    async def _do_eval(self, eval_input):
+        return await self._decision_model_runner(state=eval_input, questions=QUESTIONS, timeout=self._LLM_CALL_TIMEOUT)
+
+
+@pytest.mark.parametrize("timeout,timeout_seconds", [(0.05, None), (0.2, 0.02), (0.05, 0.2)])
+def test_public_synchronous_overall_timeout_bounds_default_requests_worker(
+    localhost, monkeypatch, timeout, timeout_seconds
+):
+    endpoint, calls, delay, _ = localhost
+    delay[0] = 0.65
+    observed = []
+    original = requests.Session.request
+
+    def record(session, *args, **kwargs):
+        observed.append(kwargs["timeout"])
+        return original(session, *args, **kwargs)
+
+    monkeypatch.setattr(requests.Session, "request", record)
+    evaluator = SynchronousDecisionEvaluator(
+        result_key="status",
+        model_config={
+            "type": "decision",
+            "azure_endpoint": endpoint,
+            "azure_deployment": "Decision-1",
+            "api_key": "local-test",
+        },
+        timeout=timeout,
+        timeout_seconds=timeout_seconds,
+        max_retries=0,
+    )
+    started = time.monotonic()
+    with pytest.raises(EvaluationException) as raised:
+        evaluator(query="synthetic")
+    elapsed = time.monotonic() - started
+    print(f"Entire public synchronous evaluator call: {elapsed:.3f}s")
+    assert elapsed < 0.4
+    assert len(calls) == 1
+    bound = min(timeout, timeout_seconds) if timeout_seconds is not None else timeout
+    assert len(observed) == 1 and 0 < observed[0] <= bound + 1e-8
+    if timeout_seconds is None or timeout_seconds > timeout:
+        assert "timed out" in str(raised.value)
+    assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
+
+
+def test_public_synchronous_authentication_consumes_transport_deadline(localhost, monkeypatch):
+    endpoint, calls, delay, _ = localhost
+    delay[0] = 0.65
+    observed = []
+    original = requests.Session.request
+
+    def record(session, *args, **kwargs):
+        observed.append(kwargs["timeout"])
+        return original(session, *args, **kwargs)
+
+    class Credential:
+        async def get_token(self, *_):
+            await asyncio.sleep(0.08)
+            from azure.core.credentials import AccessToken
+
+            return AccessToken("local-test", 9999999999)
+
+    monkeypatch.setattr(requests.Session, "request", record)
+    evaluator = SynchronousDecisionEvaluator(
+        result_key="status",
+        model_config={"type": "decision", "azure_endpoint": endpoint, "azure_deployment": "Decision-1"},
+        credential=Credential(),
+        timeout=0.15,
+        max_retries=0,
+    )
+    started = time.monotonic()
+    with pytest.raises(EvaluationException, match="timed out"):
+        evaluator(query="synthetic")
+    assert time.monotonic() - started < 0.4
+    assert len(calls) == 1 and len(observed) == 1
+    assert 0 < observed[0] <= 0.075
+
+
+def test_public_synchronous_retries_and_backoff_share_remaining_deadline(localhost, monkeypatch):
+    endpoint, calls, delay, statuses = localhost
+    delay[0] = 0.04
+    statuses[:] = [429, 429, 200]
+    observed = []
+    original = requests.Session.request
+
+    def record(session, *args, **kwargs):
+        observed.append(kwargs["timeout"])
+        return original(session, *args, **kwargs)
+
+    monkeypatch.setattr(requests.Session, "request", record)
+    evaluator = SynchronousDecisionEvaluator(
+        result_key="status",
+        model_config={
+            "type": "decision",
+            "azure_endpoint": endpoint,
+            "azure_deployment": "Decision-1",
+            "api_key": "local-test",
+        },
+        timeout=0.2,
+        max_retries=3,
+    )
+    started = time.monotonic()
+    with pytest.raises(EvaluationException, match="timed out") as raised:
+        evaluator(query="synthetic")
+    assert time.monotonic() - started < 0.4
+    assert len(calls) == len(observed) == 2
+    assert 0 < observed[1] <= observed[0] - 0.03
+    assert observed[0] <= 0.2 + 1e-8
+    assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
 
 
 def test_default_transport_sends_policy_request_and_retries(localhost, monkeypatch):

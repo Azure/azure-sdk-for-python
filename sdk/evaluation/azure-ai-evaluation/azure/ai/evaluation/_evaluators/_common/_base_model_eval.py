@@ -49,6 +49,8 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
         file based on reasoning models. Defaults to False.
     :type is_reasoning_model: bool
     :keyword timeout: Optional overall Decision time limit, including authentication and retries.
+        The remaining budget also limits native transport connect/read timeouts. Awaiting is cancelled at the
+        deadline, but synchronous credential calls cannot be forcibly interrupted and may delay synchronous return.
     :paramtype timeout: Optional[float]
     :keyword timeout_seconds: Optional Decision connect/read timeout.
     :paramtype timeout_seconds: Optional[float]
