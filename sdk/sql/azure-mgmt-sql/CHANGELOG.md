@@ -1,5 +1,38 @@
 # Release History
 
+## 5.0.0b2 (2026-10-09)
+
+### Features Added
+
+  - Model `BackupShortTermRetentionPolicyProperties` added property `immutability_status`
+  - Model `BackupShortTermRetentionPolicyProperties` added property `lock_immutability`
+  - Model `DatabaseBlobAuditingPolicyProperties` added property `required_fields`
+  - Model `DistributedAvailabilityGroupProperties` added property `most_recent_error`
+  - Model `DistributedAvailabilityGroupProperties` added property `most_recent_error_message`
+  - Model `DistributedAvailabilityGroupProperties` added property `most_recent_error_time`
+  - Model `ExtendedDatabaseBlobAuditingPolicyProperties` added property `required_fields`
+  - Model `ExtendedServerBlobAuditingPolicyProperties` added property `required_fields`
+  - Model `ManagedBackupShortTermRetentionPolicyProperties` added property `immutability_status`
+  - Model `ManagedBackupShortTermRetentionPolicyProperties` added property `lock_immutability`
+  - Model `ManagedInstanceLongTermRetentionBackupProperties` added property `is_backup_immutable`
+  - Model `ManagedInstanceLongTermRetentionBackupProperties` added property `legal_hold_immutability`
+  - Model `ManagedInstanceLongTermRetentionBackupProperties` added property `time_based_immutability`
+  - Model `ManagedInstanceLongTermRetentionBackupProperties` added property `time_based_immutability_mode`
+  - Model `ManagedInstanceLongTermRetentionPolicyProperties` added property `time_based_immutability`
+  - Model `ManagedInstanceLongTermRetentionPolicyProperties` added property `time_based_immutability_mode`
+  - Model `ServerBlobAuditingPolicyProperties` added property `required_fields`
+  - Added enum `ImmutabilityStatus`
+  - Model `LongTermRetentionBackupsOperations` added parameter `skiptoken` in method `list_by_location`
+  - Model `LongTermRetentionBackupsOperations` added parameter `top` in method `list_by_location`
+  - Model `LongTermRetentionBackupsOperations` added parameter `skiptoken` in method `list_by_resource_group_location`
+  - Model `LongTermRetentionBackupsOperations` added parameter `top` in method `list_by_resource_group_location`
+  - Model `LongTermRetentionBackupsOperations` added parameter `skiptoken` in method `list_by_resource_group_server`
+  - Model `LongTermRetentionBackupsOperations` added parameter `top` in method `list_by_resource_group_server`
+  - Model `LongTermRetentionBackupsOperations` added parameter `skiptoken` in method `list_by_server`
+  - Model `LongTermRetentionBackupsOperations` added parameter `top` in method `list_by_server`
+  - Model `RestorableDroppedDatabasesOperations` added parameter `skiptoken` in method `list_by_server`
+  - Model `RestorableDroppedDatabasesOperations` added parameter `top` in method `list_by_server`
+
 ## 5.0.0b1 (2026-08-06)
 
 ### Features Added

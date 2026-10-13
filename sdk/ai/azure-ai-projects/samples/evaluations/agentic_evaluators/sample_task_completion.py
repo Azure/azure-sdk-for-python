@@ -8,14 +8,14 @@
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
     `openai.evals.*` methods to create, get and list evaluation and and eval runs
-    for Task Completion evaluator using inline dataset content.
+    for Task Completion evaluator using query/response and messages inline data.
 
 USAGE:
     python sample_task_completion.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0" python-dotenv
+    pip install "azure-ai-projects>=2.8.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -46,7 +46,7 @@ def main() -> None:
     endpoint = os.environ[
         "FOUNDRY_PROJECT_ENDPOINT"
     ]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
-    model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME", "")  # Sample : gpt-4o-mini
+    model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
 
     with (
         DefaultAzureCredential() as credential,
@@ -74,7 +74,7 @@ def main() -> None:
                 type="azure_ai_evaluator",
                 name="task_completion",
                 evaluator_name="builtin.task_completion",
-                initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+                initialization_parameters={"deployment_name": model_deployment_name},
                 data_mapping={
                     "query": "{{item.query}}",
                     "response": "{{item.response}}",
@@ -96,6 +96,7 @@ def main() -> None:
         print("Eval Run Response:")
         pprint(eval_object_response)
 
+        # Single-turn, string response input
         # Success example - task completed successfully
         success_query = "Book a flight from New York to Los Angeles for next Friday"
         success_response = "I've successfully booked your flight from New York (JFK) to Los Angeles (LAX) for Friday, March 29th. Your confirmation number is ABC123. The flight departs at 2:30 PM EST and arrives at 5:45 PM PST."
@@ -104,7 +105,7 @@ def main() -> None:
         failure_query = "Cancel my subscription and refund my payment"
         failure_response = "I understand you want to cancel your subscription. Here are some helpful articles about our cancellation policy and refund terms that you might find useful."
 
-        # Complex example - conversation format with task completion
+        # Single-turn, structured JSON response input with task completion
         complex_query = [
             {
                 "createdAt": "2025-03-26T17:27:35Z",
@@ -183,7 +184,7 @@ def main() -> None:
             }
         ]
 
-        # Another complex example - conversation format with query but no tool calls
+        # Another structured response input without tool calls
         query_conversation_query = [
             {
                 "createdAt": "2025-03-26T17:30:00Z",
@@ -218,11 +219,11 @@ def main() -> None:
                     content=[
                         # Success example - task completed
                         SourceFileContentContent(
-                            item={"query": success_query, "response": success_response, "tool_definitions": None}
+                            item={"query": success_query, "response": success_response, "tool_definitions": []}
                         ),
                         # Failure example - task not completed
                         SourceFileContentContent(
-                            item={"query": failure_query, "response": failure_response, "tool_definitions": None}
+                            item={"query": failure_query, "response": failure_response, "tool_definitions": []}
                         ),
                         # Complex example - conversation format with tool usage
                         SourceFileContentContent(
@@ -237,7 +238,7 @@ def main() -> None:
                             item={
                                 "query": query_conversation_query,
                                 "response": query_conversation_response,
-                                "tool_definitions": None,
+                                "tool_definitions": [],
                             }
                         ),
                     ],
@@ -257,7 +258,7 @@ def main() -> None:
 
         while True:
             run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-            if run.status in ("completed", "failed"):
+            if run.status in ("completed", "failed", "canceled", "cancelled"):
                 output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
                 pprint(output_items)
                 print(f"Eval Run Status: {run.status}")
@@ -265,6 +266,69 @@ def main() -> None:
                 break
             time.sleep(5)
             print("Waiting for eval run to complete...")
+
+        client.evals.delete(eval_id=eval_object.id)
+        if run.status != "completed" or run.result_counts.errored:
+            raise RuntimeError(f"Evaluation {run.status}, {run.result_counts.errored} errored item(s): {run.error}")
+
+        # Single-turn, messages input
+        messages = [
+            {"role": "user", "content": [{"type": "text", "text": "Calculate 20% of 50."}]},
+            {"role": "assistant", "content": [{"type": "text", "text": "20% of 50 is 10."}]},
+        ]
+        messages_eval = client.evals.create(
+            name="Test Task Completion Evaluator with messages",
+            data_source_config=DataSourceConfigCustom(
+                type="custom",
+                item_schema={
+                    "type": "object",
+                    "properties": {
+                        "messages": {"type": "array", "items": {"type": "object"}},
+                        "tool_definitions": {"type": "array", "items": {"type": "object"}},
+                    },
+                    "required": ["messages", "tool_definitions"],
+                },
+                include_sample_schema=False,
+            ),
+            testing_criteria=[
+                TestingCriterionAzureAIEvaluator(
+                    type="azure_ai_evaluator",
+                    name="task_completion_messages",
+                    evaluator_name="builtin.task_completion",
+                    initialization_parameters={"deployment_name": model_deployment_name},
+                    data_mapping={
+                        "messages": "{{item.messages}}",
+                        "tool_definitions": "{{item.tool_definitions}}",
+                    },
+                )
+            ],
+        )
+        try:
+            messages_run = client.evals.runs.create(
+                eval_id=messages_eval.id,
+                name="messages_inline_run",
+                extra_body={"evaluation_level": "turn"},
+                data_source=CreateEvalJSONLRunDataSourceParam(
+                    type="jsonl",
+                    source=SourceFileContent(
+                        type="file_content",
+                        content=[SourceFileContentContent(item={"messages": messages, "tool_definitions": []})],
+                    ),
+                ),
+            )
+            while messages_run.status not in ("completed", "failed", "canceled", "cancelled"):
+                time.sleep(5)
+                messages_run = client.evals.runs.retrieve(run_id=messages_run.id, eval_id=messages_eval.id)
+            print(f"Messages eval run status: {messages_run.status}")
+            print(f"Messages eval run report: {messages_run.report_url}")
+            pprint(list(client.evals.runs.output_items.list(run_id=messages_run.id, eval_id=messages_eval.id)))
+            if messages_run.status != "completed" or messages_run.result_counts.errored:
+                raise RuntimeError(
+                    f"Messages evaluation {messages_run.status}, "
+                    f"{messages_run.result_counts.errored} errored item(s): {messages_run.error}"
+                )
+        finally:
+            client.evals.delete(eval_id=messages_eval.id)
 
 
 if __name__ == "__main__":
