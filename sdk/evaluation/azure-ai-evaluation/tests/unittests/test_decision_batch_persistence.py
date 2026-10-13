@@ -17,7 +17,9 @@ from azure.ai.evaluation._evaluate._batch_run import RunSubmitterClient
 from azure.ai.evaluation._evaluate._evaluate import (
     _calculate_aoai_evaluation_summary,
     _convert_single_row_to_aoai_format,
+    _extract_testing_criteria_metadata,
 )
+from azure.ai.evaluation._evaluators._common._base_model_eval import ModelEvaluatorBase
 from azure.ai.evaluation._evaluators._common._decision_strategy import BinaryScoring, DecisionEvaluationStrategy
 from azure.ai.evaluation._evaluators._common._model_runners import DecisionModelRunner
 from azure.ai.evaluation._evaluators._common import _model_runners
@@ -108,11 +110,33 @@ class TestDecisionBatchPersistence:
     @pytest.mark.parametrize("members", [5, 6])
     @pytest.mark.parametrize("case", ["completed", "skipped", "mixed", "semantic_error"])
     @pytest.mark.parametrize("primary_first", [False, True])
+    @pytest.mark.parametrize("metadata_source", ["manual", "sdk_instance", "sdk_builtin"])
     def test_shared_composite_request_is_counted_once_for_all_parsed_members(
-        self, batch_client, tmp_path, monkeypatch, members, case, primary_first
+        self, batch_client, tmp_path, monkeypatch, members, case, primary_first, metadata_source
     ):
         calls = []
         keys = [f"member_{index}" for index in range(members)]
+        root = "overall"
+        if metadata_source != "manual":
+            if members == 6:
+                root = "output_quality"
+                keys = [
+                    "fluency",
+                    "coherence",
+                    "intent_resolution",
+                    "task_adherence",
+                    "groundedness",
+                    "task_completion",
+                ]
+            else:
+                root = "tool_use_quality"
+                keys = [
+                    "tool_call_accuracy",
+                    "tool_call_success",
+                    "tool_input_accuracy",
+                    "tool_output_utilization",
+                    "tool_selection",
+                ]
         questions = {
             key: {"type": "noul", "instructions": key} for member in keys for key in (member, f"{member}_status")
         }
@@ -161,8 +185,9 @@ class TestDecisionBatchPersistence:
 
         monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: AsyncHttpPipeline(transport=Transport()))
 
-        async def judge(query):
-            runner = DecisionModelRunner(CONFIG, max_retries=0)
+        async def judge(query, runner=None):
+            if runner is None:
+                runner = DecisionModelRunner(CONFIG, max_retries=0)
             shared = await runner(state={"query": query}, questions=questions, timeout=2)
             result = {}
             for key in keys:
@@ -185,13 +210,16 @@ class TestDecisionBatchPersistence:
                 result.update(member_strategy.parse(member_response, {"query": query}))
             result.update(
                 {
-                    "overall": None if case == "skipped" else float(case == "completed"),
-                    "overall_status": "skipped" if case == "skipped" else "completed",
-                    "overall_passed": None if case == "skipped" else case == "completed",
-                    "overall_prompt_tokens": 120,
-                    "overall_completion_tokens": 3,
-                    "overall_total_tokens": 123,
-                    "overall_model": shared["model"],
+                    root: None if case == "skipped" else float(case == "completed"),
+                    f"{root}_status": "skipped" if case == "skipped" else "completed",
+                    f"{root}_passed": None if case == "skipped" else case == "completed",
+                    f"{root}_result": (
+                        "not_applicable" if case == "skipped" else "pass" if case == "completed" else "fail"
+                    ),
+                    f"{root}_prompt_tokens": 120,
+                    f"{root}_completion_tokens": 3,
+                    f"{root}_total_tokens": 123,
+                    f"{root}_model": shared["model"],
                 }
             )
             return result
@@ -199,13 +227,47 @@ class TestDecisionBatchPersistence:
         criteria = {
             **CRITERIA,
             "judge": {
-                "metrics": ["overall", *keys] if primary_first else [*keys, "overall"],
+                "metrics": [root, *keys] if primary_first else [*keys, root],
                 "type": "azure_ai_evaluator",
-                "evaluator_name": "builtin.overall",
+                "evaluator_name": f"builtin.{root}",
             },
         }
-        _, rows = convert_batch(batch_client, judge, tmp_path, criteria=criteria)
+        evaluator = judge
+        if metadata_source != "manual":
+
+            class OutputQualityEvaluator(ModelEvaluatorBase):
+                _supports_decision_models = True
+                _binary_decision = True
+
+                def __call__(self, *, query):
+                    return super().__call__(query=query)
+
+                async def _do_eval(self, eval_input):
+                    return await judge(eval_input["query"], self._decision_model_runner)
+
+            class ToolUseQualityEvaluator(OutputQualityEvaluator):
+                pass
+
+            evaluator_class = OutputQualityEvaluator if members == 6 else ToolUseQualityEvaluator
+            evaluator = evaluator_class(result_key=root, model_config=CONFIG, threshold=1, max_retries=0)
+            metadata = None
+            if metadata_source == "sdk_builtin":
+                metadata = {
+                    "testing_criteria": [
+                        {"name": "judge", "type": "azure_ai_evaluator", "evaluator_name": f"builtin.{root}"}
+                    ]
+                }
+            criteria = _extract_testing_criteria_metadata(
+                {"judge": evaluator, "f1": F1ScoreEvaluator()}, metadata, None, logging.getLogger("test"), None, None
+            )
+            assert criteria["judge"]["metrics"] == [root, *keys]
+            assert criteria["judge"]["evaluator_name"] == (root if metadata is None else f"builtin.{root}")
+            assert criteria["judge"]["is_inverse"] is False
+            if not primary_first:
+                criteria["judge"]["metrics"] = [*keys, root]
+        _, rows = convert_batch(batch_client, evaluator, tmp_path, criteria=criteria)
         assert len(calls) == 1 and len(calls[0]["questions"]) == members * 2
+        assert {result["metric"] for result in rows[0]["results"] if result["name"] == "judge"} == {root, *keys}
         for result in rows[0]["results"]:
             if case == "semantic_error" and result["name"] == "judge":
                 assert result["status"] == "error" and result["score"] is None and result["passed"] is None
@@ -219,9 +281,18 @@ class TestDecisionBatchPersistence:
                 if case == "skipped":
                     assert result["status"] == "skipped" and result["score"] is None and result["passed"] is None
         assert sum("usage" in (result.get("sample") or {}) for result in rows[0]["results"]) == 1
-        overall = next(result for result in rows[0]["results"] if result["metric"] == "overall")
+        overall = next(result for result in rows[0]["results"] if result["metric"] == root)
         assert overall["sample"]["usage"]["total_tokens"] == 123
         rollup = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), criteria)
+        if metadata_source != "manual":
+            criteria_rollup = next(
+                item for item in rollup["per_testing_criteria_results"] if item["testing_criteria"] == "judge"
+            )
+            expected = {"passed": 0, "failed": 0, "skipped": 0, "errored": 0}
+            expected[
+                {"completed": "passed", "mixed": "failed", "skipped": "skipped", "semantic_error": "errored"}[case]
+            ] = 1
+            assert criteria_rollup == {"testing_criteria": "judge", **expected}
         assert rollup["per_model_usage"] == [
             {
                 "model_name": "decision-native",

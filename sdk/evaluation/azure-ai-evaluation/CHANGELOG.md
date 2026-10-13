@@ -5,11 +5,13 @@
 ### Features Added
 
 - Added shared model runners and evaluation strategies for asset evaluators using decision models in Microsoft Foundry.
-- Decision evaluator results expose measured token usage and model fields in standard evaluation rows, including skipped evaluations, while retaining known metadata on failures.
+- Decision evaluator results expose known final-response token usage and model fields in standard evaluation rows, including skipped evaluations, while retaining known metadata on failures. Usage does not include earlier retry attempts.
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- Output Quality and Tool Use Quality asset evaluators retain their aggregate and member metrics when used with `evaluate` without catalog metadata.
 
 ### Other Changes
 

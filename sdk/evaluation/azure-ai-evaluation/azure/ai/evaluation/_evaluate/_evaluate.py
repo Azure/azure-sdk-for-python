@@ -3386,7 +3386,7 @@ def _add_error_summaries(
         criteria_type = testing_criteria_metadata.get(criteria_name, {}).get("type", "azure_ai_evaluator")
         if decision_error_metadata is not None:
             evaluator_name = testing_criteria_metadata.get(criteria_name, {}).get("evaluator_name")
-            if isinstance(evaluator_name, str) and evaluator_name.startswith("builtin."):
+            if isinstance(evaluator_name, str):
                 primary_metric = evaluator_name.removeprefix("builtin.")
                 metrics = sorted(metrics, key=lambda metric: metric != primary_metric)
         decision_usage_added = False
