@@ -3,13 +3,12 @@
 # ---------------------------------------------------------
 
 import math
-from typing import Any, Dict, List, Optional, TypeVar, Union
+from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
 
 from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from . import EvaluatorBase
-from ._decision_execution import DecisionExecutionPolicy
 from ._model_runners import (
     DecisionModelRunner,
     PromptyModelRunner,
@@ -49,9 +48,21 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
     :keyword is_reasoning_model: This parameter is in preview. If True, updates the config parameters in prompty
         file based on reasoning models. Defaults to False.
     :type is_reasoning_model: bool
-    :keyword decision_execution_policy: Optional transport-only limits and receipt callbacks for a decision runner.
-        Rejected for Prompty evaluators; omitted policies preserve existing Prompty behavior.
-    :paramtype decision_execution_policy: Optional[DecisionExecutionPolicy]
+    :keyword timeout: Optional overall Decision time limit, including authentication and retries.
+    :paramtype timeout: Optional[float]
+    :keyword timeout_seconds: Optional Decision connect/read timeout.
+    :paramtype timeout_seconds: Optional[float]
+    :keyword max_retries: Optional Decision retry limit, defaults to 3.
+    :paramtype max_retries: Optional[int]
+    :keyword cancellation_requested: Optional Decision cancellation callback, polled during authentication,
+        requests and retry waits. Cancelling stops awaiting synchronous credential calls, not their worker threads.
+    :paramtype cancellation_requested: Optional[Callable[[], bool]]
+    :keyword max_request_bytes: Optional limit on the compact UTF-8 serialized Decision request.
+    :paramtype max_request_bytes: Optional[int]
+    :keyword max_state_question_bytes: Optional limit on the largest individual state/question pair.
+    :paramtype max_state_question_bytes: Optional[int]
+    :keyword max_response_bytes: Optional response acceptance limit before JSON parsing, not a streaming bound.
+    :paramtype max_response_bytes: Optional[int]
     """
 
     _LLM_CALL_TIMEOUT = 600
@@ -71,10 +82,23 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
         eval_last_turn: bool = False,
         threshold: int = 3,
         credential: Optional[TokenCredential] = None,
-        decision_execution_policy: Optional[DecisionExecutionPolicy] = None,
+        timeout: Optional[float] = None,
+        timeout_seconds: Optional[float] = None,
+        max_retries: Optional[int] = None,
+        cancellation_requested: Optional[Callable[[], bool]] = None,
+        max_request_bytes: Optional[int] = None,
+        max_state_question_bytes: Optional[int] = None,
+        max_response_bytes: Optional[int] = None,
         _higher_is_better: bool = False,
         **kwargs,
     ) -> None:
+        if "decision_execution_policy" in kwargs:
+            raise EvaluationException(
+                message="Use explicit Decision execution controls instead of decision_execution_policy.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.EVALUATE,
+            )
         self._result_key = result_key
         self._is_reasoning_model = kwargs.get("is_reasoning_model", False)
         self._prompty_file = prompty_file
@@ -83,6 +107,14 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
         super().__init__(eval_last_turn=eval_last_turn, threshold=threshold, _higher_is_better=_higher_is_better)
 
         subclass_name = self.__class__.__name__
+        execution_options: Dict[str, Any] = {
+            "timeout_seconds": timeout_seconds,
+            "max_retries": max_retries,
+            "cancellation_requested": cancellation_requested,
+            "max_request_bytes": max_request_bytes,
+            "max_state_question_bytes": max_state_question_bytes,
+            "max_response_bytes": max_response_bytes,
+        }
         if is_decision_model_config(model_config):
             if not self._supports_decision_models:
                 raise EvaluationException(
@@ -92,17 +124,31 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
                     category=ErrorCategory.INVALID_VALUE,
                     target=ErrorTarget.EVALUATE,
                 )
+            if timeout is not None:
+                if (
+                    isinstance(timeout, bool)
+                    or not isinstance(timeout, (int, float))
+                    or not math.isfinite(timeout)
+                    or timeout <= 0
+                ):
+                    raise EvaluationException(
+                        message="'timeout' must be a positive finite number.",
+                        blame=ErrorBlame.USER_ERROR,
+                        category=ErrorCategory.INVALID_VALUE,
+                        target=ErrorTarget.EVALUATE,
+                    )
+                self._LLM_CALL_TIMEOUT = min(self._LLM_CALL_TIMEOUT, timeout)
             self._model_runner: Union[DecisionModelRunner, PromptyModelRunner] = DecisionModelRunner(
                 model_config,
                 credential,
                 binary=self._binary_decision,
                 evaluator_name=subclass_name,
-                execution_policy=decision_execution_policy,
+                **{name: value for name, value in execution_options.items() if value is not None},
             )
         else:
-            if decision_execution_policy is not None:
+            if timeout is not None or any(value is not None for value in execution_options.values()):
                 raise EvaluationException(
-                    message="A decision_execution_policy is only supported by decision model evaluators.",
+                    message="Decision execution controls are only supported by decision model evaluators.",
                     blame=ErrorBlame.USER_ERROR,
                     category=ErrorCategory.INVALID_VALUE,
                     target=ErrorTarget.EVALUATE,

@@ -5,6 +5,7 @@
 ### Features Added
 
 - Added shared model runners and evaluation strategies for asset evaluators using decision models in Microsoft Foundry.
+- Decision evaluator results expose measured token usage and model fields in standard evaluation rows, including skipped evaluations, while retaining known metadata on failures.
 
 ### Breaking Changes
 

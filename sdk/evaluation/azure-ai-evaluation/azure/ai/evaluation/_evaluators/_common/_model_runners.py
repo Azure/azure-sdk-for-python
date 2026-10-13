@@ -13,14 +13,13 @@ import inspect
 import json
 import math
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
-from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy, CustomHookPolicy
+from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from ..._common.utils import construct_prompty_model_config, validate_model_config
 from ..._http_utils import get_async_http_client
-from ._decision_execution import DecisionEvaluationException, DecisionExecutionPolicy, DecisionRequestObservation
 
 if os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true":
     from promptflow.core._flow import AsyncPrompty
@@ -103,8 +102,8 @@ def _invalid_config(message: str) -> EvaluationException:
     )
 
 
-def _failed(message: str, blame: ErrorBlame = ErrorBlame.SYSTEM_ERROR) -> DecisionEvaluationException:
-    return DecisionEvaluationException(
+def _failed(message: str, blame: ErrorBlame = ErrorBlame.SYSTEM_ERROR) -> EvaluationException:
+    return EvaluationException(
         message=message,
         internal_message=message,
         blame=blame,
@@ -155,31 +154,6 @@ def validate_score_answer(answer: Dict[str, Any], levels: int) -> List[float]:
     return distribution
 
 
-class _DecisionRetryPolicy(AsyncRetryPolicy):
-    def increment(self, settings: Dict[str, Any], response: Any = None, error: Optional[Exception] = None) -> bool:
-        # EvaluationException is an AzureError, but failed callbacks must not replay an already billed request.
-        if isinstance(error, EvaluationException):
-            return False
-        return super().increment(settings, response=response, error=error)
-
-
-class _DecisionObservationPolicy(CustomHookPolicy):
-    def __init__(self, runner: "DecisionModelRunner", observations: List[DecisionRequestObservation]) -> None:
-        super().__init__()
-        self.runner = runner
-        self.observations = observations
-        self.attempt = 0
-
-    def on_request(self, request: Any) -> None:
-        self.attempt += 1
-
-    def on_response(self, request: Any, response: Any) -> None:
-        self.runner._observe(self.runner._response_observation(response.http_response, self.attempt), self.observations)
-
-    def on_exception(self, request: Any) -> None:
-        self.runner._observe(DecisionRequestObservation(self.attempt, "error"), self.observations)
-
-
 class DecisionModelRunner:
     """Sends prepared evidence and typed questions to a Microsoft-Decision-1 deployment in Foundry.
 
@@ -188,6 +162,13 @@ class DecisionModelRunner:
     present, otherwise an Entra credential (from ``credential`` in the configuration or the constructor, or the
     SDK default). ``api_version`` is accepted and ignored.
     ``probability_threshold`` (default 0.75) is only accepted when ``binary=True``.
+
+    Execution controls are keyword-only and separate from model configuration. ``timeout_seconds`` bounds
+    each connect/read; the call's ``timeout`` bounds authentication, retries and the entire operation.
+    ``max_retries`` defaults to 3. ``cancellation_requested`` is polled every 50 ms, including retry waits;
+    it stops awaiting synchronous credentials but cannot stop their worker threads. Byte limits measure
+    compact unescaped UTF-8 JSON, with ``max_state_question_bytes`` applying to the largest individual pair.
+    ``max_response_bytes`` limits acceptance before parsing, not transport allocation.
     """
 
     def __init__(
@@ -197,11 +178,37 @@ class DecisionModelRunner:
         *,
         binary: bool = False,
         evaluator_name: str = "DecisionModelRunner",
-        execution_policy: Optional[DecisionExecutionPolicy] = None,
+        timeout_seconds: Optional[float] = None,
+        max_retries: int = 3,
+        cancellation_requested: Optional[Callable[[], bool]] = None,
+        max_request_bytes: Optional[int] = None,
+        max_state_question_bytes: Optional[int] = None,
+        max_response_bytes: Optional[int] = None,
     ) -> None:
-        if execution_policy is not None and not isinstance(execution_policy, DecisionExecutionPolicy):
-            raise _invalid_config("'execution_policy' must be a DecisionExecutionPolicy.")
-        self._execution_policy = execution_policy or DecisionExecutionPolicy()
+        if timeout_seconds is not None and (
+            isinstance(timeout_seconds, bool)
+            or not isinstance(timeout_seconds, (int, float))
+            or not math.isfinite(timeout_seconds)
+            or timeout_seconds <= 0
+        ):
+            raise _invalid_config("'timeout_seconds' must be a positive finite number.")
+        if isinstance(max_retries, bool) or not isinstance(max_retries, int) or max_retries < 0:
+            raise _invalid_config("'max_retries' must be a nonnegative integer.")
+        for name, value in (
+            ("max_request_bytes", max_request_bytes),
+            ("max_state_question_bytes", max_state_question_bytes),
+            ("max_response_bytes", max_response_bytes),
+        ):
+            if value is not None and (isinstance(value, bool) or not isinstance(value, int) or value <= 0):
+                raise _invalid_config(f"'{name}' must be a positive integer.")
+        if cancellation_requested is not None and not callable(cancellation_requested):
+            raise _invalid_config("'cancellation_requested' must be callable.")
+        self._timeout_seconds = timeout_seconds
+        self._max_retries = max_retries
+        self._cancellation_requested = cancellation_requested
+        self._max_request_bytes = max_request_bytes
+        self._max_state_question_bytes = max_state_question_bytes
+        self._max_response_bytes = max_response_bytes
         if not is_decision_model_config(model_config):
             raise _invalid_config(f"A decision model configuration must be a dict with type '{DECISION_MODEL_TYPE}'.")
         unexpected = set(model_config) - _DECISION_CONFIG_KEYS - _IGNORED_CONFIG_KEYS
@@ -252,12 +259,17 @@ class DecisionModelRunner:
         :return: ``{"model", "answers", "usage"}`` with the response's structure checked against the questions.
         :rtype: Dict[str, Any]
         """
+        if (
+            isinstance(timeout, bool)
+            or not isinstance(timeout, (int, float))
+            or not math.isfinite(timeout)
+            or timeout <= 0
+        ):
+            raise _invalid_config("'timeout' must be a positive finite number.")
         for question in questions.values():
             if question.get("type") not in ("noul", "score"):
                 raise _invalid_config(f"Decision question type '{question.get('type')}' is not supported.")
-        policy = self._execution_policy
-        observations: List[DecisionRequestObservation] = []
-        observation_policy = _DecisionObservationPolicy(self, observations)
+        properties = self._response_properties(None)
         try:
             body = {"model": self._deployment, "state": state, "questions": questions}
             try:
@@ -277,43 +289,29 @@ class DecisionModelRunner:
                     default=0,
                 )
             except (ValueError, TypeError, OverflowError, UnicodeError):
-                self._observe(DecisionRequestObservation(0, "request_rejected"), observations)
                 raise _failed(
                     "Decision evidence must be finite JSON-serializable data.", ErrorBlame.USER_ERROR
                 ) from None
-            if (policy.max_request_bytes is not None and len(content) > policy.max_request_bytes) or (
-                policy.max_state_question_bytes is not None and state_question_bytes > policy.max_state_question_bytes
+            if (self._max_request_bytes is not None and len(content) > self._max_request_bytes) or (
+                self._max_state_question_bytes is not None and state_question_bytes > self._max_state_question_bytes
             ):
-                self._observe(DecisionRequestObservation(0, "request_rejected"), observations)
                 raise _failed("The decision request exceeds the configured byte budget.", ErrorBlame.USER_ERROR)
-            deadline = min(timeout, policy.deadline_seconds) if policy.deadline_seconds is not None else timeout
             try:
-                payload = await asyncio.wait_for(self._await_request(content, observation_policy), timeout=deadline)
+                payload = await asyncio.wait_for(self._await_request(content), timeout=timeout)
             except asyncio.TimeoutError:
-                self._observe(DecisionRequestObservation(observation_policy.attempt, "timeout"), observations)
                 raise _failed("The decision model request timed out.") from None
+            properties = self._response_properties(payload)
             try:
                 return self._validate_response(payload, questions)
             except ValueError as exc:
                 raise _failed(f"The decision model returned an invalid response: {exc}") from None
-        except DecisionEvaluationException as exc:
-            if not observations:
-                self._observe(DecisionRequestObservation(0, "error"), observations)
-            exc.observations = tuple(observations)
+        except EvaluationException as exc:
+            if exc.properties is None:
+                exc.properties = properties
             raise
 
-    def _observe(self, observation: DecisionRequestObservation, observations: List[DecisionRequestObservation]) -> None:
-        observations.append(observation)
-        if self._execution_policy.observer is not None:
-            try:
-                self._execution_policy.observer(observation)
-            except Exception:  # pylint: disable=broad-except
-                error = _failed("The decision transport observer failed.", ErrorBlame.USER_ERROR)
-                error.observations = tuple(observations)
-                raise error from None
-
     def _cancelled(self) -> bool:
-        callback = self._execution_policy.cancellation_requested
+        callback = self._cancellation_requested
         if callback is None:
             return False
         try:
@@ -324,18 +322,15 @@ class DecisionModelRunner:
             raise _failed("The decision cancellation callback must return a boolean.", ErrorBlame.USER_ERROR)
         return result
 
-    async def _await_request(self, content: bytes, observation_policy: _DecisionObservationPolicy) -> Any:
-        observations = observation_policy.observations
+    async def _await_request(self, content: bytes) -> Any:
         if self._cancelled():
-            self._observe(DecisionRequestObservation(0, "cancelled"), observations)
             raise _failed("The decision model request was cancelled.", ErrorBlame.USER_ERROR)
-        if self._execution_policy.cancellation_requested is None:
-            return await self._post(content, observation_policy)
-        task = asyncio.create_task(self._post(content, observation_policy))
+        if self._cancellation_requested is None:
+            return await self._post(content)
+        task = asyncio.create_task(self._post(content))
         try:
             while not task.done():
                 if self._cancelled():
-                    self._observe(DecisionRequestObservation(observation_policy.attempt, "cancelled"), observations)
                     raise _failed("The decision model request was cancelled.", ErrorBlame.USER_ERROR)
                 await asyncio.wait({task}, timeout=0.05)
             return await task
@@ -361,8 +356,7 @@ class DecisionModelRunner:
         async with AsyncAzureTokenProvider() as provider:
             return (await provider.get_token(_DECISION_TOKEN_SCOPE)).token
 
-    async def _post(self, content: bytes, observation_policy: _DecisionObservationPolicy) -> Any:
-        observations = observation_policy.observations
+    async def _post(self, content: bytes) -> Any:
         headers = {"x-ms-useragent": self._user_agent, "Content-Type": "application/json"}
         if self._api_key:
             headers["api-key"] = self._api_key
@@ -375,77 +369,63 @@ class DecisionModelRunner:
                 raise _failed("Could not acquire a token for the decision model.", ErrorBlame.USER_ERROR) from None
 
         policies: Dict[str, Any] = {
-            "retry_policy": _DecisionRetryPolicy(
-                retry_total=self._execution_policy.max_retries,
-                retry_connect=self._execution_policy.max_retries,
-                retry_read=self._execution_policy.max_retries,
-                retry_status=self._execution_policy.max_retries,
+            "retry_policy": AsyncRetryPolicy(
+                retry_total=self._max_retries,
+                retry_connect=self._max_retries,
+                retry_read=self._max_retries,
+                retry_status=self._max_retries,
                 retry_backoff_factor=0.8,
                 retry_on_status_codes=_DECISION_RETRY_STATUS_CODES,
             ),
             "redirect_policy": AsyncRedirectPolicy(permit_redirects=False),
         }
         options: Dict[str, Any] = {"retry_on_methods": ["POST"]}
-        if self._execution_policy.timeout_seconds is not None:
-            options.update(
-                connection_timeout=self._execution_policy.timeout_seconds,
-                read_timeout=self._execution_policy.timeout_seconds,
-            )
+        if self._timeout_seconds is not None:
+            # The default requests transport uses this scalar for both connect and read timeouts.
+            options["connection_timeout"] = self._timeout_seconds
 
-        policies["custom_hook_policy"] = observation_policy
         try:
             async with get_async_http_client().with_policies(**policies) as client:
                 response = await client.post(self._url, content=content, headers=headers, **options)
                 status = response.status_code
-                if not observations:
-                    self._observe(self._response_observation(response, 1), observations)
-                content = response.body() if status == 200 else b""
+                content = response.body()
         except EvaluationException:
             raise
         except Exception:  # pylint: disable=broad-except
-            if not observations or observations[-1].outcome != "error":
-                self._observe(DecisionRequestObservation(observation_policy.attempt or 1, "error"), observations)
             raise _failed("The decision model request failed; check the endpoint and network access.") from None
-        if status != 200:
-            blame = ErrorBlame.USER_ERROR if status in (400, 401, 403, 404, 422) else ErrorBlame.SYSTEM_ERROR
-            raise _failed(f"The decision model returned HTTP {status}.", blame)
-        if (
-            self._execution_policy.max_response_bytes is not None
-            and len(content) > self._execution_policy.max_response_bytes
-        ):
-            raise _failed("The decision response exceeds the configured byte budget.")
-        try:
-            return json.loads(content)
-        except (ValueError, TypeError):
-            raise _failed("The decision model returned invalid JSON.") from None
-
-    def _response_observation(self, response: Any, attempt: int) -> DecisionRequestObservation:
-        content = response.body()
-        payload: Any = None
-        if (
-            self._execution_policy.max_response_bytes is None
-            or len(content) <= self._execution_policy.max_response_bytes
-        ):
+        if self._max_response_bytes is not None and len(content) > self._max_response_bytes:
+            if status == 200:
+                raise _failed("The decision response exceeds the configured byte budget.")
+            payload = None
+        else:
             try:
                 payload = json.loads(content)
             except (ValueError, TypeError):
-                pass
+                if status == 200:
+                    raise _failed("The decision model returned invalid JSON.") from None
+                payload = None
+        if status != 200:
+            blame = ErrorBlame.USER_ERROR if status in (400, 401, 403, 404, 422) else ErrorBlame.SYSTEM_ERROR
+            error = _failed(f"The decision model returned HTTP {status}.", blame)
+            error.properties = self._response_properties(payload)
+            raise error
+        return payload
+
+    def _response_properties(self, payload: Any) -> Dict[str, Any]:
+        """Retain only independently known final-response usage, never raw answers or retry totals."""
+        properties: Dict[str, Any] = {"decision_model": {"deployment": self._deployment}}
         usage = payload.get("usage") if isinstance(payload, dict) else None
         usage = usage if isinstance(usage, dict) else {}
-
-        def token_count(name: str) -> Optional[int]:
-            value = usage.get(name)
-            return value if isinstance(value, int) and not isinstance(value, bool) and value >= 0 else None
-
+        for native_key, key in (("input_tokens", "prompt_tokens"), ("output_tokens", "completion_tokens")):
+            value = usage.get(native_key)
+            if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
+                properties[key] = value
+        if "prompt_tokens" in properties and "completion_tokens" in properties:
+            properties["total_tokens"] = properties["prompt_tokens"] + properties["completion_tokens"]
         model = payload.get("model") if isinstance(payload, dict) else None
-        return DecisionRequestObservation(
-            attempt=attempt,
-            outcome="response",
-            http_status=response.status_code,
-            input_tokens=token_count("input_tokens"),
-            output_tokens=token_count("output_tokens"),
-            model=model if isinstance(model, str) and model.strip() else None,
-        )
+        if isinstance(model, str) and model.strip():
+            properties["model"] = model
+        return properties
 
     @staticmethod
     def _validate_response(payload: Any, questions: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:

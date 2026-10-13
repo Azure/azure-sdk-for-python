@@ -13,9 +13,8 @@ import json
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional, Tuple, TypeVar, Union
 
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from ._base_model_eval import ModelEvaluatorBase, not_applicable_result
-from ._decision_execution import DecisionEvaluationException
 from ._model_runners import DecisionModelRunner, validate_noul_answer, validate_score_answer
 
 STATUS_CUTOFF = 0.5
@@ -27,7 +26,7 @@ def _checked_value(validate: Callable[..., T], error_target: ErrorTarget, *args:
         return validate(*args)
     except ValueError as exc:
         message = f"The decision model returned an invalid response: {exc}"
-        raise DecisionEvaluationException(
+        raise EvaluationException(
             message=message,
             internal_message=message,
             blame=ErrorBlame.SYSTEM_ERROR,
@@ -175,6 +174,10 @@ class DecisionEvaluationStrategy:
             total_tokens=tokens["total_token_count"],
             model=tokens["model_id"],
         )
+        usage_fields = {
+            f"{key}_{name}": properties[name]
+            for name in ("prompt_tokens", "completion_tokens", "total_tokens", "model")
+        }
         try:
             skip_reason = decision_skip_reason(response, STATUS_CUTOFF, self.error_target)
             properties["decision_model"]["status_completion_probability"] = decision_probability(
@@ -184,9 +187,10 @@ class DecisionEvaluationStrategy:
             if skip_reason:
                 result = not_applicable_result(key, skip_reason, self.threshold)
                 result[f"{key}_properties"] = properties
+                result.update(usage_fields)
                 return result
             score, reason, details = self.scoring.interpret(response, key, self.error_target)
-        except DecisionEvaluationException as exc:
+        except EvaluationException as exc:
             exc.properties = properties
             raise
         properties["decision_model"].update(details)
@@ -202,4 +206,5 @@ class DecisionEvaluationStrategy:
             f"{key}_status": "completed",
             f"{key}_threshold": self.threshold,
             f"{key}_properties": properties,
+            **usage_fields,
         }

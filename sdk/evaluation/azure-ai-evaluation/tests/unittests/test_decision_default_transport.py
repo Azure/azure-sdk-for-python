@@ -14,9 +14,8 @@ import pytest
 import requests
 from urllib3.util import connection
 
-from azure.ai.evaluation._evaluators._common import DecisionExecutionPolicy
 from azure.ai.evaluation._evaluators._common._model_runners import DecisionModelRunner
-from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation._exceptions import ErrorBlame, EvaluationException
 from azure.ai.evaluation._http_utils import get_async_http_client
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
@@ -64,10 +63,10 @@ def localhost():
         thread.join()
 
 
-def invoke(endpoint, policy, timeout=3):
+def invoke(endpoint, timeout=3, **controls):
     runner = DecisionModelRunner(
         {"type": "decision", "azure_endpoint": endpoint, "azure_deployment": "Decision-1", "api_key": "local-test"},
-        execution_policy=policy,
+        **controls,
     )
     return asyncio.run(runner(state={"query": "é"}, questions=QUESTIONS, timeout=timeout))
 
@@ -91,13 +90,10 @@ def test_default_transport_sends_policy_request_and_retries(localhost, monkeypat
 
     monkeypatch.setattr(requests.Session, "request", record)
     monkeypatch.setattr(connection, "create_connection", record_connect)
-    receipts = []
-    result = invoke(endpoint, DecisionExecutionPolicy(timeout_seconds=0.5, max_retries=1, observer=receipts.append))
+    result = invoke(endpoint, timeout_seconds=0.5, max_retries=1)
     assert result["usage"] == {"input_tokens": 12, "output_tokens": 4}
-    assert observed_timeouts == [(0.5, 0.5), (0.5, 0.5)]
+    assert observed_timeouts == [0.5, 0.5]
     assert socket_connect_timeouts == [0.5, 0.5]
-    assert [receipt.http_status for receipt in receipts] == [429, 200]
-    assert [receipt.attempt for receipt in receipts] == [1, 2]
     assert len(calls) == 2 and calls[0]["body"] == calls[1]["body"]
     assert calls[0]["path"] == "/providers/microsoft/v1/systemone"
     assert calls[0]["content_type"] == "application/json"
@@ -110,14 +106,13 @@ def test_default_transport_read_timeout_is_enforced(localhost):
     delay[0] = 0.5
     started = time.monotonic()
     with pytest.raises(EvaluationException) as raised:
-        invoke(endpoint, DecisionExecutionPolicy(timeout_seconds=0.05, max_retries=0))
+        invoke(endpoint, timeout_seconds=0.05, max_retries=0)
     assert time.monotonic() - started < 0.4
     assert len(calls) == 1
-    assert raised.value.observations[0].attempt == 1
-    assert raised.value.observations[0].outcome == "error"
+    assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
 
 
-def test_default_transport_numeric_retry_deadline_and_separate_timeout_bounds(localhost, monkeypatch):
+def test_default_transport_native_scalar_timeout_preserves_numeric_retry_deadline(localhost, monkeypatch):
     endpoint, _, _, _ = localhost
     original = requests.Session.request
     observed = []
@@ -130,11 +125,10 @@ def test_default_transport_numeric_retry_deadline_and_separate_timeout_bounds(lo
 
     async def request():
         async with get_async_http_client(retry_policy=AsyncRetryPolicy(retry_total=0)) as client:
-            return await client.post(endpoint, content=b"{}", connection_timeout=2, read_timeout=0.3, timeout=0.8)
+            return await client.post(endpoint, content=b"{}", connection_timeout=2, timeout=0.8)
 
     assert asyncio.run(request()).status_code == 200
-    assert 0 < observed[0][0] <= 0.8
-    assert observed[0][1] == 0.3
+    assert 0 < observed[0] <= 0.8
 
 
 def test_default_transport_without_read_override_preserves_scalar_timeout(localhost, monkeypatch):
@@ -154,3 +148,30 @@ def test_default_transport_without_read_override_preserves_scalar_timeout(localh
 
     assert asyncio.run(request()).status_code == 200
     assert observed == [0.7]
+
+
+def test_default_transport_cancellation_interrupts_awaiting_a_real_request(localhost):
+    endpoint, calls, delay, _ = localhost
+    delay[0] = 0.5
+
+    async def request():
+        cancelled = asyncio.Event()
+        runner = DecisionModelRunner(
+            {"type": "decision", "azure_endpoint": endpoint, "azure_deployment": "Decision-1", "api_key": "local-test"},
+            timeout_seconds=1,
+            max_retries=0,
+            cancellation_requested=cancelled.is_set,
+        )
+        started = time.monotonic()
+        handle = asyncio.get_running_loop().call_later(0.05, cancelled.set)
+        try:
+            with pytest.raises(EvaluationException, match="cancelled") as raised:
+                await runner(state={}, questions=QUESTIONS, timeout=3)
+            assert time.monotonic() - started < 0.4
+            assert raised.value.blame == ErrorBlame.USER_ERROR
+            assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
+        finally:
+            handle.cancel()
+
+    asyncio.run(request())
+    assert len(calls) == 1

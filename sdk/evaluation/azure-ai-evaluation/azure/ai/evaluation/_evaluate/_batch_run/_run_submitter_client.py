@@ -22,7 +22,7 @@ from ..._legacy._adapters.types import AttrDict
 from ..._legacy._common._thread_pool_executor_with_context import ThreadPoolExecutorWithContext
 from ..._evaluate._utils import _has_aggregator
 from ..._constants import Prefixes, PF_BATCH_TIMEOUT_SEC
-from ..._evaluators._common._decision_execution import DecisionEvaluationException
+from ..._exceptions import EvaluationException
 
 from .._utils import get_int_env_var as get_int
 
@@ -30,8 +30,8 @@ LOGGER = logging.getLogger("run")
 MISSING_VALUE: Final[int] = sys.maxsize
 
 
-def _decision_error_metadata(exception: DecisionEvaluationException) -> Dict[str, Any]:
-    """Keep only measured usage, validated provenance, and transport receipts for failed Decision rows."""
+def _decision_error_metadata(exception: EvaluationException) -> Dict[str, Any]:
+    """Keep only known final-response usage and validated provenance for failed Decision rows."""
     properties: Dict[str, Any] = {}
     semantic_properties = exception.properties or {}
     for key in ("prompt_tokens", "completion_tokens", "total_tokens"):
@@ -57,28 +57,7 @@ def _decision_error_metadata(exception: DecisionEvaluationException) -> Dict[str
                 and 0 <= value <= 1
             ):
                 provenance[key] = value
-        if provenance:
-            properties["decision_model"] = provenance
-    if exception.observations:
-        receipts = []
-        for observation in exception.observations:
-            receipt = {
-                "attempt": observation.attempt,
-                "outcome": observation.outcome,
-                "http_status": (
-                    observation.http_status
-                    if isinstance(observation.http_status, int) and not isinstance(observation.http_status, bool)
-                    else None
-                ),
-                "model": (
-                    observation.model if isinstance(observation.model, str) and observation.model.strip() else None
-                ),
-            }
-            for key in ("input_tokens", "output_tokens"):
-                value = getattr(observation, key)
-                receipt[key] = value if isinstance(value, int) and not isinstance(value, bool) and value >= 0 else None
-            receipts.append(receipt)
-        properties["decision_request_observations"] = receipts
+        properties["decision_model"] = provenance
     return {"code": exception.category.value, "blame": exception.blame.value, "properties": properties}
 
 
@@ -213,8 +192,13 @@ class RunSubmitterClient:
             for detail in run.result.details:
                 if detail.error and detail.error.exception:
                     per_line_errors[detail.index] = str(detail.error.exception)
-                    if isinstance(detail.error.exception, DecisionEvaluationException):
-                        per_line_error_metadata[detail.index] = _decision_error_metadata(detail.error.exception)
+                    exception = detail.error.exception
+                    if (
+                        isinstance(exception, EvaluationException)
+                        and isinstance(exception.properties, dict)
+                        and isinstance(exception.properties.get("decision_model"), dict)
+                    ):
+                        per_line_error_metadata[detail.index] = _decision_error_metadata(exception)
 
         summary = {
             "status": run.status.value,

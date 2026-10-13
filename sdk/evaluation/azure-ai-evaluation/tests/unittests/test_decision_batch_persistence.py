@@ -14,9 +14,10 @@ from azure.core.pipeline.transport import AsyncHttpTransport, HttpResponse
 
 from azure.ai.evaluation import F1ScoreEvaluator
 from azure.ai.evaluation._evaluate._batch_run import RunSubmitterClient
-from azure.ai.evaluation._evaluate._evaluate import _convert_single_row_to_aoai_format
-from azure.ai.evaluation._evaluators._common import DecisionExecutionPolicy, DecisionRequestObservation
-from azure.ai.evaluation._evaluators._common._decision_execution import DecisionEvaluationException
+from azure.ai.evaluation._evaluate._evaluate import (
+    _calculate_aoai_evaluation_summary,
+    _convert_single_row_to_aoai_format,
+)
 from azure.ai.evaluation._evaluators._common._decision_strategy import BinaryScoring, DecisionEvaluationStrategy
 from azure.ai.evaluation._evaluators._common._model_runners import DecisionModelRunner
 from azure.ai.evaluation._evaluators._common import _model_runners
@@ -126,6 +127,17 @@ class TestDecisionBatchPersistence:
         assert len(result["properties"]["decision_model"]["rubric_hash"]) == 64
         assert "native_status_answer" not in result["properties"]["decision_model"]
         assert summary["judge"]["failed_lines"] == 1
+        rollup = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), CRITERIA)
+        assert rollup["per_model_usage"] == [
+            {
+                "model_name": "decision-native",
+                "invocation_count": 1,
+                "prompt_tokens": 120,
+                "completion_tokens": 3,
+                "total_tokens": 123,
+                "cached_tokens": 0,
+            }
+        ]
 
     @pytest.mark.parametrize("status, expected", [(0.9, "completed"), (0.1, "skipped")])
     def test_success_and_skip_are_not_stamped_as_errors(self, batch_client, tmp_path, status, expected):
@@ -143,11 +155,29 @@ class TestDecisionBatchPersistence:
         assert result["status"] == expected
         assert "error" not in (result.get("sample") or {})
         assert "per_line_error_metadata" not in summary["judge"]
+        assert result["sample"]["usage"] == {"prompt_tokens": 120, "completion_tokens": 3, "total_tokens": 123}
+        assert result["sample"]["model"] == "decision-native"
+        assert result["properties"]["total_tokens"] == 123
+        if expected == "skipped":
+            assert result["score"] is None and result["passed"] is None
+        else:
+            assert result["score"] == 1 and result["passed"] is True
+        rollup = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), CRITERIA)
+        assert rollup["per_model_usage"] == [
+            {
+                "model_name": "decision-native",
+                "invocation_count": 1,
+                "prompt_tokens": 120,
+                "completion_tokens": 3,
+                "total_tokens": 123,
+                "cached_tokens": 0,
+            }
+        ]
 
     @pytest.mark.parametrize(
         "case", ["malformed_shape", "invalid_json", "partial_usage", "precancel", "inflight_cancel", "billed_cancel"]
     )
-    def test_real_pipeline_failure_receipts_survive_batch_conversion(self, batch_client, tmp_path, monkeypatch, case):
+    def test_real_pipeline_failure_metadata_survives_batch_conversion(self, batch_client, tmp_path, monkeypatch, case):
         cancelled = False
 
         class Response(HttpResponse):
@@ -178,16 +208,14 @@ class TestDecisionBatchPersistence:
                 await self.close()
 
             async def send(self, request, **kwargs):
+                nonlocal cancelled
                 if case == "inflight_cancel":
                     await asyncio.sleep(10)
+                if case == "billed_cancel":
+                    cancelled = True
                 return Response(request)
 
         monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: AsyncHttpPipeline(transport=Transport()))
-
-        def observer(receipt):
-            nonlocal cancelled
-            if case == "billed_cancel":
-                cancelled = True
 
         async def judge(query):
             nonlocal cancelled
@@ -203,11 +231,8 @@ class TestDecisionBatchPersistence:
             try:
                 runner = DecisionModelRunner(
                     CONFIG,
-                    execution_policy=DecisionExecutionPolicy(
-                        max_retries=1,
-                        cancellation_requested=lambda: cancelled,
-                        observer=observer,
-                    ),
+                    max_retries=1,
+                    cancellation_requested=lambda: cancelled,
                 )
                 return await strategy(runner).evaluate({"query": query})
             finally:
@@ -217,21 +242,21 @@ class TestDecisionBatchPersistence:
         _, rows = convert_batch(batch_client, judge, tmp_path)
         result = next(item for item in rows[0]["results"] if item["name"] == "judge")
         assert result["status"] == "error" and result["score"] is None and result["passed"] is None
-        receipts = result["properties"]["decision_request_observations"]
-        assert all(
-            set(receipt) == {"attempt", "outcome", "http_status", "input_tokens", "output_tokens", "model"}
-            for receipt in receipts
-        )
-        assert "usage" not in result["sample"] and "model" not in result["sample"]
-        if case in ("malformed_shape", "partial_usage", "billed_cancel"):
-            assert receipts[0]["input_tokens"] == (None if case == "partial_usage" else 12)
-            assert receipts[0]["output_tokens"] == 4 and receipts[0]["model"] == "decision-native"
+        assert "decision_request_observations" not in result["properties"]
+        if case == "malformed_shape":
+            assert result["sample"]["usage"] == {"prompt_tokens": 12, "completion_tokens": 4, "total_tokens": 16}
+            assert result["sample"]["model"] == "decision-native"
+        elif case == "partial_usage":
+            assert result["sample"]["usage"] == {"completion_tokens": 4}
+            assert result["sample"]["model"] == "decision-native"
+            assert "total_tokens" not in result["properties"] and "prompt_tokens" not in result["properties"]
         else:
-            assert receipts[0]["input_tokens"] is None and receipts[0]["output_tokens"] is None
+            assert "usage" not in result["sample"] and "model" not in result["sample"]
+            assert result["properties"] == {"decision_model": {"deployment": "Decision-1"}}
         if "cancel" in case:
             assert result["sample"]["error"]["blame"] == "UserError"
-            assert receipts[-1]["outcome"] == "cancelled"
-            assert receipts[-1]["attempt"] == (0 if case == "precancel" else 1)
+        else:
+            assert result["sample"]["error"]["blame"] == "SystemError"
         assert "test-key-not-for-persistence" not in json.dumps(result)
         assert "synthetic" not in json.dumps(result["properties"])
 
@@ -243,14 +268,14 @@ class TestDecisionBatchPersistence:
             index = calls
             calls += 1
             if index == 0:
-                raise DecisionEvaluationException(
+                raise EvaluationException(
                     "Cancelled.",
                     category=ErrorCategory.FAILED_EXECUTION,
                     blame=ErrorBlame.USER_ERROR,
-                    observations=(DecisionRequestObservation(0, "cancelled"),),
+                    properties={"decision_model": {}},
                 )
             if index == 1:
-                raise DecisionEvaluationException(
+                raise EvaluationException(
                     "Invalid.",
                     category=ErrorCategory.INVALID_VALUE,
                     blame=ErrorBlame.SYSTEM_ERROR,

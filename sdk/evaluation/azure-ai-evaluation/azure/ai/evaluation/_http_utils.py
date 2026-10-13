@@ -249,20 +249,6 @@ class HttpPipeline(Pipeline):
         return cast(Self, super().__enter__())
 
 
-class _AsyncioRequestsTransportWithReadTimeout(AsyncioRequestsTransport):
-    """Adapt explicit read timeouts for the requests-backed default transport."""
-
-    async def send(self, request, **kwargs):
-        # Translate after RetryPolicy has bounded the numeric connection timeout.
-        # AsyncioRequestsTransport otherwise forwards read_timeout to requests, which rejects it.
-        if "read_timeout" in kwargs:
-            connection_timeout = kwargs.pop("connection_timeout", self.connection_config.timeout)
-            if isinstance(connection_timeout, tuple):
-                raise ValueError("Cannot set tuple connection_timeout and read_timeout together")
-            kwargs["connection_timeout"] = (connection_timeout, kwargs.pop("read_timeout"))
-        return await super().send(request, **kwargs)
-
-
 class AsyncHttpPipeline(AsyncPipeline):
     """A *very* thin wrapper over azure.core.pipeline.AsyncPipeline that facilitates sending miscellaneous
     http requests by adding:
@@ -337,7 +323,7 @@ class AsyncHttpPipeline(AsyncPipeline):
             # AsyncioRequestsTransport normally should not be imported outside of azure.core, since transports
             # are meant to be user configurable.
             # AsyncioRequestsTransport is only used in this file as the default transport when not user specified.
-            transport=transport or _AsyncioRequestsTransportWithReadTimeout(**kwargs),
+            transport=transport or AsyncioRequestsTransport(**kwargs),
             policies=[
                 config.headers_policy,
                 config.user_agent_policy,
