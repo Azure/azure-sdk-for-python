@@ -74,12 +74,9 @@ with (
     stream_response = openai_client.responses.create(
         stream=True,
         input="""
-        Your goal is to report the percent of Microsoft year-to-date stock price change.
-        To do that, go to the website finance.yahoo.com.
-        At the top of the page, you will find a search bar.
-        Enter the value 'MSFT', to get information about the Microsoft stock price.
-        At the top of the resulting page you will see a default chart of Microsoft stock price.
-        Click on 'YTD' at the top of that chart, and report the percent value that shows up just below it.""",
+        Use the Browser Automation tool to visit https://example.com.
+        Read the page and report its title and the visible description paragraph.
+        Base your answer on the browser results, not on prior knowledge.""",
     )
 
     for event in stream_response:
