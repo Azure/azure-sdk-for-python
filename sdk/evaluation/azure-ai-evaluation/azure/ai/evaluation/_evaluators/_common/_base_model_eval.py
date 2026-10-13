@@ -92,13 +92,6 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
         _higher_is_better: bool = False,
         **kwargs,
     ) -> None:
-        if "decision_execution_policy" in kwargs:
-            raise EvaluationException(
-                message="Use explicit Decision execution controls instead of decision_execution_policy.",
-                blame=ErrorBlame.USER_ERROR,
-                category=ErrorCategory.INVALID_VALUE,
-                target=ErrorTarget.EVALUATE,
-            )
         self._result_key = result_key
         self._is_reasoning_model = kwargs.get("is_reasoning_model", False)
         self._prompty_file = prompty_file

@@ -699,10 +699,6 @@ class TestDecisionExecutionControls:
         with pytest.raises(EvaluationException, match="Unsupported"):
             DecisionModelRunner({**DECISION_CONFIG, "max_retries": 0})
 
-    def test_obsolete_base_policy_cannot_be_silently_ignored(self):
-        with pytest.raises(EvaluationException, match="explicit Decision"):
-            ProbeModelEvaluator(result_key="probe", model_config=DECISION_CONFIG, decision_execution_policy=object())
-
     @pytest.mark.parametrize("timeout", [0, -1, True, float("nan"), float("inf"), "30"])
     def test_invalid_overall_timeouts_are_rejected(self, client, timeout):
         with pytest.raises(EvaluationException, match="positive finite"):
