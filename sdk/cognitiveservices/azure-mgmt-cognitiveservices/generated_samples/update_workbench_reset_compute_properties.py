@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.resiliencemanagement import ResilienceManagementClient
+from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-resiliencemanagement
+    pip install azure-mgmt-cognitiveservices
 # USAGE
-    python goal_templates_create_or_update_maximum_set_gen.py
+    python update_workbench_reset_compute_properties.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,27 +25,21 @@ from azure.mgmt.resiliencemanagement import ResilienceManagementClient
 
 
 def main():
-    client = ResilienceManagementClient(
+    client = CognitiveServicesManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.goal_templates.begin_create_or_update(
-        service_group_name="zumt",
-        goal_template_name="gt1",
-        resource={
-            "properties": {
-                "goalType": "Resiliency",
-                "regionalRecoveryPointObjective": "PT15M",
-                "regionalRecoveryTimeObjective": "PT30M",
-                "requireDisasterRecovery": "NotRequired",
-                "requireHighAvailability": "Required",
-            }
-        },
-    ).result()
+    response = client.workbenches.update(
+        resource_group_name="rgcognitiveservices",
+        account_name="myAccount",
+        project_name="myProject",
+        workbench_name="myWorkbench",
+        properties={"properties": {"gpuCount": None, "instanceType": None}},
+    )
     print(response)
 
 
-# x-ms-original-file: 2026-08-31-preview/GoalTemplates_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-15-preview/UpdateWorkbenchResetComputeProperties.json
 if __name__ == "__main__":
     main()

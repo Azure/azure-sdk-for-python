@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.resiliencemanagement import ResilienceManagementClient
+from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-resiliencemanagement
+    pip install azure-mgmt-cognitiveservices
 # USAGE
-    python goal_templates_get_maximum_set_gen.py
+    python delete_rai_rego.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,18 +25,18 @@ from azure.mgmt.resiliencemanagement import ResilienceManagementClient
 
 
 def main():
-    client = ResilienceManagementClient(
+    client = CognitiveServicesManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.goal_templates.get(
-        service_group_name="qsqjquhxpermcblvegajq",
-        goal_template_name="gt1",
+    client.rai_regos.delete(
+        resource_group_name="resource-group",
+        account_name="safety-account",
+        rai_rego_name="input-guard",
     )
-    print(response)
 
 
-# x-ms-original-file: 2026-08-31-preview/GoalTemplates_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-15-preview/DeleteRaiRego.json
 if __name__ == "__main__":
     main()

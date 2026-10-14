@@ -204,18 +204,24 @@ class ReviewService:
         operation = request.get("operation")
         if operation == "describe":
             contract.require(set(request) == {"operation"}, "request", "describe takes no other fields.")
+            draft = contract.draft_template(self.context)
             return {
                 "schema": contract.DRAFT_SCHEMA,
-                "draft": contract.draft_template(self.context),
+                "draft": draft,
                 "schemaVersion": "2",
                 "toolingRevision": self.context["toolingRevision"],
                 "packages": [
                     {
                         "package": item["packagePath"],
                         "requiredChecks": list(SEMANTIC_CHECKS),
-                        "entries": [{"entry_id": entry_id(entry), **entry} for entry in item["introducedEntries"]],
+                        "entries": [
+                            {"entry_id": entry_id(entry), **entry}
+                            for entry in item["introducedEntries"][:len(package["attribution"])]
+                        ],
+                        "omittedEntries": package["attribution_omitted"],
+                        "totalEntries": len(item["introducedEntries"]),
                     }
-                    for item in self.context["breakingChangeContext"]
+                    for item, package in zip(self.context["breakingChangeContext"], draft["packages"])
                 ],
                 "sources": [
                     {key: value for key, value in item.items() if key != "content"} for item in self.context["sources"]

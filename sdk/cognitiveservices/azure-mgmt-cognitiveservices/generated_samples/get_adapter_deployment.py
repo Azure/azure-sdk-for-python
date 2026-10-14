@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.resiliencemanagement import ResilienceManagementClient
+from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-resiliencemanagement
+    pip install azure-mgmt-cognitiveservices
 # USAGE
-    python goal_templates_delete_minimum_set_gen.py
+    python get_adapter_deployment.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,17 +25,19 @@ from azure.mgmt.resiliencemanagement import ResilienceManagementClient
 
 
 def main():
-    client = ResilienceManagementClient(
+    client = CognitiveServicesManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.goal_templates.begin_delete(
-        service_group_name="sg1",
-        goal_template_name="gt1",
-    ).result()
+    response = client.adapter_deployments.get(
+        resource_group_name="resourceGroupName",
+        account_name="accountName",
+        adapter_deployment_name="adapterDeploymentName",
+    )
+    print(response)
 
 
-# x-ms-original-file: 2026-08-31-preview/GoalTemplates_Delete_MinimumSet_Gen.json
+# x-ms-original-file: 2026-09-15-preview/GetAdapterDeployment.json
 if __name__ == "__main__":
     main()

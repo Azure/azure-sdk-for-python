@@ -7,6 +7,9 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fix HTTP dependency target being rendered as `host:None` when the span has
+  `server.address` but no `server.port` (e.g. default-port requests traced by azure-core)
+  ([#49344](https://github.com/Azure/azure-sdk-for-python/pull/49344))
 
 ### Other Changes
 

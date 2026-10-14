@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,14 +9,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.resiliencemanagement import ResilienceManagementClient
+from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-resiliencemanagement
+    pip install azure-mgmt-cognitiveservices
 # USAGE
-    python goal_templates_update_maximum_set_gen.py
+    python update_rai_binding.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,26 +26,25 @@ from azure.mgmt.resiliencemanagement import ResilienceManagementClient
 
 
 def main():
-    client = ResilienceManagementClient(
+    client = CognitiveServicesManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.goal_templates.begin_update(
-        service_group_name="ipvrpvfcsfwltkmalhklsyg",
-        goal_template_name="gt1",
-        properties={
+    response = client.rai_bindings.create_or_update(
+        resource_group_name="resource-group",
+        account_name="safety-account",
+        rai_binding_name="chat-guard",
+        rai_binding={
             "properties": {
-                "goalType": "Resiliency",
-                "regionalRecoveryPointObjective": "PT15M",
-                "regionalRecoveryTimeObjective": "PT30M",
-                "requireDisasterRecovery": "NotRequired",
-                "requireHighAvailability": "Required",
+                "boundResourceId": "/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/target-resource-group/providers/Microsoft.CognitiveServices/accounts/aoai-account/deployments/chat-canary",
+                "targetPolicyName": "agent-guard-v2",
             }
         },
-    ).result()
+    )
+    print(response)
 
 
-# x-ms-original-file: 2026-08-31-preview/GoalTemplates_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-15-preview/UpdateRaiBinding.json
 if __name__ == "__main__":
     main()
