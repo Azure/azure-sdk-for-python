@@ -16,6 +16,7 @@ from ._base import AgentServerHost
 from ._config import AgentConfig, resolve_state_subdir
 from ._errors import create_error_response
 from ._experimental import experimental
+from ._lifecycle import AgentSessionContext
 from ._middleware import InboundRequestLoggingMiddleware
 from ._request_context import (
     FoundryAgentRequestContext,
@@ -41,6 +42,7 @@ from ._version import VERSION
 
 __all__ = [
     "AgentConfig",
+    "AgentSessionContext",
     "AgentServerHost",
     "MiddlewareFactory",
     "StreamContent",
