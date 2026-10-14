@@ -84,6 +84,7 @@ def datetime_to_timestamp_ms(value: datetime.datetime) -> int:
         normalized = value.astimezone(TZ_UTC)
     return (normalized - EPOCH_UTC) // datetime.timedelta(milliseconds=1)
 
+
 def utc_from_timestamp(timestamp: float) -> datetime.datetime:
     """
     :param float timestamp: Timestamp in seconds to be converted to datetime.
