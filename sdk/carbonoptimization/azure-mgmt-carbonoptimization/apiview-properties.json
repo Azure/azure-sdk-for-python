@@ -1,6 +1,12 @@
 {
     "CrossLanguagePackageId": "Microsoft.Carbon",
     "CrossLanguageDefinitionId": {
+        "azure.mgmt.carbonoptimization.models.BillingAccountQueryFilter": "Microsoft.Carbon.BillingAccountQueryFilter",
+        "azure.mgmt.carbonoptimization.models.BillingAccountItemDetailsReportQueryFilter": "Microsoft.Carbon.BillingAccountItemDetailsReportQueryFilter",
+        "azure.mgmt.carbonoptimization.models.BillingAccountMonthlySummaryReportQueryFilter": "Microsoft.Carbon.BillingAccountMonthlySummaryReportQueryFilter",
+        "azure.mgmt.carbonoptimization.models.BillingAccountOverallSummaryReportQueryFilter": "Microsoft.Carbon.BillingAccountOverallSummaryReportQueryFilter",
+        "azure.mgmt.carbonoptimization.models.BillingAccountTopItemsMonthlySummaryReportQueryFilter": "Microsoft.Carbon.BillingAccountTopItemsMonthlySummaryReportQueryFilter",
+        "azure.mgmt.carbonoptimization.models.BillingAccountTopItemsSummaryReportQueryFilter": "Microsoft.Carbon.BillingAccountTopItemsSummaryReportQueryFilter",
         "azure.mgmt.carbonoptimization.models.CarbonEmissionData": "Microsoft.Carbon.CarbonEmissionData",
         "azure.mgmt.carbonoptimization.models.CarbonEmissionDataAvailableDateRange": "Microsoft.Carbon.CarbonEmissionDataAvailableDateRange",
         "azure.mgmt.carbonoptimization.models.CarbonEmissionDataListResult": "Microsoft.Carbon.CarbonEmissionDataListResult",
@@ -37,11 +43,16 @@
         "azure.mgmt.carbonoptimization.models.EmissionScopeEnum": "Microsoft.Carbon.EmissionScopeEnum",
         "azure.mgmt.carbonoptimization.models.OrderByColumnEnum": "Microsoft.Carbon.OrderByColumnEnum",
         "azure.mgmt.carbonoptimization.models.SortDirectionEnum": "Microsoft.Carbon.SortDirectionEnum",
+        "azure.mgmt.carbonoptimization.models.BillingAccountCategoryTypeEnum": "Microsoft.Carbon.BillingAccountCategoryTypeEnum",
+        "azure.mgmt.carbonoptimization.models.BillingAccountOrderByColumnEnum": "Microsoft.Carbon.BillingAccountOrderByColumnEnum",
         "azure.mgmt.carbonoptimization.operations.Operations.list": "Azure.ResourceManager.Operations.list",
         "azure.mgmt.carbonoptimization.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list",
         "azure.mgmt.carbonoptimization.operations.CarbonServiceOperations.query_carbon_emission_reports": "Microsoft.Carbon.CarbonService.queryCarbonEmissionReports",
         "azure.mgmt.carbonoptimization.aio.operations.CarbonServiceOperations.query_carbon_emission_reports": "Microsoft.Carbon.CarbonService.queryCarbonEmissionReports",
         "azure.mgmt.carbonoptimization.operations.CarbonServiceOperations.query_carbon_emission_data_available_date_range": "Microsoft.Carbon.CarbonService.queryCarbonEmissionDataAvailableDateRange",
-        "azure.mgmt.carbonoptimization.aio.operations.CarbonServiceOperations.query_carbon_emission_data_available_date_range": "Microsoft.Carbon.CarbonService.queryCarbonEmissionDataAvailableDateRange"
-    }
+        "azure.mgmt.carbonoptimization.aio.operations.CarbonServiceOperations.query_carbon_emission_data_available_date_range": "Microsoft.Carbon.CarbonService.queryCarbonEmissionDataAvailableDateRange",
+        "azure.mgmt.carbonoptimization.operations.CarbonServiceOperations.query_carbon_emission_reports_by_billing_account": "Microsoft.Carbon.CarbonService.queryCarbonEmissionReportsByBillingAccount",
+        "azure.mgmt.carbonoptimization.aio.operations.CarbonServiceOperations.query_carbon_emission_reports_by_billing_account": "Microsoft.Carbon.CarbonService.queryCarbonEmissionReportsByBillingAccount"
+    },
+    "CrossLanguageVersion": "fbec3b3e5059"
 }

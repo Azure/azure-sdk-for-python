@@ -1,7 +1,11 @@
 {
-  "apiVersion": "2025-04-01",
-  "commit": "5f272067844826380939c0b3f24ca3cc99dbe308",
+  "apiVersion": "2026-05-01-preview",
+  "apiVersions": {
+    "Microsoft.Carbon": "2026-05-01-preview"
+  },
+  "commit": "326f672c19172d935ff0153844efd1e8f064938e",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "typespec_src": "specification/carbon/Carbon.Management",
-  "emitterVersion": "0.45.2"
+  "typespec_src": "specification/carbon/resource-manager/Microsoft.Carbon/Carbon",
+  "emitterVersion": "0.63.10",
+  "httpClientPythonVersion": "0.39.0"
 }

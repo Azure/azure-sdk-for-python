@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import ReportTypeEnum, ResponseDataTypeEnum
@@ -18,7 +18,503 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class CarbonEmissionData(_Model):
+class BillingAccountQueryFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Query filter parameter for billing account scoped carbon emissions queries. The billing account
+    ID is derived from the URL scope parameter.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    BillingAccountItemDetailsReportQueryFilter, BillingAccountMonthlySummaryReportQueryFilter,
+    BillingAccountOverallSummaryReportQueryFilter,
+    BillingAccountTopItemsMonthlySummaryReportQueryFilter,
+    BillingAccountTopItemsSummaryReportQueryFilter
+
+    :ivar report_type: The ReportType requested for carbon emissions data. Required. Specifies how
+     data is aggregated and displayed in the output, as explained in the ReportTypeEnum. Required.
+     Known values are: "OverallSummaryReport", "MonthlySummaryReport", "TopItemsSummaryReport",
+     "TopItemsMonthlySummaryReport", and "ItemDetailsReport".
+    :vartype report_type: str or ~azure.mgmt.carbonoptimization.models.ReportTypeEnum
+    :ivar date_range: The start and end dates for carbon emissions data. Required. For
+     ItemDetailsReport and TopItemsSummaryReport, only one month of data is supported at a time, so
+     start and end dates should be equal within DateRange (e.g., start: 2024-06-01 and end:
+     2024-06-01). Required.
+    :vartype date_range: ~azure.mgmt.carbonoptimization.models.DateRange
+    :ivar subscription_list: List of subscription IDs for which carbon emissions data is requested.
+     Optional. Each subscription ID should be in lowercase format. If not provided, data for all
+     subscriptions under the billing account will be returned.
+    :vartype subscription_list: list[str]
+    :ivar resource_type_list: List of resource types for carbon emissions data. Optional. Each
+     resource type should be specified in lowercase, following the format
+     'microsoft.{service}/{resourceType}', e.g., 'microsoft.storage/storageaccounts'.
+    :vartype resource_type_list: list[str]
+    :ivar location_list: List of locations(Azure Region Display Name) for carbon emissions data,
+     with each location specified in lowercase (e.g., 'east us'). Optional. You can use the command
+     'az account list-locations -o table' to find Azure Region Display Names.
+    :vartype location_list: list[str]
+    :ivar carbon_scope_list: List of carbon emission scopes. Required. Accepts one or more values
+     from EmissionScopeEnum (e.g., Scope1, Scope2, Scope3) in list form. The output will include the
+     total emissions for the specified scopes. Required.
+    :vartype carbon_scope_list: list[str or
+     ~azure.mgmt.carbonoptimization.models.EmissionScopeEnum]
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    report_type: str = rest_discriminator(name="reportType", visibility=["read", "create", "update", "delete", "query"])
+    """The ReportType requested for carbon emissions data. Required. Specifies how data is aggregated
+     and displayed in the output, as explained in the ReportTypeEnum. Required. Known values are:
+     \"OverallSummaryReport\", \"MonthlySummaryReport\", \"TopItemsSummaryReport\",
+     \"TopItemsMonthlySummaryReport\", and \"ItemDetailsReport\"."""
+    date_range: "_models.DateRange" = rest_field(
+        name="dateRange", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The start and end dates for carbon emissions data. Required. For ItemDetailsReport and
+     TopItemsSummaryReport, only one month of data is supported at a time, so start and end dates
+     should be equal within DateRange (e.g., start: 2024-06-01 and end: 2024-06-01). Required."""
+    subscription_list: Optional[list[str]] = rest_field(
+        name="subscriptionList", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of subscription IDs for which carbon emissions data is requested. Optional. Each
+     subscription ID should be in lowercase format. If not provided, data for all subscriptions
+     under the billing account will be returned."""
+    resource_type_list: Optional[list[str]] = rest_field(
+        name="resourceTypeList", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of resource types for carbon emissions data. Optional. Each resource type should be
+     specified in lowercase, following the format 'microsoft.{service}/{resourceType}', e.g.,
+     'microsoft.storage/storageaccounts'."""
+    location_list: Optional[list[str]] = rest_field(
+        name="locationList", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of locations(Azure Region Display Name) for carbon emissions data, with each location
+     specified in lowercase (e.g., 'east us'). Optional. You can use the command 'az account
+     list-locations -o table' to find Azure Region Display Names."""
+    carbon_scope_list: list[Union[str, "_models.EmissionScopeEnum"]] = rest_field(
+        name="carbonScopeList", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of carbon emission scopes. Required. Accepts one or more values from EmissionScopeEnum
+     (e.g., Scope1, Scope2, Scope3) in list form. The output will include the total emissions for
+     the specified scopes. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        report_type: str,
+        date_range: "_models.DateRange",
+        carbon_scope_list: list[Union[str, "_models.EmissionScopeEnum"]],
+        subscription_list: Optional[list[str]] = None,
+        resource_type_list: Optional[list[str]] = None,
+        location_list: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BillingAccountItemDetailsReportQueryFilter(
+    BillingAccountQueryFilter, discriminator="ItemDetailsReport"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Query filter parameter to configure ItemDetailsReport queries scoped to a billing account.
+
+    :ivar date_range: The start and end dates for carbon emissions data. Required. For
+     ItemDetailsReport and TopItemsSummaryReport, only one month of data is supported at a time, so
+     start and end dates should be equal within DateRange (e.g., start: 2024-06-01 and end:
+     2024-06-01). Required.
+    :vartype date_range: ~azure.mgmt.carbonoptimization.models.DateRange
+    :ivar subscription_list: List of subscription IDs for which carbon emissions data is requested.
+     Optional. Each subscription ID should be in lowercase format. If not provided, data for all
+     subscriptions under the billing account will be returned.
+    :vartype subscription_list: list[str]
+    :ivar resource_type_list: List of resource types for carbon emissions data. Optional. Each
+     resource type should be specified in lowercase, following the format
+     'microsoft.{service}/{resourceType}', e.g., 'microsoft.storage/storageaccounts'.
+    :vartype resource_type_list: list[str]
+    :ivar location_list: List of locations(Azure Region Display Name) for carbon emissions data,
+     with each location specified in lowercase (e.g., 'east us'). Optional. You can use the command
+     'az account list-locations -o table' to find Azure Region Display Names.
+    :vartype location_list: list[str]
+    :ivar carbon_scope_list: List of carbon emission scopes. Required. Accepts one or more values
+     from EmissionScopeEnum (e.g., Scope1, Scope2, Scope3) in list form. The output will include the
+     total emissions for the specified scopes. Required.
+    :vartype carbon_scope_list: list[str or
+     ~azure.mgmt.carbonoptimization.models.EmissionScopeEnum]
+    :ivar report_type: Specifies that the report type is an item details report for carbon
+     emissions data. Required. ItemDetailsReport provides a granular list of items based on the
+     specified CategoryType (e.g., Resource, ResourceGroup, ResourceType, Location, or Subscription)
+     for the query filter. This report can be queried for only one month at a time, requiring the
+     same values in the start and end fields within DateRange.
+    :vartype report_type: str or ~azure.mgmt.carbonoptimization.models.ITEM_DETAILS_REPORT
+    :ivar category_type: Specifies the category type for item details. Required. Known values are:
+     "Subscription", "Location", and "ResourceType".
+    :vartype category_type: str or
+     ~azure.mgmt.carbonoptimization.models.BillingAccountCategoryTypeEnum
+    :ivar page_size: Page size for server paging. Optional. Default value is 1000 items per page.
+     Required.
+    :vartype page_size: int
+    :ivar skip_token: Pagination token for fetching the next page of data. Optional.
+    :vartype skip_token: str
+    :ivar order_by: The column name to order the results by. See supported values in
+     BillingAccountOrderByColumnEnum. Known values are: "ItemName", "LatestMonthEmissions",
+     "PreviousMonthEmissions", "MonthOverMonthEmissionsChangeRatio", and
+     "MonthlyEmissionsChangeValue".
+    :vartype order_by: str or ~azure.mgmt.carbonoptimization.models.BillingAccountOrderByColumnEnum
+    :ivar sort_direction: Sort direction. Known values are: "Desc" and "Asc".
+    :vartype sort_direction: str or ~azure.mgmt.carbonoptimization.models.SortDirectionEnum
+    """
+
+    report_type: Literal[ReportTypeEnum.ITEM_DETAILS_REPORT] = rest_discriminator(name="reportType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies that the report type is an item details report for carbon emissions data. Required.
+     ItemDetailsReport provides a granular list of items based on the specified CategoryType (e.g.,
+     Resource, ResourceGroup, ResourceType, Location, or Subscription) for the query filter. This
+     report can be queried for only one month at a time, requiring the same values in the start and
+     end fields within DateRange."""
+    category_type: Union[str, "_models.BillingAccountCategoryTypeEnum"] = rest_field(
+        name="categoryType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the category type for item details. Required. Known values are: \"Subscription\",
+     \"Location\", and \"ResourceType\"."""
+    page_size: int = rest_field(name="pageSize", visibility=["read", "create", "update", "delete", "query"])
+    """Page size for server paging. Optional. Default value is 1000 items per page. Required."""
+    skip_token: Optional[str] = rest_field(name="skipToken", visibility=["read", "create", "update", "delete", "query"])
+    """Pagination token for fetching the next page of data. Optional."""
+    order_by: Optional[Union[str, "_models.BillingAccountOrderByColumnEnum"]] = rest_field(
+        name="orderBy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The column name to order the results by. See supported values in
+     BillingAccountOrderByColumnEnum. Known values are: \"ItemName\", \"LatestMonthEmissions\",
+     \"PreviousMonthEmissions\", \"MonthOverMonthEmissionsChangeRatio\", and
+     \"MonthlyEmissionsChangeValue\"."""
+    sort_direction: Optional[Union[str, "_models.SortDirectionEnum"]] = rest_field(
+        name="sortDirection", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Sort direction. Known values are: \"Desc\" and \"Asc\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        date_range: "_models.DateRange",
+        carbon_scope_list: list[Union[str, "_models.EmissionScopeEnum"]],
+        category_type: Union[str, "_models.BillingAccountCategoryTypeEnum"],
+        page_size: int,
+        subscription_list: Optional[list[str]] = None,
+        resource_type_list: Optional[list[str]] = None,
+        location_list: Optional[list[str]] = None,
+        skip_token: Optional[str] = None,
+        order_by: Optional[Union[str, "_models.BillingAccountOrderByColumnEnum"]] = None,
+        sort_direction: Optional[Union[str, "_models.SortDirectionEnum"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.report_type = ReportTypeEnum.ITEM_DETAILS_REPORT  # type: ignore
+
+
+class BillingAccountMonthlySummaryReportQueryFilter(
+    BillingAccountQueryFilter, discriminator="MonthlySummaryReport"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Query filter parameter to configure MonthlySummaryReport queries scoped to a billing account.
+
+    :ivar date_range: The start and end dates for carbon emissions data. Required. For
+     ItemDetailsReport and TopItemsSummaryReport, only one month of data is supported at a time, so
+     start and end dates should be equal within DateRange (e.g., start: 2024-06-01 and end:
+     2024-06-01). Required.
+    :vartype date_range: ~azure.mgmt.carbonoptimization.models.DateRange
+    :ivar subscription_list: List of subscription IDs for which carbon emissions data is requested.
+     Optional. Each subscription ID should be in lowercase format. If not provided, data for all
+     subscriptions under the billing account will be returned.
+    :vartype subscription_list: list[str]
+    :ivar resource_type_list: List of resource types for carbon emissions data. Optional. Each
+     resource type should be specified in lowercase, following the format
+     'microsoft.{service}/{resourceType}', e.g., 'microsoft.storage/storageaccounts'.
+    :vartype resource_type_list: list[str]
+    :ivar location_list: List of locations(Azure Region Display Name) for carbon emissions data,
+     with each location specified in lowercase (e.g., 'east us'). Optional. You can use the command
+     'az account list-locations -o table' to find Azure Region Display Names.
+    :vartype location_list: list[str]
+    :ivar carbon_scope_list: List of carbon emission scopes. Required. Accepts one or more values
+     from EmissionScopeEnum (e.g., Scope1, Scope2, Scope3) in list form. The output will include the
+     total emissions for the specified scopes. Required.
+    :vartype carbon_scope_list: list[str or
+     ~azure.mgmt.carbonoptimization.models.EmissionScopeEnum]
+    :ivar report_type: Specifies that the report type is a monthly summary report for carbon
+     emissions data. Required. MonthlySummaryReport provides carbon emissions data by month for the
+     specified query parameters. This report type can accept different values in the start and end
+     fields within DateRange (e.g., start: 2024-03-01 and end: 2024-06-01).
+    :vartype report_type: str or ~azure.mgmt.carbonoptimization.models.MONTHLY_SUMMARY_REPORT
+    """
+
+    report_type: Literal[ReportTypeEnum.MONTHLY_SUMMARY_REPORT] = rest_discriminator(name="reportType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies that the report type is a monthly summary report for carbon emissions data. Required.
+     MonthlySummaryReport provides carbon emissions data by month for the specified query
+     parameters. This report type can accept different values in the start and end fields within
+     DateRange (e.g., start: 2024-03-01 and end: 2024-06-01)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        date_range: "_models.DateRange",
+        carbon_scope_list: list[Union[str, "_models.EmissionScopeEnum"]],
+        subscription_list: Optional[list[str]] = None,
+        resource_type_list: Optional[list[str]] = None,
+        location_list: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.report_type = ReportTypeEnum.MONTHLY_SUMMARY_REPORT  # type: ignore
+
+
+class BillingAccountOverallSummaryReportQueryFilter(
+    BillingAccountQueryFilter, discriminator="OverallSummaryReport"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Query filter parameter to configure OverallSummaryReport queries scoped to a billing account.
+
+    :ivar date_range: The start and end dates for carbon emissions data. Required. For
+     ItemDetailsReport and TopItemsSummaryReport, only one month of data is supported at a time, so
+     start and end dates should be equal within DateRange (e.g., start: 2024-06-01 and end:
+     2024-06-01). Required.
+    :vartype date_range: ~azure.mgmt.carbonoptimization.models.DateRange
+    :ivar subscription_list: List of subscription IDs for which carbon emissions data is requested.
+     Optional. Each subscription ID should be in lowercase format. If not provided, data for all
+     subscriptions under the billing account will be returned.
+    :vartype subscription_list: list[str]
+    :ivar resource_type_list: List of resource types for carbon emissions data. Optional. Each
+     resource type should be specified in lowercase, following the format
+     'microsoft.{service}/{resourceType}', e.g., 'microsoft.storage/storageaccounts'.
+    :vartype resource_type_list: list[str]
+    :ivar location_list: List of locations(Azure Region Display Name) for carbon emissions data,
+     with each location specified in lowercase (e.g., 'east us'). Optional. You can use the command
+     'az account list-locations -o table' to find Azure Region Display Names.
+    :vartype location_list: list[str]
+    :ivar carbon_scope_list: List of carbon emission scopes. Required. Accepts one or more values
+     from EmissionScopeEnum (e.g., Scope1, Scope2, Scope3) in list form. The output will include the
+     total emissions for the specified scopes. Required.
+    :vartype carbon_scope_list: list[str or
+     ~azure.mgmt.carbonoptimization.models.EmissionScopeEnum]
+    :ivar report_type: Specifies that the report type is an overall summary report for carbon
+     emissions data. Required. Overall summary report provides total carbon emissions for the
+     specified date range and query parameters, as well as comparative values for a high-level
+     overview. This report type can accept different values in the start and end fields within
+     DateRange (e.g., start: 2024-03-01 and end: 2024-06-01).
+    :vartype report_type: str or ~azure.mgmt.carbonoptimization.models.OVERALL_SUMMARY_REPORT
+    """
+
+    report_type: Literal[ReportTypeEnum.OVERALL_SUMMARY_REPORT] = rest_discriminator(name="reportType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies that the report type is an overall summary report for carbon emissions data.
+     Required. Overall summary report provides total carbon emissions for the specified date range
+     and query parameters, as well as comparative values for a high-level overview. This report type
+     can accept different values in the start and end fields within DateRange (e.g., start:
+     2024-03-01 and end: 2024-06-01)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        date_range: "_models.DateRange",
+        carbon_scope_list: list[Union[str, "_models.EmissionScopeEnum"]],
+        subscription_list: Optional[list[str]] = None,
+        resource_type_list: Optional[list[str]] = None,
+        location_list: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.report_type = ReportTypeEnum.OVERALL_SUMMARY_REPORT  # type: ignore
+
+
+class BillingAccountTopItemsMonthlySummaryReportQueryFilter(
+    BillingAccountQueryFilter, discriminator="TopItemsMonthlySummaryReport"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Query filter parameter to configure TopItemsMonthlySummaryReport queries scoped to a billing
+    account.
+
+    :ivar date_range: The start and end dates for carbon emissions data. Required. For
+     ItemDetailsReport and TopItemsSummaryReport, only one month of data is supported at a time, so
+     start and end dates should be equal within DateRange (e.g., start: 2024-06-01 and end:
+     2024-06-01). Required.
+    :vartype date_range: ~azure.mgmt.carbonoptimization.models.DateRange
+    :ivar subscription_list: List of subscription IDs for which carbon emissions data is requested.
+     Optional. Each subscription ID should be in lowercase format. If not provided, data for all
+     subscriptions under the billing account will be returned.
+    :vartype subscription_list: list[str]
+    :ivar resource_type_list: List of resource types for carbon emissions data. Optional. Each
+     resource type should be specified in lowercase, following the format
+     'microsoft.{service}/{resourceType}', e.g., 'microsoft.storage/storageaccounts'.
+    :vartype resource_type_list: list[str]
+    :ivar location_list: List of locations(Azure Region Display Name) for carbon emissions data,
+     with each location specified in lowercase (e.g., 'east us'). Optional. You can use the command
+     'az account list-locations -o table' to find Azure Region Display Names.
+    :vartype location_list: list[str]
+    :ivar carbon_scope_list: List of carbon emission scopes. Required. Accepts one or more values
+     from EmissionScopeEnum (e.g., Scope1, Scope2, Scope3) in list form. The output will include the
+     total emissions for the specified scopes. Required.
+    :vartype carbon_scope_list: list[str or
+     ~azure.mgmt.carbonoptimization.models.EmissionScopeEnum]
+    :ivar report_type: Specifies that the report type is a top items monthly summary report for
+     carbon emissions data. Required. TopItemsMonthlyReport provides the N highest-emitting items by
+     month for the specified query filter. Returns emissions data for the top N items by month
+     within the given date range. A maximum of N=10 items can be returned at a time.
+    :vartype report_type: str or
+     ~azure.mgmt.carbonoptimization.models.TOP_ITEMS_MONTHLY_SUMMARY_REPORT
+    :ivar category_type: Specifies the category type to retrieve top-emitting items, aggregated by
+     month. Required. Known values are: "Subscription", "Location", and "ResourceType".
+    :vartype category_type: str or
+     ~azure.mgmt.carbonoptimization.models.BillingAccountCategoryTypeEnum
+    :ivar top_items: The number of top items to return, based on emissions. Must be between 1 and
+     10. Required.
+    :vartype top_items: int
+    """
+
+    report_type: Literal[ReportTypeEnum.TOP_ITEMS_MONTHLY_SUMMARY_REPORT] = rest_discriminator(name="reportType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies that the report type is a top items monthly summary report for carbon emissions data.
+     Required. TopItemsMonthlyReport provides the N highest-emitting items by month for the
+     specified query filter. Returns emissions data for the top N items by month within the given
+     date range. A maximum of N=10 items can be returned at a time."""
+    category_type: Union[str, "_models.BillingAccountCategoryTypeEnum"] = rest_field(
+        name="categoryType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the category type to retrieve top-emitting items, aggregated by month. Required.
+     Known values are: \"Subscription\", \"Location\", and \"ResourceType\"."""
+    top_items: int = rest_field(name="topItems", visibility=["read", "create", "update", "delete", "query"])
+    """The number of top items to return, based on emissions. Must be between 1 and 10. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        date_range: "_models.DateRange",
+        carbon_scope_list: list[Union[str, "_models.EmissionScopeEnum"]],
+        category_type: Union[str, "_models.BillingAccountCategoryTypeEnum"],
+        top_items: int,
+        subscription_list: Optional[list[str]] = None,
+        resource_type_list: Optional[list[str]] = None,
+        location_list: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.report_type = ReportTypeEnum.TOP_ITEMS_MONTHLY_SUMMARY_REPORT  # type: ignore
+
+
+class BillingAccountTopItemsSummaryReportQueryFilter(
+    BillingAccountQueryFilter, discriminator="TopItemsSummaryReport"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Query filter parameter to configure TopItemsSummaryReport queries scoped to a billing account.
+
+    :ivar date_range: The start and end dates for carbon emissions data. Required. For
+     ItemDetailsReport and TopItemsSummaryReport, only one month of data is supported at a time, so
+     start and end dates should be equal within DateRange (e.g., start: 2024-06-01 and end:
+     2024-06-01). Required.
+    :vartype date_range: ~azure.mgmt.carbonoptimization.models.DateRange
+    :ivar subscription_list: List of subscription IDs for which carbon emissions data is requested.
+     Optional. Each subscription ID should be in lowercase format. If not provided, data for all
+     subscriptions under the billing account will be returned.
+    :vartype subscription_list: list[str]
+    :ivar resource_type_list: List of resource types for carbon emissions data. Optional. Each
+     resource type should be specified in lowercase, following the format
+     'microsoft.{service}/{resourceType}', e.g., 'microsoft.storage/storageaccounts'.
+    :vartype resource_type_list: list[str]
+    :ivar location_list: List of locations(Azure Region Display Name) for carbon emissions data,
+     with each location specified in lowercase (e.g., 'east us'). Optional. You can use the command
+     'az account list-locations -o table' to find Azure Region Display Names.
+    :vartype location_list: list[str]
+    :ivar carbon_scope_list: List of carbon emission scopes. Required. Accepts one or more values
+     from EmissionScopeEnum (e.g., Scope1, Scope2, Scope3) in list form. The output will include the
+     total emissions for the specified scopes. Required.
+    :vartype carbon_scope_list: list[str or
+     ~azure.mgmt.carbonoptimization.models.EmissionScopeEnum]
+    :ivar report_type: Specifies that the report type is a top items summary report for carbon
+     emissions data. Required. TopItemsSummaryReport provides the N highest-emitting items for the
+     specified query filters. This report returns data for a single month at a time, so it requires
+     the same values for the start and end fields within DateRange. A maximum of N=10 items can be
+     returned at a time.
+    :vartype report_type: str or ~azure.mgmt.carbonoptimization.models.TOP_ITEMS_SUMMARY_REPORT
+    :ivar category_type: Specifies the category type for which to retrieve top-emitting items.
+     Required. Known values are: "Subscription", "Location", and "ResourceType".
+    :vartype category_type: str or
+     ~azure.mgmt.carbonoptimization.models.BillingAccountCategoryTypeEnum
+    :ivar top_items: The number of top items to return, based on emissions. This value must be
+     between 1 and 10. Required.
+    :vartype top_items: int
+    """
+
+    report_type: Literal[ReportTypeEnum.TOP_ITEMS_SUMMARY_REPORT] = rest_discriminator(name="reportType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies that the report type is a top items summary report for carbon emissions data.
+     Required. TopItemsSummaryReport provides the N highest-emitting items for the specified query
+     filters. This report returns data for a single month at a time, so it requires the same values
+     for the start and end fields within DateRange. A maximum of N=10 items can be returned at a
+     time."""
+    category_type: Union[str, "_models.BillingAccountCategoryTypeEnum"] = rest_field(
+        name="categoryType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the category type for which to retrieve top-emitting items. Required. Known values
+     are: \"Subscription\", \"Location\", and \"ResourceType\"."""
+    top_items: int = rest_field(name="topItems", visibility=["read", "create", "update", "delete", "query"])
+    """The number of top items to return, based on emissions. This value must be between 1 and 10.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        date_range: "_models.DateRange",
+        carbon_scope_list: list[Union[str, "_models.EmissionScopeEnum"]],
+        category_type: Union[str, "_models.BillingAccountCategoryTypeEnum"],
+        top_items: int,
+        subscription_list: Optional[list[str]] = None,
+        resource_type_list: Optional[list[str]] = None,
+        location_list: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.report_type = ReportTypeEnum.TOP_ITEMS_SUMMARY_REPORT  # type: ignore
+
+
+class CarbonEmissionData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The basic response for different query report, all query report result will have these
     information.
 
@@ -55,7 +551,7 @@ class CarbonEmissionData(_Model):
     :vartype monthly_emissions_change_value: float
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     data_type: str = rest_discriminator(name="dataType", visibility=["read", "create", "update", "delete", "query"])
     """The data type of the query result, indicating the format of the returned response. Required.
      Known values are: \"OverallSummaryData\", \"MonthlySummaryData\", \"TopItemsSummaryData\",
@@ -107,7 +603,7 @@ class CarbonEmissionData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CarbonEmissionDataAvailableDateRange(_Model):
+class CarbonEmissionDataAvailableDateRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for available date range of carbon emission data.
 
     :ivar start_date: Start date parameter, format is yyyy-MM-dd. Required.
@@ -140,7 +636,7 @@ class CarbonEmissionDataAvailableDateRange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CarbonEmissionDataListResult(_Model):
+class CarbonEmissionDataListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of carbon emission results.
 
     :ivar value: The CarbonEmissionData items on this page. Required.
@@ -153,12 +649,12 @@ class CarbonEmissionDataListResult(_Model):
      list[~azure.mgmt.carbonoptimization.models.SubscriptionAccessDecision]
     """
 
-    value: List["_models.CarbonEmissionData"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    value: list["_models.CarbonEmissionData"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The CarbonEmissionData items on this page. Required."""
     skip_token: Optional[str] = rest_field(name="skipToken", visibility=["read", "create", "update", "delete", "query"])
     """The pagination token to fetch next page data, it's null or empty if it doesn't have next page
      data."""
-    subscription_access_decision_list: Optional[List["_models.SubscriptionAccessDecision"]] = rest_field(
+    subscription_access_decision_list: Optional[list["_models.SubscriptionAccessDecision"]] = rest_field(
         name="subscriptionAccessDecisionList", visibility=["read", "create", "update", "delete", "query"]
     )
     """The access decision list for each input subscription."""
@@ -167,9 +663,9 @@ class CarbonEmissionDataListResult(_Model):
     def __init__(
         self,
         *,
-        value: List["_models.CarbonEmissionData"],
+        value: list["_models.CarbonEmissionData"],
         skip_token: Optional[str] = None,
-        subscription_access_decision_list: Optional[List["_models.SubscriptionAccessDecision"]] = None,
+        subscription_access_decision_list: Optional[list["_models.SubscriptionAccessDecision"]] = None,
     ) -> None: ...
 
     @overload
@@ -183,7 +679,9 @@ class CarbonEmissionDataListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CarbonEmissionItemDetailData(CarbonEmissionData, discriminator="ItemDetailsData"):
+class CarbonEmissionItemDetailData(
+    CarbonEmissionData, discriminator="ItemDetailsData"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for detailed carbon emissions.
 
     :ivar latest_month_emissions: Total carbon emissions for the specified query parameters,
@@ -202,7 +700,7 @@ class CarbonEmissionItemDetailData(CarbonEmissionData, discriminator="ItemDetail
     :ivar monthly_emissions_change_value: The change in carbon emissions between the current and
      previous period, calculated as: latestMonthEmissions - previousMonthEmissions.
     :vartype monthly_emissions_change_value: float
-    :ivar data_type: Item details data. Required. The response data type for ItemDetailsReport
+    :ivar data_type: Item details data. Required. The response data type for ItemDetailsReport.
     :vartype data_type: str or ~azure.mgmt.carbonoptimization.models.ITEM_DETAILS_DATA
     :ivar item_name: Item name, it can be resource name, resource type name, location, resource
      group name or subscriptionId. It depends on category type. Required.
@@ -214,7 +712,7 @@ class CarbonEmissionItemDetailData(CarbonEmissionData, discriminator="ItemDetail
     """
 
     data_type: Literal[ResponseDataTypeEnum.ITEM_DETAILS_DATA] = rest_discriminator(name="dataType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Item details data. Required. The response data type for ItemDetailsReport"""
+    """Item details data. Required. The response data type for ItemDetailsReport."""
     item_name: str = rest_field(name="itemName", visibility=["read", "create", "update", "delete", "query"])
     """Item name, it can be resource name, resource type name, location, resource group name or
      subscriptionId. It depends on category type. Required."""
@@ -244,10 +742,13 @@ class CarbonEmissionItemDetailData(CarbonEmissionData, discriminator="ItemDetail
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, data_type=ResponseDataTypeEnum.ITEM_DETAILS_DATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.data_type = ResponseDataTypeEnum.ITEM_DETAILS_DATA  # type: ignore
 
 
-class CarbonEmissionMonthlySummaryData(CarbonEmissionData, discriminator="MonthlySummaryData"):
+class CarbonEmissionMonthlySummaryData(
+    CarbonEmissionData, discriminator="MonthlySummaryData"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for Monthly Carbon Emissions Summary.
 
     :ivar latest_month_emissions: Total carbon emissions for the specified query parameters,
@@ -267,7 +768,7 @@ class CarbonEmissionMonthlySummaryData(CarbonEmissionData, discriminator="Monthl
      previous period, calculated as: latestMonthEmissions - previousMonthEmissions.
     :vartype monthly_emissions_change_value: float
     :ivar data_type: Monthly summary data. Required. The response data type for
-     MonthlySummaryReport
+     MonthlySummaryReport.
     :vartype data_type: str or ~azure.mgmt.carbonoptimization.models.MONTHLY_SUMMARY_DATA
     :ivar date: The date, representing the month, for which the emissions data is reported,
      formatted as yyyy-MM-dd (e.g., 2024-03-01). Required.
@@ -278,7 +779,7 @@ class CarbonEmissionMonthlySummaryData(CarbonEmissionData, discriminator="Monthl
     """
 
     data_type: Literal[ResponseDataTypeEnum.MONTHLY_SUMMARY_DATA] = rest_discriminator(name="dataType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Monthly summary data. Required. The response data type for MonthlySummaryReport"""
+    """Monthly summary data. Required. The response data type for MonthlySummaryReport."""
     date: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The date, representing the month, for which the emissions data is reported, formatted as
      yyyy-MM-dd (e.g., 2024-03-01). Required."""
@@ -308,10 +809,13 @@ class CarbonEmissionMonthlySummaryData(CarbonEmissionData, discriminator="Monthl
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, data_type=ResponseDataTypeEnum.MONTHLY_SUMMARY_DATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.data_type = ResponseDataTypeEnum.MONTHLY_SUMMARY_DATA  # type: ignore
 
 
-class CarbonEmissionOverallSummaryData(CarbonEmissionData, discriminator="OverallSummaryData"):
+class CarbonEmissionOverallSummaryData(
+    CarbonEmissionData, discriminator="OverallSummaryData"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for Overall Carbon Emissions Summary.
 
     :ivar latest_month_emissions: Total carbon emissions for the specified query parameters,
@@ -331,12 +835,12 @@ class CarbonEmissionOverallSummaryData(CarbonEmissionData, discriminator="Overal
      previous period, calculated as: latestMonthEmissions - previousMonthEmissions.
     :vartype monthly_emissions_change_value: float
     :ivar data_type: Overall summary data. Required. The response data type for
-     OverallSummaryReport
+     OverallSummaryReport.
     :vartype data_type: str or ~azure.mgmt.carbonoptimization.models.OVERALL_SUMMARY_DATA
     """
 
     data_type: Literal[ResponseDataTypeEnum.OVERALL_SUMMARY_DATA] = rest_discriminator(name="dataType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Overall summary data. Required. The response data type for OverallSummaryReport"""
+    """Overall summary data. Required. The response data type for OverallSummaryReport."""
 
     @overload
     def __init__(
@@ -356,10 +860,13 @@ class CarbonEmissionOverallSummaryData(CarbonEmissionData, discriminator="Overal
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, data_type=ResponseDataTypeEnum.OVERALL_SUMMARY_DATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.data_type = ResponseDataTypeEnum.OVERALL_SUMMARY_DATA  # type: ignore
 
 
-class CarbonEmissionTopItemMonthlySummaryData(CarbonEmissionData, discriminator="TopItemsMonthlySummaryData"):
+class CarbonEmissionTopItemMonthlySummaryData(
+    CarbonEmissionData, discriminator="TopItemsMonthlySummaryData"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for Top Items Carbon Emissions by Month.
 
     :ivar latest_month_emissions: Total carbon emissions for the specified query parameters,
@@ -379,7 +886,7 @@ class CarbonEmissionTopItemMonthlySummaryData(CarbonEmissionData, discriminator=
      previous period, calculated as: latestMonthEmissions - previousMonthEmissions.
     :vartype monthly_emissions_change_value: float
     :ivar data_type: Top items Monthly summary data. Required. The response data type for
-     TopItemsMonthlySummaryReport
+     TopItemsMonthlySummaryReport.
     :vartype data_type: str or ~azure.mgmt.carbonoptimization.models.TOP_ITEMS_MONTHLY_SUMMARY_DATA
     :ivar item_name: Item name, it can be resource name, resource type name, location, resource
      group name or subscriptionId. It depends on category type. Required.
@@ -395,7 +902,7 @@ class CarbonEmissionTopItemMonthlySummaryData(CarbonEmissionData, discriminator=
 
     data_type: Literal[ResponseDataTypeEnum.TOP_ITEMS_MONTHLY_SUMMARY_DATA] = rest_discriminator(name="dataType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Top items Monthly summary data. Required. The response data type for
-     TopItemsMonthlySummaryReport"""
+     TopItemsMonthlySummaryReport."""
     item_name: str = rest_field(name="itemName", visibility=["read", "create", "update", "delete", "query"])
     """Item name, it can be resource name, resource type name, location, resource group name or
      subscriptionId. It depends on category type. Required."""
@@ -429,10 +936,13 @@ class CarbonEmissionTopItemMonthlySummaryData(CarbonEmissionData, discriminator=
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, data_type=ResponseDataTypeEnum.TOP_ITEMS_MONTHLY_SUMMARY_DATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.data_type = ResponseDataTypeEnum.TOP_ITEMS_MONTHLY_SUMMARY_DATA  # type: ignore
 
 
-class CarbonEmissionTopItemsSummaryData(CarbonEmissionData, discriminator="TopItemsSummaryData"):
+class CarbonEmissionTopItemsSummaryData(
+    CarbonEmissionData, discriminator="TopItemsSummaryData"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for Top Items by Category Type.
 
     :ivar latest_month_emissions: Total carbon emissions for the specified query parameters,
@@ -452,7 +962,7 @@ class CarbonEmissionTopItemsSummaryData(CarbonEmissionData, discriminator="TopIt
      previous period, calculated as: latestMonthEmissions - previousMonthEmissions.
     :vartype monthly_emissions_change_value: float
     :ivar data_type: Top items summary data. Required. The response data type for
-     TopItemsSummaryReport
+     TopItemsSummaryReport.
     :vartype data_type: str or ~azure.mgmt.carbonoptimization.models.TOP_ITEMS_SUMMARY_DATA
     :ivar item_name: The identifier of the item being reported on, which could refer to the
      resource name, resource type name, location, resource group name, or subscription ID, depending
@@ -466,7 +976,7 @@ class CarbonEmissionTopItemsSummaryData(CarbonEmissionData, discriminator="TopIt
     """
 
     data_type: Literal[ResponseDataTypeEnum.TOP_ITEMS_SUMMARY_DATA] = rest_discriminator(name="dataType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Top items summary data. Required. The response data type for TopItemsSummaryReport"""
+    """Top items summary data. Required. The response data type for TopItemsSummaryReport."""
     item_name: str = rest_field(name="itemName", visibility=["read", "create", "update", "delete", "query"])
     """The identifier of the item being reported on, which could refer to the resource name, resource
      type name, location, resource group name, or subscription ID, depending on the specified
@@ -499,10 +1009,11 @@ class CarbonEmissionTopItemsSummaryData(CarbonEmissionData, discriminator="TopIt
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, data_type=ResponseDataTypeEnum.TOP_ITEMS_SUMMARY_DATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.data_type = ResponseDataTypeEnum.TOP_ITEMS_SUMMARY_DATA  # type: ignore
 
 
-class DateRange(_Model):
+class DateRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Date range to be used with QueryParameter, it should be within 12 months between start and end
     date. In certain cases, start and end dates must be the same date.
 
@@ -576,15 +1087,15 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -612,7 +1123,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryFilter(_Model):
+class QueryFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Shared query filter parameter to configure carbon emissions data queries for all different
     report type defined in ReportTypeEnum.
 
@@ -654,7 +1165,7 @@ class QueryFilter(_Model):
      ~azure.mgmt.carbonoptimization.models.EmissionScopeEnum]
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     report_type: str = rest_discriminator(name="reportType", visibility=["read", "create", "update", "delete", "query"])
     """The ReportType requested for carbon emissions data. Required. Specifies how data is aggregated
      and displayed in the output, as explained in the ReportTypeEnum. Required. Known values are:
@@ -666,30 +1177,30 @@ class QueryFilter(_Model):
     """The start and end dates for carbon emissions data. Required. For ItemDetailsReport and
      TopItemsSummaryReport, only one month of data is supported at a time, so start and end dates
      should be equal within DateRange (e.g., start: 2024-06-01 and end: 2024-06-01). Required."""
-    subscription_list: List[str] = rest_field(
+    subscription_list: list[str] = rest_field(
         name="subscriptionList", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of subscription IDs for which carbon emissions data is requested. Required. Each
      subscription ID should be in lowercase format. The max length of list is 100. Required."""
-    resource_group_url_list: Optional[List[str]] = rest_field(
+    resource_group_url_list: Optional[list[str]] = rest_field(
         name="resourceGroupUrlList", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of resource group URLs for carbon emissions data. Optional. Each URL must follow the
      format '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroup}', and should be in all
      lowercase."""
-    resource_type_list: Optional[List[str]] = rest_field(
+    resource_type_list: Optional[list[str]] = rest_field(
         name="resourceTypeList", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of resource types for carbon emissions data. Optional. Each resource type should be
      specified in lowercase, following the format 'microsoft.{service}/{resourceType}', e.g.,
      'microsoft.storage/storageaccounts'."""
-    location_list: Optional[List[str]] = rest_field(
+    location_list: Optional[list[str]] = rest_field(
         name="locationList", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of locations(Azure Region Display Name) for carbon emissions data, with each location
      specified in lowercase (e.g., 'east us'). Optional. You can use the command 'az account
      list-locations -o table' to find Azure Region Display Names."""
-    carbon_scope_list: List[Union[str, "_models.EmissionScopeEnum"]] = rest_field(
+    carbon_scope_list: list[Union[str, "_models.EmissionScopeEnum"]] = rest_field(
         name="carbonScopeList", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of carbon emission scopes. Required. Accepts one or more values from EmissionScopeEnum
@@ -702,11 +1213,11 @@ class QueryFilter(_Model):
         *,
         report_type: str,
         date_range: "_models.DateRange",
-        subscription_list: List[str],
-        carbon_scope_list: List[Union[str, "_models.EmissionScopeEnum"]],
-        resource_group_url_list: Optional[List[str]] = None,
-        resource_type_list: Optional[List[str]] = None,
-        location_list: Optional[List[str]] = None,
+        subscription_list: list[str],
+        carbon_scope_list: list[Union[str, "_models.EmissionScopeEnum"]],
+        resource_group_url_list: Optional[list[str]] = None,
+        resource_type_list: Optional[list[str]] = None,
+        location_list: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -720,7 +1231,9 @@ class QueryFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ItemDetailsQueryFilter(QueryFilter, discriminator="ItemDetailsReport"):
+class ItemDetailsQueryFilter(
+    QueryFilter, discriminator="ItemDetailsReport"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Query Parameters for ItemDetailsReport.
 
     :ivar date_range: The start and end dates for carbon emissions data. Required. For
@@ -811,15 +1324,15 @@ class ItemDetailsQueryFilter(QueryFilter, discriminator="ItemDetailsReport"):
         self,
         *,
         date_range: "_models.DateRange",
-        subscription_list: List[str],
-        carbon_scope_list: List[Union[str, "_models.EmissionScopeEnum"]],
+        subscription_list: list[str],
+        carbon_scope_list: list[Union[str, "_models.EmissionScopeEnum"]],
         category_type: Union[str, "_models.CategoryTypeEnum"],
         order_by: Union[str, "_models.OrderByColumnEnum"],
         sort_direction: Union[str, "_models.SortDirectionEnum"],
         page_size: int,
-        resource_group_url_list: Optional[List[str]] = None,
-        resource_type_list: Optional[List[str]] = None,
-        location_list: Optional[List[str]] = None,
+        resource_group_url_list: Optional[list[str]] = None,
+        resource_type_list: Optional[list[str]] = None,
+        location_list: Optional[list[str]] = None,
         skip_token: Optional[str] = None,
     ) -> None: ...
 
@@ -831,10 +1344,13 @@ class ItemDetailsQueryFilter(QueryFilter, discriminator="ItemDetailsReport"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, report_type=ReportTypeEnum.ITEM_DETAILS_REPORT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.report_type = ReportTypeEnum.ITEM_DETAILS_REPORT  # type: ignore
 
 
-class MonthlySummaryReportQueryFilter(QueryFilter, discriminator="MonthlySummaryReport"):
+class MonthlySummaryReportQueryFilter(
+    QueryFilter, discriminator="MonthlySummaryReport"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Query filter parameter to configure MonthlySummaryReport queries.
 
     :ivar date_range: The start and end dates for carbon emissions data. Required. For
@@ -882,11 +1398,11 @@ class MonthlySummaryReportQueryFilter(QueryFilter, discriminator="MonthlySummary
         self,
         *,
         date_range: "_models.DateRange",
-        subscription_list: List[str],
-        carbon_scope_list: List[Union[str, "_models.EmissionScopeEnum"]],
-        resource_group_url_list: Optional[List[str]] = None,
-        resource_type_list: Optional[List[str]] = None,
-        location_list: Optional[List[str]] = None,
+        subscription_list: list[str],
+        carbon_scope_list: list[Union[str, "_models.EmissionScopeEnum"]],
+        resource_group_url_list: Optional[list[str]] = None,
+        resource_type_list: Optional[list[str]] = None,
+        location_list: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -897,10 +1413,11 @@ class MonthlySummaryReportQueryFilter(QueryFilter, discriminator="MonthlySummary
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, report_type=ReportTypeEnum.MONTHLY_SUMMARY_REPORT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.report_type = ReportTypeEnum.MONTHLY_SUMMARY_REPORT  # type: ignore
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -958,7 +1475,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -988,7 +1505,9 @@ class OperationDisplay(_Model):
      views."""
 
 
-class OverallSummaryReportQueryFilter(QueryFilter, discriminator="OverallSummaryReport"):
+class OverallSummaryReportQueryFilter(
+    QueryFilter, discriminator="OverallSummaryReport"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Query filter parameter to configure OverallSummaryReport queries.
 
     :ivar date_range: The start and end dates for carbon emissions data. Required. For
@@ -1038,11 +1557,11 @@ class OverallSummaryReportQueryFilter(QueryFilter, discriminator="OverallSummary
         self,
         *,
         date_range: "_models.DateRange",
-        subscription_list: List[str],
-        carbon_scope_list: List[Union[str, "_models.EmissionScopeEnum"]],
-        resource_group_url_list: Optional[List[str]] = None,
-        resource_type_list: Optional[List[str]] = None,
-        location_list: Optional[List[str]] = None,
+        subscription_list: list[str],
+        carbon_scope_list: list[Union[str, "_models.EmissionScopeEnum"]],
+        resource_group_url_list: Optional[list[str]] = None,
+        resource_type_list: Optional[list[str]] = None,
+        location_list: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1053,10 +1572,13 @@ class OverallSummaryReportQueryFilter(QueryFilter, discriminator="OverallSummary
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, report_type=ReportTypeEnum.OVERALL_SUMMARY_REPORT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.report_type = ReportTypeEnum.OVERALL_SUMMARY_REPORT  # type: ignore
 
 
-class ResourceCarbonEmissionItemDetailData(CarbonEmissionData, discriminator="ResourceItemDetailsData"):
+class ResourceCarbonEmissionItemDetailData(
+    CarbonEmissionData, discriminator="ResourceItemDetailsData"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for Resource detailed carbon emissions.
 
     :ivar latest_month_emissions: Total carbon emissions for the specified query parameters,
@@ -1076,7 +1598,7 @@ class ResourceCarbonEmissionItemDetailData(CarbonEmissionData, discriminator="Re
      previous period, calculated as: latestMonthEmissions - previousMonthEmissions.
     :vartype monthly_emissions_change_value: float
     :ivar data_type: ResourceGroup's item details data. Required. The response data type for
-     Resource's ItemDetailsReport
+     Resource's ItemDetailsReport.
     :vartype data_type: str or ~azure.mgmt.carbonoptimization.models.RESOURCE_ITEM_DETAILS_DATA
     :ivar item_name: It's resource name. Required.
     :vartype item_name: str
@@ -1100,7 +1622,7 @@ class ResourceCarbonEmissionItemDetailData(CarbonEmissionData, discriminator="Re
 
     data_type: Literal[ResponseDataTypeEnum.RESOURCE_ITEM_DETAILS_DATA] = rest_discriminator(name="dataType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """ResourceGroup's item details data. Required. The response data type for Resource's
-     ItemDetailsReport"""
+     ItemDetailsReport."""
     item_name: str = rest_field(name="itemName", visibility=["read", "create", "update", "delete", "query"])
     """It's resource name. Required."""
     category_type: Union[str, "_models.CategoryTypeEnum"] = rest_field(
@@ -1148,12 +1670,13 @@ class ResourceCarbonEmissionItemDetailData(CarbonEmissionData, discriminator="Re
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, data_type=ResponseDataTypeEnum.RESOURCE_ITEM_DETAILS_DATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.data_type = ResponseDataTypeEnum.RESOURCE_ITEM_DETAILS_DATA  # type: ignore
 
 
 class ResourceCarbonEmissionTopItemMonthlySummaryData(
     CarbonEmissionData, discriminator="ResourceTopItemsMonthlySummaryData"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Response for top items carbon emissions by month for resource.
 
     :ivar latest_month_emissions: Total carbon emissions for the specified query parameters,
@@ -1173,7 +1696,7 @@ class ResourceCarbonEmissionTopItemMonthlySummaryData(
      previous period, calculated as: latestMonthEmissions - previousMonthEmissions.
     :vartype monthly_emissions_change_value: float
     :ivar data_type: Resource top items Monthly summary data. Required. The response data type for
-     Resource's TopItemsMonthlySummaryReport
+     Resource's TopItemsMonthlySummaryReport.
     :vartype data_type: str or
      ~azure.mgmt.carbonoptimization.models.RESOURCE_TOP_ITEMS_MONTHLY_SUMMARY_DATA
     :ivar item_name: The resource name of resource for Resource Category. Required.
@@ -1195,7 +1718,7 @@ class ResourceCarbonEmissionTopItemMonthlySummaryData(
 
     data_type: Literal[ResponseDataTypeEnum.RESOURCE_TOP_ITEMS_MONTHLY_SUMMARY_DATA] = rest_discriminator(name="dataType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Resource top items Monthly summary data. Required. The response data type for Resource's
-     TopItemsMonthlySummaryReport"""
+     TopItemsMonthlySummaryReport."""
     item_name: str = rest_field(name="itemName", visibility=["read", "create", "update", "delete", "query"])
     """The resource name of resource for Resource Category. Required."""
     category_type: Union[str, "_models.CategoryTypeEnum"] = rest_field(
@@ -1238,12 +1761,13 @@ class ResourceCarbonEmissionTopItemMonthlySummaryData(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, data_type=ResponseDataTypeEnum.RESOURCE_TOP_ITEMS_MONTHLY_SUMMARY_DATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.data_type = ResponseDataTypeEnum.RESOURCE_TOP_ITEMS_MONTHLY_SUMMARY_DATA  # type: ignore
 
 
 class ResourceCarbonEmissionTopItemsSummaryData(
     CarbonEmissionData, discriminator="ResourceTopItemsSummaryData"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Response for Top Items For Resource Category.
 
     :ivar latest_month_emissions: Total carbon emissions for the specified query parameters,
@@ -1263,7 +1787,7 @@ class ResourceCarbonEmissionTopItemsSummaryData(
      previous period, calculated as: latestMonthEmissions - previousMonthEmissions.
     :vartype monthly_emissions_change_value: float
     :ivar data_type: Data for the top items carbon emissions summary report specific to resource
-     category. Required. The response data type for Resource's TopItemsSummaryReport
+     category. Required. The response data type for Resource's TopItemsSummaryReport.
     :vartype data_type: str or
      ~azure.mgmt.carbonoptimization.models.RESOURCE_TOP_ITEMS_SUMMARY_DATA
     :ivar item_name: The resource name of the resource for the Resource Category. Required.
@@ -1284,7 +1808,7 @@ class ResourceCarbonEmissionTopItemsSummaryData(
 
     data_type: Literal[ResponseDataTypeEnum.RESOURCE_TOP_ITEMS_SUMMARY_DATA] = rest_discriminator(name="dataType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Data for the top items carbon emissions summary report specific to resource category. Required.
-     The response data type for Resource's TopItemsSummaryReport"""
+     The response data type for Resource's TopItemsSummaryReport."""
     item_name: str = rest_field(name="itemName", visibility=["read", "create", "update", "delete", "query"])
     """The resource name of the resource for the Resource Category. Required."""
     category_type: Union[str, "_models.CategoryTypeEnum"] = rest_field(
@@ -1325,12 +1849,13 @@ class ResourceCarbonEmissionTopItemsSummaryData(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, data_type=ResponseDataTypeEnum.RESOURCE_TOP_ITEMS_SUMMARY_DATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.data_type = ResponseDataTypeEnum.RESOURCE_TOP_ITEMS_SUMMARY_DATA  # type: ignore
 
 
 class ResourceGroupCarbonEmissionItemDetailData(
     CarbonEmissionData, discriminator="ResourceGroupItemDetailsData"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Response for Resource Group detailed carbon emissions.
 
     :ivar latest_month_emissions: Total carbon emissions for the specified query parameters,
@@ -1350,7 +1875,7 @@ class ResourceGroupCarbonEmissionItemDetailData(
      previous period, calculated as: latestMonthEmissions - previousMonthEmissions.
     :vartype monthly_emissions_change_value: float
     :ivar data_type: ResourceGroup item details data. Required. The response data type for
-     ResourceGroup's ItemDetailsReport
+     ResourceGroup's ItemDetailsReport.
     :vartype data_type: str or
      ~azure.mgmt.carbonoptimization.models.RESOURCE_GROUP_ITEM_DETAILS_DATA
     :ivar item_name: It's resource group name. Required.
@@ -1367,7 +1892,7 @@ class ResourceGroupCarbonEmissionItemDetailData(
 
     data_type: Literal[ResponseDataTypeEnum.RESOURCE_GROUP_ITEM_DETAILS_DATA] = rest_discriminator(name="dataType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """ResourceGroup item details data. Required. The response data type for ResourceGroup's
-     ItemDetailsReport"""
+     ItemDetailsReport."""
     item_name: str = rest_field(name="itemName", visibility=["read", "create", "update", "delete", "query"])
     """It's resource group name. Required."""
     category_type: Union[str, "_models.CategoryTypeEnum"] = rest_field(
@@ -1405,12 +1930,13 @@ class ResourceGroupCarbonEmissionItemDetailData(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, data_type=ResponseDataTypeEnum.RESOURCE_GROUP_ITEM_DETAILS_DATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.data_type = ResponseDataTypeEnum.RESOURCE_GROUP_ITEM_DETAILS_DATA  # type: ignore
 
 
 class ResourceGroupCarbonEmissionTopItemMonthlySummaryData(
     CarbonEmissionData, discriminator="ResourceGroupTopItemsMonthlySummaryData"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Response for top items carbon emissions by month for resource group.
 
     :ivar latest_month_emissions: Total carbon emissions for the specified query parameters,
@@ -1430,7 +1956,7 @@ class ResourceGroupCarbonEmissionTopItemMonthlySummaryData(
      previous period, calculated as: latestMonthEmissions - previousMonthEmissions.
     :vartype monthly_emissions_change_value: float
     :ivar data_type: Resource group top items Monthly summary data. Required. The response data
-     type for ResourceGroup's TopItemsMonthlySummaryReport
+     type for ResourceGroup's TopItemsMonthlySummaryReport.
     :vartype data_type: str or
      ~azure.mgmt.carbonoptimization.models.RESOURCE_GROUP_TOP_ITEMS_MONTHLY_SUMMARY_DATA
     :ivar item_name: It's resource group name for ResourceGroup category. Required.
@@ -1449,7 +1975,7 @@ class ResourceGroupCarbonEmissionTopItemMonthlySummaryData(
 
     data_type: Literal[ResponseDataTypeEnum.RESOURCE_GROUP_TOP_ITEMS_MONTHLY_SUMMARY_DATA] = rest_discriminator(name="dataType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Resource group top items Monthly summary data. Required. The response data type for
-     ResourceGroup's TopItemsMonthlySummaryReport"""
+     ResourceGroup's TopItemsMonthlySummaryReport."""
     item_name: str = rest_field(name="itemName", visibility=["read", "create", "update", "delete", "query"])
     """It's resource group name for ResourceGroup category. Required."""
     category_type: Union[str, "_models.CategoryTypeEnum"] = rest_field(
@@ -1490,12 +2016,13 @@ class ResourceGroupCarbonEmissionTopItemMonthlySummaryData(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, data_type=ResponseDataTypeEnum.RESOURCE_GROUP_TOP_ITEMS_MONTHLY_SUMMARY_DATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.data_type = ResponseDataTypeEnum.RESOURCE_GROUP_TOP_ITEMS_MONTHLY_SUMMARY_DATA  # type: ignore
 
 
 class ResourceGroupCarbonEmissionTopItemsSummaryData(
     CarbonEmissionData, discriminator="ResourceGroupTopItemsSummaryData"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Response for Top Items For ResourceGroup.
 
     :ivar latest_month_emissions: Total carbon emissions for the specified query parameters,
@@ -1515,7 +2042,7 @@ class ResourceGroupCarbonEmissionTopItemsSummaryData(
      previous period, calculated as: latestMonthEmissions - previousMonthEmissions.
     :vartype monthly_emissions_change_value: float
     :ivar data_type: Resource group top items summary data. Required. The response data type for
-     ResourceGroup's TopItemsSummaryReport
+     ResourceGroup's TopItemsSummaryReport.
     :vartype data_type: str or
      ~azure.mgmt.carbonoptimization.models.RESOURCE_GROUP_TOP_ITEMS_SUMMARY_DATA
     :ivar item_name: The resourceGroup name of the resource for ResourceGroup Category. Required.
@@ -1532,7 +2059,7 @@ class ResourceGroupCarbonEmissionTopItemsSummaryData(
 
     data_type: Literal[ResponseDataTypeEnum.RESOURCE_GROUP_TOP_ITEMS_SUMMARY_DATA] = rest_discriminator(name="dataType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Resource group top items summary data. Required. The response data type for ResourceGroup's
-     TopItemsSummaryReport"""
+     TopItemsSummaryReport."""
     item_name: str = rest_field(name="itemName", visibility=["read", "create", "update", "delete", "query"])
     """The resourceGroup name of the resource for ResourceGroup Category. Required."""
     category_type: Union[str, "_models.CategoryTypeEnum"] = rest_field(
@@ -1570,10 +2097,11 @@ class ResourceGroupCarbonEmissionTopItemsSummaryData(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, data_type=ResponseDataTypeEnum.RESOURCE_GROUP_TOP_ITEMS_SUMMARY_DATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.data_type = ResponseDataTypeEnum.RESOURCE_GROUP_TOP_ITEMS_SUMMARY_DATA  # type: ignore
 
 
-class SubscriptionAccessDecision(_Model):
+class SubscriptionAccessDecision(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Access Decision for each Subscription.
 
     :ivar subscription_id: Id of Subscription. Required.
@@ -1616,7 +2144,9 @@ class SubscriptionAccessDecision(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TopItemsMonthlySummaryReportQueryFilter(QueryFilter, discriminator="TopItemsMonthlySummaryReport"):
+class TopItemsMonthlySummaryReportQueryFilter(
+    QueryFilter, discriminator="TopItemsMonthlySummaryReport"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Query filter parameter to configure TopItemsMonthlySummaryReport queries.
 
     :ivar date_range: The start and end dates for carbon emissions data. Required. For
@@ -1680,13 +2210,13 @@ class TopItemsMonthlySummaryReportQueryFilter(QueryFilter, discriminator="TopIte
         self,
         *,
         date_range: "_models.DateRange",
-        subscription_list: List[str],
-        carbon_scope_list: List[Union[str, "_models.EmissionScopeEnum"]],
+        subscription_list: list[str],
+        carbon_scope_list: list[Union[str, "_models.EmissionScopeEnum"]],
         category_type: Union[str, "_models.CategoryTypeEnum"],
         top_items: int,
-        resource_group_url_list: Optional[List[str]] = None,
-        resource_type_list: Optional[List[str]] = None,
-        location_list: Optional[List[str]] = None,
+        resource_group_url_list: Optional[list[str]] = None,
+        resource_type_list: Optional[list[str]] = None,
+        location_list: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1697,10 +2227,13 @@ class TopItemsMonthlySummaryReportQueryFilter(QueryFilter, discriminator="TopIte
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, report_type=ReportTypeEnum.TOP_ITEMS_MONTHLY_SUMMARY_REPORT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.report_type = ReportTypeEnum.TOP_ITEMS_MONTHLY_SUMMARY_REPORT  # type: ignore
 
 
-class TopItemsSummaryReportQueryFilter(QueryFilter, discriminator="TopItemsSummaryReport"):
+class TopItemsSummaryReportQueryFilter(
+    QueryFilter, discriminator="TopItemsSummaryReport"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Query filter parameter to configure TopItemsSummaryReport queries.
 
     :ivar date_range: The start and end dates for carbon emissions data. Required. For
@@ -1766,13 +2299,13 @@ class TopItemsSummaryReportQueryFilter(QueryFilter, discriminator="TopItemsSumma
         self,
         *,
         date_range: "_models.DateRange",
-        subscription_list: List[str],
-        carbon_scope_list: List[Union[str, "_models.EmissionScopeEnum"]],
+        subscription_list: list[str],
+        carbon_scope_list: list[Union[str, "_models.EmissionScopeEnum"]],
         category_type: Union[str, "_models.CategoryTypeEnum"],
         top_items: int,
-        resource_group_url_list: Optional[List[str]] = None,
-        resource_type_list: Optional[List[str]] = None,
-        location_list: Optional[List[str]] = None,
+        resource_group_url_list: Optional[list[str]] = None,
+        resource_type_list: Optional[list[str]] = None,
+        location_list: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1783,4 +2316,5 @@ class TopItemsSummaryReportQueryFilter(QueryFilter, discriminator="TopItemsSumma
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, report_type=ReportTypeEnum.TOP_ITEMS_SUMMARY_REPORT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.report_type = ReportTypeEnum.TOP_ITEMS_SUMMARY_REPORT  # type: ignore

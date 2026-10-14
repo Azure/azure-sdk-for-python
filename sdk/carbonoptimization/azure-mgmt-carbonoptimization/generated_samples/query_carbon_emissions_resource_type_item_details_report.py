@@ -51,9 +51,10 @@ def main():
             ],
         },
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2025-04-01/queryCarbonEmissionsResourceTypeItemDetailsReport.json
+# x-ms-original-file: 2026-05-01-preview/queryCarbonEmissionsResourceTypeItemDetailsReport.json
 if __name__ == "__main__":
     main()
