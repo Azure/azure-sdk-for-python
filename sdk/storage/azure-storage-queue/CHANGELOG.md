@@ -8,6 +8,7 @@
 - Fixed UTC conversion of timezone-aware datetimes in `generate_account_sas`, `generate_queue_sas`,
   and `QueueServiceClient.get_user_delegation_key` (sync and async).
   Datetimes without timezone information continue to be treated as UTC.
+- Fixed an issue where `logging_enable=True` could write sensitive request header values to DEBUG logs.
 
 ## 12.18.0 (2026-09-30)
 

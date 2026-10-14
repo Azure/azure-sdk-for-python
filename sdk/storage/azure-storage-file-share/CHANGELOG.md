@@ -9,6 +9,7 @@
   `generate_file_sas`, and `ShareServiceClient.get_user_delegation_key` (sync and async).
   Datetimes without timezone information continue to be treated as UTC.
 - Fixed an issue where a SAS generated for a file path containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
+- Fixed an issue where `logging_enable=True` could write sensitive request header values to DEBUG logs.
 
 ## 12.27.0 (2026-09-30)
 

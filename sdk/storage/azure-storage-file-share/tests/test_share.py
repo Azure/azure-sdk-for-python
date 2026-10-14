@@ -23,6 +23,8 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
 )
+from azure.core.pipeline import PipelineContext, PipelineRequest
+from azure.core.pipeline.transport import HttpRequest  # pylint: disable=non-abstract-transport-import
 from azure.core.pipeline.transport import RequestsTransport  # pylint: disable=no-name-in-module
 from azure.storage.fileshare import (
     AccessPolicy,
@@ -41,6 +43,7 @@ from azure.storage.fileshare import (
     ShareServiceClient,
     StorageErrorCode,
 )
+from azure.storage.fileshare._shared.policies import StorageLoggingPolicy
 
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = "share"
@@ -1968,6 +1971,41 @@ class TestStorageShare(StorageRecordedTestCase):
         )
         content = file_client.download_file().readall()
         assert content == data
+
+    def _log_request(self, headers):
+        request = HttpRequest("PUT", "https://account.file.core.windows.net/c/b", headers=headers)
+        with LogCaptured(self) as log_captured:
+            StorageLoggingPolicy(logging_enable=True).on_request(PipelineRequest(request, PipelineContext(None)))
+            return log_captured.getvalue()
+
+    def test_secret_headers_are_redacted(self):
+        for header in (
+            "Authorization",
+            "x-ms-encryption-key",
+            "x-ms-source-encryption-key",
+            "x-ms-copy-source-authorization",
+            "x-ms-rename-source",
+        ):
+            log_as_str = self._log_request({header: "value"})
+            assert header in log_as_str
+            assert "value" not in log_as_str
+
+    def test_source_url_sas_is_scrubbed(self):
+        for header in ("x-ms-copy-source", "x-ms-file-rename-source"):
+            log_as_str = self._log_request({header: "https://src.file.core.windows.net/c/b?sv=2025-01-05&sig=value"})
+            assert "value" not in log_as_str
+            assert "src.file.core.windows.net" in log_as_str
+
+    def test_diagnostic_headers_remain_visible(self):
+        log_as_str = self._log_request(
+            {
+                "x-ms-encryption-key-sha256": "value",
+                "x-ms-encryption-algorithm": "AES256",
+                "x-ms-client-request-id": "req-id-123",
+            }
+        )
+        for value in ("value", "AES256", "req-id-123"):
+            assert log_as_str.count(value) == 1
 
 
 # ------------------------------------------------------------------------------
