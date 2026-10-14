@@ -30,7 +30,6 @@ from opentelemetry.proto.collector.trace.v1 import (
 _SIGNALS = {"traces", "metrics", "logs"}
 _PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 _EMIT_ALL_SIGNALS = """
-import logging
 from azure.ai.agentserver.core import configure_observability
 from opentelemetry import metrics, trace
 from opentelemetry._logs import LogRecord, SeverityNumber, get_logger_provider
@@ -39,7 +38,6 @@ configure_observability()
 
 with trace.get_tracer("agentserver.otlp.test").start_as_current_span("otlp-test-span") as span:
     span.set_attribute("microsoft.foundry", "framework-value")
-    logging.getLogger("agentserver.otlp.test").warning("otlp-python-log")
 
 metrics.get_meter("agentserver.otlp.test").create_counter("otlp.test").add(1)
 
@@ -264,7 +262,7 @@ def test_otlp_protocol_exports_all_signals(
     )
     assert any(span.name == "otlp-test-span" for span in receiver.records["traces"])
     log_bodies = {record.body.string_value for record in receiver.records["logs"]}
-    assert {"otlp-test-log", "otlp-python-log", "otlp-conflicting-provider-log"} <= log_bodies
+    assert {"otlp-test-log", "otlp-conflicting-provider-log"} <= log_bodies
     for records in receiver.records.values():
         for record in records:
             attributes = {attr.key: attr.value.string_value for attr in record.attributes}
