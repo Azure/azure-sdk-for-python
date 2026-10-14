@@ -25,6 +25,10 @@
 
 - Updated the resilient-task opt-in error guidance to recommend calling
   `set_resilient_tasks_enabled(True)` before constructing the host.
+- Removed the experimental marker (docstring note and one-time runtime warning)
+  from the resilient task public APIs (`TaskContext`, `TaskRun`, `@task`,
+  `@multi_turn_task`, `set_resilient_tasks_enabled`, task exceptions, and
+  retry policy).
 - Changed the default SSE keep-alive interval to 15 seconds. Set
   `SSE_KEEPALIVE_INTERVAL=0` to disable keep-alive comments.
 

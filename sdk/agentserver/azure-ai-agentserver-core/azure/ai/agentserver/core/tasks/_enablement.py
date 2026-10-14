@@ -24,12 +24,9 @@ The switch is process-global and defaults to ``False``. Set it before
     set_resilient_tasks_enabled(True)
 """
 
-from azure.ai.agentserver.core._experimental import experimental
-
 _RESILIENT_TASKS_ENABLED: bool = False
 
 
-@experimental
 def set_resilient_tasks_enabled(value: bool = True) -> None:
     """Opt in to (or clear) the resilient task subsystem process-wide.
 
@@ -53,7 +50,6 @@ def set_resilient_tasks_enabled(value: bool = True) -> None:
     _RESILIENT_TASKS_ENABLED = bool(value)
 
 
-@experimental
 def resilient_tasks_enabled() -> bool:
     """Return whether the resilient task subsystem is enabled.
 
