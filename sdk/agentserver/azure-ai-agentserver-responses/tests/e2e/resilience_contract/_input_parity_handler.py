@@ -25,6 +25,7 @@ import asyncio
 import json
 import os
 
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -53,8 +54,8 @@ _CRASH_TOKEN = os.environ.get("CONFORMANCE_CRASH_INPUT_TOKEN", "")
 _STEERABLE = os.environ.get("CONFORMANCE_STEERABLE", "false").lower() == "true"
 
 
+set_resilient_tasks_enabled(True)
 options = ResponsesServerOptions(
-    resilient_background=True,
     shutdown_grace_period_seconds=_SHUTDOWN_GRACE_S,
     steerable_conversations=_STEERABLE,
 )

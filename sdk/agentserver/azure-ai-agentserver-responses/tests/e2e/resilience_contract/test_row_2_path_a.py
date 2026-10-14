@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Row 2 × Path A — ``(store=true, bg=true, resilient_bg=False)`` × ``stream=F/T``.
+"""Row 2 × Path A — ``(store=true, bg=true, resilient-tasks switch disabled)`` × ``stream=F/T``.
 
 Path A: handler completes within grace. Same shape as row 1 Path A
 (natural completion); the rows differ only on Path B / Path C.
@@ -30,7 +30,7 @@ from tests.e2e.resilience_contract.conftest import (
 async def test_row_2_path_a(make_harness: Callable[..., CrashHarness], stream: bool) -> None:
     """Row 2 Path A: non-resilient+bg handler completes naturally within grace."""
     harness = make_harness(
-        resilient_background=False,
+        resilient_tasks_enabled=False,
         handler_sleep_ms=50,
         shutdown_grace_seconds=LONG_GRACE_S,
     )

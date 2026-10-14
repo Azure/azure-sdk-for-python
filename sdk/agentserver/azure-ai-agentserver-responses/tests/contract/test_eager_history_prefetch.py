@@ -99,7 +99,7 @@ class TestEagerHistoryPrefetchValidation:
         """POST with a nonexistent previous_response_id should return
         404 when the provider raises FoundryResourceNotFoundError."""
         provider = InMemoryResponseProvider()
-        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(), store=provider)
         app.response_handler(_simple_handler)
 
         # Monkeypatch the provider to raise FoundryResourceNotFoundError.
@@ -139,7 +139,7 @@ class TestEagerHistoryPrefetchValidation:
         """POST with a nonexistent conversation_id should return 404
         when the provider raises FoundryResourceNotFoundError."""
         provider = InMemoryResponseProvider()
-        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(), store=provider)
         app.response_handler(_simple_handler)
 
         async def _raise_not_found(*args: Any, **kwargs: Any) -> list[str]:
@@ -172,7 +172,7 @@ class TestEagerHistoryPrefetchValidation:
         """A non-404 storage error during prefetch should still return
         an error response (not crash)."""
         provider = InMemoryResponseProvider()
-        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(), store=provider)
         app.response_handler(_simple_handler)
 
         async def _raise_generic(*args: Any, **kwargs: Any) -> list[str]:
@@ -208,7 +208,7 @@ class TestEagerHistoryPrefetchReuse:
         orchestrator's persistence path (which makes its own call).
         """
         provider = InMemoryResponseProvider()
-        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(), store=provider)
         app.response_handler(_history_reading_handler)
         client = TestClient(app)
 
@@ -261,7 +261,7 @@ class TestEagerHistoryPrefetchReuse:
         create = AsyncMock(wraps=provider.create_response)
         monkeypatch.setattr(provider, "get_history_item_ids", history)
         monkeypatch.setattr(provider, "create_response", create)
-        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(), store=provider)
         app.response_handler(_simple_handler)
         client = TestClient(app)
         previous = IdGenerator.new_response_id()
@@ -299,7 +299,7 @@ class TestEagerHistoryPrefetchReuse:
 
         monkeypatch.setattr(provider, "get_history_item_ids", history)
         monkeypatch.setattr(provider, "create_response", create)
-        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(), store=provider)
         app.response_handler(handler)
         response = TestClient(app).post(
             "/responses",
@@ -324,7 +324,7 @@ class TestEagerHistoryPrefetchSkipped:
         """When neither previous_response_id nor conversation_id is set,
         get_history_item_ids should NOT be called."""
         provider = InMemoryResponseProvider()
-        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(), store=provider)
         app.response_handler(_simple_handler)
 
         call_count = 0

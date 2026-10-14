@@ -7,7 +7,7 @@ Verifies three distinct shutdown scenarios:
 1. **resilient=True, background=True**: Response stays in whatever state the
    handler left it (in_progress).  On restart the resilient task framework
    re-enters the handler to resume.
-2. **resilient_background=False or store=False**: Best-effort mark as
+2. **resilient_tasks_enabled=False or store=False**: Best-effort mark as
    ``failed`` after the grace period expires (handler didn't finish in time).
 3. Handler that completes within grace period → "completed" regardless.
 
@@ -25,6 +25,7 @@ import pytest
 from hypercorn.asyncio import serve as _hc_serve
 from hypercorn.config import Config as _HcConfig
 
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     ResponseEventStream,
     ResponsesAgentServerHost,
@@ -66,12 +67,13 @@ async def _start_server(app, port: int) -> tuple[asyncio.Task, asyncio.Event]:
 
 
 @pytest.mark.asyncio
-async def test_shutdown_resilient_background_not_marked_failed() -> None:
+async def test_shutdown_resilient_tasks_enabled_not_marked_failed() -> None:
     """Resilient background response is NOT marked failed on shutdown.
 
     Handler ignores the shutdown signal (stuck). The framework should leave
     the response in_progress — the resilient task system re-enters on restart.
     """
+    set_resilient_tasks_enabled(True)
     handler_started = asyncio.Event()
     handler_exited = asyncio.Event()
 
@@ -98,7 +100,6 @@ async def test_shutdown_resilient_background_not_marked_failed() -> None:
 
     app = ResponsesAgentServerHost(
         options=ResponsesServerOptions(
-            resilient_background=True,
             shutdown_grace_period_seconds=1,
         ),
     )
@@ -161,7 +162,7 @@ async def test_shutdown_resilient_background_not_marked_failed() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Test 3: resilient_background=False, store=True → marked failed
+# Test 3: resilient_tasks_enabled=False, store=True → marked failed
 #
 # Handler is stuck. Server not configured for resilient background.
 # Should be marked failed after grace period.
@@ -170,11 +171,12 @@ async def test_shutdown_resilient_background_not_marked_failed() -> None:
 
 @pytest.mark.asyncio
 async def test_shutdown_non_resilient_server_marks_stored_background_failed() -> None:
-    """When resilient_background=False, stored background responses are marked failed.
+    """When resilient_tasks_enabled=False, stored background responses are marked failed.
 
     Even with store=True, if the server is NOT configured for resilient background,
     the framework marks responses failed after the grace period.
     """
+    set_resilient_tasks_enabled(False)
     handler_started = asyncio.Event()
 
     async def _stuck_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
@@ -196,7 +198,6 @@ async def test_shutdown_non_resilient_server_marks_stored_background_failed() ->
 
     app = ResponsesAgentServerHost(
         options=ResponsesServerOptions(
-            resilient_background=False,
             shutdown_grace_period_seconds=1,
         ),
     )
@@ -262,6 +263,7 @@ async def test_shutdown_grace_period_allows_completion() -> None:
     Handler responds to cancellation signal and emits response.completed.
     The response should end up "completed" — not "failed".
     """
+    set_resilient_tasks_enabled(True)
     handler_started = asyncio.Event()
 
     async def _responsive_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
@@ -283,7 +285,6 @@ async def test_shutdown_grace_period_allows_completion() -> None:
 
     app = ResponsesAgentServerHost(
         options=ResponsesServerOptions(
-            resilient_background=True,
             shutdown_grace_period_seconds=2,
         ),
     )
@@ -350,6 +351,7 @@ async def test_shutdown_resilient_responsive_handler_stays_in_progress() -> None
     Handler detects SHUTTING_DOWN, performs cleanup/checkpoint, returns
     without response.completed. Response should stay in_progress.
     """
+    set_resilient_tasks_enabled(True)
     handler_started = asyncio.Event()
     handler_exited = asyncio.Event()
 
@@ -376,7 +378,6 @@ async def test_shutdown_resilient_responsive_handler_stays_in_progress() -> None
 
     app = ResponsesAgentServerHost(
         options=ResponsesServerOptions(
-            resilient_background=True,
             shutdown_grace_period_seconds=2,
         ),
     )
@@ -456,6 +457,7 @@ async def test_client_cancel_marks_cancelled() -> None:
     Uses background mode with explicit cancel to test the same B11 path
     that B17 disconnect triggers.
     """
+    set_resilient_tasks_enabled(True)
     handler_started = asyncio.Event()
     response_id_holder: list[str] = []
 
@@ -479,7 +481,6 @@ async def test_client_cancel_marks_cancelled() -> None:
 
     app = ResponsesAgentServerHost(
         options=ResponsesServerOptions(
-            resilient_background=True,
             shutdown_grace_period_seconds=5,
         ),
     )
@@ -547,6 +548,7 @@ async def test_shutdown_store_false_sync_returns_failed() -> None:
     event. The framework should synthesize a failed response (HTTP 200,
     status="failed") rather than returning in_progress or hanging.
     """
+    set_resilient_tasks_enabled(True)
     handler_started = asyncio.Event()
 
     async def _handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
@@ -567,7 +569,6 @@ async def test_shutdown_store_false_sync_returns_failed() -> None:
 
     app = ResponsesAgentServerHost(
         options=ResponsesServerOptions(
-            resilient_background=True,
             shutdown_grace_period_seconds=1,
         ),
     )
@@ -633,6 +634,7 @@ async def test_shutdown_store_false_stream_returns_failed_event() -> None:
     The handler observes the cancellation signal and exits without a terminal
     event. The framework should emit a response.failed SSE event to the client.
     """
+    set_resilient_tasks_enabled(True)
     handler_started = asyncio.Event()
 
     async def _handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
@@ -653,7 +655,6 @@ async def test_shutdown_store_false_stream_returns_failed_event() -> None:
 
     app = ResponsesAgentServerHost(
         options=ResponsesServerOptions(
-            resilient_background=True,
             shutdown_grace_period_seconds=1,
         ),
     )

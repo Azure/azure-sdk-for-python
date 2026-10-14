@@ -8,7 +8,7 @@ process lifetime, the framework MUST mark the response ``failed``
 returns the failed terminal — NOT ``in_progress`` indefinitely.
 
 EXPECTED today: **RED — divergence 3.** ``run_sync`` never calls
-``_start_resilient_background``; no resilient record is created for
+``_start_resilient_response``; no resilient record is created for
 foreground responses; SIGKILL leaves the response ``in_progress`` with
 nothing on the restart side to mark it failed.
 
@@ -44,7 +44,7 @@ async def test_row_3_path_c(
 ) -> None:
     """Row 3 Path C: SIGKILL mid-foreground-handler, restart, marked failed."""
     harness = make_harness(
-        resilient_background=True,
+        resilient_tasks_enabled=True,
         handler_sleep_ms=int(LONG_TIME_SECS * 1000),
         shutdown_grace_seconds=LONG_GRACE_S,
     )

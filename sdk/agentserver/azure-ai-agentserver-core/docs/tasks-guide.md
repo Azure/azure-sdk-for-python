@@ -135,11 +135,10 @@ cannot run a task. A server that does not set the switch (e.g. an
 invocations-only host) constructs no manager and pays none of the recovery-scan
 latency.
 
-> **Protocol note:** the responses protocol exposes a `resilient_background`
-> server option that maps to this switch — constructing a
-> `ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=True))`
-> enables the subsystem automatically, so responses apps typically don't call
-> `set_resilient_tasks_enabled` directly.
+> **Protocol note:** the responses protocol uses this same switch. Call
+> `set_resilient_tasks_enabled(True)` before constructing
+> `ResponsesAgentServerHost`; host construction selects replay backing and
+> validates the configured response store.
 
 ### One-shot
 

@@ -44,7 +44,7 @@ async def test_row_3_path_b(
 ) -> None:
     """Row 3 Path B: foreground graceful shutdown, in-process marked failed."""
     harness = make_harness(
-        resilient_background=True,
+        resilient_tasks_enabled=True,
         handler_sleep_ms=int(LONG_TIME_SECS * 1000),
         shutdown_grace_seconds=SHORT_GRACE_S,
     )

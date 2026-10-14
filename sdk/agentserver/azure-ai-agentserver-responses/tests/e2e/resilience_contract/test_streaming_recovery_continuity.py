@@ -11,7 +11,7 @@ Scenario:
 1. Spawn the conformance handler configured to emit several
    ``output_text.delta`` events BEFORE its interruptible sleep.
 2. POST a streaming Row 1 request (``store=true, bg=true,
-   resilient_bg=True, stream=true``).
+   resilient-tasks switch enabled, stream=true``).
 3. Read the wire stream until the pre-sleep deltas have all landed
    (we know their content prefix is ``L0_pre_d0``, ``L0_pre_d1``, …
    per the per-lifetime tagging in :mod:`_test_handler_markers`).
@@ -156,7 +156,7 @@ async def test_pre_crash_deltas_survive_recovery(
 ) -> None:
     """Pre-crash deltas must remain in the persisted stream after recovery."""
     harness = make_harness(
-        resilient_background=True,
+        resilient_tasks_enabled=True,
         # Long handler sleep so the SIGKILL lands MID-sleep, after the
         # pre-sleep deltas have all been emitted to the wire.
         handler_sleep_ms=int(LONG_TIME_SECS * 1000),

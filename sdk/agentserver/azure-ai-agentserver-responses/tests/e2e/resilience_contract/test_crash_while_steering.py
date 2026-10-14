@@ -41,13 +41,13 @@ _STEERING_HANDLER_MODULE = "tests.e2e.resilience_contract._steering_handler"
 _STEER_SLEEP_MS = 5000
 
 
-def _make_steering_harness(tmp_path, *, resilient_background: bool = True) -> CrashHarness:
+def _make_steering_harness(tmp_path, *, resilient_tasks_enabled: bool = True) -> CrashHarness:
     return CrashHarness(
         sample_module=_STEERING_HANDLER_MODULE,
         tmp_path=tmp_path,
         readiness_timeout_seconds=15.0,
         env_extras={
-            "CONFORMANCE_RESILIENT_BACKGROUND": "true" if resilient_background else "false",
+            "CONFORMANCE_RESILIENT_TASKS_ENABLED": "true" if resilient_tasks_enabled else "false",
             "CONFORMANCE_STEER_SLEEP_MS": str(_STEER_SLEEP_MS),
             "AGENTSERVER_SHUTDOWN_GRACE_SECONDS": str(LONG_GRACE_S),
             "AGENTSERVER_GRACEFUL_SHUTDOWN_TIMEOUT_SECONDS": str(LONG_GRACE_S),

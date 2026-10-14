@@ -10,6 +10,12 @@
 
 ### Breaking Changes
 
+- Removed `ResponsesServerOptions.resilient_background`. Responses resilience
+  is now controlled exclusively by
+  `azure.ai.agentserver.core.tasks.set_resilient_tasks_enabled`. Call
+  `set_resilient_tasks_enabled(True)` before constructing
+  `ResponsesAgentServerHost`; this also selects file-backed SSE replay and
+  enables the persistent-store composition guard.
 - `FileResponseStore` now persists data under user-scoped
   `partitions-v1/{anonymous|user-hash}` directories. Existing files in the
   previous shared layout remain unchanged but are not read or migrated

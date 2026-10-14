@@ -325,7 +325,7 @@ async def test_all_persistence_callsites_use_exact_request_resolver(
     owner = _context(provider, prefetched) if with_owner else None
     if owner is not None and handler_first:
         await owner.get_history()
-    options = ResponsesServerOptions(resilient_background=False)
+    options = ResponsesServerOptions()
 
     async def handler(request, context, cancellation_signal):
         stream = ResponseEventStream(response_id="response", model="m")

@@ -358,10 +358,10 @@ def _reconstruct_from_params(
 
 # (Spec 014 FR-003 / FR-004 — Phase 4) Per-task disposition tells the recovery
 # scanner what to do on the next-lifetime recovered entry:
-#   - "re-invoke": re-run the handler (Row 1: resilient_background+bg+store).
+#   - "re-invoke": re-run the handler (Row 1: resilient tasks enabled+bg+store).
 #   - "mark-failed": persist a server_error terminal to the response store and
-#     complete the task without re-invoking (Rows 2, 3: bg+store with
-#     resilient_background=False, and fg+store).
+#     complete the task without re-invoking (Rows 2, 3: bg+store with resilient
+#     tasks disabled, and fg+store).
 # (Spec 039 R1) The disposition, background flag, and response_id are sourced
 # directly from the durable task INPUT (``ResilientResponseInput``, persisted at
 # task ``.start()`` — strictly before the body runs), which is the single source
@@ -395,8 +395,8 @@ def _is_recovered_entry(task_entry_mode: str) -> bool:
 class ResilientResponseOrchestrator:
     """Wraps the existing response execution pipeline in the resilient task primitive.
 
-    When ``resilient_background=True``, the normal ``asyncio.create_task()`` path
-    is replaced by ``task_fn.start()``. The task body reconstructs the execution
+    When resilient tasks are enabled, the normal ``asyncio.create_task()`` path is
+    replaced by ``task_fn.start()``. The task body reconstructs the execution
     context and calls ``_run_background_non_stream`` — the same function the
     non-resilient path uses. This ensures:
     - Zero handler code changes (same create_fn, same ResponseContext)
@@ -430,32 +430,6 @@ class ResilientResponseOrchestrator:
         # function and does not need this reference.
         self._parent_orchestrator = parent_orchestrator
 
-        # Opting into resilient background responses implies the durable task
-        # subsystem must be constructed (and recovery enabled) for this
-        # deployment. The subsystem is gated SOLELY on the process-global switch
-        # (``AgentServerHost`` constructs the ``TaskManager`` only when it is
-        # set), so translate the explicit ``resilient_background`` opt-in into
-        # that switch here, at host construction time (before the ASGI lifespan
-        # runs).
-        #
-        # NOTE: only ``resilient_background`` auto-enables the subsystem —
-        # ``steerable_conversations`` intentionally does NOT. Recovery is tied to
-        # ``resilient_background`` alone; a steerable host that wants durability
-        # must set ``resilient_background=True`` (or call
-        # ``set_resilient_tasks_enabled(True)`` explicitly). The two-switch UX is
-        # a known rough edge to smooth over post-Public-Preview.
-        #
-        # A host that leaves ``resilient_background`` off (and does not set the
-        # switch) constructs no ``TaskManager``: ``store=true`` work degrades to
-        # non-durable in-process execution (``_start_resilient_background``
-        # swallows ``TaskManagerNotInitialized``).
-        if options.resilient_background:
-            from azure.ai.agentserver.core.tasks import (  # pylint: disable=import-outside-toplevel
-                set_resilient_tasks_enabled,
-            )
-
-            set_resilient_tasks_enabled(True)
-
         # Spec 023 — per-request primitive dispatch (SOT §6.6).
         # Two task primitives are registered per deployment; ``_pick_primitive``
         # selects per request based on (conversation_id, previous_response_id,
@@ -474,10 +448,9 @@ class ResilientResponseOrchestrator:
         """Deprecated single-task accessor — use ``_one_shot_task_fn`` /
         ``_multi_turn_task_fn`` or the ``_pick_primitive`` dispatch instead.
 
-        Kept for backward-compatible introspection by existing unit tests
-        that pre-date the spec 023 per-request dispatch refactor; returns
-        the one-shot primitive (the registration with the
-        ``"responses_resilient_background"`` legacy name).
+        Kept for backward-compatible introspection by existing unit tests that
+        pre-date the spec 023 per-request dispatch refactor; returns the
+        one-shot primitive.
 
         :return: The one-shot resilient task primitive.
         :rtype: Task[dict[str, Any], None]
@@ -645,7 +618,7 @@ class ResilientResponseOrchestrator:
         """
         # (Spec 014 FR-003 / FR-004) Recovery dispatch via disposition. mark-failed:
         # the handler does NOT re-run; persist a server_error terminal and complete
-        # the task. Covers Rows 2 (bg+store, resilient_background=False) and 3 (fg+store).
+        # the task. Covers persisted Rows 2 (bg+store, switch disabled) and 3 (fg+store).
         if is_recovery and disposition == DISPOSITION_MARK_FAILED:
             logger.info(
                 "Resilient task recovered (response_id=%s, disposition=mark-failed) — marking failed",
@@ -1210,8 +1183,8 @@ class ResilientResponseOrchestrator:
     ) -> bool:
         """Start the resilient task for a background response.
 
-        Called by ``_ResponseOrchestrator._start_resilient_background`` when
-        ``resilient_background=True``. The task takes over responsibility for
+        Called by ``_ResponseOrchestrator._start_resilient_response`` when
+        resilient tasks are enabled. The task takes over responsibility for
         execution and crash recovery.
 
         :keyword record: The mutable execution record (same as non-resilient path).
@@ -1343,7 +1316,7 @@ class ResilientResponseOrchestrator:
         Used by the next-lifetime recovery path for tasks with
         ``disposition="mark-failed"`` (Rows 2 and 3 of the resilience
         matrix). Both rows cannot be re-invoked on recovery —
-        Row 2 (bg+store, resilient_background=False) opted out of crash
+        Row 2 (bg+store, switch disabled) opted out of crash
         recovery; Row 3 (fg+store) has no live HTTP request to stream
         events back to. The recovered task body marks the response
         ``failed`` via the generic ``server_error`` code (path-specific

@@ -32,8 +32,8 @@ A clause may have MULTIPLE rows if it spans dimensions; a test may appear in MUL
 | Row 1 Path C with SSE keep-alive enabled: a resilient task MUST still be created and recovery MUST succeed regardless of `SSE_KEEPALIVE_INTERVAL` (the hosted condition); the recovered lifetime produces the terminal | `test_row_1_keep_alive.py::test_row_1_keep_alive_path_c` (stream=F/T) | response.status; response.output content (recovered `L1_done`) |
 | Row 2 Path A: handler completes within grace | `test_row_2_path_a.py::test_row_2_path_a` (stream=F/T) | response.status |
 | Row 2 Path B: in-process shutdown loop marks failed with `code=server_error`; respond to waiting clients | `test_row_2_path_b.py::test_row_2_path_b` (stream=F/T) | response.status; response.error.code |
-| Row 2 Path C: next-lifetime mark-failed with `code=server_error` | `test_row_2_path_c.py::test_row_2_path_c` (stream=F/T) | response.status; response.error.code |
-| Row 2: pre-crash stream events are within-process only (no resilient stream provider auto-composed when `resilient_background=False`); cross-lifetime stream-content survival is NOT a Row 2 promise. The Row 2 contract surface for Path C is the response-store `failed` snapshot covered by `test_row_2_path_c.py`. | n/a | n/a |
+| Row 2 Path C: switch disabled, so no next-lifetime recovery scan; last stored status remains `in_progress` | `test_row_2_path_c.py::test_row_2_path_c` (stream=F/T) | response.status |
+| Row 2: pre-crash stream events are within-process only (no resilient stream provider when the resilient-tasks switch is disabled); cross-lifetime stream-content survival is NOT a Row 2 promise. | n/a | n/a |
 | Row 3 Path A: handler completes within grace | `test_row_3_path_a.py::test_row_3_path_a` (stream=F/T) | response.status |
 | Row 3 Path B: foreground mark-failed; respond to original connection | `test_row_3_path_b.py::test_row_3_path_b` (stream=F/T) | response.status; response.error.code |
 | Row 3 Path C: foreground mark-failed via Path-C fallback | `test_row_3_path_c.py::test_row_3_path_c` (stream=F/T) | response.status; response.error.code |
@@ -49,7 +49,7 @@ A clause may have MULTIPLE rows if it spans dimensions; a test may appear in MUL
 |---|---|---|
 | Server rule 1: every emitted SSE event MUST be appended to resilient stream provider BEFORE wire flush | Implicit via Row 1 Path B/C stream=T (assembled stream replay assertions) | event sequence |
 | Server rule 2: `GET /responses/{id}?stream=true&starting_after=<event_id>` returns events strictly after `<event_id>` then live-tails | `test_streaming_recovery_continuity.py` (uses starting_after=0) | event sequence |
-| Server rule 2: GET-reconnect for Row 2 stream=T | n/a — Row 2 has no resilient stream provider (resilient_background=False short-circuits the FileStreamProvider auto-compose in `_routing.py`), so Row 2's stream events are within-process best-effort only. Cross-lifetime stream survival is NOT a Row 2 promise (the contract surface for Row 2 Path C is the response-store `failed` snapshot, not the persisted stream). | n/a |
+| Server rule 2: GET-reconnect for Row 2 stream=T | n/a — Row 2 has no resilient stream provider because the disabled switch selects in-memory replay in `_routing.py`; cross-lifetime stream survival is not promised. | n/a |
 | Server rule 3: recovered handler emits `response.in_progress` reset event as first event | `test_streaming_recovery_continuity.py::test_pre_crash_deltas_survive_recovery` (asserts post-recovery in_progress with seq > pre-crash max) | event sequence |
 | Server rule 3: reset event carries corrected output_items reflecting post-recovery state | `test_reset_event_content.py::test_reset_event_carries_corrected_output_items` (Spec 032 B1 — real crash; asserts the post-recovery `response.in_progress` event's `response.output` carries the seeded/corrected items) | event content |
 | Server rule 4: event ids stable across recovery; recovered events get fresh monotonic ids picking up after last pre-crash id | `test_streaming_recovery_continuity.py` (asserts strict monotonic seq across attempts) | seq monotonicity |
@@ -92,10 +92,10 @@ A clause may have MULTIPLE rows if it spans dimensions; a test may appear in MUL
 
 | Clause | Test | Dimension |
 |---|---|---|
-| `resilient_background=True` + non-persistent `store` (explicit `InMemoryResponseProvider`) → startup error | `tests/unit/test_composition_guard.py::*` (5 tests) + `tests/integration/test_startup_composition_guard.py::*` (2 tests) | composition guard |
-| `store=true` requests accepted without ResponseStore → startup error | n/a — UNREACHABLE by construction (Spec 032 B2): `store=None` always resolves to a persistent `FileResponseStore` (`_routing.py` `store=None` branch); there is no missing-`ResponseStore` state to guard. The only reachable missing-provider case (explicit non-resilient store + resilient_background) IS guarded + tested above. | composition guard |
+| the resilient-tasks switch enabled + non-persistent `store` (explicit `InMemoryResponseProvider`) → startup error | `tests/unit/test_composition_guard.py::*` (5 tests) + `tests/integration/test_startup_composition_guard.py::*` (2 tests) | composition guard |
+| `store=true` requests accepted without ResponseStore → startup error | n/a — UNREACHABLE by construction (Spec 032 B2): `store=None` always resolves to a persistent `FileResponseStore` (`_routing.py` `store=None` branch); there is no missing-`ResponseStore` state to guard. The only reachable missing-provider case (explicit non-persistent store + the resilient-tasks switch) IS guarded + tested above. | composition guard |
 | `stream=true` requests accepted without streaming-capable transport → startup error | n/a — UNREACHABLE by construction (Spec 032 B2): the streams registry is auto-configured at startup (`_configure_streams_registry`); there is no missing-transport state to guard. | composition guard |
-| `resilient_background=True` without ResilientStreamProviderProtocol for streamed resilient responses → startup error | Implicit via the responses package's auto-compose in `_routing.py` (FileStreamProvider when needed). Negative test absent. | composition guard |
+| the resilient-tasks switch enabled without ResilientStreamProviderProtocol for streamed resilient responses → startup error | Implicit via the responses package's auto-compose in `_routing.py` (FileStreamProvider when needed). Negative test absent. | composition guard |
 
 ---
 
@@ -114,7 +114,7 @@ A clause may have MULTIPLE rows if it spans dimensions; a test may appear in MUL
 ## Row 11 — Developer checkpoint write (§ Per-row contracts → Row 11)
 
 Row 11 is the checkpoint-write extension of Row 1 (`store=true, background=true,
-resilient_background=True`). It covers `yield stream.checkpoint()` in the
+the resilient-tasks switch enabled`). It covers `yield stream.checkpoint()` in the
 one-OutputItem-per-phase pattern. Cutpoints C1/C3 require real crashes and are
 exercised e2e (Path B graceful `exit_for_recovery` + Path C SIGKILL); C2 is a
 documented provider-atomicity limitation; C4/C5 are unit-tested.
@@ -130,7 +130,7 @@ documented provider-atomicity limitation; C4/C5 are unit-tested.
 | C4: checkpoint event after terminal is dropped; terminal snapshot wins; no exception | `tests/unit/test_checkpoint.py` (post-terminal drop) | event ordering |
 | C5: provider `update_response` failure during `checkpoint()` is swallowed; recovery sees the prior snapshot | `tests/unit/test_checkpoint.py` (swallow-on-failure) | provider failure |
 | Recovery deferral (`exit_for_recovery`) MUST NOT overwrite the last checkpoint snapshot with a pre-terminal record | `test_row_11_path_b.py` (stream=F asserts the checkpointed phase survives as `L0` after deferral) | response.output content |
-| `checkpoint()` gated to resilient background (`resilient_background` + `store` + `background`); no-op otherwise | `tests/unit/test_checkpoint.py` (gate) | gate |
+| `checkpoint()` gated to resilient background (resilient-tasks switch + `store` + `background`); no-op otherwise | `tests/unit/test_checkpoint.py` (gate) | gate |
 
 ---
 

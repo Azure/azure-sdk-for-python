@@ -25,7 +25,7 @@ from azure.ai.agentserver.responses import (
 
 
 def _make_session_app() -> TestClient:
-    options = ResponsesServerOptions(resilient_background=True, steerable_conversations=True)
+    options = ResponsesServerOptions(steerable_conversations=True)
     app = ResponsesAgentServerHost(options=options)
     state_by_chain: dict[str, dict[str, Any]] = {}
 
@@ -71,3 +71,9 @@ class TestResilientSessionE2E:
             },
         )
         assert resp2.status_code == 200
+
+@pytest.fixture(autouse=True)
+def _enable_resilient_tasks_for_module() -> None:
+    from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
+
+    set_resilient_tasks_enabled(True)

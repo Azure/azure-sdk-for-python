@@ -64,14 +64,10 @@ from azure.ai.agentserver.responses import (
 )
 from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 
-options = ResponsesServerOptions(resilient_background=True)
-app = ResponsesAgentServerHost(options=options)
-
-# Explicitly opt into resilient-task startup recovery, for parity with the
-# invocations resilient samples. The Responses framework already registers its
-# internal durable tasks at host construction (so recovery runs regardless);
-# this call just makes the opt-in intent explicit.
+# Resilient replay and composition are configured when the host is constructed.
 set_resilient_tasks_enabled(True)
+options = ResponsesServerOptions()
+app = ResponsesAgentServerHost(options=options)
 
 _SIMULATE_SHUTDOWN_MS = int(os.environ.get("SIMULATE_SHUTDOWN_MS", "0"))
 

@@ -111,7 +111,7 @@ async def test_row_1_path_a_polled_response_output_reflects_fresh_handler(
 ) -> None:
     """Row 1 Path A stream=F: polled GET reflects lifetime-0 handler's intent."""
     harness = make_harness(
-        resilient_background=True,
+        resilient_tasks_enabled=True,
         handler_sleep_ms=50,  # fast completion within grace
         shutdown_grace_seconds=LONG_GRACE_S,
     )
@@ -143,7 +143,7 @@ async def test_row_1_path_c_polled_response_output_reflects_recovered_handler(
 ) -> None:
     """Row 1 Path C stream=F: post-recovery GET reflects lifetime-1 handler's intent."""
     harness = make_harness(
-        resilient_background=True,
+        resilient_tasks_enabled=True,
         handler_sleep_ms=int(LONG_TIME_SECS * 1000),
         pre_sleep_deltas=1,
         shutdown_grace_seconds=LONG_GRACE_S,
@@ -190,7 +190,7 @@ async def test_row_2_path_a_polled_response_output_reflects_fresh_handler(
 ) -> None:
     """Row 2 Path A stream=F: polled GET reflects lifetime-0 handler's intent."""
     harness = make_harness(
-        resilient_background=False,  # Row 2: non-resilient background
+        resilient_tasks_enabled=False,  # Row 2: non-resilient background
         handler_sleep_ms=50,
         shutdown_grace_seconds=LONG_GRACE_S,
     )
@@ -211,7 +211,7 @@ async def test_row_3_path_a_foreground_response_output_reflects_fresh_handler(
 ) -> None:
     """Row 3 Path A stream=F: foreground POST returns the snapshot inline with correct content."""
     harness = make_harness(
-        resilient_background=True,  # immaterial for fg
+        resilient_tasks_enabled=True,  # immaterial for fg
         handler_sleep_ms=50,
         shutdown_grace_seconds=LONG_GRACE_S,
     )

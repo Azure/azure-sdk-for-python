@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Row 1 × Path A — ``(store=true, bg=true, resilient_bg=True)`` × ``stream=F/T``.
+"""Row 1 × Path A — ``(store=true, bg=true, resilient-tasks switch enabled)`` × ``stream=F/T``.
 
 Path A: handler completes within the configured grace period (the
 "happy path"). No framework recovery involvement; the response
@@ -32,7 +32,7 @@ from tests.e2e.resilience_contract.conftest import (
 async def test_row_1_path_a(make_harness: Callable[..., CrashHarness], stream: bool) -> None:
     """Row 1 Path A: resilient+bg handler completes naturally within grace."""
     harness = make_harness(
-        resilient_background=True,
+        resilient_tasks_enabled=True,
         handler_sleep_ms=50,
         shutdown_grace_seconds=LONG_GRACE_S,
     )

@@ -30,6 +30,7 @@ import asyncio
 import os
 from typing import Any
 
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -94,8 +95,8 @@ class _TransientOnceStore:
         return await self._inner.get_history_item_ids(*args, **kwargs)
 
 
+set_resilient_tasks_enabled(True)
 options = ResponsesServerOptions(
-    resilient_background=True,
     shutdown_grace_period_seconds=_SHUTDOWN_GRACE_S,
 )
 _inner_store = FileResponseStore(storage_dir=resolve_state_subdir("responses"))

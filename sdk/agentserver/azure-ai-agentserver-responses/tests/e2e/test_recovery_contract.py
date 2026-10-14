@@ -126,8 +126,10 @@ class _AsyncAsgiClient:
 
 
 def _build_client(handler, *, steerable: bool = False, resilient: bool = True) -> _AsyncAsgiClient:
+    from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
+
+    set_resilient_tasks_enabled(resilient)
     options = ResponsesServerOptions(
-        resilient_background=resilient,
         steerable_conversations=steerable,
     )
     app = ResponsesAgentServerHost(options=options)

@@ -34,7 +34,6 @@ from azure.ai.agentserver.responses import (
 def _make_resilient_app(handler, *, steerable: bool = False, **kwargs) -> TestClient:
     """Create a TestClient with a resilient ResponsesAgentServerHost."""
     options = ResponsesServerOptions(
-        resilient_background=True,
         steerable_conversations=steerable,
     )
     app = ResponsesAgentServerHost(options=options, **kwargs)
@@ -188,3 +187,9 @@ class TestResilientOrchestrationParallelForks:
         # All should have distinct IDs
         ids = {r["id"] for r in responses}
         assert len(ids) == 3
+
+@pytest.fixture(autouse=True)
+def _enable_resilient_tasks_for_module() -> None:
+    from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
+
+    set_resilient_tasks_enabled(True)

@@ -18,6 +18,7 @@ from typing import Any
 import pytest
 from starlette.testclient import TestClient
 
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     ResponseEventStream,
     ResponsesAgentServerHost,
@@ -48,8 +49,9 @@ def _event(**md) -> ResponseCheckpointEvent:
     return ResponseCheckpointEvent(resp)
 
 
-def _opts(resilient_background: bool) -> ResponsesServerOptions:
-    return ResponsesServerOptions(resilient_background=resilient_background)
+@pytest.fixture(autouse=True)
+def _enable_checkpoint_resilience() -> None:
+    set_resilient_tasks_enabled(True)
 
 
 # --------------------------------------------------------------------------
@@ -64,7 +66,6 @@ async def test_t18_no_op_matrix():
     await _do_checkpoint_persist(
         _event(),
         provider=p,
-        runtime_options=_opts(True),
         store=False,
         background=True,
         context=None,
@@ -78,7 +79,6 @@ async def test_t18_no_op_matrix():
     await _do_checkpoint_persist(
         _event(),
         provider=p,
-        runtime_options=_opts(True),
         store=True,
         background=False,
         context=None,
@@ -87,12 +87,12 @@ async def test_t18_no_op_matrix():
         terminal_seen=False,
     )
     assert p.updates == []
-    # (c) resilient_background=False
+    # (c) resilient tasks disabled
+    set_resilient_tasks_enabled(False)
     p = _RecordingProvider()
     await _do_checkpoint_persist(
         _event(),
         provider=p,
-        runtime_options=_opts(False),
         store=True,
         background=True,
         context=None,
@@ -101,12 +101,12 @@ async def test_t18_no_op_matrix():
         terminal_seen=False,
     )
     assert p.updates == []
-    # resilient background → persists
+    # Resilient stored background → persists.
+    set_resilient_tasks_enabled(True)
     p = _RecordingProvider()
     snap = await _do_checkpoint_persist(
         _event(cp=1),
         provider=p,
-        runtime_options=_opts(True),
         store=True,
         background=True,
         context=None,
@@ -125,7 +125,6 @@ async def test_t20_idempotent_when_snapshot_unchanged():
     snap = await _do_checkpoint_persist(
         ev,
         provider=p,
-        runtime_options=_opts(True),
         store=True,
         background=True,
         context=None,
@@ -137,7 +136,6 @@ async def test_t20_idempotent_when_snapshot_unchanged():
     await _do_checkpoint_persist(
         ev,
         provider=p,
-        runtime_options=_opts(True),
         store=True,
         background=True,
         context=None,
@@ -156,7 +154,6 @@ async def test_t21_status_as_is_in_snapshot():
     await _do_checkpoint_persist(
         ev,
         provider=p,
-        runtime_options=_opts(True),
         store=True,
         background=True,
         context=None,
@@ -178,7 +175,6 @@ async def test_t22_failure_swallowed_and_tagged():
     snap = await _do_checkpoint_persist(
         _event(cp=1),
         provider=p,
-        runtime_options=_opts(True),
         store=True,
         background=True,
         context=None,
@@ -196,7 +192,6 @@ async def test_t22b_drop_after_terminal():
     snap = await _do_checkpoint_persist(
         _event(cp=1),
         provider=p,
-        runtime_options=_opts(True),
         store=True,
         background=True,
         context=None,
@@ -214,7 +209,7 @@ async def test_t22b_drop_after_terminal():
 
 
 def _bg_client(handler) -> TestClient:
-    app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=True))
+    app = ResponsesAgentServerHost(options=ResponsesServerOptions())
     app.response_handler(handler)
     return TestClient(app)
 
@@ -311,7 +306,7 @@ def test_t22d_no_implicit_checkpoints_zero_checkpoint_handler():
         return _events()
 
     app = ResponsesAgentServerHost(
-        options=ResponsesServerOptions(resilient_background=True),
+        options=ResponsesServerOptions(),
         store=_CountingProvider(),
     )
     app.response_handler(handler)

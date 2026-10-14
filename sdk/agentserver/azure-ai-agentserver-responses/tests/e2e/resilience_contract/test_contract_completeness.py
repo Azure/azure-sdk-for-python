@@ -59,7 +59,7 @@ def test_every_row_has_a_test_module_per_applicable_path() -> None:
             if not mod_path.exists():
                 missing.append(
                     f"row {row.row_number} (store={row.store}, "
-                    f"bg={row.background}, dbg={row.resilient_background}) "
+                    f"bg={row.background}, switch={row.switch_state}) "
                     f"path {path_letter.upper()} → {mod_path.name} not found"
                 )
     assert not missing, (

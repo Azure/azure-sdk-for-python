@@ -27,7 +27,7 @@ from azure.ai.agentserver.responses import (
 
 
 def _make_streaming_app() -> TestClient:
-    options = ResponsesServerOptions(resilient_background=True, steerable_conversations=True)
+    options = ResponsesServerOptions(steerable_conversations=True)
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
@@ -112,3 +112,9 @@ class TestResilientStreamingE2E:
             events = _collect_sse(resp)
         delta_events = [e for e in events if e["type"] == "response.output_text.delta"]
         assert len(delta_events) > 0
+
+@pytest.fixture(autouse=True)
+def _enable_resilient_tasks_for_module() -> None:
+    from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
+
+    set_resilient_tasks_enabled(True)

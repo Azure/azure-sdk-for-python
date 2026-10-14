@@ -131,7 +131,7 @@ async def test_chain_id_stable_across_recovery(
 ) -> None:
     """conversation_chain_id is the same value for lifetime 0 and lifetime 1."""
     harness = make_harness(
-        resilient_background=True,
+        resilient_tasks_enabled=True,
         pre_sleep_deltas=1,
         handler_sleep_ms=int(LONG_TIME_SECS * 1000),
         shutdown_grace_seconds=LONG_GRACE_S,

@@ -25,7 +25,7 @@ from tests.e2e.resilience_contract.conftest import LONG_GRACE_S
 async def test_row_3_path_a(make_harness: Callable[..., CrashHarness], stream: bool) -> None:
     """Row 3 Path A: foreground handler completes naturally on the HTTP connection."""
     harness = make_harness(
-        resilient_background=True,  # resilient_background is "any" for row 3
+        resilient_tasks_enabled=True,  # resilient_tasks_enabled is "any" for row 3
         handler_sleep_ms=50,
         shutdown_grace_seconds=LONG_GRACE_S,
     )

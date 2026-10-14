@@ -14,8 +14,7 @@ loop) runs.
 
 Recovery — and durable tasks as a whole — is therefore strictly opt-in. Merely
 declaring a durable task (``@task`` / ``@multi_turn_task``) does **not** turn
-the subsystem on; you must set this switch (directly, or via a protocol option
-that maps to it, e.g. the responses ``resilient_background`` server option).
+the subsystem on; you must set this switch directly.
 
 The switch is process-global and defaults to ``False``. Set it before
 ``AgentServerHost`` lifespan startup (typically at import time)::

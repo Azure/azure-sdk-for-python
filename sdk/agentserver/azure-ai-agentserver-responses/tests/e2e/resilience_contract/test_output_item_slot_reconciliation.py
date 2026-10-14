@@ -136,7 +136,7 @@ async def test_output_item_slot_reused_by_recovered_handler(
 ) -> None:
     """Recovered handler's output_item.added at same index produces two added events with correct content reconciliation."""
     harness = make_harness(
-        resilient_background=True,
+        resilient_tasks_enabled=True,
         pre_sleep_deltas=1,
         handler_sleep_ms=int(LONG_TIME_SECS * 1000),
         shutdown_grace_seconds=LONG_GRACE_S,

@@ -45,6 +45,7 @@ from __future__ import annotations
 import asyncio
 import os
 
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -88,8 +89,8 @@ _CRASH_CUTPOINT = _parse_cutpoint(os.environ.get("CONFORMANCE_CRASH_CUTPOINT"))
 _PAUSE_CEILING_S = 30.0
 
 
+set_resilient_tasks_enabled(True)
 options = ResponsesServerOptions(
-    resilient_background=True,
     shutdown_grace_period_seconds=_SHUTDOWN_GRACE_S,
 )
 app = ResponsesAgentServerHost(options=options)

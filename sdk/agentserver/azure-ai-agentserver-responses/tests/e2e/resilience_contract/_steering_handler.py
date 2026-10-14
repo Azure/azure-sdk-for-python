@@ -30,7 +30,7 @@ where ``n`` is a process-local turn counter used only to label test output and
 Env vars consumed:
 
 - ``PORT`` / ``AGENTSERVER_STATE_ROOT`` — wired by ``_crash_harness``.
-- ``CONFORMANCE_RESILIENT_BACKGROUND`` — ``"true"``/``"false"`` (default true).
+- ``CONFORMANCE_RESILIENT_TASKS_ENABLED`` — ``"true"``/``"false"`` (default true).
 - ``CONFORMANCE_STEER_SLEEP_MS`` — per-turn interruptible sleep before the
   terminal (default ``4000``); long enough for a mid-flight SIGKILL.
 - ``AGENTSERVER_SHUTDOWN_GRACE_SECONDS`` — server shutdown grace (default 10).
@@ -68,20 +68,19 @@ def _env_int(name: str, default: int) -> int:
         return default
 
 
-_RESILIENT_BG = _env_bool("CONFORMANCE_RESILIENT_BACKGROUND", True)
+_RESILIENT_TASKS_ENABLED = _env_bool("CONFORMANCE_RESILIENT_TASKS_ENABLED", True)
 _STEER_SLEEP_MS = max(0, _env_int("CONFORMANCE_STEER_SLEEP_MS", 4000))
 _SHUTDOWN_GRACE_S = max(1, _env_int("AGENTSERVER_SHUTDOWN_GRACE_SECONDS", 10))
 
 
 options = ResponsesServerOptions(
-    resilient_background=_RESILIENT_BG,
     steerable_conversations=True,
     shutdown_grace_period_seconds=_SHUTDOWN_GRACE_S,
 )
 # Steering (mid-turn input queuing) is implemented by the multi-turn task
-# primitive and needs the TaskManager. Since only ``resilient_background`` now
-# auto-enables the subsystem (steerable does not), enable it explicitly so the
-# steering conformance is valid even when CONFORMANCE_RESILIENT_BACKGROUND=false.
+# primitive and needs the TaskManager. Since only ``resilient_tasks_enabled`` now
+# Steering conformance requires the durable task subsystem, so enable it before
+# constructing the host.
 set_resilient_tasks_enabled(True)
 app = ResponsesAgentServerHost(options=options)
 _turn_counts: dict[str, int] = {}

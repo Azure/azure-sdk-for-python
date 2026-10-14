@@ -81,7 +81,7 @@ def test_run_background_no_shielded_runner_path() -> None:
     """``_ResponseOrchestrator.run_background`` must not use ``asyncio.create_task(_shielded_runner)`` for store=True.
 
     Under spec 024 Phase 2 all ``store=true`` background responses go
-    through ``_start_resilient_background`` which runs the handler inside
+    through ``_start_resilient_response`` which runs the handler inside
     the task body. The asyncio.create_task + shielded runner path for
     store=True is gone (only Row 4 — no store — still uses asyncio.create_task).
     """
@@ -92,11 +92,11 @@ def test_run_background_no_shielded_runner_path() -> None:
     src = inspect.getsource(_ResponseOrchestrator.run_background)
     # The post-Phase-2 code should NOT contain the legacy pattern of
     # "asyncio.create_task(_shielded_runner())" followed by a separate
-    # _start_resilient_background call with disposition="mark-failed". The
-    # unified path uses _start_resilient_background for all store=True rows.
+    # _start_resilient_response call with disposition="mark-failed". The
+    # unified path uses _start_resilient_response for all store=True rows.
     assert 'disposition="mark-failed"' not in src, (
         "spec 024 Phase 2 deletes the Row 2 bookkeeping path in run_background. "
-        "All store=True paths use the unified _start_resilient_background with "
+        "All store=True paths use the unified _start_resilient_response with "
         "a disposition argument computed inline."
     )
 

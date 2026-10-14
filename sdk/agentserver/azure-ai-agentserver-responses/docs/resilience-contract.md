@@ -24,7 +24,7 @@ conformance meta-test.
 
 This document defines:
 
-- The **flags and server option** that select a resilience behaviour.
+- The request flags and process-global switch that select a resilience behaviour.
 - The **termination lifecycle** — the three paths a server lifetime can take
   when a request is in flight.
 - The **matrix** — for each flag combination, what the framework promises on
@@ -63,12 +63,15 @@ Three boolean flags on the request select the resilience shape:
   delivered as SSE events on the original connection. Independent of the
   resilience shape; see the **Streaming sub-contract**.
 
-### Server option
+### Process-global switch
 
-- **`resilient_background`** *(server option, default `False`)* — whether the
-  framework engages full crash-recovery for `background=true, store=true`
-  requests. When `True`, the supporting providers MUST be present (see
-  **Composition rules**); the server fails loud at startup otherwise.
+- **`set_resilient_tasks_enabled(True)`** *(core process-global switch, default
+  off)* — enables durable task execution and full crash recovery for
+  `background=true, store=true` requests. Call it **before constructing
+  `ResponsesAgentServerHost`**: response-store composition and SSE replay
+  backing are selected during host construction. When enabled, the supporting
+  providers MUST be present (see **Composition rules**); the server fails loud
+  at startup otherwise.
 
 ### Termination paths
 
@@ -91,12 +94,12 @@ A single termination event is handled by exactly one path.
 
 ### Resilient record
 
-Every accepted `store=true` request is registered with the underlying
-resilient-task primitive at acceptance time. The registration carries the
-response id, the row's Path-C disposition (`re-invoke` for Row 1,
-`mark-failed` for Rows 2 and 3), and (for re-invocation rows) the handler
-reference. `store=false` requests have no resilient record; Path C does not
-apply.
+When resilient tasks are enabled, every accepted `store=true` request is
+registered with the underlying resilient-task primitive at acceptance time.
+The registration carries the response id and Path-C disposition (`re-invoke`
+for stored background work, `mark-failed` for stored foreground work). When
+the switch is disabled, no task manager is installed and stored work runs
+in-process. `store=false` requests have no resilient record.
 
 ### Recovered entry
 
@@ -134,18 +137,18 @@ boundary, `responses-resilience-spec.md` §5.3 / §8.2.)
 ## The matrix
 
 The matrix is the per-row × per-path contract. Rows 1–4 are keyed on the three
-flags (`store`, `background`, `resilient_background`); `stream` is intentionally
+flags (`store`, `background`, resilient-tasks switch); `stream` is intentionally
 NOT a row key (the contract is mode-flag agnostic with respect to `stream`,
 and the streaming sub-contract specifies how it is delivered). Row 11 is a
 **checkpoint-write extension of Row 1** — it has Row 1's flags and adds the
 developer `stream.checkpoint()` write point; its cutpoints are detailed in its
 per-row contract.
 
-| Row | `store` | `background` | `resilient_background` | Path A (within-grace) | Path B (grace exhausted) | Path C (crash / Path-B failure) |
+| Row | `store` | `background` | resilient-tasks switch | Path A (within-grace) | Path B (grace exhausted) | Path C (crash / Path-B failure) |
 |----:|---------|--------------|----------------------|-----------------------|--------------------------|---------------------------------|
 |  1  | `true`  | `true`       | `True`               | natural terminal      | hand the in-flight handler to the resilient-task primitive's recovery; runtime exits; next lifetime re-invokes the handler with `is_recovery=True` | next lifetime re-invokes the handler with `is_recovery=True` |
-|  2  | `true`  | `true`       | `False`              | natural terminal      | mark response `failed` (`code=server_error`) in-process before exit; respond to waiting clients | next lifetime marks response `failed` (`code=server_error`) |
-|  3  | `true`  | `false`      | any                  | natural terminal      | mark response `failed` (`code=server_error`) in-process before exit; respond to waiting clients | next lifetime marks response `failed` (`code=server_error`) |
+|  2  | `true`  | `true`       | `False`              | natural terminal      | mark response `failed` (`code=server_error`) in-process before exit; respond to waiting clients | no recovery scan; the last persisted status may remain `in_progress` |
+|  3  | `true`  | `false`      | any                  | natural terminal      | mark response `failed` (`code=server_error`) in-process before exit; respond to waiting clients | switch enabled: next lifetime marks response `failed`; switch disabled: no recovery scan |
 |  4  | `false` | any          | any                  | natural terminal      | best-effort `failed` marker in-process; original HTTP connection may already be closing | no recovery applies (no persisted state) |
 | 11  | `true`  | `true`       | `True`               | all phases checkpoint + complete; final `response.output` reflects every phase | handler at a checkpoint boundary calls `await context.exit_for_recovery()`; recovery resumes from the last checkpointed snapshot | SIGKILL at a checkpoint boundary; recovery resumes from the last checkpointed snapshot |
 
@@ -156,7 +159,7 @@ Read every cell as a MUST for the framework. Path A is identical across Rows
 
 ## Per-row contracts
 
-### Row 1 — Full recovery (`store=true, background=true, resilient_background=True`)
+### Row 1 — Full recovery (`store=true`, `background=true`, switch enabled)
 
 **Path A.** Handler completes within grace. Standard happy path.
 
@@ -182,7 +185,7 @@ with `context.is_recovery == True`.
   `await context.exit_for_recovery()`, which works in every handler shape
   (coroutine, async generator, sync).
 
-### Row 2 — Marked failed (`store=true, background=true, resilient_background=False`)
+### Row 2 — Marked failed (`store=true`, `background=true`, switch disabled)
 
 A stored, observable response without crash recovery.
 
@@ -192,24 +195,23 @@ A stored, observable response without crash recovery.
 (`code=server_error`, path cause in `message`), persist any final events, and
 respond to waiting clients in this lifetime.
 
-**Path C.** On the next lifetime the framework finds the resilient record
-(disposition `mark-failed`) and marks the response `failed`
-(`code=server_error`) by overlaying the failed terminal onto the persisted
-response snapshot — preserving `agent_reference`, `model`, and the progress
-(output items) durably persisted before the crash — so subsequent polling
-and stream-reconnect see terminal. When no snapshot was ever persisted, a
-minimal `failed` object is synthesized carrying `agent_reference` + `model`
-from the persisted task input.
+**Path C.** With the process-global switch disabled, no task manager or
+recovery scan runs. A hard crash can therefore leave the last persisted
+response status `in_progress`. If a `mark-failed` task persisted by an earlier
+lifetime/version is later recovered with the subsystem enabled, its recorded
+disposition remains authoritative and the recovery body marks the response
+failed without invoking the handler.
 
-### Row 3 — Marked failed, foreground (`store=true, background=false`, any `resilient_background`)
+### Row 3 — Marked failed, foreground (`store=true`, `background=false`, either switch state)
 
 A stored response observable over the original (foreground) HTTP connection.
-`resilient_background` is a free axis — foreground responses do not benefit from
-resilient handler recovery because the client connection is gone. Path A/B/C
-have the same shape as Row 2; all failure markers use `code=server_error` with
-the path-specific cause in `message`.
+The switch is a free axis — foreground responses are never re-invoked because
+the client connection is gone. When the switch is enabled, the persisted
+disposition is `mark-failed`; when disabled, execution is in-process only.
+All failure markers use `code=server_error` with the path-specific cause in
+`message`.
 
-### Row 4 — Best-effort (`store=false`, any `background`, any `resilient_background`)
+### Row 4 — Best-effort (`store=false`, any `background`, either switch state)
 
 In-memory-only, no persistence, no recovery.
 
@@ -234,7 +236,7 @@ the recovery resume-point directly observable in the recovered
 `response.output`.
 
 `checkpoint()` is gated to resilient background responses
-(`resilient_background=True` + `store=true` + `background=true`) and is a no-op
+(switch enabled + `store=true` + `background=true`) and is a no-op
 otherwise.
 
 **Cutpoints** (the failure boundaries the contract guarantees, expressed in
@@ -330,12 +332,12 @@ absent; it MUST NOT silently downgrade to a weaker row.
 
 | Server config | Required providers | If missing |
 |---|---|---|
-| `resilient_background=True` | `ResponseStore` supporting resilient task records; a resilient stream provider for streamed resilient responses | Startup error naming the missing provider |
+| Resilient-tasks switch enabled | `ResponseStore` supporting resilient task records; a resilient stream provider for streamed resilient responses | Startup error naming the missing provider |
 | `store=true` requests accepted (any row) | `ResponseStore` | Startup error |
 | `stream=true` requests accepted (any row) | A streaming-capable transport configuration | Startup error |
 
 The same "fail loud, never silently downgrade" rule applies at **request
-time**. When `resilient_background` is in effect and the resilient task cannot
+time**. When the resilient-tasks switch is enabled and the resilient task cannot
 be started, the framework MUST fail the request rather than silently running
 the handler on a non-durable, connection-scoped task (which would lose crash
 recovery while still returning a healthy-looking response):

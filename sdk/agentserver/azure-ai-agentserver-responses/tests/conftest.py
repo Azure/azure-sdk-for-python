@@ -35,12 +35,13 @@ def _reset_resilient_tasks_global_state():
     """Contain process-global resilient-tasks state per test.
 
     The resilient-tasks enable switch and the ``TaskManager`` singleton are
-    process-global. A test that enables resilient tasks — e.g. constructs a
-    ``resilient_background=True`` host, which auto-enables the switch, or calls
-    ``set_resilient_tasks_enabled(True)`` — would otherwise leak that state into
+    process-global. A test that calls ``set_resilient_tasks_enabled(True)`` would
+    otherwise leak that state into
     subsequent tests in the same pytest process (a plain host would then build a
-    manager and behave durably). Snapshot both at test start and restore at the
-    end so each test is isolated.
+    manager and behave durably). Snapshot both at test start, reset them to the
+    default (disabled, no manager) so a switch enabled at collection time (for
+    example by importing a resilient sample) cannot leak in, and restore the
+    snapshot at the end so each test is isolated.
     """
     from azure.ai.agentserver.core.tasks import (  # pylint: disable=import-outside-toplevel
         _manager as _mgr_mod,
@@ -55,6 +56,8 @@ def _reset_resilient_tasks_global_state():
 
     saved_flag = resilient_tasks_enabled()
     saved_mgr = _mgr_mod._manager  # noqa: SLF001  # pylint: disable=protected-access
+    set_task_manager(None)
+    set_resilient_tasks_enabled(False)
     try:
         yield
     finally:
@@ -68,7 +71,7 @@ def _isolated_resilient_tasks_root(tmp_path):
 
     (Spec 013) Without this, the LocalFileTaskProvider defaults to
     ``~/.agentserver-tasks`` which is shared across all test runs and lets
-    in-progress task state leak between tests — when resilient_background
+    in-progress task state leak between tests — when resilient_tasks_enabled
     actually works, recovery on startup fires for these stale tasks and
     breaks tests that assume a clean slate.
 

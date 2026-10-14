@@ -617,14 +617,14 @@ def test_cancel__provider_fallback_returns_400_for_completed_after_restart() -> 
     provider = InMemoryResponseProvider()
 
     # First app instance: create and complete a response
-    app1 = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
+    app1 = ResponsesAgentServerHost(options=ResponsesServerOptions(), store=provider)
     app1.response_handler(_noop_response_handler)
     client1 = TestClient(app1)
     response_id = _create_background_response(client1)
     _wait_for_status(client1, response_id, "completed")
 
     # Second app instance (simulating restart): fresh runtime state, same provider
-    app2 = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
+    app2 = ResponsesAgentServerHost(options=ResponsesServerOptions(), store=provider)
     app2.response_handler(_noop_response_handler)
     client2 = TestClient(app2)
 
@@ -645,14 +645,14 @@ def test_cancel__provider_fallback_returns_400_for_failed_after_restart() -> Non
     provider = InMemoryResponseProvider()
 
     # First app instance: create a response that fails
-    app1 = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
+    app1 = ResponsesAgentServerHost(options=ResponsesServerOptions(), store=provider)
     app1.response_handler(_raising_response_handler)
     client1 = TestClient(app1)
     response_id = _create_background_response(client1)
     _wait_for_status(client1, response_id, "failed")
 
     # Second app instance (simulating restart)
-    app2 = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
+    app2 = ResponsesAgentServerHost(options=ResponsesServerOptions(), store=provider)
     app2.response_handler(_noop_response_handler)
     client2 = TestClient(app2)
 
@@ -694,7 +694,7 @@ def test_cancel__persisted_state_is_cancelled_even_when_handler_completes_after_
 
         return _events()
 
-    app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
+    app = ResponsesAgentServerHost(options=ResponsesServerOptions(), store=provider)
     app.response_handler(_uncooperative_handler)
     client = TestClient(app)
 

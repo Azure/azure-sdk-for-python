@@ -2,16 +2,15 @@
 # Licensed under the MIT license.
 """Spec 024 Phase 4 step 24a — relaxed composition conformance test.
 
-Proposal #9 of spec 024 §A removed the composition guard that rejected
-``steerable_conversations=True + resilient_background=False``. This e2e
-test asserts the combination works end-to-end:
+Proposal #9 of spec 024 §A removed the composition guard between steering and
+resilience. This e2e test asserts steering works with the core resilient-tasks
+switch disabled:
 
 - Multiple sequential turns on the same conversation_id succeed.
 - Mid-turn input is correctly queued (steering works).
 - The chain extends across turns.
 
-Pre-spec-024: ``ResponsesServerOptions(steerable_conversations=True,
-resilient_background=False)`` raised ValueError at construction time.
+Pre-spec-024: ``ResponsesServerOptions(steerable_conversations=True)`` raised ValueError at construction time.
 Post-spec-024: this combination is valid; the lock/queue semantics of
 steering are independent of the resilience/recovery disposition.
 
@@ -34,18 +33,17 @@ from azure.ai.agentserver.responses import (
 )
 
 
-def test_options_construction_with_steerable_and_resilient_bg_off() -> None:
+def test_options_construction_with_steerable_and_resilience_disabled() -> None:
     """Constructing the host with the relaxed combination must NOT raise."""
     options = ResponsesServerOptions(
         steerable_conversations=True,
-        resilient_background=False,
     )
     host = ResponsesAgentServerHost(options=options)
     assert host is not None
 
 
 @pytest.mark.asyncio
-async def test_steerable_chain_extends_across_turns_with_resilient_bg_off() -> None:
+async def test_steerable_chain_extends_with_resilience_disabled() -> None:
     """Three sequential turns on the same conversation_id all complete.
 
     Verifies the chain extends regardless of the resilience disposition.
@@ -56,7 +54,6 @@ async def test_steerable_chain_extends_across_turns_with_resilient_bg_off() -> N
 
     options = ResponsesServerOptions(
         steerable_conversations=True,
-        resilient_background=False,
     )
     host = ResponsesAgentServerHost(options=options)
 
@@ -75,7 +72,7 @@ async def test_steerable_chain_extends_across_turns_with_resilient_bg_off() -> N
         return _events()
 
     with TestClient(host) as client:
-        conversation_id = "conv_steerable_resilient_off_test"
+        conversation_id = "conv_steerable_resilience_disabled_test"
 
         # Turn 1
         r1 = client.post(

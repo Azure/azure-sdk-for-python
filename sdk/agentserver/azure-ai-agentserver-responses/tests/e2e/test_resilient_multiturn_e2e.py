@@ -18,6 +18,7 @@ from typing import Any
 import pytest
 from starlette.testclient import TestClient
 
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -33,8 +34,8 @@ from azure.ai.agentserver.responses import (
 
 def _make_multiturn_app() -> TestClient:
     """Create a multiturn app similar to the sample."""
+    set_resilient_tasks_enabled(True)
     options = ResponsesServerOptions(
-        resilient_background=True,
         steerable_conversations=True,
     )
     app = ResponsesAgentServerHost(options=options)
@@ -132,8 +133,9 @@ class TestResilientMultiturnNonResilient:
     """Non-resilient fallback behavior."""
 
     def test_non_resilient_still_works(self) -> None:
-        """With resilient_background=False, handler still functions."""
-        options = ResponsesServerOptions(resilient_background=False)
+        """With resilient_tasks_enabled=False, handler still functions."""
+        set_resilient_tasks_enabled(False)
+        options = ResponsesServerOptions()
         app = ResponsesAgentServerHost(options=options)
 
         @app.response_handler
@@ -186,8 +188,8 @@ def _make_conv_id_non_steerable_app() -> tuple[Any, dict[str, Any]]:
     the app — typically via ``async with hypercorn_server(app) as client``
     which triggers the lifespan that initialises the TaskManager.
     """
+    set_resilient_tasks_enabled(True)
     options = ResponsesServerOptions(
-        resilient_background=True,
         steerable_conversations=False,  # Row 5
     )
     app = ResponsesAgentServerHost(options=options)
@@ -336,8 +338,8 @@ class TestRow5ConversationIdNonSteerableE2E:
         from tests._helpers import hypercorn_server
         from azure.ai.agentserver.responses import ResponseEventStream
 
+        set_resilient_tasks_enabled(True)
         options = ResponsesServerOptions(
-            resilient_background=True,
             steerable_conversations=False,
         )
         app = ResponsesAgentServerHost(options=options)

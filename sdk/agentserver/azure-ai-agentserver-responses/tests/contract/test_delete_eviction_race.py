@@ -105,7 +105,7 @@ class TestDeleteEvictionRace:
         monkeypatch.setattr(_RuntimeState, "delete", _racing_delete)
 
         provider = InMemoryResponseProvider()
-        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(), store=provider)
         app.response_handler(_simple_handler)
         client = TestClient(app)
 
@@ -168,7 +168,7 @@ class TestDeleteEvictionRace:
         monkeypatch.setattr(RS, "get", _detecting_get)
 
         provider = InMemoryResponseProvider()
-        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(), store=provider)
         app.response_handler(_simple_handler)
         client = TestClient(app)
 
@@ -227,7 +227,7 @@ class TestDeleteEvictionRace:
         monkeypatch.setattr(_RuntimeState, "delete", _racing_delete)
 
         provider = InMemoryResponseProvider()
-        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(), store=provider)
         app.response_handler(_simple_handler)
         client = TestClient(app)
 

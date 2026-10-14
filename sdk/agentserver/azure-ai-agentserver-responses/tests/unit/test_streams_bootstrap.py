@@ -5,7 +5,7 @@
 Assertions:
 
 1. Constructing ``ResponsesAgentServerHost`` with
-   ``resilient_background=True`` configures the registry's file-backed
+   ``resilient_tasks_enabled=True`` configures the registry's file-backed
    replay backing — verified by inspecting that the next stream we mint
    for an arbitrary id lands on disk under the configured directory.
 2. ``await streams.get_or_create("resp-abc")`` returns the same
@@ -27,6 +27,7 @@ from azure.ai.agentserver.core.streaming import (
     EventStreamNotFoundError,
     streams,
 )
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
     ResponsesServerOptions,
@@ -58,7 +59,7 @@ def _isolate_streams_registry() -> Iterator[None]:
 
 @pytest.mark.asyncio
 async def test_host_construction_configures_file_backed_replay(tmp_path: Path) -> None:
-    """``resilient_background=True`` selects the file-backed backing and
+    """``resilient_tasks_enabled=True`` selects the file-backed backing and
     points it at the operator-supplied storage directory.
 
     (Spec 024 Phase 3a) ``AGENTSERVER_STATE_ROOT`` is the single env
@@ -66,7 +67,8 @@ async def test_host_construction_configures_file_backed_replay(tmp_path: Path) -
     """
     os.environ["AGENTSERVER_STATE_ROOT"] = str(tmp_path)
     try:
-        ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=True))
+        set_resilient_tasks_enabled(True)
+        ResponsesAgentServerHost(options=ResponsesServerOptions())
 
         stream = await streams.get_or_create("resp-bootstrap-1")
         assert isinstance(stream, EventStream)
@@ -83,7 +85,8 @@ async def test_host_construction_configures_file_backed_replay(tmp_path: Path) -
 async def test_get_or_create_is_idempotent(tmp_path: Path) -> None:
     os.environ["AGENTSERVER_STATE_ROOT"] = str(tmp_path)
     try:
-        ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=True))
+        set_resilient_tasks_enabled(True)
+        ResponsesAgentServerHost(options=ResponsesServerOptions())
 
         s1 = await streams.get_or_create("resp-abc")
         s2 = await streams.get_or_create("resp-abc")
@@ -96,7 +99,8 @@ async def test_get_or_create_is_idempotent(tmp_path: Path) -> None:
 async def test_delete_removes_registry_entry_and_on_disk_file(tmp_path: Path) -> None:
     os.environ["AGENTSERVER_STATE_ROOT"] = str(tmp_path)
     try:
-        ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=True))
+        set_resilient_tasks_enabled(True)
+        ResponsesAgentServerHost(options=ResponsesServerOptions())
 
         await streams.get_or_create("resp-abc")
         assert (tmp_path / "streams" / "resp-abc.jsonl").exists()
@@ -111,12 +115,13 @@ async def test_delete_removes_registry_entry_and_on_disk_file(tmp_path: Path) ->
 
 @pytest.mark.asyncio
 async def test_non_resilient_host_uses_in_memory_replay(tmp_path: Path) -> None:
-    """``resilient_background=False`` selects the in-memory replay
+    """``resilient_tasks_enabled=False`` selects the in-memory replay
     backing — verified by minting a stream and confirming no on-disk
     log is created (file-backed would create one eagerly)."""
     os.environ["AGENTSERVER_STATE_ROOT"] = str(tmp_path)
     try:
-        ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False))
+        set_resilient_tasks_enabled(False)
+        ResponsesAgentServerHost(options=ResponsesServerOptions())
 
         stream = await streams.get_or_create("resp-mem")
         assert isinstance(stream, EventStream)

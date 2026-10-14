@@ -20,6 +20,7 @@ from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-
     AgentServerHost,
     build_server_version,
 )
+from azure.ai.agentserver.core.tasks import resilient_tasks_enabled
 
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseContext
@@ -136,27 +137,28 @@ def _stream_cursor(event: Any) -> int:
 _REPLAY_EVENT_TTL_SECONDS = 600.0
 
 
-def _configure_streams_registry(runtime_options: ResponsesServerOptions) -> None:
+def _configure_streams_registry(resilience_enabled: bool) -> None:
     """Pick the registry backing for SSE event streams at compose time.
 
-    - ``resilient_background=True`` → file-backed replay under
+    - resilient tasks enabled → file-backed replay under
       ``${AGENTSERVER_STATE_ROOT:-~/.agentserver}/streams/`` (spec 024
       Phase 3a unified storage layout).
-    - ``resilient_background=False`` → in-memory replay (events live in
+    - resilient tasks disabled → in-memory replay (events live in
       process; replay survives eager eviction within the TTL window).
 
     The configurator is a process-wide singleton — last call wins for
     streams created after it. In tests with multiple hosts per process,
     the per-test fixtures snapshot/restore the registry's private state.
 
-    :param runtime_options: The responses server options.
-    :type runtime_options: ResponsesServerOptions
+    :param resilience_enabled: Whether resilient tasks were enabled when the host
+        was constructed.
+    :type resilience_enabled: bool
     """
     from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
         streams,
     )
 
-    if runtime_options.resilient_background:
+    if resilience_enabled:
         # (Spec 024 Phase 3a) Stream store path resolves via the unified
         # storage-paths helper; legacy ``AGENTSERVER_STREAM_STORE_PATH``
         # env var + per-temp-dir default are deleted. ``storage_dir`` is
@@ -181,9 +183,7 @@ def _log_startup_configuration(
 ) -> None:
     """Log the responses startup configuration and durability mode.
 
-    Emitted once at host construction. The resilience line reflects the final
-    resolved state (the resilient orchestrator auto-enables the switch when
-    ``resilient_background`` is set). When durability is disabled we log a
+    Emitted once at host construction. When durability is disabled we log a
     WARNING so operators are not surprised that a ``store=true`` response killed
     mid-flight by an ungraceful crash stays ``in_progress`` on a later GET (no
     crash recovery) — matching a plain stateless server.
@@ -217,7 +217,8 @@ def _log_startup_configuration(
             "Responses resilience: DISABLED - store=true responses run in-process and are "
             "NOT durable across an ungraceful crash: a response in-flight when the process "
             "is hard-killed stays in_progress on a later GET (no mark-failed/recovery). "
-            "Enable durability via resilient_background, or set_resilient_tasks_enabled(True)."
+            "Call set_resilient_tasks_enabled(True) before constructing the host "
+            "to enable durability."
         )
 
 
@@ -404,10 +405,15 @@ class ResponsesAgentServerHost(AgentServerHost):
 
         resolved_provider: ResponseProviderProtocol = store if store is not None else InMemoryResponseProvider()
 
-        # Composition guard: when ``resilient_background=True`` AND the
+        # Read the process-global switch at host construction because both the
+        # composition guard and process-wide replay registry are configured here.
+        # Callers must enable resilient tasks before constructing the host.
+        resilience_enabled = resilient_tasks_enabled()
+
+        # Composition guard: when resilient tasks are enabled AND the
         # caller EXPLICITLY supplied a non-persistent ``store=`` argument,
         # refuse to start. The operator chose a store that contradicts
-        # their resilient_background opt-in and we won't silently degrade.
+        # their resilience opt-in and we won't silently degrade.
         #
         # The default path (``store=None`` → ``FileResponseStore`` under
         # ``${AGENTSERVER_STATE_ROOT}/responses/``) is now persistent
@@ -415,19 +421,18 @@ class ResponsesAgentServerHost(AgentServerHost):
         # ``InMemoryResponseProvider`` and operators had to set
         # ``AGENTSERVER_RESPONSE_STORE_PATH`` to upgrade — that env var
         # is now deleted in favour of the unified default.
-        if runtime_options.resilient_background and store is not None and isinstance(store, InMemoryResponseProvider):
+        if resilience_enabled and store is not None and isinstance(store, InMemoryResponseProvider):
             raise ValueError(
                 "ResponsesAgentServerHost refused to start: "
-                "``resilient_background=True`` was configured with an "
-                "explicit ``store=`` argument "
+                "resilient tasks were enabled with an explicit ``store=`` argument "
                 f"({type(store).__name__}) that does not persist across "
-                "process crashes — resilient_background cannot honour its "
+                "process crashes, so the host cannot honour its "
                 "recovery promise. Either (a) supply a persistent store "
                 "(FileResponseStore, FoundryStorageProvider, etc.), "
                 "(b) omit ``store=`` to use the default file-backed store "
                 "under ``${AGENTSERVER_STATE_ROOT}/responses/``, or "
-                "(c) set ``resilient_background=False`` to opt out of "
-                "crash recovery."
+                "(c) do not call set_resilient_tasks_enabled(True) to opt out "
+                "of crash recovery."
             )
 
         # Configure the process-wide streams registry. A single configurator
@@ -436,7 +441,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         # ``as_dict()`` form so the registry's default JSON codec accepts
         # them; the cursor function exposes ``sequence_number`` as the
         # reconnection cursor for ``subscribe(after=N)`` / ``Last-Event-ID``.
-        _configure_streams_registry(runtime_options)
+        _configure_streams_registry(resilience_enabled)
 
         runtime_state = _RuntimeState()
         orchestrator = _ResponseOrchestrator(

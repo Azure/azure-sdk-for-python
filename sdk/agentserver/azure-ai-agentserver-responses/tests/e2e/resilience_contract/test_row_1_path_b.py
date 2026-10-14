@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Row 1 × Path B — ``(store=true, bg=true, resilient_bg=True)`` × ``stream=F/T``.
+"""Row 1 × Path B — ``(store=true, bg=true, resilient-tasks switch enabled)`` × ``stream=F/T``.
 
 Path B: SIGTERM is delivered with a deliberately-short shutdown grace
 period (``SHORT_GRACE_S``). The handler is still running at grace
@@ -22,7 +22,7 @@ EXPECTED today:
 - ``stream=False``: GREEN — Spec 013's cross-process reconstruction
   already covers the polled case for row 1.
 - ``stream=True``: **RED — divergence 1.** ``run_stream`` never engages
-  ``_start_resilient_background``; no resilient record exists for the
+  ``_start_resilient_response``; no resilient record exists for the
   streamed POST; restart has nothing to re-invoke. Phase 3 closes this.
 
 Contract source: ``resilience-contract.md`` § Per-row contracts → Row 1.
@@ -48,7 +48,7 @@ from tests.e2e.resilience_contract.conftest import (
 async def test_row_1_path_b(make_harness: Callable[..., CrashHarness], stream: bool) -> None:
     """Row 1 Path B: graceful shutdown, grace exhausted, framework hand-off + recovery."""
     harness = make_harness(
-        resilient_background=True,
+        resilient_tasks_enabled=True,
         handler_sleep_ms=int(LONG_TIME_SECS * 1000),
         shutdown_grace_seconds=SHORT_GRACE_S,
     )
@@ -105,7 +105,7 @@ async def test_row_1_path_b_graceful_exit_not_sigkill(
     import signal as _signal
 
     harness = make_harness(
-        resilient_background=True,
+        resilient_tasks_enabled=True,
         handler_sleep_ms=int(LONG_TIME_SECS * 1000),
         shutdown_grace_seconds=SHORT_GRACE_S,
     )

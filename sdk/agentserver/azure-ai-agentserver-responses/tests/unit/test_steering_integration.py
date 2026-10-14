@@ -95,19 +95,17 @@ class TestAcceptanceHookDispatch:
 class TestSteeringConfiguration:
     """Steering options validation."""
 
-    def test_steerable_with_resilient_background_off_does_not_raise(self) -> None:
+    def test_steerable_with_resilient_tasks_disabled_does_not_raise(self) -> None:
         """(Spec 024 Phase 4 — Proposal #9 relaxed composition)
 
-        steerable_conversations=True + resilient_background=False is now
+        steerable_conversations=True + resilient_tasks_enabled=False is now
         a VALID combination. Pre-Phase-4 this raised ValueError; the
         guard is removed because the two options are independent.
         """
         options = ResponsesServerOptions(
             steerable_conversations=True,
-            resilient_background=False,
         )
         assert options.steerable_conversations is True
-        assert options.resilient_background is False
 
     # (Spec 024 Phase 5 — Proposal #5 / Phase 4 — Proposal #9)
     # ``store_disabled`` option DELETED and the
@@ -115,11 +113,9 @@ class TestSteeringConfiguration:
     # rejected combination is no longer expressible). See the Phase 5
     # test file for the absence-of-keyword assertion.
 
-    def test_steerable_with_resilient_is_valid(self) -> None:
-        """Valid configuration: steerable + resilient + store."""
+    def test_steerable_configuration_is_independent_of_resilience(self) -> None:
+        """Steering remains valid regardless of the process-global switch."""
         opts = ResponsesServerOptions(
             steerable_conversations=True,
-            resilient_background=True,
         )
         assert opts.steerable_conversations is True
-        assert opts.resilient_background is True

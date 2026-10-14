@@ -45,7 +45,7 @@ async def test_row_4_path_c(
     only.
     """
     harness = make_harness(
-        resilient_background=False,
+        resilient_tasks_enabled=False,
         handler_sleep_ms=int(LONG_TIME_SECS * 1000),
         shutdown_grace_seconds=LONG_GRACE_S,
     )

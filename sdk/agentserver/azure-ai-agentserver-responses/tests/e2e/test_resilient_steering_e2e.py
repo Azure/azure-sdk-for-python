@@ -35,7 +35,6 @@ from azure.ai.agentserver.responses import (
 def _make_steerable_app(handler, *, acceptance_hook=None, **kwargs) -> TestClient:
     """Create a TestClient with steerable conversation support."""
     options = ResponsesServerOptions(
-        resilient_background=True,
         steerable_conversations=True,
     )
     app = ResponsesAgentServerHost(options=options, **kwargs)
@@ -100,7 +99,6 @@ class TestSteerableConversationConflict:
             return TextResponse(context, request, text="Fork response")
 
         options = ResponsesServerOptions(
-            resilient_background=True,
             steerable_conversations=False,
         )
         app = ResponsesAgentServerHost(options=options)
@@ -137,3 +135,9 @@ class TestAcceptanceHookE2E:
         # Just verify app builds and works
         resp = client.post("/responses", json=_base_payload())
         assert resp.status_code == 200
+
+@pytest.fixture(autouse=True)
+def _enable_resilient_tasks_for_module() -> None:
+    from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
+
+    set_resilient_tasks_enabled(True)

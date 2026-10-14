@@ -2,7 +2,7 @@
 # Licensed under the MIT license.
 """Row 11 × Path C — developer checkpoint write, SIGKILL mid-handler.
 
-Row 11 extends Row 1 (``store=true, background=true, resilient_background=True``)
+Row 11 extends Row 1 (``store=true, background=true, resilient_tasks_enabled=True``)
 with the ``yield stream.checkpoint()`` write point. Path C drives a real
 SIGKILL (via ``_crash_harness``) at a deterministic cutpoint, then restarts
 and asserts recovery resumes from the checkpointed snapshot — proving the

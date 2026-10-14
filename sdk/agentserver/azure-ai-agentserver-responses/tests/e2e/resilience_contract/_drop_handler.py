@@ -32,6 +32,7 @@ from __future__ import annotations
 import asyncio
 import os
 
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -56,8 +57,8 @@ _PRE_CREATE_SLEEP_MS = _env_int("CONFORMANCE_PRE_CREATE_SLEEP_MS", 5000)
 _MARKER_FILE = os.environ.get("CONFORMANCE_DROP_MARKER_FILE", "")
 
 
+set_resilient_tasks_enabled(True)
 options = ResponsesServerOptions(
-    resilient_background=True,
     shutdown_grace_period_seconds=_SHUTDOWN_GRACE_S,
 )
 app = ResponsesAgentServerHost(options=options)

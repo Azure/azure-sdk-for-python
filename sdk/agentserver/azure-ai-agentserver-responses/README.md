@@ -162,7 +162,7 @@ For detailed handler implementation guidance, see [docs/handler-implementation-g
 
 ### Resilience
 
-Crash recovery is **opt-in** via `ResponsesServerOptions(resilient_background=True)`. When opted in, background responses with `store=True` are crash-recoverable: the handler is re-invoked on restart and the recovered context exposes `context.is_recovery == True`. Stream events are persisted incrementally so clients can reconnect and resume from where they left off. Without the opt-in (the default), a crash mid-handler marks the response `failed` instead of re-invoking the handler. For advanced scenarios (metadata checkpointing, multi-turn steering), see the [Resilient Responses Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/resilient-responses-developer-guide.md).
+Crash recovery is **opt-in** via `set_resilient_tasks_enabled(True)` from `azure.ai.agentserver.core.tasks`. Call it before constructing `ResponsesAgentServerHost`; host construction selects the persistent SSE replay backing and validates the response store. When opted in, stored background responses are crash-recoverable: the handler is re-invoked on restart and the recovered context exposes `context.is_recovery == True`. For advanced scenarios (metadata checkpointing, multi-turn steering), see the [Resilient Responses Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/resilient-responses-developer-guide.md).
 
 ## Examples
 
@@ -321,9 +321,9 @@ Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 | [Annotations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_15_annotations.py) | Attach file_path, file_citation, and url_citation annotations |
 | [Structured Outputs](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_16_structured_outputs.py) | Return structured JSON as a `structured_outputs` item |
 | [Resilient Streaming](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_19_resilient_streaming.py) | Framework-checkpoint handler — one item per phase + `stream.checkpoint()`, recovery via `context.persisted_response` |
-| [Resilient Steering](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_20_resilient_steering.py) | `context.is_steered_turn` on the drain re-entry with `resilient_background=True, steerable_conversations=True`; naive re-run recovery |
+| [Resilient Steering](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_20_resilient_steering.py) | `context.is_steered_turn` on the drain re-entry with resilient tasks and `steerable_conversations=True`; naive re-run recovery |
 | [Resilient LangGraph](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_21_resilient_langgraph.py) | Real-time streaming LangGraph agent composing `AsyncSqliteSaver` with framework `stream.checkpoint()` / `context.persisted_response`; graph checkpoint id stored in `internal_metadata` so recovery rewinds to the persisted point (no divergence window) |
-| [Resilient Multi-turn](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_22_resilient_multiturn.py) | Multi-turn conversation with `resilient_background=True, steerable_conversations=False` |
+| [Resilient Multi-turn](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_22_resilient_multiturn.py) | Multi-turn conversation with resilient tasks and `steerable_conversations=False` |
 
 - [Handler implementation guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md) — Detailed reference for building handlers
 

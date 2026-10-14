@@ -45,7 +45,7 @@ async def test_client_cancel_during_recovery_settles_cancelled(
     """A real client cancel arriving during a recovered invocation settles the
     response to ``cancelled`` (client_cancelled cause), not failed/completed."""
     harness = make_harness(
-        resilient_background=True,
+        resilient_tasks_enabled=True,
         # Long handler sleep so the recovered invocation is still running (in
         # its interruptible sleep) when the cancel lands.
         handler_sleep_ms=int(LONG_TIME_SECS * 1000),
