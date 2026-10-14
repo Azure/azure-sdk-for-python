@@ -29,6 +29,7 @@ def _convert_dict_to_camel_case(dictionary: Dict[str, Any]) -> Dict[str, Any]:
     :param dict[str, any] dictionary: The dictionary to convert to camel case.
     :return: The dictionary with keys converted to camel case.
     :rtype: dict[str, any]
+    :raises ValueError: If two keys of a dictionary are converted to the same camel case key.
     """
 
     new_dictionary: Dict[str, Any] = {}
@@ -38,18 +39,27 @@ def _convert_dict_to_camel_case(dictionary: Dict[str, Any]) -> Dict[str, Any]:
         # Convert the key to camel case
         camel_case_key = _to_camel_case(key)
 
-        # If the value is a dictionary, apply algorithm recursively
-        if isinstance(value, dict):
-            new_dictionary[camel_case_key] = _convert_dict_to_camel_case(value)
+        # Reject a key that converts to the same name as a previous key
+        if camel_case_key in new_dictionary:
+            raise ValueError(f"Duplicate key after normalization: {camel_case_key}")
 
-        # If the value is a list, apply algorithm recursively to each element
-        elif isinstance(value, list):
-            new_dictionary[camel_case_key] = [
-                _convert_dict_to_camel_case(elem) if isinstance(elem, dict) else elem for elem in value
-            ]
-
-        # Otherwise, add the key and value to the new dictionary
-        else:
-            new_dictionary[camel_case_key] = value
+        # Convert nested dictionaries, including dictionaries inside lists at any depth
+        new_dictionary[camel_case_key] = _convert_value_to_camel_case(value)
 
     return new_dictionary
+
+
+def _convert_value_to_camel_case(value: Any) -> Any:
+    """Convert dictionary keys to camel case in a value, recursing into lists.
+
+    :param any value: The value to convert.
+    :return: The value with the keys of all nested dictionaries converted to camel case.
+    :rtype: any
+    :raises ValueError: If two keys of a dictionary are converted to the same camel case key.
+    """
+
+    if isinstance(value, dict):
+        return _convert_dict_to_camel_case(value)
+    if isinstance(value, list):
+        return [_convert_value_to_camel_case(elem) for elem in value]
+    return value

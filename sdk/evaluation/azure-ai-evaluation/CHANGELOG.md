@@ -1,14 +1,11 @@
 # Release History
 
-## 1.18.9 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.18.9 (2026-10-12)
 
 ### Bugs Fixed
 
-### Other Changes
+- Hardened multimodal evaluation image handling. The output file name is now derived from a validated allow-list of known image types rather than the raw `data:image/<subtype>;` value, and decoded image bytes are confined to the intended `images/` folder.
+- Added Microsoft-scoped evaluation status and boolean pass/fail attributes to Application Insights result events.
 
 ## 1.18.8 (2026-10-08)
 
