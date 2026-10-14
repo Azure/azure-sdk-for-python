@@ -2,15 +2,9 @@
 
 ## 1.18.10 (Unreleased)
 
-### Features Added
-
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Hardened local Prompty image resolution so only relative files within the Prompty directory are inlined, with opened-file validation to prevent path changes from redirecting reads and without exposing the local directory in fallback logs.
-
-### Other Changes
 
 ## 1.18.9 (2026-10-12)
 

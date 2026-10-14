@@ -4,6 +4,7 @@ import re
 import os
 import json
 import hashlib
+import ssl
 import multiprocessing
 import time
 from datetime import datetime, timedelta
@@ -15,6 +16,7 @@ from enum import Enum
 from pathlib import Path, PurePosixPath
 from typing import Any, Dict, Final, Generator, Mapping, Literal, Optional
 from unittest.mock import patch
+from urllib.request import HTTPRedirectHandler, HTTPSHandler, build_opener
 from zipfile import ZipFile
 import nltk
 import requests
@@ -62,6 +64,11 @@ _NLTK_TEST_PACKAGES = {
 }
 
 
+class _NoNltkRedirects(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
 def _prepare_nltk_test_data(data_dir: Path) -> None:
     for resource, (checksum, unpack) in _NLTK_TEST_PACKAGES.items():
         archive_path = data_dir.joinpath(*resource.split("/"))
@@ -69,13 +76,12 @@ def _prepare_nltk_test_data(data_dir: Path) -> None:
             contents = archive_path.read_bytes()
         else:
             url = f"https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/{resource}"
-            with requests.get(url, timeout=60, allow_redirects=False) as response:
-                response.raise_for_status()
-                if response.status_code != 200:
-                    raise RuntimeError(
-                        f"Unexpected HTTP status {response.status_code} for NLTK test data '{resource}'."
-                    )
-                contents = response.content
+            # Include the Windows system CA store, which contains the CI proxy's trusted root.
+            opener = build_opener(HTTPSHandler(context=ssl.create_default_context()), _NoNltkRedirects())
+            with opener.open(url, timeout=60) as response:
+                if response.status != 200:
+                    raise RuntimeError(f"Unexpected HTTP status {response.status} for NLTK test data '{resource}'.")
+                contents = response.read()
 
         if hashlib.sha256(contents).hexdigest() != checksum:
             raise RuntimeError(f"SHA-256 checksum mismatch for NLTK test data '{resource}'.")
