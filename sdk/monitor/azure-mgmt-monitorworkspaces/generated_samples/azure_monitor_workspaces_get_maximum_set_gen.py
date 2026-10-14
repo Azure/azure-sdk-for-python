@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-10-03/AzureMonitorWorkspaces_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-03-preview/AzureMonitorWorkspaces_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
