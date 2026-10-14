@@ -275,6 +275,45 @@ async def test_failed_async_management_link_open_is_evicted_before_retry(setup_e
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("timeout", [None, 0])
+@pytest.mark.parametrize("cancel_setup", [False, True])
+async def test_unbounded_async_setup_does_not_stall_on_cleanup(timeout, cancel_setup):
+    client = object.__new__(AMQPClientAsync)
+    client._mgmt_links = {}
+    client._mgmt_link_lock_async = asyncio.Lock()
+    client._session = MagicMock()
+    opening = asyncio.Event()
+    setup_error = RuntimeError("attach failed")
+
+    async def open_link():
+        opening.set()
+        if not cancel_setup:
+            raise setup_error
+        await asyncio.Event().wait()
+
+    link = MagicMock(open=AsyncMock(side_effect=open_link), close=AsyncMock(side_effect=asyncio.Event().wait))
+    with patch("azure.servicebus._pyamqp.aio._client_async.ManagementOperation", return_value=link):
+        task = asyncio.create_task(client.open_mgmt_link_async(timeout=timeout))
+        try:
+            await opening.wait()
+            if cancel_setup:
+                task.cancel()
+            done, _ = await asyncio.wait({task}, timeout=2)
+            assert task in done, "Management cleanup must finish without a second cancellation."
+            with pytest.raises(asyncio.CancelledError if cancel_setup else RuntimeError) as caught:
+                await task
+            if not cancel_setup:
+                assert caught.value is setup_error
+            assert client._mgmt_links == {}
+            link.close.assert_awaited_once()
+        finally:
+            if not task.done():
+                task.cancel()
+                with pytest.raises((RuntimeError, asyncio.CancelledError)):
+                    await task
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize("client_type", [ServiceBusClient, AsyncServiceBusClient])
 @pytest.mark.parametrize("subscription", [False, True])
 @pytest.mark.parametrize("operation", ["delete_messages", "purge_messages"])

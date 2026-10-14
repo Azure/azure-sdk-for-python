@@ -36,6 +36,7 @@ from ..constants import (
 from ..error import AMQPError, ErrorCondition, AMQPException, MessageException
 
 _logger = logging.getLogger(__name__)
+_MGMT_LINK_CLEANUP_TIMEOUT = 1.0
 
 
 class AMQPClientAsync(AMQPClientSync):
@@ -426,9 +427,9 @@ class AMQPClientAsync(AMQPClientSync):
                 try:
                     close_result = mgmt_link.close()
                     if inspect.isawaitable(close_result):
-                        remaining = (
-                            max(0, timeout - (time.monotonic() - start_time)) if timeout and timeout > 0 else None
-                        )
+                        remaining = _MGMT_LINK_CLEANUP_TIMEOUT
+                        if timeout and timeout > 0:
+                            remaining = min(remaining, max(0, timeout - (time.monotonic() - start_time)))
                         await asyncio.wait_for(close_result, timeout=remaining)
                 except BaseException:  # pylint: disable=broad-except
                     _logger.warning("Management link cleanup failed; preserving the original error.", exc_info=True)
