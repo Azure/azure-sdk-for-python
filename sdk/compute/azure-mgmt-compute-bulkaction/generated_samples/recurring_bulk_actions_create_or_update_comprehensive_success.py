@@ -15,7 +15,7 @@ from azure.mgmt.compute.bulkaction import ComputeBulkActionsMgmtClient
     pip install azure-identity
     pip install azure-mgmt-compute-bulkaction
 # USAGE
-    python scheduled_actions_enable_basic_success.py
+    python recurring_bulk_actions_create_or_update_comprehensive_success.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,12 +30,34 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.scheduled_actions.begin_enable(
+    response = client.scheduled_actions.begin_create_or_update(
         resource_group_name="example-rg",
-        scheduled_action_name="weekday-start",
+        scheduled_action_name="first-fifteenth-start",
+        resource={
+            "location": "eastus",
+            "properties": {
+                "actionType": "Start",
+                "disabled": False,
+                "endTime": "2027-09-01T19:00:00-07:00",
+                "notificationSettings": [
+                    {"destination": "admin@contoso.com", "disabled": True, "language": "en-us", "type": "Email"}
+                ],
+                "resourceType": "VirtualMachine",
+                "schedule": {
+                    "requestedDaysOfTheMonth": [1, 15],
+                    "requestedMonths": ["All"],
+                    "requestedWeekDays": ["All"],
+                    "scheduledTime": "19:00:00",
+                    "timeZone": "America/Los_Angeles",
+                },
+                "startTime": "2026-09-01T19:00:00-07:00",
+            },
+            "tags": {"environment": "production"},
+        },
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-10-06-preview/ScheduledActions_Enable_BasicSuccess.json
+# x-ms-original-file: 2026-10-06-preview/RecurringBulkActions_CreateOrUpdate_ComprehensiveSuccess.json
 if __name__ == "__main__":
     main()
