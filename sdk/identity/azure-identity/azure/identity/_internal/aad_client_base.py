@@ -4,6 +4,7 @@
 # ------------------------------------
 import abc
 import base64
+import hashlib
 import json
 import logging
 import time
@@ -97,7 +98,11 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
         return cast(TokenCache, self._cae_cache if is_cae else self._cache)
 
     def get_cached_access_token(
-        self, scopes: Iterable[str], home_account_id: Optional[str] = None, **kwargs: Any
+        self,
+        scopes: Iterable[str],
+        home_account_id: Optional[str] = None,
+        user_assertion_hash: Optional[str] = None,
+        **kwargs: Any,
     ) -> Optional[AccessTokenInfo]:
         # Do not return a cached token if claims are provided.
         if kwargs.get("claims"):
@@ -112,6 +117,9 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
             # accounts (e.g. a persistent cache shared by several `AuthorizationCodeCredential` instances) can't
             # satisfy this request with another account's token.
             query["home_account_id"] = home_account_id
+        if user_assertion_hash:
+            # Constrain the search to tokens obtained by exchanging this user assertion (on-behalf-of flow)
+            query["user_assertion_hash"] = user_assertion_hash
 
         cache = self._get_cache(**kwargs)
         now = int(time.time())
@@ -139,7 +147,11 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
         return None
 
     def get_cached_refresh_tokens(
-        self, scopes: Iterable[str], home_account_id: Optional[str] = None, **kwargs
+        self,
+        scopes: Iterable[str],
+        home_account_id: Optional[str] = None,
+        user_assertion_hash: Optional[str] = None,
+        **kwargs,
     ) -> List[Dict]:
         cache = self._get_cache(**kwargs)
         query: Dict[str, Any] = {"client_id": self._client_id}
@@ -148,6 +160,9 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
             # accounts (e.g. a persistent cache shared by several `AuthorizationCodeCredential` instances) can't
             # satisfy this request with another account's refresh token.
             query["home_account_id"] = home_account_id
+        if user_assertion_hash:
+            # Constrain the search to refresh tokens obtained by exchanging this user assertion (on-behalf-of flow)
+            query["user_assertion_hash"] = user_assertion_hash
         return list(cache.search(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes), query=query))
 
     @abc.abstractmethod
@@ -178,7 +193,13 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
     def _build_pipeline(self, **kwargs):
         pass
 
-    def _process_response(self, response: PipelineResponse, request_time: int, **kwargs) -> AccessTokenInfo:
+    def _process_response(
+        self,
+        response: PipelineResponse,
+        request_time: int,
+        user_assertion_hash: Optional[str] = None,
+        **kwargs,
+    ) -> AccessTokenInfo:
         content = response.context.get(
             ContentDecodePolicy.CONTEXT_NAME
         ) or ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
@@ -242,6 +263,8 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
         if home_account_id:
             self.last_home_account_id = home_account_id
 
+        refresh_token = content.get("refresh_token")
+
         # caching is the final step because 'add' mutates 'content'
         cache.add(
             event={
@@ -253,7 +276,26 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
             now=request_time,
         )
 
+        if user_assertion_hash:
+            # Bind the new tokens to the user assertion they were obtained with (on-behalf-of flow), so another
+            # credential instance holding the same assertion can use them, but one holding a different assertion
+            # can't. (A refresh token updated in place above keeps the binding it already had.)
+            self._bind_to_user_assertion(
+                cache, TokenCache.CredentialType.ACCESS_TOKEN, token.token, user_assertion_hash
+            )
+            if refresh_token:
+                self._bind_to_user_assertion(
+                    cache, TokenCache.CredentialType.REFRESH_TOKEN, refresh_token, user_assertion_hash
+                )
+
         return token
+
+    def _bind_to_user_assertion(
+        self, cache: TokenCache, credential_type: str, secret: str, user_assertion_hash: str
+    ) -> None:
+        entries = list(cache.search(credential_type, query={"client_id": self._client_id, "secret": secret}))
+        for entry in entries:
+            cache.modify(credential_type, entry, {"user_assertion_hash": user_assertion_hash})
 
     def _get_auth_code_request(
         self, scopes: Iterable[str], code: str, redirect_uri: str, client_secret: Optional[str] = None, **kwargs: Any
@@ -496,6 +538,18 @@ def _get_home_account_id(content: Dict) -> Optional[str]:
             pass
 
     return None
+
+
+def _hash_user_assertion(user_assertion: str) -> str:
+    """Hash a user assertion for binding cached on-behalf-of tokens to it, as MSAL .NET does.
+
+    :param str user_assertion: the user assertion
+    :return: the base64url-encoded SHA-256 hash of the assertion, without padding
+    :rtype: str
+    """
+
+    digest = hashlib.sha256(user_assertion.encode("utf-8")).digest()
+    return base64.urlsafe_b64encode(digest).decode("utf-8").rstrip("=")
 
 
 def _merge_claims_challenge_and_capabilities(capabilities, claims_challenge):

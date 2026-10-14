@@ -92,6 +92,9 @@ class AadClient(AadClientBase):
         kwargs.pop("claims", None)
         kwargs.pop("client_secret", None)
         enable_cae = kwargs.pop("enable_cae", False)
+        user_assertion_hash = kwargs.pop("user_assertion_hash", None)
         now = int(time.time())
         response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
-        return self._process_response(response, now, enable_cae=enable_cae, **kwargs)
+        return self._process_response(
+            response, now, user_assertion_hash=user_assertion_hash, enable_cae=enable_cae, **kwargs
+        )

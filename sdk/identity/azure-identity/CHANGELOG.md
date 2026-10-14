@@ -1,5 +1,11 @@
 # Release History
 
+## 1.26.1 (Unreleased)
+
+### Bugs Fixed
+
+- Fixed a regression in 1.26.0 where the asynchronous `OnBehalfOfCredential` never used tokens cached by another credential instance, even one holding the same user assertion, so every new instance made a network request (including with `TokenCachePersistenceOptions`). Cached on-behalf-of tokens are now bound to the user assertion they were obtained with, and credentials only use tokens bound to their own assertion. ([#49532](https://github.com/Azure/azure-sdk-for-python/issues/49532))
+
 ## 1.26.0 (2026-09-30)
 
 ### Features Added

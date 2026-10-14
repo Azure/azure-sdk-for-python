@@ -403,6 +403,84 @@ async def test_no_cross_user_refresh_token_from_shared_cache(get_token_method):
     assert credential_b._client.last_home_account_id == "b.utid"
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_same_assertion_token_from_shared_cache(get_token_method):
+    """A new credential with the same user assertion should use the token a previous credential cached for it.
+
+    Web APIs commonly create a credential per request, sharing a cache between them (e.g. a persistent cache).
+    """
+    shared_cache = msal.TokenCache()
+    exchanges = []
+
+    async def send(request, **kwargs):
+        exchanges.append(request.body["assertion"])
+        return mock_response(json_payload=build_aad_response(access_token="ACCESS-TOKEN-A", uid="a", utid="utid"))
+
+    def make_credential(user_assertion):
+        return OnBehalfOfCredential(
+            "tenant-id",
+            "client-id",
+            client_secret="secret",
+            user_assertion=user_assertion,
+            transport=Mock(send=send),
+            cache=shared_cache,
+        )
+
+    token = await getattr(make_credential("assertion-a"), get_token_method)("scope")
+    assert token.token == "ACCESS-TOKEN-A"
+
+    token = await getattr(make_credential("assertion-a"), get_token_method)("scope")
+    assert token.token == "ACCESS-TOKEN-A"
+    assert exchanges == ["assertion-a"], "credential didn't use the token cached for its user assertion"
+
+    # a different assertion for the same account must be exchanged rather than served from the cache
+    token = await getattr(make_credential("assertion-a2"), get_token_method)("scope")
+    assert exchanges == ["assertion-a", "assertion-a2"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_same_assertion_refresh_token_from_shared_cache(get_token_method):
+    """A new credential with the same user assertion should redeem the refresh token cached for it."""
+    shared_cache = msal.TokenCache()
+    requests = []
+
+    async def send(request, **kwargs):
+        refresh_token = request.body.get("refresh_token")
+        requests.append(refresh_token)
+        if refresh_token is None:
+            return mock_response(
+                json_payload=build_aad_response(
+                    access_token="ACCESS-TOKEN", refresh_token="REFRESH-TOKEN", expires_in=0, uid="a", utid="utid"
+                )
+            )
+        assert refresh_token == "REFRESH-TOKEN"
+        return mock_response(json_payload=build_aad_response(access_token="REFRESHED-ACCESS-TOKEN"))
+
+    def make_credential():
+        return OnBehalfOfCredential(
+            "tenant-id",
+            "client-id",
+            client_secret="secret",
+            user_assertion="assertion",
+            transport=Mock(send=send),
+            cache=shared_cache,
+        )
+
+    token = await getattr(make_credential(), get_token_method)("scope")
+    assert token.token == "ACCESS-TOKEN"
+
+    token = await getattr(make_credential(), get_token_method)("scope")
+    assert token.token == "REFRESHED-ACCESS-TOKEN"
+    assert requests == [None, "REFRESH-TOKEN"]
+
+    # the refreshed access token is still bound to the assertion, so a third credential gets it from the cache
+    token = await getattr(make_credential(), get_token_method)("scope")
+    assert token.token == "REFRESHED-ACCESS-TOKEN"
+    assert requests == [None, "REFRESH-TOKEN"]
+
+
 def test_tenant_id_validation():
     """The credential should raise ValueError when given an invalid tenant_id"""
     valid_ids = {"c878a2ab-8ef4-413b-83a0-199afb84d7fb", "contoso.onmicrosoft.com", "organizations", "common"}

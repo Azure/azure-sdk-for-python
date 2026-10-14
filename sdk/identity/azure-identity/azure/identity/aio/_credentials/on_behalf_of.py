@@ -11,6 +11,7 @@ from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 from ..._credentials.certificate import get_client_credential
 from ..._internal import AadClientCertificate, validate_tenant_id
+from ..._internal.aad_client_base import _hash_user_assertion
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -77,6 +78,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         self._assertion = user_assertion
         if not self._assertion:
             raise TypeError('"user_assertion" must not be empty.')
+        self._assertion_hash = _hash_user_assertion(self._assertion)
 
         if client_assertion_func:
             if client_certificate or client_secret:
@@ -113,34 +115,33 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         await self._client.close()
 
     async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
-        if not self._client.token_exchanged or not self._client.last_home_account_id:
-            # Either this credential hasn't yet exchanged its assertion, so its account isn't established, or it
-            # did but the STS response didn't let us determine the resulting account's identity. In both cases, a
-            # cache shared with other accounts must not satisfy this credential's token request because doing so
-            # risks returning another account's token.
-            return None
-        return self._client.get_cached_access_token(scopes, home_account_id=self._client.last_home_account_id, **kwargs)
+        # Only use cached tokens obtained by exchanging this credential's user assertion. Tokens obtained with another
+        # assertion may belong to another account, but tokens obtained with this one can be shared by every credential
+        # holding it, e.g. a credential created for each request in a web API using a persistent cache.
+        return self._client.get_cached_access_token(scopes, user_assertion_hash=self._assertion_hash, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
-        if self._client.token_exchanged and self._client.last_home_account_id:
-            # Note we assume the cache has tokens for one user only. That's okay because each instance of this class
-            # is locked to a single user (assertion). This assumption will become unsafe if this class allows
-            # applications to change an instance's assertion.
-            refresh_tokens = self._client.get_cached_refresh_tokens(
-                scopes, home_account_id=self._client.last_home_account_id, **kwargs
-            )
-            if len(refresh_tokens) == 1:  # there should be only one
-                try:
-                    refresh_token = refresh_tokens[0]["secret"]
-                    return await self._client.obtain_token_by_refresh_token_on_behalf_of(
-                        scopes, self._client_credential, refresh_token, **kwargs
-                    )
-                except ClientAuthenticationError as ex:
-                    _LOGGER.debug("silent authentication failed: %s", ex, exc_info=True)
-                except (IndexError, KeyError, TypeError) as ex:
-                    # this is purely defensive, hasn't been observed in practice
-                    _LOGGER.debug("silent authentication failed due to malformed refresh token: %s", ex, exc_info=True)
+        refresh_tokens = self._client.get_cached_refresh_tokens(
+            scopes, user_assertion_hash=self._assertion_hash, **kwargs
+        )
+        if len(refresh_tokens) == 1:  # there should be only one
+            try:
+                refresh_token = refresh_tokens[0]["secret"]
+                return await self._client.obtain_token_by_refresh_token_on_behalf_of(
+                    scopes,
+                    self._client_credential,
+                    refresh_token,
+                    user_assertion_hash=self._assertion_hash,
+                    **kwargs,
+                )
+            except ClientAuthenticationError as ex:
+                _LOGGER.debug("silent authentication failed: %s", ex, exc_info=True)
+            except (IndexError, KeyError, TypeError) as ex:
+                # this is purely defensive, hasn't been observed in practice
+                _LOGGER.debug("silent authentication failed due to malformed refresh token: %s", ex, exc_info=True)
 
-        # we don't have a refresh token bound to this credential's account, or silent auth failed:
+        # we don't have a refresh token bound to this credential's user assertion, or silent auth failed:
         # acquire a new token from the assertion
-        return await self._client.obtain_token_on_behalf_of(scopes, self._client_credential, self._assertion, **kwargs)
+        return await self._client.obtain_token_on_behalf_of(
+            scopes, self._client_credential, self._assertion, user_assertion_hash=self._assertion_hash, **kwargs
+        )
