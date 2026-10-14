@@ -5226,21 +5226,21 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.AzureAIAgentTargetParam(TypedDict, total=False):
+        key "name": Required[str]
         key "tool_descriptions": List[ToolDescriptionParam]
+        key "type": Required[Literal["azure_ai_agent"]]
         key "version": str
-        name: Required[str]
-        type: Required[Literal["azure_ai_agent"]]
 
 
     class azure.ai.projects.models.AzureAIBenchmarkPreviewEvalRunDataSource(TypedDict, total=False):
         key "input_messages": InputMessagesItemReference
-        target: Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
-        type: Required[Literal["azure_ai_benchmark_preview"]]
+        key "target": Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
+        key "type": Required[Literal["azure_ai_benchmark_preview"]]
 
 
     class azure.ai.projects.models.AzureAIDataSourceConfig(TypedDict, total=False):
-        scenario: Required[str]
-        type: Required[Literal["azure_ai_source"]]
+        key "scenario": Required[str]
+        key "type": Required[Literal["azure_ai_source"]]
 
 
     class azure.ai.projects.models.AzureAIModelTarget(EvaluationTarget, discriminator='azure_ai_model'):
@@ -5263,14 +5263,14 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.AzureAIModelTargetParam(TypedDict, total=False):
         key "model": str
         key "sampling_params": ModelSamplingConfigParam
-        type: Required[Literal["azure_ai_model"]]
+        key "type": Required[Literal["azure_ai_model"]]
 
 
     class azure.ai.projects.models.AzureAIResponsesEvalRunDataSource(TypedDict, total=False):
         key "event_configuration_id": str
+        key "item_generation_params": Required[ResponseRetrievalItemGenerationParams]
         key "max_runs_hourly": int
-        item_generation_params: Required[ResponseRetrievalItemGenerationParams]
-        type: Required[Literal["azure_ai_responses"]]
+        key "type": Required[Literal["azure_ai_responses"]]
 
 
     class azure.ai.projects.models.AzureAISearchIndex(Index, discriminator='AzureSearch'):
@@ -7032,13 +7032,13 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.EvalCsvFileIdSource(TypedDict, total=False):
-        id: Required[str]
-        type: Required[Literal["file_id"]]
+        key "id": Required[str]
+        key "type": Required[Literal["file_id"]]
 
 
     class azure.ai.projects.models.EvalCsvRunDataSource(TypedDict, total=False):
-        source: Required[EvalCsvFileIdSource]
-        type: Required[Literal["csv"]]
+        key "source": Required[EvalCsvFileIdSource]
+        key "type": Required[Literal["csv"]]
 
 
     class azure.ai.projects.models.EvalResult(_Model):
@@ -12284,9 +12284,9 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.RedTeamEvalRunDataSource(TypedDict, total=False):
-        item_generation_params: Required[Any]
-        target: Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
-        type: Required[Literal["azure_ai_red_team"]]
+        key "item_generation_params": Required[Any]
+        key "target": Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
+        key "type": Required[Literal["azure_ai_red_team"]]
 
 
     class azure.ai.projects.models.RedTeamTargetConfig(_Model):
@@ -12389,10 +12389,10 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.ResponseRetrievalItemGenerationParams(TypedDict, total=False):
+        key "data_mapping": Required[Dict[str, str]]
         key "max_num_turns": int
-        data_mapping: Required[Dict[str, str]]
-        source: Required[Union[SourceFileContent, SourceFileID]]
-        type: Required[Literal["response_retrieval"]]
+        key "source": Required[Union[SourceFileContent, SourceFileID]]
+        key "type": Required[Literal["response_retrieval"]]
 
 
     class azure.ai.projects.models.ResponseUsageInputTokensDetails(_Model):
@@ -13249,10 +13249,10 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.TargetCompletionEvalRunDataSource(TypedDict, total=False):
-        input_messages: Required[InputMessagesItemReference]
-        source: Required[Union[SourceFileContent, SourceFileID]]
-        target: Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
-        type: Required[Literal["azure_ai_target_completions"]]
+        key "input_messages": Required[InputMessagesItemReference]
+        key "source": Required[Union[SourceFileContent, SourceFileID]]
+        key "target": Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
+        key "type": Required[Literal["azure_ai_target_completions"]]
 
 
     class azure.ai.projects.models.TaxonomyCategory(_Model):
@@ -14063,11 +14063,11 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.TestingCriterionAzureAIEvaluator(TypedDict, total=False):
         key "data_mapping": Dict[str, str]
+        key "evaluator_name": Required[str]
         key "evaluator_version": str
         key "initialization_parameters": Dict[str, Any]
-        evaluator_name: Required[str]
-        name: Required[str]
-        type: Required[Literal["azure_ai_evaluator"]]
+        key "name": Required[str]
+        key "type": Required[Literal["azure_ai_evaluator"]]
 
 
     class azure.ai.projects.models.TextResponseFormat(_Model):
@@ -14817,7 +14817,7 @@ namespace azure.ai.projects.models
         key "lookback_hours": int
         key "max_traces": int
         key "trace_ids": List[str]
-        type: Required[Literal["azure_ai_traces_preview"]]
+        key "type": Required[Literal["azure_ai_traces_preview"]]
 
 
     class azure.ai.projects.models.TranscriptTextUsageDuration(CreateTranscriptionResponseJsonUsage, discriminator='duration'):

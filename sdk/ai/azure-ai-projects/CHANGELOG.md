@@ -13,6 +13,7 @@
 * Updated Voice Agent samples to use `FOUNDRY_VOICE_AGENT_MODEL` for model configuration, retaining `FOUNDRY_VOICE_MODEL` as a deprecated fallback in `sample_voice_agent_with_tools.py`.
 * Renamed Voice Agent realtime samples from `sample_voice_agent_live_*` to `sample_voice_agent_realtime_*`, updating usage instructions and cross-references.
 * Updated `sample_multiturn_trace_evaluation_agent_filter.py` to use the supported agent-name/version filter, remove unsupported command-line filtering options, and configure trace lookback and maximum trace count through `TRACE_LOOKBACK_HOURS` and `TRACE_MAX_TRACES`.
+* Updated `sample_agent_browser_automation.py` to handle the GA `remote_function_call` browser action items, print complete agent messages instead of per-token deltas, and demonstrate reading the title and description of example.com.
 
 ## 2.8.0 (2026-10-02)
 

@@ -485,6 +485,22 @@ class TestAzureTraceExporter(unittest.TestCase):
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "www.example.com")
 
+        # Stable semconv, server.port absent (e.g. default-port URL)
+        span._attributes = {
+            "http.request.method": "GET",
+            "server.address": "www.example.com",
+            "url.scheme": "https",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.target, "www.example.com")
+
+        span._attributes = {
+            "http.request.method": "GET",
+            "server.address": "www.example.com",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertEqual(envelope.data.base_data.target, "www.example.com")
+
         span._attributes = {
             "http.request.method": "GET",
             "gen_ai.system": "az.ai.inference",
