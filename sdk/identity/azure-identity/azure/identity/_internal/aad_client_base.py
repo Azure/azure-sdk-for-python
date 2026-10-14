@@ -164,7 +164,7 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
             query["home_account_id"] = home_account_id
         if user_assertion_hash:
             # Constrain the search to refresh tokens obtained by exchanging this user assertion (on-behalf-of flow)
-            query["user_assertion_hash"] = user_assertion_hash
+            query["ext_cache_key"] = user_assertion_hash
         return list(cache.search(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes), query=query))
 
     @abc.abstractmethod
@@ -282,34 +282,26 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
             # Bind the new tokens to the user assertion they were obtained with (on-behalf-of flow), so another
             # credential instance holding the same assertion can use them, but one holding a different assertion
             # can't. (A refresh token updated in place above keeps the binding it already had.)
-            self._bind_access_token_to_user_assertion(cache, token.token, user_assertion_hash)
+            self._bind_to_user_assertion(
+                cache, TokenCache.CredentialType.ACCESS_TOKEN, token.token, user_assertion_hash
+            )
             if refresh_token:
-                self._bind_refresh_token_to_user_assertion(cache, refresh_token, user_assertion_hash)
+                self._bind_to_user_assertion(
+                    cache, TokenCache.CredentialType.REFRESH_TOKEN, refresh_token, user_assertion_hash
+                )
 
         return token
 
-    def _bind_access_token_to_user_assertion(
-        self, cache: TokenCache, access_token: str, user_assertion_hash: str
+    def _bind_to_user_assertion(
+        self, cache: TokenCache, credential_type: str, secret: str, user_assertion_hash: str
     ) -> None:
-        # Move the entry 'add' created to one keyed by the assertion hash ("ext_cache_key" is part of MSAL's access
-        # token key), so access tokens obtained with different assertions for the same account and scopes don't
-        # overwrite each other.
-        credential_type = TokenCache.CredentialType.ACCESS_TOKEN
-        query = {"client_id": self._client_id, "secret": access_token}
-        for entry in list(cache.search(credential_type, query=query)):
+        # Store the entry 'add' created again with the assertion hash as its "ext_cache_key". That's part of MSAL's
+        # access token key, so access tokens obtained with different assertions for the same account and scopes don't
+        # overwrite each other. MSAL's refresh token key ignores it, so for refresh tokens it's only a tag.
+        for entry in list(cache.search(credential_type, query={"client_id": self._client_id, "secret": secret})):
             cache.modify(credential_type, entry)  # remove
             bound_entry = dict(entry, ext_cache_key=user_assertion_hash)
             cache.modify(credential_type, bound_entry, bound_entry)
-
-    def _bind_refresh_token_to_user_assertion(
-        self, cache: TokenCache, refresh_token: str, user_assertion_hash: str
-    ) -> None:
-        # MSAL's refresh token key has no equivalent of "ext_cache_key", so an account has one refresh token per
-        # client and scopes. It's bound to the assertion that most recently obtained it.
-        credential_type = TokenCache.CredentialType.REFRESH_TOKEN
-        query = {"client_id": self._client_id, "secret": refresh_token}
-        for entry in list(cache.search(credential_type, query=query)):
-            cache.modify(credential_type, entry, {"user_assertion_hash": user_assertion_hash})
 
     def _get_auth_code_request(
         self, scopes: Iterable[str], code: str, redirect_uri: str, client_secret: Optional[str] = None, **kwargs: Any
