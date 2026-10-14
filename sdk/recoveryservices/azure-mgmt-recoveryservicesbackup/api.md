@@ -1979,7 +1979,7 @@ namespace azure.mgmt.recoveryservicesbackup.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
+            ) -> AsyncLROPoller[RPExtendedInfoResourceList]: ...
 
         @overload
         async def begin_get_rp_extended_info(
@@ -1991,7 +1991,7 @@ namespace azure.mgmt.recoveryservicesbackup.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
+            ) -> AsyncLROPoller[RPExtendedInfoResourceList]: ...
 
         @overload
         async def begin_get_rp_extended_info(
@@ -2003,17 +2003,7 @@ namespace azure.mgmt.recoveryservicesbackup.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @distributed_trace_async
-        async def begin_get_rp_extended_info_operation_result(
-                self, 
-                resource_group_name: str, 
-                vault_name: str, 
-                fabric_name: str, 
-                operation_id: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
+            ) -> AsyncLROPoller[RPExtendedInfoResourceList]: ...
 
         @distributed_trace_async
         async def get(
@@ -2026,6 +2016,16 @@ namespace azure.mgmt.recoveryservicesbackup.aio.operations
                 recovery_point_id: str, 
                 **kwargs: Any
             ) -> RecoveryPointResource: ...
+
+        @distributed_trace_async
+        async def get_rp_extended_info_operation_result(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                fabric_name: str, 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> Optional[RPExtendedInfoResourceList]: ...
 
         @distributed_trace
         def list(
@@ -4731,7 +4731,7 @@ namespace azure.mgmt.recoveryservicesbackup.models
     class azure.mgmt.recoveryservicesbackup.models.AzureVmWorkloadSQLInstanceProtectedItem(AzureVmWorkloadProtectedItem, discriminator='AzureVmWorkloadSQLInstance'):
         backup_management_type: Union[str, BackupManagementType]
         backup_set_name: str
-        child_db_names: Optional[list[str]]
+        child_database_name_list: Optional[list[str]]
         container_name: str
         create_mode: Union[str, CreateMode]
         deferred_delete_time_in_utc: datetime
@@ -4772,7 +4772,7 @@ namespace azure.mgmt.recoveryservicesbackup.models
                 self, 
                 *, 
                 backup_set_name: Optional[str] = ..., 
-                child_db_names: Optional[list[str]] = ..., 
+                child_database_name_list: Optional[list[str]] = ..., 
                 container_name: Optional[str] = ..., 
                 create_mode: Optional[Union[str, CreateMode]] = ..., 
                 deferred_delete_time_in_utc: Optional[datetime] = ..., 
@@ -5793,6 +5793,7 @@ namespace azure.mgmt.recoveryservicesbackup.models
         SHAREPOINT = "Sharepoint"
         SQLDB = "SQLDB"
         SQL_DATA_BASE = "SQLDataBase"
+        SQL_INSTANCE = "SQLInstance"
         SYSTEM_STATE = "SystemState"
         VM = "VM"
         V_MWARE_VM = "VMwareVM"
@@ -6487,6 +6488,7 @@ namespace azure.mgmt.recoveryservicesbackup.models
         SHAREPOINT = "Sharepoint"
         SQLDB = "SQLDB"
         SQL_DATA_BASE = "SQLDataBase"
+        SQL_INSTANCE = "SQLInstance"
         SYSTEM_STATE = "SystemState"
         VM = "VM"
         V_MWARE_VM = "VMwareVM"
@@ -7478,6 +7480,23 @@ namespace azure.mgmt.recoveryservicesbackup.models
                 recovery_point_id: Optional[str] = ..., 
                 renew_existing_registration: Optional[bool] = ..., 
                 virtual_machine_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.recoveryservicesbackup.models.IaasVMRPExtendedInfo(RPExtendedInfo, discriminator='IaasVMRPExtendedInfo'):
+        data_disks: Optional[list[DiskInformation]]
+        object_type: Literal["IaasVMRPExtendedInfo"]
+        os_disk: Optional[DiskInformation]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                data_disks: Optional[list[DiskInformation]] = ..., 
+                os_disk: Optional[DiskInformation] = ...
             ) -> None: ...
 
         @overload
@@ -9136,6 +9155,60 @@ namespace azure.mgmt.recoveryservicesbackup.models
         type: str
 
 
+    class azure.mgmt.recoveryservicesbackup.models.RPExtendedInfo(_Model):
+        object_type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                object_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.recoveryservicesbackup.models.RPExtendedInfoResource(Resource):
+        e_tag: Optional[str]
+        id: str
+        location: Optional[str]
+        name: str
+        properties: Optional[RPExtendedInfo]
+        system_data: SystemData
+        tags: Optional[dict[str, str]]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                e_tag: Optional[str] = ..., 
+                location: Optional[str] = ..., 
+                properties: Optional[RPExtendedInfo] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.recoveryservicesbackup.models.RPExtendedInfoResourceList(ResourceList):
+        next_link: str
+        value: Optional[list[RPExtendedInfoResource]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                next_link: Optional[str] = ..., 
+                value: Optional[list[RPExtendedInfoResource]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.recoveryservicesbackup.models.RecoveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         FILE_RECOVERY = "FileRecovery"
         INVALID = "Invalid"
@@ -10617,6 +10690,7 @@ namespace azure.mgmt.recoveryservicesbackup.models
         SHAREPOINT = "Sharepoint"
         SQLDB = "SQLDB"
         SQL_DATA_BASE = "SQLDataBase"
+        SQL_INSTANCE = "SQLInstance"
         SYSTEM_STATE = "SystemState"
         VM = "VM"
         V_MWARE_VM = "VMwareVM"
@@ -12230,7 +12304,7 @@ namespace azure.mgmt.recoveryservicesbackup.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> LROPoller[None]: ...
+            ) -> LROPoller[RPExtendedInfoResourceList]: ...
 
         @overload
         def begin_get_rp_extended_info(
@@ -12242,7 +12316,7 @@ namespace azure.mgmt.recoveryservicesbackup.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> LROPoller[None]: ...
+            ) -> LROPoller[RPExtendedInfoResourceList]: ...
 
         @overload
         def begin_get_rp_extended_info(
@@ -12254,17 +12328,7 @@ namespace azure.mgmt.recoveryservicesbackup.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @distributed_trace
-        def begin_get_rp_extended_info_operation_result(
-                self, 
-                resource_group_name: str, 
-                vault_name: str, 
-                fabric_name: str, 
-                operation_id: str, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
+            ) -> LROPoller[RPExtendedInfoResourceList]: ...
 
         @distributed_trace
         def get(
@@ -12277,6 +12341,16 @@ namespace azure.mgmt.recoveryservicesbackup.operations
                 recovery_point_id: str, 
                 **kwargs: Any
             ) -> RecoveryPointResource: ...
+
+        @distributed_trace
+        def get_rp_extended_info_operation_result(
+                self, 
+                resource_group_name: str, 
+                vault_name: str, 
+                fabric_name: str, 
+                operation_id: str, 
+                **kwargs: Any
+            ) -> Optional[RPExtendedInfoResourceList]: ...
 
         @distributed_trace
         def list(
@@ -13617,7 +13691,7 @@ namespace azure.mgmt.recoveryservicesbackup.types
         key "workloadType": Union[str, DataSourceType]
         backupManagementType: Union[str, BackupManagementType]
         backupSetName: str
-        childDBNames: list[str]
+        childDatabaseNameList: list[str]
         containerName: str
         createMode: Union[str, CreateMode]
         deferredDeleteTimeInUTC: str

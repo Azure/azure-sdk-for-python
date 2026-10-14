@@ -852,7 +852,7 @@ class ProtectedItem(_Model):  # pylint: disable=docstring-keyword-should-match-k
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :ivar container_name: Unique name of container.
     :vartype container_name: str
@@ -913,7 +913,7 @@ class ProtectedItem(_Model):  # pylint: disable=docstring-keyword-should-match-k
     """Type of workload this item represents. Known values are: \"Invalid\", \"VM\", \"FileFolder\",
      \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\", \"SystemState\",
      \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\", \"SAPHanaDatabase\",
-     \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     container_name: Optional[str] = rest_field(
         name="containerName", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1029,7 +1029,7 @@ class AzureFileshareProtectedItem(
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :ivar container_name: Unique name of container.
     :vartype container_name: str
@@ -1289,7 +1289,7 @@ class AzureFileShareProtectionPolicy(
     :ivar work_load_type: Type of workload for the backup management. Known values are: "Invalid",
      "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype work_load_type: str or ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     :ivar schedule_policy: Backup schedule specified as part of backup policy.
     :vartype schedule_policy: ~azure.mgmt.recoveryservicesbackup.models.SchedulePolicy
@@ -1312,7 +1312,7 @@ class AzureFileShareProtectionPolicy(
     """Type of workload for the backup management. Known values are: \"Invalid\", \"VM\",
      \"FileFolder\", \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\",
      \"SystemState\", \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\",
-     \"SAPHanaDatabase\", \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPHanaDatabase\", \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     schedule_policy: Optional["_models.SchedulePolicy"] = rest_field(
         name="schedulePolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2017,7 +2017,7 @@ class AzureIaaSVMProtectedItem(
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :ivar container_name: Unique name of container.
     :vartype container_name: str
@@ -2211,7 +2211,7 @@ class AzureIaaSClassicComputeVMProtectedItem(
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :ivar container_name: Unique name of container.
     :vartype container_name: str
@@ -2480,7 +2480,7 @@ class AzureIaaSComputeVMProtectedItem(
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :ivar container_name: Unique name of container.
     :vartype container_name: str
@@ -3528,7 +3528,7 @@ class AzureWorkloadContainer(
     :ivar workload_type: Workload type for which registration was sent. Known values are:
      "Invalid", "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM",
      "SystemState", "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare",
-     "SAPHanaDatabase", "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPHanaDatabase", "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     :ivar operation_type: Re-Do Operation. Known values are: "Invalid", "Register", "Reregister",
      and "Rehydrate".
@@ -3560,7 +3560,7 @@ class AzureWorkloadContainer(
     """Workload type for which registration was sent. Known values are: \"Invalid\", \"VM\",
      \"FileFolder\", \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\",
      \"SystemState\", \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\",
-     \"SAPHanaDatabase\", \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPHanaDatabase\", \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     operation_type: Optional[Union[str, "_models.OperationType"]] = rest_field(
         name="operationType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3627,7 +3627,7 @@ class AzureSQLAGWorkloadContainerProtectionContainer(
     :ivar workload_type: Workload type for which registration was sent. Known values are:
      "Invalid", "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM",
      "SystemState", "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare",
-     "SAPHanaDatabase", "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPHanaDatabase", "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     :ivar operation_type: Re-Do Operation. Known values are: "Invalid", "Register", "Reregister",
      and "Rehydrate".
@@ -3748,7 +3748,7 @@ class AzureSqlProtectedItem(
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :ivar container_name: Unique name of container.
     :vartype container_name: str
@@ -4522,7 +4522,7 @@ class AzureVMAppContainerProtectionContainer(
     :ivar workload_type: Workload type for which registration was sent. Known values are:
      "Invalid", "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM",
      "SystemState", "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare",
-     "SAPHanaDatabase", "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPHanaDatabase", "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     :ivar operation_type: Re-Do Operation. Known values are: "Invalid", "Register", "Reregister",
      and "Rehydrate".
@@ -4925,7 +4925,7 @@ class AzureVmWorkloadProtectedItem(
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :ivar container_name: Unique name of container.
     :vartype container_name: str
@@ -5210,7 +5210,7 @@ class AzureVmWorkloadProtectionPolicy(
     :ivar work_load_type: Type of workload for the backup management. Known values are: "Invalid",
      "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype work_load_type: str or ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     :ivar vm_workload_policy_type: Type of the protection policy. Known values are: "Invalid",
      "SnapshotV1", "SnapshotV2", and "Streaming".
@@ -5235,7 +5235,7 @@ class AzureVmWorkloadProtectionPolicy(
     """Type of workload for the backup management. Known values are: \"Invalid\", \"VM\",
      \"FileFolder\", \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\",
      \"SystemState\", \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\",
-     \"SAPHanaDatabase\", \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPHanaDatabase\", \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     vm_workload_policy_type: Optional[Union[str, "_models.VMWorkloadPolicyType"]] = rest_field(
         name="vmWorkloadPolicyType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5366,7 +5366,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :ivar container_name: Unique name of container.
     :vartype container_name: str
@@ -5778,7 +5778,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :ivar container_name: Unique name of container.
     :vartype container_name: str
@@ -6060,7 +6060,7 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :ivar container_name: Unique name of container.
     :vartype container_name: str
@@ -6566,7 +6566,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :ivar container_name: Unique name of container.
     :vartype container_name: str
@@ -6864,7 +6864,7 @@ class AzureVmWorkloadSQLInstanceProtectedItem(
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :ivar container_name: Unique name of container.
     :vartype container_name: str
@@ -6949,8 +6949,8 @@ class AzureVmWorkloadSQLInstanceProtectedItem(
      specific types in the polymorphic chain of types. Required. Default value is
      "AzureVmWorkloadSQLInstance".
     :vartype protected_item_type: str
-    :ivar child_db_names: Name of Child Dbs protected under this parent.
-    :vartype child_db_names: list[str]
+    :ivar child_database_name_list: Name of Child Dbs protected under this parent.
+    :vartype child_database_name_list: list[str]
     :ivar instance_protection_readiness: The state of instance protection. Known values are:
      "Unknown", "Ready", "ScheduleDisabled", "PartialProtection", and "ProtectionError".
     :vartype instance_protection_readiness: str or
@@ -6960,8 +6960,8 @@ class AzureVmWorkloadSQLInstanceProtectedItem(
     protected_item_type: Literal["AzureVmWorkloadSQLInstance"] = rest_discriminator(name="protectedItemType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """This property will be used as the discriminator for deciding the specific types in the
      polymorphic chain of types. Required. Default value is \"AzureVmWorkloadSQLInstance\"."""
-    child_db_names: Optional[list[str]] = rest_field(
-        name="childDBNames", visibility=["read", "create", "update", "delete", "query"]
+    child_database_name_list: Optional[list[str]] = rest_field(
+        name="childDatabaseNameList", visibility=["read", "create", "update", "delete", "query"]
     )
     """Name of Child Dbs protected under this parent."""
     instance_protection_readiness: Optional[Union[str, "_models.InstanceProtectionReadiness"]] = rest_field(
@@ -7002,7 +7002,7 @@ class AzureVmWorkloadSQLInstanceProtectedItem(
         extended_info: Optional["_models.AzureVmWorkloadProtectedItemExtendedInfo"] = None,
         kpis_healths: Optional[dict[str, "_models.KPIResourceHealthDetails"]] = None,
         nodes_list: Optional[list["_models.DistributedNodesInfo"]] = None,
-        child_db_names: Optional[list[str]] = None,
+        child_database_name_list: Optional[list[str]] = None,
         instance_protection_readiness: Optional[Union[str, "_models.InstanceProtectionReadiness"]] = None,
     ) -> None: ...
 
@@ -9907,7 +9907,7 @@ class BackupStatusRequest(_Model):  # pylint: disable=docstring-keyword-should-m
     :ivar resource_type: Container Type - VM, SQLPaaS, DPM, AzureFileShare... Known values are:
      "Invalid", "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM",
      "SystemState", "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare",
-     "SAPHanaDatabase", "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPHanaDatabase", "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype resource_type: str or ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :ivar resource_id: Entire ARM resource id of the resource.
     :vartype resource_id: str
@@ -9921,7 +9921,7 @@ class BackupStatusRequest(_Model):  # pylint: disable=docstring-keyword-should-m
     """Container Type - VM, SQLPaaS, DPM, AzureFileShare... Known values are: \"Invalid\", \"VM\",
      \"FileFolder\", \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\",
      \"SystemState\", \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\",
-     \"SAPHanaDatabase\", \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPHanaDatabase\", \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     resource_id: Optional[str] = rest_field(
         name="resourceId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -11250,7 +11250,7 @@ class DPMProtectedItem(
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :ivar container_name: Unique name of container.
     :vartype container_name: str
@@ -12253,7 +12253,7 @@ class GenericProtectedItem(
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :ivar container_name: Unique name of container.
     :vartype container_name: str
@@ -13304,6 +13304,87 @@ class IaasVMRestoreWithRehydrationRequest(
         self.object_type = "IaasVMRestoreWithRehydrationRequest"  # type: ignore
 
 
+class RPExtendedInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Base class for additional details of a recovery point. Workload-specific additional details are
+    derived from this class.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    IaasVMRPExtendedInfo
+
+    :ivar object_type: This property will be used as the discriminator for deciding the specific
+     types in the polymorphic chain of types. Required. Default value is None.
+    :vartype object_type: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    object_type: str = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])
+    """This property will be used as the discriminator for deciding the specific types in the
+     polymorphic chain of types. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        object_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IaasVMRPExtendedInfo(
+    RPExtendedInfo, discriminator="IaasVMRPExtendedInfo"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Additional details of an IaaS VM recovery point.
+
+    :ivar os_disk: OS disk of the backed up virtual machine. The lun of the OS disk is always -1,
+     since a logical unit number is only assigned to data disks.
+    :vartype os_disk: ~azure.mgmt.recoveryservicesbackup.models.DiskInformation
+    :ivar data_disks: Data disks of the backed up virtual machine.
+    :vartype data_disks: list[~azure.mgmt.recoveryservicesbackup.models.DiskInformation]
+    :ivar object_type: Required. Default value is "IaasVMRPExtendedInfo".
+    :vartype object_type: str
+    """
+
+    os_disk: Optional["_models.DiskInformation"] = rest_field(
+        name="osDisk", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OS disk of the backed up virtual machine. The lun of the OS disk is always -1, since a logical
+     unit number is only assigned to data disks."""
+    data_disks: Optional[list["_models.DiskInformation"]] = rest_field(
+        name="dataDisks", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Data disks of the backed up virtual machine."""
+    object_type: Literal["IaasVMRPExtendedInfo"] = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"IaasVMRPExtendedInfo\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        os_disk: Optional["_models.DiskInformation"] = None,
+        data_disks: Optional[list["_models.DiskInformation"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object_type = "IaasVMRPExtendedInfo"  # type: ignore
+
+
 class IdentityBasedRestoreDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IaaS VM workload specific restore details for restores using managed identity.
 
@@ -14172,7 +14253,7 @@ class MabContainerExtendedInfo(_Model):  # pylint: disable=docstring-keyword-sho
     :ivar backup_item_type: Type of backup items associated with this container. Known values are:
      "Invalid", "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM",
      "SystemState", "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare",
-     "SAPHanaDatabase", "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPHanaDatabase", "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype backup_item_type: str or ~azure.mgmt.recoveryservicesbackup.models.BackupItemType
     :ivar backup_items: List of backup items associated with this container.
     :vartype backup_items: list[str]
@@ -14192,7 +14273,7 @@ class MabContainerExtendedInfo(_Model):  # pylint: disable=docstring-keyword-sho
     """Type of backup items associated with this container. Known values are: \"Invalid\", \"VM\",
      \"FileFolder\", \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\",
      \"SystemState\", \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\",
-     \"SAPHanaDatabase\", \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPHanaDatabase\", \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     backup_items: Optional[list[str]] = rest_field(
         name="backupItems", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -14299,7 +14380,7 @@ class MabFileFolderProtectedItem(
     :ivar workload_type: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :ivar container_name: Unique name of container.
     :vartype container_name: str
@@ -14514,7 +14595,7 @@ class MabJob(Job, discriminator="MabJob"):  # pylint: disable=docstring-keyword-
     :ivar workload_type: Workload type of backup item. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workload_type: str or ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
     :ivar error_details: The errors.
     :vartype error_details: list[~azure.mgmt.recoveryservicesbackup.models.MabErrorInfo]
@@ -14548,7 +14629,7 @@ class MabJob(Job, discriminator="MabJob"):  # pylint: disable=docstring-keyword-
     """Workload type of backup item. Known values are: \"Invalid\", \"VM\", \"FileFolder\",
      \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\", \"SystemState\",
      \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\", \"SAPHanaDatabase\",
-     \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     error_details: Optional[list["_models.MabErrorInfo"]] = rest_field(
         name="errorDetails", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -15602,7 +15683,7 @@ class PreValidateEnableBackupRequest(_Model):  # pylint: disable=docstring-keywo
     :ivar resource_type: ProtectedItem Type- VM, SqlDataBase, AzureFileShare etc. Known values are:
      "Invalid", "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM",
      "SystemState", "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare",
-     "SAPHanaDatabase", "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPHanaDatabase", "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype resource_type: str or ~azure.mgmt.recoveryservicesbackup.models.DataSourceType
     :ivar resource_id: ARM Virtual Machine Id.
     :vartype resource_id: str
@@ -15618,7 +15699,7 @@ class PreValidateEnableBackupRequest(_Model):  # pylint: disable=docstring-keywo
     """ProtectedItem Type- VM, SqlDataBase, AzureFileShare etc. Known values are: \"Invalid\", \"VM\",
      \"FileFolder\", \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\",
      \"SystemState\", \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\",
-     \"SAPHanaDatabase\", \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPHanaDatabase\", \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     resource_id: Optional[str] = rest_field(
         name="resourceId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -16856,6 +16937,97 @@ class RetentionDuration(_Model):  # pylint: disable=docstring-keyword-should-mat
         *,
         count: Optional[int] = None,
         duration_type: Optional[Union[str, "_models.RetentionDurationType"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RPExtendedInfoResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Additional details of a recovery point, wrapped in a resource envelope.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.recoveryservicesbackup.models.SystemData
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar e_tag: Optional ETag.
+    :vartype e_tag: str
+    :ivar properties: RPExtendedInfoResource properties.
+    :vartype properties: ~azure.mgmt.recoveryservicesbackup.models.RPExtendedInfo
+    """
+
+    location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource location."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read", "create", "update", "delete", "query"])
+    """Optional ETag."""
+    properties: Optional["_models.RPExtendedInfo"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """RPExtendedInfoResource properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+        e_tag: Optional[str] = None,
+        properties: Optional["_models.RPExtendedInfo"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RPExtendedInfoResourceList(ResourceList):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """List of the additional details of recovery points.
+
+    :ivar next_link: The URI to fetch the next page of resources, with each API call returning up
+     to 200 resources per page. Use ListNext() to fetch the next page if the total number of
+     resources exceeds 200.
+    :vartype next_link: str
+    :ivar value: List of resources.
+    :vartype value: list[~azure.mgmt.recoveryservicesbackup.models.RPExtendedInfoResource]
+    """
+
+    value: Optional[list["_models.RPExtendedInfoResource"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of resources."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        next_link: Optional[str] = None,
+        value: Optional[list["_models.RPExtendedInfoResource"]] = None,
     ) -> None: ...
 
     @overload

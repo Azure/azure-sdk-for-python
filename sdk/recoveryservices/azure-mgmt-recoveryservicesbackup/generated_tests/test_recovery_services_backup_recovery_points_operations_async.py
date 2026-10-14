@@ -81,15 +81,13 @@ class TestRecoveryServicesBackupRecoveryPointsOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_recovery_points_begin_get_rp_extended_info_operation_result(self, resource_group):
-        response = await (
-            await self.client.recovery_points.begin_get_rp_extended_info_operation_result(
-                resource_group_name=resource_group.name,
-                vault_name="str",
-                fabric_name="str",
-                operation_id="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
+    async def test_recovery_points_get_rp_extended_info_operation_result(self, resource_group):
+        response = await self.client.recovery_points.get_rp_extended_info_operation_result(
+            resource_group_name=resource_group.name,
+            vault_name="str",
+            fabric_name="str",
+            operation_id="str",
+        )
 
         # please add some check logic here by yourself
         # ...

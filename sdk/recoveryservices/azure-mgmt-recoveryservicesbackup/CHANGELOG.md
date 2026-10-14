@@ -1,6 +1,6 @@
 # Release History
 
-## 11.2.0 (2026-10-08)
+## 11.2.0 (2026-10-14)
 
 ### Features Added
 
@@ -15,10 +15,13 @@
   - Model `AzureVmWorkloadSQLDatabaseProtectedItem` added property `protection_level`
   - Model `AzureWorkloadSQLRecoveryPointExtendedInfo` added property `included_databases`
   - Model `AzureWorkloadSQLRecoveryPointExtendedInfo` added property `snapshot_recovery_point_info`
+  - Enum `BackupItemType` added member `SQL_INSTANCE`
+  - Enum `DataSourceType` added member `SQL_INSTANCE`
   - Model `DiskInformation` added property `disk_size_in_gb`
   - Model `DiskInformation` added property `storage_type`
   - Enum `RecoveryPointTierType` added member `IA_SNAPSHOT_RP`
   - Model `SnapshotRestoreParameters` added property `disks_to_detach_on_clash`
+  - Enum `WorkloadType` added member `SQL_INSTANCE`
   - Added model `AzureVmWorkloadSQLInstanceProtectedItem`
   - Added model `DatabaseInRP`
   - Added model `DiskInfo`
@@ -26,14 +29,18 @@
   - Added model `FilesystemInfo`
   - Added model `GetRPExtendedInfoRequest`
   - Added model `GetRPExtendedInfoRequestResource`
+  - Added model `IaasVMRPExtendedInfo`
   - Added enum `InstanceProtectionReadiness`
   - Added enum `ProtectionLevel`
+  - Added model `RPExtendedInfo`
+  - Added model `RPExtendedInfoResource`
+  - Added model `RPExtendedInfoResourceList`
   - Added model `SnapshotRecoveryPointInfo`
   - Added model `StorageSpaceInfo`
   - Added enum `VMWorkloadPolicyType`
   - Added model `ValidateAzureWorkloadRestoreOperationRequest`
-  - Operation group `RecoveryPointsOperations` added method `begin_get_rp_extended_info`
-  - Operation group `RecoveryPointsOperations` added method `begin_get_rp_extended_info_operation_result`
+  - Model `RecoveryPointsOperations` added method `begin_get_rp_extended_info`
+  - Model `RecoveryPointsOperations` added method `get_rp_extended_info_operation_result`
   - Added operation group `ProtectionContainerRefreshOperationStatusesOperations`
 
 ## 11.1.0 (2026-08-31)

@@ -193,7 +193,7 @@ class AzureFileshareProtectedItem(TypedDict, total=False):
     :ivar workloadType: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workloadType: Union[str, "DataSourceType"]
     :ivar containerName: Unique name of container.
     :vartype containerName: str
@@ -266,7 +266,7 @@ class AzureFileshareProtectedItem(TypedDict, total=False):
     """Type of workload this item represents. Known values are: \"Invalid\", \"VM\", \"FileFolder\",
      \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\", \"SystemState\",
      \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\", \"SAPHanaDatabase\",
-     \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     containerName: str
     """Unique name of container."""
     sourceResourceId: str
@@ -363,7 +363,7 @@ class AzureFileShareProtectionPolicy(TypedDict, total=False):
     :ivar workLoadType: Type of workload for the backup management. Known values are: "Invalid",
      "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workLoadType: Union[str, "WorkloadType"]
     :ivar schedulePolicy: Backup schedule specified as part of backup policy.
     :vartype schedulePolicy: "SchedulePolicy"
@@ -388,7 +388,7 @@ class AzureFileShareProtectionPolicy(TypedDict, total=False):
     """Type of workload for the backup management. Known values are: \"Invalid\", \"VM\",
      \"FileFolder\", \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\",
      \"SystemState\", \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\",
-     \"SAPHanaDatabase\", \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPHanaDatabase\", \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     schedulePolicy: "SchedulePolicy"
     """Backup schedule specified as part of backup policy."""
     retentionPolicy: "RetentionPolicy"
@@ -551,7 +551,7 @@ class AzureIaaSClassicComputeVMProtectedItem(TypedDict, total=False):
     :ivar workloadType: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workloadType: Union[str, "DataSourceType"]
     :ivar containerName: Unique name of container.
     :vartype containerName: str
@@ -640,7 +640,7 @@ class AzureIaaSClassicComputeVMProtectedItem(TypedDict, total=False):
     """Type of workload this item represents. Known values are: \"Invalid\", \"VM\", \"FileFolder\",
      \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\", \"SystemState\",
      \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\", \"SAPHanaDatabase\",
-     \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     containerName: str
     """Unique name of container."""
     sourceResourceId: str
@@ -785,7 +785,7 @@ class AzureIaaSComputeVMProtectedItem(TypedDict, total=False):
     :ivar workloadType: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workloadType: Union[str, "DataSourceType"]
     :ivar containerName: Unique name of container.
     :vartype containerName: str
@@ -874,7 +874,7 @@ class AzureIaaSComputeVMProtectedItem(TypedDict, total=False):
     """Type of workload this item represents. Known values are: \"Invalid\", \"VM\", \"FileFolder\",
      \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\", \"SystemState\",
      \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\", \"SAPHanaDatabase\",
-     \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     containerName: str
     """Unique name of container."""
     sourceResourceId: str
@@ -1162,7 +1162,7 @@ class AzureSQLAGWorkloadContainerProtectionContainer(TypedDict, total=False):  #
     :ivar workloadType: Workload type for which registration was sent. Known values are: "Invalid",
      "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workloadType: Union[str, "WorkloadType"]
     :ivar operationType: Re-Do Operation. Known values are: "Invalid", "Register", "Reregister",
      and "Rehydrate".
@@ -1199,7 +1199,7 @@ class AzureSQLAGWorkloadContainerProtectionContainer(TypedDict, total=False):  #
     """Workload type for which registration was sent. Known values are: \"Invalid\", \"VM\",
      \"FileFolder\", \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\",
      \"SystemState\", \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\",
-     \"SAPHanaDatabase\", \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPHanaDatabase\", \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     operationType: Union[str, "OperationType"]
     """Re-Do Operation. Known values are: \"Invalid\", \"Register\", \"Reregister\", and
      \"Rehydrate\"."""
@@ -1269,7 +1269,7 @@ class AzureSqlProtectedItem(TypedDict, total=False):
     :ivar workloadType: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workloadType: Union[str, "DataSourceType"]
     :ivar containerName: Unique name of container.
     :vartype containerName: str
@@ -1335,7 +1335,7 @@ class AzureSqlProtectedItem(TypedDict, total=False):
     """Type of workload this item represents. Known values are: \"Invalid\", \"VM\", \"FileFolder\",
      \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\", \"SystemState\",
      \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\", \"SAPHanaDatabase\",
-     \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     containerName: str
     """Unique name of container."""
     sourceResourceId: str
@@ -1545,7 +1545,7 @@ class AzureVMAppContainerProtectionContainer(TypedDict, total=False):
     :ivar workloadType: Workload type for which registration was sent. Known values are: "Invalid",
      "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workloadType: Union[str, "WorkloadType"]
     :ivar operationType: Re-Do Operation. Known values are: "Invalid", "Register", "Reregister",
      and "Rehydrate".
@@ -1582,7 +1582,7 @@ class AzureVMAppContainerProtectionContainer(TypedDict, total=False):
     """Workload type for which registration was sent. Known values are: \"Invalid\", \"VM\",
      \"FileFolder\", \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\",
      \"SystemState\", \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\",
-     \"SAPHanaDatabase\", \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPHanaDatabase\", \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     operationType: Union[str, "OperationType"]
     """Re-Do Operation. Known values are: \"Invalid\", \"Register\", \"Reregister\", and
      \"Rehydrate\"."""
@@ -1665,7 +1665,7 @@ class AzureVmWorkloadProtectionPolicy(TypedDict, total=False):
     :ivar workLoadType: Type of workload for the backup management. Known values are: "Invalid",
      "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workLoadType: Union[str, "WorkloadType"]
     :ivar vmWorkloadPolicyType: Type of the protection policy. Known values are: "Invalid",
      "SnapshotV1", "SnapshotV2", and "Streaming".
@@ -1690,7 +1690,7 @@ class AzureVmWorkloadProtectionPolicy(TypedDict, total=False):
     """Type of workload for the backup management. Known values are: \"Invalid\", \"VM\",
      \"FileFolder\", \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\",
      \"SystemState\", \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\",
-     \"SAPHanaDatabase\", \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPHanaDatabase\", \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     vmWorkloadPolicyType: Union[str, "VMWorkloadPolicyType"]
     """Type of the protection policy. Known values are: \"Invalid\", \"SnapshotV1\", \"SnapshotV2\",
      and \"Streaming\"."""
@@ -1715,7 +1715,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(TypedDict, total=False):  # pyl
     :ivar workloadType: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workloadType: Union[str, "DataSourceType"]
     :ivar containerName: Unique name of container.
     :vartype containerName: str
@@ -1807,7 +1807,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(TypedDict, total=False):  # pyl
     """Type of workload this item represents. Known values are: \"Invalid\", \"VM\", \"FileFolder\",
      \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\", \"SystemState\",
      \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\", \"SAPHanaDatabase\",
-     \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     containerName: str
     """Unique name of container."""
     sourceResourceId: str
@@ -1891,7 +1891,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(TypedDict, total=False):  # py
     :ivar workloadType: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workloadType: Union[str, "DataSourceType"]
     :ivar containerName: Unique name of container.
     :vartype containerName: str
@@ -1983,7 +1983,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(TypedDict, total=False):  # py
     """Type of workload this item represents. Known values are: \"Invalid\", \"VM\", \"FileFolder\",
      \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\", \"SystemState\",
      \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\", \"SAPHanaDatabase\",
-     \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     containerName: str
     """Unique name of container."""
     sourceResourceId: str
@@ -2067,7 +2067,7 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(TypedDict, total=False):  # 
     :ivar workloadType: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workloadType: Union[str, "DataSourceType"]
     :ivar containerName: Unique name of container.
     :vartype containerName: str
@@ -2159,7 +2159,7 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(TypedDict, total=False):  # 
     """Type of workload this item represents. Known values are: \"Invalid\", \"VM\", \"FileFolder\",
      \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\", \"SystemState\",
      \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\", \"SAPHanaDatabase\",
-     \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     containerName: str
     """Unique name of container."""
     sourceResourceId: str
@@ -2243,7 +2243,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(TypedDict, total=False):
     :ivar workloadType: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workloadType: Union[str, "DataSourceType"]
     :ivar containerName: Unique name of container.
     :vartype containerName: str
@@ -2341,7 +2341,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(TypedDict, total=False):
     """Type of workload this item represents. Known values are: \"Invalid\", \"VM\", \"FileFolder\",
      \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\", \"SystemState\",
      \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\", \"SAPHanaDatabase\",
-     \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     containerName: str
     """Unique name of container."""
     sourceResourceId: str
@@ -2431,7 +2431,7 @@ class AzureVmWorkloadSQLInstanceProtectedItem(TypedDict, total=False):
     :ivar workloadType: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workloadType: Union[str, "DataSourceType"]
     :ivar containerName: Unique name of container.
     :vartype containerName: str
@@ -2513,8 +2513,8 @@ class AzureVmWorkloadSQLInstanceProtectedItem(TypedDict, total=False):
      specific types in the polymorphic chain of types. Required. Default value is
      "AzureVmWorkloadSQLInstance".
     :vartype protectedItemType: Literal["AzureVmWorkloadSQLInstance"]
-    :ivar childDBNames: Name of Child Dbs protected under this parent.
-    :vartype childDBNames: list[str]
+    :ivar childDatabaseNameList: Name of Child Dbs protected under this parent.
+    :vartype childDatabaseNameList: list[str]
     :ivar instanceProtectionReadiness: The state of instance protection. Known values are:
      "Unknown", "Ready", "ScheduleDisabled", "PartialProtection", and "ProtectionError".
     :vartype instanceProtectionReadiness: Union[str, "InstanceProtectionReadiness"]
@@ -2528,7 +2528,7 @@ class AzureVmWorkloadSQLInstanceProtectedItem(TypedDict, total=False):
     """Type of workload this item represents. Known values are: \"Invalid\", \"VM\", \"FileFolder\",
      \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\", \"SystemState\",
      \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\", \"SAPHanaDatabase\",
-     \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     containerName: str
     """Unique name of container."""
     sourceResourceId: str
@@ -2600,7 +2600,7 @@ class AzureVmWorkloadSQLInstanceProtectedItem(TypedDict, total=False):
     protectedItemType: Required[Literal["AzureVmWorkloadSQLInstance"]]
     """This property will be used as the discriminator for deciding the specific types in the
      polymorphic chain of types. Required. Default value is \"AzureVmWorkloadSQLInstance\"."""
-    childDBNames: list[str]
+    childDatabaseNameList: list[str]
     """Name of Child Dbs protected under this parent."""
     instanceProtectionReadiness: Union[str, "InstanceProtectionReadiness"]
     """The state of instance protection. Known values are: \"Unknown\", \"Ready\",
@@ -3363,7 +3363,7 @@ class BackupStatusRequest(TypedDict, total=False):
     :ivar resourceType: Container Type - VM, SQLPaaS, DPM, AzureFileShare... Known values are:
      "Invalid", "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM",
      "SystemState", "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare",
-     "SAPHanaDatabase", "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPHanaDatabase", "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype resourceType: Union[str, "DataSourceType"]
     :ivar resourceId: Entire ARM resource id of the resource.
     :vartype resourceId: str
@@ -3375,7 +3375,7 @@ class BackupStatusRequest(TypedDict, total=False):
     """Container Type - VM, SQLPaaS, DPM, AzureFileShare... Known values are: \"Invalid\", \"VM\",
      \"FileFolder\", \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\",
      \"SystemState\", \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\",
-     \"SAPHanaDatabase\", \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPHanaDatabase\", \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     resourceId: str
     """Entire ARM resource id of the resource."""
     poLogicalName: str
@@ -3544,7 +3544,7 @@ class DPMProtectedItem(TypedDict, total=False):
     :ivar workloadType: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workloadType: Union[str, "DataSourceType"]
     :ivar containerName: Unique name of container.
     :vartype containerName: str
@@ -3610,7 +3610,7 @@ class DPMProtectedItem(TypedDict, total=False):
     """Type of workload this item represents. Known values are: \"Invalid\", \"VM\", \"FileFolder\",
      \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\", \"SystemState\",
      \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\", \"SAPHanaDatabase\",
-     \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     containerName: str
     """Unique name of container."""
     sourceResourceId: str
@@ -4026,7 +4026,7 @@ class GenericProtectedItem(TypedDict, total=False):
     :ivar workloadType: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workloadType: Union[str, "DataSourceType"]
     :ivar containerName: Unique name of container.
     :vartype containerName: str
@@ -4098,7 +4098,7 @@ class GenericProtectedItem(TypedDict, total=False):
     """Type of workload this item represents. Known values are: \"Invalid\", \"VM\", \"FileFolder\",
      \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\", \"SystemState\",
      \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\", \"SAPHanaDatabase\",
-     \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     containerName: str
     """Unique name of container."""
     sourceResourceId: str
@@ -4765,7 +4765,7 @@ class MabContainerExtendedInfo(TypedDict, total=False):
     :ivar backupItemType: Type of backup items associated with this container. Known values are:
      "Invalid", "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM",
      "SystemState", "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare",
-     "SAPHanaDatabase", "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPHanaDatabase", "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype backupItemType: Union[str, "BackupItemType"]
     :ivar backupItems: List of backup items associated with this container.
     :vartype backupItems: list[str]
@@ -4781,7 +4781,7 @@ class MabContainerExtendedInfo(TypedDict, total=False):
     """Type of backup items associated with this container. Known values are: \"Invalid\", \"VM\",
      \"FileFolder\", \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\",
      \"SystemState\", \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\",
-     \"SAPHanaDatabase\", \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPHanaDatabase\", \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     backupItems: list[str]
     """List of backup items associated with this container."""
     policyName: str
@@ -4823,7 +4823,7 @@ class MabFileFolderProtectedItem(TypedDict, total=False):
     :ivar workloadType: Type of workload this item represents. Known values are: "Invalid", "VM",
      "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM", "SystemState",
      "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare", "SAPHanaDatabase",
-     "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype workloadType: Union[str, "DataSourceType"]
     :ivar containerName: Unique name of container.
     :vartype containerName: str
@@ -4894,7 +4894,7 @@ class MabFileFolderProtectedItem(TypedDict, total=False):
     """Type of workload this item represents. Known values are: \"Invalid\", \"VM\", \"FileFolder\",
      \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\", \"SystemState\",
      \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\", \"SAPHanaDatabase\",
-     \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     containerName: str
     """Unique name of container."""
     sourceResourceId: str
@@ -5107,7 +5107,7 @@ class PreValidateEnableBackupRequest(TypedDict, total=False):
     :ivar resourceType: ProtectedItem Type- VM, SqlDataBase, AzureFileShare etc. Known values are:
      "Invalid", "VM", "FileFolder", "AzureSqlDb", "SQLDB", "Exchange", "Sharepoint", "VMwareVM",
      "SystemState", "Client", "GenericDataSource", "SQLDataBase", "AzureFileShare",
-     "SAPHanaDatabase", "SAPAseDatabase", and "SAPHanaDBInstance".
+     "SAPHanaDatabase", "SAPAseDatabase", "SAPHanaDBInstance", and "SQLInstance".
     :vartype resourceType: Union[str, "DataSourceType"]
     :ivar resourceId: ARM Virtual Machine Id.
     :vartype resourceId: str
@@ -5121,7 +5121,7 @@ class PreValidateEnableBackupRequest(TypedDict, total=False):
     """ProtectedItem Type- VM, SqlDataBase, AzureFileShare etc. Known values are: \"Invalid\", \"VM\",
      \"FileFolder\", \"AzureSqlDb\", \"SQLDB\", \"Exchange\", \"Sharepoint\", \"VMwareVM\",
      \"SystemState\", \"Client\", \"GenericDataSource\", \"SQLDataBase\", \"AzureFileShare\",
-     \"SAPHanaDatabase\", \"SAPAseDatabase\", and \"SAPHanaDBInstance\"."""
+     \"SAPHanaDatabase\", \"SAPAseDatabase\", \"SAPHanaDBInstance\", and \"SQLInstance\"."""
     resourceId: str
     """ARM Virtual Machine Id."""
     vaultId: str

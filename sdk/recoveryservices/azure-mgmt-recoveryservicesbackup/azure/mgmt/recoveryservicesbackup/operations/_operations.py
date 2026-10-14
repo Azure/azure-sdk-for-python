@@ -6918,7 +6918,7 @@ class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.RPExtendedInfoResourceList]:
         """Triggers fetching the additional details of a recovery point, which are not returned by the
         recovery point GET API. This is an asynchronous operation. Returns tracking headers which can
         be tracked using the GetRPExtendedInfoOperationResult API.
@@ -6936,8 +6936,10 @@ class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns RPExtendedInfoResourceList. The
+         RPExtendedInfoResourceList is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicesbackup.models.RPExtendedInfoResourceList]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -6951,7 +6953,7 @@ class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.RPExtendedInfoResourceList]:
         """Triggers fetching the additional details of a recovery point, which are not returned by the
         recovery point GET API. This is an asynchronous operation. Returns tracking headers which can
         be tracked using the GetRPExtendedInfoOperationResult API.
@@ -6969,8 +6971,10 @@ class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns RPExtendedInfoResourceList. The
+         RPExtendedInfoResourceList is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicesbackup.models.RPExtendedInfoResourceList]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -6984,7 +6988,7 @@ class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.RPExtendedInfoResourceList]:
         """Triggers fetching the additional details of a recovery point, which are not returned by the
         recovery point GET API. This is an asynchronous operation. Returns tracking headers which can
         be tracked using the GetRPExtendedInfoOperationResult API.
@@ -7002,8 +7006,10 @@ class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns RPExtendedInfoResourceList. The
+         RPExtendedInfoResourceList is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicesbackup.models.RPExtendedInfoResourceList]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -7015,7 +7021,7 @@ class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
         fabric_name: str,
         parameters: Union[_models.GetRPExtendedInfoRequestResource, _types.GetRPExtendedInfoRequestResource, IO[bytes]],
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.RPExtendedInfoResourceList]:
         """Triggers fetching the additional details of a recovery point, which are not returned by the
         recovery point GET API. This is an asynchronous operation. Returns tracking headers which can
         be tracked using the GetRPExtendedInfoOperationResult API.
@@ -7032,15 +7038,17 @@ class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
          type. Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.models.GetRPExtendedInfoRequestResource or
          ~azure.mgmt.recoveryservicesbackup.types.GetRPExtendedInfoRequestResource or IO[bytes]
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns RPExtendedInfoResourceList. The
+         RPExtendedInfoResourceList is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.recoveryservicesbackup.models.RPExtendedInfoResourceList]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.RPExtendedInfoResourceList] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -7059,9 +7067,12 @@ class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.RPExtendedInfoResourceList, response.json())
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -7076,17 +7087,38 @@ class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[None].from_continuation_token(
+            return LROPoller[_models.RPExtendedInfoResourceList].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.RPExtendedInfoResourceList](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
-    def _get_rp_extended_info_operation_result_initial(  # pylint: disable=name-too-long
+    @distributed_trace
+    def get_rp_extended_info_operation_result(
         self, resource_group_name: str, vault_name: str, fabric_name: str, operation_id: str, **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> Optional[_models.RPExtendedInfoResourceList]:
+        """Returns the additional details of the recovery points fetched by a prior getRPExtendedInfo
+        operation. Returns 202 Accepted while the operation is still running.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the recovery services vault. Required.
+        :type vault_name: str
+        :param fabric_name: Fabric name associated with the backed up items. Required.
+        :type fabric_name: str
+        :param operation_id: OperationID which represents the prior getRPExtendedInfo operation whose
+         result needs to be fetched. Required.
+        :type operation_id: str
+        :return: RPExtendedInfoResourceList or None. The RPExtendedInfoResourceList is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.recoveryservicesbackup.models.RPExtendedInfoResourceList or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7098,7 +7130,7 @@ class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.RPExtendedInfoResourceList]] = kwargs.pop("cls", None)
 
         _request = build_recovery_points_get_rp_extended_info_operation_result_request(
             resource_group_name=resource_group_name,
@@ -7116,7 +7148,7 @@ class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -7124,10 +7156,11 @@ class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
                 _models.ErrorResponse,
@@ -7135,7 +7168,14 @@ class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = None
         response_headers = {}
+        if response.status_code == 200:
+            if _stream:
+                deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+            else:
+                deserialized = _deserialize(_models.RPExtendedInfoResourceList, response.json())
+
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
@@ -7143,79 +7183,10 @@ class RecoveryPointsOperations:  # pylint: disable=docstring-missing-param
                 "str", response.headers.get("Azure-AsyncOperation")
             )
 
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_get_rp_extended_info_operation_result(  # pylint: disable=name-too-long
-        self, resource_group_name: str, vault_name: str, fabric_name: str, operation_id: str, **kwargs: Any
-    ) -> LROPoller[None]:
-        """Returns the additional details of the recovery points fetched by a prior getRPExtendedInfo
-        operation. Returns 202 Accepted while the operation is still running.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vault_name: The name of the recovery services vault. Required.
-        :type vault_name: str
-        :param fabric_name: Fabric name associated with the backed up items. Required.
-        :type fabric_name: str
-        :param operation_id: OperationID which represents the prior getRPExtendedInfo operation whose
-         result needs to be fetched. Required.
-        :type operation_id: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._get_rp_extended_info_operation_result_initial(
-                resource_group_name=resource_group_name,
-                vault_name=vault_name,
-                fabric_name=fabric_name,
-                operation_id=operation_id,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
 class RestoresOperations:  # pylint: disable=docstring-missing-param

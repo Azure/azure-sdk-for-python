@@ -190,6 +190,8 @@
         "azure.mgmt.recoveryservicesbackup.models.IaasVMRecoveryPoint": "Microsoft.RecoveryServices.IaasVMRecoveryPoint",
         "azure.mgmt.recoveryservicesbackup.models.IaasVMRestoreRequest": "Microsoft.RecoveryServices.IaasVMRestoreRequest",
         "azure.mgmt.recoveryservicesbackup.models.IaasVMRestoreWithRehydrationRequest": "Microsoft.RecoveryServices.IaasVMRestoreWithRehydrationRequest",
+        "azure.mgmt.recoveryservicesbackup.models.RPExtendedInfo": "Microsoft.RecoveryServices.RPExtendedInfo",
+        "azure.mgmt.recoveryservicesbackup.models.IaasVMRPExtendedInfo": "Microsoft.RecoveryServices.IaasVMRPExtendedInfo",
         "azure.mgmt.recoveryservicesbackup.models.IdentityBasedRestoreDetails": "Microsoft.RecoveryServices.IdentityBasedRestoreDetails",
         "azure.mgmt.recoveryservicesbackup.models.IdentityInfo": "Microsoft.RecoveryServices.IdentityInfo",
         "azure.mgmt.recoveryservicesbackup.models.ILRRequestResource": "Microsoft.RecoveryServices.ILRRequestResource",
@@ -264,6 +266,8 @@
         "azure.mgmt.recoveryservicesbackup.models.RestoreFileSpecs": "Microsoft.RecoveryServices.RestoreFileSpecs",
         "azure.mgmt.recoveryservicesbackup.models.RestoreRequestResource": "Microsoft.RecoveryServices.RestoreRequestResource",
         "azure.mgmt.recoveryservicesbackup.models.RetentionDuration": "Microsoft.RecoveryServices.RetentionDuration",
+        "azure.mgmt.recoveryservicesbackup.models.RPExtendedInfoResource": "Microsoft.RecoveryServices.RPExtendedInfoResource",
+        "azure.mgmt.recoveryservicesbackup.models.RPExtendedInfoResourceList": "Microsoft.RecoveryServices.RPExtendedInfoResourceList",
         "azure.mgmt.recoveryservicesbackup.models.SecuredVMDetails": "Microsoft.RecoveryServices.SecuredVMDetails",
         "azure.mgmt.recoveryservicesbackup.models.SecurityPinBase": "Microsoft.RecoveryServices.SecurityPinBase",
         "azure.mgmt.recoveryservicesbackup.models.Settings": "Microsoft.RecoveryServices.Settings",
@@ -442,8 +446,8 @@
         "azure.mgmt.recoveryservicesbackup.aio.operations.RecoveryPointsOperations.list": "Microsoft.RecoveryServices.RecoveryPoints.list",
         "azure.mgmt.recoveryservicesbackup.operations.RecoveryPointsOperations.begin_get_rp_extended_info": "Microsoft.RecoveryServices.RecoveryPointsExtendedInfo.getRPExtendedInfo",
         "azure.mgmt.recoveryservicesbackup.aio.operations.RecoveryPointsOperations.begin_get_rp_extended_info": "Microsoft.RecoveryServices.RecoveryPointsExtendedInfo.getRPExtendedInfo",
-        "azure.mgmt.recoveryservicesbackup.operations.RecoveryPointsOperations.begin_get_rp_extended_info_operation_result": "Microsoft.RecoveryServices.RecoveryPointsExtendedInfo.getRPExtendedInfoOperationResult",
-        "azure.mgmt.recoveryservicesbackup.aio.operations.RecoveryPointsOperations.begin_get_rp_extended_info_operation_result": "Microsoft.RecoveryServices.RecoveryPointsExtendedInfo.getRPExtendedInfoOperationResult",
+        "azure.mgmt.recoveryservicesbackup.operations.RecoveryPointsOperations.get_rp_extended_info_operation_result": "Microsoft.RecoveryServices.RecoveryPointsExtendedInfo.getRPExtendedInfoOperationResult",
+        "azure.mgmt.recoveryservicesbackup.aio.operations.RecoveryPointsOperations.get_rp_extended_info_operation_result": "Microsoft.RecoveryServices.RecoveryPointsExtendedInfo.getRPExtendedInfoOperationResult",
         "azure.mgmt.recoveryservicesbackup.operations.RestoresOperations.begin_trigger": "Microsoft.RecoveryServices.Restores.trigger",
         "azure.mgmt.recoveryservicesbackup.aio.operations.RestoresOperations.begin_trigger": "Microsoft.RecoveryServices.Restores.trigger",
         "azure.mgmt.recoveryservicesbackup.operations.ItemLevelRecoveryConnectionsOperations.provision": "Microsoft.RecoveryServices.ItemLevelRecoveryConnections.provision",
@@ -557,5 +561,5 @@
         "azure.mgmt.recoveryservicesbackup.RecoveryServicesBackupClient.begin_move_recovery_point": "Microsoft.RecoveryServices.RecoveryPoints.moveRecoveryPoint",
         "azure.mgmt.recoveryservicesbackup.aio.RecoveryServicesBackupClient.begin_move_recovery_point": "Microsoft.RecoveryServices.RecoveryPoints.moveRecoveryPoint"
     },
-    "CrossLanguageVersion": "51fd5b46e5b8"
+    "CrossLanguageVersion": "f7f804765554"
 }

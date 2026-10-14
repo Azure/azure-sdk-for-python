@@ -86,6 +86,8 @@ class BackupItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SAP_ASE_DATABASE."""
     SAP_HANA_DB_INSTANCE = "SAPHanaDBInstance"
     """SAP_HANA_DB_INSTANCE."""
+    SQL_INSTANCE = "SQLInstance"
+    """A SQL Server instance."""
 
 
 class BackupManagementType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -219,6 +221,8 @@ class DataSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SAP_ASE_DATABASE."""
     SAP_HANA_DB_INSTANCE = "SAPHanaDBInstance"
     """SAP_HANA_DB_INSTANCE."""
+    SQL_INSTANCE = "SQLInstance"
+    """A SQL Server instance."""
 
 
 class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1251,6 +1255,8 @@ class WorkloadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SAP_ASE_DATABASE."""
     SAP_HANA_DB_INSTANCE = "SAPHanaDBInstance"
     """SAP_HANA_DB_INSTANCE."""
+    SQL_INSTANCE = "SQLInstance"
+    """A SQL Server instance."""
 
 
 class XcoolState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

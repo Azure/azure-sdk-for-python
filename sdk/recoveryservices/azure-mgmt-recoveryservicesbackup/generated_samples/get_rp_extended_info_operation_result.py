@@ -30,12 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.recovery_points.begin_get_rp_extended_info_operation_result(
+    response = client.recovery_points.get_rp_extended_info_operation_result(
         resource_group_name="testRG",
         vault_name="testVault",
         fabric_name="Azure",
         operation_id="00000000-0000-0000-0000-000000000000",
-    ).result()
+    )
+    print(response)
 
 
 # x-ms-original-file: 2026-10-01/AzureIaasVm/GetRPExtendedInfoOperationResult.json

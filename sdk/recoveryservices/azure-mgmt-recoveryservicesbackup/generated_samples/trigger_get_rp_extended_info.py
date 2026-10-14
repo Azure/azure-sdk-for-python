@@ -31,7 +31,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.recovery_points.begin_get_rp_extended_info(
+    response = client.recovery_points.begin_get_rp_extended_info(
         resource_group_name="testRG",
         vault_name="testVault",
         fabric_name="Azure",
@@ -43,6 +43,7 @@ def main():
             }
         },
     ).result()
+    print(response)
 
 
 # x-ms-original-file: 2026-10-01/AzureIaasVm/TriggerGetRPExtendedInfo.json
