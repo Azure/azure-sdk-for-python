@@ -48,9 +48,9 @@ def isolate_runtime(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
         "FOUNDRY_HOSTING_ENVIRONMENT",
         "FOUNDRY_AGENT_SESSION_ID",
         "FOUNDRY_AGENT_SESSION_GUID",
-        "FOUNDRY_MEMORY_SNAPSHOT_ENABLED",
     ):
         monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "true")
     try:
         yield
     finally:
@@ -76,7 +76,6 @@ def payload(restore_id: str = "restore-1", session_id: str = "session-1") -> dic
             "restore_id": restore_id,
             "session_env_overrides": {
                 "FOUNDRY_AGENT_SESSION_GUID": "a" * 32,
-                "FOUNDRY_MEMORY_SNAPSHOT_ENABLED": "true",
             },
         }
     }
@@ -92,12 +91,14 @@ def client(app: AgentServerHost) -> httpx.AsyncClient:
 
 @pytest.mark.parametrize(
     ("value", "expected"),
-    [(None, None), ("true", True), ("TRUE", True), (" false ", False), ("false", False)],
+    [(None, False), ("true", True), ("TRUE", True), (" false ", False), ("false", False)],
 )
-def test_snapshot_flag_preserves_absence(
-    monkeypatch: pytest.MonkeyPatch, value: str | None, expected: bool | None
+def test_snapshot_flag_defaults_absence_to_false(
+    monkeypatch: pytest.MonkeyPatch, value: str | None, expected: bool
 ) -> None:
-    if value is not None:
+    if value is None:
+        monkeypatch.delenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", raising=False)
+    else:
         monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", value)
     assert _read_memory_snapshot_enabled() is expected
 
@@ -113,14 +114,9 @@ async def test_invalid_present_flag_fails_startup(monkeypatch: pytest.MonkeyPatc
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("value", [None, "true"])
 async def test_capture_and_snapshot_startup_do_not_construct_tasks(
-    monkeypatch: pytest.MonkeyPatch,
     provider_factory: tuple[LocalFileTaskProvider, Mock],
-    value: str | None,
 ) -> None:
-    if value is not None:
-        monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", value)
     _, factory = provider_factory
     app = host()
     async with app.router.lifespan_context(app), client(app) as http:
@@ -133,11 +129,16 @@ async def test_capture_and_snapshot_startup_do_not_construct_tasks(
 
 
 @pytest.mark.asyncio
-async def test_explicit_false_keeps_cold_activation(
+@pytest.mark.parametrize("value", [None, "false"])
+async def test_false_or_absent_keeps_cold_activation(
     monkeypatch: pytest.MonkeyPatch,
     provider_factory: tuple[LocalFileTaskProvider, Mock],
+    value: str | None,
 ) -> None:
-    monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "false")
+    if value is None:
+        monkeypatch.delenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", raising=False)
+    else:
+        monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", value)
     monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "cold-session")
     _, factory = provider_factory
     app = host()
@@ -156,21 +157,71 @@ async def test_explicit_false_keeps_cold_activation(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("enabled", [False, True])
 @pytest.mark.parametrize("value", [None, "true", "false"])
-async def test_disabled_tasks_stay_disabled_on_cold_and_restore(
+async def test_startup_and_restore_honor_resilience_and_snapshot_flags(
+    monkeypatch: pytest.MonkeyPatch,
+    provider_factory: tuple[LocalFileTaskProvider, Mock],
+    enabled: bool,
+    value: str | None,
+) -> None:
+    set_resilient_tasks_enabled(enabled)
+    if value is None:
+        monkeypatch.delenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", raising=False)
+    else:
+        monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", value)
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "session-1")
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_GUID", "a" * 32)
+    _, factory = provider_factory
+    app = host()
+    async with app.router.lifespan_context(app), client(app) as http:
+        if enabled and value != "true":
+            assert get_task_manager() is app._task_manager
+            factory.assert_called_once()
+        else:
+            factory.assert_not_called()
+            assert app._task_manager is None
+            with pytest.raises(TaskManagerNotInitialized):
+                get_task_manager()
+
+        assert (await http.post("/_agent/after-restore", json=payload())).status_code == 200
+        if enabled:
+            manager = get_task_manager()
+            assert manager is app._task_manager
+            assert manager._config.session_id == "session-1"
+            assert manager._periodic_recovery_task is not None
+            assert not manager._periodic_recovery_task.done()
+            factory.assert_called_once()
+        else:
+            factory.assert_not_called()
+            assert app._task_manager is None
+            with pytest.raises(TaskManagerNotInitialized):
+                get_task_manager()
+        assert os.environ.get("FOUNDRY_MEMORY_SNAPSHOT_ENABLED") == value
+    assert app._task_manager is None
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("value", [None, "false"])
+async def test_cold_runtime_rejects_restore_for_another_session(
     monkeypatch: pytest.MonkeyPatch,
     provider_factory: tuple[LocalFileTaskProvider, Mock],
     value: str | None,
 ) -> None:
-    set_resilient_tasks_enabled(False)
-    if value is not None:
+    if value is None:
+        monkeypatch.delenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", raising=False)
+    else:
         monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", value)
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "cold-session")
     _, factory = provider_factory
     app = host()
     async with app.router.lifespan_context(app), client(app) as http:
-        assert (await http.post("/_agent/after-restore", json=payload())).status_code == 200
-        factory.assert_not_called()
-        assert app._task_manager is None
+        manager = get_task_manager()
+        response = await http.post("/_agent/after-restore", json=payload())
+        assert response.status_code == 409
+        assert get_task_manager() is manager
+        assert manager._config.session_id == "cold-session"
+        factory.assert_called_once()
 
 
 @pytest.mark.asyncio

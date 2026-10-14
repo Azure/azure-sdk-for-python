@@ -52,8 +52,9 @@
   Environment-backed `AgentConfig` values are refreshed in place before
   callbacks run, and `AgentSessionContext` is marked experimental.
 - Separate process-side task registration from session-bound task activation.
-  Explicit `FOUNDRY_MEMORY_SNAPSHOT_ENABLED=false` starts requested tasks during
-  cold startup; absent or true defers startup until after-restore. Preserve
+  `FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true` defers enabled tasks during capture until
+  after-restore; absent or false keeps ordinary cold startup. Resilience opt-out
+  remains disabled for both initialization paths. Preserve
   best-effort recovery, checkpoint initialization phases by restore ID, wait for
   owned workers to stop before incompatible configuration rollback, and stop
   managers created after startup at shutdown.

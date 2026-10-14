@@ -72,7 +72,7 @@ to false, and introduces no extra feature header.
 
 | Value | Enabled task subsystem at ordinary startup |
 |---|---|
-| Absent | Defer construction/startup; capture has no real-session runtime |
+| Absent | Same as `false`: activate during ordinary cold/local initialization |
 | `true` | Defer construction/startup; activate through after-restore |
 | `false` | Activate during ordinary cold/local session initialization |
 
@@ -80,8 +80,14 @@ Application resilience enablement is still required through
 `set_resilient_tasks_enabled(True)` or Responses resilience options. A
 declaration alone does not enable the subsystem.
 
+| Resilient tasks enabled | Environment value | Ordinary startup | After-restore |
+|---|---|---|---|
+| No | absent, `false`, or `true` | No task subsystem | No task subsystem |
+| Yes | absent or `false` | Activate immediately | Activate/retain the same session runtime |
+| Yes | `true` | Defer activation | Activate after hydration and dependency callbacks |
+
 Present values must be case-insensitive `true` or `false`; surrounding
-whitespace is accepted. Empty/malformed values fail explicitly. Missing is not
+whitespace is accepted. Empty/malformed values fail explicitly. Missing is
 treated as false. The flag chooses an initialization trigger, not permission
 to execute or renew leases after activation.
 
@@ -90,11 +96,18 @@ require a new flag override or changing the flag to false.
 
 ### Compatibility and rollout requirement
 
-Non-snapshot/local launchers must explicitly supply false. An older launcher
-with no value no longer automatically starts requested tasks. This is an
-intentional draft contract, not a transparent backward-compatible default.
-Launcher/platform provisioning and package rollout must be reviewed before
-release. Do not silently fall back to eager startup to hide missing wiring.
+Non-snapshot/local launchers need no new environment variable: absent preserves
+ordinary startup. Every temporary capture producer must supply `true`, including
+direct capture and queued version/Managed Harness package warm templates.
+The captured value survives restoration; no restore override is required, and
+the hook explicitly activates tasks while the value remains `true`.
+
+An unmarked capture would start enabled tasks immediately and could capture
+session-bound runtime state. The before-snapshot callback is not a substitute
+for correct startup signaling. Coordinate service and SDK rollout: the earlier
+prototype treated absence as deferred, so removing its cold-boot `false` wiring
+requires this SDK update too. Prior registry-prototype hosted results below do
+not qualify the revised signal contract.
 
 ## Lifecycle
 
@@ -105,6 +118,7 @@ imports and session-independent warmup
   -> construct protocol routes/orchestrators
   -> register task definitions and options
   -> preserve resilience intent
+  -> capture environment explicitly sets the snapshot variable to true
   -> ordinary startup defers TaskManager
   -> before-snapshot
   -> capture warmed process
@@ -121,7 +135,7 @@ No application task should acquire a lease or execute in the capture sandbox.
 ### Ordinary cold startup
 
 ```text
-explicit false + application resilience opt-in
+absent or false + application resilience opt-in
   -> construct manager with current session configuration
   -> install registered callbacks
   -> existing initial recovery
@@ -237,10 +251,10 @@ Keep eager registration of `responses_resilient_one_shot` and
 without rebuilding the complete Responses protocol graph.
 
 `TaskManagerNotInitialized` no longer necessarily means intentional opt-out.
-When resilience is enabled and startup is deferred (the variable is absent or
+When resilience is enabled and startup is deferred (the variable is
 `true`), Responses propagates that initialization error through existing error
 handling instead of silently running non-durably. When resilience is
-intentionally disabled, or startup is not deferred (`false`, including in-process
+intentionally disabled, or startup is not deferred (absent/`false`, including in-process
 clients whose lifespan never ran), the existing in-process fallback remains.
 
 No new HTTP 503 contract is introduced. Normal platform request admission
@@ -345,11 +359,15 @@ startup can continue.
 
 #### Collection boundary
 
-The prototype installs an owned registry at host construction. Collection is
-allowed only while absent/true mode intentionally defers the runtime, resilience
+The prototype installs an owned registry at host construction. Under this
+revised contract, collection must be allowed only while `true` intentionally
+defers the runtime, resilience
 is enabled, no manager is installed, and capture startup enrollment remains
 open. Before-snapshot freezes enrollment. After-restore also freezes it before
 dependency preparation.
+
+The earlier registry prototype also collected in absent mode; it must be aligned
+and requalified before adoption. This PR does not implement that registry.
 
 HTTP/WebSocket request execution is excluded through an ASGI request boundary.
 Missing-manager requests must not become queued startup work. Resilience
@@ -525,7 +543,7 @@ typed-input behavior is not broadened or redesigned.
 
 | Scenario | Evidence / status |
 |---|---|
-| Absent/true deferral; false cold startup; opt-out; malformed input | Targeted startup tests |
+| True deferral; absent/false cold startup; opt-out; malformed input | Targeted startup tests |
 | Definitions before activation; restored binding | Core/Responses activation tests |
 | Same-ID concurrent/duplicate hooks | Real ASGI tests; one runtime/scanner |
 | Partial initialization/scanner failure | Completed-phase reuse tests |
@@ -567,7 +585,7 @@ task through a composed ordinary lifespan, not a session-start callback:
 | Case | Observation |
 |---|---|
 | Cold startup | Original non-snapshot task creation and lease behavior |
-| Absent-flag capture/restoration | Deferred intention/no runtime at capture; real leased launch after SDK activation |
+| Absent-flag capture/restoration (previous prototype contract) | Deferred intention/no runtime at capture; real leased launch after SDK activation |
 | Completed startup followed by natural idle | New restore ID and fresh startup task ID, without the prior create409/hook500 |
 | Crash while startup is unfinished | Original task ID retained, fencing generation increments, saved progress resumes |
 | Crash after startup completes | New materialization creates fresh startup work with a new automatic ID |

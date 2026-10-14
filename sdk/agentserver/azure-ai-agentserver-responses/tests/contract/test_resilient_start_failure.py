@@ -229,7 +229,7 @@ class TestSnapshotTaskActivation:
     def test_enabled_missing_runtime_does_not_fall_back(
         self, _switch_off: Any, monkeypatch: pytest.MonkeyPatch, stream: bool
     ) -> None:
-        monkeypatch.delenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", raising=False)
+        monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "true")
         set_resilient_tasks_enabled(True)
         called: list[bool] = []
 
@@ -253,10 +253,15 @@ class TestSnapshotTaskActivation:
                 assert response.headers.get(ERROR_SOURCE) == "platform"
             assert not called
 
+    @pytest.mark.parametrize("value", [None, "false"])
+    @pytest.mark.parametrize("stream", [False, True])
     def test_cold_start_missing_runtime_keeps_in_process_fallback(
-        self, _switch_off: Any, monkeypatch: pytest.MonkeyPatch
+        self, _switch_off: Any, monkeypatch: pytest.MonkeyPatch, value: str | None, stream: bool
     ) -> None:
-        monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "false")
+        if value is None:
+            monkeypatch.delenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", raising=False)
+        else:
+            monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", value)
         set_resilient_tasks_enabled(True)
         called: list[bool] = []
 
@@ -267,16 +272,20 @@ class TestSnapshotTaskActivation:
         # Plain TestClient (no `with`): the lifespan never runs, so no manager exists.
         response = _build_client(handler).post(
             "/responses",
-            json={"model": "test", "input": "hi", "stream": False, "store": True},
+            json={"model": "test", "input": "hi", "stream": stream, "store": True},
         )
         assert response.status_code == 200, response.text
         assert ERROR_SOURCE not in response.headers
+        if stream:
+            types = [event["type"] for event in _collect_sse_events(response.text)]
+            assert "error" not in types
+            assert "response.completed" in types
         assert called
 
     def test_requests_after_restore_use_registered_task_runtime(
         self, _switch_off: Any, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        monkeypatch.delenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", raising=False)
+        monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "true")
         set_resilient_tasks_enabled(True)
         with _build_client() as http:
             with pytest.raises(TaskManagerNotInitialized):
