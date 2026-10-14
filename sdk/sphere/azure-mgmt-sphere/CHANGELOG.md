@@ -1,5 +1,25 @@
 # Release History
 
+## 2.0.0 (2026-10-14)
+
+### Features Added
+
+  - Client `AzureSphereMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `AzureSphereMgmtClient` added method `send_request`
+
+### Breaking Changes
+
+  - Deleted or renamed model `CatalogListResult`
+  - Deleted or renamed model `CertificateListResult`
+  - Deleted or renamed model `CountDeviceResponse`
+  - Deleted or renamed model `DeploymentListResult`
+  - Deleted or renamed model `DeviceGroupListResult`
+  - Deleted or renamed model `DeviceListResult`
+  - Deleted or renamed model `ImageListResult`
+  - Deleted or renamed model `OperationListResult`
+  - Deleted or renamed model `PagedDeviceInsight`
+  - Deleted or renamed model `ProductListResult`
+
 ## 1.0.0 (2024-03-26)
 
 ### Features Added
