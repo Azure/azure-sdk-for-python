@@ -324,12 +324,14 @@ class TestDeleteMessages:
         )
         receiver._container_id = "receiver"
         receiver._mgmt_target = "$management"
-        receiver._open_with_timeout = MagicMock(
-            side_effect=lambda _timeout: threading.Event().wait(0.01)
-        )
+        receiver._open_with_timeout = MagicMock()
         receiver._amqp_transport.mgmt_client_setup = MagicMock()
 
-        ServiceBusReceiver._open_mgmt_link_with_retry(receiver, timeout=2)
+        with patch(
+            "azure.servicebus._base_handler.time.monotonic",
+            side_effect=[10.0, 10.0, 10.0, 10.5],
+        ):
+            ServiceBusReceiver._open_mgmt_link_with_retry(receiver, timeout=2)
 
         receiver._open_with_timeout.assert_called_once()
         receiver_timeout = receiver._open_with_timeout.call_args.args[0]
@@ -338,7 +340,7 @@ class TestDeleteMessages:
         setup_args = receiver._amqp_transport.mgmt_client_setup.call_args
         assert setup_args.args == (receiver._handler,)
         assert setup_args.kwargs["node"] == receiver._mgmt_target.encode("UTF-8")
-        assert 0 < setup_args.kwargs["timeout"] < receiver_timeout
+        assert setup_args.kwargs["timeout"] == pytest.approx(receiver_timeout - 0.5)
 
     def test_forwards_session_id(self):
         receiver = _receiver(ServiceBusReceiver, session_id="session-a")
@@ -798,15 +800,16 @@ class TestDeleteMessagesAsync:
         )
         receiver._container_id = "receiver"
         receiver._mgmt_target = "$management"
-        async def delayed_open(_timeout):
-            await asyncio.sleep(0.01)
-
-        receiver._open_with_timeout = AsyncMock(side_effect=delayed_open)
+        receiver._open_with_timeout = AsyncMock()
         receiver._amqp_transport.mgmt_client_setup_async = AsyncMock()
 
-        await AsyncServiceBusReceiver._open_mgmt_link_with_retry(
-            receiver, timeout=2
-        )
+        with patch(
+            "azure.servicebus.aio._base_handler_async.time.monotonic",
+            side_effect=[10.0, 10.0, 10.0, 10.5],
+        ):
+            await AsyncServiceBusReceiver._open_mgmt_link_with_retry(
+                receiver, timeout=2
+            )
 
         receiver._open_with_timeout.assert_awaited_once()
         receiver_timeout = receiver._open_with_timeout.await_args.args[0]
@@ -815,7 +818,7 @@ class TestDeleteMessagesAsync:
         setup_args = receiver._amqp_transport.mgmt_client_setup_async.await_args
         assert setup_args.args == (receiver._handler,)
         assert setup_args.kwargs["node"] == receiver._mgmt_target.encode("UTF-8")
-        assert 0 < setup_args.kwargs["timeout"] < receiver_timeout
+        assert setup_args.kwargs["timeout"] == pytest.approx(receiver_timeout - 0.5)
 
     @pytest.mark.asyncio
     async def test_keeps_one_cutoff_and_stops_only_on_zero(self):
