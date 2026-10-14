@@ -470,6 +470,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             if timeout is not None and timeout <= 0:
                 raise OperationTimeoutError()
             start_time = time.monotonic()
+            deadline = None if timeout is None else start_time + timeout
             if timeout is None:
                 await self._open()
             else:
@@ -477,10 +478,14 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 timeout -= time.monotonic() - start_time
                 if timeout <= 0:
                     raise OperationTimeoutError()
-            return await self._amqp_transport.mgmt_client_setup_async(
-                self._handler,
-                node=self._mgmt_target.encode(self._config.encoding),
-                timeout=timeout,
+            return await await_with_deadline(
+                self._amqp_transport.mgmt_client_setup_async(
+                    self._handler,
+                    node=self._mgmt_target.encode(self._config.encoding),
+                    timeout=timeout,
+                ),
+                deadline,
+                "Timed out waiting for the management link to open.",
             )
 
         return await self._do_retryable_operation(

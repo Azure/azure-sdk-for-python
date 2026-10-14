@@ -240,6 +240,59 @@ async def test_async_management_link_setup_converts_timeout_error():
         )
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize("phase", ["lock", "open", "auth", "ready", "open_cleanup", "auth_cleanup_lock"])
+async def test_async_management_setup_deadline_prevents_dispatch(phase):
+    client = object.__new__(AMQPClientAsync)
+    client._mgmt_links = {}
+    client._mgmt_link_lock_async = asyncio.Lock()
+    client._session = MagicMock()
+    client.auth_complete_async = AsyncMock(return_value=True)
+    link = MagicMock(open=AsyncMock(), ready=AsyncMock(return_value=True), close=AsyncMock())
+    blocked = AsyncMock(side_effect=asyncio.Event().wait)
+    if phase == "lock":
+        await client._mgmt_link_lock_async.acquire()
+        client._mgmt_links["$management"] = link
+    elif phase == "auth":
+        client.auth_complete_async = blocked
+    elif phase == "open_cleanup":
+        link.open = blocked
+        link.close = AsyncMock(side_effect=asyncio.Event().wait)
+    elif phase == "auth_cleanup_lock":
+        async def blocked_auth():
+            await client._mgmt_link_lock_async.acquire()
+            await blocked()
+
+        client.auth_complete_async = AsyncMock(side_effect=blocked_auth)
+    else:
+        setattr(link, phase, blocked)
+    receiver = _receiver(AsyncServiceBusReceiver)
+    receiver._config = MagicMock(retry_total=0, try_timeout=None, encoding="UTF-8")
+    receiver._container_id = "receiver"
+    receiver._mgmt_target = "$management"
+    receiver._handler = client
+    receiver._amqp_transport = PyamqpTransportAsync
+    receiver._open_with_timeout = AsyncMock()
+    receiver._handle_exception = AsyncMock(side_effect=lambda error: error)
+    receiver._mgmt_request_response = AsyncMock()
+    receiver._open_mgmt_link_with_retry = AsyncServiceBusReceiver._open_mgmt_link_with_retry.__get__(receiver)
+    try:
+        with patch("azure.servicebus._pyamqp.aio._client_async.ManagementOperation", return_value=link):
+            with pytest.raises(OperationTimeoutError):
+                await asyncio.wait_for(receiver.delete_messages(1, timeout=0.05), timeout=1)
+        receiver._mgmt_request_response.assert_not_awaited()
+        if phase == "lock":
+            assert client._mgmt_links == {"$management": link}
+            link.close.assert_not_called()
+        else:
+            blocked.assert_awaited_once()
+            assert client._mgmt_links == {}
+            link.close.assert_called_once()
+    finally:
+        if phase in ("lock", "auth_cleanup_lock"):
+            client._mgmt_link_lock_async.release()
+
+
 class TestDeleteMessages:
     @pytest.mark.parametrize(
         "session_id,suppress_session_advice,expects_session_advice",
@@ -845,12 +898,17 @@ class TestDeleteMessagesAsync:
         )
         receiver._container_id = "receiver"
         receiver._mgmt_target = "$management"
-        receiver._open_with_timeout = AsyncMock()
+        clock = MagicMock(return_value=10.0)
+
+        async def open_receiver(_timeout):
+            clock.return_value = 10.5
+
+        receiver._open_with_timeout = AsyncMock(side_effect=open_receiver)
         receiver._amqp_transport.mgmt_client_setup_async = AsyncMock()
 
         with patch(
             "azure.servicebus.aio._base_handler_async.time.monotonic",
-            side_effect=[10.0, 10.0, 10.0, 10.5],
+            clock,
         ):
             await AsyncServiceBusReceiver._open_mgmt_link_with_retry(
                 receiver, timeout=2
