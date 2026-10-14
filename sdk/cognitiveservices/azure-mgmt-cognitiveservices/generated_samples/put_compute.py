@@ -48,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-15-preview/PutCompute.json
+# x-ms-original-file: 2026-09-15-preview/PutCompute.json
 if __name__ == "__main__":
     main()
