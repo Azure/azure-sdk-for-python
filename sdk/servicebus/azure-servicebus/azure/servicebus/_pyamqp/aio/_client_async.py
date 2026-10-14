@@ -421,9 +421,12 @@ class AMQPClientAsync(AMQPClientSync):
                 async with self._mgmt_link_lock_async:
                     if self._mgmt_links.get(node) is mgmt_link:
                         self._mgmt_links.pop(node, None)
-                close_result = mgmt_link.close()
-                if inspect.isawaitable(close_result):
-                    await close_result
+                try:
+                    close_result = mgmt_link.close()
+                    if inspect.isawaitable(close_result):
+                        await close_result
+                except BaseException:  # pylint: disable=broad-except
+                    _logger.warning("Management link cleanup failed; preserving the original error.", exc_info=True)
             raise
 
 

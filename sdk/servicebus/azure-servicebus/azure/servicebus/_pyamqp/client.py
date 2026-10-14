@@ -518,7 +518,10 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
                 with self._mgmt_link_lock:
                     if self._mgmt_links.get(node) is mgmt_link:
                         self._mgmt_links.pop(node, None)
-                mgmt_link.close()
+                try:
+                    mgmt_link.close()
+                except Exception:  # pylint: disable=broad-except
+                    _logger.warning("Management link cleanup failed; preserving the original error.", exc_info=True)
             raise
 
 

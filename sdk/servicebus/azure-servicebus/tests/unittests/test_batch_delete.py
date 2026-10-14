@@ -10,8 +10,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from azure.servicebus import DeleteMessagesResult, ServiceBusReceiver
-from azure.servicebus.aio import ServiceBusReceiver as AsyncServiceBusReceiver
+from azure.servicebus import DeleteMessagesResult, ServiceBusClient, ServiceBusReceiver, ServiceBusSubQueue
+from azure.servicebus.aio import ServiceBusClient as AsyncServiceBusClient, ServiceBusReceiver as AsyncServiceBusReceiver
 from azure.servicebus._common.constants import (
     ERROR_CODE_MESSAGE_NOT_FOUND,
     MGMT_REQUEST_ENQUEUED_TIME_UTC,
@@ -123,7 +123,8 @@ def _receiver(receiver_type, session_id=None):
     return receiver
 
 
-def test_failed_management_link_open_is_evicted_before_retry():
+@pytest.mark.parametrize("cleanup_error", [None, RuntimeError("close failed")])
+def test_failed_management_link_open_is_evicted_before_retry(cleanup_error):
     client = object.__new__(AMQPClient)
     client._mgmt_links = {}
     client._mgmt_link_lock = threading.Lock()
@@ -131,6 +132,7 @@ def test_failed_management_link_open_is_evicted_before_retry():
     client.auth_complete = MagicMock(return_value=True)
     failed_link = MagicMock()
     failed_link.open.side_effect = RuntimeError("attach failed")
+    failed_link.close.side_effect = cleanup_error
     ready_link = MagicMock()
     ready_link.ready.return_value = True
 
@@ -157,15 +159,17 @@ def test_management_link_setup_converts_timeout_error():
 
 
 @pytest.mark.asyncio
-async def test_cancelled_management_link_open_is_evicted_before_retry():
+@pytest.mark.parametrize("setup_error", [RuntimeError("attach failed"), asyncio.CancelledError()])
+@pytest.mark.parametrize("cleanup_error", [None, RuntimeError("close failed"), asyncio.CancelledError()])
+async def test_failed_async_management_link_open_is_evicted_before_retry(setup_error, cleanup_error):
     client = object.__new__(AMQPClientAsync)
     client._mgmt_links = {}
     client._mgmt_link_lock_async = asyncio.Lock()
     client._session = MagicMock()
     client.auth_complete_async = AsyncMock(return_value=True)
     failed_link = MagicMock()
-    failed_link.open = AsyncMock(side_effect=asyncio.CancelledError())
-    failed_link.close = AsyncMock()
+    failed_link.open = AsyncMock(side_effect=setup_error)
+    failed_link.close = AsyncMock(side_effect=cleanup_error)
     ready_link = MagicMock()
     ready_link.open = AsyncMock()
     ready_link.ready = AsyncMock(return_value=True)
@@ -174,14 +178,55 @@ async def test_cancelled_management_link_open_is_evicted_before_retry():
         "azure.servicebus._pyamqp.aio._client_async.ManagementOperation",
         side_effect=[failed_link, ready_link],
     ) as operation_type:
-        with pytest.raises(asyncio.CancelledError):
+        with pytest.raises(type(setup_error)) as caught:
             await client.open_mgmt_link_async()
+        assert caught.value is setup_error
         assert client._mgmt_links == {}
         failed_link.close.assert_awaited_once()
 
         assert await client.open_mgmt_link_async() is ready_link
 
     assert operation_type.call_count == 2
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("client_type", [ServiceBusClient, AsyncServiceBusClient])
+@pytest.mark.parametrize("subscription", [False, True])
+@pytest.mark.parametrize("operation", ["delete_messages", "purge_messages"])
+@pytest.mark.parametrize("sub_queue,suffix", [
+    (ServiceBusSubQueue.DEAD_LETTER, "/$DeadLetterQueue"),
+    (ServiceBusSubQueue.TRANSFER_DEAD_LETTER, "/$Transfer/$DeadLetterQueue"),
+])
+async def test_client_created_subqueue_batch_delete_routing(client_type, subscription, operation, sub_queue, suffix):
+    client = client_type("example.servicebus.windows.net", MagicMock())
+    is_async = client_type is AsyncServiceBusClient
+    try:
+        if subscription:
+            receiver = client.get_subscription_receiver("topic", "subscription", sub_queue=sub_queue)
+            entity_path = "topic/Subscriptions/subscription"
+        else:
+            receiver = client.get_queue_receiver("queue", sub_queue=sub_queue)
+            entity_path = "queue"
+        receiver._open = AsyncMock() if is_async else MagicMock()
+        expected_node = (entity_path + suffix + "/$management").encode("UTF-8")
+        setup_method = "mgmt_client_setup_async" if is_async else "mgmt_client_setup"
+        request_method = "mgmt_client_request_async" if is_async else "mgmt_client_request"
+        with patch.object(receiver._amqp_transport, setup_method) as setup, patch.object(
+            receiver._amqp_transport, request_method, return_value=0
+        ) as dispatch:
+            args = (1,) if operation == "delete_messages" else ()
+            if is_async:
+                await getattr(receiver, operation)(*args)
+            else:
+                getattr(receiver, operation)(*args)
+            assert setup.call_args.kwargs["node"] == expected_node
+            assert dispatch.call_args.kwargs["node"] == expected_node
+            assert dispatch.call_args.kwargs["operation"] == REQUEST_RESPONSE_BATCH_DELETE_MESSAGES_OPERATION
+    finally:
+        if is_async:
+            await client.close()
+        else:
+            client.close()
 
 
 @pytest.mark.asyncio
