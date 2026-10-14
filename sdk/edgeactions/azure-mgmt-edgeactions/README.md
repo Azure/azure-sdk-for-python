@@ -74,7 +74,7 @@ These tests do not prove that the service accepts or rejects a request.
 The three lifecycle scenarios use recorded service responses in playback mode. Only the
 two generated resource-group listing smoke tests remain live-only and are skipped offline.
 
-For persistent local configuration, use this package's [.env.example](.env.example).
+For persistent local configuration, use this package's `.env.example` file.
 Copy it to `.env` at the worktree root, or merge its settings into an existing `.env`
 without overwriting other configuration. From this package directory:
 
@@ -191,7 +191,7 @@ that affect requests or expected service responses. Older captures made before t
 playback-safe sanitizer setup may have lost resource names/IDs or `Location` paths;
 replace those captures with a live recording rather than guessing the erased values.
 
-Following the existing [Network management tests](../../network/azure-mgmt-network/tests/conftest.py),
+Following the existing [Network management tests](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/network/azure-mgmt-network/tests/conftest.py),
 package setup preserves `Location` headers and resource names; it also preserves resource IDs,
 as the [JavaScript EdgeActions tests](https://github.com/Azure/azure-sdk-for-js/blob/main/sdk/edgeactions/arm-edgeactions/test/public/utils/recordedClient.ts)
 and the .NET/Java ARM frameworks do. Shared Python setup already preserves
@@ -206,9 +206,21 @@ are also sanitized. Polling operation paths/IDs, API versions, and functional te
 are preserved for reliable playback. These rules are not a blanket guarantee that every
 future response is safe to publish: review new recording fields before sharing them.
 
-Review sanitization and
-follow the testing guide's recording-migration instructions to publish recordings to
-`azure-sdk-assets` and commit the resulting `assets.json` pointer.
+Recordings are stored in `Azure/azure-sdk-assets`; this package's `assets.json` pins
+the published recording set. Playback automatically fetches that set into the
+worktree-root `.assets` cache when needed. An initial download requires network
+access, but playback does not call Azure.
+
+After a successful live recording, review the updated recordings in the cache and
+follow the testing guide's
+[recording update instructions](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#update-test-recordings).
+From the package directory, publish the recordings with:
+
+```powershell
+python ..\..\..\scripts\manage_recordings.py push -p assets.json
+```
+
+Commit the updated `assets.json` pointer, not recording JSON files under `tests`.
 
 ## Next steps
 

@@ -26,8 +26,10 @@ def version_code(deployment_type):
     if deployment_type == "zip":
         buffer = io.BytesIO()
         with zipfile.ZipFile(buffer, "w") as archive:
-            # Fixed ZIP metadata keeps the request identical during playback.
-            archive.writestr(zipfile.ZipInfo("handler.js", date_time=(1980, 1, 1, 0, 0, 0)), HANDLER)
+            info = zipfile.ZipInfo("handler.js", date_time=(1980, 1, 1, 0, 0, 0))
+            # Match the recorded Windows creator metadata on every platform.
+            info.create_system = 0
+            archive.writestr(info, HANDLER)
         content = buffer.getvalue()
     return base64.b64encode(content).decode()
 
@@ -84,7 +86,9 @@ class TestEdgeActionsLifecycle(AzureMgmtRecordedTestCase):
             assert before.tags == {"purpose": "initial", "remove-me": "initial"}
             assert name in [action.name for action in client.edge_actions.list_by_resource_group(rg)]
 
-            with pytest.raises(HttpResponseError, match="PATCH request body must contain at least one property") as error:
+            with pytest.raises(
+                HttpResponseError, match="PATCH request body must contain at least one property"
+            ) as error:
                 client.edge_actions.begin_update(rg, name, models.EdgeActionUpdate()).result()
             assert error.value.status_code == 400
             assert client.edge_actions.get(rg, name).tags == before.tags

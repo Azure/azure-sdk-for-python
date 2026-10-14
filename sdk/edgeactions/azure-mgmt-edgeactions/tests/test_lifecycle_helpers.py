@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 import base64
+import hashlib
 import io
 import os
 import subprocess
@@ -80,6 +81,19 @@ def test_version_code_is_replayable(deployment_type):
             assert archive.getinfo("handler.js").date_time == (1980, 1, 1, 0, 0, 0)
     else:
         assert decoded == HANDLER
+
+
+@pytest.mark.parametrize("create_system", [0, 3], ids=["windows", "unix"])
+def test_zip_payload_matches_recording_across_platforms(monkeypatch, create_system):
+    class PlatformZipInfo(zipfile.ZipInfo):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.create_system = create_system
+
+    monkeypatch.setattr(zipfile, "ZipInfo", PlatformZipInfo)
+    payload = base64.b64decode(version_code("zip"))
+    # Fingerprint of the synthetic ZIP request in the existing service recording.
+    assert hashlib.sha256(payload).hexdigest() == "1513a84ea0182336e1a0e7d7ab1c8472bd276c47628fd41c6272e43407d3a5c6"
 
 
 def make_version(name, is_default):
