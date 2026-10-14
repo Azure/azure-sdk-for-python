@@ -40,7 +40,11 @@ def test_context_closes_owned_resources_after_token_outcome(resources, failure):
             return await provider.get_token("scope")
 
     if failure:
-        with pytest.raises(failure, match="token failed"):
+        # asyncio.run() can replace a CancelledError's message with an empty one when the
+        # cancellation propagates through further awaits during cleanup, so only the
+        # exception type (not its message) can be reliably asserted in that case.
+        match = None if failure is asyncio.CancelledError else "token failed"
+        with pytest.raises(failure, match=match):
             asyncio.run(request())
     else:
         assert asyncio.run(request()).token == "local-token"
@@ -57,7 +61,11 @@ def test_failed_context_entry_closes_environment_client(resources, failure):
         async with providers.AsyncAzureTokenProvider():
             pytest.fail("Context entry must fail")
 
-    with pytest.raises(failure, match="initialization failed"):
+    # See note above: asyncio.run() can discard a CancelledError's original message when
+    # cancellation propagates through further awaits during cleanup, so only the exception
+    # type can be reliably asserted in that case.
+    match = None if failure is asyncio.CancelledError else "initialization failed"
+    with pytest.raises(failure, match=match):
         asyncio.run(request())
     client.close.assert_awaited_once_with()
     credential.close.assert_not_called()
