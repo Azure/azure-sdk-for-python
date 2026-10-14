@@ -473,6 +473,7 @@ def persistent_obo_cache(tmp_path, monkeypatch):
 @pytest.mark.parametrize("account_info", [True, False])
 async def test_persistent_cache_new_instance(persistent_obo_cache, get_token_method, enable_cae, account_info):
     """A new per-request credential reads the same assertion's token from a separate persistent cache object."""
+
     async def send(request, **kwargs):
         assert request.body["client_id"] == "client-id"
         assert request.body["assertion"] == "assertion"
