@@ -178,7 +178,10 @@ EdgeActions use the Standard SKU;
 EdgeActions and their children use `global`. The framework tags temporary groups and initiates their deletion
 after each scenario. Scenario cleanup waits for deletion of its EdgeAction and children.
 
-To reuse a dedicated group, set `AZURE_RESOURCEGROUP_NAME=ea-python-sdk-tests-rg`.
+Optionally, reuse an existing dedicated test group. For example, if you have created
+a group named `edgeaction-pythonsdk-tests-rg`, set
+`AZURE_RESOURCEGROUP_NAME=edgeaction-pythonsdk-tests-rg` in your local `.env`.
+This name is only an example, not a default or a group the tests create automatically.
 The framework does not create or delete a supplied group; the scenarios still create and
 delete their own `eapython...` actions within it. Leave this variable unset for isolated
 groups. Never point these tests at a production group.
