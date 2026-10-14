@@ -21,6 +21,8 @@
   Environment-backed `AgentConfig` values are refreshed in place before
   callbacks run, and `AgentSessionContext` is marked experimental.
 
+- Fixed Windows file-backed replay streams remaining locked after abrupt process termination by using an OS-managed lock.
+
 ### Other Changes
 
 - Changed the default SSE keep-alive interval to 15 seconds. Set
