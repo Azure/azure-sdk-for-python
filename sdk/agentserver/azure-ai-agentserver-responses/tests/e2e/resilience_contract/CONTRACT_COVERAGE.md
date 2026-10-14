@@ -37,6 +37,7 @@ A clause may have MULTIPLE rows if it spans dimensions; a test may appear in MUL
 | Row 3 Path A: handler completes within grace | `test_row_3_path_a.py::test_row_3_path_a` (stream=F/T) | response.status |
 | Row 3 Path B: foreground mark-failed; respond to original connection | `test_row_3_path_b.py::test_row_3_path_b` (stream=F/T) | response.status; response.error.code |
 | Row 3 Path C with switch enabled: foreground mark-failed via recovery fallback | `test_row_3_path_c.py::test_row_3_path_c` (stream=F/T) | response.status; response.error.code |
+| Row 3 Path C with switch disabled: no recovery scanner; persisted foreground state remains `in_progress` | `test_row_3_path_c.py::test_row_3_path_c_switch_disabled_remains_in_progress` (stream=F/T) | response.status |
 | Row 4 Path A: handler completes; ephemeral, GET returns 404 | `test_row_4_path_a.py::test_row_4_path_a` (stream=F/T) | response.status (returned inline); GET 404 |
 | Row 4 Path B: best-effort failed marker on live wire (MAY) | `test_row_4_path_b.py::test_row_4_path_b` (stream=F/T) | response.status (best-effort) |
 | Row 4 Path C: no persisted state, no next-lifetime action | `test_row_4_path_c.py::test_row_4_path_c` (stream=F/T) | meta (n/a verification) |

@@ -12,7 +12,6 @@ validator would still be caught.
 
 from __future__ import annotations
 
-import asyncio
 import os
 from typing import Iterator
 
@@ -56,9 +55,8 @@ def _clear_env_overrides() -> Iterator[None]:
 async def test_resilient_tasks_enabled_explicit_inmemory_store_fails_construction() -> None:
     """Spec 014 FR-006 integration: the host MUST refuse to construct
     (and therefore MUST NOT start serving traffic) when an operator
-    deliberately configures ``resilient_tasks_enabled=True`` with an
-    explicit in-memory store. End-to-end check that no path bypasses
-    the guard.
+    enables the core switch with an explicit in-memory store. End-to-end
+    check that no path bypasses the guard.
     """
     set_resilient_tasks_enabled(True)
     options = ResponsesServerOptions()
@@ -75,9 +73,10 @@ async def test_resilient_tasks_enabled_explicit_inmemory_store_fails_constructio
 
 
 def test_resilient_tasks_enabled_default_construction_works() -> None:
-    """Backward-compat regression: ``ResponsesAgentServerHost()`` with
-    all defaults continues to construct successfully — the guard does
-    NOT fire on the default path (in-process tests / local dev).
+    """The enabled guard accepts the default persistent ``FileResponseStore``.
+
+    The root fixture restores the process-global switch after this test.
     """
+    set_resilient_tasks_enabled(True)
     app = ResponsesAgentServerHost()
     assert app is not None
