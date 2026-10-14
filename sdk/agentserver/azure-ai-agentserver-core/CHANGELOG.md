@@ -21,13 +21,6 @@
   Environment-backed `AgentConfig` values are refreshed in place before
   callbacks run, and `AgentSessionContext` is marked experimental.
 
-### Other Changes
-
-- Changed the default SSE keep-alive interval to 15 seconds. Set
-  `SSE_KEEPALIVE_INTERVAL=0` to disable keep-alive comments.
-
-## 2.2.1 (Unreleased)
-
 ### Bugs Fixed
 
 - Preserve an observed final terminal marker before recovery-time TTL
@@ -65,6 +58,11 @@
   deletion tombstone, allowing cleanup to be retried.
 - Make Windows replay lock-file removal failures retryable without closing
   an already-released file descriptor or reporting successful deletion.
+
+### Other Changes
+
+- Changed the default SSE keep-alive interval to 15 seconds. Set
+  `SSE_KEEPALIVE_INTERVAL=0` to disable keep-alive comments.
 
 ## 2.2.0 (2026-09-23)
 

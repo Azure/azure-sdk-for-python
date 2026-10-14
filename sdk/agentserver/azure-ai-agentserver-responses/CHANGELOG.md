@@ -4,6 +4,8 @@
 
 ### Bugs Fixed
 
+- Propagate source cancellation through SSE keep-alive streams instead of
+  treating interrupted durable admission as successful stream completion.
 - Signal accepted durable task shutdown before awaiting response execution, so
   explicit and checkpoint-based recovery exits preserve recoverable input.
   Rebind cold-recovery cancellation to the handler's exact event before
@@ -42,7 +44,7 @@
   partition returns HTTP 409 while execution or replay is retained.
 - Require a successful user-scoped provider lookup before replaying stored SSE
   events; storage errors no longer fall through to cached replay.
-- Require Core 2.2.1 so retained file replay is discovered after restart for
+- Require Core 2.3.0b1 so retained file replay is discovered after restart for
   duplicate admission, authorized replay, and deletion.
 - Return an error when replay cleanup fails during DELETE and retain ownership
   state so the owner can retry cleanup.
