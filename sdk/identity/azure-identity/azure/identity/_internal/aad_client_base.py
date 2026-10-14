@@ -122,7 +122,6 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
             # keyed by the assertion hash (see _process_response), and MSAL only matches entries having an
             # "ext_cache_key" to queries specifying it.
             query["ext_cache_key"] = user_assertion_hash
-            query["user_assertion_hash"] = user_assertion_hash
 
         cache = self._get_cache(**kwargs)
         now = int(time.time())
@@ -299,7 +298,7 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
         query = {"client_id": self._client_id, "secret": access_token}
         for entry in list(cache.search(credential_type, query=query)):
             cache.modify(credential_type, entry)  # remove
-            bound_entry = dict(entry, ext_cache_key=user_assertion_hash, user_assertion_hash=user_assertion_hash)
+            bound_entry = dict(entry, ext_cache_key=user_assertion_hash)
             cache.modify(credential_type, bound_entry, bound_entry)
 
     def _bind_refresh_token_to_user_assertion(
