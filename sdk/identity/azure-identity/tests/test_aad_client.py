@@ -409,3 +409,60 @@ def test_get_cached_access_token_with_claims():
     # With claims, should return None even though a valid token is cached
     token_with_claims = client.get_cached_access_token([scope], claims=claims)
     assert token_with_claims is None
+
+
+def test_on_behalf_of_concurrent_exchange_never_cross_binds():
+    """Another process's exchange between a token's cache write and its binding to the user assertion costs a cache
+    miss, but must never bind one assertion's token to another assertion.
+
+    This simulates two processes sharing a persistent cache, exchanging different assertions for the same account.
+    """
+    from azure.identity._internal.aad_client_base import _hash_user_assertion
+
+    cache = TokenCache()
+
+    def send_for(assertion):
+        def send(request, **kwargs):
+            return mock_response(
+                json_payload=build_aad_response(
+                    access_token="ACCESS-TOKEN-" + assertion,
+                    refresh_token="REFRESH-TOKEN-" + assertion,
+                    uid="a",
+                    utid="utid",
+                )
+            )
+
+        return send
+
+    client_a = AadClient("tenant-id", "client-id", transport=Mock(send=send_for("assertion-a")), cache=cache)
+    client_b = AadClient("tenant-id", "client-id", transport=Mock(send=send_for("assertion-b")), cache=cache)
+    hash_a, hash_b = _hash_user_assertion("assertion-a"), _hash_user_assertion("assertion-b")
+
+    def exchange(client, assertion, user_assertion_hash):
+        # the sync client doesn't implement obtain_token_on_behalf_of, but shares the request and response handling
+        request = client._get_on_behalf_of_request(["scope"], "secret", assertion)
+        client._run_pipeline(request, user_assertion_hash=user_assertion_hash)
+
+    bind = client_a._bind_to_user_assertion
+    interleaved = False
+
+    def bind_after_other_exchange(*args, **kwargs):
+        nonlocal interleaved
+        if not interleaved:
+            # B's exchange overwrites A's entries, which aren't bound yet and so have the same keys as B's
+            interleaved = True
+            exchange(client_b, "assertion-b", hash_b)
+        bind(*args, **kwargs)
+
+    with patch.object(client_a, "_bind_to_user_assertion", bind_after_other_exchange):
+        exchange(client_a, "assertion-a", hash_a)
+
+    # A lost its cache entries, so the next credential with assertion A has to exchange it again...
+    assert client_a.get_cached_access_token(["scope"], user_assertion_hash=hash_a) is None
+    assert client_a.get_cached_refresh_tokens(["scope"], user_assertion_hash=hash_a) == []
+
+    # ...but B's tokens are bound to B only
+    assert client_b.get_cached_access_token(["scope"], user_assertion_hash=hash_b).token == "ACCESS-TOKEN-assertion-b"
+    assert [rt["secret"] for rt in client_b.get_cached_refresh_tokens(["scope"], user_assertion_hash=hash_b)] == [
+        "REFRESH-TOKEN-assertion-b"
+    ]
