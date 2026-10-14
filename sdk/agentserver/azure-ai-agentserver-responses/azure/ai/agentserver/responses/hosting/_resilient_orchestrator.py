@@ -9,9 +9,10 @@ is a transparent infrastructure concern.
 
 Architecture (post-spec-024 unification):
   POST /responses → _ResponseOrchestrator.run_background()
-    → resilient task body → _run_background_non_stream(...)
-       (handler runs INSIDE the task body for every store=true row;
-        disposition selects re-invoke vs mark-failed recovery).
+    → (switch enabled + store=true) → resilient task body
+       → _run_background_non_stream(...)
+       (disposition selects re-invoke vs mark-failed recovery).
+    → (switch disabled + store=true) → in-process asyncio fallback.
     → (store=false) → asyncio.create_task(...) fallback for Row 4.
 """
 
@@ -360,8 +361,8 @@ def _reconstruct_from_params(
 # scanner what to do on the next-lifetime recovered entry:
 #   - "re-invoke": re-run the handler (Row 1: resilient tasks enabled+bg+store).
 #   - "mark-failed": persist a server_error terminal to the response store and
-#     complete the task without re-invoking (Rows 2, 3: bg+store with resilient
-#     tasks disabled, and fg+store).
+#     complete the task without re-invoking (switch-enabled foreground work and
+#     legacy persisted records).
 # (Spec 039 R1) The disposition, background flag, and response_id are sourced
 # directly from the durable task INPUT (``ResilientResponseInput``, persisted at
 # task ``.start()`` — strictly before the body runs), which is the single source
@@ -597,9 +598,9 @@ class ResilientResponseOrchestrator:
         strictly before the body's first entry — so no framework metadata mirror
         or explicit flush is needed (the input is the single source of truth,
         matching the .NET port). On a recovered entry with a ``mark-failed``
-        disposition (Rows 2/3), persists the ``server_error`` terminal to the
-        store **without re-invoking the handler** and signals the caller to
-        return.
+        disposition (switch-enabled foreground work or a legacy persisted
+        record), persists the ``server_error`` terminal to the store **without
+        re-invoking the handler** and signals the caller to return.
 
         :keyword disposition: The task disposition from the input
             (``re-invoke`` / ``mark-failed``).

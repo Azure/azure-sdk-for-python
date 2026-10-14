@@ -3613,10 +3613,10 @@ class _ResponseOrchestrator:
             return await self._run_sync_inner(ctx, state)
 
         # (Spec 024 Phase 2 — bookkeeping unification) Row 3 unified path:
-        # handler runs inside the resilient task body, HTTP request awaits the
-        # task's terminal via ``await task_run.result()``. Crash recovery
-        # uses the same mark-failed disposition as before — the next-lifetime
-        # recovery scanner reclaims tasks that crashed mid-execution.
+        # with resilient tasks enabled, the handler runs inside the task body
+        # and the HTTP request awaits ``task_run.result()``. Crash recovery uses
+        # the persisted mark-failed disposition. With the switch disabled,
+        # _start_resilient_response uses the non-durable in-process fallback.
         record = ResponseExecution(
             response_id=ctx.response_id,
             mode_flags=ResponseModeFlags(stream=False, store=True, background=False),

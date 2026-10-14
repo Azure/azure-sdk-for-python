@@ -16,8 +16,11 @@ Recovery — and durable tasks as a whole — is therefore strictly opt-in. Mere
 declaring a durable task (``@task`` / ``@multi_turn_task``) does **not** turn
 the subsystem on; you must set this switch directly.
 
-The switch is process-global and defaults to ``False``. Set it before
-``AgentServerHost`` lifespan startup (typically at import time)::
+The switch is process-global and defaults to ``False``. Invocations hosts read
+it at ``AgentServerHost`` lifespan startup. Responses hosts additionally read
+it while constructing ``ResponsesAgentServerHost`` to choose replay storage and
+validate provider composition, so Responses applications MUST set it before
+constructing the host (typically at import time)::
 
     from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 
@@ -31,16 +34,19 @@ def set_resilient_tasks_enabled(value: bool = True) -> None:
     """Opt in to (or clear) the resilient task subsystem process-wide.
 
     This gates whether ``AgentServerHost`` constructs the ``TaskManager`` at
-    lifespan startup. Setting it to ``True`` constructs the manager, runs the
-    startup crash-recovery scan, and starts the periodic recovery loop. When it
-    is ``False`` no manager is installed: ``get_task_manager()`` raises
+    lifespan startup. When the value is ``True`` at startup, the host constructs
+    the manager, runs the crash-recovery scan, and starts the periodic recovery
+    loop. When it is ``False`` no manager is installed:
+    ``get_task_manager()`` raises
     :class:`~azure.ai.agentserver.core.tasks.TaskManagerNotInitialized` and a
     durable task cannot run (callers such as the responses ``store=true`` path
     swallow that and degrade to non-durable in-process execution).
 
-    Must be called before ``AgentServerHost`` lifespan startup (typically at
-    import time) to take effect. Defaults to enabling when called with no
-    argument.
+    Invocations applications must call this before ``AgentServerHost`` lifespan
+    startup. Responses applications must call it before constructing
+    ``ResponsesAgentServerHost`` because host construction snapshots the value
+    for replay storage and composition validation. Defaults to enabling when
+    called with no argument.
 
     :param value: ``True`` to enable the resilient task subsystem, ``False`` to
         clear.

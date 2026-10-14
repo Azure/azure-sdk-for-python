@@ -45,7 +45,6 @@ def _make_steering_harness(
     tmp_path,
     *,
     resilient_tasks_enabled: bool = True,
-    steer_sleep_ms: int = _STEER_SLEEP_MS,
 ) -> CrashHarness:
     return CrashHarness(
         sample_module=_STEERING_HANDLER_MODULE,
@@ -53,7 +52,7 @@ def _make_steering_harness(
         readiness_timeout_seconds=15.0,
         env_extras={
             "CONFORMANCE_RESILIENT_TASKS_ENABLED": "true" if resilient_tasks_enabled else "false",
-            "CONFORMANCE_STEER_SLEEP_MS": str(steer_sleep_ms),
+            "CONFORMANCE_STEER_SLEEP_MS": str(_STEER_SLEEP_MS),
             "AGENTSERVER_SHUTDOWN_GRACE_SECONDS": str(LONG_GRACE_S),
             "AGENTSERVER_GRACEFUL_SHUTDOWN_TIMEOUT_SECONDS": str(LONG_GRACE_S),
             "LOGLEVEL": "WARNING",
@@ -174,7 +173,6 @@ async def test_steering_harness_respects_disabled_resilient_tasks_switch(tmp_pat
     harness = _make_steering_harness(
         tmp_path,
         resilient_tasks_enabled=False,
-        steer_sleep_ms=200,
     )
     await harness.start()
     try:
@@ -192,7 +190,11 @@ async def test_steering_harness_respects_disabled_resilient_tasks_switch(tmp_pat
 
         await harness.kill()
         await harness.restart()
-        await asyncio.sleep(1.0)
+        # The handler sleeps for the same 5-second cutpoint used by the sibling
+        # crash test. Waiting past that duration distinguishes a disabled switch
+        # (no recovery, still in_progress) from an accidentally enabled switch
+        # (recovered handler would have completed).
+        await asyncio.sleep((_STEER_SLEEP_MS / 1000) + 1.0)
 
         response = await harness.client.get(f"/responses/{response_id}")
         assert response.status_code == 200, response.text

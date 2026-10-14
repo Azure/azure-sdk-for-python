@@ -67,6 +67,7 @@ app = ResponsesAgentServerHost(
 ```
 
 Without `set_resilient_tasks_enabled(True)`, durable task execution and crash
-recovery are disabled. Without
-`steerable_conversations=True`, concurrent multi-turn requests for the
-same conversation return `409 conversation_locked` instead of queueing.
+recovery are disabled, and overlapping turns run independently without
+task-backed locking or queueing. With resilient tasks enabled but
+`steerable_conversations=False`, concurrent multi-turn requests for the same
+conversation return `409 conversation_locked` instead of queueing.

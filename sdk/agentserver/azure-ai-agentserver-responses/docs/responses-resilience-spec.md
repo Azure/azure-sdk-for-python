@@ -1384,6 +1384,9 @@ lifetime.
 
 ### C-LOCK — Conversation lock
 
+The requirements in C-LOCK, C-FORK-REJECT, C-ACCEPT, and
+C-STEER-DELIVERY apply only when the resilient-tasks switch is enabled.
+
 For `store=true` with `steerable_conversations=false`, a new turn
 arriving while a prior turn for the same chain is in progress MUST
 return HTTP 409 `conversation_locked` per §11.1.
@@ -1410,7 +1413,6 @@ For `steerable_conversations=true`, queued turns MUST drain in FIFO
 order, with no concurrent handler executions for the same chain
 (§11.4). Drained turns MUST observe `is_steered_turn=True`.
 `pending_input_count` MUST count post-this queued turns.
-These requirements apply only when the resilient-tasks switch is enabled.
 
 ### C-COMPOSE — Composition guards
 
@@ -1418,9 +1420,9 @@ The resilient-tasks switch requires `store=true` to engage row 1; if
 `store=false`, the request falls through to row 4 regardless of
 the switch state. `steerable_conversations=true` requires both
 `store=true` and the resilient-tasks switch enabled for the steering queue,
-locking, anti-fork checks, and acceptance hook to function;
-implementations MUST reject the combination at startup or fall
-through to non-store behaviour per their stability policy.
+locking, anti-fork checks, and acceptance hook to function. With the switch
+disabled, stored requests use independent asyncio fallback executions and none
+of C-LOCK, C-FORK-REJECT, C-ACCEPT, or C-STEER-DELIVERY applies.
 
 ---
 

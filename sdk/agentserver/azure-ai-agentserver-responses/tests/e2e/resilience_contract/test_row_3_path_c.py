@@ -7,13 +7,9 @@ process lifetime, the framework MUST mark the response ``failed``
 (``code=server_error``) so a subsequent ``GET /responses/{saved_id}``
 returns the failed terminal — NOT ``in_progress`` indefinitely.
 
-EXPECTED today: **RED — divergence 3.** ``run_sync`` never calls
-``_start_resilient_response``; no resilient record is created for
-foreground responses; SIGKILL leaves the response ``in_progress`` with
-nothing on the restart side to mark it failed.
-
-Phase 4 closes this by creating a bookkeeping resilient record for every
-``store=true`` response (per RD-1) with disposition ``mark-failed``.
+The conformance harness enables resilient tasks, so foreground execution has a
+durable record with disposition ``mark-failed``. A switch-disabled foreground
+request would have no recovery scanner and could remain ``in_progress``.
 
 Contract source: ``resilience-contract.md`` § Per-row contracts → Row 3.
 """

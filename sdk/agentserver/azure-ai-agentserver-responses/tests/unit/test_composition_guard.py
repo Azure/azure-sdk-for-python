@@ -55,10 +55,10 @@ def _clear_env_overrides() -> Iterator[None]:
 
 
 def test_resilient_tasks_explicit_inmemory_store_raises_at_startup() -> None:
-    """Composition guard: explicit ``store=InMemoryResponseProvider()`` with
-    ``resilient_tasks_enabled=True`` MUST raise — operator deliberately chose
-    a non-persistent store while opting into crash recovery, which is
-    contradictory and the framework refuses to silently degrade.
+    """An explicit in-memory store with the core switch enabled MUST raise.
+
+    The operator deliberately chose a non-persistent store while opting into
+    crash recovery, which is contradictory and cannot silently degrade.
     """
     from azure.ai.agentserver.responses.store._memory import (
         InMemoryResponseProvider,
@@ -79,13 +79,11 @@ def test_resilient_tasks_explicit_inmemory_store_raises_at_startup() -> None:
 
 
 def test_resilient_tasks_with_custom_inmemory_subclass_raises_at_startup() -> None:
-    """Composition guard: explicit ``store=`` with ``resilient_tasks_enabled=True``
-    that does not persist across crashes MUST raise — the operator
-    deliberately chose a non-persistent store while opting into crash
-    recovery, which is contradictory and the framework refuses to silently
-    degrade. The guard only inspects the response store; streaming
-    resilience is owned by the streams registry configured at startup,
-    so any explicit non-persistent store fails the same way.
+    """An explicit in-memory subclass with the core switch enabled MUST raise.
+
+    The guard uses ``isinstance`` so custom subclasses cannot silently weaken
+    crash recovery. Streaming resilience is configured separately by the
+    process-wide streams registry.
     """
     from azure.ai.agentserver.responses.store._memory import (
         InMemoryResponseProvider,
@@ -104,8 +102,10 @@ def test_resilient_tasks_with_custom_inmemory_subclass_raises_at_startup() -> No
 
 
 def test_resilient_tasks_disabled_with_default_file_store_does_not_raise() -> None:
-    """Composition guard is gated on ``resilient_tasks_enabled=True``. With it
-    disabled, the default in-memory provider is permitted.
+    """With the switch disabled, the default file-backed store constructs cleanly.
+
+    Omitting ``store=`` resolves to ``FileResponseStore``; this verifies the
+    ordinary default composition path, not an in-memory provider.
     """
     set_resilient_tasks_enabled(False)
     options = ResponsesServerOptions()
@@ -114,11 +114,11 @@ def test_resilient_tasks_disabled_with_default_file_store_does_not_raise() -> No
 
 
 def test_resilient_tasks_enabled_with_default_file_store_does_not_raise() -> None:
-    """The DEFAULT path (no explicit ``store=``) is not considered an
-    operator misconfiguration — it satisfies in-process tests and local
-    development. The guard only fires when the operator EXPLICITLY
-    supplied a non-resilient store. Backward-compat regression guard so
-    the existing test/dev workflows continue to work.
+    """The default ``FileResponseStore`` satisfies the enabled composition guard.
+
+    Omitting ``store=`` resolves to persistent file-backed storage, so host
+    construction must succeed without treating the default as an explicit
+    non-persistent provider.
     """
     set_resilient_tasks_enabled(True)
     options = ResponsesServerOptions()

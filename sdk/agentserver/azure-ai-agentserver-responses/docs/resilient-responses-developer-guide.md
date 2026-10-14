@@ -104,6 +104,9 @@ With steering enabled:
 
 ### Do you need a custom acceptance hook?
 
+The acceptance hook is part of task-backed steering and therefore requires the
+resilient-tasks switch to be enabled.
+
 When a new turn is queued onto an **already-active steerable conversation**
 (steering pressure — never the first turn of a conversation), the framework
 returns a "queued" response to that POST. By default it's a minimal
@@ -176,9 +179,9 @@ overlapping turns run independently through the asyncio fallback.
 
 ### Steerable conversations: no forking
 
-When `steerable_conversations=True`, each turn after the first must reference
-the previous turn's `response_id` via `previous_response_id`. The framework
-rejects forks with HTTP 409:
+When resilient tasks are enabled and `steerable_conversations=True`, each turn
+after the first must reference the previous turn's `response_id` via
+`previous_response_id`. The framework rejects forks with HTTP 409:
 
 ```json
 {
