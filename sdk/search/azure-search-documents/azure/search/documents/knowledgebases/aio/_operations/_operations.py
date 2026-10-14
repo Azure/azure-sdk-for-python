@@ -405,7 +405,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         },
         api_versions_list=["2026-08-01-preview", "2026-10-01"],
     )
-    async def retrieve_stream(
+    async def retrieve_stream(  # pylint: disable=too-many-statements
         self,
         retrieval_request: Union[
             _models2.KnowledgeBaseRetrievalRequest, _types_models2.KnowledgeBaseRetrievalRequest, IO[bytes]
