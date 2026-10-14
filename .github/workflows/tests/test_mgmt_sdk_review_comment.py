@@ -92,7 +92,13 @@ def review():
                     for name in MODULE.CHECKS
                 ],
                 "findings": [],
-                "attribution": {"outcome": "no_entries", "initial_release": False, "reason": "", "entries": []},
+                "attribution": {
+                    "outcome": "no_entries",
+                    "initial_release": False,
+                    "omitted_count": 0,
+                    "reason": "",
+                    "entries": [],
+                },
             }
         ],
     }
@@ -206,6 +212,7 @@ def production_fixture(data=None, trusted=None):
                     for item in package["findings"]
                     if item["check"] in SEMANTIC_CHECKS
                 ],
+                "attribution_omitted": package["attribution"]["omitted_count"],
                 "attribution": [
                     {
                         "entry_id": entry_id(breaking["introducedEntries"][item["entry_index"]]),

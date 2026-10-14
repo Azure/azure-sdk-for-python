@@ -31,12 +31,9 @@ if TYPE_CHECKING:
         FailoverDirectionTypes,
         FailoverState,
         ForceInclusionAndUpdate,
-        GoalAssignmentType,
-        GoalType,
         InitialConfig,
         JobStatus,
         ManagedServiceIdentityType,
-        MembershipType,
         ProvisioningState,
         RBACSetupMode,
         RBACState,
@@ -46,7 +43,6 @@ if TYPE_CHECKING:
         RecoveryPlanState,
         RecoveryPlanType,
         RelativeResourceCompositionState,
-        RequirementSelected,
         ResourceInclusionState,
         ResourceProtectionStatus,
         ResourceReplicationRole,
@@ -206,6 +202,21 @@ class AttentionReason(TypedDict, total=False):
     :ivar sliAttentionStatuses: Per-SLI attention status for each SLI selected for Drill
      monitoring.
     :vartype sliAttentionStatuses: list["SliAttentionStatus"]
+    :ivar drillRbacOnGoalAssignment: Drill object does not have the necessary RBAC on Goal
+     Assignment. Known values are: "Set" and "NotSet".
+    :vartype drillRbacOnGoalAssignment: Union[str, "RBACState"]
+    :ivar rbacNeededForDrillOnGoalAssignment: Permissions needed by the Drill MSI on Goal
+     Assignment.
+    :vartype rbacNeededForDrillOnGoalAssignment: list[str]
+    :ivar goalAssignment: Goal Assignment not present. Known values are: "Exists" and "NotExists".
+    :vartype goalAssignment: Union[str, "ExtensionObjectState"]
+    :ivar recoveryPlan: Recovery plan not present. Known values are: "Exists" and "NotExists".
+    :vartype recoveryPlan: Union[str, "ExtensionObjectState"]
+    :ivar healthModelAssociatedWithServiceGroup: Indicates whether any entity in the selected Azure
+     Health Model references the Drill Service Group through
+     properties.signalGroups.azureResource.azureResourceId. Known values are: "Exists" and
+     "NotExists".
+    :vartype healthModelAssociatedWithServiceGroup: Union[str, "ExtensionObjectState"]
     """
 
     drillRbacOnChaosResource: Union[str, "RBACState"]
@@ -280,6 +291,19 @@ class AttentionReason(TypedDict, total=False):
      selected SLI. Known values are: \"Set\" and \"NotSet\"."""
     sliAttentionStatuses: list["SliAttentionStatus"]
     """Per-SLI attention status for each SLI selected for Drill monitoring."""
+    drillRbacOnGoalAssignment: Union[str, "RBACState"]
+    """Drill object does not have the necessary RBAC on Goal Assignment. Known values are: \"Set\" and
+     \"NotSet\"."""
+    rbacNeededForDrillOnGoalAssignment: list[str]
+    """Permissions needed by the Drill MSI on Goal Assignment."""
+    goalAssignment: Union[str, "ExtensionObjectState"]
+    """Goal Assignment not present. Known values are: \"Exists\" and \"NotExists\"."""
+    recoveryPlan: Union[str, "ExtensionObjectState"]
+    """Recovery plan not present. Known values are: \"Exists\" and \"NotExists\"."""
+    healthModelAssociatedWithServiceGroup: Union[str, "ExtensionObjectState"]
+    """Indicates whether any entity in the selected Azure Health Model references the Drill Service
+     Group through properties.signalGroups.azureResource.azureResourceId. Known values are:
+     \"Exists\" and \"NotExists\"."""
 
 
 class ChaosResourcePropertiesOfDrill(TypedDict, total=False):
@@ -501,6 +525,8 @@ class DrillUpdateProperties(TypedDict, total=False):
 
     :ivar recoveryPlanProperties: Recovery Plan properties.
     :vartype recoveryPlanProperties: "RecoveryPlanPropertiesOfDrill"
+    :ivar goalAssignmentProperties: Goal Assignment properties.
+    :vartype goalAssignmentProperties: "GoalAssignmentPropertiesOfDrill"
     :ivar drillAssetProperties: Properties for internal resources that are created for the Drill.
     :vartype drillAssetProperties: "AssetPropertiesOfDrill"
     :ivar chaosResourceProperties: Chaos Resource properties.
@@ -520,6 +546,8 @@ class DrillUpdateProperties(TypedDict, total=False):
 
     recoveryPlanProperties: "RecoveryPlanPropertiesOfDrill"
     """Recovery Plan properties."""
+    goalAssignmentProperties: "GoalAssignmentPropertiesOfDrill"
+    """Goal Assignment properties."""
     drillAssetProperties: "AssetPropertiesOfDrill"
     """Properties for internal resources that are created for the Drill."""
     chaosResourceProperties: "ChaosResourcePropertiesOfDrill"
@@ -738,7 +766,7 @@ class FaultProperties(TypedDict, total=False):
 
 
 class GoalAssignment(ProxyResource):
-    """Goal assignment a AzureResilienceProviderHub resource.
+    """A goal assignment resource in the Azure Resilience Management provider.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -760,40 +788,50 @@ class GoalAssignment(ProxyResource):
 
 
 class GoalAssignmentProperties(TypedDict, total=False):
-    """Definition of goal assignment property.
+    """Properties of a goal assignment.
 
-    :ivar goalTemplateId: Arm id of the goal template.
-    :vartype goalTemplateId: str
-    :ivar goalAssignmentType: The type of goal assignment. "Resiliency"
-    :vartype goalAssignmentType: Union[str, "GoalAssignmentType"]
     :ivar requireZonalResiliency: Whether zonal resiliency is required for this goal assignment.
+     Required.
     :vartype requireZonalResiliency: bool
     :ivar serviceLevelResources: List of service level resources.
     :vartype serviceLevelResources: list["ServiceLevelResource"]
-    :ivar provisioningState: Provisioning state. Known values are: "Succeeded", "Failed",
-     "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and "NeedsAttention".
+    :ivar provisioningState: The provisioning state of the goal assignment. Known values are:
+     "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and
+     "NeedsAttention".
     :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar errorDetails: Details of any errors encountered during the operation.
     :vartype errorDetails: "ErrorDetail"
     """
 
-    goalTemplateId: str
-    """Arm id of the goal template."""
-    goalAssignmentType: Union[str, "GoalAssignmentType"]
-    """The type of goal assignment. \"Resiliency\""""
-    requireZonalResiliency: bool
-    """Whether zonal resiliency is required for this goal assignment."""
+    requireZonalResiliency: Required[bool]
+    """Whether zonal resiliency is required for this goal assignment. Required."""
     serviceLevelResources: list["ServiceLevelResource"]
     """List of service level resources."""
     provisioningState: Union[str, "ProvisioningState"]
-    """Provisioning state. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and \"NeedsAttention\"."""
+    """The provisioning state of the goal assignment. Known values are: \"Succeeded\", \"Failed\",
+     \"Canceled\", \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and
+     \"NeedsAttention\"."""
     errorDetails: "ErrorDetail"
     """Details of any errors encountered during the operation."""
 
 
+class GoalAssignmentPropertiesOfDrill(TypedDict, total=False):
+    """Goal assignment properties.
+
+    :ivar identity: Identity to use for goal assignment operations. Required.
+    :vartype identity: "AssociatedIdentity"
+    :ivar goalAssignmentId: Goal assignment id.
+    :vartype goalAssignmentId: str
+    """
+
+    identity: Required["AssociatedIdentity"]
+    """Identity to use for goal assignment operations. Required."""
+    goalAssignmentId: str
+    """Goal assignment id."""
+
+
 class GoalResource(ProxyResource):
-    """Goal Resource a AzureResilienceProviderHub resource.
+    """A goal resource in the Azure Resilience Management provider.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -815,141 +853,29 @@ class GoalResource(ProxyResource):
 
 
 class GoalResourceProperties(TypedDict, total=False):
-    """Definition of goal assignment property.
+    """Properties of a goal resource.
 
-    :ivar resourceArmId: Arm Id of resource under the SG for which the extension resource is
-     maintained. Required.
+    :ivar resourceArmId: The fully qualified ARM resource ID represented by this goal resource.
+     Required.
     :vartype resourceArmId: str
-    :ivar highAvailabilityGoalParticipation: Flag which depicts whether the Arm resource is
-     excluded for high availability recommendation. Known values are: "Excluded" and "Included".
-    :vartype highAvailabilityGoalParticipation: Union[str, "ExclusionState"]
-    :ivar highAvailabilityAttestationStatus: Flag which depicts whether the Arm resource is
-     manually attested for high availability recommendation. Known values are: "NotAttested" and
-     "ManuallyAttested".
-    :vartype highAvailabilityAttestationStatus: Union[str, "AttestationState"]
-    :ivar zonalResiliency: Zonal resiliency posture (participation, attestation, exclusion reason,
-     and user confirmations) for the Arm resource.
+    :ivar zonalResiliency: The zonal resiliency posture for the ARM resource, including
+     participation, attestation, exclusion reason, and user confirmations.
     :vartype zonalResiliency: "ResiliencyProperties"
-    :ivar disasterRecoveryGoalParticipation: Flag which depicts whether the Arm resource is
-     excluded for disaster recovery recommendation. Known values are: "Excluded" and "Included".
-    :vartype disasterRecoveryGoalParticipation: Union[str, "ExclusionState"]
-    :ivar disasterRecoveryAttestationStatus: Flag which depicts whether the Arm resource is
-     manually attested for disaster recovery recommendation. Known values are: "NotAttested" and
-     "ManuallyAttested".
-    :vartype disasterRecoveryAttestationStatus: Union[str, "AttestationState"]
-    :ivar exclusionReasonForHighAvailabilityGoals: Reason for exclusion from high availability
-     goals. Known values are: "UserSelectedExclusion", "FailedOverResource", and
-     "UnsupportedResource".
-    :vartype exclusionReasonForHighAvailabilityGoals: Union[str, "ExclusionReason"]
-    :ivar exclusionReasonForDisasterRecoveryGoals: Reason for exclusion from disaster recovery
-     goals. Known values are: "UserSelectedExclusion", "FailedOverResource", and
-     "UnsupportedResource".
-    :vartype exclusionReasonForDisasterRecoveryGoals: Union[str, "ExclusionReason"]
-    :ivar userConfirmationForHighAvailability: List of user confirmations for high availability
-     solutions.
-    :vartype userConfirmationForHighAvailability: list["UserConfirmationItem"]
-    :ivar serviceGroupMemberships: List of service groups of which this resource is memberof.
-    :vartype serviceGroupMemberships: list["ServiceGroupMembership"]
-    :ivar provisioningState: Provisioning state. Known values are: "Succeeded", "Failed",
-     "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and "NeedsAttention".
+    :ivar provisioningState: The provisioning state of the goal resource. Known values are:
+     "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and
+     "NeedsAttention".
     :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     resourceArmId: Required[str]
-    """Arm Id of resource under the SG for which the extension resource is maintained. Required."""
-    highAvailabilityGoalParticipation: Union[str, "ExclusionState"]
-    """Flag which depicts whether the Arm resource is excluded for high availability recommendation.
-     Known values are: \"Excluded\" and \"Included\"."""
-    highAvailabilityAttestationStatus: Union[str, "AttestationState"]
-    """Flag which depicts whether the Arm resource is manually attested for high availability
-     recommendation. Known values are: \"NotAttested\" and \"ManuallyAttested\"."""
+    """The fully qualified ARM resource ID represented by this goal resource. Required."""
     zonalResiliency: "ResiliencyProperties"
-    """Zonal resiliency posture (participation, attestation, exclusion reason, and user confirmations)
-     for the Arm resource."""
-    disasterRecoveryGoalParticipation: Union[str, "ExclusionState"]
-    """Flag which depicts whether the Arm resource is excluded for disaster recovery recommendation.
-     Known values are: \"Excluded\" and \"Included\"."""
-    disasterRecoveryAttestationStatus: Union[str, "AttestationState"]
-    """Flag which depicts whether the Arm resource is manually attested for disaster recovery
-     recommendation. Known values are: \"NotAttested\" and \"ManuallyAttested\"."""
-    exclusionReasonForHighAvailabilityGoals: Union[str, "ExclusionReason"]
-    """Reason for exclusion from high availability goals. Known values are: \"UserSelectedExclusion\",
-     \"FailedOverResource\", and \"UnsupportedResource\"."""
-    exclusionReasonForDisasterRecoveryGoals: Union[str, "ExclusionReason"]
-    """Reason for exclusion from disaster recovery goals. Known values are: \"UserSelectedExclusion\",
-     \"FailedOverResource\", and \"UnsupportedResource\"."""
-    userConfirmationForHighAvailability: list["UserConfirmationItem"]
-    """List of user confirmations for high availability solutions."""
-    serviceGroupMemberships: list["ServiceGroupMembership"]
-    """List of service groups of which this resource is memberof."""
+    """The zonal resiliency posture for the ARM resource, including participation, attestation,
+     exclusion reason, and user confirmations."""
     provisioningState: Union[str, "ProvisioningState"]
-    """Provisioning state. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and \"NeedsAttention\"."""
-
-
-class GoalTemplate(ProxyResource):
-    """Goal template a AzureResilienceProviderHub resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: "GoalTemplateProperties"
-    """
-
-    properties: "GoalTemplateProperties"
-    """The resource-specific properties for this resource."""
-
-
-class GoalTemplateProperties(TypedDict, total=False):
-    """Definition of goal template property.
-
-    :ivar requireHighAvailability: Option specified by customer under high availability section of
-     goal template. Known values are: "NotRequired" and "Required".
-    :vartype requireHighAvailability: Union[str, "RequirementSelected"]
-    :ivar requireDisasterRecovery: Option specified by customer under disaster recovery section of
-     goal template. Known values are: "NotRequired" and "Required".
-    :vartype requireDisasterRecovery: Union[str, "RequirementSelected"]
-    :ivar regionalRecoveryPointObjective: Regional recovery point objective specified by customer.
-     eg, PT15M for 15 minutes.
-    :vartype regionalRecoveryPointObjective: str
-    :ivar regionalRecoveryTimeObjective: Regional recovery time objective specified by customer.
-     eg, PT15M for 15 minutes.
-    :vartype regionalRecoveryTimeObjective: str
-    :ivar goalType: Type of Goal Template created by customer. Required. "Resiliency"
-    :vartype goalType: Union[str, "GoalType"]
-    :ivar provisioningState: Provisioning state. Known values are: "Succeeded", "Failed",
-     "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and "NeedsAttention".
-    :vartype provisioningState: Union[str, "ProvisioningState"]
-    :ivar errorDetails: Details of any errors encountered during the operation.
-    :vartype errorDetails: "ErrorDetail"
-    """
-
-    requireHighAvailability: Union[str, "RequirementSelected"]
-    """Option specified by customer under high availability section of goal template. Known values
-     are: \"NotRequired\" and \"Required\"."""
-    requireDisasterRecovery: Union[str, "RequirementSelected"]
-    """Option specified by customer under disaster recovery section of goal template. Known values
-     are: \"NotRequired\" and \"Required\"."""
-    regionalRecoveryPointObjective: str
-    """Regional recovery point objective specified by customer. eg, PT15M for 15 minutes."""
-    regionalRecoveryTimeObjective: str
-    """Regional recovery time objective specified by customer. eg, PT15M for 15 minutes."""
-    goalType: Required[Union[str, "GoalType"]]
-    """Type of Goal Template created by customer. Required. \"Resiliency\""""
-    provisioningState: Union[str, "ProvisioningState"]
-    """Provisioning state. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
-     \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and \"NeedsAttention\"."""
-    errorDetails: "ErrorDetail"
-    """Details of any errors encountered during the operation."""
+    """The provisioning state of the goal resource. Known values are: \"Succeeded\", \"Failed\",
+     \"Canceled\", \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and
+     \"NeedsAttention\"."""
 
 
 class HealthModelMonitoringProperties(TypedDict, total=False):
@@ -959,18 +885,16 @@ class HealthModelMonitoringProperties(TypedDict, total=False):
     :ivar identity: Identity that the Drill uses to read the Azure Health Model. The Drill is
      granted Reader on the Health Model for this identity. Required.
     :vartype identity: "AssociatedIdentity"
-    :ivar discoveryRuleId: Full ARM Id of the discovery rule inside the Azure Health Model. The
-     parent Health Model is derived from this Id; it is the only identifier accepted on the wire.
+    :ivar healthModelId: Full ARM Id of the Azure Health Model selected for Drill monitoring.
      Required.
-    :vartype discoveryRuleId: str
+    :vartype healthModelId: str
     """
 
     identity: Required["AssociatedIdentity"]
     """Identity that the Drill uses to read the Azure Health Model. The Drill is granted Reader on the
      Health Model for this identity. Required."""
-    discoveryRuleId: Required[str]
-    """Full ARM Id of the discovery rule inside the Azure Health Model. The parent Health Model is
-     derived from this Id; it is the only identifier accepted on the wire. Required."""
+    healthModelId: Required[str]
+    """Full ARM Id of the Azure Health Model selected for Drill monitoring. Required."""
 
 
 class IncludeOrUpdateResource(TypedDict, total=False):
@@ -1548,6 +1472,8 @@ class RegionalDrillProperties(TypedDict, total=False):
     :vartype serviceGroupId: str
     :ivar recoveryPlanProperties: ROPlan properties.
     :vartype recoveryPlanProperties: "RecoveryPlanPropertiesOfDrill"
+    :ivar goalAssignmentProperties: Goal Assignment properties.
+    :vartype goalAssignmentProperties: "GoalAssignmentPropertiesOfDrill"
     :ivar drillAssetProperties: Properties for internal resources that are created for the Drill.
     :vartype drillAssetProperties: "AssetPropertiesOfDrill"
     :ivar chaosResourceProperties: Chaos Resource properties.
@@ -1590,6 +1516,8 @@ class RegionalDrillProperties(TypedDict, total=False):
     """Parent SG resource."""
     recoveryPlanProperties: "RecoveryPlanPropertiesOfDrill"
     """ROPlan properties."""
+    goalAssignmentProperties: "GoalAssignmentPropertiesOfDrill"
+    """Goal Assignment properties."""
     drillAssetProperties: "AssetPropertiesOfDrill"
     """Properties for internal resources that are created for the Drill."""
     chaosResourceProperties: "ChaosResourcePropertiesOfDrill"
@@ -1651,30 +1579,31 @@ class ReprotectRequestProperties(TypedDict, total=False):
 class ResiliencyProperties(TypedDict, total=False):
     """Resiliency posture for a goal resource.
 
-    :ivar goalParticipation: Flag which depicts whether the Arm resource is excluded for resiliency
-     recommendation. Known values are: "Excluded" and "Included".
+    :ivar goalParticipation: Indicates whether the ARM resource is excluded from resiliency
+     recommendations. Known values are: "Excluded" and "Included".
     :vartype goalParticipation: Union[str, "ExclusionState"]
-    :ivar attestationStatus: Flag which depicts whether the Arm resource is manually attested for
-     resiliency recommendation. Known values are: "NotAttested" and "ManuallyAttested".
+    :ivar attestationStatus: Indicates whether the ARM resource's resiliency posture is manually
+     attested. Known values are: "NotAttested" and "ManuallyAttested".
     :vartype attestationStatus: Union[str, "AttestationState"]
-    :ivar exclusionReason: Reason for exclusion from resiliency goals. Known values are:
-     "UserSelectedExclusion", "FailedOverResource", and "UnsupportedResource".
+    :ivar exclusionReason: The reason the ARM resource is excluded from resiliency goals. Known
+     values are: "UserSelectedExclusion", "FailedOverResource", and "UnsupportedResource".
     :vartype exclusionReason: Union[str, "ExclusionReason"]
-    :ivar userConfirmation: List of user confirmations for resiliency solutions.
+    :ivar userConfirmation: User confirmations for resiliency solutions recommended for the ARM
+     resource.
     :vartype userConfirmation: list["UserConfirmationItem"]
     """
 
     goalParticipation: Union[str, "ExclusionState"]
-    """Flag which depicts whether the Arm resource is excluded for resiliency recommendation. Known
-     values are: \"Excluded\" and \"Included\"."""
+    """Indicates whether the ARM resource is excluded from resiliency recommendations. Known values
+     are: \"Excluded\" and \"Included\"."""
     attestationStatus: Union[str, "AttestationState"]
-    """Flag which depicts whether the Arm resource is manually attested for resiliency recommendation.
-     Known values are: \"NotAttested\" and \"ManuallyAttested\"."""
+    """Indicates whether the ARM resource's resiliency posture is manually attested. Known values are:
+     \"NotAttested\" and \"ManuallyAttested\"."""
     exclusionReason: Union[str, "ExclusionReason"]
-    """Reason for exclusion from resiliency goals. Known values are: \"UserSelectedExclusion\",
-     \"FailedOverResource\", and \"UnsupportedResource\"."""
+    """The reason the ARM resource is excluded from resiliency goals. Known values are:
+     \"UserSelectedExclusion\", \"FailedOverResource\", and \"UnsupportedResource\"."""
     userConfirmation: list["UserConfirmationItem"]
-    """List of user confirmations for resiliency solutions."""
+    """User confirmations for resiliency solutions recommended for the ARM resource."""
 
 
 class ResourceCrossZoneVmRecoveryProtectionSetting(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -1926,37 +1855,16 @@ class ResourceSiteRecoveryTestFailoverParams(TypedDict, total=False):
     """The Azure network resource is which will be used for test failover virtual machine."""
 
 
-class ServiceGroupMembership(TypedDict, total=False):
-    """Model for service group membership.
-
-    :ivar serviceGroupId: Arm Id of the service group. Required.
-    :vartype serviceGroupId: str
-    :ivar membershipType: Membership type of the service group to resource. Required. Known values
-     are: "Direct", "ThroughSubscription", and "ThroughResourceGroup".
-    :vartype membershipType: Union[str, "MembershipType"]
-    """
-
-    serviceGroupId: Required[str]
-    """Arm Id of the service group. Required."""
-    membershipType: Required[Union[str, "MembershipType"]]
-    """Membership type of the service group to resource. Required. Known values are: \"Direct\",
-     \"ThroughSubscription\", and \"ThroughResourceGroup\"."""
-
-
 class ServiceLevelResource(TypedDict, total=False):
-    """The Service level resource model.
+    """A service-level resource associated with a goal assignment.
 
-    :ivar serviceLevelIndicatorResourceId: The arm id of the service level indicator resource.
-     Required.
+    :ivar serviceLevelIndicatorResourceId: The ARM resource ID of the service-level indicator
+     resource. Required.
     :vartype serviceLevelIndicatorResourceId: str
-    :ivar serviceLevelObjectiveResourceId: The arm id of the service level object resource.
-    :vartype serviceLevelObjectiveResourceId: str
     """
 
     serviceLevelIndicatorResourceId: Required[str]
-    """The arm id of the service level indicator resource. Required."""
-    serviceLevelObjectiveResourceId: str
-    """The arm id of the service level object resource."""
+    """The ARM resource ID of the service-level indicator resource. Required."""
 
 
 class SliAttentionStatus(TypedDict, total=False):
@@ -2130,14 +2038,14 @@ class TrackedResource(Resource):
 
 
 class UpdateGoalResourceRequest(TypedDict, total=False):
-    """Request model for update goal resource.
+    """Request body for updating goal resources.
 
-    :ivar resources: List of update goal resource. Required.
+    :ivar resources: The goal resources to update. Required.
     :vartype resources: list["GoalResource"]
     """
 
     resources: Required[list["GoalResource"]]
-    """List of update goal resource. Required."""
+    """The goal resources to update. Required."""
 
 
 class UpdateRecoveryResourcesRequest(TypedDict, total=False):
@@ -2187,7 +2095,7 @@ class UsagePlan(TrackedResource):
 class UsagePlanProperties(TypedDict, total=False):
     """Definition of usage plan properties.
 
-    :ivar planType: The type of the usage plan. Known values are: "Basic" and "Standard".
+    :ivar planType: The type of the usage plan. "Standard"
     :vartype planType: Union[str, "UsagePlanType"]
     :ivar provisioningState: Provisioning state of the usage plan. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", "Accepted", and "NeedsAttention".
@@ -2197,7 +2105,7 @@ class UsagePlanProperties(TypedDict, total=False):
     """
 
     planType: Union[str, "UsagePlanType"]
-    """The type of the usage plan. Known values are: \"Basic\" and \"Standard\"."""
+    """The type of the usage plan. \"Standard\""""
     provisioningState: Union[str, "ProvisioningState"]
     """Provisioning state of the usage plan. Known values are: \"Succeeded\", \"Failed\",
      \"Canceled\", \"Provisioning\", \"Updating\", \"Deleting\", \"Accepted\", and
@@ -2313,6 +2221,8 @@ class ZonalDrillProperties(TypedDict, total=False):
     :vartype serviceGroupId: str
     :ivar recoveryPlanProperties: ROPlan properties.
     :vartype recoveryPlanProperties: "RecoveryPlanPropertiesOfDrill"
+    :ivar goalAssignmentProperties: Goal Assignment properties.
+    :vartype goalAssignmentProperties: "GoalAssignmentPropertiesOfDrill"
     :ivar drillAssetProperties: Properties for internal resources that are created for the Drill.
     :vartype drillAssetProperties: "AssetPropertiesOfDrill"
     :ivar chaosResourceProperties: Chaos Resource properties.
@@ -2358,6 +2268,8 @@ class ZonalDrillProperties(TypedDict, total=False):
     """Parent SG resource."""
     recoveryPlanProperties: "RecoveryPlanPropertiesOfDrill"
     """ROPlan properties."""
+    goalAssignmentProperties: "GoalAssignmentPropertiesOfDrill"
+    """Goal Assignment properties."""
     drillAssetProperties: "AssetPropertiesOfDrill"
     """Properties for internal resources that are created for the Drill."""
     chaosResourceProperties: "ChaosResourcePropertiesOfDrill"

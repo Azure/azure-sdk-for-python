@@ -73,6 +73,7 @@ jobs:
           cp .github/workflows/scripts/mgmt_sdk_review_contract.py review-snapshot/
           cp .github/workflows/scripts/mgmt_sdk_review_evidence.py review-snapshot/
           cp .github/workflows/scripts/mgmt_sdk_review_service.py review-snapshot/
+          cp .github/workflows/scripts/mgmt_sdk_review_request.jq review-snapshot/
           cd review-snapshot
           python mgmt_sdk_review_context.py
           python mgmt_sdk_review_contract.py schema > review-schema.json
@@ -214,6 +215,9 @@ safe-outputs:
                   - sources
                 type: object
               type: array
+            attribution_omitted:
+              minimum: 0
+              type: integer
             checks:
               additionalProperties: false
               properties:
@@ -404,6 +408,7 @@ safe-outputs:
               type: string
           required:
             - attribution
+            - attribution_omitted
             - checks
             - findings
             - package
@@ -537,7 +542,12 @@ Read `review-evidence/review-context.json`, especially `mgmtSdkCodeReviewRules`,
 to the trusted executing workflow revision, not the SDK PR or a remembered policy. Call the `review` tool with
 `{"operation":"describe"}` for the canonical `draft`, schema, source IDs, required semantic checks and entry IDs.
 Start from the returned `draft`, not a handwritten reconstruction of the schema. It includes every
-package, required check and attribution entry. Empty reasons/explanations in this template are
+package and required check, and a bounded prefix of attribution entries. At most eight entries
+are selected across packages, round-robin in trusted changelog order. `attribution_omitted`
+records the unreviewed suffix count; `describe` supplies the selected entries and total count.
+Do not investigate omitted entries or reset their count. The publisher retains the full snapshot
+and labels any omitted attribution as partial, requiring human review.
+Empty reasons/explanations in this template are
 unfinished analysis, not permission to publish an unreviewed draft.
 The shell bridge is `mcpscripts review .` with `{"request":"<JSON operation>"}` on stdin.
 Python and curl are NOT agent shell tools. Use the read-only tool, not shell execution.
@@ -584,7 +594,7 @@ Do not report passing checks or unrelated pre-existing problems as findings.
 
 ## 3. Attribute breaking changes
 
-Produce exactly one attribution row per trusted `entry_id`; do not repeat release headings,
+Produce exactly one attribution row per selected `entry_id`, in the returned order; do not repeat release headings,
 initial-release flags, collection outcomes, entry text or confidence flags. Code derives them.
 Use `cause: "typespec_api"` only for direct, verified specification evidence connecting the
 named change to a definition, decorator, versioning annotation or API selection. This renders
@@ -610,15 +620,24 @@ only by the trusted routine version/stability checks.
 
 ## 4. Preflight, correct, submit once
 
-Write the full schema-version-2 draft to `/tmp/gh-aw/agent/review.json`. If discovery is complete
+Write the bounded schema-version-2 draft to `/tmp/gh-aw/agent/review.json`. If discovery is complete
 with no management packages, the draft is
 `{"schema_version":"2","outcome":"not_applicable","packages":[]}`.
 If discovery is incomplete and no checks completed, use the incomplete path below.
 Check the draft shape before semantic preflight:
 
 ```bash
-jq '{request: ({operation: "check", draft: .} | tojson)}' /tmp/gh-aw/agent/review.json | mcpscripts review .
+jq --arg operation check -f review-evidence/mgmt_sdk_review_request.jq /tmp/gh-aw/agent/review.json > /tmp/gh-aw/agent/request.json
+jq '.request | fromjson | .draft' /tmp/gh-aw/agent/request.json > /tmp/gh-aw/agent/bounded-review.json
+mcpscripts review . < /tmp/gh-aw/agent/request.json
 ```
+
+The trusted jq filter measures the encoded request, including string escaping, against a
+9,000-byte budget below the gateway's 10,240-byte limit. It drops only whole trailing attribution
+rows and increments `attribution_omitted`; checks, findings and retained evidence are unchanged.
+Use `bounded-review.json` for further corrections and preflight. Never shorten explanations,
+remove citations or relabel a cause just to fit the transport. If checks/findings alone exceed
+the budget, the filter fails explicitly: use the incomplete path instead of sending an oversized request.
 
 A successful `check` validates only shape and never contains a submission. Correct every format
 error, preserving the returned template's field names: `attribution` belongs in each package,
@@ -629,7 +648,8 @@ Use real evidence instead of the example ID or range. Put observations/remediati
 not in missing-evidence reasons. Then call semantic preflight:
 
 ```bash
-jq '{request: ({operation: "preflight", draft: .} | tojson)}' /tmp/gh-aw/agent/review.json | mcpscripts review .
+jq --arg operation preflight -f review-evidence/mgmt_sdk_review_request.jq /tmp/gh-aw/agent/bounded-review.json > /tmp/gh-aw/agent/request.json
+mcpscripts review . < /tmp/gh-aw/agent/request.json
 ```
 
 Read its JSON result (large tool responses give a file path). Inspect every error `code`, `path`
@@ -660,7 +680,9 @@ Multi-package reviews use shared evidence references (`E1`, `E2`, etc.) so an id
 URL is linked only once across checks, findings and attribution. Each use retains its label
 and any unavailable-line explanation; different revisions or line ranges remain distinct.
 Single-package comments retain inline links. The same budgets still apply after rendering;
-genuinely oversized reviews remain incomplete rather than dropping findings or evidence.
+genuinely oversized reviews remain incomplete rather than dropping findings or retained evidence.
+Truncated attribution is published only as an explicitly partial review, with the exact omitted
+count and a pinned changelog link for human review; it never implies those entries were checked.
 Publication errors stay incomplete, not successful reviews.
 
 ### Explicit incomplete outcome
