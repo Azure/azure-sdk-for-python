@@ -19,9 +19,12 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models, types as _types
+from .._app_insights_provisioning import FoundryAppInsightsProvisioner, validate_app_insights_auth
 from .._utils.model_base import _deserialize
 from .._validation import api_version_validation
 from ._operations import ComputesOperations as _ComputesOperationsGenerated
+from ._operations import ProjectConnectionsOperations
+from ._operations import ProjectsOperations as _ProjectsOperationsGenerated
 
 _TERMINAL_FAILED_STATES = frozenset({"failed", "canceled", "cancelled"})
 _TERMINAL_SUCCESS_STATES = frozenset({"succeeded"})
@@ -77,6 +80,43 @@ def _provisioning_error(compute: Any) -> HttpResponseError:
     if detail:
         text = f"{text} {detail}"
     return HttpResponseError(message=text)
+
+
+def _project_state(project: Any) -> str:
+    properties = getattr(project, "properties", None)
+    state = getattr(properties, "provisioning_state", None) if properties is not None else None
+    if state is None and isinstance(project, MutableMapping):
+        state = (project.get("properties") or {}).get("provisioningState")
+    return str(getattr(state, "value", state) or "").lower()
+
+
+def _wait_for_project_ready(
+    operations: "ProjectsOperations",
+    *,
+    resource_group_name: str,
+    account_name: str,
+    project_name: str,
+    initial_project: _models.Project,
+    polling_interval: int,
+    timeout: int,
+) -> _models.Project:
+    project = initial_project
+    deadline = time.monotonic() + timeout
+    while True:
+        state = _project_state(project)
+        if state == "succeeded":
+            return project
+        if state in _TERMINAL_FAILED_STATES:
+            raise HttpResponseError(
+                message=f"Foundry project provisioning reached terminal state '{state}'."
+            )
+        if time.monotonic() >= deadline:
+            raise TimeoutError(
+                f"Foundry project did not reach a terminal provisioning state within {timeout} seconds."
+            )
+        if polling_interval:
+            time.sleep(polling_interval)
+        project = operations.get(resource_group_name, account_name, project_name)
 
 
 class _ComputeListPolling(PollingMethod):
@@ -273,7 +313,132 @@ class ComputesOperations(_ComputesOperationsGenerated):
         )
 
 
-__all__: list[str] = ["ComputesOperations"]
+class ProjectsOperations(_ProjectsOperationsGenerated):
+    """Projects operations with temporary default Application Insights provisioning."""
+
+    def create_with_default_app_insights(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        project_name: str,
+        project: Union[_models.Project, _types.Project, IO[bytes]],
+        *,
+        app_insights_auth: str = "api_key",
+        app_insights_resource_group_name: Optional[str] = None,
+        log_analytics_workspace_name: Optional[str] = None,
+        app_insights_name: Optional[str] = None,
+        connection_name: str = "appinsights",
+        monitor_audience: str = "https://monitor.azure.com/.default",
+        content_type: str = "application/json",
+        polling_interval: Optional[int] = None,
+        project_readiness_timeout: int = 900,
+    ) -> _models.Project:
+        """Create a project and provision a default Application Insights connection.
+
+        This preview convenience method composes multiple ARM resource providers. It is
+        intended as a temporary bridge until the Foundry resource provider owns the
+        provisioning workflow.
+
+        :param resource_group_name: Resource group containing the Foundry account.
+        :type resource_group_name: str
+        :param account_name: Foundry account name.
+        :type account_name: str
+        :param project_name: Project name.
+        :type project_name: str
+        :param project: Project creation parameters.
+        :type project: ~azure.mgmt.cognitiveservices.models.Project or
+         ~azure.mgmt.cognitiveservices.types.Project or IO[bytes]
+        :keyword app_insights_auth: ``api_key`` or ``project_managed_identity``.
+         Defaults to ``api_key`` to match the current Foundry UI create-project flow.
+        :paramtype app_insights_auth: str
+        :keyword app_insights_resource_group_name: Resource group for Log Analytics and
+         Application Insights. Defaults to ``resource_group_name``.
+        :paramtype app_insights_resource_group_name: str
+        :keyword log_analytics_workspace_name: Existing or new workspace name. A stable
+         account-scoped name is derived when omitted.
+        :paramtype log_analytics_workspace_name: str
+        :keyword app_insights_name: Existing or new Application Insights component name.
+         A stable account-scoped name is derived when omitted.
+        :paramtype app_insights_name: str
+        :keyword connection_name: Project connection name. Defaults to ``appinsights``.
+        :paramtype connection_name: str
+        :keyword monitor_audience: Azure Monitor token audience for managed identity mode.
+        :paramtype monitor_audience: str
+        :keyword content_type: Project request content type.
+        :paramtype content_type: str
+        :keyword polling_interval: ARM polling interval in seconds.
+        :paramtype polling_interval: int
+        :keyword project_readiness_timeout: Maximum seconds to wait for the project backend
+         workspace to finish provisioning after the generated ARM poller completes.
+        :paramtype project_readiness_timeout: int
+        :return: The created project.
+        :rtype: ~azure.mgmt.cognitiveservices.models.Project
+        """
+        app_insights_auth = validate_app_insights_auth(app_insights_auth)
+        project_kwargs: dict[str, Any] = {"content_type": content_type}
+        if polling_interval is not None:
+            project_kwargs["polling_interval"] = polling_interval
+        created_project = super().begin_create(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            project_name=project_name,
+            project=project,
+            **project_kwargs,
+        ).result()
+        effective_polling_interval = (
+            polling_interval if polling_interval is not None else self._config.polling_interval
+        )
+        created_project = _wait_for_project_ready(
+            self,
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            project_name=project_name,
+            initial_project=created_project,
+            polling_interval=effective_polling_interval,
+            timeout=project_readiness_timeout,
+        )
+
+        location = getattr(created_project, "location", None)
+        if location is None and isinstance(created_project, dict):
+            location = created_project.get("location")
+        if not location:
+            raise ValueError("The created project did not return a location.")
+
+        project_connections = ProjectConnectionsOperations(
+            self._client,
+            self._config,
+            self._serialize,
+            self._deserialize,
+        )
+        provisioner = FoundryAppInsightsProvisioner(
+            credential=self._config.credential,
+            subscription_id=self._config.subscription_id,
+            project_connections=project_connections,
+            base_url=self._config.base_url,
+            cloud_setting=self._config.cloud_setting,
+            credential_scopes=self._config.credential_scopes,
+            polling_interval=effective_polling_interval,
+        )
+        try:
+            provisioner.provision(
+                project=created_project,
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                project_name=project_name,
+                auth_mode=app_insights_auth,
+                location=str(location),
+                app_insights_resource_group_name=app_insights_resource_group_name,
+                log_analytics_workspace_name=log_analytics_workspace_name,
+                app_insights_name=app_insights_name,
+                connection_name=connection_name,
+                monitor_audience=monitor_audience,
+            )
+        finally:
+            provisioner.close()
+        return created_project
+
+
+__all__: list[str] = ["ComputesOperations", "ProjectsOperations"]
 
 
 def patch_sdk():

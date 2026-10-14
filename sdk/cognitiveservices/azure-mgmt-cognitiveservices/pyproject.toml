@@ -30,7 +30,10 @@ keywords = [
 ]
 dependencies = [
     "isodate>=0.6.1",
+    "azure-mgmt-applicationinsights>=5.0.0b2",
+    "azure-mgmt-authorization>=5.0.0b2",
     "azure-mgmt-core>=1.6.0",
+    "azure-mgmt-loganalytics>=14.0.0",
     "typing-extensions>=4.6.0",
 ]
 dynamic = [

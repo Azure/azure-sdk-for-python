@@ -1,5 +1,14 @@
 # Release History
 
+## 14.1.0b1 (Unreleased)
+
+### Features Added
+
+- Added the temporary preview `projects.create_with_default_app_insights` convenience method for
+  creating a Foundry project with an automatically provisioned Application Insights connection.
+  The method supports API Key authentication for current UI parity and Project Managed Identity
+  authentication with Monitoring Metrics Publisher RBAC.
+
 ## 15.0.0b6 (2026-10-10)
 
 ### Features Added
