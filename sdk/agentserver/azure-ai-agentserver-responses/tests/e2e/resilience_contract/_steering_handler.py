@@ -77,11 +77,7 @@ options = ResponsesServerOptions(
     steerable_conversations=True,
     shutdown_grace_period_seconds=_SHUTDOWN_GRACE_S,
 )
-# Steering (mid-turn input queuing) is implemented by the multi-turn task
-# primitive and needs the TaskManager. Since only ``resilient_tasks_enabled`` now
-# Steering conformance requires the durable task subsystem, so enable it before
-# constructing the host.
-set_resilient_tasks_enabled(True)
+set_resilient_tasks_enabled(_RESILIENT_TASKS_ENABLED)
 app = ResponsesAgentServerHost(options=options)
 _turn_counts: dict[str, int] = {}
 

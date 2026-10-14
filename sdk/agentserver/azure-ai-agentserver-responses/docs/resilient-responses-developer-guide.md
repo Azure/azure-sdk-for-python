@@ -35,8 +35,8 @@ you want it; see [Choosing a resume strategy](#choosing-a-resume-strategy).
 |---------|----------|
 | Crash recovery | Handler re-invoked on server restart (requires `set_resilient_tasks_enabled(True)`) |
 | Stream replay | Events persisted incrementally; clients reconnect seamlessly |
-| Conversation lock | Prevents conflicting concurrent writes |
-| Non-bg cleanup | Foreground responses marked `failed` on crash (no ghost re-invocation) |
+| Conversation lock | Prevents conflicting concurrent writes when resilient tasks are enabled |
+| Non-bg cleanup | Switch-enabled foreground responses recover with `mark-failed`; switch-disabled hard crashes have no scanner |
 | TTL-based cleanup | Stream events auto-expire after 10 minutes (framework-internal) |
 
 ## Decision Tree
@@ -94,6 +94,9 @@ options = ResponsesServerOptions(
 )
 ```
 
+The core switch is required for the `MultiTurnTask` that provides overlap
+queuing, cooperative cancellation, conversation locking, and anti-fork checks.
+
 With steering enabled:
 - Each turn shares the same resilient task (conversation continuity)
 - New turns can cancel the current in-progress turn
@@ -133,7 +136,7 @@ mechanics.
 | Control | Default | Description |
 |---------|---------|-------------|
 | `set_resilient_tasks_enabled(True)` | Disabled | Opt into durable tasks and crash-recoverable background responses; call before host construction |
-| `steerable_conversations` | `False` | Enable multi-turn steering with cooperative cancel |
+| `steerable_conversations` | `False` | Enable multi-turn steering with cooperative cancel; task-backed queuing and anti-fork semantics require resilient tasks to be enabled |
 
 ## Configuration Matrix
 
@@ -159,17 +162,17 @@ conformance test in `tests/e2e/resilience_contract/`. If something behaves
 differently from what the spec says, that's a bug in either the implementation
 or the spec — open an issue.
 
-`steerable_conversations=True` composes orthogonally: it enables multi-turn
-steering on top of any row above. Recovery composes with steering — see the
-[handler guide's Recovery × Cancellation Composition](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md#recovery--cancellation-composition).
+`steerable_conversations=True` is accepted with either switch state, but its
+queuing, cancellation, and anti-fork guarantees require resilient tasks to be
+enabled. With the switch disabled, sequential chain linkage still works while
+overlapping turns run independently through the asyncio fallback.
 
 > **`conversation_id` chains**: when a request supplies
 > `conversation_id`, sequential turns extend the chain even when
 > `steerable_conversations=False`. Only **concurrent overlap** (a new
 > turn arriving while a prior turn's handler is still in progress)
-> returns 409 `conversation_locked`. This is independent of the
-> `steerable_conversations` option — that option only controls whether
-> mid-turn inputs are queued (steerable) or rejected (non-steerable).
+> uses task-backed queuing or locking only when resilient tasks are enabled.
+> With the switch disabled, overlapping turns are not serialized.
 
 ### Steerable conversations: no forking
 
@@ -573,9 +576,13 @@ final response but may render intermediate states incorrectly.
 When `background=false` (foreground streaming):
 
 - Response is tied to the HTTP connection lifetime.
-- If the server crashes: response is marked `failed` with `code=server_error`.
+- Graceful shutdown marks an unfinished stored response `failed` in-process.
+- After a hard crash, the switch-enabled recovery scanner follows the
+  `mark-failed` disposition; with the switch disabled there is no scanner and
+  the stored status may remain `in_progress`.
 - The handler is NOT re-invoked (client is already disconnected).
-- Conversation lock still applies (prevents concurrent modifications).
+- Task-backed conversation locking applies only when resilient tasks are
+  enabled.
 
 ## Layered Concerns
 

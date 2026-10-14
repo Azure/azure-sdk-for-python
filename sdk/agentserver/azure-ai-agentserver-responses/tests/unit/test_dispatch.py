@@ -18,7 +18,7 @@ from azure.ai.agentserver.responses.hosting._dispatch import (
 def test_decide_disposition_truth_table() -> None:
     # Row 1: stored background under resilient_tasks_enabled → re-invoke.
     assert decide_disposition(background=True, resilient_tasks_enabled=True, store=True) == DISPOSITION_REINVOKE
-    # Row 2: stored background WITHOUT resilient_tasks_enabled → mark-failed.
+    # Row 2: switch disabled; no task manager persists or applies this fallback.
     assert decide_disposition(background=True, resilient_tasks_enabled=False, store=True) == DISPOSITION_MARK_FAILED
     # Row 3: foreground + store → mark-failed.
     assert decide_disposition(background=False, resilient_tasks_enabled=True, store=True) == DISPOSITION_MARK_FAILED

@@ -113,15 +113,17 @@ separation is normative.
 | # | `store` | `background` | resilient-tasks switch | Behaviour |
 |---|---|---|---|---|
 | 1 | true | true  | true  | **Full resilience.** Handler runs inside the resilient task body. Recovery re-invokes the handler. |
-| 2 | true | true  | false | **Stored, non-durable execution.** The disposition is `mark-failed`; without a task manager the handler falls back to in-process execution. Persisted `mark-failed` tasks from earlier lifetimes are still handled when recovery is enabled later. |
-| 3 | true | false | (any) | **Foreground stored execution.** The disposition is `mark-failed`. With the switch enabled it runs inside the resilient task body; otherwise it falls back in-process. |
+| 2 | true | true  | false | **Stored, non-durable execution.** No task manager exists, so the handler runs in-process. Graceful shutdown can mark it failed; a hard crash can leave it `in_progress`. |
+| 3 | true | false | true | **Durable foreground execution.** The task input records `mark-failed`; recovery settles the response without re-invoking the handler. |
+| 3 | true | false | false | **Stored, non-durable foreground execution.** No task manager or recovery scanner exists. |
 | 4 | false | (any) | (any) | **No resilience.** Best-effort failed marker during graceful shutdown. No persistence. No recovery. |
 
 `stream` is orthogonal: it collapses out of the row keys. Each row × `stream`
 combination is its own conformance cell.
 
-`steerable_conversations` is orthogonal to the row but composes only with
-`store=true` (Rows 1, 2, 3) — see §11.
+`steerable_conversations` can be configured independently, but its queuing,
+cancellation, and anti-fork guarantees require both `store=true` and the
+resilient-tasks switch enabled — see §11.
 
 `starting_after=` reconnection is supported only for `store=true` requests
 (any row 1/2/3). For Row 4 there is no persisted event log; reconnection is
@@ -132,17 +134,15 @@ not meaningful.
 Each row × stream cell has three termination paths the framework MUST
 deliver per the table below:
 
-| Path | Trigger | Row 1 (`resilient-tasks switch`) | Rows 2/3 (`store`, no `resilient-tasks switch`) | Row 4 (no store) |
-|---|---|---|---|---|
-| **A** | Handler returns within grace | Persist terminal; task body returns | Persist terminal; task body returns | Persist terminal (best-effort) |
-| **B** | Grace exhausted (graceful shutdown) | Task left `in_progress`; handler stops; **next lifetime re-invokes** | Task body persists `failed` (server_error, shutdown_reason=grace_exhausted) | Best-effort in-process `failed` marker |
-| **C** | SIGKILL or Path-B failure | Next-lifetime recovery scanner re-fires task → handler re-invoked with `context.is_recovery=True` | Next-lifetime recovery scanner re-fires task → marks response `failed` (`server_error`) | No recovery applies (no persistence) |
+| Path | Trigger | Switch on + `store=true, background=true` | Switch on + `store=true, background=false` | Switch off + `store=true` | `store=false` |
+|---|---|---|---|---|---|
+| **A** | Handler returns within grace | Persist terminal; task body returns | Persist terminal; task body returns | Persist terminal in-process | Persist terminal (best-effort) |
+| **B** | Grace exhausted (graceful shutdown) | Leave task/response `in_progress` for recovery | Mark response `failed` in-process | Mark response `failed` in-process | Best-effort in-process `failed` marker |
+| **C** | SIGKILL or Path-B failure | Recovery scanner re-fires task → handler re-invoked with `context.is_recovery=True` | Recovery scanner follows persisted `mark-failed` disposition | No recovery scanner; last stored status may remain `in_progress` | No recovery applies (no persistence) |
 
-The framework MUST implement Path B and Path C as independent fallbacks
-for each other (Path C is a complete fallback for Path B). A Path-B
-in-process marker that does not persist before the process
-exits MUST be backed by a Path-C next-lifetime marker; the row 2/3
-recovery scanner closes that window.
+Path C is a fallback for Path B only when the resilient-tasks switch is
+enabled and a durable task record exists. With the switch disabled, the
+graceful-shutdown marker has no next-lifetime fallback.
 
 ### §3.2 — `stream` × row interaction
 
@@ -291,7 +291,7 @@ longer creates one.
 |---|---|---|
 | `response_id` | `ResilientResponseInput.response_id` | Logs / operator triage |
 | `background` | `bool(request.background)` — re-derived from the persisted `request` (§5.3) | Recovery dispatch (foreground → mark failed) |
-| `disposition` | `ResilientResponseInput.disposition` (`"re-invoke"` Row 1 / `"mark-failed"` Rows 2, 3) | Recovery dispatch (§7) |
+| `disposition` | `ResilientResponseInput.disposition` (`"re-invoke"` for switch-enabled stored background / `"mark-failed"` for switch-enabled stored foreground and legacy persisted tasks) | Recovery dispatch (§7) |
 
 > **Note — no `last_sequence_number` key.** Earlier drafts reserved a
 > `last_sequence_number` metadata watermark for streaming reconnection
@@ -306,7 +306,7 @@ longer creates one.
 `disposition` MUST be durable before the task body performs any await that could
 be interrupted by a crash — otherwise a recovered task with no disposition would
 default to `re-invoke` and skip the `mark-failed` branch (losing recovery-marker
-semantics for Rows 2/3). The **task input satisfies this by construction**: it is
+semantics for durable foreground or legacy tasks). The **task input satisfies this by construction**: it is
 persisted atomically at task `.start()`, i.e. *before the handler body runs at
 all* — strictly earlier than any first-entry write could be. The same holds for
 any future control value that affects recovery dispatch: carry it on the input.
@@ -349,13 +349,14 @@ rather than re-invoking the handler with partial state.
 
 ## §6 — The perpetual conversation-scoped task
 
-For every `store=true` request, the framework engages a resilient
-task. The task is **perpetual**: it represents the conversation
-chain's execution loop, not a single response.
+When the resilient-tasks switch is enabled, every `store=true` request engages
+a resilient task. The task is **perpetual**: it represents the conversation
+chain's execution loop, not a single response. With the switch disabled,
+stored requests use the in-process asyncio fallback described in §6.2.
 
 **One architecture — unified handler-in-task-body.** The handler
-ALWAYS runs inside the resilient task body, for every `store=true`
-row. The"bookkeeping pattern" (where the handler ran
+always runs inside the resilient task body for switch-enabled `store=true`
+rows. The "bookkeeping pattern" (where the handler ran
 outside the body for Rows 2/3 and a separate task waited for a
 completion signal) has been deleted. Recovery behaviour is selected
 by the `disposition` carried on the durable task **input** (§5):
@@ -396,9 +397,8 @@ forked or sequential) maps to a distinct `task_id` (the `fork:` /
 `resp:` partition disambiguates), so no suspend-and-resume loop is
 needed; each task is one-shot.
 
-### §6.2 — Lifecycle (Rows 2/3 — stored non-reinvocation paths)
+### §6.2 — Lifecycle (switch-disabled stored work and durable foreground work)
 
-The disposition selected for stored work outside Row 1 is `mark-failed`.
 Execution depends on the process-global switch:
 
 1. **Switch disabled (Row 2)** — no task manager exists, so execution falls
@@ -420,9 +420,11 @@ best-effort only and not resilient. On SIGKILL there is no recovery.
 
 ### §6.4 — Primitive selection (per-request dispatch matrix)
 
-The responses layer dispatches each `store=true` request to one of two
-underlying resilient-task primitives, based on the request shape and the
-deployment's `steerable_conversations` option. This is a refinement of
+When resilient tasks are enabled, the responses layer dispatches each
+`store=true` request to one of two underlying resilient-task primitives, based
+on the request shape and the deployment's `steerable_conversations` option.
+With the switch disabled, this table does not apply: task startup falls back
+to independent asyncio execution. This is a refinement of
 the top-level 4-row matrix in §3 — Rows 1, 2, and 3 (all `store=true`
 rows) split into sub-rows here according to whether the request
 identifies a multi-turn chain.
@@ -498,7 +500,7 @@ The handler reloads application watermarks from an explicit
 `FoundryStateStore`. Those writes are independent from task lifecycle
 transitions and lease renewal.
 
-### §7.2 — `disposition == "mark-failed"` (Rows 2, 3)
+### §7.2 — `disposition == "mark-failed"` (durable foreground and legacy tasks)
 
 On recovery, the task body:
 
@@ -992,8 +994,9 @@ recovery AND cancelled".
 
 ## §11 — Steering
 
-`steerable_conversations=True` enables multi-turn steering on top of
-Rows 1, 2, or 3 (i.e. any `store=true` row). With steering enabled:
+`steerable_conversations=True` enables task-backed multi-turn steering only
+when resilient tasks are also enabled and `store=true`. With both controls
+enabled:
 
 - Every turn in a conversation chain shares the same resilient `task_id`
   (the chain partitioning rule in §4.2 collapses them).
@@ -1292,10 +1295,10 @@ await), satisfying the ordering rule by construction.
 For Row 1 with `steerable_conversations=true`, the resilient task body
 MUST signal implicit-suspend (in this implementation: `return None`
 from a `@multi_turn_task`-decorated body) after the handler's terminal,
-keeping the task alive for subsequent turns per §6.1. For Rows 2/3,
-the task body invokes the handler directly; on graceful shutdown
-without explicit `exit_for_recovery`, the body persists the
-`shutdown_reason=grace_exhausted` failed terminal before returning.
+keeping the task alive for subsequent turns per §6.1. For switch-enabled
+stored foreground work, the task body invokes the handler directly; on
+graceful shutdown it persists the `shutdown_reason=grace_exhausted` failed
+terminal before returning. Switch-disabled work has no task body.
 
 ### C-DISPOSITION — Recovery dispatch
 
@@ -1407,13 +1410,15 @@ For `steerable_conversations=true`, queued turns MUST drain in FIFO
 order, with no concurrent handler executions for the same chain
 (§11.4). Drained turns MUST observe `is_steered_turn=True`.
 `pending_input_count` MUST count post-this queued turns.
+These requirements apply only when the resilient-tasks switch is enabled.
 
 ### C-COMPOSE — Composition guards
 
 The resilient-tasks switch requires `store=true` to engage row 1; if
 `store=false`, the request falls through to row 4 regardless of
-the switch state. `steerable_conversations=true` requires
-`store=true` for the steering queue and acceptance hook to function;
+the switch state. `steerable_conversations=true` requires both
+`store=true` and the resilient-tasks switch enabled for the steering queue,
+locking, anti-fork checks, and acceptance hook to function;
 implementations MUST reject the combination at startup or fall
 through to non-store behaviour per their stability policy.
 
@@ -1637,28 +1642,27 @@ the switch state. There is no persistent record to recover from;
 the resilient orchestrator is bypassed. The implementation MUST NOT
 silently fail; the row-4 best-effort marker fires per §6.3.
 
-### §17.2 — `steerable_conversations=true` requires `store=true`
+### §17.2 — Task-backed steering requires `store=true` and resilient tasks enabled
 
 The steering queue, the conversation lock, and the acceptance hook
-ALL depend on the resilient task primitive. With `store=false`, no
-resilient task is created; there is no queue to enqueue into; the
-acceptance hook is not invoked. Implementations MUST either reject the
-combination at startup or document the no-op fall-through clearly.
+ALL depend on the resilient task primitive. With `store=false` or the switch
+disabled, no task-backed execution is created; there is no queue to enqueue
+into and the acceptance hook is not invoked.
 
 ### §17.3 — `steerable_conversations=true` × resilient tasks disabled
 
-This combination is supported; steering remains a separate server option.
-Without the task manager, stored work falls back to in-process execution and
-does not gain durable crash recovery. If a persisted task with
-`disposition="mark-failed"` is recovered after the subsystem is enabled, the
-recovery body marks the response failed rather than invoking the handler.
+This combination is accepted, but no `MultiTurnTask` exists. Stored requests
+fall back to independent asyncio executions: sequential chain linkage still
+works, while overlapping turns are neither queued nor protected by task-backed
+cancellation, locking, or anti-fork checks. Applications that need those
+steering semantics MUST enable resilient tasks before constructing the host.
 
 ### §17.4 — `background=false` + steerable
 
-This is Row 3. The handler runs inside the resilient task body; the
-HTTP request awaits the task body's terminal via the framework's
-`TaskRun.result()` API. A new turn arriving mid-handler still goes
-through the queue / lock / acceptance hook per §11. (Note:
+This is Row 3. With resilient tasks enabled, the handler runs inside the task
+body and the HTTP request awaits `TaskRun.result()`; a new turn arriving
+mid-handler goes through the queue / lock / acceptance hook per §11. With the
+switch disabled, it uses the independent asyncio fallback instead. (Note:
 `background=false` + steering means the original HTTP caller's
 connection is open while the handler runs to completion; a steered
 turn arriving from a different client connection gets queued.)

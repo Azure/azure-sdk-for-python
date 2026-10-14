@@ -24,11 +24,11 @@ def decide_disposition(
 ) -> str:
     """Return the resilient-recovery disposition for a response.
 
-    The single decision site (Spec 033 FR-006). A response is **re-invoked** on
-    crash recovery only when it is a stored, background response running under
-    the process-global resilient-tasks switch enabled (resilience matrix Row 1);
-    every other stored row (Row 2 switch disabled, Row 3 foreground+store) is **marked
-    failed** on recovery — the handler is not re-run.
+    The single decision site (Spec 033 FR-006). With resilient tasks enabled, a
+    stored background response is **re-invoked** (Row 1) and stored foreground
+    work is **marked failed** (Row 3). When the switch is disabled (Row 2), no
+    task manager exists, so the returned fallback value is not persisted or
+    applied by a recovery scanner.
 
     :keyword background: The request's ``background`` flag.
     :paramtype background: bool
@@ -53,7 +53,7 @@ def classify_row(
     """Return the resilience-matrix row number (1-4) for a response.
 
     Row 1: ``store + background + resilient_tasks_enabled`` (full recovery).
-    Row 2: ``store + background`` with resilient tasks disabled (mark-failed).
+    Row 2: ``store + background`` with resilient tasks disabled (non-durable).
     Row 3: ``store`` foreground (mark-failed).
     Row 4: ``store=false`` (no resilient state; no recovery).
 

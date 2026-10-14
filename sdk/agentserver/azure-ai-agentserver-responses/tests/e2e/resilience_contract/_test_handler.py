@@ -27,12 +27,10 @@ Env vars consumed:
   by both core (resilient tasks) and responses (response store + stream
   store) packages via :func:`azure.ai.agentserver.core._config.resolve_state_subdir`.
   (Spec 024 Phase 3a unified storage layout.)
-- ``CONFORMANCE_RESILIENT_TASKS_ENABLED`` — ``"true"`` or ``"false"`` to select
-  the server's ``resilient_tasks_enabled`` option. Default ``"true"``.
-- ``CONFORMANCE_RESILIENT_TASKS_ENABLED`` — ``"true"`` to set
-  ``ResponsesServerOptions()``.
-  (forces row 4 ephemeral regardless of per-request ``store`` flag).
-  Default ``"false"``.
+- ``CONFORMANCE_RESILIENT_TASKS_ENABLED`` — ``"true"`` or ``"false"`` for
+  the core process-global resilient-task switch, applied before host
+  construction. Default ``"true"``. The request's own ``store`` and
+  ``background`` fields continue to select persistence and response mode.
 - ``CONFORMANCE_HANDLER_SLEEP_MS`` — milliseconds the handler sleeps
   between the pre-sleep delta burst and the post-sleep delta burst.
   Default ``50`` (fast natural completion).
@@ -63,7 +61,6 @@ from azure.ai.agentserver.responses import (
 )
 
 from tests.e2e.resilience_contract._test_handler_markers import (
-    PHASE_POST,
     PHASE_PRE,
     delta_content,
     final_text,

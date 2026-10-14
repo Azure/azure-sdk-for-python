@@ -32,11 +32,11 @@ A clause may have MULTIPLE rows if it spans dimensions; a test may appear in MUL
 | Row 1 Path C with SSE keep-alive enabled: a resilient task MUST still be created and recovery MUST succeed regardless of `SSE_KEEPALIVE_INTERVAL` (the hosted condition); the recovered lifetime produces the terminal | `test_row_1_keep_alive.py::test_row_1_keep_alive_path_c` (stream=F/T) | response.status; response.output content (recovered `L1_done`) |
 | Row 2 Path A: handler completes within grace | `test_row_2_path_a.py::test_row_2_path_a` (stream=F/T) | response.status |
 | Row 2 Path B: in-process shutdown loop marks failed with `code=server_error`; respond to waiting clients | `test_row_2_path_b.py::test_row_2_path_b` (stream=F/T) | response.status; response.error.code |
-| Row 2 Path C: switch disabled, so no next-lifetime recovery scan; last stored status remains `in_progress` | `test_row_2_path_c.py::test_row_2_path_c` (stream=F/T) | response.status |
+| Row 2 Path C: switch disabled, so no next-lifetime recovery scan; last stored status remains `in_progress` | `test_row_2_path_c.py::test_switch_disabled_stored_background_remains_in_progress_after_hard_crash` (stream=F/T) | response.status |
 | Row 2: pre-crash stream events are within-process only (no resilient stream provider when the resilient-tasks switch is disabled); cross-lifetime stream-content survival is NOT a Row 2 promise. | n/a | n/a |
 | Row 3 Path A: handler completes within grace | `test_row_3_path_a.py::test_row_3_path_a` (stream=F/T) | response.status |
 | Row 3 Path B: foreground mark-failed; respond to original connection | `test_row_3_path_b.py::test_row_3_path_b` (stream=F/T) | response.status; response.error.code |
-| Row 3 Path C: foreground mark-failed via Path-C fallback | `test_row_3_path_c.py::test_row_3_path_c` (stream=F/T) | response.status; response.error.code |
+| Row 3 Path C with switch enabled: foreground mark-failed via recovery fallback | `test_row_3_path_c.py::test_row_3_path_c` (stream=F/T) | response.status; response.error.code |
 | Row 4 Path A: handler completes; ephemeral, GET returns 404 | `test_row_4_path_a.py::test_row_4_path_a` (stream=F/T) | response.status (returned inline); GET 404 |
 | Row 4 Path B: best-effort failed marker on live wire (MAY) | `test_row_4_path_b.py::test_row_4_path_b` (stream=F/T) | response.status (best-effort) |
 | Row 4 Path C: no persisted state, no next-lifetime action | `test_row_4_path_c.py::test_row_4_path_c` (stream=F/T) | meta (n/a verification) |

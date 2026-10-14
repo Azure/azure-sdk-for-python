@@ -370,9 +370,8 @@ def _reconstruct_from_params(
 
 
 # (Spec 024 Phase 2) `_BOOKKEEPING_EVENTS` module-level registry deleted —
-# the bookkeeping pattern is gone. Handlers run inside the task body for
-# all rows (Row 1 + Row 2 + Row 3); see SOT §6.4 unified handler-execution
-# model.
+# the bookkeeping pattern is gone. Switch-enabled stored work runs inside the
+# task body; switch-disabled work uses the orchestrator's in-process fallback.
 
 
 def _is_recovered_entry(task_entry_mode: str) -> bool:
@@ -618,7 +617,8 @@ class ResilientResponseOrchestrator:
         """
         # (Spec 014 FR-003 / FR-004) Recovery dispatch via disposition. mark-failed:
         # the handler does NOT re-run; persist a server_error terminal and complete
-        # the task. Covers persisted Rows 2 (bg+store, switch disabled) and 3 (fg+store).
+        # the task. Covers switch-enabled foreground work and legacy persisted
+        # records whose input already carries ``mark-failed``.
         if is_recovery and disposition == DISPOSITION_MARK_FAILED:
             logger.info(
                 "Resilient task recovered (response_id=%s, disposition=mark-failed) — marking failed",
@@ -1314,13 +1314,11 @@ class ResilientResponseOrchestrator:
         """Persist a response as ``failed`` after crash recovery.
 
         Used by the next-lifetime recovery path for tasks with
-        ``disposition="mark-failed"`` (Rows 2 and 3 of the resilience
-        matrix). Both rows cannot be re-invoked on recovery —
-        Row 2 (bg+store, switch disabled) opted out of crash
-        recovery; Row 3 (fg+store) has no live HTTP request to stream
-        events back to. The recovered task body marks the response
-        ``failed`` via the generic ``server_error`` code (path-specific
-        cause in ``message``, per ``resilience-contract.md`` § Glossary).
+        ``disposition="mark-failed"``. Current hosts create that disposition
+        for switch-enabled foreground work; legacy persisted background tasks
+        may also carry it. The recovered task body marks the response ``failed``
+        via the generic ``server_error`` code (path-specific cause in
+        ``message``, per ``resilience-contract.md`` § Glossary).
 
         Idempotent against a completed-response race (T-066): if the
         response already exists in the store with a terminal status, the

@@ -1436,8 +1436,8 @@ class _ResponseOrchestrator:
         # is registered in _REGISTERED_DESCRIPTORS before TaskManager.startup()
         # runs recovery. Without this, stale tasks from a previous crash would
         # not be recovered until the first HTTP request triggers lazy creation.
-        # Eager creation is unconditional: Rows 2/3 also need recovery
-        # dispatch for persisted mark-failed tasks — they use the same
+        # Eager creation is unconditional: switch-enabled foreground and legacy
+        # persisted mark-failed tasks also need recovery dispatch — they use the same
         # @task function with a ``disposition="mark-failed"`` payload that
         # the recovery body honours.
         from ._resilient_orchestrator import (
@@ -3167,8 +3167,8 @@ class _ResponseOrchestrator:
         # bookkeeping_record + bookkeeping_active + _complete_bookkeeping_task
         # mechanics are deleted. Disposition is selected per row:
         #   - switch enabled + bg + store  → re-invoke   (Row 1 stream=T)
-        #   - switch disabled + bg + store → mark-failed (Row 2 stream=T)
-        #   - fg + store                      → mark-failed (Row 3 stream=T)
+        #   - switch enabled + fg + store  → mark-failed (Row 3 stream=T)
+        #   - switch disabled + store      → in-process fallback (non-durable)
         # The downstream branches read ``_unified_disposition`` instead of
         # deriving the disposition independently.
         _unified_disposition = decide_disposition(
@@ -3970,10 +3970,10 @@ class _ResponseOrchestrator:
             # the handler attempts the resilient task body. With the core switch
             # disabled, ``_start_resilient_response`` uses the in-process fallback.
             # The disposition determines recovery behaviour for durable records:
-            #   - switch enabled  → re-invoke (Row 1: handler
-            #     re-runs on next-lifetime recovery).
-            #   - switch disabled → mark-failed (Row 2: response
-            #     is marked failed on next-lifetime recovery).
+            #   - switch enabled + background → re-invoke the handler.
+            #   - switch enabled + foreground → mark the response failed.
+            # With the switch disabled there is no durable record or recovery
+            # scanner, so the fallback does not apply the disposition.
             # The legacy ``asyncio.create_task(_shielded_runner)`` path
             # for Row 2 + the separate bookkeeping task are deleted —
             # one resilient task per response covers both rows.
@@ -4268,12 +4268,12 @@ class _ResponseOrchestrator:
         :param fallback_runner: The shielded runner coroutine function to run
             in-process when resilient tasks are disabled.
         :type fallback_runner: Any
-        :keyword disposition: One of ``"re-invoke"`` (Row 1: switch enabled + bg + store
-            — task body re-runs handler on recovery) or ``"mark-failed"``
-            (Rows 2/3: bg+store with resilient-tasks switch disabled, or fg+store — task body
-            is bookkeeping-only on fresh entry and marks the response failed on
-            recovery). Stamped into task framework metadata so recovery dispatch
-            can route without re-deriving the gate from request params.
+        :keyword disposition: One of ``"re-invoke"`` (switch-enabled stored
+            background work) or ``"mark-failed"`` (switch-enabled stored
+            foreground work, plus legacy persisted records). Stamped into task
+            input so recovery can route without re-deriving the request gates.
+            When the switch is disabled, no task starts and the value is unused
+            by the in-process fallback.
         :paramtype disposition: str
         :raises Exception: If the task subsystem is present and the resilient
             start fails (e.g. the task-store write is rejected). The exception is

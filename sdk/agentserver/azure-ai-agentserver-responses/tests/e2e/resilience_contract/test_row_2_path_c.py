@@ -27,8 +27,11 @@ from tests.e2e.resilience_contract.conftest import (
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("stream", [False, True], ids=["stream=False", "stream=True"])
-async def test_row_2_path_c(make_harness: Callable[..., CrashHarness], stream: bool) -> None:
-    """Row 2 Path C: SIGKILL leaves the stored response in progress."""
+async def test_switch_disabled_stored_background_remains_in_progress_after_hard_crash(
+    make_harness: Callable[..., CrashHarness],
+    stream: bool,
+) -> None:
+    """Switch-off Path C has no recovery scanner, so stored state stays in progress."""
     harness = make_harness(
         resilient_tasks_enabled=False,
         handler_sleep_ms=int(LONG_TIME_SECS * 1000),

@@ -148,7 +148,7 @@ per-row contract.
 |----:|---------|--------------|----------------------|-----------------------|--------------------------|---------------------------------|
 |  1  | `true`  | `true`       | `True`               | natural terminal      | hand the in-flight handler to the resilient-task primitive's recovery; runtime exits; next lifetime re-invokes the handler with `is_recovery=True` | next lifetime re-invokes the handler with `is_recovery=True` |
 |  2  | `true`  | `true`       | `False`              | natural terminal      | mark response `failed` (`code=server_error`) in-process before exit; respond to waiting clients | no recovery scan; the last persisted status may remain `in_progress` |
-|  3  | `true`  | `false`      | any                  | natural terminal      | mark response `failed` (`code=server_error`) in-process before exit; respond to waiting clients | switch enabled: next lifetime marks response `failed`; switch disabled: no recovery scan |
+|  3  | `true`  | `false`      | any                  | natural terminal      | mark response `failed` (`code=server_error`) in-process before exit; respond to waiting clients | switch enabled: recover the persisted task with `mark-failed`; switch disabled: no recovery scan and the status may remain `in_progress` |
 |  4  | `false` | any          | any                  | natural terminal      | best-effort `failed` marker in-process; original HTTP connection may already be closing | no recovery applies (no persisted state) |
 | 11  | `true`  | `true`       | `True`               | all phases checkpoint + complete; final `response.output` reflects every phase | handler at a checkpoint boundary calls `await context.exit_for_recovery()`; recovery resumes from the last checkpointed snapshot | SIGKILL at a checkpoint boundary; recovery resumes from the last checkpointed snapshot |
 
@@ -185,7 +185,7 @@ with `context.is_recovery == True`.
   `await context.exit_for_recovery()`, which works in every handler shape
   (coroutine, async generator, sync).
 
-### Row 2 — Marked failed (`store=true`, `background=true`, switch disabled)
+### Row 2 — Stored, non-durable (`store=true`, `background=true`, switch disabled)
 
 A stored, observable response without crash recovery.
 
@@ -205,11 +205,11 @@ failed without invoking the handler.
 ### Row 3 — Marked failed, foreground (`store=true`, `background=false`, either switch state)
 
 A stored response observable over the original (foreground) HTTP connection.
-The switch is a free axis — foreground responses are never re-invoked because
-the client connection is gone. When the switch is enabled, the persisted
-disposition is `mark-failed`; when disabled, execution is in-process only.
-All failure markers use `code=server_error` with the path-specific cause in
-`message`.
+Foreground responses are never re-invoked because the client connection is
+gone. When the switch is enabled, the persisted disposition is `mark-failed`
+and the next-lifetime scanner settles a hard-crashed response as failed. When
+the switch is disabled, execution is in-process only: graceful shutdown marks
+it failed, but a hard crash can leave the stored status `in_progress`.
 
 ### Row 4 — Best-effort (`store=false`, any `background`, either switch state)
 
