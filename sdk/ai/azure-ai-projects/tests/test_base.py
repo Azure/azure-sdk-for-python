@@ -82,21 +82,6 @@ servicePreparer = functools.partial(
     foundry_hosted_agent_name="sanitized-hosted-agent-name",
 )
 
-browserAutomationServicePreparer = functools.partial(
-    EnvironmentVariableLoader,
-    "",
-    **{
-        key: servicePreparer.keywords[key]
-        for key in (
-            "foundry_project_endpoint",
-            "foundry_agent_name",
-            "foundry_model_name",
-            "browser_automation_project_connection_id",
-            "llm_validation_project_endpoint",
-        )
-    },
-)
-
 fineTuningServicePreparer = functools.partial(
     EnvironmentVariableLoader,
     "",
