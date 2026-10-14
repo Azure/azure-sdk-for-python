@@ -441,6 +441,41 @@ async def test_same_assertion_token_from_shared_cache(get_token_method):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_assertions_for_same_account_cached_separately(get_token_method):
+    """Access tokens obtained with different assertions for the same account shouldn't overwrite each other.
+
+    An account can have more than one valid assertion at once, e.g. from two sessions, or a client renewing its token
+    before the old one expires.
+    """
+    shared_cache = msal.TokenCache()
+    exchanges = []
+
+    async def send(request, **kwargs):
+        assertion = request.body["assertion"]
+        exchanges.append(assertion)
+        return mock_response(
+            json_payload=build_aad_response(access_token="ACCESS-TOKEN-" + assertion, uid="a", utid="utid")
+        )
+
+    def make_credential(user_assertion):
+        return OnBehalfOfCredential(
+            "tenant-id",
+            "client-id",
+            client_secret="secret",
+            user_assertion=user_assertion,
+            transport=Mock(send=send),
+            cache=shared_cache,
+        )
+
+    for assertion in ("assertion-1", "assertion-2", "assertion-1", "assertion-2"):
+        token = await getattr(make_credential(assertion), get_token_method)("scope")
+        assert token.token == "ACCESS-TOKEN-" + assertion
+
+    assert exchanges == ["assertion-1", "assertion-2"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
 async def test_same_assertion_refresh_token_from_shared_cache(get_token_method):
     """A new credential with the same user assertion should redeem the refresh token cached for it."""
     shared_cache = msal.TokenCache()
