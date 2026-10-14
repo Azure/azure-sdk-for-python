@@ -3,6 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+import asyncio
+import json
+import sys
+from pathlib import Path
 from itertools import product
 from urllib.parse import urlparse
 from unittest.mock import Mock, patch
@@ -12,7 +16,7 @@ import msal
 from devtools_testutils import is_live
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
-from azure.identity import UsernamePasswordCredential
+from azure.identity import TokenCachePersistenceOptions, UsernamePasswordCredential
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.aad_client_base import JWT_BEARER_ASSERTION
 from azure.identity._internal.user_agent import USER_AGENT
@@ -401,6 +405,377 @@ async def test_no_cross_user_refresh_token_from_shared_cache(get_token_method):
     assert refreshed_token_b.token == "REFRESHED-ACCESS-TOKEN-B"
     assert b_requests == [None, "REFRESH-TOKEN-B"]
     assert credential_b._client.last_home_account_id == "b.utid"
+
+
+@pytest.fixture
+def persistent_obo_cache(tmp_path, monkeypatch):
+    from msal_extensions import FilePersistence
+
+    def get_persistence(**kwargs):
+        return FilePersistence(str(tmp_path / kwargs["cache_name"]))
+
+    monkeypatch.setattr("azure.identity._persistent_cache._get_persistence", get_persistence)
+    return TokenCachePersistenceOptions(name="obo-test", allow_unencrypted_storage=True)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+@pytest.mark.parametrize("enable_cae", [True, False])
+@pytest.mark.parametrize("account_info", [True, False])
+async def test_persistent_cache_new_instance(persistent_obo_cache, get_token_method, enable_cae, account_info):
+    async def send(request, **kwargs):
+        assert request.body["client_id"] == "client-id"
+        assert request.body["assertion"] == "assertion"
+        return mock_response(
+            json_payload=build_aad_response(
+                access_token="cached-token",
+                uid="user" if account_info else None,
+                utid="tenant" if account_info else None,
+            )
+        )
+
+    transport = AsyncMockTransport(send=Mock(wraps=send))
+    options = {"enable_cae": enable_cae}
+    kwargs = {"options": options} if get_token_method == "get_token_info" else options
+    caches = []
+    for _ in range(2):
+        async with OnBehalfOfCredential(
+            "tenant-id",
+            "client-id",
+            client_secret="secret",
+            user_assertion="assertion",
+            cache_persistence_options=persistent_obo_cache,
+            transport=transport,
+        ) as credential:
+            token = await getattr(credential, get_token_method)("scope", **kwargs)
+            assert token.token == "cached-token"
+            caches.append(credential._client._get_cache(enable_cae=enable_cae))
+    assert caches[0] is not caches[1]
+    assert transport.send.call_count == 1
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+@pytest.mark.parametrize("enable_cae", [True, False])
+@pytest.mark.parametrize("same_account", [True, False])
+@pytest.mark.parametrize("expired", [True, False])
+async def test_persistent_cache_assertion_isolation(
+    persistent_obo_cache, get_token_method, enable_cae, same_account, expired
+):
+    requests = []
+
+    async def send(request, **kwargs):
+        assert request.body["client_id"] == "client-id"
+        assertion = request.body.get("assertion")
+        refresh_token = request.body.get("refresh_token")
+        requests.append((assertion, refresh_token))
+        if refresh_token:
+            assert refresh_token == "refresh-a"
+            # A rotation response need not identify the account.
+            return mock_response(
+                json_payload=build_aad_response(
+                    access_token="refreshed-a",
+                    refresh_token="rotated-a",
+                    expires_in=0,
+                )
+            )
+        return mock_response(
+            json_payload=build_aad_response(
+                access_token="access-" + assertion,
+                refresh_token="refresh-" + assertion,
+                expires_in=0 if expired else 3600,
+                uid="same-user" if same_account else assertion,
+                utid="tenant",
+            )
+        )
+
+    transport = AsyncMockTransport(send=Mock(wraps=send))
+    options = {"enable_cae": enable_cae}
+    kwargs = {"options": options} if get_token_method == "get_token_info" else options
+    for assertion in ("a", "b", "a"):
+        async with OnBehalfOfCredential(
+            "tenant-id",
+            "client-id",
+            client_secret="secret",
+            user_assertion=assertion,
+            cache_persistence_options=persistent_obo_cache,
+            transport=transport,
+        ) as credential:
+            token = await getattr(credential, get_token_method)("scope", **kwargs)
+            assert token.token == ("refreshed-a" if expired and len(requests) == 3 else "access-" + assertion)
+    assert requests == ([("a", None), ("b", None), (None, "refresh-a")] if expired else [("a", None), ("b", None)])
+
+    if expired:
+
+        async def send_rotated(request, **kwargs):
+            assert request.body["refresh_token"] == "rotated-a"
+            return mock_response(json_payload=build_aad_response(access_token="after-rotation"))
+
+        async with OnBehalfOfCredential(
+            "tenant-id",
+            "client-id",
+            client_secret="secret",
+            user_assertion="a",
+            cache_persistence_options=persistent_obo_cache,
+            transport=AsyncMockTransport(send=send_rotated),
+        ) as credential:
+            assert (await getattr(credential, get_token_method)("scope", **kwargs)).token == "after-rotation"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("enable_cae", [True, False])
+async def test_persistent_cache_ignores_unbound_entries(persistent_obo_cache, enable_cae):
+    from azure.identity._persistent_cache import _load_persistent_cache
+
+    cache = _load_persistent_cache(persistent_obo_cache, enable_cae)
+    cache.add(
+        {
+            "client_id": "client-id",
+            "scope": ["scope"],
+            "token_endpoint": "https://login.microsoftonline.com/tenant-id/oauth2/v2.0/token",
+            "response": build_aad_response(
+                access_token="legacy-token",
+                refresh_token="legacy-refresh",
+                uid="user",
+                utid="tenant",
+            ),
+        }
+    )
+
+    async def send(request, **kwargs):
+        assert request.body["assertion"] == "assertion"
+        assert "refresh_token" not in request.body
+        return mock_response(json_payload=build_aad_response(access_token="bound-token"))
+
+    transport = AsyncMockTransport(send=Mock(wraps=send))
+    async with OnBehalfOfCredential(
+        "tenant-id",
+        "client-id",
+        client_secret="secret",
+        user_assertion="assertion",
+        cache_persistence_options=persistent_obo_cache,
+        transport=transport,
+    ) as credential:
+        assert (await credential.get_token("scope", enable_cae=enable_cae)).token == "bound-token"
+    assert transport.send.call_count == 1
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("expired", [True, False])
+async def test_persistent_cache_client_tenant_and_authority_isolation(persistent_obo_cache, expired):
+    requests = []
+
+    async def send(request, **kwargs):
+        assert "refresh_token" not in request.body
+        requests.append(request.url)
+        return mock_response(
+            json_payload=build_aad_response(
+                access_token=request.body["client_id"] + ":" + request.url,
+                refresh_token="refresh",
+                expires_in=0 if expired else 3600,
+                uid="same-user",
+                utid="home-tenant",
+            )
+        )
+
+    for client, authority, tenant in (
+        ("client-id", "https://login.microsoftonline.com", "tenant-a"),
+        ("client-id", "https://login.microsoftonline.com", "tenant-b"),
+        ("client-id", "https://other-authority", "tenant-a"),
+        ("other-client", "https://login.microsoftonline.com", "tenant-a"),
+    ):
+        async with OnBehalfOfCredential(
+            "tenant-a",
+            client,
+            client_secret="secret",
+            user_assertion="assertion",
+            authority=authority,
+            additionally_allowed_tenants=["tenant-b"],
+            cache_persistence_options=persistent_obo_cache,
+            transport=AsyncMockTransport(send=send),
+        ) as credential:
+            token = await credential.get_token("scope", tenant_id=tenant)
+            assert token.token == f"{client}:{authority}/{tenant}/oauth2/v2.0/token"
+    assert len(requests) == 4
+
+
+@pytest.mark.asyncio
+async def test_persistent_cache_claims_and_scopes(persistent_obo_cache):
+    requests = []
+
+    async def send(request, **kwargs):
+        requests.append((request.body["scope"], request.body.get("claims")))
+        return mock_response(json_payload=build_aad_response(access_token=str(len(requests))))
+
+    for scope, claims in (("scope", None), ("other-scope", None), ("scope", '{"access_token": {}}')):
+        async with OnBehalfOfCredential(
+            "tenant-id",
+            "client-id",
+            client_secret="secret",
+            user_assertion="assertion",
+            cache_persistence_options=persistent_obo_cache,
+            transport=AsyncMockTransport(send=send),
+        ) as credential:
+            token = await credential.get_token(scope, claims=claims)
+            assert token.token == str(len(requests))
+    assert requests == [("scope", None), ("other-scope", None), ("scope", '{"access_token": {}}')]
+
+
+@pytest.mark.asyncio
+async def test_persistent_cache_concurrent_writers(persistent_obo_cache):
+    ready = asyncio.Event()
+    requests = []
+
+    async def send(request, **kwargs):
+        assertion = request.body["assertion"]
+        requests.append(assertion)
+        if len(requests) == 2:
+            ready.set()
+        await ready.wait()
+        return mock_response(
+            json_payload=build_aad_response(
+                access_token=assertion,
+                uid="same-user",
+                utid="tenant",
+            )
+        )
+
+    async def acquire(assertion, transport):
+        async with OnBehalfOfCredential(
+            "tenant-id",
+            "client-id",
+            client_secret="secret",
+            user_assertion=assertion,
+            cache_persistence_options=persistent_obo_cache,
+            transport=transport,
+        ) as credential:
+            assert (await credential.get_token("scope")).token == assertion
+
+    await asyncio.gather(*(acquire(user, AsyncMockTransport(send=send)) for user in ("a", "b")))
+    no_network = AsyncMockTransport(send=Mock(side_effect=AssertionError("unexpected exchange")))
+    await asyncio.gather(*(acquire(user, no_network) for user in ("a", "b")))
+    assert sorted(requests) == ["a", "b"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("invalid_grant", [True, False])
+async def test_persistent_cache_refresh_updates_are_assertion_bound(persistent_obo_cache, invalid_grant):
+    async def exchange(request, **kwargs):
+        return mock_response(
+            json_payload=build_aad_response(
+                access_token="expired",
+                refresh_token="shared-refresh-secret",
+                expires_in=0,
+                uid="same-user",
+                utid="tenant",
+            )
+        )
+
+    for assertion in ("a", "b"):
+        async with OnBehalfOfCredential(
+            "tenant-id",
+            "client-id",
+            client_secret="secret",
+            user_assertion=assertion,
+            cache_persistence_options=persistent_obo_cache,
+            transport=AsyncMockTransport(send=exchange),
+        ) as credential:
+            await credential.get_token("scope")
+
+    a_requests = []
+
+    async def refresh_a(request, **kwargs):
+        a_requests.append(request.body["grant_type"])
+        if request.body.get("refresh_token"):
+            assert request.body["refresh_token"] == "shared-refresh-secret"
+            if invalid_grant:
+                return mock_response(status_code=400, json_payload={"error": "invalid_grant"})
+            return mock_response(json_payload=build_aad_response(access_token="refreshed-a", refresh_token="rotated-a"))
+        assert request.body["assertion"] == "a"
+        return mock_response(json_payload=build_aad_response(access_token="exchanged-a"))
+
+    async with OnBehalfOfCredential(
+        "tenant-id",
+        "client-id",
+        client_secret="secret",
+        user_assertion="a",
+        cache_persistence_options=persistent_obo_cache,
+        transport=AsyncMockTransport(send=refresh_a),
+    ) as credential:
+        token = await credential.get_token("scope")
+        assert token.token == ("exchanged-a" if invalid_grant else "refreshed-a")
+        refresh_tokens = credential._client.get_cached_refresh_tokens(["scope"])
+        assert [entry["secret"] for entry in refresh_tokens] == ([] if invalid_grant else ["rotated-a"])
+
+    assert a_requests == (
+        ["refresh_token", "urn:ietf:params:oauth:grant-type:jwt-bearer"] if invalid_grant else ["refresh_token"]
+    )
+
+    async def refresh_b(request, **kwargs):
+        assert request.body["refresh_token"] == "shared-refresh-secret"
+        assert "assertion" not in request.body
+        return mock_response(json_payload=build_aad_response(access_token="refreshed-b"))
+
+    async with OnBehalfOfCredential(
+        "tenant-id",
+        "client-id",
+        client_secret="secret",
+        user_assertion="b",
+        cache_persistence_options=persistent_obo_cache,
+        transport=AsyncMockTransport(send=refresh_b),
+    ) as credential:
+        assert (await credential.get_token("scope")).token == "refreshed-b"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("enable_cae", [True, False])
+@pytest.mark.parametrize("expired", [True, False])
+async def test_persistent_cache_separate_processes(tmp_path, enable_cae, expired):
+    worker = Path(__file__).with_name("obo_cache_process.py")
+
+    async def run(assertion, mode):
+        process = await asyncio.create_subprocess_exec(
+            sys.executable,
+            str(worker),
+            stdin=asyncio.subprocess.PIPE,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        settings = json.dumps(
+            {
+                "directory": str(tmp_path),
+                "assertion": assertion,
+                "mode": mode,
+                "enable_cae": enable_cae,
+                "expired": expired,
+            }
+        ).encode()
+        try:
+            stdout, stderr = await asyncio.wait_for(process.communicate(settings), timeout=30)
+        finally:
+            if process.returncode is None:
+                process.kill()
+                await process.wait()
+        assert process.returncode == 0, stdout.decode() + stderr.decode()
+        return json.loads(stdout)
+
+    writers = await asyncio.gather(*(run(user, "write") for user in ("a", "b")))
+    for user, result in zip(("a", "b"), writers):
+        assert result["token"] == "access-" + user
+        assert result["requests"] == ["urn:ietf:params:oauth:grant-type:jwt-bearer"]
+
+    for user in ("a", "b"):
+        result = await run(user, "refresh" if expired else "read")
+        assert result["token"] == ("refreshed-" if expired else "access-") + user
+        assert result["requests"] == (["refresh_token"] if expired else [])
+        assert [entry["secret"] for entry in result["refresh_tokens"]] == [
+            ("rotated-" if expired else "refresh-") + user
+        ]
+        # A third process must read the refreshed access token and rotated refresh token from disk.
+        repeated = await run(user, "read")
+        assert repeated["token"] == result["token"]
+        assert repeated["requests"] == []
+        assert repeated["refresh_tokens"] == result["refresh_tokens"]
 
 
 def test_tenant_id_validation():
