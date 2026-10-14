@@ -21,8 +21,8 @@ Submodules
 azure.search.documents.indexes.types module
 -------------------------------------------
 
-.. TEMPORARY: Remove exclude-members after upgrading the Python emitter to a
-   version that escapes at-prefixed wire names in docstrings.
+.. Wire keys are documented by :ivar: fields, not Python attribute directives.
+   Keep these exclusions until Sphinx autodoc supports non-identifier keys.
 .. automodule:: azure.search.documents.indexes.types
    :members:
    :exclude-members: @odata.etag,@odata.type

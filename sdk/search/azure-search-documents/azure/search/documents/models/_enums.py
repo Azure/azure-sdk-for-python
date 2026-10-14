@@ -112,7 +112,7 @@ class QueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SIMPLE = "simple"
     """Uses the simple query syntax for searches. Search text is interpreted using a simple query
-    language that allows for symbols such as +, * and "". Queries are evaluated across all
+    language that allows for symbols such as +, * and \"\". Queries are evaluated across all
     searchable fields by default, unless the searchFields parameter is specified."""
     FULL = "full"
     """Uses the full Lucene query syntax for searches. Search text is interpreted using the Lucene
@@ -191,9 +191,6 @@ class VectorFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     the filter selectivity, this can result in fewer results than requested by the parameter 'k'."""
     PRE_FILTER = "preFilter"
     """The filter will be applied before the search query."""
-    STRICT_POST_FILTER = "strictPostFilter"
-    """The filter will be applied after the global top-k candidate set of vector results is returned.
-    This will result in fewer results than requested by the parameter 'k'."""
 
 
 class VectorQueryKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -203,9 +200,3 @@ class VectorQueryKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Vector query where a raw vector value is provided."""
     TEXT = "text"
     """Vector query where a text value that needs to be vectorized is provided."""
-    IMAGE_URL = "imageUrl"
-    """Vector query where an url that represents an image value that needs to be vectorized is
-    provided."""
-    IMAGE_BINARY = "imageBinary"
-    """Vector query where a base 64 encoded binary of an image that needs to be vectorized is
-    provided."""

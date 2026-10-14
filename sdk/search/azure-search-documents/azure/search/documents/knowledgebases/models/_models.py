@@ -23,7 +23,6 @@ from ._enums import (
 
 if TYPE_CHECKING:
     from .. import models as _models
-    from ......search import models as _search_models6
     from ...indexes import models as _indexes_models3
 
 
@@ -505,6 +504,42 @@ class IndexedSqlKnowledgeSourceParams(
         self.kind = KnowledgeSourceKind.INDEXED_SQL  # type: ignore
 
 
+class KnowledgeBaseRetrievalStreamEvent(_Model):
+    """Common base for events emitted by a streaming knowledge base retrieval."""
+
+
+class KnowledgeBaseActivityCompletedStreamEvent(
+    KnowledgeBaseRetrievalStreamEvent
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Emitted when an individual retrieval activity completes.
+
+    :ivar value: The completed activity record. Required.
+    :vartype value: ~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecord
+    """
+
+    value: "_models.KnowledgeBaseActivityRecord" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The completed activity record. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: "_models.KnowledgeBaseActivityRecord",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class KnowledgeBaseActivityRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for activity records. Tracks execution details, timing, and errors for knowledge base
     operations.
@@ -684,6 +719,38 @@ class KnowledgeBaseActivityStartedEvent(_Model):  # pylint: disable=docstring-ke
         super().__init__(*args, **kwargs)
 
 
+class KnowledgeBaseActivityStartedStreamEvent(
+    KnowledgeBaseRetrievalStreamEvent
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Emitted when an individual retrieval activity starts.
+
+    :ivar value: The activity-started payload. Required.
+    :vartype value: ~azure.search.documents.knowledgebases.models.KnowledgeBaseActivityStartedEvent
+    """
+
+    value: "_models.KnowledgeBaseActivityStartedEvent" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The activity-started payload. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: "_models.KnowledgeBaseActivityStartedEvent",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class KnowledgeBaseAgenticReasoningActivityRecord(
     KnowledgeBaseActivityRecord, discriminator="agenticReasoning"
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
@@ -708,9 +775,6 @@ class KnowledgeBaseAgenticReasoningActivityRecord(
     :vartype type: str or ~azure.search.documents.knowledgebases.models.AGENTIC_REASONING
     :ivar reasoning_tokens: The number of input tokens for agentic reasoning.
     :vartype reasoning_tokens: int
-    :ivar retrieval_reasoning_effort: The retrieval reasoning effort configuration.
-    :vartype retrieval_reasoning_effort:
-     ~azure.search.documents.knowledgebases.models.KnowledgeRetrievalReasoningEffort
     """
 
     type: Literal[KnowledgeBaseActivityRecordType.AGENTIC_REASONING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -719,10 +783,6 @@ class KnowledgeBaseAgenticReasoningActivityRecord(
         name="reasoningTokens", visibility=["read", "create", "update", "delete", "query"]
     )
     """The number of input tokens for agentic reasoning."""
-    retrieval_reasoning_effort: Optional["_models.KnowledgeRetrievalReasoningEffort"] = rest_field(
-        name="retrievalReasoningEffort", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The retrieval reasoning effort configuration."""
 
     @overload
     def __init__(
@@ -735,7 +795,6 @@ class KnowledgeBaseAgenticReasoningActivityRecord(
         error: Optional["_models.KnowledgeBaseErrorDetail"] = None,
         warning: Optional[str] = None,
         reasoning_tokens: Optional[int] = None,
-        retrieval_reasoning_effort: Optional["_models.KnowledgeRetrievalReasoningEffort"] = None,
     ) -> None: ...
 
     @overload
@@ -771,6 +830,38 @@ class KnowledgeBaseAnswerCompletedEvent(_Model):  # pylint: disable=docstring-ke
         *,
         message_index: int,
         message: "_models.KnowledgeBaseMessage",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KnowledgeBaseAnswerCompletedStreamEvent(
+    KnowledgeBaseRetrievalStreamEvent
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Emitted when an answer message is complete.
+
+    :ivar value: The completed answer payload. Required.
+    :vartype value: ~azure.search.documents.knowledgebases.models.KnowledgeBaseAnswerCompletedEvent
+    """
+
+    value: "_models.KnowledgeBaseAnswerCompletedEvent" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The completed answer payload. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: "_models.KnowledgeBaseAnswerCompletedEvent",
     ) -> None: ...
 
     @overload
@@ -1051,6 +1142,38 @@ class KnowledgeBaseErrorDetail(_Model):
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
+
+
+class KnowledgeBaseErrorStreamEvent(
+    KnowledgeBaseRetrievalStreamEvent
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Emitted when retrieval fails after the stream starts.
+
+    :ivar value: The retrieval error payload. Required.
+    :vartype value: ~azure.search.documents.knowledgebases.models.KnowledgeBaseStreamErrorEvent
+    """
+
+    value: "_models.KnowledgeBaseStreamErrorEvent" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The retrieval error payload. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: "_models.KnowledgeBaseStreamErrorEvent",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class KnowledgeBaseFileActivityArguments(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -2097,6 +2220,38 @@ class KnowledgeBaseModelWebSummarizationActivityRecord(
         self.type = KnowledgeBaseActivityRecordType.MODEL_WEB_SUMMARIZATION  # type: ignore
 
 
+class KnowledgeBaseReferencesCompletedStreamEvent(
+    KnowledgeBaseRetrievalStreamEvent
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Emitted when the references used by the response are available.
+
+    :ivar value: The references used to produce the response. Required.
+    :vartype value: list[~azure.search.documents.knowledgebases.models.KnowledgeBaseReference]
+    """
+
+    value: list["_models.KnowledgeBaseReference"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The references used to produce the response. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: list["_models.KnowledgeBaseReference"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class KnowledgeBaseResponseCompletedEvent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Emitted after retrieval completes successfully.
 
@@ -2123,6 +2278,39 @@ class KnowledgeBaseResponseCompletedEvent(_Model):  # pylint: disable=docstring-
         *,
         status_code: Union[int, "_models.KnowledgeBaseRetrievalStatusCode"],
         response: "_models.KnowledgeBaseRetrievalResponse",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KnowledgeBaseResponseCompletedStreamEvent(
+    KnowledgeBaseRetrievalStreamEvent
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Emitted when retrieval completes successfully or with partial results.
+
+    :ivar value: The authoritative completed retrieval payload. Required.
+    :vartype value:
+     ~azure.search.documents.knowledgebases.models.KnowledgeBaseResponseCompletedEvent
+    """
+
+    value: "_models.KnowledgeBaseResponseCompletedEvent" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The authoritative completed retrieval payload. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: "_models.KnowledgeBaseResponseCompletedEvent",
     ) -> None: ...
 
     @overload
@@ -2313,6 +2501,39 @@ class KnowledgeBaseRetrievalStartedEvent(_Model):  # pylint: disable=docstring-k
         knowledge_base_name: str,
         output_mode: Union[str, "_models.KnowledgeRetrievalOutputMode"],
         reasoning_effort: "_models.KnowledgeRetrievalReasoningEffort",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KnowledgeBaseRetrievalStartedStreamEvent(
+    KnowledgeBaseRetrievalStreamEvent
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Emitted after retrieval preflight validation completes.
+
+    :ivar value: The retrieval-started payload. Required.
+    :vartype value:
+     ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStartedEvent
+    """
+
+    value: "_models.KnowledgeBaseRetrievalStartedEvent" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The retrieval-started payload. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: "_models.KnowledgeBaseRetrievalStartedEvent",
     ) -> None: ...
 
     @overload
@@ -3176,7 +3397,7 @@ class KnowledgeSourceStatus(_Model):  # pylint: disable=docstring-keyword-should
     :vartype statistics: ~azure.search.documents.knowledgebases.models.KnowledgeSourceStatistics
     :ivar file_capacity: File upload capacity for a File knowledge source. Omitted for other
      knowledge source kinds.
-    :vartype file_capacity: ~search.models.KnowledgeSourceFileCapacity
+    :vartype file_capacity: ~azure.search.documents.indexes.models.KnowledgeSourceFileCapacity
     """
 
     kind: Optional[Union[str, "_indexes_models3.KnowledgeSourceKind"]] = rest_field(
@@ -3206,7 +3427,7 @@ class KnowledgeSourceStatus(_Model):  # pylint: disable=docstring-keyword-should
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Statistical information about the knowledge source synchronization history. Null on first sync."""
-    file_capacity: Optional["_search_models6.KnowledgeSourceFileCapacity"] = rest_field(
+    file_capacity: Optional["_indexes_models3.KnowledgeSourceFileCapacity"] = rest_field(
         name="fileCapacity", visibility=["read"]
     )
     """File upload capacity for a File knowledge source. Omitted for other knowledge source kinds."""

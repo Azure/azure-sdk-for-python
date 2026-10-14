@@ -11,25 +11,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AIFoundryModelCatalogName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The name of the embedding model from the Azure AI Foundry Catalog that will be called."""
-
-    OPEN_AI_CLIP_IMAGE_TEXT_EMBEDDINGS_VIT_BASE_PATCH32 = "OpenAI-CLIP-Image-Text-Embeddings-vit-base-patch32"
-    """OpenAI-CLIP-Image-Text-Embeddings-vit-base-patch32."""
-    OPEN_AI_CLIP_IMAGE_TEXT_EMBEDDINGS_VIT_LARGE_PATCH14_336 = "OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336"
-    """OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336."""
-    FACEBOOK_DINO_V2_IMAGE_EMBEDDINGS_VIT_BASE = "Facebook-DinoV2-Image-Embeddings-ViT-Base"
-    """Facebook-DinoV2-Image-Embeddings-ViT-Base."""
-    FACEBOOK_DINO_V2_IMAGE_EMBEDDINGS_VIT_GIANT = "Facebook-DinoV2-Image-Embeddings-ViT-Giant"
-    """Facebook-DinoV2-Image-Embeddings-ViT-Giant."""
-    COHERE_EMBED_V3_ENGLISH = "Cohere-embed-v3-english"
-    """Cohere-embed-v3-english."""
-    COHERE_EMBED_V3_MULTILINGUAL = "Cohere-embed-v3-multilingual"
-    """Cohere-embed-v3-multilingual."""
-    COHERE_EMBED_V4 = "Cohere-embed-v4"
-    """Cohere embed v4 model for generating embeddings from both text and images."""
-
-
 class AzureOpenAIModelName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Azure Open AI model name that will be called."""
 
@@ -43,15 +24,25 @@ class AzureOpenAIModelName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gpt5Mini model."""
     GPT5_NANO = "gpt-5-nano"
     """Gpt5Nano model."""
+    GPT54 = "gpt-5.4"
+    """Gpt54 model."""
     GPT5_4_MINI = "gpt-5.4-mini"
     """Gpt54Mini model."""
     GPT5_4_NANO = "gpt-5.4-nano"
     """Gpt54Nano model."""
+    GPT55 = "gpt-5.5"
+    """Gpt55 model."""
+    GPT56_SOL = "gpt-5.6-sol"
+    """Gpt56Sol model."""
+    GPT56_TERRA = "gpt-5.6-terra"
+    """Gpt56Terra model."""
+    GPT56_LUNA = "gpt-5.6-luna"
+    """Gpt56Luna model."""
 
 
 class BlobIndexerDataToExtract(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the data to extract from Azure blob storage and tells the indexer which data to
-    extract from image content when "imageAction" is set to a value other than "none".  This
+    extract from image content when \"imageAction\" is set to a value other than \"none\".  This
     applies to embedded image content in a .PDF or other application, or image files such as .jpg
     and .png, in Azure blobs.
     """
@@ -67,23 +58,23 @@ class BlobIndexerDataToExtract(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class BlobIndexerImageAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines how to process embedded images and image files in Azure blob storage.  Setting the
-    "imageAction" configuration to any value other than "none" requires that a skillset also be
+    \"imageAction\" configuration to any value other than \"none\" requires that a skillset also be
     attached to that indexer.
     """
 
     NONE = "none"
     """Ignores embedded images or image files in the data set.  This is the default."""
     GENERATE_NORMALIZED_IMAGES = "generateNormalizedImages"
-    """Extracts text from images (for example, the word "STOP" from a traffic stop sign), and embeds
-    it into the content field.  This action requires that "dataToExtract" is set to
-    "contentAndMetadata".  A normalized image refers to additional processing resulting in uniform
+    """Extracts text from images (for example, the word \"STOP\" from a traffic stop sign), and embeds
+    it into the content field.  This action requires that \"dataToExtract\" is set to
+    \"contentAndMetadata\".  A normalized image refers to additional processing resulting in uniform
     image output, sized and rotated to promote consistent rendering when you include images in
     visual search results. This information is generated for each image when you use this option."""
     GENERATE_NORMALIZED_IMAGE_PER_PAGE = "generateNormalizedImagePerPage"
-    """Extracts text from images (for example, the word "STOP" from a traffic stop sign), and embeds
+    """Extracts text from images (for example, the word \"STOP\" from a traffic stop sign), and embeds
     it into the content field, but treats PDF files differently in that each page will be rendered
     as an image and normalized accordingly, instead of extracting embedded images.  Non-PDF file
-    types will be treated the same as if "generateNormalizedImages" was set."""
+    types will be treated the same as if \"generateNormalizedImages\" was set."""
 
 
 class BlobIndexerParsingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -868,12 +859,12 @@ class LexicalNormalizerName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ASCII_FOLDING = "asciifolding"
     """Converts alphabetic, numeric, and symbolic Unicode characters which are not in the first 127
-    ASCII characters (the "Basic Latin" Unicode block) into their ASCII equivalents, if such
+    ASCII characters (the \"Basic Latin\" Unicode block) into their ASCII equivalents, if such
     equivalents exist. See
     `http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/miscellaneous/ASCIIFoldingFilter.html
     <http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/miscellaneous/ASCIIFoldingFilter.html>`_."""
     ELISION = "elision"
-    """Removes elisions. For example, "l'avion" (the plane) will be converted to "avion" (plane). See
+    """Removes elisions. For example, \"l'avion\" (the plane) will be converted to \"avion\" (plane). See
     `http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/util/ElisionFilter.html
     <http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/util/ElisionFilter.html>`_."""
     LOWERCASE = "lowercase"
@@ -1172,7 +1163,7 @@ class MicrosoftTokenizerLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class OcrLineEnding(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the sequence of characters to use between the lines of text recognized by the OCR
-    skill. The default value is "space".
+    skill. The default value is \"space\".
     """
 
     SPACE = "space"
@@ -2242,7 +2233,7 @@ class TokenFilterName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     <http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/tr/ApostropheFilter.html>`_."""
     ASCII_FOLDING = "asciifolding"
     """Converts alphabetic, numeric, and symbolic Unicode characters which are not in the first 127
-    ASCII characters (the "Basic Latin" Unicode block) into their ASCII equivalents, if such
+    ASCII characters (the \"Basic Latin\" Unicode block) into their ASCII equivalents, if such
     equivalents exist. See
     `http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/miscellaneous/ASCIIFoldingFilter.html
     <http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/miscellaneous/ASCIIFoldingFilter.html>`_."""
@@ -2270,7 +2261,7 @@ class TokenFilterName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     `http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/ngram/EdgeNGramTokenFilter.html
     <http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/ngram/EdgeNGramTokenFilter.html>`_."""
     ELISION = "elision"
-    """Removes elisions. For example, "l'avion" (the plane) will be converted to "avion" (plane). See
+    """Removes elisions. For example, \"l'avion\" (the plane) will be converted to \"avion\" (plane). See
     `http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/util/ElisionFilter.html
     <http://lucene.apache.org/core/4_10_3/analyzers-common/org/apache/lucene/analysis/util/ElisionFilter.html>`_."""
     GERMAN_NORMALIZATION = "german_normalization"

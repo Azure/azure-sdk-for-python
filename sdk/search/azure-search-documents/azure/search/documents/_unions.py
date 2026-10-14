@@ -11,11 +11,11 @@ from typing import TYPE_CHECKING, TypeAlias, Union
 if TYPE_CHECKING:
     from .knowledgebases import models as _knowledgebases_models1
 KnowledgeBaseRetrievalStreamEvents: TypeAlias = Union[
-    "_knowledgebases_models1.KnowledgeBaseRetrievalStartedEvent",
-    "_knowledgebases_models1.KnowledgeBaseActivityStartedEvent",
-    "_knowledgebases_models1.KnowledgeBaseActivityRecord",
-    "_knowledgebases_models1.KnowledgeBaseAnswerCompletedEvent",
-    list["_knowledgebases_models1.KnowledgeBaseReference"],
-    "_knowledgebases_models1.KnowledgeBaseStreamErrorEvent",
-    "_knowledgebases_models1.KnowledgeBaseResponseCompletedEvent",
+    "_knowledgebases_models1.KnowledgeBaseRetrievalStartedStreamEvent",
+    "_knowledgebases_models1.KnowledgeBaseActivityStartedStreamEvent",
+    "_knowledgebases_models1.KnowledgeBaseActivityCompletedStreamEvent",
+    "_knowledgebases_models1.KnowledgeBaseAnswerCompletedStreamEvent",
+    "_knowledgebases_models1.KnowledgeBaseReferencesCompletedStreamEvent",
+    "_knowledgebases_models1.KnowledgeBaseErrorStreamEvent",
+    "_knowledgebases_models1.KnowledgeBaseResponseCompletedStreamEvent",
 ]

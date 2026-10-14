@@ -670,168 +670,6 @@ class AzureBlobKnowledgeSourceParameters(_Model):  # pylint: disable=docstring-k
         super().__init__(*args, **kwargs)
 
 
-class AzureMachineLearningParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Specifies the properties for connecting to an AML vectorizer.
-
-    :ivar scoring_uri: (Required for no authentication or key authentication) The scoring URI of
-     the AML service to which the JSON payload will be sent. Only the https URI scheme is allowed.
-     Required.
-    :vartype scoring_uri: str
-    :ivar authentication_key: (Required for key authentication) The key for the AML service.
-    :vartype authentication_key: str
-    :ivar resource_id: (Required for token authentication). The Azure Resource Manager resource ID
-     of the AML service. It should be in the format
-     subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.
-    :vartype resource_id: str
-    :ivar timeout: (Optional) When specified, indicates the timeout for the http client making the
-     API call.
-    :vartype timeout: ~datetime.timedelta
-    :ivar region: (Optional for token authentication). The region the AML service is deployed in.
-    :vartype region: str
-    :ivar model_name: The name of the embedding model from the Azure AI Foundry Catalog that is
-     deployed at the provided endpoint. Known values are:
-     "OpenAI-CLIP-Image-Text-Embeddings-vit-base-patch32",
-     "OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336",
-     "Facebook-DinoV2-Image-Embeddings-ViT-Base", "Facebook-DinoV2-Image-Embeddings-ViT-Giant",
-     "Cohere-embed-v3-english", "Cohere-embed-v3-multilingual", and "Cohere-embed-v4".
-    :vartype model_name: str or ~azure.search.documents.indexes.models.AIFoundryModelCatalogName
-    """
-
-    scoring_uri: str = rest_field(name="uri", visibility=["read", "create", "update", "delete", "query"])
-    """(Required for no authentication or key authentication) The scoring URI of the AML service to
-     which the JSON payload will be sent. Only the https URI scheme is allowed. Required."""
-    authentication_key: Optional[str] = rest_field(
-        name="key", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """(Required for key authentication) The key for the AML service."""
-    resource_id: Optional[str] = rest_field(
-        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """(Required for token authentication). The Azure Resource Manager resource ID of the AML service.
-     It should be in the format
-     subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}."""
-    timeout: Optional[datetime.timedelta] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """(Optional) When specified, indicates the timeout for the http client making the API call."""
-    region: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """(Optional for token authentication). The region the AML service is deployed in."""
-    model_name: Optional[Union[str, "_models.AIFoundryModelCatalogName"]] = rest_field(
-        name="modelName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The name of the embedding model from the Azure AI Foundry Catalog that is deployed at the
-     provided endpoint. Known values are: \"OpenAI-CLIP-Image-Text-Embeddings-vit-base-patch32\",
-     \"OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336\",
-     \"Facebook-DinoV2-Image-Embeddings-ViT-Base\", \"Facebook-DinoV2-Image-Embeddings-ViT-Giant\",
-     \"Cohere-embed-v3-english\", \"Cohere-embed-v3-multilingual\", and \"Cohere-embed-v4\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        scoring_uri: str,
-        authentication_key: Optional[str] = None,
-        resource_id: Optional[str] = None,
-        timeout: Optional[datetime.timedelta] = None,
-        region: Optional[str] = None,
-        model_name: Optional[Union[str, "_models.AIFoundryModelCatalogName"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class VectorSearchVectorizer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Specifies the vectorization method to be used during query time.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureMachineLearningVectorizer, AzureOpenAIVectorizer, WebApiVectorizer
-
-    :ivar vectorizer_name: The name to associate with this particular vectorization method.
-     Required.
-    :vartype vectorizer_name: str
-    :ivar kind: Type of VectorSearchVectorizer. Required. Known values are: "azureOpenAI",
-     "customWebApi", "aiServicesVision", and "aml".
-    :vartype kind: str or ~azure.search.documents.indexes.models.VectorSearchVectorizerKind
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    vectorizer_name: str = rest_field(name="name", visibility=["read", "create", "update", "delete", "query"])
-    """The name to associate with this particular vectorization method. Required."""
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
-    """Type of VectorSearchVectorizer. Required. Known values are: \"azureOpenAI\", \"customWebApi\",
-     \"aiServicesVision\", and \"aml\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        vectorizer_name: str,
-        kind: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AzureMachineLearningVectorizer(
-    VectorSearchVectorizer, discriminator="aml"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Specifies an Azure Machine Learning endpoint deployed via the Azure AI Foundry Model Catalog
-    for generating the vector embedding of a query string.
-
-    :ivar vectorizer_name: The name to associate with this particular vectorization method.
-     Required.
-    :vartype vectorizer_name: str
-    :ivar aml_parameters: Specifies the properties of the AML vectorizer.
-    :vartype aml_parameters: ~azure.search.documents.indexes.models.AzureMachineLearningParameters
-    :ivar kind: The name of the kind of vectorization method being configured for use with vector
-     search. Required. Generate embeddings using an Azure Machine Learning endpoint deployed via the
-     Azure AI Foundry Model Catalog at query time.
-    :vartype kind: str or ~azure.search.documents.indexes.models.AML
-    """
-
-    aml_parameters: Optional["_models.AzureMachineLearningParameters"] = rest_field(
-        name="amlParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Specifies the properties of the AML vectorizer."""
-    kind: Literal[VectorSearchVectorizerKind.AML] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The name of the kind of vectorization method being configured for use with vector search.
-     Required. Generate embeddings using an Azure Machine Learning endpoint deployed via the Azure
-     AI Foundry Model Catalog at query time."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        vectorizer_name: str,
-        aml_parameters: Optional["_models.AzureMachineLearningParameters"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = VectorSearchVectorizerKind.AML  # type: ignore
-
-
 class SearchIndexerSkill(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base type for skills.
 
@@ -940,7 +778,8 @@ class AzureOpenAIEmbeddingSkill(
     :vartype auth_identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
     :ivar model_name: The name of the embedding model that is deployed at the provided deploymentId
      path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
-     "text-embedding-3-small", "gpt-5-mini", "gpt-5-nano", "gpt-5.4-mini", and "gpt-5.4-nano".
+     "text-embedding-3-small", "gpt-5-mini", "gpt-5-nano", "gpt-5.4", "gpt-5.4-mini",
+     "gpt-5.4-nano", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", and "gpt-5.6-luna".
     :vartype model_name: str or ~azure.search.documents.indexes.models.AzureOpenAIModelName
     :ivar dimensions: The number of dimensions the resulting output embeddings should have. Only
      supported in text-embedding-3 and later models.
@@ -969,7 +808,8 @@ class AzureOpenAIEmbeddingSkill(
     )
     """The name of the embedding model that is deployed at the provided deploymentId path. Known
      values are: \"text-embedding-ada-002\", \"text-embedding-3-large\", \"text-embedding-3-small\",
-     \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.4-mini\", and \"gpt-5.4-nano\"."""
+     \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.4\", \"gpt-5.4-mini\", \"gpt-5.4-nano\", \"gpt-5.5\",
+     \"gpt-5.6-sol\", \"gpt-5.6-terra\", and \"gpt-5.6-luna\"."""
     dimensions: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of dimensions the resulting output embeddings should have. Only supported in
      text-embedding-3 and later models."""
@@ -1004,6 +844,46 @@ class AzureOpenAIEmbeddingSkill(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.odata_type = "#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill"  # type: ignore
+
+
+class VectorSearchVectorizer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Specifies the vectorization method to be used during query time.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureOpenAIVectorizer, WebApiVectorizer
+
+    :ivar vectorizer_name: The name to associate with this particular vectorization method.
+     Required.
+    :vartype vectorizer_name: str
+    :ivar kind: Type of VectorSearchVectorizer. Required. Known values are: "azureOpenAI",
+     "customWebApi", "aiServicesVision", and "aml".
+    :vartype kind: str or ~azure.search.documents.indexes.models.VectorSearchVectorizerKind
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    vectorizer_name: str = rest_field(name="name", visibility=["read", "create", "update", "delete", "query"])
+    """The name to associate with this particular vectorization method. Required."""
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """Type of VectorSearchVectorizer. Required. Known values are: \"azureOpenAI\", \"customWebApi\",
+     \"aiServicesVision\", and \"aml\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        vectorizer_name: str,
+        kind: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class AzureOpenAIVectorizer(
@@ -1062,7 +942,8 @@ class AzureOpenAIVectorizerParameters(_Model):  # pylint: disable=docstring-keyw
     :vartype auth_identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
     :ivar model_name: The name of the embedding model that is deployed at the provided deploymentId
      path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
-     "text-embedding-3-small", "gpt-5-mini", "gpt-5-nano", "gpt-5.4-mini", and "gpt-5.4-nano".
+     "text-embedding-3-small", "gpt-5-mini", "gpt-5-nano", "gpt-5.4", "gpt-5.4-mini",
+     "gpt-5.4-nano", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", and "gpt-5.6-luna".
     :vartype model_name: str or ~azure.search.documents.indexes.models.AzureOpenAIModelName
     """
 
@@ -1085,7 +966,8 @@ class AzureOpenAIVectorizerParameters(_Model):  # pylint: disable=docstring-keyw
     )
     """The name of the embedding model that is deployed at the provided deploymentId path. Known
      values are: \"text-embedding-ada-002\", \"text-embedding-3-large\", \"text-embedding-3-small\",
-     \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.4-mini\", and \"gpt-5.4-nano\"."""
+     \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.4\", \"gpt-5.4-mini\", \"gpt-5.4-nano\", \"gpt-5.5\",
+     \"gpt-5.6-sol\", \"gpt-5.6-terra\", and \"gpt-5.6-luna\"."""
 
     @overload
     def __init__(
@@ -5901,6 +5783,26 @@ class KnowledgeSourceFile(_Model):
         name="extractionMode", visibility=["read"]
     )
     """The extraction mode applied to the file. Known values are: \"minimal\" and \"standard\"."""
+
+
+class KnowledgeSourceFileCapacity(_Model):
+    """File upload capacity for a File knowledge source.
+
+    :ivar max_file_count: The maximum number of files allowed in the knowledge source. Required.
+    :vartype max_file_count: int
+    :ivar remaining_file_count: The number of additional files that can be uploaded at the time of
+     the request. Required.
+    :vartype remaining_file_count: int
+    :ivar max_file_size_bytes: The maximum size in bytes of an individual uploaded file. Required.
+    :vartype max_file_size_bytes: int
+    """
+
+    max_file_count: int = rest_field(name="maxFileCount", visibility=["read"])
+    """The maximum number of files allowed in the knowledge source. Required."""
+    remaining_file_count: int = rest_field(name="remainingFileCount", visibility=["read"])
+    """The number of additional files that can be uploaded at the time of the request. Required."""
+    max_file_size_bytes: int = rest_field(name="maxFileSizeBytes", visibility=["read"])
+    """The maximum size in bytes of an individual uploaded file. Required."""
 
 
 class KnowledgeSourceReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only

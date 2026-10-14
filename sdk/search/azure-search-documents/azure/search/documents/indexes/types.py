@@ -21,10 +21,8 @@ from .models._enums import (
 
 if TYPE_CHECKING:
     from ..knowledgebases.models import KnowledgeRetrievalOutputMode
-    from ..knowledgebases.models import KnowledgeSourceIngestionParameters
-    from ..knowledgebases.types import KnowledgeRetrievalReasoningEffort
+    from ..knowledgebases.types import KnowledgeRetrievalReasoningEffort, KnowledgeSourceIngestionParameters
     from .models import (
-        AIFoundryModelCatalogName,
         AzureOpenAIModelName,
         BlobIndexerDataToExtract,
         BlobIndexerImageAction,
@@ -345,77 +343,6 @@ class AzureBlobKnowledgeSourceParameters(TypedDict, total=False):
     """Resources created by the knowledge source."""
 
 
-class AzureMachineLearningParameters(TypedDict, total=False):
-    """Specifies the properties for connecting to an AML vectorizer.
-
-    :ivar uri: (Required for no authentication or key authentication) The scoring URI of the AML
-     service to which the JSON payload will be sent. Only the https URI scheme is allowed. Required.
-    :vartype uri: str
-    :ivar key: (Required for key authentication) The key for the AML service.
-    :vartype key: str
-    :ivar resourceId: (Required for token authentication). The Azure Resource Manager resource ID
-     of the AML service. It should be in the format
-     subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.
-    :vartype resourceId: str
-    :ivar timeout: (Optional) When specified, indicates the timeout for the http client making the
-     API call.
-    :vartype timeout: str
-    :ivar region: (Optional for token authentication). The region the AML service is deployed in.
-    :vartype region: str
-    :ivar modelName: The name of the embedding model from the Azure AI Foundry Catalog that is
-     deployed at the provided endpoint. Known values are:
-     "OpenAI-CLIP-Image-Text-Embeddings-vit-base-patch32",
-     "OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336",
-     "Facebook-DinoV2-Image-Embeddings-ViT-Base", "Facebook-DinoV2-Image-Embeddings-ViT-Giant",
-     "Cohere-embed-v3-english", "Cohere-embed-v3-multilingual", and "Cohere-embed-v4".
-    :vartype modelName: Union[str, "AIFoundryModelCatalogName"]
-    """
-
-    uri: Required[Optional[str]]
-    """(Required for no authentication or key authentication) The scoring URI of the AML service to
-     which the JSON payload will be sent. Only the https URI scheme is allowed. Required."""
-    key: Optional[str]
-    """(Required for key authentication) The key for the AML service."""
-    resourceId: Optional[str]
-    """(Required for token authentication). The Azure Resource Manager resource ID of the AML service.
-     It should be in the format
-     subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}."""
-    timeout: Optional[str]
-    """(Optional) When specified, indicates the timeout for the http client making the API call."""
-    region: Optional[str]
-    """(Optional for token authentication). The region the AML service is deployed in."""
-    modelName: Union[str, "AIFoundryModelCatalogName"]
-    """The name of the embedding model from the Azure AI Foundry Catalog that is deployed at the
-     provided endpoint. Known values are: \"OpenAI-CLIP-Image-Text-Embeddings-vit-base-patch32\",
-     \"OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336\",
-     \"Facebook-DinoV2-Image-Embeddings-ViT-Base\", \"Facebook-DinoV2-Image-Embeddings-ViT-Giant\",
-     \"Cohere-embed-v3-english\", \"Cohere-embed-v3-multilingual\", and \"Cohere-embed-v4\"."""
-
-
-class AzureMachineLearningVectorizer(TypedDict, total=False):
-    """Specifies an Azure Machine Learning endpoint deployed via the Azure AI Foundry Model Catalog
-    for generating the vector embedding of a query string.
-
-    :ivar name: The name to associate with this particular vectorization method. Required.
-    :vartype name: str
-    :ivar amlParameters: Specifies the properties of the AML vectorizer.
-    :vartype amlParameters: "AzureMachineLearningParameters"
-    :ivar kind: The name of the kind of vectorization method being configured for use with vector
-     search. Required. Generate embeddings using an Azure Machine Learning endpoint deployed via the
-     Azure AI Foundry Model Catalog at query time.
-    :vartype kind: Literal[VectorSearchVectorizerKind.AML]
-    """
-
-    name: Required[str]
-    """The name to associate with this particular vectorization method. Required."""
-    amlParameters: "AzureMachineLearningParameters"
-    """Specifies the properties of the AML vectorizer."""
-    kind: Required[Literal[VectorSearchVectorizerKind.AML]]
-    """The name of the kind of vectorization method being configured for use with vector search.
-     Required. Generate embeddings using an Azure Machine Learning endpoint deployed via the Azure
-     AI Foundry Model Catalog at query time."""
-
-
 AzureOpenAIEmbeddingSkill = TypedDict(
     "AzureOpenAIEmbeddingSkill",
     {
@@ -463,7 +390,8 @@ resource.
 :vartype authIdentity: "SearchIndexerDataIdentity"
 :ivar modelName: The name of the embedding model that is deployed at the provided deploymentId
  path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
- "text-embedding-3-small", "gpt-5-mini", "gpt-5-nano", "gpt-5.4-mini", and "gpt-5.4-nano".
+ "text-embedding-3-small", "gpt-5-mini", "gpt-5-nano", "gpt-5.4", "gpt-5.4-mini",
+ "gpt-5.4-nano", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", and "gpt-5.6-luna".
 :vartype modelName: Union[str, "AzureOpenAIModelName"]
 :ivar dimensions: The number of dimensions the resulting output embeddings should have. Only
  supported in text-embedding-3 and later models.
@@ -509,7 +437,8 @@ class AzureOpenAIVectorizerParameters(TypedDict, total=False):
     :vartype authIdentity: "SearchIndexerDataIdentity"
     :ivar modelName: The name of the embedding model that is deployed at the provided deploymentId
      path. Known values are: "text-embedding-ada-002", "text-embedding-3-large",
-     "text-embedding-3-small", "gpt-5-mini", "gpt-5-nano", "gpt-5.4-mini", and "gpt-5.4-nano".
+     "text-embedding-3-small", "gpt-5-mini", "gpt-5-nano", "gpt-5.4", "gpt-5.4-mini",
+     "gpt-5.4-nano", "gpt-5.5", "gpt-5.6-sol", "gpt-5.6-terra", and "gpt-5.6-luna".
     :vartype modelName: Union[str, "AzureOpenAIModelName"]
     """
 
@@ -524,7 +453,8 @@ class AzureOpenAIVectorizerParameters(TypedDict, total=False):
     modelName: Union[str, "AzureOpenAIModelName"]
     """The name of the embedding model that is deployed at the provided deploymentId path. Known
      values are: \"text-embedding-ada-002\", \"text-embedding-3-large\", \"text-embedding-3-small\",
-     \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.4-mini\", and \"gpt-5.4-nano\"."""
+     \"gpt-5-mini\", \"gpt-5-nano\", \"gpt-5.4\", \"gpt-5.4-mini\", \"gpt-5.4-nano\", \"gpt-5.5\",
+     \"gpt-5.6-sol\", \"gpt-5.6-terra\", and \"gpt-5.6-luna\"."""
 
 
 class BinaryQuantizationCompression(TypedDict, total=False):
@@ -5999,7 +5929,6 @@ KnowledgeSource = Union[
     SearchIndexKnowledgeSource,
     WebKnowledgeSource,
 ]
-VectorSearchVectorizer = Union[AzureMachineLearningVectorizer, AzureOpenAIVectorizer, WebApiVectorizer]
 SearchIndexerSkill = Union[
     ChatCompletionSkill,
     WebApiSkill,
@@ -6022,6 +5951,7 @@ SearchIndexerSkill = Union[
     ImageAnalysisSkill,
     OcrSkill,
 ]
+VectorSearchVectorizer = Union[AzureOpenAIVectorizer, WebApiVectorizer]
 VectorSearchCompression = Union[BinaryQuantizationCompression, ScalarQuantizationCompression]
 SimilarityAlgorithm = Union[BM25SimilarityAlgorithm, ClassicSimilarityAlgorithm]
 CharFilter = Union[MappingCharFilter, PatternReplaceCharFilter]

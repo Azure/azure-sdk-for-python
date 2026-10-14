@@ -1048,7 +1048,7 @@ class _SearchClientOperationsMixin(
         :paramtype vector_queries: list[~azure.search.documents.models.VectorQuery]
         :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
          vector search is performed. Default is 'preFilter' for new indexes. Known values are:
-         "postFilter", "preFilter", and "strictPostFilter". Default value is None.
+         "postFilter" and "preFilter". Default value is None.
         :paramtype vector_filter_mode: str or ~azure.search.documents.models.VectorFilterMode
         :return: SearchDocumentsResult. The SearchDocumentsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.models._models.SearchDocumentsResult

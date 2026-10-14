@@ -52,123 +52,6 @@ class IndexDocumentsBatch(TypedDict, total=False):
     """The actions in the batch. Required."""
 
 
-class VectorizableImageBinaryQuery(TypedDict, total=False):
-    """The query parameters to use for vector search when a base 64 encoded binary of an image that
-    needs to be vectorized is provided.
-
-    :ivar k: Number of nearest neighbors to return as top hits.
-    :vartype k: int
-    :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
-     searched.
-    :vartype fields: str
-    :ivar exhaustive: When true, triggers an exhaustive k-nearest neighbor search across all
-     vectors within the vector index. Useful for scenarios where exact matches are critical, such as
-     determining ground truth values.
-    :vartype exhaustive: bool
-    :ivar oversampling: Oversampling factor. Minimum value is 1. It overrides the
-     'defaultOversampling' parameter configured in the index definition. It can be set only when
-     'rerankWithOriginalVectors' is true. This parameter is only permitted when a compression method
-     is used on the underlying vector field.
-    :vartype oversampling: float
-    :ivar weight: Relative weight of the vector query when compared to other vector query and/or
-     the text query within the same search request. This value is used when combining the results of
-     multiple ranking lists produced by the different vector queries and/or the results retrieved
-     through the text query. The higher the weight, the higher the documents that matched that query
-     will be in the final ranking. Default is 1.0 and the value needs to be a positive number larger
-     than zero.
-    :vartype weight: float
-    :ivar base64Image: The base 64 encoded binary of an image to be vectorized to perform a vector
-     search query.
-    :vartype base64Image: str
-    :ivar kind: The kind of vector query being performed. Required. Vector query where a base 64
-     encoded binary of an image that needs to be vectorized is provided.
-    :vartype kind: Literal[VectorQueryKind.IMAGE_BINARY]
-    """
-
-    k: int
-    """Number of nearest neighbors to return as top hits."""
-    fields: str
-    """Vector Fields of type Collection(Edm.Single) to be included in the vector searched."""
-    exhaustive: bool
-    """When true, triggers an exhaustive k-nearest neighbor search across all vectors within the
-     vector index. Useful for scenarios where exact matches are critical, such as determining ground
-     truth values."""
-    oversampling: float
-    """Oversampling factor. Minimum value is 1. It overrides the 'defaultOversampling' parameter
-     configured in the index definition. It can be set only when 'rerankWithOriginalVectors' is
-     true. This parameter is only permitted when a compression method is used on the underlying
-     vector field."""
-    weight: float
-    """Relative weight of the vector query when compared to other vector query and/or the text query
-     within the same search request. This value is used when combining the results of multiple
-     ranking lists produced by the different vector queries and/or the results retrieved through the
-     text query. The higher the weight, the higher the documents that matched that query will be in
-     the final ranking. Default is 1.0 and the value needs to be a positive number larger than zero."""
-    base64Image: str
-    """The base 64 encoded binary of an image to be vectorized to perform a vector search query."""
-    kind: Required[Literal[VectorQueryKind.IMAGE_BINARY]]
-    """The kind of vector query being performed. Required. Vector query where a base 64 encoded binary
-     of an image that needs to be vectorized is provided."""
-
-
-class VectorizableImageUrlQuery(TypedDict, total=False):
-    """The query parameters to use for vector search when an url that represents an image value that
-    needs to be vectorized is provided.
-
-    :ivar k: Number of nearest neighbors to return as top hits.
-    :vartype k: int
-    :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
-     searched.
-    :vartype fields: str
-    :ivar exhaustive: When true, triggers an exhaustive k-nearest neighbor search across all
-     vectors within the vector index. Useful for scenarios where exact matches are critical, such as
-     determining ground truth values.
-    :vartype exhaustive: bool
-    :ivar oversampling: Oversampling factor. Minimum value is 1. It overrides the
-     'defaultOversampling' parameter configured in the index definition. It can be set only when
-     'rerankWithOriginalVectors' is true. This parameter is only permitted when a compression method
-     is used on the underlying vector field.
-    :vartype oversampling: float
-    :ivar weight: Relative weight of the vector query when compared to other vector query and/or
-     the text query within the same search request. This value is used when combining the results of
-     multiple ranking lists produced by the different vector queries and/or the results retrieved
-     through the text query. The higher the weight, the higher the documents that matched that query
-     will be in the final ranking. Default is 1.0 and the value needs to be a positive number larger
-     than zero.
-    :vartype weight: float
-    :ivar url: The URL of an image to be vectorized to perform a vector search query.
-    :vartype url: str
-    :ivar kind: The kind of vector query being performed. Required. Vector query where an url that
-     represents an image value that needs to be vectorized is provided.
-    :vartype kind: Literal[VectorQueryKind.IMAGE_URL]
-    """
-
-    k: int
-    """Number of nearest neighbors to return as top hits."""
-    fields: str
-    """Vector Fields of type Collection(Edm.Single) to be included in the vector searched."""
-    exhaustive: bool
-    """When true, triggers an exhaustive k-nearest neighbor search across all vectors within the
-     vector index. Useful for scenarios where exact matches are critical, such as determining ground
-     truth values."""
-    oversampling: float
-    """Oversampling factor. Minimum value is 1. It overrides the 'defaultOversampling' parameter
-     configured in the index definition. It can be set only when 'rerankWithOriginalVectors' is
-     true. This parameter is only permitted when a compression method is used on the underlying
-     vector field."""
-    weight: float
-    """Relative weight of the vector query when compared to other vector query and/or the text query
-     within the same search request. This value is used when combining the results of multiple
-     ranking lists produced by the different vector queries and/or the results retrieved through the
-     text query. The higher the weight, the higher the documents that matched that query will be in
-     the final ranking. Default is 1.0 and the value needs to be a positive number larger than zero."""
-    url: str
-    """The URL of an image to be vectorized to perform a vector search query."""
-    kind: Required[Literal[VectorQueryKind.IMAGE_URL]]
-    """The kind of vector query being performed. Required. Vector query where an url that represents
-     an image value that needs to be vectorized is provided."""
-
-
 class VectorizableTextQuery(TypedDict, total=False):
     """The query parameters to use for vector search when a text value that needs to be vectorized is
     provided.
@@ -397,7 +280,7 @@ class SearchPostRequest(TypedDict, total=False):
     :vartype vectorQueries: list["VectorQuery"]
     :ivar vectorFilterMode: Determines whether or not filters are applied before or after the
      vector search is performed. Default is 'preFilter' for new indexes. Known values are:
-     "postFilter", "preFilter", and "strictPostFilter".
+     "postFilter" and "preFilter".
     :vartype vectorFilterMode: Union[str, "VectorFilterMode"]
     """
 
@@ -505,8 +388,7 @@ class SearchPostRequest(TypedDict, total=False):
     """The query parameters for vector and hybrid search queries."""
     vectorFilterMode: Union[str, "VectorFilterMode"]
     """Determines whether or not filters are applied before or after the vector search is performed.
-     Default is 'preFilter' for new indexes. Known values are: \"postFilter\", \"preFilter\", and
-     \"strictPostFilter\"."""
+     Default is 'preFilter' for new indexes. Known values are: \"postFilter\" and \"preFilter\"."""
 
 
 class SuggestPostRequest(TypedDict, total=False):
@@ -674,4 +556,4 @@ class AutocompletePostRequest(TypedDict, total=False):
      default is 5."""
 
 
-VectorQuery = Union[VectorizableImageBinaryQuery, VectorizableImageUrlQuery, VectorizableTextQuery, VectorizedQuery]
+VectorQuery = Union[VectorizableTextQuery, VectorizedQuery]
