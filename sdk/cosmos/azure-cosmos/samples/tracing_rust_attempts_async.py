@@ -5,8 +5,9 @@
 # -------------------------------------------------------------------------
 """Public Rust-backed create/read proof with locally inspected spans.
 
-Set COSMOSDBCONNECTIONSTRING to an authorized test account. Database sales and
-container orders must already exist with partition key /customerId. The sample
+Set COSMOSDBCONNECTIONSTRING to an authorized test account (alpha-bank-account
+in the guide). Database alpha-bank-db and container alpha-bank-container must
+already exist with partition key /customerId. The sample
 creates and removes one unique synthetic order; it never changes the resources.
 Use --conflict for a setup create followed by a measured duplicate create.
 Without that flag, the measured call is the original Bite 15 successful create.
@@ -185,10 +186,10 @@ async def run_proof(exporter, *, conflict=False, read=False, not_found=False, az
     async with CosmosClient.from_connection_string(os.environ["COSMOSDBCONNECTIONSTRING"]) as client:
         if client._adapter.name != "rust":
             raise RuntimeError("This sample requires an SDK with Rust as the default backend.")
-        container = client.get_database_client("sales").get_container_client("orders")
+        container = client.get_database_client("alpha-bank-db").get_container_client("alpha-bank-container")
         properties = await container.read()
         if properties["partitionKey"]["paths"] != ["/customerId"]:
-            raise ValueError("sales/orders must use partition key /customerId")
+            raise ValueError("alpha-bank-db/alpha-bank-container must use partition key /customerId")
         created = False
         public_exception = None
         try:
@@ -255,8 +256,8 @@ async def run_proof(exporter, *, conflict=False, read=False, not_found=False, az
             evidence = {
                 "checked_at_utc": datetime.now(timezone.utc).isoformat(),
                 "binding": Path(_rust.__file__).name,
-                "database": "sales",
-                "container": "orders",
+                "database": "alpha-bank-db",
+                "container": "alpha-bank-container",
                 "mode": "read-missing" if not_found else ("read" if read else ("conflict" if conflict else "success")),
                 "public_exception": public_exception,
                 "expected_status": expected_driver_status,

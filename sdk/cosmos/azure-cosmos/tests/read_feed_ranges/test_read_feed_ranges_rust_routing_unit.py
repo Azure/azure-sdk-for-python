@@ -313,7 +313,7 @@ def test_read_feed_ranges_builder_does_not_coerce_refresh(value):
 
 @pytest.mark.parametrize("async_client", [False, True])
 @pytest.mark.parametrize("options", [
-    {"response_hook": None}, {"timeout": 5}, {"read_timeout": None},
+    {"response_hook": None}, {"timeout": 5},
     {"excluded_locations": ["West US"]}, {"max_item_count": 1},
     {"initial_headers": {"x-customer": "orders"}}, {"request_options": {}},
     {"unknown_option": False},

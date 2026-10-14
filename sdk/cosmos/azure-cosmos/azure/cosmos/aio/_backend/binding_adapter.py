@@ -65,6 +65,7 @@ from ...exceptions import CosmosClientTimeoutError
 
 from .cosmos_backend import AsyncCosmosBackend
 from ..._telemetry import get_operation
+from ...runtime import CosmosRuntime
 
 if TYPE_CHECKING:
     from azure.cosmos._rust import _ItemFeedCursor
@@ -164,13 +165,14 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         master_key: Optional[str] = None,
         client_config: Optional[PreparedClientConfig] = None,
         token_credential: Optional[Any] = None,
+        runtime: Optional[CosmosRuntime] = None,
     ) -> None:
-        """Store inputs and check CosmosDriverRuntime settings without acquiring a driver handle.
+        """Store inputs and select a runtime without acquiring a driver handle.
 
         BindingAdapterShared performs the same setup as for BindingAdapter, including
-        checking completed CosmosDriverRuntime initialization. This constructor
+        rejecting retired client-level network settings. This constructor
         also creates locks and empty future fields. Acquisition and close create
-        their futures later; construction does not reserve CosmosDriverRuntime settings.
+        their futures later; construction does not initialize the default runtime.
         """
         # Fields must exist even if shared validation fails and the finalizer runs.
         # _driver_acquisition_lock allows one acquisition attempt at a time.
@@ -185,7 +187,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         self._init_future: Optional["asyncio.Future[str]"] = None
         self._init_future_loop: Optional[asyncio.AbstractEventLoop] = None
         self._init_shared(
-            endpoint, master_key, client_config, token_credential
+            endpoint, master_key, client_config, token_credential, runtime
         )
 
     async def initialize(self) -> None:
@@ -224,7 +226,8 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
                     raise RuntimeError("AsyncBindingAdapter: the client is closed.")
                 if self._driver_handle is not None:
                     return self._driver_handle
-            new_driver_handle: Optional[str] = self._initialize_driver(_rust_module)
+                runtime = self._runtime
+            new_driver_handle: Optional[str] = self._initialize_driver(_rust_module, runtime)
             with self._driver_handle_lock:
                 if self._closing:
                     surplus_driver_handle, new_driver_handle = new_driver_handle, None
@@ -244,6 +247,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
             self._closing = True
             driver_handle = self._driver_handle
             self._driver_handle = None
+            self._runtime = None
             return driver_handle
 
     async def _ensure_driver_handle(self) -> str:
@@ -387,6 +391,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         if not isinstance(prepared, PreparedRequest):
             raise TypeError("execute requires a PreparedRequest")
         prepared = self._with_client_headers(prepared)
+        deadline = self._request_deadline(deadline, prepared.settings.timeout_seconds)
         if _rust_module is None:
             raise NotImplementedError(
                 "AsyncBindingAdapter.execute: the compiled "
@@ -448,6 +453,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         Same result as the synchronous ``BindingAdapter.get_container_metadata``,
         with one difference: the ``_async`` binding function is awaited.
         """
+        deadline = self._request_deadline(deadline)
         if _rust_module is None:
             raise NotImplementedError(
                 "AsyncBindingAdapter.get_container_metadata: the compiled "
@@ -484,6 +490,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         fetch all subsequent pages itself.
         """
         self.validate_page_request(prepared)
+        deadline = self._request_deadline(deadline, prepared.settings.timeout_seconds)
         binding_function_name = get_page_binding_function_name(
             prepared.op, uses_cursor=prepared.cursor is not None
         )

@@ -311,15 +311,6 @@ def test_options_are_keyword_only(listing_case, args):
     assert listing_case.requests == []
 
 
-@pytest.mark.parametrize("value", [False, 0, 1])
-def test_socket_timeout_is_rejected(listing_case, value):
-    """The socket-level ``read_timeout`` is not accepted here, including when false or
-    zero, which are still the customer asking for it. The error names the option
-    so it is clear what to remove, and it is raised before any request.
-    """
-    with pytest.raises(TypeError, match="read_timeout"):
-        listing_case.database.list_containers(read_timeout=value)
-    assert listing_case.requests == []
 
 
 @pytest.mark.parametrize("timeout", [None, 1, 1.5, 10])
@@ -336,7 +327,7 @@ def test_supported_timeout_and_application_headers(listing_case, timeout):
     """
     case = listing_case
     pager = case.database.list_containers(
-        timeout=timeout, read_timeout=None, initial_headers={"x-company-trace": "listing"}
+        timeout=timeout, initial_headers={"x-company-trace": "listing"}
     )
     assert len(_drain(case, pager)) == 2
     if case.rust:
@@ -358,7 +349,6 @@ def test_supported_timeout_and_application_headers(listing_case, timeout):
     {"raw_request_hook": lambda request: None}, {"raw_response_hook": lambda response: None},
     {"connection_timeout": 10}, {"unknown_option": None},
     {"request_options": {"availabilityStrategy": False}},
-    {"request_options": {"read_timeout": 2}},
 ])
 def test_unsupported_rust_options_do_not_dispatch(listing_case, kwargs):
     """Options the Rust path cannot honor never produce a request, and never move the

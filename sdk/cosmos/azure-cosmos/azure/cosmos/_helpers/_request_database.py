@@ -76,7 +76,7 @@ _CREATE_DATABASE_INAPPLICABLE_HEADERS = frozenset(
 
 def prepare_create_database_options(
     kwargs: dict[str, Any], offer: Optional[int | ThroughputProperties],
-    *, operation_name: str = "create_database", allow_read_timeout: bool = False,
+    *, operation_name: str = "create_database",
     defaults: Optional[ItemClientDefaults] = None,
 ) -> tuple[dict[str, Any], Optional[float]]:
     """Snapshot creation inputs and establish one budget before driver setup."""
@@ -88,12 +88,6 @@ def prepare_create_database_options(
     if "request_options" not in kwargs:
         kwargs["request_options"] = feed_options
     options = deepcopy(compose_options_from_kwargs(kwargs))
-    # Get-or-create retains this option for the explicitly selected legacy path.
-    # Its Rust eligibility check rejects it before the existence read.
-    if not allow_read_timeout:
-        for source in (kwargs, options):
-            if source.pop("read_timeout", None) is not None:
-                raise TypeError(f"{operation_name}() does not support the 'read_timeout' keyword argument")
     timeout = kwargs.get("timeout", options.pop("timeout", None))
     if not is_supported_operation_timeout(timeout):
         raise ValueError(f"{operation_name} timeout must be None or a finite number of seconds >= 1 and < 2**64.")
@@ -283,9 +277,6 @@ def is_read_database_rust_eligible(
     Returns ``False`` when the caller asked for
     something the Rust path would drop without saying so:
 
-    * ``read_timeout`` -- no supported per-operation override on this path.
-      The constructor's value configures CosmosDriverRuntime's whole HTTP-attempt
-      limits, not response-read inactivity.
     * any operation kwarg outside ``_RUST_READ_DATABASE_SUPPORTED_KWARGS`` --
       for example ``connection_timeout`` or ``raw_request_hook``, which the
       legacy azure-core pipeline consumes and the Rust path never sees.
@@ -319,11 +310,6 @@ def _database_request_options_are_supported(
     request_options: Mapping[str, Any],
     operation_kwargs: Mapping[str, Any],
 ) -> bool:
-    if (
-        request_options.get(Constants.Kwargs.READ_TIMEOUT) is not None
-        or operation_kwargs.get(Constants.Kwargs.READ_TIMEOUT) is not None
-    ):
-        return False
     if set(operation_kwargs).difference(_RUST_READ_DATABASE_SUPPORTED_KWARGS):
         return False
     if overrides_driver_owned_header(request_options):

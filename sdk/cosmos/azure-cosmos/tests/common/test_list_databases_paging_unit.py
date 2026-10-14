@@ -28,6 +28,7 @@ import asyncio
 import json
 import time
 from copy import deepcopy
+from types import MethodType
 from unittest.mock import MagicMock
 
 import pytest
@@ -37,6 +38,7 @@ from azure.cosmos import _rust
 from azure.cosmos._backend import binding_adapter as sync_rust
 from azure.cosmos.aio._backend import binding_adapter as async_rust
 from azure.cosmos._backend.contracts import BackendResponse
+from azure.cosmos._backend._binding_adapter_shared import BindingAdapterShared
 from azure.cosmos._backend.errors import BindingProtocolError
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 from query_items.test_query_backend_routing_unit import (
@@ -506,6 +508,7 @@ async def test_real_rust_backend_deducts_setup_before_binding(listing_client, mo
     async def dispatch_async(handle, prepared, *, timeout_seconds):
         return dispatch(handle, prepared, timeout_seconds=timeout_seconds)
     backend._ensure_driver_handle = acquire_async if is_async else acquire
+    backend._request_deadline = MethodType(BindingAdapterShared._request_deadline, backend)
     execute = module.AsyncBindingAdapter.execute_pages if is_async else module.BindingAdapter.execute_pages
     backend.execute_pages = lambda prepared, deadline=None: execute(backend, prepared, deadline=deadline)
     monkeypatch.setattr(module, "_binding_function_by_name", lambda method: dispatch_async if is_async else dispatch)

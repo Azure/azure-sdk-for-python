@@ -53,8 +53,6 @@ def can_use_rust_backend_for_read_offer(*, backend: Any, options: Mapping[str, A
     """
     if not is_rust_backend(backend):
         return False
-    if options.get(Constants.Kwargs.READ_TIMEOUT) is not None:
-        return False
     if options.get(Constants.Kwargs.AVAILABILITY_STRATEGY) is not None:
         return False
     if overrides_driver_owned_header(options):

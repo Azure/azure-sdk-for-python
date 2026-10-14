@@ -20,7 +20,7 @@ requests. Synchronous and asynchronous clients use the same classes.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Generic, Optional, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, Mapping, Optional, TypeVar
 
 from azure.core.utils import CaseInsensitiveDict
 
@@ -36,13 +36,25 @@ _BackendT = TypeVar("_BackendT", "CosmosBackend", "AsyncCosmosBackend")
 
 @dataclass(frozen=True)
 class ItemClientDefaults:
-    """Client defaults used by items and, for priority/bucket, database creation."""
+    """Operation defaults, including the overall budget used when a call omits it."""
 
     no_response_on_write: bool = False
     enable_compact_utf8_item_writes: bool = False
     priority: Optional[str] = None
     throughput_bucket: Optional[int] = None
     hedging_threshold_ms: Optional[int] = None
+    operation_timeout_seconds: Optional[float] = None
+
+    def apply_timeout(self, kwargs: dict[str, Any]) -> None:
+        """Resolve the default before preparation establishes a call or page deadline."""
+        if self.operation_timeout_seconds is None:
+            return
+        options = kwargs.get("request_options", kwargs.get("feed_options")) or {}
+        if not isinstance(options, Mapping):
+            return  # Argument preparation reports malformed option containers.
+        timeout = kwargs.get("timeout", options.get("timeout"))
+        if timeout is None:
+            kwargs["timeout"] = self.operation_timeout_seconds
 
     def apply_to_options(self, options: dict[str, Any]) -> None:
         """Fill request defaults without overriding per-call options or headers."""

@@ -163,7 +163,7 @@ class PreparedClientConfig(_ValidatedSettings):
     original list afterward does not change this record's saved preference.
 
     The binding uses these settings with the endpoint and credential to choose
-    a shared CosmosDriver or create one. Proxy and connection/read timeout
+    a shared CosmosDriver or create one. Proxy and connection timeout
     settings apply to CosmosDriverRuntime, even when clients use different
     CosmosDriver objects.
     """
@@ -200,19 +200,15 @@ class PreparedClientConfig(_ValidatedSettings):
     #: The builder rejects BoundedStaleness and ConsistentPrefix.
     consistency_level: Optional[str] = None
 
-    #: Whether CosmosDriverRuntime may use environment proxy settings:
-    #: True allows them, False requires a direct connection, and None requests no change.
+    #: Retired client setting; native validation rejects non-None values.
+    #: Configure proxy permission on ConnectionPoolOptions instead.
     proxy_allowed: Optional[bool] = None
 
-    #: Requested seconds allowed to establish a connection. Applies to the
-    #: shared CosmosDriverRuntime; None requests no override.
+    #: Retired client setting; configure ConnectionPoolOptions.connection_timeout.
     connection_timeout_seconds: Optional[float] = None
 
-    #: Python's read_timeout, in seconds. It limits a complete HTTP
-    #: attempt: connecting, sending, and receiving, not just waiting for more
-    #: response data. Applies to both item and account/container-property
-    #: requests across the process. None requests no override.
-    read_timeout_seconds: Optional[float] = None
+    #: Default overall operation budget; per-call settings override it.
+    operation_timeout_seconds: Optional[float] = None
 
     #: Internal test rules for failures and delays. Different rules prevent two
     #: clients from sharing the same driver.
@@ -238,8 +234,8 @@ class PreparedClientConfig(_ValidatedSettings):
         self._check_type("proxy_allowed", self.proxy_allowed, bool)
         if self.connection_timeout_seconds is not None:
             self._check_number("connection_timeout_seconds", self.connection_timeout_seconds)
-        if self.read_timeout_seconds is not None:
-            self._check_number("read_timeout_seconds", self.read_timeout_seconds)
+        if self.operation_timeout_seconds is not None:
+            self._check_number("operation_timeout_seconds", self.operation_timeout_seconds)
         if any(not isinstance(rule, PreparedFaultInjectionRule) for rule in self.fault_injection_rules):
             self._invalid_type("fault_injection_rules")
         if not isinstance(self.headers, Mapping) or any(

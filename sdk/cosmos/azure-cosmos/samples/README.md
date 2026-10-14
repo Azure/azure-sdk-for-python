@@ -18,6 +18,11 @@ The following are code samples that show common scenario operations with the Azu
   the client using `with` or `async with`. These examples target the Rust-default
   SDK and do not select a backend.
 
+* `runtime_configuration.py` - Explicitly initialize and share a custom Rust
+  runtime, configure connection and HTTP-request timeouts, and apply a separate
+  overall timeout. Run with `--async` for asynchronous initialization. Other
+  samples normally omit `runtime` and use the default process singleton.
+
 * [examples.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/examples.py) - Examples of common tasks:
     * Create Database
     * Create Container

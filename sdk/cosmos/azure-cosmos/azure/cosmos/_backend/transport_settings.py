@@ -13,21 +13,50 @@ certificate setting is active.
 Both public constructors combine connection_policy settings with keyword
 overrides before this check, so nesting an option does not bypass validation.
 
-Connection and read timeouts pass through the binding to CosmosDriverRuntime.
-Keep None for an unspecified value instead of treating a Python default as a
-customer request. Construction checks completed CosmosDriverRuntime
-initialization without creating that object or reserving values.
-Driver acquisition checks again and initializes CosmosDriverRuntime if needed.
-
-Here, read_timeout limits the complete HTTP attempt, not just
-time spent waiting for more response data.
+Rust clients select an explicit CosmosRuntime or the default singleton.
+Network overrides belong to its ConnectionPoolOptions, not client keywords.
+The connection timeout resolver below remains for explicitly selected legacy
+clients. Removed options are rejected at the common client boundary.
 """
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, Tuple
+from typing import Any
 
 from ..documents import ConnectionPolicy
+from ..runtime import CosmosRuntime
+
+
+def validate_client_runtime_settings(kwargs: Mapping[str, Any]) -> None:
+    """Keep network settings on explicit runtimes; never reconfigure the default."""
+    runtime = kwargs.get("runtime")
+    if runtime is not None and not isinstance(runtime, CosmosRuntime):
+        raise TypeError("runtime must be a CosmosRuntime created with create() or create_async().")
+    for name in (
+        "connection_timeout", "request_timeout", "proxy_allowed",
+        "data_http_request_timeout", "metadata_http_request_timeout",
+        "idle_connection_timeout", "max_idle_connections_per_endpoint",
+    ):
+        if name in kwargs:
+            raise TypeError(
+                f"Configure {name} through ConnectionPoolOptions and "
+                "CosmosRuntime.create()/create_async(), then pass runtime= to CosmosClient. "
+                "The legacy request_timeout alias was milliseconds; connection_timeout is seconds."
+            )
+    policy = kwargs.get("connection_policy")
+    if policy is not None:
+        stock = ConnectionPolicy()
+        if policy.RequestTimeout != stock.RequestTimeout:
+            raise TypeError(
+                "Move connection_policy.RequestTimeout to ConnectionPoolOptions.connection_timeout "
+                "in seconds, and pass an explicitly created runtime to CosmosClient."
+            )
+    timeout = kwargs.get("timeout")
+    if timeout is not None:
+        from .._helpers._request_settings import is_supported_operation_timeout  # pylint: disable=import-outside-toplevel
+
+        if not is_supported_operation_timeout(timeout):
+            raise ValueError("timeout must be finite, non-boolean seconds >= 1 and < 2**64.")
 
 def reject_unsupported_transport_settings(
     *,
@@ -88,16 +117,16 @@ def reject_unsupported_transport_settings(
         )
 
 
-def resolve_client_transport_timeouts(kwargs: Mapping[str, Any]) -> Tuple[Any, Any]:
-    """Return requested connection/read seconds without changing kwargs.
+def resolve_client_connection_timeout(kwargs: Mapping[str, Any]) -> Any:
+    """Return requested connection seconds without changing kwargs.
 
     request_timeout is the older connection-timeout name, measured in
     milliseconds, and takes precedence over connection_timeout. A
     connection_policy contributes only values differing from a fresh default
     policy; otherwise return None for that setting.
 
-    This function reads values only. The binding later checks them against
-    the recorded CosmosDriverRuntime settings; reading them does not reserve them.
+    Rust client validation rejects explicit overrides before this resolver.
+    Reading the remaining default policy does not configure a Rust runtime.
     """
     stock_policy = ConnectionPolicy()
     policy = kwargs.get("connection_policy") or stock_policy
@@ -109,10 +138,4 @@ def resolve_client_transport_timeouts(kwargs: Mapping[str, Any]) -> Tuple[Any, A
         connection_timeout = policy.RequestTimeout
     else:
         connection_timeout = None
-    if "read_timeout" in kwargs:
-        read_timeout = kwargs["read_timeout"]
-    elif policy.ReadTimeout != stock_policy.ReadTimeout:
-        read_timeout = policy.ReadTimeout
-    else:
-        read_timeout = None
-    return connection_timeout, read_timeout
+    return connection_timeout

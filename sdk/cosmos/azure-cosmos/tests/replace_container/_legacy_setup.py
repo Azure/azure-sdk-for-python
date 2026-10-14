@@ -24,7 +24,7 @@ class SyncReplacementCase(unittest.TestCase):
         self.key = os.environ["ACCOUNT_KEY"]
         self.client = self.key_client = self._create_key_client()
         self.addCleanup(self.client.close)
-        self.data_client = CosmosClient(self.host, self.key, _backend="core-python", read_timeout=30)
+        self.data_client = CosmosClient(self.host, self.key, _backend="core-python")
         self.addCleanup(self.data_client.close)
         self.database_id = "replace_legacy_" + uuid.uuid4().hex
         self.addCleanup(self._delete_owned_database)
@@ -57,7 +57,7 @@ class AsyncReplacementCase(unittest.IsolatedAsyncioTestCase):
         self.key = os.environ["ACCOUNT_KEY"]
         self.client = self.key_client = self._create_key_client()
         self.addAsyncCleanup(self.client.close)
-        self.data_client = AsyncCosmosClient(self.host, self.key, _backend="core-python", read_timeout=30)
+        self.data_client = AsyncCosmosClient(self.host, self.key, _backend="core-python")
         self.addAsyncCleanup(self.data_client.close)
         await self.client.__aenter__()
         await self.data_client.__aenter__()

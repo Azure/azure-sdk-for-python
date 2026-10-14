@@ -55,12 +55,6 @@ class ListDatabasesConfig:
         for name, key in self.unsupported_options:
             if name in kwargs or key in self.options:
                 raise TypeError(f"{self.operation}() does not support the '{name}' option")
-        for source in (self.options, kwargs):
-            if source.pop("read_timeout", None) is not None:
-                raise TypeError(
-                    f"{self.operation}() does not support the 'read_timeout' keyword argument; "
-                    "configure it when constructing CosmosClient."
-                )
         kwargs.pop("timeout", None)
         self.timeout = self.options.get("timeout")
         if not is_supported_operation_timeout(self.timeout):

@@ -20,6 +20,7 @@ from __future__ import annotations
 from typing import Any, Mapping, Optional, Sequence
 
 from azure.cosmos._backend.factory import _make_backend
+from azure.cosmos.runtime import CosmosRuntime
 
 from .cosmos_backend import AsyncCosmosBackend
 from .legacy import ASYNC_LEGACY_BACKEND
@@ -31,6 +32,8 @@ def make_async_backend(
     *,
     url: Optional[str] = None,
     credential: Any = None,
+    runtime: Optional[CosmosRuntime] = None,
+    operation_timeout: Optional[float] = None,
     preferred_locations: Optional[Sequence[str]] = None,
     excluded_locations: Optional[Sequence[str]] = None,
     throttling_max_retry_count: Optional[int] = None,
@@ -40,7 +43,6 @@ def make_async_backend(
     consistency_level: Optional[str] = None,
     proxy_allowed: Optional[bool] = None,
     connection_timeout_seconds: Optional[float] = None,
-    read_timeout_seconds: Optional[float] = None,
     fault_injection_rules: Any = None,
     headers: Optional[Mapping[str, str]] = None,
     proxy_config: Any = None,
@@ -53,8 +55,8 @@ def make_async_backend(
     """Return a Python backend for async operations; this factory is not awaited.
 
     For example, endpoint and preferred-region inputs become the stored settings
-    of AsyncBindingAdapter. Its construction checks completed CosmosDriverRuntime
-    initialization but does not initialize it or reserve its settings.
+    of AsyncBindingAdapter. Construction retains the selected runtime and
+    rejects retired network settings, without initializing the default runtime.
     """
     return _make_backend(
         explicit,
@@ -62,6 +64,8 @@ def make_async_backend(
         legacy_backend=ASYNC_LEGACY_BACKEND,
         url=url,
         credential=credential,
+        runtime=runtime,
+        operation_timeout=operation_timeout,
         preferred_locations=preferred_locations,
         excluded_locations=excluded_locations,
         throttling_max_retry_count=throttling_max_retry_count,
@@ -71,7 +75,7 @@ def make_async_backend(
         consistency_level=consistency_level,
         proxy_allowed=proxy_allowed,
         connection_timeout_seconds=connection_timeout_seconds,
-        read_timeout_seconds=read_timeout_seconds,
+
         fault_injection_rules=fault_injection_rules,
         headers=headers,
         proxy_config=proxy_config,

@@ -5,8 +5,8 @@
 Self-contained: builds its own database + container in ``setUp`` and
 registers cleanup immediately. The class name and method names match the
 source at ``tests/test_query.py`` so test IDs differ only by path.
-The None-parameters, ordered-paging, and OFFSET LIMIT tests reuse the owned
-container; their query inputs and assertions are unchanged.
+The None-parameters, ordered-paging, OFFSET LIMIT, and COUNT tests reuse the
+owned container; their query inputs and assertions are unchanged.
 DISTINCT retains its original composite indexes in a separate owned container.
 
 Run with::
@@ -19,7 +19,7 @@ import uuid
 
 import pytest
 
-from azure.cosmos import CosmosClient, PartitionKey
+from azure.cosmos import CosmosClient, PartitionKey, http_constants
 from query_items._legacy_distinct_helpers import DistinctConfig
 
 
@@ -282,6 +282,53 @@ class TestQuery(unittest.TestCase):
             query_results_strings = sorted(query_results_strings)
             result_strings = sorted(result_strings)
         self.assertListEqual(result_strings, query_results_strings)
+
+    def test_partition_scoped_count_is_index_only(self):
+        # Source: tests/test_query.py::TestQuery.test_partition_scoped_count_is_index_only
+        created_collection = self.container
+        partition_key = "PowerCut-" + str(uuid.uuid4())
+        other_partition_key = "Other-" + str(uuid.uuid4())
+        created_items = []
+        try:
+            for i in range(25):
+                item = created_collection.create_item({
+                    "id": f"power-cut-{i}-{uuid.uuid4()}",
+                    "pk": partition_key,
+                    "value": i,
+                })
+                created_items.append((item["id"], item["pk"]))
+            item = created_collection.create_item({
+                "id": "other-document-type-" + str(uuid.uuid4()),
+                "pk": other_partition_key,
+            })
+            created_items.append((item["id"], item["pk"]))
+
+            query_iterable = created_collection.query_items(
+                query="SELECT VALUE COUNT(1) FROM c",
+                partition_key=partition_key,
+                enable_cross_partition_query=False,
+                populate_query_metrics=True,
+            )
+            pager = query_iterable.by_page()
+            pages = [list(page) for page in pager]
+
+            self.assertEqual([[25]], pages)
+            self.assertIsNone(pager.continuation_token)
+
+            response_headers = query_iterable.get_response_headers()
+            metrics_header = response_headers[http_constants.HttpHeaders.QueryMetrics]
+            metrics = dict(
+                entry.split("=", 1)
+                for entry in metrics_header.split(";")
+                if entry
+            )
+            self.assertEqual(0, int(metrics["retrievedDocumentCount"]))
+            self.assertEqual(0, int(metrics["retrievedDocumentSize"]))
+            self.assertEqual(1.0, float(metrics["indexUtilizationRatio"]))
+            self.assertLess(float(response_headers[http_constants.HttpHeaders.RequestCharge]), 20.0)
+        finally:
+            for item_id, item_partition_key in created_items:
+                created_collection.delete_item(item_id, item_partition_key)
 
     def test_paging_with_continuation_token(self):
         """A continuation token replays the page that follows it.

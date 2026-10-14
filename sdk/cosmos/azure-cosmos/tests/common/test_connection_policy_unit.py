@@ -31,6 +31,7 @@ from azure.cosmos._backend.contracts import PreparedClientConfig
 from azure.cosmos._connection_policy import resolve_connection_policy_kwargs
 from azure.cosmos._retry_options import RetryOptions
 from azure.cosmos.documents import ConnectionPolicy, ProxyConfiguration, SSLConfiguration
+from azure.cosmos import ConnectionPoolOptions, CosmosRuntime
 
 
 @pytest.fixture(params=[sync_client, async_client], ids=["sync", "async"])
@@ -237,7 +238,7 @@ def test_region_keywords_override_policy_including_empty(construct_client, backe
         assert client._adapter._client_config.excluded_locations == ()
 
 
-def test_policy_timeouts_still_resolve_with_keyword_and_alias_precedence(construct_client):
+def test_legacy_policy_timeouts_still_resolve_with_keyword_and_alias_precedence(construct_client):
     """The older millisecond name for the connection timeout still wins, and the caller's
     policy is left alone.
 
@@ -253,15 +254,12 @@ def test_policy_timeouts_still_resolve_with_keyword_and_alias_precedence(constru
     """
     policy = configured_policy()
     policy.RequestTimeout = 4
-    policy.ReadTimeout = 20
-    client, legacy = construct_client(
-        connection_policy=policy, request_timeout=2000, connection_timeout=3, read_timeout=25
+    _, legacy = construct_client(
+        _backend="core-python", connection_policy=policy,
+        request_timeout=2000, connection_timeout=3,
     )
-    config = client._adapter._client_config
-    assert config.connection_timeout_seconds == legacy.RequestTimeout == 2
-    assert config.read_timeout_seconds == legacy.ReadTimeout == 25
+    assert legacy.RequestTimeout == 2
     assert policy.RequestTimeout == 4
-    assert policy.ReadTimeout == 20
 
 
 @pytest.mark.parametrize("setting", ["proxy", "ca", "cert", "key", "disable_verification"])
@@ -282,8 +280,8 @@ def test_nested_unsupported_transport_rejected_before_startup(
     is the thing the caller can actually change. The older connection object is checked
     never to have been built, so the failure really did come first.
 
-    The last line verifies that an explicit proxy choice is supported. Construction
-    does not reserve that choice; the binding fixes it when the runtime initializes.
+    The last line verifies that explicit environment-proxy permission is supported
+    through an initialized custom runtime, rather than a client keyword.
     """
     policy = ConnectionPolicy()
     if setting == "proxy":
@@ -301,7 +299,9 @@ def test_nested_unsupported_transport_rejected_before_startup(
     with pytest.raises(ValueError, match=expected):
         construct_client(connection_policy=policy)
     client_module.CosmosClientConnection.assert_not_called()
-    construct_client(proxy_allowed=False)
+    construct_client(runtime=CosmosRuntime.create(
+        connection_pool=ConnectionPoolOptions(proxy_allowed=False)
+    ))
 
 
 def test_explicit_transport_overrides_clear_nested_settings(construct_client):

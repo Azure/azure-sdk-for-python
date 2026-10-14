@@ -78,10 +78,6 @@ class QueryConfig(ReadAllConfig):
         options = deepcopy(
             kwargs.pop("request_options", kwargs.pop("feed_options", {})) or {}
         )
-        if kwargs.get("read_timeout") is None:
-            kwargs.pop("read_timeout", None)
-        if options.get("read_timeout") is None:
-            options.pop("read_timeout", None)
         for public, internal in _QUERY_OPTIONS.items():
             if public in kwargs:
                 options[internal] = kwargs.pop(public)

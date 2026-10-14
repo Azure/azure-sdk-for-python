@@ -177,7 +177,7 @@ async def test_list_containers_options_and_page_hooks_async(populated_database_i
                     snapshots.append(headers)
 
             pager = database.list_containers(
-                max_item_count=1, timeout=10, read_timeout=None,
+                max_item_count=1, timeout=10,
                 initial_headers={"x-company-trace": "list-containers"}, response_hook=Hook(),
             )
             assert snapshots == []

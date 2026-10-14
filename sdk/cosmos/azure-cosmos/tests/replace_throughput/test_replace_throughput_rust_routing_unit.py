@@ -31,7 +31,6 @@ _OFFER = {"id": "offer", "_self": "offers/AAAAAA==/", "content": {"offerThroughp
         (LEGACY_BACKEND, {}, {}, False),
         (SimpleNamespace(name="rust"), {}, {}, True),
         (SimpleNamespace(name="rust"), {}, {"unknown": 1}, False),
-        (SimpleNamespace(name="rust"), {"read_timeout": 5}, {}, False),
         (SimpleNamespace(name="rust"), {"availabilityStrategy": True}, {}, False),
         (SimpleNamespace(name="rust"), {"initialHeaders": {"USER-AGENT": "custom"}}, {}, False),
     ],
@@ -40,7 +39,7 @@ def test_replace_gate(backend, options, kwargs, expected):
     """Only a plain throughput replacement on the Rust backend is eligible.
 
     Six cases: legacy backend, bare Rust call, unknown keyword, a
-    ``read_timeout``, an availability strategy, and a custom user agent in the
+    an availability strategy, and a custom user agent in the
     initial headers.
 
     Everything except the bare Rust call falls back, so a caller's timeout or

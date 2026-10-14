@@ -102,7 +102,6 @@ class TestUserAgentOverwriteRegression(unittest.TestCase):
             user_agent_overwrite=True,
             consistency_level="Session",
             connection_timeout=10,
-            read_timeout=10,
             transport=capture,
         )
         try:

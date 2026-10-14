@@ -78,24 +78,13 @@ class AsyncDatabaseHelper:
         On success, check the remaining time before calling response_hook once
         with copies of the headers and database properties.
 
-        A per-call read_timeout is rejected. The customer app configures that
-        setting when constructing CosmosClient instead.
         """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
         if response_hook is not None and not callable(response_hook):
             raise TypeError("create_database response_hook must be callable or None.")
         hook = with_response_header_snapshot(response_hook, copy_body=True)
-        if (
-            request_options.get(Constants.Kwargs.READ_TIMEOUT) is not None
-            or operation_kwargs.get(Constants.Kwargs.READ_TIMEOUT) is not None
-        ):
-            raise TypeError(
-                "create_database() does not support the 'read_timeout' keyword argument"
-            )
-        operation_kwargs.pop("read_timeout", None)
         request_options = dict(request_options)
-        request_options.pop("read_timeout", None)
 
         def build_request() -> PreparedRequest:
             return build_create_database_prepared(

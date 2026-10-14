@@ -76,7 +76,7 @@ class ReadAllConfig:
             kwargs.get("request_options", kwargs.pop("feed_options", {})) or {}
         )
         self.options = deepcopy(compose_options_from_kwargs(kwargs))
-        for key in ("timeout", "read_timeout"):
+        for key in ("timeout",):
             if key in kwargs:
                 self.options[key] = kwargs.pop(key)
         self.timeout = self.options.get("timeout")

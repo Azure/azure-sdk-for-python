@@ -130,7 +130,6 @@ class TestInferenceServiceTimeout(unittest.TestCase):
             mock_run.assert_called_once()
             call_kwargs = mock_run.call_args[1]
             self.assertEqual(call_kwargs["connection_timeout"], 7)
-            self.assertEqual(call_kwargs["read_timeout"], 7)
 
     def test_async_inference_passes_timeout_to_pipeline(self):
         """Test that async inference service passes timeout kwargs to pipeline.run()."""
@@ -155,7 +154,6 @@ class TestInferenceServiceTimeout(unittest.TestCase):
                 mock_run.assert_called_once()
                 call_kwargs = mock_run.call_args[1]
                 self.assertEqual(call_kwargs["connection_timeout"], 12)
-                self.assertEqual(call_kwargs["read_timeout"], 12)
 
         asyncio.run(run_test())
 

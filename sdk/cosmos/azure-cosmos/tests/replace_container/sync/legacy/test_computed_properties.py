@@ -13,7 +13,7 @@ from replace_container._legacy_setup import SyncReplacementCase
 @pytest.mark.cosmosEmulator
 class TestComputedPropertiesQuery(SyncReplacementCase):
     def _create_key_client(self):
-        return CosmosClient(self.host, self.key, _backend="rust", read_timeout=30)
+        return CosmosClient(self.host, self.key, _backend="rust")
 
     def _initialize_data(self):
         self.items = [

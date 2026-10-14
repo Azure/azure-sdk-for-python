@@ -39,7 +39,6 @@ _OFFER_QUERY = {
         (LEGACY_BACKEND, {}, {}, False),
         (RUST_BACKEND, {}, {}, True),
         (RUST_BACKEND, {}, {"unknown": 1}, False),
-        (RUST_BACKEND, {"read_timeout": 5}, {}, False),
         (RUST_BACKEND, {"availabilityStrategy": True}, {}, False),
     ],
 )
@@ -47,7 +46,7 @@ def test_offer_read_gate(backend, options, kwargs, expected):
     """Only a plain offer read on the Rust backend is eligible for the Rust path.
 
     Five cases: the legacy backend is never eligible; a bare Rust call is; and
-    an unknown keyword, a ``read_timeout`` or an availability strategy each
+    an unknown keyword, an availability strategy each
     send the call back to legacy.
 
     The gate has to refuse anything it cannot honour exactly. Reading throughput

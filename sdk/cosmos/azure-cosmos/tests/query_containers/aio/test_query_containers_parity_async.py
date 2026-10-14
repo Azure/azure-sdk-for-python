@@ -200,7 +200,7 @@ async def test_query_containers_page_hooks_and_timeout_async(database_with_conta
                     headers["x-local"] = "mutation"
 
             pager = database.query_containers(
-                "SELECT * FROM c", max_item_count=1, timeout=timeout, read_timeout=None,
+                "SELECT * FROM c", max_item_count=1, timeout=timeout,
                 initial_headers={"x-company-trace": "query-containers"}, response_hook=Hook(),
             )
             assert snapshots == []

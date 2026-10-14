@@ -147,7 +147,7 @@ def test_target_ownership_returns_and_rust_dispatch(replace_case, kind, return_p
         target = case.database.get_container_client("c1")
     elif kind == "other_database_proxy":
         target = type(case.database)(case.connection, "other").get_container_client("c1")
-    result = _replace(case, target, PK, default_ttl=3600, return_properties=return_properties, read_timeout=None)
+    result = _replace(case, target, PK, default_ttl=3600, return_properties=return_properties)
     proxy = result[0] if return_properties else result
     assert proxy.id == "c1" and proxy.container_link == "dbs/db1/colls/c1"
     assert proxy.client_connection is case.connection
@@ -162,7 +162,6 @@ def test_target_ownership_returns_and_rust_dispatch(replace_case, kind, return_p
         case.backend.execute.assert_not_called()
         call = case.connection.ReplaceContainer.call_args
         assert call.args == ("dbs/db1/colls/c1",)
-        assert "read_timeout" not in call.kwargs
         body = call.kwargs["collection"]
     else:
         case.connection.ReplaceContainer.assert_not_called()
@@ -250,15 +249,6 @@ def test_retired_keywords_rejected_by_presence(replace_case, option, value):
     _assert_no_dispatch(replace_case)
 
 
-@pytest.mark.parametrize("value", [False, 0, 0.5, 2])
-def test_per_call_read_timeout_rejected(replace_case, value):
-    """The socket-level ``read_timeout`` is not accepted per call here, including
-    when set to false or zero, which are still the customer asking for it. The
-    error names the option so it is clear what to remove.
-    """
-    with pytest.raises(TypeError, match="read_timeout"):
-        _replace(replace_case, "c1", PK, read_timeout=value)
-    _assert_no_dispatch(replace_case)
 
 
 @pytest.mark.parametrize("kwargs", [

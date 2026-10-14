@@ -5,14 +5,14 @@
 The sync/async legacy tests use a Python transport delay. Here the installed
 emulator and a Rust QueryItem fault exercise the compiled page boundary instead.
 This covers the first fetch and fresh per-page budgets, not failure/resume after
-an already delivered page, read_timeout, or multi-partition query execution.
+an already delivered page, or multi-partition query execution.
 """
 import math
 
 from azure.cosmos.exceptions import CosmosClientTimeoutError
 from fault_injection._point_timeout import (
     DELAY_MS, MAX_OPERATION_ELAPSED, MIN_TIMEOUT_ELAPSED, OPERATION_TIMEOUT,
-    read_timeout_rule,
+    read_operation_timeout_rule,
 )
 
 PAGE_TIMEOUT = OPERATION_TIMEOUT
@@ -20,7 +20,7 @@ BETWEEN_PAGES_DELAY = PAGE_TIMEOUT + 0.1
 
 
 def query_timeout_rule(rule_id, container_id, inject):
-    return {**read_timeout_rule(rule_id, container_id, inject), "operation_type": "QueryItem"}
+    return {**read_operation_timeout_rule(rule_id, container_id, inject), "operation_type": "QueryItem"}
 
 
 def capture_page_calls(monkeypatch, *, asynchronous=False):

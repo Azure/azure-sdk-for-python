@@ -108,7 +108,7 @@ def test_read_container_quota_and_statistics_use_selected_backend(database_id, c
         properties = run_target_operation(
             client, lambda: container.read(
                 populate_partition_key_range_statistics=statistics,
-                populate_quota_info=quota, read_timeout=None,
+                populate_quota_info=quota,
             ),
         )
         headers = properties.get_response_headers()

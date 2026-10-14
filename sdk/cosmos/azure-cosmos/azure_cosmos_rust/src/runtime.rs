@@ -24,8 +24,8 @@
 //!
 //! Two matching clients can reuse a CosmosDriver object rather than build one
 //! each. The binding computes a driver identity from the endpoint, credential,
-//! and PreparedClientConfig fields. It uses that identity as the driver-cache
-//! key and returns the same string to Python in its role as a driver handle.
+//! and PreparedClientConfig fields, then adds the selected runtime identity.
+//! It returns that cache key to Python in its role as a driver handle.
 //! Each acquisition adds to the entry's count; a balanced final release removes
 //! the entry. An active operation can still retain the CosmosDriver afterward.
 //!
@@ -33,37 +33,14 @@
 //! The account address, credential, and client settings describe the account
 //! access; they are not the connections used to perform it.
 //!
-//! The binding obtains a CosmosDriverRuntime from the Rust driver library.
-//! This object supplies resources used to establish and use network connections.
-//! The binding calls its create_driver method with the account configuration
-//! to obtain a CosmosDriver for operation calls.
+//! The binding selects the client's explicit CosmosDriverRuntime or the default
+//! singleton from driver_runtime.rs. Connection settings belong to that runtime,
+//! not to the client acquiring a driver. Runtime identity participates in driver
+//! reuse: separately created runtimes never receive each other's cached drivers.
 //!
-//! RuntimeContext retains access to CosmosDriverRuntime and the Tokio runtime.
-//! The Tokio runtime runs asynchronous Rust work; it has a different role from
-//! CosmosDriverRuntime and is not Python's event loop.
-//!
-//! A client's first operation requiring the Rust driver acquires a driver
-//! handle. Acquisition initializes RuntimeContext when needed. Within this
-//! Python process, it retains one CosmosDriverRuntime and records the requested
-//! connection settings.
-//!
-//! Separate Python clients can use different CosmosDriver objects, but those
-//! objects use the same CosmosDriverRuntime. Creating another CosmosDriver
-//! therefore does not provide an independent connection timeout.
-//!
-//! For example, client A requests connection_timeout=2 and client B requests
-//! connection_timeout=5. If A's acquisition initializes CosmosDriverRuntime
-//! first, its two-second setting is recorded. B's explicit five-second request
-//! is rejected rather than silently using two seconds. The same compatibility
-//! rule applies to read_timeout and proxy_allowed.
-//!
-//! Constructing a Python client does not initialize CosmosDriverRuntime or
-//! reserve these settings. Construction rejects a conflict if initialization
-//! has already completed; acquisition checks again otherwise. Initialization
-//! failures are retained too. This sharing boundary is the current binding
-//! design, not proof that the Rust driver requires process-wide settings.
-//! See docs/V5/use-cases/design_issues.md for the unresolved client-isolation
-//! and read-timeout compatibility questions.
+//! RuntimeContext retains only the shared Tokio executor. Creating a custom
+//! driver runtime does not create another executor. Each CosmosDriver retains
+//! its selected driver runtime independently of the Python runtime object.
 //!
 //! Preferred regions and driver operation defaults are prepared separately for
 //! DriverOptions. See docs/V5/VOCABULARY.md for the object names and
@@ -80,14 +57,14 @@ use pyo3::prelude::*;
 use sha2::{Digest, Sha256};
 
 use azure_data_cosmos_driver::{
-    driver::{CosmosDriver, CosmosDriverRuntime},
+    driver::CosmosDriver,
     fault_injection::{
         CustomResponseBuilder, FaultInjectionConditionBuilder, FaultInjectionErrorType,
         FaultInjectionResultBuilder, FaultInjectionRule, FaultInjectionRuleBuilder, FaultOperationType,
     },
     models::AccountReference,
     options::{
-        AvailabilityStrategy, ConnectionPoolOptions, DriverOptions, ExcludedRegions,
+        AvailabilityStrategy, DriverOptions, EndToEndOperationLatencyPolicy, ExcludedRegions,
         HedgeThreshold, HedgingStrategy, OperationOptions, OperationOptionsBuilder,
         PartitionFailoverOptions, PartitionFailoverOptionsBuilder, PartitionTopologyCacheMode,
         ReadConsistencyStrategy, Region, ThrottlingRetryOptionsBuilder, UserAgentSuffix,
@@ -97,31 +74,20 @@ use tokio::runtime::Runtime as TokioRuntime;
 use url::Url;
 
 use crate::credential::PyTokenCredential;
+use crate::driver_runtime::{default_runtime, RuntimeHandle};
 
 // ---------------------------------------------------------------------------
 // Per-process singletons
 // ---------------------------------------------------------------------------
 
-/// Retain the Tokio runtime, CosmosDriverRuntime, and recorded connection settings.
-/// `runtime_context` creates this record once; later acquisitions check explicit
-/// requested settings against those recorded values.
+/// Retain the shared executor, independently of the selected driver runtime.
 pub(crate) struct RuntimeContext {
     pub(crate) tokio_rt: &'static TokioRuntime,
-    pub(crate) driver_runtime: Arc<CosmosDriverRuntime>,
-    settings: RuntimeSettings,
-}
-
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-struct RuntimeSettings {
-    proxy_allowed: Option<bool>,
-    max_connect_timeout: Option<Duration>,
-    max_dataplane_request_timeout: Option<Duration>,
-    max_metadata_request_timeout: Option<Duration>,
 }
 
 /// One cached CosmosDriver, its fault rules, and its outstanding acquisition count.
 ///
-/// The key includes endpoint, credential, and config fingerprints because drivers
+/// The key includes runtime identity, endpoint, credential, and config fingerprints because drivers
 /// retain authentication and settings. Keying only by endpoint would incorrectly
 /// share those values between differently configured clients.
 ///
@@ -144,7 +110,7 @@ fn apply_close(refcount: usize) -> (usize, bool) {
 }
 
 // ---------------------------------------------------------------------------
-// Cache key: (endpoint, credential, config)
+// Cache key: (endpoint, credential, config, runtime identity)
 // ---------------------------------------------------------------------------
 //
 // * Account keys use process-salted SHA-256. Handles remain private identifiers,
@@ -242,7 +208,7 @@ fn config_fingerprint(config: Option<&Bound<'_, PyAny>>) -> PyResult<String> {
         "consistency_level": field!("consistency_level", String),
         "proxy_allowed": field!("proxy_allowed", bool),
         "connection_timeout_seconds": finite(field!("connection_timeout_seconds", f64), "connection_timeout_seconds")?,
-        "read_timeout_seconds": finite(field!("read_timeout_seconds", f64), "read_timeout_seconds")?,
+        "operation_timeout_seconds": finite(field!("operation_timeout_seconds", f64), "operation_timeout_seconds")?,
         "fault_injection_rules": rules,
         "headers": client_headers_from_config(config)?,
     });
@@ -285,32 +251,6 @@ fn driver_identity(
     ))
 }
 
-/// Check explicit settings against the initialized CosmosDriverRuntime settings.
-///
-/// For example, a requested five-second connection timeout conflicts with a
-/// recorded two-second value. An unspecified value requests no override.
-/// The first acquisition to initialize RuntimeContext records the settings;
-/// merely constructing a Python client does not choose them.
-fn runtime_settings_conflict(initialized: RuntimeSettings, requested: RuntimeSettings) -> bool {
-    setting_conflicts(initialized.proxy_allowed, requested.proxy_allowed)
-        || setting_conflicts(
-            initialized.max_connect_timeout,
-            requested.max_connect_timeout,
-        )
-        || setting_conflicts(
-            initialized.max_dataplane_request_timeout,
-            requested.max_dataplane_request_timeout,
-        )
-        || setting_conflicts(
-            initialized.max_metadata_request_timeout,
-            requested.max_metadata_request_timeout,
-        )
-}
-
-fn setting_conflicts<T: PartialEq>(initialized: Option<T>, requested: Option<T>) -> bool {
-    requested.is_some() && initialized != requested
-}
-
 const AUTH_REQUIRED_ERROR: &str =
     "acquire_driver_handle requires either a master_key or a token credential";
 const AUTH_EXCLUSIVE_ERROR: &str =
@@ -329,8 +269,7 @@ fn validate_auth_inputs(
     }
 }
 
-// Keep init errors too, so every later caller sees the same failure reason.
-static RUNTIME_CONTEXT: OnceLock<Result<RuntimeContext, String>> = OnceLock::new();
+static RUNTIME_CONTEXT: OnceLock<RuntimeContext> = OnceLock::new();
 static DRIVERS: OnceLock<RwLock<HashMap<String, DriverEntry>>> = OnceLock::new();
 
 /// Return the driver cache, creating the empty table if needed.
@@ -340,114 +279,40 @@ pub(crate) fn drivers() -> &'static RwLock<HashMap<String, DriverEntry>> {
     DRIVERS.get_or_init(|| RwLock::new(HashMap::new()))
 }
 
-/// Initialize RuntimeContext during acquisition, or check its recorded result.
-///
-/// Initialization obtains the Tokio runtime and builds CosmosDriverRuntime.
-/// Release Python's global interpreter lock (GIL) while initializing or waiting
-/// for another initializer. A stored failure is raised again; a stored success
-/// is checked for conflicting explicit connection settings.
-fn runtime_context(
-    py: Python<'_>,
-    requested_settings: RuntimeSettings,
-) -> PyResult<&'static RuntimeContext> {
-    // Waiting for another initializer must also release the GIL; otherwise that
-    // initializer cannot reacquire it to finish while this thread waits on OnceLock.
-    let ctx_or_error = py.allow_threads(|| {
-        RUNTIME_CONTEXT.get_or_init(|| {
-            let tokio_rt = pyo3_async_runtimes::tokio::get_runtime();
-            let mut runtime_builder = CosmosDriverRuntime::builder();
-            if let Some(connection_pool) = connection_pool_from_settings(requested_settings)? {
-                runtime_builder = runtime_builder.with_connection_pool(connection_pool);
-            }
-            let driver_runtime = tokio_rt
-                .block_on(async { runtime_builder.build().await })
-                .map_err(|e| format!("driver runtime build failed: {e}"))?;
-            Ok(RuntimeContext {
-                tokio_rt,
-                driver_runtime,
-                settings: requested_settings,
-            })
-        })
-    });
-    validate_runtime_context(ctx_or_error, requested_settings)
+pub(crate) fn runtime_context() -> &'static RuntimeContext {
+    RUNTIME_CONTEXT.get_or_init(|| RuntimeContext {
+        tokio_rt: pyo3_async_runtimes::tokio::get_runtime(),
+    })
 }
 
-fn validate_runtime_context(
-    context: &Result<RuntimeContext, String>,
-    requested_settings: RuntimeSettings,
-) -> PyResult<&RuntimeContext> {
-    match context {
-        Ok(ctx) => {
-            if runtime_settings_conflict(ctx.settings, requested_settings) {
-                return Err(PyValueError::new_err(format!(
-                    "Rust transport configuration is process-global and was already initialized with {:?}; cannot honor {:?} for this client. Set proxy_allowed, connection_timeout, and read_timeout consistently on every Rust CosmosClient in the process.",
-                    ctx.settings, requested_settings
-                )));
-            }
-            Ok(ctx)
-        }
-        Err(message) => Err(PyRuntimeError::new_err(message.clone())),
-    }
-}
-
-/// Check a new Python client's connection settings without initializing
-/// CosmosDriverRuntime.
-///
-/// The Python wrapper calls this during client construction. For example,
-/// a requested five-second connection timeout raises ValueError if the
-/// binding has already initialized CosmosDriverRuntime with two seconds.
-/// A matching two-second request passes this compatibility check.
-///
-/// If initialization has no completed result, return without initializing
-/// CosmosDriverRuntime or reserving settings. If an earlier initialization
-/// failed, raise RuntimeError with the retained failure.
-///
-/// Passing this check does not guarantee that later acquisition will pass:
-/// another client may initialize CosmosDriverRuntime in between. Driver
-/// acquisition therefore checks the settings again.
+/// Reject retired client-level network configuration without initializing a runtime.
 #[pyfunction(name = "_validate_runtime_configuration")]
 #[pyo3(signature = (config=None))]
 pub(crate) fn validate_runtime_configuration(config: Option<&Bound<'_, PyAny>>) -> PyResult<()> {
-    let requested_settings = runtime_settings_from_config(config)?;
-    if let Some(context) = RUNTIME_CONTEXT.get() {
-        validate_runtime_context(context, requested_settings)?;
+    if let Some(config) = config {
+        for name in ["connection_timeout_seconds", "read_timeout_seconds", "proxy_allowed"] {
+            match config.getattr(name) {
+                Ok(value) if !value.is_none() => {
+                    return Err(PyValueError::new_err(format!(
+                        "{name} is not a client setting; use CosmosRuntime with ConnectionPoolOptions. \
+                         Read-inactivity timeouts are not supported."
+                    )));
+                }
+                Ok(_) => {}
+                Err(error) if error.is_instance_of::<PyAttributeError>(config.py()) => {}
+                Err(error) => return Err(error),
+            }
+        }
     }
     Ok(())
 }
 
-fn connection_pool_from_settings(
-    settings: RuntimeSettings,
-) -> Result<Option<ConnectionPoolOptions>, String> {
-    if settings == RuntimeSettings::default() {
-        return Ok(None);
-    }
-    let mut builder = ConnectionPoolOptions::builder();
-    if let Some(proxy_allowed) = settings.proxy_allowed {
-        builder = builder.with_proxy_allowed(proxy_allowed);
-    }
-    if let Some(timeout) = settings.max_connect_timeout {
-        builder = builder.with_max_connect_timeout(timeout);
-    }
-    if let Some(timeout) = settings.max_dataplane_request_timeout {
-        builder = builder.with_max_dataplane_request_timeout(timeout);
-    }
-    if let Some(timeout) = settings.max_metadata_request_timeout {
-        builder = builder.with_max_metadata_request_timeout(timeout);
-    }
-    builder
-        .build()
-        .map(Some)
-        .map_err(|e| format!("invalid connection pool options: {e}"))
-}
-
 /// Return an initialized RuntimeContext without creating it.
 /// Operation helpers use its Tokio runtime. Missing initialization raises an
-/// error naming the required acquisition step; a retained initialization failure
-/// is raised again.
+/// error naming the required acquisition step.
 pub(crate) fn require_runtime_context(op_name: &str) -> PyResult<&'static RuntimeContext> {
     match RUNTIME_CONTEXT.get() {
-        Some(Ok(ctx)) => Ok(ctx),
-        Some(Err(message)) => Err(PyRuntimeError::new_err(message.clone())),
+        Some(ctx) => Ok(ctx),
         None => Err(PyRuntimeError::new_err(format!(
             "acquire_driver_handle must be called before {op_name}"
         ))),
@@ -459,19 +324,8 @@ pub(crate) fn require_runtime_context(op_name: &str) -> PyResult<&'static Runtim
 // ---------------------------------------------------------------------------
 //
 #[pyfunction(name = "_runtime_configuration")]
-pub(crate) fn runtime_configuration() -> Option<(Option<bool>, Option<f64>, Option<f64>)> {
-    match RUNTIME_CONTEXT.get() {
-        Some(Ok(ctx)) => Some((
-            ctx.settings.proxy_allowed,
-            ctx.settings
-                .max_connect_timeout
-                .map(|value| value.as_secs_f64()),
-            ctx.settings
-                .max_dataplane_request_timeout
-                .map(|value| value.as_secs_f64()),
-        )),
-        _ => None,
-    }
+pub(crate) fn runtime_configuration() -> Option<(f64, f64, f64)> {
+    crate::driver_runtime::default_configuration()
 }
 
 /// Acquire a CosmosDriver object and return a driver handle for later binding calls.
@@ -480,30 +334,39 @@ pub(crate) fn runtime_configuration() -> Option<(Option<bool>, Option<f64>, Opti
 ///
 /// A cache hit increments its count. On a miss, build outside the cache lock,
 /// then cache the CosmosDriver or use the entry another caller inserted meanwhile.
-/// CosmosDriverRuntime connection settings are shared within the process;
+/// CosmosDriverRuntime is selected explicitly or from the default singleton;
 /// preferred regions and driver operation defaults belong in DriverOptions.
 ///
 /// Exactly one of `master_key` and Python `credential` must be present.
 /// PyTokenCredential handles a synchronous credential or AsyncTokenCredentialBridge.
 
 #[pyfunction]
-#[pyo3(signature = (endpoint, master_key=None, config=None, credential=None))]
+#[pyo3(signature = (endpoint, master_key=None, config=None, credential=None, runtime=None))]
 pub(crate) fn acquire_driver_handle(
     py: Python<'_>,
     endpoint: &str,
     master_key: Option<&str>,
     config: Option<&Bound<'_, PyAny>>,
     credential: Option<&Bound<'_, PyAny>>,
+    runtime: Option<PyRef<'_, RuntimeHandle>>,
 ) -> PyResult<String> {
     validate_auth_inputs(master_key, credential)?;
 
     let endpoint_url = Url::parse(endpoint)
         .map_err(|e| PyValueError::new_err(format!("invalid endpoint URL: {e}")))?;
 
-    let requested_settings = runtime_settings_from_config(config)?;
-    let runtime_ctx = runtime_context(py, requested_settings)?;
+    validate_runtime_configuration(config)?;
+    let runtime_ctx = runtime_context();
+    let selected_runtime = match runtime {
+        Some(runtime) => runtime.clone(),
+        None => py.allow_threads(|| runtime_ctx.tokio_rt.block_on(default_runtime()))?,
+    };
 
-    let driver_handle = driver_identity(endpoint, master_key, config, credential)?;
+    let driver_handle = format!(
+        "{}:runtime-{}",
+        driver_identity(endpoint, master_key, config, credential)?,
+        selected_runtime.id
+    );
 
     // Fast path: reuse the matching cache entry and add one acquisition.
     // This changes the count, so it requires a write lock.
@@ -567,7 +430,7 @@ pub(crate) fn acquire_driver_handle(
     // Build the CosmosDriver on the Tokio runtime, then wait on the task's
     // handle with the GIL released. Concurrent acquisitions can submit separate
     // build tasks. Join failures are mapped to Python errors below.
-    let driver_runtime = Arc::clone(&runtime_ctx.driver_runtime);
+    let driver_runtime = Arc::clone(&selected_runtime.driver_runtime);
     let build_task = runtime_ctx
         .tokio_rt
         .spawn(async move { driver_runtime.create_driver(driver_options).await });
@@ -618,32 +481,6 @@ pub(crate) fn partition_failover_options() -> PyResult<PartitionFailoverOptions>
         .map_err(|error| PyValueError::new_err(format!("invalid partition failover settings: {error}")))
 }
 
-/// Read CosmosDriverRuntime connection settings from PreparedClientConfig.
-fn runtime_settings_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<RuntimeSettings> {
-    let Some(client_config) = config else {
-        return Ok(RuntimeSettings::default());
-    };
-    // Compatibility mapping: the driver exposes complete HTTP-attempt caps,
-    // not the customer app's socket-read inactivity timer (driver parity gap 17).
-    let http_attempt_cap = timeout_from_config(client_config, "read_timeout_seconds")?;
-    Ok(RuntimeSettings {
-        proxy_allowed: get_config_opt::<bool>(client_config, "proxy_allowed")?,
-        max_connect_timeout: timeout_from_config(client_config, "connection_timeout_seconds")?,
-        max_dataplane_request_timeout: http_attempt_cap,
-        max_metadata_request_timeout: http_attempt_cap,
-    })
-}
-
-fn timeout_from_config(config: &Bound<'_, PyAny>, field_name: &str) -> PyResult<Option<Duration>> {
-    let Some(seconds) = get_config_opt::<f64>(config, field_name)? else {
-        return Ok(None);
-    };
-    Duration::try_from_secs_f64(seconds).map(Some).map_err(|_| {
-        PyValueError::new_err(format!(
-            "{field_name} must be a finite, non-negative number of seconds"
-        ))
-    })
-}
 
 /// Convert PreparedClientConfig.preferred_locations into Rust driver Region values.
 /// For example, the tuple ("West US",) supplies one Region::from("West US").
@@ -827,6 +664,18 @@ fn operation_options_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<
     let Some(config) = config else {
         return Ok(builder.build());
     };
+    if let Some(value) = get_config_opt::<PyObject>(config, "operation_timeout_seconds")? {
+        if value.bind(config.py()).is_instance_of::<pyo3::types::PyBool>() {
+            return Err(PyValueError::new_err("timeout must be numeric, not bool"));
+        }
+        let seconds: f64 = value.bind(config.py()).extract()?;
+        let timeout = Duration::try_from_secs_f64(seconds)
+            .map_err(|_| PyValueError::new_err("timeout must be finite seconds within range"))?;
+        if timeout < Duration::from_secs(1) {
+            return Err(PyValueError::new_err("timeout must be at least one second"));
+        }
+        builder = builder.with_end_to_end_latency_policy(EndToEndOperationLatencyPolicy::new(timeout));
+    }
     let headers = client_headers_from_config(Some(config))?;
     if !headers.is_empty() {
         builder = builder.with_custom_headers(
@@ -946,7 +795,7 @@ pub(crate) fn read_consistency_from_str(level: &str) -> Option<ReadConsistencySt
 
 /// Read an optional PreparedClientConfig attribute.
 /// Missing or None yields Ok(None); a wrongly typed value raises ValueError.
-fn get_config_opt<'py, T>(config: &Bound<'py, PyAny>, attr: &str) -> PyResult<Option<T>>
+pub(crate) fn get_config_opt<'py, T>(config: &Bound<'py, PyAny>, attr: &str) -> PyResult<Option<T>>
 where
     T: FromPyObject<'py>,
 {
@@ -1056,10 +905,10 @@ pub(crate) fn _debug_cached_account_regions(
 mod tests {
     use super::{
         apply_close, compose_cache_key, config_fingerprint_from_value,
-        connection_pool_from_settings, get_config_opt, master_key_fingerprint,
-        operation_options_from_config, read_consistency_from_str, runtime_settings_conflict,
-        runtime_settings_from_config, token_credential_fingerprint, validate_auth_inputs,
-        validate_runtime_context, RuntimeContext, RuntimeSettings, AUTH_EXCLUSIVE_ERROR,
+        get_config_opt, master_key_fingerprint,
+        operation_options_from_config, read_consistency_from_str,
+        token_credential_fingerprint, validate_auth_inputs,
+        AUTH_EXCLUSIVE_ERROR,
         AUTH_REQUIRED_ERROR,
     };
 
@@ -1174,7 +1023,7 @@ config = SimpleNamespace(fault_injection_rules=(rule,))
         AvailabilityStrategy, HedgeThreshold, HedgingStrategy, OperationOptionsBuilder,
         OperationOptionsView, ReadConsistencyStrategy,
     };
-    use pyo3::exceptions::{PyRuntimeError, PyValueError};
+    use pyo3::exceptions::PyValueError;
     use pyo3::prelude::*;
     use pyo3::types::{PyModule, PyString};
     use std::time::Duration;
@@ -1520,36 +1369,7 @@ class ExplicitNone:
     }
 
     #[test]
-    fn runtime_settings_conflict_only_when_later_explicit_value_differs() {
-        let initialized = RuntimeSettings {
-            proxy_allowed: Some(true),
-            max_connect_timeout: Some(Duration::from_secs(5)),
-            max_dataplane_request_timeout: Some(Duration::from_secs(65)),
-            max_metadata_request_timeout: Some(Duration::from_secs(65)),
-        };
-        assert!(!runtime_settings_conflict(
-            initialized,
-            RuntimeSettings::default()
-        ));
-        assert!(!runtime_settings_conflict(initialized, initialized));
-        assert!(runtime_settings_conflict(
-            initialized,
-            RuntimeSettings {
-                max_connect_timeout: Some(Duration::from_secs(4)),
-                ..initialized
-            }
-        ));
-        assert!(runtime_settings_conflict(
-            RuntimeSettings::default(),
-            RuntimeSettings {
-                proxy_allowed: Some(true),
-                ..RuntimeSettings::default()
-            }
-        ));
-    }
-
-    #[test]
-    fn runtime_settings_read_transport_timeouts_from_python_config() {
+    fn retired_client_network_settings_are_rejected_without_initialization() {
         pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
             let module = PyModule::from_code_bound(
@@ -1558,7 +1378,6 @@ class ExplicitNone:
 class Config:
     proxy_allowed = False
     connection_timeout_seconds = 1.25
-    read_timeout_seconds = 42.5
 "#,
                 "runtime_settings_test.py",
                 "runtime_settings_test",
@@ -1569,34 +1388,10 @@ class Config:
                 .and_then(|cls| cls.call0())
                 .expect("Config() should construct");
 
-            let settings =
-                runtime_settings_from_config(Some(&config)).expect("settings should parse");
-            assert_eq!(settings.proxy_allowed, Some(false));
-            assert_eq!(
-                settings.max_connect_timeout,
-                Some(Duration::from_millis(1_250))
-            );
-            assert_eq!(
-                settings.max_dataplane_request_timeout,
-                Some(Duration::from_millis(42_500))
-            );
-            assert_eq!(
-                settings.max_metadata_request_timeout,
-                Some(Duration::from_millis(42_500))
-            );
-        });
-    }
-
-    #[test]
-    fn runtime_validation_propagates_cached_initialization_failure() {
-        pyo3::prepare_freethreaded_python();
-        Python::with_gil(|py| {
-            let context = Err("driver runtime build failed: test failure".to_owned());
-            let error = validate_runtime_context(&context, RuntimeSettings::default())
-                .err()
-                .expect("cached initialization failure must propagate");
-            assert!(error.is_instance_of::<PyRuntimeError>(py));
-            assert!(error.to_string().contains("test failure"));
+            let error = super::validate_runtime_configuration(Some(&config)).unwrap_err();
+            assert!(error.is_instance_of::<PyValueError>(py));
+            assert!(error.to_string().contains("CosmosRuntime"));
+            assert!(super::validate_runtime_configuration(None).is_ok());
         });
     }
 
@@ -1688,7 +1483,6 @@ variants = [
     Config(consistency_level="Eventual"),
     Config(proxy_allowed=True),
     Config(connection_timeout_seconds=1.5),
-    Config(read_timeout_seconds=30.0),
     Config(fault_injection_rules=(SimpleNamespace(
         id="rule", operation_type="CreateItem", status_code=502, sub_status=0,
         container_id=None, region=None, delay_ms=0, probability=1.0,
@@ -1712,97 +1506,6 @@ variants = [
             assert_ne!(identity, token_identity);
             assert_eq!(token_identity, super::driver_identity(url, None, None, Some(&credential)).unwrap());
         });
-    }
-
-    #[test]
-    fn runtime_validation_checks_successfully_initialized_settings() {
-        pyo3::prepare_freethreaded_python();
-        let tokio_rt = pyo3_async_runtimes::tokio::get_runtime();
-        let driver_runtime = tokio_rt
-            .block_on(azure_data_cosmos_driver::driver::CosmosDriverRuntime::builder().build())
-            .expect("local driver runtime should build without an account");
-        let settings = RuntimeSettings {
-            proxy_allowed: Some(true),
-            max_connect_timeout: Some(Duration::from_secs(2)),
-            ..RuntimeSettings::default()
-        };
-        let context = Ok(RuntimeContext {
-            tokio_rt,
-            driver_runtime,
-            settings,
-        });
-        Python::with_gil(|py| {
-            assert!(validate_runtime_context(&context, RuntimeSettings::default()).is_ok());
-            assert!(validate_runtime_context(&context, settings).is_ok());
-            let error = validate_runtime_context(
-                &context,
-                RuntimeSettings {
-                    max_connect_timeout: Some(Duration::from_secs(5)),
-                    ..settings
-                },
-            )
-            .err()
-            .expect("different initialized timeout must fail");
-            assert!(error.is_instance_of::<PyValueError>(py));
-            assert!(error.to_string().contains("process-global"));
-        });
-    }
-
-    #[test]
-    fn runtime_settings_compare_timeouts_at_native_nanosecond_precision() {
-        pyo3::prepare_freethreaded_python();
-        Python::with_gil(|py| {
-            let module = PyModule::from_code_bound(
-                py,
-                r#"
-class Config:
-    proxy_allowed = None
-    connection_timeout_seconds = 2.123456789
-    read_timeout_seconds = 25.123456789
-"#,
-                "runtime_precision_test.py",
-                "runtime_precision_test",
-            )
-            .expect("module must compile");
-            let config = module.getattr("Config").unwrap().call0().unwrap();
-            let initialized = runtime_settings_from_config(Some(&config)).unwrap();
-            config
-                .setattr("connection_timeout_seconds", 2.1234567891)
-                .unwrap();
-            config
-                .setattr("read_timeout_seconds", 25.1234567891)
-                .unwrap();
-            let equivalent = runtime_settings_from_config(Some(&config)).unwrap();
-            assert!(!runtime_settings_conflict(initialized, equivalent));
-            config
-                .setattr("connection_timeout_seconds", 2.1234567896)
-                .unwrap();
-            let different = runtime_settings_from_config(Some(&config)).unwrap();
-            assert!(runtime_settings_conflict(initialized, different));
-        });
-    }
-
-    #[test]
-    fn runtime_settings_build_connection_pool_timeout_caps() {
-        let settings = RuntimeSettings {
-            proxy_allowed: Some(false),
-            max_connect_timeout: Some(Duration::from_millis(1_250)),
-            max_dataplane_request_timeout: Some(Duration::from_millis(42_500)),
-            max_metadata_request_timeout: Some(Duration::from_millis(42_500)),
-        };
-        let pool = connection_pool_from_settings(settings)
-            .expect("connection pool settings should be valid")
-            .expect("non-default settings should build a pool");
-        assert!(!pool.proxy_allowed());
-        assert_eq!(pool.max_connect_timeout(), Duration::from_millis(1_250));
-        assert_eq!(
-            pool.max_dataplane_request_timeout(),
-            Duration::from_millis(42_500)
-        );
-        assert_eq!(
-            pool.max_metadata_request_timeout(),
-            Duration::from_millis(42_500)
-        );
     }
 
     #[test]
@@ -2019,9 +1722,8 @@ class Config:
             let sender = sender.clone();
             workers.push(std::thread::spawn(move || {
                 barrier.wait();
-                let address = Python::with_gil(|py| {
-                    super::runtime_context(py, RuntimeSettings::default())
-                        .unwrap()
+                let address = Python::with_gil(|_py| {
+                    super::runtime_context()
                         .tokio_rt as *const tokio::runtime::Runtime as usize
                 });
                 sender.send(address).unwrap();
@@ -2042,12 +1744,89 @@ class Config:
     #[test]
     fn driver_work_uses_the_async_bridge_executor() {
         pyo3::prepare_freethreaded_python();
-        Python::with_gil(|py| {
-            let context = super::runtime_context(py, RuntimeSettings::default()).unwrap();
+        Python::with_gil(|_py| {
+            let context = super::runtime_context();
             assert!(std::ptr::eq(
                 context.tokio_rt,
                 pyo3_async_runtimes::tokio::get_runtime()
             ));
+        });
+    }
+
+    #[test]
+    fn selected_runtime_scopes_driver_reuse_and_survives_python_owner_release() {
+        use std::sync::Arc;
+        use url::Url;
+        use azure_data_cosmos_driver::in_memory_emulator::{
+            InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion,
+        };
+        use crate::driver_runtime::RuntimeHandle;
+
+        pyo3::prepare_freethreaded_python();
+        let endpoint = Url::parse("https://runtime-ownership.emulator.local").unwrap();
+        let config = VirtualAccountConfig::new(vec![VirtualRegion::new(
+            "East US", endpoint.clone(),
+        )]).unwrap();
+        let emulator = Arc::new(InMemoryEmulatorHttpClient::new(config));
+        let executor = super::runtime_context().tokio_rt;
+        let first = executor.block_on(emulator.runtime_builder().build()).unwrap();
+        let second = executor.block_on(emulator.runtime_builder().build()).unwrap();
+        let weak_first = Arc::downgrade(&first);
+        Python::with_gil(|py| {
+            let first = Py::new(py, RuntimeHandle::new(first)).unwrap();
+            let second = Py::new(py, RuntimeHandle::new(second)).unwrap();
+            let acquire = |runtime: &Py<RuntimeHandle>| {
+                super::acquire_driver_handle(
+                    py, endpoint.as_str(), Some("ZW11bGF0b3Ita2V5"), None, None,
+                    Some(runtime.borrow(py)),
+                ).unwrap()
+            };
+            let a = acquire(&first);
+            let b = acquire(&first);
+            let c = acquire(&second);
+            assert_eq!(a, b);
+            assert_ne!(a, c);
+            assert_eq!(super::drivers().read().get(&a).unwrap().refcount, 2);
+            drop(first);
+            assert!(weak_first.upgrade().is_some());
+            let operation_driver = Arc::clone(&super::drivers().read().get(&a).unwrap().driver);
+            super::release_driver_handle(&a).unwrap();
+            assert!(super::drivers().read().contains_key(&b));
+            super::release_driver_handle(&b).unwrap();
+            assert!(weak_first.upgrade().is_some());
+            drop(operation_driver);
+            assert!(weak_first.upgrade().is_none());
+            super::release_driver_handle(&c).unwrap();
+        });
+    }
+
+    #[test]
+    fn client_overall_deadline_is_distinct_from_connection_settings() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let module = PyModule::from_code_bound(py,
+                "from types import SimpleNamespace\nconfig = SimpleNamespace(operation_timeout_seconds=30)",
+                "timeout_config.py", "timeout_config").unwrap();
+            let config = module.getattr("config").unwrap();
+            let options = operation_options_from_config(Some(&config)).unwrap();
+            assert_eq!(options.end_to_end_latency_policy.as_ref().unwrap().timeout(), Duration::from_secs(30));
+            let account = std::sync::Arc::new(options);
+            let operation = OperationOptionsBuilder::new()
+                .with_end_to_end_latency_policy(super::EndToEndOperationLatencyPolicy::new(Duration::from_secs(2)))
+                .build();
+            for (request, expected) in [(None, 30), (Some(&operation), 2), (None, 30)] {
+                let view = OperationOptionsView::new(None, None, Some(account.clone()), request);
+                assert_eq!(view.end_to_end_latency_policy().unwrap().timeout(), Duration::from_secs(expected));
+            }
+            let first_identity = super::driver_identity(
+                "https://timeout.invalid", Some("key"), Some(&config), None).unwrap();
+            config.setattr("operation_timeout_seconds", 2).unwrap();
+            assert_ne!(first_identity, super::driver_identity(
+                "https://timeout.invalid", Some("key"), Some(&config), None).unwrap());
+            for invalid in [0.5, f64::NAN, f64::INFINITY] {
+                config.setattr("operation_timeout_seconds", invalid).unwrap();
+                assert!(operation_options_from_config(Some(&config)).is_err());
+            }
         });
     }
 }

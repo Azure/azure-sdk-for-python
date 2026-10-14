@@ -33,6 +33,7 @@ from .credentials import resolved_credential
 from .legacy import LEGACY_BACKEND
 from .binding_adapter import BindingAdapter
 from .transport_settings import reject_unsupported_transport_settings
+from ..runtime import CosmosRuntime
 
 _BackendT = TypeVar("_BackendT")
 _LegacyBackendT = TypeVar("_LegacyBackendT")
@@ -75,6 +76,8 @@ def _make_backend(
     legacy_backend: _LegacyBackendT,
     url: Optional[str] = None,
     credential: Any = None,
+    runtime: Optional[CosmosRuntime] = None,
+    operation_timeout: Optional[float] = None,
     preferred_locations: Optional[Sequence[str]] = None,
     excluded_locations: Optional[Sequence[str]] = None,
     throttling_max_retry_count: Optional[int] = None,
@@ -84,7 +87,6 @@ def _make_backend(
     consistency_level: Optional[str] = None,
     proxy_allowed: Optional[bool] = None,
     connection_timeout_seconds: Optional[float] = None,
-    read_timeout_seconds: Optional[float] = None,
     fault_injection_rules: Any = None,
     headers: Optional[Mapping[str, str]] = None,
     proxy_config: Any = None,
@@ -122,6 +124,7 @@ def _make_backend(
                 endpoint=url,
                 master_key=master_key,
                 token_credential=token_credential,
+                runtime=runtime,
                 client_config=build_client_config(
                     preferred_locations,
                     excluded_locations=excluded_locations,
@@ -132,11 +135,14 @@ def _make_backend(
                     consistency_level=consistency_level,
                     proxy_allowed=proxy_allowed,
                     connection_timeout_seconds=connection_timeout_seconds,
-                    read_timeout_seconds=read_timeout_seconds,
+
                     fault_injection_rules=fault_injection_rules,
                     headers=headers,
+                    operation_timeout_seconds=operation_timeout,
                 ),
             )
+    if runtime is not None:
+        raise ValueError("runtime is supported only by the Rust backend.")
     return legacy_backend
 
 
@@ -145,6 +151,8 @@ def make_backend(
     *,
     url: Optional[str] = None,
     credential: Any = None,
+    runtime: Optional[CosmosRuntime] = None,
+    operation_timeout: Optional[float] = None,
     preferred_locations: Optional[Sequence[str]] = None,
     excluded_locations: Optional[Sequence[str]] = None,
     throttling_max_retry_count: Optional[int] = None,
@@ -154,7 +162,6 @@ def make_backend(
     consistency_level: Optional[str] = None,
     proxy_allowed: Optional[bool] = None,
     connection_timeout_seconds: Optional[float] = None,
-    read_timeout_seconds: Optional[float] = None,
     fault_injection_rules: Any = None,
     headers: Optional[Mapping[str, str]] = None,
     proxy_config: Any = None,
@@ -171,6 +178,8 @@ def make_backend(
         legacy_backend=LEGACY_BACKEND,
         url=url,
         credential=credential,
+        runtime=runtime,
+        operation_timeout=operation_timeout,
         preferred_locations=preferred_locations,
         excluded_locations=excluded_locations,
         throttling_max_retry_count=throttling_max_retry_count,
@@ -180,7 +189,7 @@ def make_backend(
         consistency_level=consistency_level,
         proxy_allowed=proxy_allowed,
         connection_timeout_seconds=connection_timeout_seconds,
-        read_timeout_seconds=read_timeout_seconds,
+
         fault_injection_rules=fault_injection_rules,
         headers=headers,
         proxy_config=proxy_config,

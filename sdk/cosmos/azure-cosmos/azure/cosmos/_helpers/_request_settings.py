@@ -26,6 +26,7 @@ from .._backend.request_settings import (
     ResourceSettings,
     reject_trigger_header,
 )
+from .._backend.capabilities import reject_removed_options
 from .._constants import _Constants as Constants
 
 
@@ -85,7 +86,7 @@ def compose_options_from_kwargs(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     Handles only the kwarg-name -> option-key translation. Does not
     stamp timing fields, does not handle ``etag`` / ``match_condition``
     (``compose_item_options`` handles those), and does not
-    pull ``read_timeout`` / ``timeout``.
+    pull ``timeout``.
 
     A pre-existing ``request_options`` dict in ``kwargs`` is consumed
     as the starting point; kwarg shortcuts override entries from it.
@@ -96,6 +97,7 @@ def compose_options_from_kwargs(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     :returns: A new dict keyed by internal option-key names.
     :rtype: Dict[str, Any]
     """
+    reject_removed_options(kwargs)
     options: Dict[str, Any] = dict(kwargs.pop("request_options", {}) or {})
     for kwarg_name, option_key in COMMON_OPTIONS.items():
         if kwarg_name in kwargs:
@@ -141,11 +143,12 @@ def compose_item_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     are removed from kwargs itself; callers must supply a working copy when
     their original dictionary must remain unchanged.
     """
+    reject_removed_options(kwargs)
     feed_options = kwargs.pop("feed_options", {})
     if "request_options" not in kwargs:
         kwargs["request_options"] = feed_options
     options = compose_options_from_kwargs(kwargs)
-    for key in (Constants.Kwargs.READ_TIMEOUT, Constants.Kwargs.TIMEOUT):
+    for key in (Constants.Kwargs.TIMEOUT,):
         if key in kwargs:
             options[key] = kwargs[key]
     if_match, if_none_match = get_match_headers(kwargs)
@@ -210,7 +213,7 @@ _TRUTHY_GATED_OPTION_KEYS = frozenset(
 # Legacy pipeline bookkeeping is not a service setting. Reused build_options
 # dictionaries can carry these keys into point preparation.
 #   * ``operationStartTime`` -- pipeline timing bookkeeping (``_base.build_options``).
-#   * ``timeoutScope`` / ``timeout`` / ``read_timeout`` -- legacy timeout policy
+#   * ``timeoutScope`` / ``timeout`` -- legacy timeout policy
 #     inputs; supported durations travel as settings.timeout_seconds.
 #     Item/page deadlines are supplied separately to execution.
 #   * ``retry_write`` -- how many times to retry a non-idempotent write. It is a
@@ -224,7 +227,6 @@ _NON_WIRE_INTERNAL_OPTION_KEYS = frozenset(
         Constants.OperationStartTime,
         Constants.TimeoutScope,
         Constants.Kwargs.TIMEOUT,
-        Constants.Kwargs.READ_TIMEOUT,
         Constants.Kwargs.RETRY_WRITE,
     }
 )
@@ -459,6 +461,7 @@ def build_request_headers_and_settings(
     Explicit headers retain their existing precedence; an unknown option raises
     rather than silently disappearing.
     """
+    reject_removed_options(options)
     headers: dict[str, str] = {}
     groups: dict[str, dict[str, Any]] = {
         "": {},
@@ -588,6 +591,8 @@ def account_request_settings(
     options: Mapping[str, Any],
     kwargs: Optional[Mapping[str, Any]],
 ) -> tuple[dict[str, str], RequestSettings]:
+    reject_removed_options(options)
+    reject_removed_options(kwargs or {})
     normalized = dict(options)
     normalized.pop("timeout", None)
     timeout = (kwargs or {}).get("timeout")

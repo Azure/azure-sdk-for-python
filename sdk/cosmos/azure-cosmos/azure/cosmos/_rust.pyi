@@ -7,15 +7,21 @@ run the operations. _ItemFeedCursor is the binding's feed cursor, not a Python
 page iterator. Other binding exports remain typed as Any through __getattr__.
 """
 
-from typing import Any
+from typing import Any, Awaitable
+from .runtime import ConnectionPoolOptions
 
 def _validate_runtime_configuration(config: Any = None) -> None:
-    """Check requested CosmosDriverRuntime settings without initializing it.
-
-    A completed initialization failure is raised. Successful validation does
-    not reserve settings; driver acquisition checks them again.
-    """
+    """Reject retired client-level network settings without initializing a runtime."""
     ...
+
+class _CosmosRuntime:
+    @property
+    def id(self) -> int: ...
+    @property
+    def timeouts(self) -> tuple[float, float, float]: ...
+
+def _create_runtime(options: ConnectionPoolOptions | None = None) -> _CosmosRuntime: ...
+def _create_runtime_async(options: ConnectionPoolOptions | None = None) -> Awaitable[_CosmosRuntime]: ...
 
 class _ItemFeedCursor:
     """Retain progress between page fetches made through the binding."""

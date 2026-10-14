@@ -179,7 +179,6 @@ def test_get_throughput_preserves_inputs_and_callback_result(fixed_throughput_da
 
 
 @pytest.mark.parametrize("options", [
-    {"read_timeout": 2},
     {"availability_strategy": {"type": "hedging"}},
     {"initial_headers": {"Accept": "unsupported"}},
 ])

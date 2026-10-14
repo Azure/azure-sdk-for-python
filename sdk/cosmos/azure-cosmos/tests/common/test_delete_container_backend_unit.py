@@ -170,7 +170,7 @@ def test_delete_accepts_target_forms_and_returns_none(delete_case, legacy, targe
     elif target_kind == "other_database_proxy":
         target = type(case.database)(case.connection, "other").get_container_client("c1")
     hook = MagicMock()
-    assert _delete(case, target, response_hook=hook, read_timeout=None) is None
+    assert _delete(case, target, response_hook=hook) is None
     hook.assert_called_once()
     assert hook.call_args.args[1] is None
     case.connection.ReadContainer.assert_not_called()
@@ -179,7 +179,6 @@ def test_delete_accepts_target_forms_and_returns_none(delete_case, legacy, targe
         case.backend.execute.assert_not_called()
         call = case.connection.DeleteContainer.call_args
         assert call.args == ("dbs/db1/colls/c1",)
-        assert "read_timeout" not in call.kwargs
     else:
         case.connection.DeleteContainer.assert_not_called()
         prepared = case.backend.execute.call_args.args[0]
@@ -218,21 +217,6 @@ def test_delete_rejects_obsolete_options(delete_case, legacy, option, value):
     _assert_no_dispatch(case)
 
 
-@pytest.mark.parametrize("legacy", [False, True])
-@pytest.mark.parametrize("value", [False, 0, 0.5, 2, "invalid"])
-def test_delete_rejects_socket_timeout(delete_case, legacy, value):
-    """The socket-level ``read_timeout`` is not accepted per call, on either engine.
-
-    False, zero, half a second, two seconds, and a string all raise ``TypeError``
-    naming the option, so the error points at exactly what to remove. Nothing is
-    deleted.
-    """
-    case = delete_case
-    if legacy:
-        case.connection._backend = case.legacy_backend
-    with pytest.raises(TypeError, match="read_timeout"):
-        _delete(case, "c1", read_timeout=value)
-    _assert_no_dispatch(case)
 
 
 @pytest.mark.parametrize("legacy", [False, True])

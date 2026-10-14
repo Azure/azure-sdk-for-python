@@ -328,7 +328,6 @@ def test_resume_and_independent_pagers_ignore_global_headers(feed):
         ({"timeout": 0}, ValueError),
         ({"timeout": True}, ValueError),
         ({"response_hook": 4}, TypeError),
-        ({"read_timeout": 2}, NotImplementedError),
         ({"availability_strategy": False}, NotImplementedError),
         ({"feed_range": {}}, NotImplementedError),
         ({"request_options": {"partitionKeyRangeId": "0"}}, NotImplementedError),
@@ -348,7 +347,7 @@ def test_invalid_or_unsupported_settings_fail_without_dispatch(feed, kwargs, err
       that is zero, ``nan``, or a bool; and a legacy continuation passed as
       ``continuation``.
     * ``NotImplementedError`` for settings the Rust path genuinely does not
-      support yet -- ``read_timeout``, ``availability_strategy``,
+      support yet -- ``availability_strategy``,
       ``feed_range``, a pinned partition key range, or an attempt to override
       the authorization header.
 
@@ -734,8 +733,7 @@ def test_legacy_remains_lazy_pinned_and_uses_per_pager_bookmarks(legacy_feed):
     """The legacy path keeps the same laziness, isolation and accounting guarantees.
 
     Building the pager fetches nothing and does not even load container
-    metadata. Settings the Rust path rejects -- ``read_timeout`` and
-    ``availability_strategy`` -- are accepted here, since legacy supports them.
+    metadata. Settings the Rust path rejects -- ``availability_strategy`` -- are accepted here, since legacy supports them.
 
     Paging then walks three fetches to produce two public pages, the middle
     one being empty. The continuation token comes from the pager's own state:
@@ -751,7 +749,6 @@ def test_legacy_remains_lazy_pinned_and_uses_per_pager_bookmarks(legacy_feed):
     options = {"maxItemCount": 1}
     pager = legacy_feed.proxy.read_all_items(
         request_options=options,
-        read_timeout=2,
         availability_strategy=False,
         response_hook=hook,
     )

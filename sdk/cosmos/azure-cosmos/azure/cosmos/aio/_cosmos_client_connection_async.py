@@ -2731,11 +2731,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = legacy_deadline_options(options, deadline)
             kwargs["timeout"] = options["timeout"]
             kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
-        read_timeout = options.get("read_timeout")
-        if read_timeout is not None:
-            # we currently have a gap where kwargs are not getting passed correctly down the pipeline. In order to make
-            # absolute time out work, we are passing read_timeout via kwargs as a temporary fix
-            kwargs.setdefault("read_timeout", read_timeout)
 
         operation_start_time = options.get(Constants.OperationStartTime)
         if operation_start_time is not None:

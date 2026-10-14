@@ -133,7 +133,7 @@ def legacy_item_metadata_options(options: Dict[str, Any]) -> Dict[str, Any]:
     """Do not apply item conditions, hooks, or partition keys to the metadata GET."""
     return {
         key: options[key] for key in (
-            Constants.Kwargs.TIMEOUT, Constants.Kwargs.READ_TIMEOUT,
+            Constants.Kwargs.TIMEOUT,
             Constants.OperationStartTime, "excludedLocations",
         ) if key in options
     }
@@ -198,7 +198,7 @@ class LegacyItemHelper:
                 metadata_options = legacy_item_metadata_options(options)
                 properties = self.client_connection.ReadContainer(
                     link, options=metadata_options,
-                    **{key: metadata_options[key] for key in ("timeout", "read_timeout") if key in metadata_options},
+                    **{key: metadata_options[key] for key in ("timeout",) if key in metadata_options},
                 )
                 self.client_connection._set_container_properties_cache(
                     link, _build_properties_cache(properties, link)

@@ -168,7 +168,7 @@ def test_recreated_container_uses_new_offer(resources, asynchronous):
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("options", [
-    {"read_timeout": 2}, {"availability_strategy": True}, {"initial_headers": {"Accept": "unsupported"}},
+    {"availability_strategy": True}, {"initial_headers": {"Accept": "unsupported"}},
 ])
 def test_unsupported_input_never_enters_binding_or_legacy(monkeypatch, asynchronous, options):
     def configure(client):

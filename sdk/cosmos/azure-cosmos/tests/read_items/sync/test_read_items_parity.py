@@ -142,12 +142,3 @@ def test_L6_read_items_custom_initial_headers(seeded):
     _run_with_options(seeded["container_id"], items,
                       description="[L6] read_items initial_headers (custom)",
                       read_items_kwargs={"initial_headers": {"x-trace-id": "read-items-parity"}})
-
-
-def test_L7_read_items_read_timeout_falls_back_to_legacy(seeded):
-    """read_timeout keeps the point leg on legacy (rust has no per-request read
-    timeout); the returned items still match legacy."""
-    items = [seeded["seeded"][-1]]
-    _run_with_options(seeded["container_id"], items,
-                      description="[L7] read_items read_timeout (legacy fallback)",
-                      read_items_kwargs={"read_timeout": 30})

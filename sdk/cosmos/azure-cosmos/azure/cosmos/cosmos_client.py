@@ -33,7 +33,7 @@ This module is Python wrapper code, not the binding or the Rust driver.
 """
 
 import warnings
-from ._backend.capabilities import reject_rust_arguments, reject_unsupported_rust_arguments
+from ._backend.capabilities import reject_removed_options, reject_rust_arguments, prepare_operation_kwargs
 import logging
 from copy import copy
 from typing import Any, Mapping, Optional, Union, Callable, overload, Literal, TYPE_CHECKING
@@ -51,7 +51,8 @@ from ._helpers._item_context import ItemClientContext, ItemClientDefaults
 from ._utils import _validate_enable_compact_utf8_item_writes
 from ._backend.errors import raise_account_read_unsupported
 from ._backend.factory import make_backend, resolve_backend_name
-from ._backend.transport_settings import resolve_client_transport_timeouts
+from ._backend.transport_settings import resolve_client_connection_timeout, validate_client_runtime_settings
+from .runtime import CosmosRuntime
 from ._base import build_options
 from ._helpers._request_database import prepare_create_database_options
 from ._helpers._list_databases import list_databases as _list_databases
@@ -106,8 +107,6 @@ def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
         policy.RequestTimeout = kwargs.pop('request_timeout') / 1000.0
     else:
         policy.RequestTimeout = kwargs.pop('connection_timeout', policy.RequestTimeout)
-
-    policy.ReadTimeout = kwargs.pop(Constants.Kwargs.READ_TIMEOUT, policy.ReadTimeout)
 
     policy.ConnectionMode = kwargs.pop('connection_mode', policy.ConnectionMode)
     policy.ProxyConfiguration = copy(kwargs.pop('proxy_config', policy.ProxyConfiguration))
@@ -192,17 +191,15 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :type credential: Union[str, dict[str, str], ~azure.core.credentials.TokenCredential]
     :param str consistency_level: Consistency level to use for the session. The default value is None (Account level).
         More on consistency levels and possible values: https://aka.ms/cosmos-consistency-levels
-    :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
-    :keyword int connection_timeout: The HTTP request timeout in seconds.
-    :keyword float read_timeout: The socket read timeout in seconds. This is the time the client will wait for a
-        response from the server after a connection has been established. If not specified, the default value of
-        65 seconds is used. This can be overridden at the request level.
+    :keyword float timeout: Default overall operation budget in seconds, including retries.
+        Rust requires a finite value >= 1 and < 2**64; individual calls may override it.
+    :keyword runtime: An initialized Rust runtime. Omit to use the default process-wide singleton.
+        Configure connection and data/metadata HTTP-request timeouts on its ConnectionPoolOptions.
+    :paramtype runtime: ~azure.cosmos.CosmosRuntime
+    :keyword float connection_timeout: Legacy-only connection timeout. Rust clients require runtime configuration.
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
     :keyword proxy_config: Connection proxy configuration.
     :paramtype proxy_config: ~azure.cosmos.ProxyConfiguration
-    :keyword bool proxy_allowed: Rust backend only. When set with ``_backend="rust"``,
-        allows (``True``) or disables (``False``) proxy usage from environment
-        variables (for example ``HTTPS_PROXY`` / ``HTTP_PROXY``).
     :keyword ssl_config: Connection SSL configuration.
     :paramtype ssl_config: ~azure.cosmos.SSLConfiguration
     :keyword bool connection_verify: Whether to verify the connection, default value is True.
@@ -222,7 +219,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         geo-replicated database accounts. (Default: True)
     :keyword ~azure.cosmos.documents.ConnectionPolicy connection_policy:
         Grouped client connection settings. Supported preferred/excluded regions,
-        throttle retry limits, and timeouts also apply to the Rust backend.
+        and throttle retry limits also apply to the Rust backend. Explicit
+        connection/read timeout overrides require migration to the runtime API.
         Individual keyword settings override grouped values; zero retry limits
         are honored. The supplied policy is not modified. Unsupported Rust
         proxy/TLS settings are rejected even when supplied inside this object.
@@ -266,6 +264,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         url: str,
         credential: Union[TokenCredential, str, dict[str, Any]],
         consistency_level: Optional[str] = None,
+        *,
+        runtime: Optional[CosmosRuntime] = None,
         **kwargs
     ) -> None:
         """Prepare this client from the supplied account address and credential.
@@ -277,16 +277,18 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         If construction fails, the customer app does not receive a usable client.
         """
         validate_credential(credential)
+        reject_removed_options(kwargs)
         kwargs = resolve_connection_policy_kwargs(kwargs)
         # Choose which backend this client will use. A ``_backend=`` argument
         # wins; otherwise the COSMOS_BACKEND environment variable decides;
         # otherwise it falls back to core-python.
         backend_choice = resolve_backend_name(kwargs.pop("_backend", None))
         if backend_choice != "core-python":
+            validate_client_runtime_settings(dict(kwargs, runtime=runtime))
             reject_rust_arguments(kwargs)
         fault_injection_rules = kwargs.pop("_fault_injection_rules", None)
         proxy_allowed = kwargs.pop("proxy_allowed", None)
-        connection_timeout, read_timeout = resolve_client_transport_timeouts(kwargs)
+        connection_timeout = resolve_client_connection_timeout(kwargs)
         # These startup settings are read, not removed, so that they are still
         # in kwargs when the legacy connection is built further down. Both need
         # them.
@@ -300,6 +302,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             backend_choice,
             url=url,
             credential=credential,
+            runtime=runtime,
+            operation_timeout=kwargs.get("timeout"),
             preferred_locations=kwargs.get("preferred_locations"),
             excluded_locations=kwargs.get("excluded_locations"),
             throttling_max_retry_count=kwargs.get("retry_throttle_total"),
@@ -309,7 +313,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             consistency_level=consistency_level,
             proxy_allowed=proxy_allowed,
             connection_timeout_seconds=connection_timeout,
-            read_timeout_seconds=read_timeout,
             fault_injection_rules=fault_injection_rules,
             headers=kwargs.get("headers"),
             # Proxy and TLS settings, which the Rust path cannot apply yet.
@@ -326,6 +329,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         self._adapter: CosmosBackend = chosen
         self._item_context: ItemClientContext[CosmosBackend] = ItemClientContext(
             chosen, ItemClientDefaults(
+                operation_timeout_seconds=kwargs.get("timeout") if chosen.name != "core-python" else None,
                 priority=kwargs.get("priority"),
                 throughput_bucket=kwargs.get("throughput_bucket"),
                 hedging_threshold_ms=(
@@ -582,7 +586,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 :dedent: 0
                 :caption: Create a database in the Cosmos DB account:
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
         return_properties = kwargs.pop("return_properties", False)
 
         response_hook = kwargs.pop("response_hook", None)
@@ -747,13 +751,13 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         creation requests no shared database throughput; an existing database's
         allocation is never changed.
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
         return_properties = kwargs.pop("return_properties", False)
 
         response_hook = kwargs.pop("response_hook", None)
         request_options, deadline = prepare_create_database_options(
             kwargs, offer_throughput,
-            operation_name="create_database_if_not_exists", allow_read_timeout=True,
+            operation_name="create_database_if_not_exists",
             defaults=self._item_context.defaults,
         )
         database = {"id": id}
@@ -821,7 +825,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: An Iterable of database properties (dicts).
         :rtype: ItemPaged[dict[str, Any]]
 
-        Per-call ``read_timeout`` is not supported; configure it on ``CosmosClient``.
         Unsupported Rust page options raise during iteration instead of using
         the legacy transport. All settings are keyword-only. ``session_token``,
         ``populate_query_metrics``, ``availability_strategy``, ``no_response``,
@@ -839,7 +842,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         A non-callable hook raises ``TypeError``. Hook iteration-stop exceptions
         become ``RuntimeError`` rather than ending the listing silently.
         """
-        reject_unsupported_rust_arguments(self, kwargs, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, headers=initial_headers)
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if initial_headers is not None:
@@ -897,7 +900,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         ``session_token``, ``populate_query_metrics``, ``availability_strategy``,
         ``enable_cross_partition_query``, ``no_response``, and ``content_type`` are
         rejected with ``TypeError``, including explicit ``None``/``False`` and nested equivalents.
-        Configure ``read_timeout`` on ``CosmosClient``, not per call.
         Unsupported Rust page options fail without switching to the legacy transport.
 
         Each pager owns its continuation. Hook failures do not replay pages; hook
@@ -906,7 +908,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         Synchronous setup and callbacks cannot be forcibly interrupted; cancellation
         cleanup can delay return beyond the timeout.
         """
-        reject_unsupported_rust_arguments(self, kwargs, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, headers=initial_headers)
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         if throughput_bucket is not None:
@@ -948,7 +950,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         ``False``. Conditional request arguments remain supported and are validated
         before dispatch. Unsupported Rust requests raise without using legacy transport.
         """
-        reject_unsupported_rust_arguments(self, kwargs, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, headers=initial_headers)
         for option in ("session_token", "populate_query_metrics"):
             if option in kwargs:
                 raise TypeError(f"delete_database() does not support the '{option}' keyword argument")
@@ -982,7 +984,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
         :rtype: ~azure.cosmos.DatabaseAccount
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
         # Reading account properties has not moved to the Rust path yet. On a
         # Rust-backed client, raise rather than quietly falling back to the
         # legacy connection, which would hide that this is still missing.

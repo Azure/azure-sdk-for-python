@@ -82,7 +82,7 @@ def test_internal_option_keys_are_not_emitted_as_headers():
     This is the ``read_items`` shape: its single-item legs route through the
     point-read prep with the batch's query / ``build_options`` options dict,
     which carries pipeline-internal keys (``operationStartTime``,
-    ``timeoutScope``, ``timeout``, ``read_timeout``, ``retry_write``).
+    ``timeoutScope``, ``timeout``, ``retry_write``).
     The Rust prep's catch-all would otherwise copy them through as bogus headers
     (silently dropped by the binding in production, a hard error under
     ``COSMOS_WIRE_STRICT``).
@@ -99,7 +99,6 @@ def test_internal_option_keys_are_not_emitted_as_headers():
         "operationStartTime": 1784323061.0,
         "timeoutScope": "operation",
         "timeout": 5,
-        "read_timeout": 3,
         "retry_write": 3,
         # Real customer options that must still reach the wire.
         "enableCrossPartitionQuery": True,
@@ -112,7 +111,6 @@ def test_internal_option_keys_are_not_emitted_as_headers():
         "operationStartTime",
         "timeoutScope",
         "timeout",
-        "read_timeout",
         "retry_write",
     ):
         assert internal_key not in headers

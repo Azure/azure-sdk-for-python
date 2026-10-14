@@ -329,7 +329,7 @@ def test_failed_constructor_unwinds_backend(module, monkeypatch, stage):
         return backend
 
     monkeypatch.setattr(module, factory_name, capture)
-    kwargs = {"proxy_allowed": False, "connection_timeout": 2, "read_timeout": 25}
+    kwargs = {"timeout": 25}
     error = RuntimeError("startup failed")
     if stage == "encoding":
         kwargs["enable_compact_utf8_item_writes"] = "invalid"
@@ -345,8 +345,7 @@ def test_failed_constructor_unwinds_backend(module, monkeypatch, stage):
     assert retained[0]._closing
     replacement = sync_backend.BindingAdapter(
         "https://startup.invalid", master_key="ZmFrZQ==",
-        client_config=PreparedClientConfig(proxy_allowed=True, connection_timeout_seconds=3,
-                                          read_timeout_seconds=30),
+        client_config=PreparedClientConfig(operation_timeout_seconds=30),
     )
     close_backend(retained[0])
     replacement.close()
@@ -357,11 +356,11 @@ def test_close_does_not_validate_or_replay_runtime_settings(monkeypatch):
     monkeypatch.setattr("azure.cosmos._rust._validate_runtime_configuration", validator)
     first = sync_backend.BindingAdapter(
         "https://first.invalid", master_key="key",
-        client_config=PreparedClientConfig(read_timeout_seconds=20),
+        client_config=PreparedClientConfig(operation_timeout_seconds=20),
     )
     other = sync_backend.BindingAdapter(
         "https://other.invalid", master_key="key",
-        client_config=PreparedClientConfig(proxy_allowed=True, read_timeout_seconds=30),
+        client_config=PreparedClientConfig(operation_timeout_seconds=30),
     )
     assert validator.call_count == 2
     validator.reset_mock()
@@ -384,7 +383,7 @@ def test_close_during_initialization_releases_late_handle(monkeypatch):
     monkeypatch.setattr(async_backend, "_rust_module", binding)
     backend = async_backend.AsyncBindingAdapter(
         "https://account.invalid", master_key="key",
-        client_config=PreparedClientConfig(proxy_allowed=True),
+        client_config=PreparedClientConfig(operation_timeout_seconds=30),
     )
     with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
         future = executor.submit(backend._acquire_driver_handle)
@@ -393,7 +392,7 @@ def test_close_during_initialization_releases_late_handle(monkeypatch):
             close_backend(backend)
             replacement = sync_backend.BindingAdapter(
                 "https://account.invalid", master_key="key",
-                client_config=PreparedClientConfig(proxy_allowed=False),
+                client_config=PreparedClientConfig(operation_timeout_seconds=20),
             )
             replacement.close()
         finally:
@@ -422,7 +421,6 @@ def test_failed_driver_build_leaves_runtime_validation_to_binding(monkeypatch):
     for config in (
         PreparedClientConfig(proxy_allowed=True),
         PreparedClientConfig(connection_timeout_seconds=3),
-        PreparedClientConfig(read_timeout_seconds=30),
     ):
         with pytest.raises(ValueError, match="runtime settings already initialized"):
             sync_backend.BindingAdapter("https://other.invalid", master_key="key", client_config=config)
@@ -509,7 +507,7 @@ def test_async_entry_failure_closes_all_resources(monkeypatch, cancelled, backen
     connection._close_pipeline = connection.pipeline_client.__aexit__
     monkeypatch.setattr(async_client, "CosmosClientConnection", MagicMock(return_value=connection))
     client = async_client.CosmosClient(
-        "https://account.invalid", "ZmFrZQ==", _backend=backend_name, proxy_allowed=False
+        "https://account.invalid", "ZmFrZQ==", _backend=backend_name
     )
     if backend_name == "rust":
         monkeypatch.setattr(client._adapter, "initialize", AsyncMock(side_effect=error))
@@ -695,8 +693,8 @@ def test_client_and_proxies_share_the_adapter_field(module, backend_name):
         close_backend(client._adapter)
 
 
-def test_native_validation_does_not_initialize_or_reserve_runtime():
-    """A fresh process proves that the real export permits different unused settings."""
+def test_native_validation_does_not_initialize_default_runtime():
+    """Client defaults do not reserve or initialize the singleton."""
     code = """
 from azure.cosmos import _rust
 from azure.cosmos._backend.contracts import PreparedClientConfig
@@ -704,8 +702,8 @@ assert not hasattr(_rust, "_driver_identity")
 assert _rust._runtime_configuration() is None
 for config in (
     None,
-    PreparedClientConfig(proxy_allowed=True, connection_timeout_seconds=2),
-    PreparedClientConfig(proxy_allowed=False, connection_timeout_seconds=5),
+    PreparedClientConfig(operation_timeout_seconds=2),
+    PreparedClientConfig(operation_timeout_seconds=5),
 ):
     assert _rust._validate_runtime_configuration(config) is None
     assert _rust._runtime_configuration() is None

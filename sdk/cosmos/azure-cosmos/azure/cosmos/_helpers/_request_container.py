@@ -72,12 +72,10 @@ def parse_container_create_args(
 def validate_container_create_kwargs(
     kwargs: dict[str, Any], *, method_name: str = "create_container"
 ) -> None:
-    """Reject obsolete options and per-call socket timeouts on container operations."""
+    """Reject obsolete options on container operations."""
     for option in ("session_token", "populate_query_metrics"):
         if option in kwargs:
             raise TypeError("{}() does not support the '{}' keyword argument".format(method_name, option))
-    if kwargs.pop("read_timeout", None) is not None:
-        raise TypeError("{}() does not support the 'read_timeout' keyword argument".format(method_name))
 
 
 def prepare_container_get_or_create_read(

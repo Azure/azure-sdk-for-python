@@ -643,7 +643,6 @@ def test_query_body_scope_options_and_client_defaults_are_preserved(query):
         ({"full_text_score_scope": "Global"}, NotImplementedError),
         ({"continuation_token_limit": -1}, ValueError),
         ({"continuation_token_limit": 1}, NotImplementedError),
-        ({"read_timeout": 1}, NotImplementedError),
         ({"availability_strategy": "True"}, TypeError),
         ({"initial_headers": {"X-MS-Start-EPK": "00"}}, NotImplementedError),
         ({"initial_headers": {"Authorization": "override"}}, NotImplementedError),
@@ -668,7 +667,7 @@ def test_invalid_or_unsupported_arguments_fail_without_dispatch(query, kwargs, e
     expected.
 
     ``NotImplementedError`` covers things the Rust path does not support yet
-    -- full text score scope, continuation token limits, ``read_timeout``,
+    -- full text score scope, continuation token limits,
     pinned partition key ranges, overriding the authorization or EPK headers,
     and any unrecognised keyword. Accepting and ignoring these would let a
     customer believe a setting took effect.
@@ -865,8 +864,7 @@ def test_core_python_public_query_stays_on_legacy_and_rejects_rust_tokens(legacy
     """On the core-python backend queries run the legacy path and refuse Rust tokens.
 
     With the legacy backend selected, the query returns the legacy iterable
-    and the driver is never used. Options the Rust path rejects, such as
-    ``read_timeout``, are simply supported here.
+    and the driver is never used.
 
     A ``q1.`` token issued by the Rust path is refused as incompatible -- both
     through the public call and through the query iterable directly, since
@@ -875,7 +873,7 @@ def test_core_python_public_query_stays_on_legacy_and_rejects_rust_tokens(legacy
     rows.
     """
     query = legacy_query
-    result = query.proxy.query_items("SELECT * FROM c", read_timeout=5)
+    result = query.proxy.query_items("SELECT * FROM c")
     assert result is query.connection.QueryItems.return_value
     assert not query.calls
     with pytest.raises(ValueError, match="incompatible"):
@@ -1075,4 +1073,4 @@ def test_invalid_header_name_and_non_document_envelope_fail_explicitly(query):
     )
     method.side_effect = lambda *args, **kwargs: (200, 0, {}, b'{"Documents":{}}', None)
     with pytest.raises(ValueError, match="query_items.*invalid Documents"):
-        query.collect(query.proxy.query_items("SELECT * FROM c", read_timeout=None))
+        query.collect(query.proxy.query_items("SELECT * FROM c"))

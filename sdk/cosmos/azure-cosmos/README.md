@@ -100,6 +100,60 @@ KEY = os.environ['ACCOUNT_KEY']
 client = CosmosClient(URL, credential=KEY)
 ```
 
+### Rust runtime and timeout configuration
+
+Rust-backed clients use one default driver runtime per process. Ordinary clients
+need no runtime argument. To customize connection settings, explicitly create
+an immutable `CosmosRuntime` and share that object between clients:
+
+```python
+from azure.cosmos import ConnectionPoolOptions, CosmosClient, CosmosRuntime
+
+runtime = CosmosRuntime.create(connection_pool=ConnectionPoolOptions(
+    connection_timeout=2,
+    data_http_request_timeout=6,
+    metadata_http_request_timeout=20,
+    idle_connection_timeout=300,
+    max_idle_connections_per_endpoint=100,
+))
+with CosmosClient(URL, credential=KEY, runtime=runtime, timeout=30) as client:
+    orders = client.get_database_client("sales").get_container_client("orders")
+    order = orders.read_item("order-42", partition_key="customer-17", timeout=2)
+```
+
+For asynchronous initialization use `await CosmosRuntime.create_async(...)`.
+Either creation method returns a runtime usable by sync or async clients.
+Separate creation calls produce separate runtimes even when settings match;
+passing the same runtime deliberately shares it. Runtime sharing does not
+promise a single HTTP connection pool. Clients and active native operations
+retain their own references; there is no runtime `close()` method.
+
+All durations are seconds. Connection timeout limits establishing a connection.
+Data and metadata HTTP-request timeouts each limit one complete HTTP attempt,
+not the retry sequence or inactivity between response bytes. Unset options
+retain Rust environment/default resolution; absent overrides, the three
+timeouts are 5, 6, and 65 seconds respectively. `timeout` is the separate overall
+operation budget, including preparation and retries: set a client default or
+override it with a non-`None` per-call value, with or without a custom runtime.
+`timeout=None` inherits the client default. Paged operations receive a fresh
+budget for each public page fetch, not one budget for consuming all results.
+Rust-backed clients reject budgets
+below one second rather than silently increasing them.
+
+**Migration:** Rust-backed clients reject constructor `connection_timeout`,
+`request_timeout`, and `proxy_allowed`; configure the corresponding runtime
+options instead. The old `request_timeout` alias used milliseconds, so convert
+it to seconds. `read_timeout` and the `ConnectionPolicy` read-timeout fields
+have been removed from both Rust and legacy execution. Explicit use, including
+`None` and nested request options, raises `TypeError`. The new HTTP-request
+timeouts bound whole attempts, not response-read inactivity; they are not
+equivalent replacements. Per-call connection overrides remain unsupported on Rust.
+
+See `samples/runtime_configuration.py` for sharing and async initialization.
+These examples target the Rust-backed release; in this migration checkout,
+select it with the private `COSMOS_BACKEND=rust` test control. Runtime options
+are not supported by the retained legacy backend.
+
 ### Compact UTF-8 item writes
 
 By default, the client escapes non-ASCII characters in JSON item bodies, so each such character is sent as a

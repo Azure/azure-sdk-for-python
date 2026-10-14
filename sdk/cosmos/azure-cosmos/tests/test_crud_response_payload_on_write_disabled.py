@@ -1645,20 +1645,6 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
                                           if included_path['path'] == '/*'])
         self.assertFalse(root_included_path.get('indexes'))
 
-    def test_client_request_timeout(self):
-        # Test is flaky on Emulator
-        if not ('localhost' in self.host or '127.0.0.1' in self.host):
-            connection_policy = documents.ConnectionPolicy()
-            # making timeout 0 ms to make sure it will throw
-            connection_policy.ReadTimeout = 0.000000000001
-            # client does a getDatabaseAccount on initialization, which will not time out because
-            # there is a forced timeout for those calls
-            client = cosmos_client.CosmosClient(self.host, self.masterKey, "Session",
-                                                    connection_policy=connection_policy)
-            with self.assertRaises(ServiceResponseError):
-                databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
-                container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
-                container.create_item(body={'id': str(uuid.uuid4()), 'name': 'sample'})
 
     def test_query_iterable_functionality(self):
         collection = self.key_databaseForTest.create_container("query-iterable-container",

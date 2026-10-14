@@ -818,7 +818,7 @@ def test_read_hook_failure_preserves_attempts_and_exception(create, recording):
     assert telemetry._OPERATION.get() is None
 
 
-def test_read_timeout_and_cancellation_reset_opt_in(create, recording):
+def test_read_operation_timeout_and_cancellation_reset_opt_in(create, recording):
     create.error = TimeoutError("binding deadline")
     with pytest.raises(CosmosClientTimeoutError):
         asyncio.run(traced_read(create, timeout=10))
@@ -2932,7 +2932,7 @@ def test_driver_returned_timeout_keeps_diagnostics_and_original_exception(timeou
     kwargs = {"timeout": 10} if budget else {}
     if mode == "disabled":
         kwargs["tracing_options"] = {"enabled": False}
-    has_deadline = budget and timeout_item.operation in ("create_item", "read_item", "replace_item", "patch_item")
+    has_deadline = budget
     error_type = CosmosClientTimeoutError if has_deadline else TimeoutError
     with trace.get_tracer("customer").start_as_current_span("change_order") as parent:
         with pytest.raises(error_type) as caught:

@@ -279,15 +279,6 @@ def test_query_required_and_only_positional_argument(query_case, args):
     assert query_case.requests == []
 
 
-@pytest.mark.parametrize("value", [False, 0, 1])
-def test_read_timeout_rejected(query_case, value):
-    """The socket-level ``read_timeout`` is not accepted here, including when false or
-    zero, which are still the customer asking for it. The error names the option,
-    and no request is made.
-    """
-    with pytest.raises(TypeError, match="read_timeout"):
-        query_case.database.query_containers(SQL, read_timeout=value)
-    assert query_case.requests == []
 
 
 @pytest.mark.parametrize("query", [SQL, None])
@@ -308,7 +299,7 @@ def test_supported_timeout_headers_and_explicit_none_query(query_case, query, ti
     case = query_case
     hooks = []
     rows = _drain(case, case.database.query_containers(
-        query, timeout=timeout, read_timeout=None,
+        query, timeout=timeout,
         initial_headers={"x-company-trace": "query-containers"},
         response_hook=lambda headers, results: hooks.append(headers),
     ))
@@ -331,7 +322,6 @@ def test_supported_timeout_headers_and_explicit_none_query(query_case, query, ti
     {"raw_request_hook": lambda request: None}, {"raw_response_hook": lambda response: None},
     {"connection_timeout": 10}, {"unknown_option": None},
     {"request_options": {"availabilityStrategy": False}},
-    {"request_options": {"read_timeout": 2}},
 ])
 def test_unsupported_rust_options_never_fall_back(query_case, kwargs):
     """Options the Rust path cannot honor never produce a request, and never move the

@@ -41,7 +41,7 @@ service backend; obtaining the DatabaseProxy does not.
 """
 
 from azure.cosmos._backend.capabilities import OperationRouting
-from .._backend.capabilities import reject_unsupported_rust_arguments
+from .._backend.capabilities import prepare_operation_kwargs
 
 from typing import TYPE_CHECKING, Any, Mapping, Optional, Union, Callable, overload, Literal
 
@@ -182,12 +182,10 @@ class DatabaseProxy(object):
         :returns: A dict representing the database properties
         :rtype: ~azure.cosmos.CosmosDict
         """
-        reject_unsupported_rust_arguments(self, kwargs, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, headers=initial_headers)
         for option in ("session_token", "populate_query_metrics"):
             if option in kwargs:
                 raise TypeError("DatabaseProxy.read() does not support the '{}' keyword argument".format(option))
-        if kwargs.pop("read_timeout", None) is not None:
-            raise TypeError("DatabaseProxy.read() does not support the 'read_timeout' keyword argument")
 
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
@@ -458,7 +456,7 @@ class DatabaseProxy(object):
                 :caption: Create a container with specific settings; in this case, a custom partition key:
                 :name: create_container_with_settings
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
 
         id, partition_key = parse_container_create_args(args, kwargs)
         validate_container_create_kwargs(kwargs)
@@ -556,7 +554,7 @@ class DatabaseProxy(object):
         Only ``id`` and ``partition_key`` may be positional. Missing or duplicate
         required arguments raise ``TypeError`` before sending a request.
         ``session_token`` and ``populate_query_metrics`` are rejected even when
-        ``None``; non-``None`` ``read_timeout`` is also rejected.
+        ``None``.
         Unsupported Rust options fail before the first request rather than
         falling back to legacy Python. A supported ``timeout`` applies separately
         to the read and create steps, not to the combined workflow.
@@ -636,7 +634,7 @@ class DatabaseProxy(object):
         Only ``id`` and ``partition_key`` may be positional. Missing or duplicate
         required arguments raise ``TypeError`` before sending a request.
         ``session_token`` and ``populate_query_metrics`` are rejected even when
-        ``None``; non-``None`` ``read_timeout`` is also rejected.
+        ``None``.
         Unsupported Rust options fail before the first request rather than
         falling back to legacy Python. A supported ``timeout`` applies separately
         to the read and create steps, not to the combined workflow.
@@ -701,7 +699,7 @@ class DatabaseProxy(object):
         Only ``id`` and ``partition_key`` may be positional. Missing or duplicate
         required arguments raise ``TypeError`` before sending a request.
         ``session_token`` and ``populate_query_metrics`` are rejected even when
-        ``None``; non-``None`` ``read_timeout`` is also rejected.
+        ``None``.
         Unsupported Rust options fail before the first request rather than
         falling back to legacy Python. A supported ``timeout`` applies separately
         to the read and create steps, not to the combined workflow.
@@ -754,7 +752,7 @@ class DatabaseProxy(object):
             and CosmosDict with the container properties.
         :rtype: ~azure.cosmos.ContainerProxy or tuple[~azure.cosmos.aio.ContainerProxy, ~azure.cosmos.CosmosDict]
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
 
         id, partition_key = parse_container_create_args(
             args, kwargs, method_name="create_container_if_not_exists"
@@ -907,7 +905,6 @@ class DatabaseProxy(object):
         Use ``async for`` to consume this iterator; do not await this method.
         All settings are keyword-only. ``session_token``, ``populate_query_metrics``,
         and ``availability_strategy`` are rejected, including explicit ``None`` or ``False``.
-        Per-call ``read_timeout`` is not supported; configure it on ``CosmosClient``.
         Unsupported Rust page options raise during iteration instead of using legacy Python.
 
         .. admonition:: Example:
@@ -920,12 +917,7 @@ class DatabaseProxy(object):
                 :caption: List all containers in the database:
                 :name: list_containers
         """
-        reject_unsupported_rust_arguments(self, kwargs, headers=initial_headers)
-        if kwargs.pop("read_timeout", None) is not None:
-            raise TypeError(
-                "list_containers() does not support the 'read_timeout' keyword argument; "
-                "configure it when constructing CosmosClient."
-            )
+        prepare_operation_kwargs(self, kwargs, headers=initial_headers)
         for option in ("session_token", "populate_query_metrics", "availability_strategy"):
             if option in kwargs:
                 raise TypeError(f"list_containers() does not support the '{option}' keyword argument")
@@ -981,16 +973,10 @@ class DatabaseProxy(object):
         ``query`` is required; all other settings are keyword-only. Use ``list_containers()``
         for an unfiltered inventory. ``session_token``, ``populate_query_metrics``,
         ``availability_strategy``, and ``enable_cross_partition_query`` are rejected,
-        including explicit ``None`` or ``False``. Configure ``read_timeout`` on ``CosmosClient``,
-        not on this call. Unsupported Rust options raise during iteration rather than
+        including explicit ``None`` or ``False``. Unsupported Rust options raise during iteration rather than
         switching to legacy Python.
         """
-        reject_unsupported_rust_arguments(self, kwargs, headers=initial_headers)
-        if kwargs.pop("read_timeout", None) is not None:
-            raise TypeError(
-                "query_containers() does not support the 'read_timeout' keyword argument; "
-                "configure it when constructing CosmosClient."
-            )
+        prepare_operation_kwargs(self, kwargs, headers=initial_headers)
         for option in ("session_token", "populate_query_metrics", "availability_strategy",
                        "enable_cross_partition_query"):
             if option in kwargs:
@@ -1162,8 +1148,7 @@ class DatabaseProxy(object):
 
         Only ``container`` and ``partition_key`` may be positional. Missing or duplicate
         required arguments raise ``TypeError``. ``session_token`` and ``populate_query_metrics``
-        are rejected even when set to ``None`` or ``False``. Configure ``read_timeout``
-        on ``CosmosClient``; a non-``None`` per-call value is rejected.
+        are rejected even when set to ``None`` or ``False``.
         Conditional ``etag`` and ``match_condition`` settings remain supported.
         Unsupported Rust options fail without legacy fallback.
 
@@ -1215,7 +1200,7 @@ class DatabaseProxy(object):
                 :caption: Reset the TTL property on a container, and display the updated properties:
                 :name: reset_container_properties
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
 
         container, partition_key = parse_container_create_args(
             args, kwargs, method_name="replace_container", target_parameter="container",
@@ -1288,8 +1273,8 @@ class DatabaseProxy(object):
         """Delete a container and its contents, returning ``None`` on success.
 
         A missing container raises ``CosmosResourceNotFoundError``. Only the
-        container may be positional. Session/metrics keywords and non-``None``
-        ``read_timeout`` are rejected. Unsupported Rust settings fail without
+        container may be positional. Session/metrics keywords are rejected.
+        Unsupported Rust settings fail without
         legacy fallback. The response hook receives copied headers and ``None``.
 
         :param container: The ID (name) of the container to delete. You can either
@@ -1306,7 +1291,7 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
-        reject_unsupported_rust_arguments(self, kwargs, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, headers=initial_headers)
         validate_container_create_kwargs(kwargs, method_name="delete_container")
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
@@ -1335,7 +1320,7 @@ class DatabaseProxy(object):
         :returns: ThroughputProperties for the database.
         :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs, inherit_timeout=False)
         return await get_database_throughput_async(
             client_connection=self.client_connection,
             database_link=self.database_link,
@@ -1364,7 +1349,7 @@ class DatabaseProxy(object):
         :returns: ThroughputProperties for the database, updated with new throughput.
         :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs, inherit_timeout=False)
         return await replace_database_throughput_async(
             client_connection=self.client_connection,
             database_link=self.database_link,

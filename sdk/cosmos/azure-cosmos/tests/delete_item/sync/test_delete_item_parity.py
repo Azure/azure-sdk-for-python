@@ -32,7 +32,7 @@ What this file pins for ``delete_item``:
   one kwarg so a failure attributes cleanly to that kwarg.
 * **behavioural / Python-only kwargs.** ``timeout`` is honoured
   on both backends; ``retry_write``, ``availability_strategy``,
-  ``excluded_locations``, ``read_timeout``, ``connection_timeout`` are
+  ``excluded_locations``, ``connection_timeout`` are
   Python-only or partially-mapped on the rust path and are skipped with
   plain-English reasons (same skip pattern as the create_item suite).
 * **``response_hook`` fires exactly once per backend.** Captures
@@ -294,14 +294,6 @@ def test_excluded_locations(container_for):
                 excluded_locations=["East US"]).assert_functional_parity()
 
 
-@pytest.mark.skip(reason="Partial parity: the driver has client-level analogs via "
-                          "ConnectionPoolOptions::{min,max}_dataplane_request_timeout but the "
-                          "binding doesn't construct the pool options from Python's `read_timeout` "
-                          "kwarg yet. Same skip rationale as create_item's L3_read_timeout.")
-def test_read_timeout(container_for):
-    """Baseline call plus ``read_timeout=30`` (azure-core HTTP read timeout)."""
-    _run_delete(container_for, summary="baseline + read_timeout=30",
-                read_timeout=30).assert_functional_parity()
 
 
 @pytest.mark.skip(reason="Partial parity: the driver has client-level analogs via "

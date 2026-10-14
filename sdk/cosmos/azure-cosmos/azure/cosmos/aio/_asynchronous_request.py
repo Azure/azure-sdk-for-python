@@ -41,6 +41,7 @@ from .._synchronized_request import (
     _replace_url_prefix,
     _should_escape_non_ascii_in_request_body,
 )
+from .._backend.capabilities import reject_removed_options
 from ..documents import _OperationType
 
 # cspell:ignore ppaf
@@ -59,6 +60,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     :rtype: tuple of (dict, dict)
 
     """
+    reject_removed_options(kwargs)
     # pylint: disable=protected-access, too-many-branches
     kwargs.pop(_Constants.OperationStartTime, None)
     # Pop internal flags that should not be passed to the HTTP layer
@@ -71,20 +73,15 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     # ``AsyncItemPaged`` materializing 304 as an empty page.
     status_capture = kwargs.pop("_internal_response_status_capture", None)
     connection_timeout = connection_policy.RequestTimeout
-    read_timeout = connection_policy.ReadTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)
-    read_timeout = kwargs.pop("read_timeout", read_timeout)
 
     # Every request tries to perform a refresh
     client_timeout = kwargs.get('timeout')
     start_time = time.time()
-    if request_params.healthy_tentative_location:
-        read_timeout = connection_policy.RecoveryReadTimeout
     if request_params.resource_type != http_constants.ResourceType.DatabaseAccount:
         await global_endpoint_manager.refresh_endpoint_list(None, **kwargs)
     else:
         # always override database account call timeouts
-        read_timeout = connection_policy.DBAReadTimeout
         connection_timeout = connection_policy.DBAConnectionTimeout
 
     if client_timeout is not None:
@@ -92,8 +89,6 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         if kwargs['timeout'] <= 0:
             raise exceptions.CosmosClientTimeoutError()
 
-    if request_params.read_timeout_override:
-        read_timeout = request_params.read_timeout_override
 
     if request_params.endpoint_override:
         base_url = request_params.endpoint_override
@@ -128,7 +123,6 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
             pipeline_client,
             request,
             connection_timeout=connection_timeout,
-            read_timeout=read_timeout,
             connection_verify=kwargs.pop("connection_verify", ca_certs),
             connection_cert=kwargs.pop("connection_cert", cert_files),
             request_params=request_params,
@@ -140,7 +134,6 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
             pipeline_client,
             request,
             connection_timeout=connection_timeout,
-            read_timeout=read_timeout,
             # If SSL is disabled, verify = false
             connection_verify=kwargs.pop("connection_verify", is_ssl_enabled),
             request_params=request_params,

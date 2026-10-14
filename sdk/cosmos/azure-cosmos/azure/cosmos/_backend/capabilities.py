@@ -37,10 +37,24 @@ def require_legacy_api(connection: Any, api_name: str, *, item_context: Any = No
         )
 
 
-def reject_unsupported_rust_arguments(
-    proxy: Any, kwargs: Mapping[str, Any], *, strategy: Any = None, headers: Any = None,
+def reject_removed_options(kwargs: Mapping[str, Any]) -> None:
+    """Reject removed settings on both execution paths, including nested options."""
+    for options in (kwargs, kwargs.get("request_options"), kwargs.get("feed_options"), kwargs.get("options")):
+        if isinstance(options, Mapping) and "read_timeout" in options:
+            raise TypeError("read_timeout has been removed; use timeout for the overall operation budget.")
+    policy = kwargs.get("connection_policy")
+    if policy is not None:
+        for name in ("ReadTimeout", "RecoveryReadTimeout", "DBAReadTimeout"):
+            if hasattr(policy, name):
+                raise TypeError(f"connection_policy.{name} has been removed.")
+
+
+def prepare_operation_kwargs(
+    proxy: Any, kwargs: dict[str, Any], *, strategy: Any = None, headers: Any = None,
+    inherit_timeout: bool = True,
 ) -> None:
-    """Reject excluded inputs before metadata, paging, or retained coordinators."""
+    """Validate inputs and apply defaults before metadata, paging, or coordinators."""
+    reject_removed_options(kwargs)
     context = getattr(proxy, "_item_context", None)
     backend = context.adapter if context is not None else getattr(
         proxy.client_connection, "__dict__", {}
@@ -48,6 +62,8 @@ def reject_unsupported_rust_arguments(
     if backend is not None and backend.name == "core-python":
         return
     reject_rust_arguments(kwargs, strategy=strategy, headers=headers)
+    if inherit_timeout and context is not None:
+        context.defaults.apply_timeout(kwargs)
 
 
 def reject_rust_arguments(
@@ -180,11 +196,11 @@ CAPABILITIES: dict[str, OpCapability] = {
     ops.OP_LIST_DATABASES: OpCapability(
         frozenset({ops.OP_LIST_DATABASES}),
         unsupported_message=(
-            "list_databases cannot run on the Rust backend for this call: per-call read_timeout, an "
+            "list_databases cannot run on the Rust backend for this call: an "
             "unsupported timeout value, availability_strategy, driver-owned header overrides, "
             "unsupported transport keywords/hooks, and non-list feed shapes are not supported by this "
-            "listing path. Remove the unsupported option; configure connection and read timeouts when "
-            "constructing CosmosClient. The request will not be sent through legacy Python."
+            "listing path. Configure connection and HTTP-request limits through CosmosRuntime; "
+            "read inactivity is unsupported. The request will not be sent through legacy Python."
         ),
     ),
     ops.OP_QUERY_DATABASES: OpCapability(
@@ -192,18 +208,18 @@ CAPABILITIES: dict[str, OpCapability] = {
         unsupported_message=(
             "query_databases cannot run on the Rust backend for this call: the query mode, timeout "
             "value, request-header override, or transport option is not supported by this query path. "
-            "Remove the unsupported option; configure connection and read timeouts when constructing "
-            "CosmosClient. The request will not be sent through legacy Python."
+            "Configure connection and HTTP-request limits through CosmosRuntime; "
+            "read inactivity is unsupported. The request will not be sent through legacy Python."
         ),
     ),
     ops.OP_LIST_CONTAINERS: OpCapability(
         frozenset({ops.OP_LIST_CONTAINERS}),
         unsupported_message=(
-            "list_containers cannot run on the Rust backend for this call: per-call read_timeout, an "
+            "list_containers cannot run on the Rust backend for this call: an "
             "unsupported timeout value, availability_strategy, driver-owned header overrides, "
             "unsupported transport keywords/hooks, and non-list feed shapes are not supported by this "
-            "listing path. Remove the unsupported option; configure connection and read timeouts when "
-            "constructing CosmosClient. The request will not be sent through legacy Python."
+            "listing path. Configure connection and HTTP-request limits through CosmosRuntime; "
+            "read inactivity is unsupported. The request will not be sent through legacy Python."
         ),
     ),
     ops.OP_QUERY_CONTAINERS: OpCapability(
@@ -211,8 +227,8 @@ CAPABILITIES: dict[str, OpCapability] = {
         unsupported_message=(
             "query_containers cannot run on the Rust backend for this call: the query mode, timeout "
             "value, request-header override, or transport option is not supported by this query path. "
-            "Remove the unsupported option; configure connection and read timeouts when constructing "
-            "CosmosClient. The request will not be sent through legacy Python."
+            "Configure connection and HTTP-request limits through CosmosRuntime; "
+            "read inactivity is unsupported. The request will not be sent through legacy Python."
         ),
     ),
     ops.OP_QUERY_ITEMS_CHANGE_FEED: OpCapability(
@@ -258,10 +274,10 @@ CAPABILITIES: dict[str, OpCapability] = {
         frozenset({ops.OP_CREATE_DATABASE, ops.OP_READ_DATABASE}),
         unsupported_message=(
             "create_database_if_not_exists cannot run on the Rust backend for this call: it was given "
-            "a per-call option the Rust path cannot honor (read_timeout, a timeout the driver would "
+            "a per-call option the Rust path cannot honor (a timeout the driver would "
             "interpret differently, an overridden standard request header, or a transport keyword "
             "such as connection_timeout). Remove the unsupported per-call option; configure "
-            "connection and read timeouts when constructing CosmosClient."
+            "connection and HTTP-request limits through CosmosRuntime."
         ),
     ),
     GET_OR_CREATE_CONTAINER: OpCapability(

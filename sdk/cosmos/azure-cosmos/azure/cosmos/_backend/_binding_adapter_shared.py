@@ -6,18 +6,16 @@
 """Share setup, binding checks, and cleanup between the two Python wrappers.
 
 BindingAdapter and AsyncBindingAdapter reuse this Python code, but retain separate
-per-client fields. The binding creates CosmosDriver objects through one
-CosmosDriverRuntime with shared connection settings.
-
-Construction checks any completed CosmosDriverRuntime initialization without
-creating that object or reserving its settings. Driver acquisition checks again,
-because another client may have initialized CosmosDriverRuntime in the meantime.
+per-client fields. Each client selects an explicit CosmosRuntime or the default
+singleton. Construction rejects retired client-level network settings; it does
+not acquire a driver or initialize the default runtime.
 """
 from __future__ import annotations
 
 import logging
 import os
 import threading
+import time
 from contextlib import contextmanager
 from dataclasses import replace
 from pathlib import Path
@@ -31,6 +29,7 @@ from .contracts import PreparedClientConfig, PreparedPageRequest, PreparedReques
 from .errors import PagePreflightError, UnsupportedQueryError
 from .operations import get_page_binding_function_name
 from ..exceptions import CosmosClientTimeoutError
+from ..runtime import CosmosRuntime
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -271,8 +270,9 @@ class BindingAdapterShared:
         master_key: Optional[str],
         client_config: Optional[PreparedClientConfig],
         token_credential: Optional[Any],
+        runtime: Optional[CosmosRuntime] = None,
     ) -> None:
-        """Retain this client's inputs and check initialized CosmosDriverRuntime settings.
+        """Retain this client's inputs and reject retired network settings.
 
         The customer app supplies these values once during client construction.
         Later driver acquisition uses the saved values.
@@ -290,15 +290,10 @@ class BindingAdapterShared:
         CosmosClient retains an AsyncBindingAdapter with the same fields.
         Both adapter classes are Python wrapper code, not the Rust driver.
 
-        The Python wrapper knows this client's requested settings; the binding
-        knows whether CosmosDriverRuntime has already been initialized and
-        which settings were recorded. Ask the binding to check compatibility
-        now so a known conflict is reported during client construction.
-
-        For example, requesting a five-second connection timeout fails this
-        check if CosmosDriverRuntime already uses two seconds. The check does
-        not create CosmosDriverRuntime or reserve settings. Driver acquisition
-        checks again because another client may initialize it after this check.
+        A custom runtime is already initialized and retained by reference.
+        None selects the default singleton when a driver is first acquired.
+        The native validation guard rejects old prepared client configurations
+        containing network overrides, rather than silently ignoring them.
         """
         self._endpoint = endpoint
         self._master_key = master_key
@@ -307,6 +302,7 @@ class BindingAdapterShared:
         self._token_credential = token_credential
         # Pass these settings, such as preferred regions, when acquiring a driver.
         self._client_config = client_config
+        self._runtime = runtime
         # The binding returns a driver handle identifying a CosmosDriver on first
         # use. Reuse it until close; the subclasses coordinate changes with this lock.
         self._driver_handle: Optional[str] = None
@@ -314,6 +310,8 @@ class BindingAdapterShared:
         # Once close sets this flag, do not acquire another driver for the client.
         self._closing = False
         try:
+            if runtime is not None and not isinstance(runtime, CosmosRuntime):
+                raise TypeError("runtime must be CosmosRuntime or None.")
             from azure.cosmos import _rust
 
             validate_runtime = getattr(_rust, "_validate_runtime_configuration", None)
@@ -332,6 +330,7 @@ class BindingAdapterShared:
         """Mark failed client construction closed and release its async credential bridge."""
         with self._driver_handle_lock:
             self._closing = True
+            self._runtime = None
         self._close_token_credential_bridge()
 
     def _with_client_headers(self, prepared: PreparedRequest) -> PreparedRequest:
@@ -342,7 +341,17 @@ class BindingAdapterShared:
         headers.update(prepared.headers)
         return replace(prepared, headers=headers)
 
-    def _initialize_driver(self, binding: Any) -> str:
+    def _request_deadline(
+        self, deadline: Optional[float], timeout: Optional[float] = None
+    ) -> Optional[float]:
+        """Preserve an outer budget; otherwise bound this request before driver setup."""
+        if deadline is not None:
+            return deadline
+        if timeout is None and self._client_config is not None:
+            timeout = self._client_config.operation_timeout_seconds
+        return None if timeout is None else time.monotonic() + timeout
+
+    def _initialize_driver(self, binding: Any, runtime: Optional[CosmosRuntime] = None) -> str:
         """Ask the binding to acquire a driver handle using this client's saved inputs.
 
         Pass the saved account address, credential, and PreparedClientConfig to
@@ -366,7 +375,10 @@ class BindingAdapterShared:
         operation.
         """
         configure_packaged_query_plan_interop(binding)
-        return binding.acquire_driver_handle(*self._acquire_driver_handle_args())
+        args = self._acquire_driver_handle_args()
+        if runtime is not None:
+            return binding.acquire_driver_handle(*args, runtime=runtime._handle)
+        return binding.acquire_driver_handle(*args)
 
     def _acquire_driver_handle_args(self) -> tuple[Any, ...]:
         """Build the same driver-handle acquisition arguments for both client types."""

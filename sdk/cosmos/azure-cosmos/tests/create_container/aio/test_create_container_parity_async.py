@@ -199,7 +199,7 @@ async def test_create_container_supported_options_and_hook_async(database_id):
         container, properties = await run_target_operation_async(client, lambda: database.create_container(
             _per_engine_id(client, "options"), PartitionKey(path="/tenant"),
             default_ttl=3600, unique_key_policy={"uniqueKeys": [{"paths": ["/code"]}]},
-            timeout=10, read_timeout=None, initial_headers={"x-my-app": "provisioner"},
+            timeout=10, initial_headers={"x-my-app": "provisioner"},
             response_hook=hook, return_properties=True,
         ))
         assert len(hooks) == 1

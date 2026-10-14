@@ -12,7 +12,7 @@ from replace_container._legacy_setup import SyncReplacementCase
 @pytest.mark.cosmosEmulator
 class TestFullTextPolicy(SyncReplacementCase):
     def _create_key_client(self):
-        return CosmosClient(self.host, self.key, _backend="rust", read_timeout=30)
+        return CosmosClient(self.host, self.key, _backend="rust")
 
     def test_replace_full_text_container(self):
         """Replace can both add a full text policy and change an existing one.

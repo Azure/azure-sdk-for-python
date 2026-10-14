@@ -231,7 +231,6 @@ def test_explicit_legacy_database_read_preserves_owned_data(database_read, fail,
     def query(query_spec, options, **kwargs):
         expected_link = "dbs/db/colls/coll/" if hasattr(database, "container_link") else "dbs/db/"
         assert query_spec["parameters"][0]["value"] == expected_link
-        assert kwargs["read_timeout"] == 3
         assert kwargs["timeout"] == 10
         if alias != "options":
             assert options["timeout"] == 10
@@ -258,10 +257,10 @@ def test_explicit_legacy_database_read_preserves_owned_data(database_read, fail,
 
     if fail:
         with pytest.raises(RuntimeError, match="legacy query failed"):
-            invoke(**{alias: options}, read_timeout=3, timeout=10, response_hook=hook)
+            invoke(**{alias: options}, timeout=10, response_hook=hook)
         assert not calls
     else:
-        result = invoke(**{alias: options}, read_timeout=3, timeout=10, response_hook=hook)
+        result = invoke(**{alias: options}, timeout=10, response_hook=hook)
         assert result.offer_throughput == 4000
         assert result.get_response_headers()["etag"] == "legacy-offer"
         assert calls == [True]
@@ -270,7 +269,6 @@ def test_explicit_legacy_database_read_preserves_owned_data(database_read, fail,
 
 
 @pytest.mark.parametrize("kwargs", [
-    {"read_timeout": 2},
     {"connection_timeout": 2},
     {"availability_strategy": {"type": "hedging"}},
     {"initial_headers": {"Accept": "custom"}},
@@ -278,9 +276,6 @@ def test_explicit_legacy_database_read_preserves_owned_data(database_read, fail,
     {"initial_headers": {"User-Agent": "custom"}},
     {"initial_headers": {"x-ms-version": "custom"}},
     {"unknown_option": True},
-    {"options": {"read_timeout": 2}},
-    {"request_options": {"read_timeout": 2}},
-    {"feed_options": {"read_timeout": 2}},
     {"request_options": {"initialHeaders": {"Accept": "custom"}}},
     {"timeout": 0.5},
 ])
@@ -581,10 +576,9 @@ def test_sync_explicit_legacy_get_throughput_preserves_options(monkeypatch: pyte
 
     database = _sync_database(LEGACY_BACKEND, QueryOffers=_query_offers)
 
-    result = database.get_throughput(read_timeout=3)
+    result = database.get_throughput()
 
     assert result.offer_throughput == 400
-    assert seen["kwargs"]["read_timeout"] == 3
     # The database link selects its throughput offer.
     assert seen["query"]["parameters"][0]["value"] == "dbs/db/"
 
@@ -614,11 +608,10 @@ def test_sync_replace_throughput_reads_the_offer_without_caller_keywords(
 
     database = _sync_database(_Backend(), QueryOffers=_query_offers, ReplaceOffer=_replace_offer)
 
-    result = database.replace_throughput(500, read_timeout=3)
+    result = database.replace_throughput(500)
 
     assert result.offer_throughput == 500
     assert read_kwargs == {}
-    assert replace_kwargs["read_timeout"] == 3
     assert replace_kwargs["offer_link"] == "offers/AAAAAA==/"
     # The sent offer contains the requested value.
     assert replace_kwargs["sent_throughput"] == 500
@@ -659,10 +652,9 @@ def test_async_replace_throughput_reads_the_offer_with_caller_keywords(
 
     database = _async_database(_AsyncBackend(), QueryOffers=_Offers, ReplaceOffer=_replace_offer)
 
-    result = asyncio.run(database.replace_throughput(500, read_timeout=3))
+    result = asyncio.run(database.replace_throughput(500))
 
     assert result.offer_throughput == 500
-    assert read_kwargs["read_timeout"] == 3
 
 
 # --- a database with no provisioned throughput ----------------------------
@@ -742,10 +734,9 @@ def test_async_explicit_legacy_get_throughput_preserves_options(monkeypatch: pyt
 
     database = _async_database(ASYNC_LEGACY_BACKEND, QueryOffers=_query_offers)
 
-    result = asyncio.run(database.get_throughput(read_timeout=3))
+    result = asyncio.run(database.get_throughput())
 
     assert result.offer_throughput == 400
-    assert seen["kwargs"]["read_timeout"] == 3
     # The database link selects its throughput offer.
     assert seen["query"]["parameters"][0]["value"] == "dbs/db/"
 

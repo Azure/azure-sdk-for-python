@@ -537,43 +537,8 @@ async def test_database_feed_capability_errors_never_replay(
     assert rust_compatibility_fallback_count() == fallback_before
 
 
-@pytest.mark.parametrize("read_timeout", [0, 0.5, 30, False, "invalid"])
-def test_database_feed_rejects_per_call_read_timeout(listing_client, database_feed, read_timeout):
-    """``read_timeout`` cannot be set per call on a database feed.
-
-    Every value is refused with a ``TypeError`` naming the option, including
-    ``0`` and ``False``, which a looser check based on truthiness would let
-    through. The read timeout is a client-level transport setting, so
-    accepting it here would imply a per-call control that does not exist.
-
-    Nothing is constructed or sent.
-    """
-    _, conn, backend, _ = listing_client
-    conn.QueryDatabases = MagicMock(side_effect=AssertionError("pager must not be constructed"))
-    conn.ReadDatabases = MagicMock(side_effect=AssertionError("pager must not be constructed"))
-    hook = MagicMock()
-    with pytest.raises(TypeError, match="'read_timeout'"):
-        database_feed(read_timeout=read_timeout, response_hook=hook)
-    hook.assert_not_called()
-    backend.execute_pages.assert_not_called()
-    conn.QueryDatabases.assert_not_called()
-    conn.ReadDatabases.assert_not_called()
 
 
-@pytest.mark.asyncio
-async def test_database_feed_accepts_unset_read_timeout(listing_client, database_feed):
-    """Passing ``read_timeout=None`` is allowed, because it asks for nothing.
-
-    The counterpart to the rejection test. ``None`` means "not supplied", so
-    it is accepted and paging works normally with the other settings intact.
-
-    This matters for callers that pass every option through from their own
-    config, most of them unset; they should not have to strip the Nones out.
-    """
-    _, _, backend, is_async = listing_client
-    pager = database_feed(read_timeout=None, max_item_count=1).by_page()
-    await _next_listing_page(pager, is_async)
-    assert backend.prepared.max_item_count == 1
 
 
 @pytest.mark.parametrize("is_query", [False, True], ids=["list", "query"])
@@ -1413,7 +1378,7 @@ async def test_query_legacy_preparation_is_lazy_but_preserved(monkeypatch, is_as
     conn._CosmosClientConnection__Post = post
     options = {"initialHeaders": {"x-application": "caller"}}
     if route == "ineligible":
-        options["read_timeout"] = 2
+        options["initialHeaders"]["User-Agent"] = "customer-agent"
     call = _run_async_query_feed if is_async else _run_sync_query_feed
     result = call(
         conn, query={"query": "SELECT * FROM c"}, options=options, is_query_plan=route == "query-plan",
@@ -1452,7 +1417,7 @@ def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepr
     ORDER BY) are now eligible because the old Python SQL-regex scan was removed --
     the driver's reply decides whether it can run them. But options the Rust page
     path cannot represent (``enableCrossPartitionQuery=False``, a ``feed_range``, a
-    MultiHash partition key, ``read_timeout``, ``availability_strategy``, full-text
+    MultiHash partition key, ``availability_strategy``, full-text
     score scope, query advice) still block it and keep the query on the legacy path.
     """
     eligibility = can_use_rust_backend_for_query_page
@@ -1550,14 +1515,6 @@ def test_sync_query_backend_eligibility_allows_cross_partition_but_blocks_unrepr
         container_properties={
             "partitionKey": {"paths": ["/pk1", "/pk2"], "kind": "MultiHash", "version": 2}
         },
-        is_query_plan=False,
-        resource_type=http_constants.ResourceType.Document,
-    )
-    assert not eligibility(
-        query_payload={"query": "SELECT * FROM c"},
-        options={"partitionKey": ["tenant-a"], "read_timeout": 0.2},
-        kwargs={},
-        container_properties={"partitionKey": {"paths": ["/pk"], "kind": "Hash"}},
         is_query_plan=False,
         resource_type=http_constants.ResourceType.Document,
     )
@@ -1793,13 +1750,6 @@ def test_sync_read_all_marks_unsupported_options_as_rust_ineligible():
         partition_key_range_id=None,
     )
     assert not eligibility(
-        options={"read_timeout": 10},
-        kwargs={},
-        is_query_plan=False,
-        resource_type=http_constants.ResourceType.Document,
-        partition_key_range_id=None,
-    )
-    assert not eligibility(
         options={"changeFeedState": {"ct": "value"}},
         kwargs={},
         is_query_plan=False,
@@ -1856,13 +1806,6 @@ def test_async_read_all_marks_unsupported_options_as_rust_ineligible():
     )
     assert not eligibility(
         options={Constants.Kwargs.AVAILABILITY_STRATEGY: True},
-        kwargs={},
-        is_query_plan=False,
-        resource_type=http_constants.ResourceType.Document,
-        partition_key_range_id=None,
-    )
-    assert not eligibility(
-        options={"read_timeout": 1},
         kwargs={},
         is_query_plan=False,
         resource_type=http_constants.ResourceType.Document,
@@ -2297,8 +2240,6 @@ def test_async_list_databases_legacy_path_sends_initial_headers(monkeypatch):
     "options, kwargs",
     [
         ({"initialHeaders": {"user-agent": "custom"}}, {}),
-        ({Constants.Kwargs.READ_TIMEOUT: 0.5}, {}),
-        ({}, {Constants.Kwargs.READ_TIMEOUT: 0.5}),
         ({Constants.Kwargs.TIMEOUT: 0.5}, {Constants.Kwargs.TIMEOUT: 0.5}),
         ({Constants.Kwargs.TIMEOUT: 0}, {Constants.Kwargs.TIMEOUT: 0}),
         ({Constants.Kwargs.TIMEOUT: "invalid"}, {Constants.Kwargs.TIMEOUT: "invalid"}),
@@ -2343,7 +2284,6 @@ def test_async_list_databases_backend_rejects_unrepresentable_options(monkeypatc
     "options, kwargs",
     [
         ({"initialHeaders": {"user-agent": "custom"}}, {}),
-        ({}, {Constants.Kwargs.READ_TIMEOUT: 0.5}),
         ({Constants.Kwargs.TIMEOUT: 0.5}, {Constants.Kwargs.TIMEOUT: 0.5}),
         ({Constants.Kwargs.TIMEOUT: 0}, {Constants.Kwargs.TIMEOUT: 0}),
         ({Constants.Kwargs.TIMEOUT: "invalid"}, {Constants.Kwargs.TIMEOUT: "invalid"}),
@@ -2424,36 +2364,8 @@ def test_list_databases_rejection_categories_are_explicit(monkeypatch, is_async,
     legacy_get.assert_not_called()
 
 
-@pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
-@pytest.mark.parametrize("read_timeout", [0, 0.5, 30, False, "invalid"])
-def test_public_list_databases_rejects_per_call_read_timeout(client_type, read_timeout):
-    """``read_timeout`` cannot be set per call on the public ``list_databases``.
-
-    The same rule as the internal feed, checked on the public surface of both
-    the sync and async clients so they cannot drift apart. Every value is
-    refused by name, including ``0`` and ``False``, which a truthiness check
-    would let slip through. Nothing is dispatched.
-    """
-    client = object.__new__(client_type)
-    client.client_connection = MagicMock()
-    hook = MagicMock()
-    with pytest.raises(TypeError, match="'read_timeout'"):
-        client.list_databases(read_timeout=read_timeout, response_hook=hook)
-    client.client_connection.ReadDatabases.assert_not_called()
-    hook.assert_not_called()
 
 
-def test_public_list_databases_accepts_unset_read_timeout(listing_client):
-    """``read_timeout=None`` is accepted and leaves the other settings intact.
-
-    ``None`` means "not supplied", so it is allowed. The page size still
-    reaches the pager's options, and building the iterable sends nothing --
-    the call is lazy either way.
-    """
-    client, _, backend, _ = listing_client
-    result = client.list_databases(max_item_count=1, read_timeout=None)
-    assert result.by_page().state.config.options["maxItemCount"] == 1
-    backend.execute_pages.assert_not_called()
 
 
 @pytest.mark.parametrize("fail_on_page", [1, 2])
@@ -3310,7 +3222,6 @@ def test_query_databases_binding_request_carries_the_query_body():
     "options, kwargs",
     [
         ({"initialHeaders": {"user-agent": "custom"}}, {}),
-        ({Constants.Kwargs.READ_TIMEOUT: 0.5}, {}),
         ({Constants.Kwargs.TIMEOUT: 0.5}, {Constants.Kwargs.TIMEOUT: 0.5}),
         ({Constants.Kwargs.AVAILABILITY_STRATEGY: False}, {}),
         ({}, {"raw_request_hook": lambda _request: None}),

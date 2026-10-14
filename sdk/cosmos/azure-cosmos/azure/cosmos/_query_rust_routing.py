@@ -127,8 +127,6 @@ def can_use_rust_backend_for_query_page(
     if "prefix_partition_key_object" in kwargs or "prefix_partition_key_value" in kwargs:
         return False
     # These options are not supported by this compatibility page path.
-    if options.get("read_timeout") is not None:
-        return False
     if Constants.Kwargs.AVAILABILITY_STRATEGY in options:
         return False
     if overrides_driver_owned_header(options):
@@ -184,8 +182,6 @@ def can_use_rust_backend_for_read_all_items_page(
         return False
     if options.get("changeFeedState") is not None:
         return False
-    if options.get("read_timeout") is not None:
-        return False
     if Constants.Kwargs.AVAILABILITY_STRATEGY in options:
         return False
     if overrides_driver_owned_header(options):
@@ -220,10 +216,6 @@ def _master_feed_page_is_rust_eligible(
     if resource_type != expected_resource_type:
         return False
     if options.get("changeFeedState") is not None:
-        return False
-    if options.get(Constants.Kwargs.READ_TIMEOUT) is not None:
-        return False
-    if kwargs.get(Constants.Kwargs.READ_TIMEOUT) is not None:
         return False
     allowed_kwargs = _MASTER_FEED_ALLOWED_INTERNAL_KWARGS
     if allow_timeout:

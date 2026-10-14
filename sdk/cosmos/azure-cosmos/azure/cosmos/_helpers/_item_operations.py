@@ -126,7 +126,7 @@ def validate_rust_item_options(args: Dict[str, Any], options: Dict[str, Any]) ->
     and both leave the caller believing something happened that did not. The
     error names the option so it can be removed.
     """
-    for key in ("read_timeout", "connection_timeout", "retry_write", "raw_request_hook", "raw_response_hook"):
+    for key in ("connection_timeout", "retry_write", "raw_request_hook", "raw_response_hook"):
         if args["kwargs"].get(key) is not None or options.get(key) is not None:
             raise NotImplementedError(f"The Rust item backend does not support per-call {key}")
     if not _timeout_is_representable(args["kwargs"]):

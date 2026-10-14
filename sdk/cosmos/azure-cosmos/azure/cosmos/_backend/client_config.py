@@ -126,7 +126,7 @@ def build_client_config(
     consistency_level: Optional[str] = None,
     proxy_allowed: Optional[bool] = None,
     connection_timeout_seconds: Optional[float] = None,
-    read_timeout_seconds: Optional[float] = None,
+    operation_timeout_seconds: Optional[float] = None,
     fault_injection_rules: Optional[Sequence[Mapping[str, Any]]] = None,
     headers: Optional[Mapping[str, str]] = None,
 ) -> Optional[PreparedClientConfig]:
@@ -137,12 +137,10 @@ def build_client_config(
     Region names become tuples, internal test rules become read-only records,
     and an empty User-Agent suffix becomes None.
 
-    Preferred regions and retry settings configure a CosmosDriver object.
-    Proxy and connection/read timeout settings instead apply to the shared
-    CosmosDriverRuntime, including for clients using different CosmosDriver
-    objects. Python's read_timeout becomes a limit on a whole HTTP attempt,
-    not just pauses while reading a response. This builder only prepares those
-    values; it neither creates CosmosDriverRuntime nor reserves its settings.
+    Preferred regions, retries, and the overall operation budget configure a
+    CosmosDriver object. Network settings instead belong to the selected
+    CosmosRuntime. Retired fields remain recognizable so adapter/native
+    validation can reject old callers rather than silently discard settings.
 
     Return None when all options leave nothing to carry in a configuration
     record. This does not mean every setting uses an unmodified driver default:
@@ -158,6 +156,11 @@ def build_client_config(
             )
         )
     preferred = _normalize_locations(preferred_locations, "preferred_locations")
+    if operation_timeout_seconds is not None:
+        from .._helpers._request_settings import is_supported_operation_timeout  # pylint: disable=import-outside-toplevel
+
+        if not is_supported_operation_timeout(operation_timeout_seconds):
+            raise ValueError("timeout must be finite, non-boolean seconds >= 1 and < 2**64.")
     excluded = _normalize_locations(excluded_locations, "excluded_locations")
     if throttling_max_retry_count is not None and (
         isinstance(throttling_max_retry_count, bool)
@@ -182,10 +185,6 @@ def build_client_config(
         "connection_timeout",
         maximum=6.0,
     )
-    read_timeout = _normalize_transport_timeout(
-        read_timeout_seconds,
-        "read_timeout",
-    )
     prepared_fault_rules = _prepare_fault_injection_rules(fault_injection_rules)
     prepared_headers = freeze_headers(headers if headers is not None else {})
     for name in prepared_headers:
@@ -200,7 +199,7 @@ def build_client_config(
         and consistency is None
         and proxy_allowed is None
         and connection_timeout is None
-        and read_timeout is None
+        and operation_timeout_seconds is None
         and not prepared_fault_rules
         and not prepared_headers
     ):
@@ -215,7 +214,7 @@ def build_client_config(
         consistency_level=consistency,
         proxy_allowed=proxy_allowed,
         connection_timeout_seconds=connection_timeout,
-        read_timeout_seconds=read_timeout,
+        operation_timeout_seconds=operation_timeout_seconds,
         fault_injection_rules=prepared_fault_rules,
         headers=prepared_headers,
     )
@@ -427,7 +426,7 @@ def _normalize_transport_timeout(
     None requests no override. Otherwise require a real number other than bool,
     convert it to float, and require a finite value of at least 0.1 seconds.
     A supplied maximum is inclusive; the client builder uses 6 seconds for
-    connection establishment and supplies no maximum for read_timeout.
+    connection establishment.
 
     Type and range checks report ValueError using the supplied option name.
     Applying the timeout to requests belongs to the binding and Rust driver.

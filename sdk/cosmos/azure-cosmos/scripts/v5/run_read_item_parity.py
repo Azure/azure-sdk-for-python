@@ -18,6 +18,8 @@ partition-scoped ORDER BY/paging test or its Rust copy instead.
 self-contained copy; --surface aio selects its async counterpart (sync is default).
 --query-test distinct selects the original four DISTINCT queries or their
 self-contained copy, also supporting --surface aio.
+--query-test count selects the original partition-scoped COUNT/metrics test
+or its copy on either surface.
 --query-test top compares the self-contained TOP copy on both backends,
 changing only its backend pin for core Python. Its adapted fixture and
 public paging checks do not audit the original cross-partition setup or
@@ -45,11 +47,13 @@ QUERY_METHODS = {
     "top": "::TestCrossPartitionTopOrderBy::test_orderby_top_query",
     "offset": "::TestQuery::test_offset_limit",
     "distinct": "::TestQuery::test_distinct",
+    "count": "::TestQuery::test_partition_scoped_count_is_index_only",
 }
 
 ASYNC_QUERY_METHODS = {
     "offset": "::TestQueryAsync::test_offset_limit_async",
     "distinct": "::TestQueryAsync::test_distinct_async",
+    "count": "::TestQueryAsync::test_partition_scoped_count_is_index_only_async",
 }
 
 METHODS = {
@@ -103,7 +107,7 @@ def main(argv=None):
     if args.query_test is not None and args.op != "query_items":
         parser.error("--query-test requires --op query_items")
     if args.surface == "aio" and not (args.op == "query_items" and args.query_test in ASYNC_QUERY_METHODS):
-        parser.error("--surface aio requires --op query_items --query-test offset or distinct")
+        parser.error("--surface aio requires --op query_items --query-test offset, distinct, or count")
     for name in ("ACCOUNT_HOST", "ACCOUNT_KEY"):
         if not os.environ.get(name):
             parser.error(f"{name} must be set explicitly for the test target")
@@ -163,7 +167,7 @@ def main(argv=None):
             database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
             config.TEST_DATABASE_ID = database_id
             config.TEST_SINGLE_PARTITION_CONTAINER_ID = container_id
-            if args.op == "upsert_item":
+            if args.op == "upsert_item" or args.query_test == "count":
                 config.TEST_MULTI_PARTITION_CONTAINER_ID = container_id
             return pytest.main(options + [
                 str(ROOT / "tests" / filename) + node for filename, node in selections

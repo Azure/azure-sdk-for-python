@@ -6,10 +6,14 @@
 
 #### Features Added
 
+* Added `CosmosRuntime`, `ConnectionPoolOptions`, and the `CosmosClient(runtime=...)` option for explicitly initialized, shareable Rust runtimes alongside the default process singleton.
+* Added Rust-backed client-level `timeout` defaults with per-operation overrides, independently of runtime connection and HTTP-request timeouts.
 * Added simple-token combination to synchronous and asynchronous `ContainerProxy.get_latest_session_token()`, alongside existing vector-token support.
 
 #### Breaking Changes
 
+* Rust-backed clients require connection/proxy settings on `CosmosRuntime` and reject overall timeout budgets below one second.
+* Removed `read_timeout` and `ConnectionPolicy.ReadTimeout`, `RecoveryReadTimeout`, and `DBAReadTimeout` from both legacy and Rust execution; supplying the removed options now raises `TypeError`.
 * For the Rust-backed release, reject trigger options and headers and exclude stored-procedure, trigger, and UDF definition APIs, including stored-procedure execution; SQL invocation of deployed UDFs remains supported.
 * Removed Cosmos database-user and resource-permission APIs from synchronous and asynchronous clients on both backends, including `UserProxy`, `Permission`, `PermissionMode`, and the `resource_token_expiry_seconds` option.
 * Removed resource-token and permission-feed authentication from both backends. Synchronous and asynchronous clients now reject these credentials during construction; account-key strings, `masterKey` dictionaries, and Microsoft Entra credentials remain supported.

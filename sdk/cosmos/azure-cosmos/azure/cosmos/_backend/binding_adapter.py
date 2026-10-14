@@ -22,8 +22,8 @@ The responsibilities are::
         -> service backend: return the database properties
 
 Importing without the compiled binding remains possible for migration checks.
-Construction still requires the binding to validate CosmosDriverRuntime
-settings; a missing binding is not a supported release mode.
+Construction still requires the binding to reject retired client settings;
+a missing binding is not a supported release mode.
 """
 from __future__ import annotations
 import logging
@@ -33,6 +33,7 @@ from azure.core.exceptions import ServiceResponseError
 from .._operation_deadline import remaining_timeout
 from ..exceptions import CosmosClientTimeoutError
 from .._telemetry import get_operation
+from ..runtime import CosmosRuntime
 
 from .cosmos_backend import CosmosBackend
 from .operations import (
@@ -149,7 +150,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         close -> release this client's acquisition of H
 
     H is an illustration, not an actual handle. Clients with matching account,
-    credential, and configuration can share a CosmosDriver. BindingAdapterShared
+    credential, configuration, and runtime can share a CosmosDriver. BindingAdapterShared
     supplies common setup and cleanup code, not a shared Python settings object.
     """
 
@@ -161,6 +162,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         master_key: Optional[str] = None,
         client_config: Optional[PreparedClientConfig] = None,
         token_credential: Optional[Any] = None,
+        runtime: Optional[CosmosRuntime] = None,
     ) -> None:
         """Remember the client's inputs without acquiring a CosmosDriver.
 
@@ -168,12 +170,13 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
 
             endpoint + credential + PreparedClientConfig
                 -> save on this BindingAdapter
-                -> check any completed CosmosDriverRuntime initialization
+                -> reject retired client-level network settings
 
-        The check neither creates CosmosDriverRuntime nor reserves its settings.
+        Construction retains a custom runtime or selects the default for later
+        acquisition; it does not initialize the default runtime.
         """
         self._init_shared(
-            endpoint, master_key, client_config, token_credential
+            endpoint, master_key, client_config, token_credential, runtime
         )
 
     def _ensure_driver_handle(self) -> str:
@@ -208,7 +211,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
             if self._closing:
                 raise RuntimeError("BindingAdapter: the client is closed.")
             if self._driver_handle is None:
-                self._driver_handle = self._initialize_driver(_rust_module)
+                self._driver_handle = self._initialize_driver(_rust_module, self._runtime)
             return self._driver_handle
 
     def close(self) -> None:
@@ -227,6 +230,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
             self._closing = True
             driver_handle = self._driver_handle
             self._driver_handle = None
+            self._runtime = None
         self._close_token_credential_bridge()
         if driver_handle is None or _rust_module is None:
             return
@@ -276,6 +280,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         if not isinstance(prepared, PreparedRequest):
             raise TypeError("execute requires a PreparedRequest")
         prepared = self._with_client_headers(prepared)
+        deadline = self._request_deadline(deadline, prepared.settings.timeout_seconds)
         if _rust_module is None:
             raise NotImplementedError(
                 "BindingAdapter.execute: the compiled "
@@ -355,6 +360,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         The driver may fetch missing properties rather than use cached ones.
         This returns properties, not order rows or a BackendResponse.
         """
+        deadline = self._request_deadline(deadline)
         if _rust_module is None:
             raise NotImplementedError(
                 "BindingAdapter.get_container_metadata: the compiled "
@@ -397,6 +403,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         The caller owns subsequent page fetches, not a loop inside this method.
         """
         self.validate_page_request(prepared)
+        deadline = self._request_deadline(deadline, prepared.settings.timeout_seconds)
         binding_function_name = get_page_binding_function_name(
             prepared.op, uses_cursor=prepared.cursor is not None
         )

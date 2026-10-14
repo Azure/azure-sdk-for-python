@@ -15,7 +15,7 @@ from common._parity_helpers import _binding_operation_count, _rust_fallback_coun
 from fault_injection._delayed_create import assert_control, assert_route, emit
 from fault_injection._point_timeout import (
     OPERATION_TIMEOUT, assert_point_timeout, assert_read_budget, assert_read_elapsed,
-    capture_read_budget, read_timeout_rule,
+    capture_read_budget, read_operation_timeout_rule,
 )
 
 pytestmark = pytest.mark.cosmosEmulator
@@ -33,7 +33,7 @@ async def test_point_read_operation_timeout_async(owned_target, monkeypatch, inj
     async with CosmosClient(
         os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"],
         _backend="rust", consistency_level="Session",
-        _fault_injection_rules=[read_timeout_rule(rule_id, observer.id, inject)],
+        _fault_injection_rules=[read_operation_timeout_rule(rule_id, observer.id, inject)],
     ) as client:
         container = client.get_database_client(database_id).get_container_client(observer.id)
         await container.read(timeout=30)

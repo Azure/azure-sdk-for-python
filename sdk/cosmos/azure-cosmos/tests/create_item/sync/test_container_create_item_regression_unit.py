@@ -18,8 +18,8 @@ to be re-fixed:
 1. The cache-populate step must still go through the proxy's
    ``_get_properties_with_options`` so:
      * the proxy's ``container_cache_lock`` is taken (thread-safety),
-     * per-call options like ``excluded_locations``, ``timeout`` and
-       ``read_timeout`` are forwarded into the cache-refresh read.
+     * per-call options like ``excluded_locations`` and ``timeout``
+       are forwarded into the cache-refresh read.
    Calling ``client_connection._refresh_container_properties_cache``
    directly would silently drop both of those.
 2. Every kwarg the customer passed to ``create_item`` must still
@@ -131,25 +131,21 @@ class TestContainerCreateItemPreservesLegacyCacheBehaviour(unittest.TestCase):
         self.assertIn("dbs/db/colls/c", cache)
 
     def test_cache_miss_forwards_timeout_kwargs_into_cache_fetch(self):
-        """Cache miss: ``timeout`` and ``read_timeout`` reach the cache-refresh ``read``.
+        """Cache miss: the remaining ``timeout`` reaches the cache-refresh ``read``.
 
-        Same contract as ``excluded_locations``: a 5-second
-        ``read_timeout`` on the customer's call must not silently
-        become the default 60-second timeout during cache refresh.
+        The customer's overall budget must not restart during cache refresh.
         """
         proxy, _cc, _cache = _make_proxy_with_mock_connection(precached=False)
 
         proxy.create_item(
             {"id": "x", "pk": "a"},
             timeout=10,
-            read_timeout=5,
         )
 
         proxy.read.assert_called_once()
         read_kwargs = proxy.read.call_args.kwargs
         self.assertGreater(read_kwargs[Constants.Kwargs.TIMEOUT], 0)
         self.assertLessEqual(read_kwargs[Constants.Kwargs.TIMEOUT], 10)
-        self.assertEqual(read_kwargs.get(Constants.Kwargs.READ_TIMEOUT), 5)
 
     def test_cache_populate_step_takes_container_cache_lock(self):
         """Cache populate runs under ``container_cache_lock`` (thread-safety invariant).

@@ -16,12 +16,13 @@
 //! not a CosmosDriver service operation.
 //!
 //! Every operation below has an `_async` twin that returns a Python awaitable
-//! instead of a ready result. The driver lifecycle, diagnostics, and settings
-//! entry points are sync only. Acquisition can initialize CosmosDriverRuntime,
+//! instead of a ready result. Runtime creation also has sync and async exports.
+//! Acquisition can initialize the default CosmosDriverRuntime,
 //! obtain the Tokio runtime, and wait for a CosmosDriver object to be created.
 //! It is not merely a driver-cache lookup. See each
 //! function for its execution and return-value contract.
 //!
+//! Runtime creation (`driver_runtime.rs`): `_create_runtime`, `_create_runtime_async`.
 //! Driver lifecycle (`runtime.rs`):
 //!   `_validate_runtime_configuration`, `acquire_driver_handle`,
 //!   `release_driver_handle`, `_runtime_configuration`,
@@ -65,6 +66,7 @@
 //! same compiled extension. Use docs/V5/VOCABULARY.md for their established names.
 
 mod credential;
+mod driver_runtime;
 mod ffi;
 mod feed_range_subset;
 #[cfg(test)]
@@ -90,6 +92,9 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, wire::settings::_request_settings_schema);
     m.add_class::<wire::lifecycle::AsyncOperationProbe>()?;
     m.add_class::<wire::item_feed::ItemFeedCursor>()?;
+    m.add_class::<driver_runtime::RuntimeHandle>()?;
+    add_pyfn!(m, driver_runtime::create_runtime);
+    add_pyfn!(m, driver_runtime::create_runtime_async);
     add_pyfn!(m, wire::item_feed::fetch_page_with_cursor);
     add_pyfn!(m, wire::item_feed::fetch_page_with_cursor_async);
     add_pyfn!(m, runtime::acquire_driver_handle);

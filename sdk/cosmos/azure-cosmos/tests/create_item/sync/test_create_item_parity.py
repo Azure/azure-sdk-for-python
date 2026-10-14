@@ -380,17 +380,6 @@ def test_timeout(container_for):
          timeout=30).assert_functional_parity()
 
 
-@pytest.mark.skip(reason="Partial parity: the driver has client-level analogs via "
-                          "ConnectionPoolOptions::{min,max}_dataplane_request_timeout "
-                          "(reqwest's builder.timeout) and TransportRequest::timeout for the per-call "
-                          "override, but `OperationOptions` doesn't yet expose a per-call hook and the "
-                          "binding doesn't construct the pool options from Python's `read_timeout` "
-                          "kwarg. Driver-level support exists; per-call parity is a binding follow-up.")
-def test_read_timeout(container_for):
-    """Baseline call plus ``read_timeout=30`` (azure-core HTTP read timeout)."""
-    body = {"id": uuid.uuid4().hex, "pk": "a"}
-    _run(container_for, body, summary="baseline + read_timeout=30",
-         read_timeout=30).assert_functional_parity()
 
 
 @pytest.mark.skip(reason="Partial parity: the driver has client-level analogs via "

@@ -321,16 +321,6 @@ async def test_async_excluded_locations(container_for):
     cmp.assert_functional_parity()
 
 
-@pytest.mark.skip(reason="Partial parity: the driver has client-level connect/read timeout "
-                         "analogs but the binding does not wire Python's per-call "
-                         "read_timeout into them yet. Mirrors the sync suite's skip.")
-@pytest.mark.asyncio
-async def test_async_read_timeout(container_for):
-    """``read_timeout=30`` -- the azure-core HTTP read timeout."""
-    body = {"id": uuid.uuid4().hex, "pk": "a"}
-    cmp = await _run_create(container_for, body, summary="baseline + read_timeout=30",
-                            read_timeout=30)
-    cmp.assert_functional_parity()
 
 
 @pytest.mark.skip(reason="Partial parity: the binding does not wire Python's "

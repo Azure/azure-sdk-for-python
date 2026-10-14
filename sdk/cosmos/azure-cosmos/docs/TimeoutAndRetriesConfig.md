@@ -2,25 +2,38 @@
 
 ### Timeout config
 
-The timeout options for the client can be changed from the default configurations with the options below. 
-These options can be passed in at the client constructor or on a per-request basis. These are:
-- `Client Timeout`: can be changed by passing the `timeout` option. Changes the value of the per-operation client timeout (operations like cross-partition queries can make multiple requests for instance - it would be considered as one query operation). If not present,
-the 'Connection Timeout' connectivity timeouts below will be used. `connection_timeout` must be smaller than your `timeout` to be used.
-- `Connection Timeout`: can be changed through `connection_timeout` option. Changes the value on the client's http transport timeout when
-connecting to the socket. Default value is 5s. 
-- `Read Timeout`: can be changed through `read_timeout` option. Changes the value on the client's http transport timeout when
-reading the service buffer stream, or receiving responses from the server. Default value is 65s.
+`timeout` sets an overall operation budget, including preparation and retries.
+Set a client default or a non-`None` override on supported operations; `None`
+inherits the client default. A paged operation gets a fresh budget for each
+public page fetch, not for each internal service request or the whole enumeration.
 
-These options can also be combined, as seen in the example below.
-This will set the client timeout to 10 seconds, connection timeout to 3 seconds, and read timeout to 60 seconds.
+For Rust clients, configure transport limits on `ConnectionPoolOptions` and
+pass an explicitly created `CosmosRuntime` to the client:
+- `connection_timeout`: connection establishment, 0.1–6 seconds.
+- `data_http_request_timeout`: one complete data HTTP attempt, at least 0.1 seconds.
+- `metadata_http_request_timeout`: one complete metadata HTTP attempt, 0.1–65 seconds.
+
+Without overrides, these limits are 5, 6, and 65 seconds respectively.
+All durations are finite seconds; overall budgets must be at least one second
+and less than `2**64`. The HTTP-attempt limits do not measure read inactivity.
+`read_timeout` and its connection-policy fields are removed on both execution
+paths; explicitly supplying them, even as `None`, raises `TypeError`.
+
+This example sets a ten-second overall default, a three-second connection limit,
+and separate data/metadata HTTP-attempt limits.
 ```python
-from azure.cosmos import CosmosClient
+from azure.cosmos import ConnectionPoolOptions, CosmosClient, CosmosRuntime
 
 import os
 URL = os.environ['ACCOUNT_URI']
 KEY = os.environ['ACCOUNT_KEY']
 
-client = CosmosClient(URL, credential=KEY, timeout=10, connection_timeout=3, read_timeout=60)
+runtime = CosmosRuntime.create(connection_pool=ConnectionPoolOptions(
+    connection_timeout=3,
+    data_http_request_timeout=6,
+    metadata_http_request_timeout=60,
+))
+client = CosmosClient(URL, credential=KEY, runtime=runtime, timeout=10)
 ```
 
 

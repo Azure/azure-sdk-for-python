@@ -89,7 +89,7 @@ async def test_replace_properties_and_keep_items(owned_database, mode, backend, 
                   else database.get_container_client(name) if target_kind == "proxy" else name)
         proxy, properties = await replace(
             target, default_ttl=3600, return_properties=True, response_hook=Hook(),
-            timeout=30, read_timeout=None, initial_headers={"x-company-trace": "replacement"},
+            timeout=30, initial_headers={"x-company-trace": "replacement"},
         )
         assert proxy.id == name and properties["id"] == name
         assert properties["indexingPolicy"]["indexingMode"] == "consistent"

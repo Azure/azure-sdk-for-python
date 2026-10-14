@@ -198,7 +198,7 @@ class TestParityWithLegacyBuildOptions(unittest.TestCase):
 
     ``build_options`` does extra work the new helper deliberately
     does *not* do (stamps ``OperationStartTime``, pulls
-    ``read_timeout`` / ``timeout``, handles ``access_condition``).
+    ``timeout``, handles ``access_condition``).
     For the *kwarg-name → option-key* subset, both implementations
     must agree exactly. This class reproduces the legacy subset
     inline and asserts equality across a representative input table.

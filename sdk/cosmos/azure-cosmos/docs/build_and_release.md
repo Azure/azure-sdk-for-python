@@ -1487,19 +1487,42 @@ sdk\cosmos\ci.yml
     -> shared build jobs and conditional release processing
 ```
 
-The Cosmos template already sets:
+**Having shared instructions for installing Rust is different from asking
+the Cosmos pipeline to use them.** The general template supports Microsoft
+Rust installation, but leaves it disabled unless a caller requests it.
 
-```yaml
-InstallMsRustToolchain: true
-```
+The SDK-owned `sdk\cosmos\ci.yml` must send that request through the
+Central-owned `cosmos-sdk-client.yml`. The Cosmos template must accept the
+inputs and forward them to `archetype-sdk-client.yml`; it does not need another
+implementation of the installer.
 
-That is a request for the downstream setup steps to install the selected Rust
-toolchain. The template also supplies the package working directory and the
-additional Rust target needed for Windows ARM64.
+**Status checked on October 13, 2026:** Central merged the forwarding in
+PR #49522, commit `19d1c40a60`. The SDK entry now supplies the four Rust inputs
+locally, but the current feature branch still needs to incorporate that upstream
+template change before it can accept them. Fetching `origin/main` downloaded
+the change; it did not update the feature branch's files. Our earlier
+branch-specific Cosmos template explicitly enabled installation; aligning it
+with upstream removed that opt-in. The shared installer being merged did not
+automatically enable it for Cosmos.
 
-The flags must reach the step that performs installation. Merely declaring a
-setting at the top of a pipeline would not help if downstream templates
-ignored it.
+Once the forwarding is available in the source used by the run, the SDK entry
+can supply these inputs:
+
+| Input | What it tells the build |
+|---|---|
+| `InstallMsRustToolchain` | Enable Microsoft Rust installation |
+| `MsRustWorkingDirectory` | Find `rust-toolchain.toml` in this package directory and use its selected compiler version |
+| `MsRustToolchainFeed` | Download the toolchain from this package source, explained below |
+| `MsRustAdditionalTargets` | Also install support for compiling Windows ARM64 on the Windows x64 build machine |
+
+The first three are required to enable the current installer successfully.
+The fourth is needed for our requested Windows ARM64 wheel; it is not a
+universal requirement for every Rust package.
+
+Our `azure-cosmos` artifact entry already sets `signBinaries: true`. That
+separate flag opts into the supported binary-signing path and is also used by
+the shared build to select extension builds. **It does not request Microsoft
+Rust installation.**
 
 ### Which shared files do the work?
 
@@ -1562,12 +1585,90 @@ Linux wheel builds run inside the prepared containers introduced in section
 11. The compiler setup, required credentials, and input files must be available
 where the build actually runs, not just on the host.
 
-### Build access and time limits are part of the environment
+### Where does the build download its Rust tools and dependencies?
 
-The build needs access to compiler and dependency sources. A **feed** is a
-service from which tools download packages or other build inputs.
+The build machine needs more than our Python and Rust source. It needs the
+compiler that turns Rust into machine code, and the dependency source packages
+that Cargo builds with our binding.
+
+A **feed** is a service from which build tools download packages or other
+inputs. Our shared setup uses two different feeds because installing a compiler
+and downloading a library's source are different operations:
+
+| Feed | What the build obtains | How the shared setup selects it |
+|---|---|---|
+| Microsoft Rust toolchain feed | The Microsoft Rust build tools selected by `rust-toolchain.toml` | Explicit `MsRustToolchainFeed` input, passed to the installer's `ToolchainFeed` parameter |
+| Cargo dependency feed | Rust dependency packages, through the configured crates.io mirror | The installer's `CratesIoFeed` parameter, whose current default selects `azure-sdk-for-rust-public` |
+
+For our package, `rust-toolchain.toml` selects `ms-prod-1.97`. That answers
+**which toolchain version to use**. The toolchain feed answers **where to
+download it**. Neither setting replaces the other.
+
+The Cargo feed does not select the compiler version. It also does not replace
+the driver Git revision configured in `Cargo.toml`; that driver source still
+requires access to its Git repository.
+
+### Can we reuse the test toolchain feed?
+
+Yes, for the current prototype testing. Central identified this feed on
+October 13, 2026, and it matches the default in our saved pre-cleanup installer:
+
+```text
+https://pkgs.dev.azure.com/azure-sdk/_packaging/azure-sdk-for-rust-org-test/nuget/v3/index.json
+```
+
+The address ends in `nuget/v3/index.json` because the toolchain is distributed
+through a NuGet package feed. We are downloading build tools here, not changing
+how customers install the Python SDK.
+
+Previously, the installer template supplied this address as a default. Central's
+merged installer instead requires the caller to supply the toolchain feed
+explicitly. **We can reuse the feed; what changes is where its address is
+configured.**
+
+The SDK entry now supplies the following inputs alongside `ServiceDirectory`
+under `extends.parameters` in `sdk\cosmos\ci.yml`, retaining the existing
+`Artifacts` list. The branch used by the run must also contain Central's
+forwarding change:
+
+```yaml
+InstallMsRustToolchain: true
+MsRustWorkingDirectory: $(Build.SourcesDirectory)/sdk/cosmos/azure-cosmos
+MsRustToolchainFeed: https://pkgs.dev.azure.com/azure-sdk/_packaging/azure-sdk-for-rust-org-test/nuget/v3/index.json
+MsRustAdditionalTargets: aarch64-pc-windows-msvc
+```
+
+These inputs have been added locally, not yet committed or pushed as part of
+this update. They do not establish that a run has succeeded. The test feed is
+not yet an approved production-release feed decision.
+
+### Knowing the feed address does not grant access
+
+The address tells the installer where to ask for the toolchain. The pipeline's
+**build identity**, the account used by the automation, must also be allowed
+to download it. A developer's ability to open the feed in a browser does not
+establish that the pipeline can use it.
+
 Authentication for internal feeds belongs in pipeline infrastructure.
-Credentials must not be committed into the SDK's package files.
+The feed address is configuration; access tokens are credentials and must not
+be committed into the SDK's package files.
+
+The next run must confirm that its identity can obtain `ms-prod-1.97` and the
+required targets from this feed. Feed contents and current build access have
+not been verified by this documentation update. Successful toolchain
+installation also does not prove that Cargo dependency downloads will succeed;
+those use their own feed configuration and authentication.
+
+These are build-time downloads. A customer installing a compatible wheel does
+not need these internal feeds or Microsoft Rust tools.
+
+**Source:** `eng\pipelines\templates\stages\archetype-sdk-client.yml`,
+`eng\pipelines\templates\steps\build-package-artifacts.yml`,
+`eng\pipelines\templates\steps\install-msrust-toolchain.yml`, and the package's
+`rust-toolchain.toml`. The forwarding status is based on the checked-out
+`cosmos-sdk-client.yml`; the test-feed choice reflects Central's guidance above.
+
+### Build time limits are separate from feed access
 
 The Rust-enabled jobs currently allow 240 minutes for a whole job and
 210 minutes for the package-generation step inside it.

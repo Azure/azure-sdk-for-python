@@ -62,7 +62,7 @@ def resolve_connection_policy_kwargs(kwargs: Mapping[str, Any]) -> dict[str, Any
     the keyword arguments.
 
     Connection timeouts are resolved separately by
-    resolve_client_transport_timeouts, not by this function.
+    resolve_client_connection_timeout, not by this function.
     """
     resolved = dict(kwargs)
     stock = ConnectionPolicy()

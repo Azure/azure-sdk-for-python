@@ -279,7 +279,6 @@ def test_filter_and_operations_are_snapshotted_before_metadata(rust_patch):
         ({"filter_predicate": 1}, TypeError),
         ({"request_options": {"filterPredicate": {"condition": "FROM c"}}}, TypeError),
         ({"response_hook": False}, TypeError),
-        ({"read_timeout": 2}, NotImplementedError),
         ({"retry_write": 0}, NotImplementedError),
     ],
 )
@@ -294,7 +293,7 @@ def test_invalid_or_unsupported_options_fail_before_io(rust_patch, kwargs, error
       values (the SDK must not silently pick a winner).
     * ``NotImplementedError`` -- the argument is valid Cosmos usage that this
       path does not support yet: any ``If-None-Match`` form, a
-      ``read_timeout``, ``retry_write``.
+      ``retry_write``.
 
     The distinction matters to a customer: one says "fix your call", the
     other says "this does not work here yet". Neither may reach the service,

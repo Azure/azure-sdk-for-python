@@ -33,6 +33,7 @@ from azure.core.exceptions import DecodeError  # type: ignore
 from . import exceptions, http_constants, _retry_utility
 from ._availability_strategy_config import CrossRegionHedgingStrategy
 from ._availability_strategy_handler import execute_with_hedging
+from ._backend.capabilities import reject_removed_options
 from ._constants import _Constants
 from ._helpers._wire_encoding import encode_json_to_utf8
 from ._response_decoding import decode_response_body_for_status
@@ -163,6 +164,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     :rtype: tuple of (dict, dict)
 
     """
+    reject_removed_options(kwargs)
     # pylint: disable=protected-access, too-many-branches
     kwargs.pop(_Constants.OperationStartTime, None)
     # Pop internal flags that should not be passed to the HTTP layer
@@ -176,23 +178,16 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     status_capture = kwargs.pop("_internal_response_status_capture", None)
     connection_timeout = connection_policy.RequestTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)
-    read_timeout = connection_policy.ReadTimeout
-    read_timeout = kwargs.pop("read_timeout", read_timeout)
 
     # Every request tries to perform a refresh
     client_timeout = kwargs.get('timeout')
     start_time = time.time()
-    if request_params.healthy_tentative_location:
-        read_timeout = connection_policy.RecoveryReadTimeout
     if request_params.resource_type != http_constants.ResourceType.DatabaseAccount:
         global_endpoint_manager.refresh_endpoint_list(None, **kwargs)
     else:
         # always override database account call timeouts
-        read_timeout = connection_policy.DBAReadTimeout
         connection_timeout = connection_policy.DBAConnectionTimeout
 
-    if request_params.read_timeout_override:
-        read_timeout = request_params.read_timeout_override
 
     if client_timeout is not None:
         kwargs['timeout'] = client_timeout - (time.time() - start_time)
@@ -238,7 +233,6 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
             pipeline_client,
             request,
             connection_timeout=connection_timeout,
-            read_timeout=read_timeout,
             connection_verify=kwargs.pop("connection_verify", ca_certs),
             connection_cert=kwargs.pop("connection_cert", cert_files),
             request_params=request_params,
@@ -250,7 +244,6 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
             pipeline_client,
             request,
             connection_timeout=connection_timeout,
-            read_timeout=read_timeout,
             # If SSL is disabled, verify = false
             connection_verify=kwargs.pop("connection_verify", is_ssl_enabled),
             request_params=request_params,

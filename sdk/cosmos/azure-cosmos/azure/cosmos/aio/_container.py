@@ -22,7 +22,7 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 import asyncio  # pylint: disable=do-not-import-asyncio
-from .._backend.capabilities import reject_unsupported_rust_arguments
+from .._backend.capabilities import prepare_operation_kwargs
 import warnings
 from datetime import datetime
 from typing import (TYPE_CHECKING, Any, Mapping, Optional, Sequence, Union, Tuple, cast, overload, AsyncIterable,
@@ -173,8 +173,6 @@ class ContainerProxy:
                 kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
             if Constants.Kwargs.TIMEOUT in options:
                 kwargs[Constants.Kwargs.TIMEOUT] = options[Constants.Kwargs.TIMEOUT]
-            if Constants.Kwargs.READ_TIMEOUT in options:
-                kwargs[Constants.Kwargs.READ_TIMEOUT] = options[Constants.Kwargs.READ_TIMEOUT]
 
         return await self._get_properties(**kwargs)
 
@@ -256,7 +254,7 @@ class ContainerProxy:
         """Read the container properties.
 
         All optional arguments must be passed by keyword. Session/query-metrics
-        options and non-``None`` per-call ``read_timeout`` are rejected.
+        options are rejected.
         Unsupported Rust settings raise rather than using legacy Python.
         The response hook receives independent copies of the response headers
         and container properties, including nested values.
@@ -272,12 +270,12 @@ class ContainerProxy:
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.
-        :raises TypeError: A positional argument, retired option, or non-None per-call read_timeout is supplied.
+        :raises TypeError: A positional argument or retired option is supplied.
         :raises NotImplementedError: Rust cannot honor the requested settings.
         :returns: Container properties with response headers available through ``get_response_headers()``.
         :rtype: ~azure.cosmos.CosmosDict
         """
-        reject_unsupported_rust_arguments(self, kwargs, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, headers=initial_headers)
         validate_container_create_kwargs(kwargs, method_name="ContainerProxy.read")
         if priority is not None:
             kwargs['priority'] = priority
@@ -367,7 +365,7 @@ class ContainerProxy:
         :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
         deadline = prepare_create_item_kwargs(kwargs, response_hook=response_hook)
         # Fold the named keyword arguments back into kwargs so the helper
         # receives a single dict.
@@ -461,7 +459,7 @@ class ContainerProxy:
                 :caption: Get an item from the database and update one of its properties:
                 :name: update_item
         """
-        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
         prepare_item_target(kwargs, item)
         # Check the cache-staleness value here rather than deeper in, so a bad
         # value raises where the caller can see it. None means skip the check.
@@ -543,7 +541,7 @@ class ContainerProxy:
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[dict[str, Any]]
         """
-        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
         if session_token is not None:
             kwargs['session_token'] = session_token
         if initial_headers is not None:
@@ -612,7 +610,7 @@ class ContainerProxy:
             Repeated pairs produce one result per occurrence. Empty input performs no network calls.
         :rtype: ~azure.cosmos.CosmosList
         """
-        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
 
         items, deadline = prepare_read_items(items, max_concurrency, kwargs)
         if not items:
@@ -1026,7 +1024,7 @@ class ContainerProxy:
                 :dedent: 0
                 :caption: Parameterized query to get all products that have been discontinued:
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
         original_positional_arg_names = ["query"]
         utils.add_args_to_kwargs(original_positional_arg_names, args, kwargs)
         if uses_rust(self):
@@ -1343,7 +1341,7 @@ class ContainerProxy:
         :returns: An AsyncItemPaged of items (dicts), or change records for AllVersionsAndDeletes.
         :rtype: AsyncItemPaged[dict[str, Any]]
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
         from ._helpers._change_feed import query_items_change_feed
 
         return query_items_change_feed(self, kwargs)
@@ -1402,7 +1400,7 @@ class ContainerProxy:
         :returns: A CosmosDict representing the upserted item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
         # Upsert sends a body, like create, so the partition key is read out
         # of that body during the send. It also accepts etag and
         # match_condition, which narrow it to insert-only or to a replace
@@ -1530,7 +1528,7 @@ class ContainerProxy:
             is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
         prepare_item_target(kwargs, item)
         # The id of the item to overwrite comes from ``item`` -- either a
         # string id, or the ``id`` of a dict -- and not from the body. This
@@ -1631,7 +1629,7 @@ class ContainerProxy:
             `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy)
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy)
         # Fold the named keyword arguments into kwargs, then hand off.
         merge_patch_item_explicit_kwargs(
             kwargs,
@@ -1718,7 +1716,7 @@ class ContainerProxy:
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
         :rtype: None
         """
-        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
         merge_delete_item_explicit_kwargs(
             kwargs,
             session_token=session_token,
@@ -1770,7 +1768,7 @@ class ContainerProxy:
         :returns: ThroughputProperties for the container.
         :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs, inherit_timeout=False)
         return await _get_throughput(
             client_connection=self.client_connection,
             container_link=self.container_link,
@@ -1801,7 +1799,7 @@ class ContainerProxy:
         :returns: ThroughputProperties for the container, updated with new throughput.
         :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs, inherit_timeout=False)
         return await _replace_container_throughput(
             client_connection=self.client_connection,
             container_link=self.container_link,
@@ -1827,7 +1825,7 @@ class ContainerProxy:
         :returns: An AsyncItemPaged of conflicts (dicts).
         :rtype: AsyncItemPaged[dict[str, Any]]
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -1867,7 +1865,7 @@ class ContainerProxy:
         :returns: An AsyncItemPaged of conflicts (dicts).
         :rtype: AsyncItemPaged[dict[str, Any]]
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -1910,7 +1908,7 @@ class ContainerProxy:
         :returns: A CosmosDict representing the retrieved conflict.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         await self._get_properties_with_options(request_options)
@@ -1944,7 +1942,7 @@ class ContainerProxy:
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The conflict does not exist in the container.
         :rtype: None
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         await self._get_properties_with_options(request_options)
@@ -1982,7 +1980,7 @@ class ContainerProxy:
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :rtype: None
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
@@ -2054,7 +2052,7 @@ class ContainerProxy:
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
         :rtype: ~azure.cosmos.CosmosList[dict[str, Any]]
         """
-        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy)
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy)
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
@@ -2119,7 +2117,7 @@ class ContainerProxy:
           are present. It therefore should only be treated as an opaque value.
 
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
         return _read_feed_ranges(
             client_connection=self.client_connection,
             container_link=self.container_link,

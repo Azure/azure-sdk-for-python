@@ -171,15 +171,6 @@ def test_obsolete_options_rejected_by_presence(read_case, option, value):
     _assert_no_dispatch(read_case)
 
 
-@pytest.mark.parametrize("value", [0, False, 2])
-def test_socket_timeout_rejected(read_case, value):
-    """The socket-level ``read_timeout`` is refused by this method, including when
-    set to zero or false, since those are still the customer asking for it. The
-    error names the option so they know which one to remove.
-    """
-    with pytest.raises(TypeError, match="read_timeout"):
-        _read(read_case, read_timeout=value)
-    _assert_no_dispatch(read_case)
 
 
 @pytest.mark.parametrize("quota", [None, False, True])
@@ -204,7 +195,6 @@ def test_metadata_flags_and_none_timeout_preserve_backend(read_case, quota, stat
     before = rust_compatibility_fallback_count()
     result = _read(
         case, populate_quota_info=quota, populate_partition_key_range_statistics=statistics,
-        read_timeout=None,
     )
     assert isinstance(result, CosmosDict)
     assert result == case.properties
@@ -213,7 +203,6 @@ def test_metadata_flags_and_none_timeout_preserve_backend(read_case, quota, stat
     if case.legacy:
         case.backend.execute.assert_not_called()
         call = case.connection.ReadContainer.call_args
-        assert "read_timeout" not in call.kwargs
         options = call.kwargs["options"]
     else:
         case.connection.ReadContainer.assert_not_called()

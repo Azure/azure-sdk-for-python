@@ -104,7 +104,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
             query_to_use,
             self._resource_link,
             self._options.get('excludedLocations'),
-            read_timeout=self._options.get('read_timeout'),
+
             **read_all_options
         )
         query_execution_info = _PartitionedQueryExecutionInfo(query_plan)

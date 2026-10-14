@@ -80,8 +80,7 @@ class DatabaseHelper:
         """Create one database, without exposing backend selection to the public method.
 
         Builds the account-level create request and drives it through the selected
-        backend. ``create_database`` does not support a per-call ``read_timeout``;
-        callers configure the read timeout when constructing ``CosmosClient``.
+        backend.
         ``response_hook`` is invoked once on success with the response headers and
         the created database.
         """
@@ -90,16 +89,7 @@ class DatabaseHelper:
         if response_hook is not None and not callable(response_hook):
             raise TypeError("create_database response_hook must be callable or None.")
         hook = with_response_header_snapshot(response_hook, copy_body=True)
-        if (
-            request_options.get(Constants.Kwargs.READ_TIMEOUT) is not None
-            or operation_kwargs.get(Constants.Kwargs.READ_TIMEOUT) is not None
-        ):
-            raise TypeError(
-                "create_database() does not support the 'read_timeout' keyword argument"
-            )
-        operation_kwargs.pop("read_timeout", None)
         request_options = dict(request_options)
-        request_options.pop("read_timeout", None)
         remaining_timeout(deadline)
         result = self._backend.run_operation(
             build_request=lambda: build_create_database_prepared(

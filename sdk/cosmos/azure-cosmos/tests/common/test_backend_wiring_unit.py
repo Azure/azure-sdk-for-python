@@ -35,6 +35,7 @@ import pytest
 
 import azure.cosmos.aio._cosmos_client as async_cosmos_client_module
 import azure.cosmos.cosmos_client as sync_cosmos_client_module
+from azure.cosmos import CosmosRuntime, ConnectionPoolOptions
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
 from azure.cosmos._backend.contracts import ContainerMetadata
 from azure.cosmos._backend.contracts import (
@@ -71,7 +72,7 @@ from azure.cosmos._backend.factory import make_backend, resolve_backend_name
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._backend.transport_settings import (
     reject_unsupported_transport_settings,
-    resolve_client_transport_timeouts,
+    resolve_client_connection_timeout,
 )
 from azure.cosmos._backend._async_credential_bridge import (
     AsyncCredentialBridgeReentrantError,
@@ -437,6 +438,7 @@ _ALLOWED = {
     # Dispatch imports belong to the backends; shared lifecycle setup
     # checks initialized runtime settings without creating or reserving them.
     "_rust": {
+        Path("runtime.py"),
         Path("_backend") / "binding_adapter.py",
         Path("aio") / "_backend" / "binding_adapter.py",
         Path("_backend") / "_binding_adapter_shared.py",
@@ -1849,38 +1851,38 @@ def test_async_factory_carries_preferred_locations_into_rust_backend(monkeypatch
     )
 
 
-def test_sync_factory_carries_transport_timeouts_into_rust_backend(monkeypatch):
-    """Prove sync backend creation preserves transport timeouts."""
+def test_sync_factory_carries_explicit_runtime_into_rust_backend(monkeypatch):
+    """Connection settings belong to the selected runtime."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    runtime = CosmosRuntime.create(connection_pool=ConnectionPoolOptions(
+        connection_timeout=2.5, data_http_request_timeout=45))
     backend = make_backend(
         BACKEND_NAME_RUST,
         url="https://timeouts-sync.documents.azure.com",
         credential="k",
-        connection_timeout_seconds=2.5,
-        read_timeout_seconds=45,
+        runtime=runtime,
     )
     assert isinstance(backend, BindingAdapter)
-    assert backend._client_config == PreparedClientConfig(
-        connection_timeout_seconds=2.5,
-        read_timeout_seconds=45.0,
-    )
+    assert backend._runtime is runtime
+    assert backend._client_config is None
+    backend.close()
 
 
-def test_async_factory_carries_transport_timeouts_into_rust_backend(monkeypatch):
-    """Prove async backend creation preserves transport timeouts."""
+def test_async_factory_carries_explicit_runtime_into_rust_backend(monkeypatch):
+    """The async adapter retains an initialized runtime."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    runtime = CosmosRuntime.create(connection_pool=ConnectionPoolOptions(
+        connection_timeout=1.5, data_http_request_timeout=30))
     backend = make_async_backend(
         BACKEND_NAME_RUST,
         url="https://timeouts-async.documents.azure.com",
         credential="k",
-        connection_timeout_seconds=1.5,
-        read_timeout_seconds=30,
+        runtime=runtime,
     )
     assert isinstance(backend, AsyncBindingAdapter)
-    assert backend._client_config == PreparedClientConfig(
-        connection_timeout_seconds=1.5,
-        read_timeout_seconds=30.0,
-    )
+    assert backend._runtime is runtime
+    assert backend._client_config is None
+    asyncio.run(backend.close())
 
 
 def test_untuned_sync_client_carries_no_transport_timeouts(monkeypatch):
@@ -1903,21 +1905,20 @@ def test_untuned_sync_client_carries_no_transport_timeouts(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_async_client_carries_explicit_transport_timeouts(monkeypatch):
-    """Prove async clients pass explicit transport timeouts to Rust."""
+    """Async clients select an explicitly configured runtime."""
     monkeypatch.setattr(
         async_cosmos_client_module, "CosmosClientConnection", MagicMock()
     )
+    runtime = await CosmosRuntime.create_async(connection_pool=ConnectionPoolOptions(
+        connection_timeout=2, data_http_request_timeout=30))
     client = async_cosmos_client_module.CosmosClient(
         "https://client-async.documents.azure.com",
         "key",
         _backend=BACKEND_NAME_RUST,
-        connection_timeout=2.0,
-        read_timeout=30.0,
+        runtime=runtime,
     )
-    assert client._adapter._client_config == PreparedClientConfig(
-        connection_timeout_seconds=2.0,
-        read_timeout_seconds=30.0,
-    )
+    assert client._adapter._runtime is runtime
+    assert client._adapter._client_config is None
     await client._adapter.close()
 
 
@@ -1964,128 +1965,88 @@ def test_async_rust_backend_passes_client_config_to_acquire_driver_handle(monkey
     )
 
 
-class _ProxyGlobalRuntimeFakeModule:
-    """Fake Rust module to test process-global proxy policy.
-
-    The first acquisition sets the proxy policy for the process. Later clients must
-    use the same policy or leave it unset.
-    """
-
-    def __init__(self):
-        """Start with no proxy choice recorded and no drivers handed out yet."""
-        self._initialized_proxy_allowed = None
-        self._initialized = False
-        self._next_driver_handle = 0
-
-    def validate_runtime_configuration(self, config=None):
-        requested = getattr(config, "proxy_allowed", None)
-        if self._initialized and requested is not None and requested != self._initialized_proxy_allowed:
-            raise ValueError("Rust runtime proxy configuration is process-global and was already initialized")
-
-    def acquire_driver_handle(self, *args):
-        """Model a proxy-policy conflict and return a distinct synthetic handle.
-
-        This test double is not a full native runtime or driver cache.
-        """
-        config = args[2] if len(args) >= 3 else None
-        requested = getattr(config, "proxy_allowed", None) if config is not None else None
-        if not self._initialized:
-            self._initialized_proxy_allowed = requested
-            self._initialized = True
-        self.validate_runtime_configuration(config)
-        self._next_driver_handle += 1
-        return "handle-{}".format(self._next_driver_handle)
-
-    def release_driver_handle(self, _driver_handle):
-        """Accept a release and do nothing, so closing a client is never what fails a test."""
-        return None
-
-
 @pytest.mark.parametrize("first_proxy,initialize_second", [(None, False), (True, False), (True, True)])
-def test_rust_backend_checks_initialized_policy_not_construction_order(monkeypatch, first_proxy, initialize_second):
-    """Unused clients coexist; acquisition and later construction check actual state."""
-    fake_module = _ProxyGlobalRuntimeFakeModule()
+def test_rust_backend_selection_is_independent_of_acquisition_order(monkeypatch, first_proxy, initialize_second):
+    """Forward the selected runtime, not another client's previously selected settings."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.side_effect = ["first", "second"]
     monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
-    monkeypatch.setattr(
-        "azure.cosmos._rust._validate_runtime_configuration", fake_module.validate_runtime_configuration
+    first_runtime = (
+        CosmosRuntime.create(connection_pool=ConnectionPoolOptions(proxy_allowed=first_proxy))
+        if first_proxy is not None else None
     )
-
     first = BindingAdapter(
         endpoint="https://x.documents.azure.com",
         master_key="k",
-        client_config=PreparedClientConfig(proxy_allowed=first_proxy),
+        runtime=first_runtime,
     )
     second = BindingAdapter(
         endpoint="https://x.documents.azure.com", master_key="k",
-        client_config=PreparedClientConfig(proxy_allowed=False),
+        runtime=CosmosRuntime.create(connection_pool=ConnectionPoolOptions(proxy_allowed=False)),
     )
-    assert not fake_module._initialized
-    initializer, later = (second, first) if initialize_second else (first, second)
-    initializer._ensure_driver_handle()
-    with pytest.raises(ValueError, match="process-global"):
-        later._ensure_driver_handle()
-    with pytest.raises(ValueError, match="process-global"):
+    try:
+        fake_module.acquire_driver_handle.assert_not_called()
+        for adapter in ((second, first) if initialize_second else (first, second)):
+            adapter._ensure_driver_handle()
+            expected = adapter._runtime._handle if adapter._runtime is not None else None
+            assert fake_module.acquire_driver_handle.call_args.kwargs.get("runtime") is expected
+    finally:
+        first.close()
+        second.close()
+
+
+def test_rust_backend_client_proxy_override_is_rejected(monkeypatch):
+    """A direct adapter cannot bypass the runtime-only settings contract."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.return_value = "driver"
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+
+    with pytest.raises(ValueError, match="CosmosRuntime"):
         BindingAdapter(
             endpoint="https://x.documents.azure.com",
             master_key="k",
-            client_config=PreparedClientConfig(proxy_allowed=initialize_second),
+            client_config=PreparedClientConfig(proxy_allowed=True),
         )
-    first.close()
-    second.close()
-
-
-def test_rust_backend_unset_proxy_allowed_does_not_conflict(monkeypatch):
-    """Sync path: an unset later value carries nothing and does not conflict."""
-    fake_module = _ProxyGlobalRuntimeFakeModule()
-    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
-
-    first = BindingAdapter(
-        endpoint="https://x.documents.azure.com",
-        master_key="k",
-        client_config=PreparedClientConfig(proxy_allowed=True),
-    )
     second = BindingAdapter(
         endpoint="https://x.documents.azure.com",
         master_key="k",
         client_config=None,
     )
 
-    first._ensure_driver_handle()
     second._ensure_driver_handle()
+    second.close()
 
 
 @pytest.mark.parametrize("first_proxy,initialize_second", [(None, False), (True, False), (True, True)])
-def test_async_rust_backend_checks_initialized_policy_not_construction_order(monkeypatch, first_proxy, initialize_second):
-    """Async acquisition repeats the non-reserving constructor check."""
-    fake_module = _ProxyGlobalRuntimeFakeModule()
+def test_async_rust_backend_selection_is_independent_of_acquisition_order(monkeypatch, first_proxy, initialize_second):
+    """The async worker forwards its client's runtime regardless of acquisition order."""
+    fake_module = MagicMock()
+    fake_module.acquire_driver_handle.side_effect = ["first", "second"]
     monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
-    monkeypatch.setattr(
-        "azure.cosmos._rust._validate_runtime_configuration", fake_module.validate_runtime_configuration
-    )
 
     async def _run():
+        first_runtime = (
+            await CosmosRuntime.create_async(connection_pool=ConnectionPoolOptions(proxy_allowed=first_proxy))
+            if first_proxy is not None else None
+        )
         first = AsyncBindingAdapter(
             endpoint="https://x.documents.azure.com",
             master_key="k",
-            client_config=PreparedClientConfig(proxy_allowed=first_proxy),
+            runtime=first_runtime,
         )
         second = AsyncBindingAdapter(
             endpoint="https://x.documents.azure.com", master_key="k",
-            client_config=PreparedClientConfig(proxy_allowed=False),
+            runtime=await CosmosRuntime.create_async(connection_pool=ConnectionPoolOptions(proxy_allowed=False)),
         )
-        assert not fake_module._initialized
-        initializer, later = (second, first) if initialize_second else (first, second)
-        await initializer._ensure_driver_handle()
-        with pytest.raises(ValueError, match="process-global"):
-            await later._ensure_driver_handle()
-        with pytest.raises(ValueError, match="process-global"):
-            AsyncBindingAdapter(
-                endpoint="https://x.documents.azure.com",
-                master_key="k",
-                client_config=PreparedClientConfig(proxy_allowed=initialize_second),
-            )
-        await first.close()
-        await second.close()
+        try:
+            fake_module.acquire_driver_handle.assert_not_called()
+            for adapter in ((second, first) if initialize_second else (first, second)):
+                await adapter._ensure_driver_handle()
+                expected = adapter._runtime._handle if adapter._runtime is not None else None
+                assert fake_module.acquire_driver_handle.call_args.kwargs.get("runtime") is expected
+        finally:
+            await first.close()
+            await second.close()
 
     asyncio.run(_run())
 
@@ -2218,7 +2179,6 @@ def test_build_client_config_combines_all_settings():
         user_agent_suffix="checkout-westus2",
         consistency_level="Eventual",
         connection_timeout_seconds=2.5,
-        read_timeout_seconds=45,
     )
     assert config == PreparedClientConfig(
         preferred_locations=("West US",),
@@ -2229,42 +2189,38 @@ def test_build_client_config_combines_all_settings():
         user_agent_suffix="checkout-westus2",
         consistency_level="Eventual",
         connection_timeout_seconds=2.5,
-        read_timeout_seconds=45.0,
     )
 
 
-def test_resolve_client_transport_timeouts_reports_only_explicit_values():
+def test_resolve_client_connection_timeout_reports_only_explicit_values():
     """A customer who named no timeout gets None, not the legacy defaults.
 
-    These two values configure the process-wide Rust driver runtime, so reporting
-    a default here would pin the whole process to it on behalf of a customer who
-    never asked for it.
+    The legacy resolver reports only the requested connection setting; it does
+    not configure a Rust runtime.
     """
-    assert resolve_client_transport_timeouts({}) == (None, None)
-    assert resolve_client_transport_timeouts({"connection_timeout": 2}) == (2, None)
-    assert resolve_client_transport_timeouts({"read_timeout": 30}) == (None, 30)
+    assert resolve_client_connection_timeout({}) is None
+    assert resolve_client_connection_timeout({"connection_timeout": 2}) == 2
 
 
-def test_resolve_client_transport_timeouts_ignores_a_stock_connection_policy():
+def test_resolve_client_connection_timeout_ignores_a_stock_connection_policy():
     """The public clients build a default ConnectionPolicy for every client, so a
     policy that still holds the stock values is not a customer choice."""
-    assert resolve_client_transport_timeouts(
+    assert resolve_client_connection_timeout(
         {"connection_policy": ConnectionPolicy()}
-    ) == (None, None)
+    ) is None
 
 
-def test_resolve_client_transport_timeouts_honors_alias_and_custom_policy():
+def test_resolve_client_connection_timeout_honors_alias_and_custom_policy():
     """The legacy millisecond alias keeps precedence and policy defaults still apply."""
     policy = ConnectionPolicy()
     policy.RequestTimeout = 3
-    policy.ReadTimeout = 40
-    assert resolve_client_transport_timeouts(
+    assert resolve_client_connection_timeout(
         {
             "connection_policy": policy,
             "connection_timeout": 2,
             "request_timeout": 750,
         }
-    ) == (0.75, 40)
+    ) == 0.75
 
 
 def test_build_client_config_carries_transport_timeouts():
@@ -2272,12 +2228,8 @@ def test_build_client_config_carries_transport_timeouts():
     config = build_client_config(
         None,
         connection_timeout_seconds=1.25,
-        read_timeout_seconds=42.5,
     )
-    assert config == PreparedClientConfig(
-        connection_timeout_seconds=1.25,
-        read_timeout_seconds=42.5,
-    )
+    assert config == PreparedClientConfig(connection_timeout_seconds=1.25)
 
 
 @pytest.mark.parametrize(
@@ -2285,8 +2237,6 @@ def test_build_client_config_carries_transport_timeouts():
     [
         ({"connection_timeout_seconds": 0.05}, "at least 0.1"),
         ({"connection_timeout_seconds": 7}, "at most 6.0"),
-        ({"read_timeout_seconds": 0}, "at least 0.1"),
-        ({"read_timeout_seconds": float("inf")}, "must be finite"),
     ],
 )
 def test_build_client_config_rejects_driver_unsupported_transport_timeouts(
@@ -2361,19 +2311,19 @@ def test_build_client_config_rejects_non_bool_proxy_allowed():
         (PreparedClientConfig(proxy_allowed=False), PreparedClientConfig(proxy_allowed=True)),
         (PreparedClientConfig(proxy_allowed=True), PreparedClientConfig(proxy_allowed=True)),
         (PreparedClientConfig(connection_timeout_seconds=2), PreparedClientConfig(connection_timeout_seconds=5)),
-        (PreparedClientConfig(read_timeout_seconds=25), PreparedClientConfig(read_timeout_seconds=30)),
     ],
 )
-def test_unused_clients_do_not_reserve_runtime_settings(first, second):
-    """No Python constructor reserves a proxy choice or transport timeout."""
+def test_retired_client_settings_are_rejected_even_before_first_use(first, second):
+    """Direct adapters cannot select runtime settings through client configuration."""
     endpoint = "https://unused-clients.documents.azure.com"
-    a = BindingAdapter(endpoint, master_key="key", client_config=first)
-    b = BindingAdapter(endpoint, master_key="key", client_config=second)
-    try:
-        assert a._driver_handle is None and b._driver_handle is None
-    finally:
-        a.close()
-        b.close()
+    for config in (first, second):
+        if config is None:
+            adapter = BindingAdapter(endpoint, master_key="key")
+            assert adapter._driver_handle is None
+            adapter.close()
+        else:
+            with pytest.raises(ValueError, match="CosmosRuntime"):
+                BindingAdapter(endpoint, master_key="key", client_config=config)
 
 
 def test_construction_requires_native_runtime_validation(monkeypatch):
@@ -2422,7 +2372,6 @@ def test_factory_carries_all_startup_settings_into_rust_backend(monkeypatch):
         availability_strategy=True,
         user_agent_suffix="checkout-westus2",
         consistency_level="Eventual",
-        proxy_allowed=True,
     )
     assert isinstance(backend, BindingAdapter)
     assert backend._client_config == PreparedClientConfig(
@@ -2432,7 +2381,6 @@ def test_factory_carries_all_startup_settings_into_rust_backend(monkeypatch):
         hedging_threshold_ms=500,
         user_agent_suffix="checkout-westus2",
         consistency_level="Eventual",
-        proxy_allowed=True,
     )
 
 
@@ -2447,7 +2395,6 @@ def test_async_factory_carries_all_startup_settings_into_rust_backend(monkeypatc
         availability_strategy={"threshold_ms": 15},
         user_agent_suffix="reporting-eastus",
         consistency_level="Session",
-        proxy_allowed=False,
     )
     assert isinstance(backend, AsyncBindingAdapter)
     assert backend._client_config == PreparedClientConfig(
@@ -2455,7 +2402,6 @@ def test_async_factory_carries_all_startup_settings_into_rust_backend(monkeypatc
         hedging_threshold_ms=15,
         user_agent_suffix="reporting-eastus",
         consistency_level="Session",
-        proxy_allowed=False,
     )
 
 
@@ -4032,21 +3978,23 @@ def test_async_list_databases_transport_error_does_not_replay_legacy(monkeypatch
 
 
 def test_untuned_and_tuned_rust_clients_can_both_be_constructed(monkeypatch):
-    """Public client construction permits coexistence before native initialization."""
+    """Default and explicit runtimes can coexist without reconfiguring each other."""
     monkeypatch.setattr(
         sync_cosmos_client_module, "CosmosClientConnection", MagicMock()
     )
     untuned = sync_cosmos_client_module.CosmosClient(
         "https://coexist.documents.azure.com", "key", _backend=BACKEND_NAME_RUST
     )
+    runtime = CosmosRuntime.create(connection_pool=ConnectionPoolOptions(connection_timeout=2))
     tuned = sync_cosmos_client_module.CosmosClient(
         "https://coexist.documents.azure.com",
         "key",
         _backend=BACKEND_NAME_RUST,
-        connection_timeout=2.0,
+        runtime=runtime,
     )
     assert untuned._adapter._client_config is None
-    assert tuned._adapter._client_config.connection_timeout_seconds == 2.0
+    assert tuned._adapter._runtime is runtime
+    assert runtime._handle.timeouts[0] == 2
     untuned._adapter.close()
     tuned._adapter.close()
 

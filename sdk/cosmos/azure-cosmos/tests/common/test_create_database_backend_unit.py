@@ -259,7 +259,6 @@ def test_read_database_prepared_rejects_empty_normalized_id(database_id):
         ({}, {"timeout": "1"}, False),
         ({}, {"timeout": float("nan")}, False),
         ({}, {"timeout": float("inf")}, False),
-        ({"read_timeout": 2}, {"read_timeout": 2}, False),
         ({}, {"connection_timeout": 2}, False),
         ({}, {"raw_request_hook": object()}, False),
         ({}, {"response_hook": object()}, True),
@@ -403,44 +402,6 @@ def test_sync_read_database_routes_to_rust_and_parses_response():
     assert type(hook_calls[0][1]) is dict
 
 
-def test_sync_read_database_keeps_legacy_path_and_read_timeout():
-    """Choosing the legacy helper explicitly still passes the internal timeout through."""
-    response_headers = {"x-ms-request-charge": "1.0"}
-    legacy_body = {"id": "db1", "_rid": "legacy"}
-    hook_calls = []
-
-    def response_hook(headers, body):
-        """Append the headers and body to hook_calls so the test can assert on them."""
-        hook_calls.append((headers, body))
-
-    def legacy_read(_link, *, options, **kwargs):
-        """Invoke the caller's response_hook and return the canned legacy body."""
-        kwargs["response_hook"](response_headers, legacy_body)
-        return legacy_body
-
-    connection = SimpleNamespace(
-        ReadDatabase=MagicMock(side_effect=legacy_read),
-        last_response_headers=response_headers,
-    )
-    result = DatabaseHelper(connection, LEGACY_BACKEND).read_database(
-        "db1",
-        {Constants.Kwargs.READ_TIMEOUT: 2},
-        response_hook=response_hook,
-        kwargs={Constants.Kwargs.READ_TIMEOUT: 2, "response_hook": MagicMock()},
-    )
-
-    assert result == {"id": "db1", "_rid": "legacy"}
-    connection.ReadDatabase.assert_called_once_with(
-        "dbs/db1",
-        options={Constants.Kwargs.READ_TIMEOUT: 2},
-        **{
-            Constants.Kwargs.READ_TIMEOUT: 2,
-            "response_hook": ANY,
-        },
-    )
-    assert hook_calls == [
-        ({"x-ms-request-charge": "1.0"}, {"id": "db1", "_rid": "legacy"})
-    ]
 
 
 def test_sync_read_database_maps_not_found_and_skips_hook():
@@ -568,16 +529,14 @@ def _call_database_read(case, *args, **kwargs):
 @pytest.mark.parametrize(
     "option, value",
     [(option, value) for option in ("session_token", "populate_query_metrics")
-     for value in (None, False, True, "unused")]
-    + [("read_timeout", value) for value in (False, True, "unused")],
+     for value in (None, False, True, "unused")],
 )
 def test_database_read_rejects_obsolete_and_socket_options(database_read_case, use_legacy, option, value):
     """Retired options are refused up front on both engines, whatever value they
     carry.
 
-    ``session_token`` and ``populate_query_metrics`` no longer do anything, and
-    ``read_timeout`` is a socket-level setting this method does not support. All
-    three raise ``TypeError`` naming the offending option, including when the
+    ``session_token`` and ``populate_query_metrics`` no longer do anything.
+    Both raise ``TypeError`` naming the offending option, including when the
     value passed is ``None`` or ``False`` -- a customer who leaves one of these
     in their call should be told, not silently ignored.
 
@@ -625,7 +584,7 @@ def test_database_read_preserves_supported_options_and_refreshes_properties(data
     """
     case = database_read_case
     result = _call_database_read(
-        case, timeout=timeout, read_timeout=None, throughput_bucket=7,
+        case, timeout=timeout, throughput_bucket=7,
         initial_headers={"x-my-app": "catalog"},
     )
     assert isinstance(result, CosmosDict)
@@ -973,24 +932,6 @@ def test_sync_helper_keeps_legacy_create_database_behind_boundary():
     ]
 
 
-def test_sync_create_database_rejects_per_call_read_timeout():
-    """Create-database uses the configured backend and does not support overriding
-    the client's read timeout for one call."""
-    connection = SimpleNamespace(
-        CreateDatabase=MagicMock(return_value={"id": "db1"}),
-        last_response_headers={},
-    )
-    backend = _BindingAdapter()
-
-    with pytest.raises(TypeError, match="does not support the 'read_timeout'"):
-        DatabaseHelper(connection, backend).create_database(
-            {"id": "db1"},
-            {Constants.Kwargs.READ_TIMEOUT: 2},
-            kwargs={Constants.Kwargs.READ_TIMEOUT: 2},
-        )
-
-    assert backend.prepared is None
-    connection.CreateDatabase.assert_not_called()
 
 
 def test_sync_helper_maps_conflict_to_resource_exists():
@@ -1210,75 +1151,8 @@ def test_sync_if_not_exists_legacy_reads_winning_database_after_conflict():
     )
 
 
-def test_sync_if_not_exists_legacy_preserves_read_timeout_on_both_legs():
-    """A per-call socket timeout applies to the read and to the create.
-
-    The customer set one timeout for one method call. Applying it to only the
-    first request would leave the second able to hang for the client default,
-    which is not what they asked for.
-    """
-    connection = SimpleNamespace(
-        ReadDatabase=MagicMock(
-            side_effect=CosmosResourceNotFoundError(status_code=404, message="missing")
-        ),
-        CreateDatabase=MagicMock(return_value={"id": "db1", "_rid": "created"}),
-        last_response_headers={},
-    )
-
-    result = DatabaseHelper(connection, LEGACY_BACKEND).create_database_if_not_exists(
-        {"id": "db1"},
-        {},
-        kwargs={Constants.Kwargs.READ_TIMEOUT: 2},
-    )
-
-    assert result["_rid"] == "created"
-    assert connection.ReadDatabase.call_args.kwargs[Constants.Kwargs.READ_TIMEOUT] == 2
-    assert connection.CreateDatabase.call_args.kwargs[Constants.Kwargs.READ_TIMEOUT] == 2
 
 
-@pytest.mark.parametrize(
-    "request_options,operation_kwargs",
-    [
-        ({Constants.Kwargs.READ_TIMEOUT: 2}, {}),
-        ({}, {Constants.Kwargs.READ_TIMEOUT: 2}),
-        # Both legs share DatabaseProxy.read's eligibility rule, so every option
-        # that sends a plain read to the legacy path stops a get-or-create here.
-        # The driver clamps a sub-second end-to-end timeout to 1 second, and a
-        # transport keyword is consumed by the azure-core pipeline the Rust path
-        # never runs.
-        ({}, {Constants.Kwargs.TIMEOUT: 0.5}),
-        ({}, {"connection_timeout": 2}),
-    ],
-)
-def test_sync_if_not_exists_read_timeout_never_crosses_from_rust_to_legacy(
-    request_options,
-    operation_kwargs,
-):
-    """An unsupported per-call socket timeout fails instead of mixing engines.
-
-    A per-call socket timeout is not something the Rust path can express, and the
-    method needs both of its requests on the same engine. Quietly running the whole
-    thing on the legacy path would give the customer different retry behavior and
-    different diagnostics than every other call on that client, with no way to
-    notice. It raises instead, and sends nothing.
-    """
-    connection = SimpleNamespace(
-        ReadDatabase=MagicMock(return_value={"id": "db1"}),
-        CreateDatabase=MagicMock(),
-        last_response_headers={},
-    )
-    backend = _BindingAdapter()
-
-    with pytest.raises(NotImplementedError, match="create_database_if_not_exists"):
-        DatabaseHelper(connection, backend).create_database_if_not_exists(
-            {"id": "db1"},
-            request_options,
-            kwargs=operation_kwargs,
-        )
-
-    assert backend.prepared is None
-    connection.ReadDatabase.assert_not_called()
-    connection.CreateDatabase.assert_not_called()
 
 
 class _AsyncBindingAdapter(AsyncCosmosBackend):
@@ -1437,43 +1311,6 @@ def test_async_connection_read_database_forwards_initial_headers():
     asyncio.run(run())
 
 
-def test_async_read_database_keeps_legacy_read_timeout():
-    """Choosing the async legacy helper explicitly still passes the internal timeout through."""
-    async def run():
-        """The explicitly selected legacy path fires the hook once."""
-        response_headers = {"x-ms-request-charge": "1.0"}
-        legacy_body = {"id": "db1", "_rid": "legacy"}
-        hook_calls = []
-
-        async def legacy_read(_link, *, options, **kwargs):
-            """Invoke the caller's response_hook and return the canned legacy body."""
-            kwargs["response_hook"](response_headers, legacy_body)
-            return legacy_body
-
-        connection = SimpleNamespace(
-            ReadDatabase=AsyncMock(side_effect=legacy_read),
-            last_response_headers=response_headers,
-        )
-        result = await AsyncDatabaseHelper(connection, ASYNC_LEGACY_BACKEND).read_database(
-            "db1",
-            {Constants.Kwargs.READ_TIMEOUT: 2},
-            response_hook=lambda headers, body: hook_calls.append((headers, body)),
-            kwargs={Constants.Kwargs.READ_TIMEOUT: 2},
-        )
-
-        assert result == {"id": "db1", "_rid": "legacy"}
-        connection.ReadDatabase.assert_awaited_once()
-        link, = connection.ReadDatabase.await_args.args
-        awaited_kwargs = connection.ReadDatabase.await_args.kwargs
-        assert link == "dbs/db1"
-        assert awaited_kwargs["options"] == {Constants.Kwargs.READ_TIMEOUT: 2}
-        assert awaited_kwargs[Constants.Kwargs.READ_TIMEOUT] == 2
-        assert callable(awaited_kwargs["response_hook"])
-        # The hook must fire exactly once on the legacy path too -- the
-        # coordinator hands it to the legacy call instead of to the parser.
-        assert hook_calls == [(response_headers, legacy_body)]
-
-    asyncio.run(run())
 
 
 def test_async_read_database_maps_not_found_and_skips_hook():
@@ -1729,31 +1566,6 @@ def test_async_helper_keeps_legacy_create_database_behind_boundary():
     asyncio.run(run())
 
 
-def test_async_create_database_rejects_per_call_read_timeout():
-    """Async create-database does not support overriding the client's read timeout
-    for one call."""
-    async def run():
-        """Confirm the unsupported option fails before either backend is invoked."""
-        connection = SimpleNamespace(
-            CreateDatabase=AsyncMock(return_value={"id": "db1"}),
-            last_response_headers={"x-ms-request-charge": "4.25"},
-        )
-        backend = _AsyncBindingAdapter()
-        hook_calls = []
-
-        with pytest.raises(TypeError, match="does not support the 'read_timeout'"):
-            await AsyncDatabaseHelper(connection, backend).create_database(
-                {"id": "db1"},
-                {Constants.Kwargs.READ_TIMEOUT: 2},
-                response_hook=lambda headers, body: hook_calls.append((headers, body)),
-                kwargs={Constants.Kwargs.READ_TIMEOUT: 2},
-            )
-
-        assert backend.prepared is None
-        assert hook_calls == []
-        connection.CreateDatabase.assert_not_awaited()
-
-    asyncio.run(run())
 
 
 def test_async_if_not_exists_legacy_reads_then_creates_only_on_404():
@@ -2651,29 +2463,6 @@ def test_create_database_signature_is_keyword_only_after_id(client_type, method_
     assert not any(p.kind == inspect.Parameter.VAR_POSITIONAL for p in parameters.values())
 
 
-def test_if_not_exists_unsupported_option_does_not_recommend_legacy(create_database_client):
-    """The error for an unsupported option tells the customer how to fix it, in their
-    own terms.
-
-    The message names the offending option and points at how the client was
-    constructed, which is the thing they can actually change. It does not
-    mention the internal backend name, which would mean nothing to them and
-    would leak an implementation detail into a public error message.
-
-    Nothing is prepared and neither leg of the workflow runs.
-    """
-    client = create_database_client
-    with pytest.raises(NotImplementedError) as error:
-        _call_create_database(
-            client, "db1", method_name="create_database_if_not_exists", read_timeout=1
-        )
-    message = str(error.value)
-    assert "read_timeout" in message
-    assert "constructing CosmosClient" in message
-    assert "core-python" not in message
-    assert client._adapter.prepared_requests == []
-    client.client_connection.ReadDatabase.assert_not_called()
-    client.client_connection.CreateDatabase.assert_not_called()
 
 
 @pytest.mark.parametrize(
@@ -2996,78 +2785,8 @@ def test_async_if_not_exists_legacy_existing_skips_create_and_strips_create_only
     asyncio.run(run())
 
 
-def test_async_if_not_exists_legacy_preserves_read_timeout_on_both_legs():
-    """Async twin: one per-call socket timeout applies to the read and the create."""
-    async def run():
-        """Confirm a ``read_timeout`` kwarg is forwarded to both the async read and create legacy calls."""
-        connection = SimpleNamespace(
-            ReadDatabase=AsyncMock(
-                side_effect=CosmosResourceNotFoundError(status_code=404, message="missing")
-            ),
-            CreateDatabase=AsyncMock(return_value={"id": "db1", "_rid": "created"}),
-            last_response_headers={},
-        )
-
-        result = await AsyncDatabaseHelper(
-            connection,
-            ASYNC_LEGACY_BACKEND,
-        ).create_database_if_not_exists(
-            {"id": "db1"},
-            {},
-            kwargs={Constants.Kwargs.READ_TIMEOUT: 2},
-        )
-
-        assert result["_rid"] == "created"
-        assert connection.ReadDatabase.call_args.kwargs[Constants.Kwargs.READ_TIMEOUT] == 2
-        assert connection.CreateDatabase.call_args.kwargs[Constants.Kwargs.READ_TIMEOUT] == 2
-
-    asyncio.run(run())
 
 
-@pytest.mark.parametrize(
-    "request_options,operation_kwargs",
-    [
-        ({Constants.Kwargs.READ_TIMEOUT: 2}, {}),
-        ({}, {Constants.Kwargs.READ_TIMEOUT: 2}),
-        # Both legs share DatabaseProxy.read's eligibility rule, so every option
-        # that sends a plain read to the legacy path stops a get-or-create here.
-        # The driver clamps a sub-second end-to-end timeout to 1 second, and a
-        # transport keyword is consumed by the azure-core pipeline the Rust path
-        # never runs.
-        ({}, {Constants.Kwargs.TIMEOUT: 0.5}),
-        ({}, {"connection_timeout": 2}),
-    ],
-)
-def test_async_if_not_exists_read_timeout_never_crosses_from_rust_to_legacy(
-    request_options,
-    operation_kwargs,
-):
-    """Async twin: an unsupported socket timeout fails without engine mixing, and
-    without sending either request."""
-    async def run():
-        """Attempt ``create_database_if_not_exists`` with a Rust-incompatible option and confirm it raises ``NotImplementedError`` before any request is sent."""
-        connection = SimpleNamespace(
-            ReadDatabase=AsyncMock(return_value={"id": "db1"}),
-            CreateDatabase=AsyncMock(),
-            last_response_headers={},
-        )
-        backend = _AsyncBindingAdapter()
-
-        with pytest.raises(NotImplementedError, match="create_database_if_not_exists"):
-            await AsyncDatabaseHelper(
-                connection,
-                backend,
-            ).create_database_if_not_exists(
-                {"id": "db1"},
-                request_options,
-                kwargs=operation_kwargs,
-            )
-
-        assert backend.prepared is None
-        connection.ReadDatabase.assert_not_awaited()
-        connection.CreateDatabase.assert_not_awaited()
-
-    asyncio.run(run())
 
 
 def test_sync_if_not_exists_non_404_read_error_propagates_without_create():
@@ -3535,9 +3254,7 @@ def test_if_not_exists_legacy_receives_remaining_budget_and_isolated_hook(
     pinned clock advances -- the budget shrinks here exactly as it does on the
     Rust path.
 
-    The legacy-only ``read_timeout`` is passed through, since a customer on this
-    path is entitled to the settings it supports, and each call carries its own
-    start time.
+    Each legacy call carries its own start time and the remaining shared budget.
 
     Two rules are kept from the Rust path. The hook is not handed down to the
     legacy call; the coordinator fires it once itself, so the customer's
@@ -3581,7 +3298,7 @@ def test_if_not_exists_legacy_receives_remaining_budget_and_isolated_hook(
 
     proxy, properties = _call_create_database(
         client, "db1", method_name="create_database_if_not_exists", timeout=5,
-        read_timeout=2, offer_throughput=400, return_properties=True, response_hook=hook,
+        offer_throughput=400, return_properties=True, response_hook=hook,
     )
     assert proxy.id == "db1"
     assert properties["nested"]["value"] == "original"
@@ -3590,7 +3307,6 @@ def test_if_not_exists_legacy_receives_remaining_budget_and_isolated_hook(
     for index, (options, kwargs) in enumerate(recorded):
         assert options["_item_operation_deadline"] == 105.0
         assert options["timeout"] == kwargs["timeout"] == 5.0 - index
-        assert kwargs["read_timeout"] == 2
         assert kwargs[Constants.OperationStartTime] > 0
         assert "response_hook" not in kwargs
         assert ("offerThroughput" in options) == (index == 1)
@@ -4069,7 +3785,6 @@ def test_delete_database_service_error_never_fires_success_hook_or_replays(delet
 @pytest.mark.parametrize(
     "kwargs",
     [
-        {"read_timeout": 0.5},
         {"timeout": 0.5},
         {"timeout": 0},
         {"timeout": "invalid"},
@@ -4324,23 +4039,6 @@ def test_sync_delete_database_raises_not_found_for_a_missing_database():
         DatabaseHelper(connection, backend).delete_database("dbs/db1", {})
 
 
-def test_sync_delete_database_rejects_unsupported_read_timeout_without_fallback():
-    """The timeout eligibility rule is unchanged, but no legacy delete is allowed."""
-    connection = SimpleNamespace(
-        DeleteDatabase=MagicMock(return_value=None),
-        last_response_headers={},
-    )
-    backend = _BindingAdapter(_deleted_response())
-
-    with pytest.raises(NotImplementedError, match="delete_database.*legacy Python"):
-        DatabaseHelper(connection, backend).delete_database(
-            "dbs/db1",
-            {Constants.Kwargs.READ_TIMEOUT: 2},
-            kwargs={},
-        )
-
-    assert backend.prepared is None
-    connection.DeleteDatabase.assert_not_called()
 
 
 def test_async_delete_database_routes_to_rust_and_never_calls_legacy():
@@ -4368,27 +4066,6 @@ def test_async_delete_database_routes_to_rust_and_never_calls_legacy():
     asyncio.run(run())
 
 
-def test_async_delete_database_rejects_unsupported_read_timeout_without_fallback():
-    """The async delete uses the same no-fallback policy."""
-    async def run():
-        """An unsupported timeout must not reach either transport."""
-        connection = SimpleNamespace(
-            DeleteDatabase=AsyncMock(return_value=None),
-            last_response_headers={},
-        )
-        backend = _AsyncBindingAdapter(_deleted_response())
-
-        with pytest.raises(NotImplementedError, match="delete_database.*legacy Python"):
-            await AsyncDatabaseHelper(connection, backend).delete_database(
-                "dbs/db1",
-                {Constants.Kwargs.READ_TIMEOUT: 2},
-                kwargs={},
-            )
-
-        assert backend.prepared is None
-        connection.DeleteDatabase.assert_not_awaited()
-
-    asyncio.run(run())
 
 
 @pytest.mark.parametrize(

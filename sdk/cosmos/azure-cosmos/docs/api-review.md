@@ -2062,8 +2062,8 @@ and the existing two-argument response hook. The proxy result and `return_proper
 tuple remain unchanged. Include the policies the application wants to retain;
 passing a properties dictionary as the target still supplies only its ID.
 
-**Other public changes:** Non-`None` per-call `read_timeout` is rejected;
-`None` is discarded. Configure socket timeouts on the client instead.
+**Other public changes:** Removed `read_timeout` raises `TypeError` on both
+execution paths, including `None`. Runtime HTTP-attempt limits are distinct.
 `response_hook(headers, properties)` receives its own copies of the headers
 and properties, including nested values. Editing those copies no longer
 changes the returned properties or the SDK's saved headers. Valid response hook
@@ -2146,8 +2146,8 @@ but do not rely on edits to either argument changing returned properties,
 cached partition-key metadata, or SDK-owned headers. Such local edits never
 changed the actual Cosmos DB container.
 
-**Other public changes:** Reject non-`None` per-call `read_timeout`; discard
-`None`. Configure socket timeouts on the client instead. Unsupported Rust
+**Other public changes:** Reject removed `read_timeout` on both execution
+paths, including `None`. Runtime HTTP-attempt limits are distinct. Unsupported Rust
 settings now raise rather than silently change backends. Response hooks still
 run synchronously after success, including callable objects that evaluate to
 `False`; this concerns the object itself, not its return value. Header
@@ -2354,7 +2354,7 @@ remains an open compatibility question.
 | Decide whether to retry after the result of a create is uncertain | Legacy exposes a write-retry opt-in for these failures. The driver can retry creates without the equivalent per-write control, while the Rust item path rejects non-`None` `retry_write`, including zero. The driver must provide the control or the changed retry contract needs approval. |
 | Reuse a saved session token across calls | Legacy omits explicit tokens on ordinary single-write-region creates; Rust forwards them. For example, `session_token="not-a-session-token"` is ignored by legacy, so the order is created, but Rust receives 400 and the order is not created. Decide whether acceptance of malformed values must be preserved. Do not remove tokens indiscriminately: on multi-write-region accounts they can require a write region to catch up with data the application already read elsewhere. Failover and container-recreation behavior remain open compatibility questions. |
 | Keep writing after a container is recreated under the same name | With `/customerId` cached, recreate the container with `/region` and submit `{"id":"order-42","region":"West US"}` without `customerId`. Legacy recovery re-extracts this undefined key; the Rust driver refreshes metadata but retains the old key. The request can fail with HTTP 400 rather than recover using the new key. Recovery after container recreation remains an open compatibility requirement. |
-| Bound connection setup or response waiting for this create | Legacy per-call `connection_timeout` and `read_timeout` have no equivalent driver controls. The Rust path rejects non-`None` values. A single overall `timeout` does not preserve those separate limits. |
+| Bound connection setup or response waiting for this create | Legacy per-call `connection_timeout` has no equivalent driver control. `read_timeout` is removed on both paths. The Rust path rejects non-`None` values. A single overall `timeout` does not preserve those separate limits. |
 | Start another eligible regional write while the first remains slow | Legacy can hedge writes with write-retry opt-in and suitable writable regions. The Rust driver does not hedge document creates. Accepting `availability_strategy` in Python does not preserve that behavior; driver support or an approved availability change is needed. |
 | Read all service response headers | The driver retains selected fields, not the original complete map. Neither `get_response_headers()` nor a copied success-hook argument can recover a discarded header, including when the response body is suppressed. |
 | Inspect or modify the raw outgoing request | The Rust path rejects the raw request callback. The driver needs a supported interception capability before our binding can restore it. Static custom headers and parsed success hooks are not equivalents. |
@@ -2564,8 +2564,8 @@ If the service reports HTTP 304 ("not modified"), `item` is an empty
 
 With `timeout=5`, spending 2 seconds obtaining container metadata leaves
 approximately 3 for the item read, not a fresh 5. Waiting for the legacy
-metadata-cache lock consumes time too. `timeout=None` leaves this overall
-budget unset and clears a nested timeout; separate transport settings still
+metadata-cache lock consumes time too. `timeout=None` inherits the client
+default and overrides a nested timeout; separate transport settings still
 apply. Python initialization, parsing and synchronous callback code are not
 forcibly interrupted at every instruction. The async client requests
 cancellation of pending binding work, but cannot guarantee immediate
@@ -2605,7 +2605,7 @@ governed metadata hedging.
 |---|---|
 | Read an order in an older partitionless/system-key container | Excluded from the Rust-backed release. The driver team has no current implementation plans; reconsideration depends on customer need. Null and undefined keys are not substitutes for the legacy empty-key representation. See the shared older-container decision below. |
 | Explicitly request `BoundedStaleness` or `ConsistentPrefix` on one read | Legacy forwards `request_options={"consistencyLevel": ...}`. The driver has no equivalent explicit read strategy. The binding now raises `NotImplementedError` instead of accepting a setting the driver can override. Driver support or an approved restriction is needed; inheriting an account default is not an explicit per-read override. |
-| Limit connection setup or response inactivity for this read | Legacy supports per-call `connection_timeout` and `read_timeout`. The Rust item path rejects non-`None` values. An overall `timeout` does not replace those separate controls. Driver support or an approved compatibility change is required. |
+| Limit connection setup or response inactivity for this read | Legacy supports per-call `connection_timeout`; `read_timeout` is removed from both paths. The Rust item path rejects non-`None` values. An overall `timeout` does not replace those separate controls. Driver support or an approved compatibility change is required. |
 | Try additional regions while earlier read attempts remain slow | The release supports threshold-only hedging with one alternate. Explicit `threshold_steps_ms` is rejected rather than discarded; progressive third/later hedges are intentionally excluded. |
 | Obtain every original service response header | The driver preserves selected fields, not the complete map. An original `date` or diagnostic header can be absent even when the order is returned. Copying hook arguments cannot restore it; driver preservation and binding forwarding are required. |
 | Inspect or modify the raw outgoing request | The Rust path rejects `raw_request_hook`. The driver needs a supported interception capability before the binding can restore it. Static headers and a success callback are not equivalent. |
@@ -3523,7 +3523,7 @@ to its metadata requests:
 | Legacy setting | What the customer previously received |
 |---|---|
 | `timeout` | A limit for each partition-range fetch and its retries, not one budget for complete discovery. |
-| `connection_timeout`, `read_timeout` | Per-call controls for connection setup and waiting without receiving data on those fetches. |
+| `connection_timeout` | Legacy per-call connection-setup control on those fetches. |
 | `response_hook` | Headers and body for each successful partition-range response; no callback when cached ranges avoided the requests. |
 | `raw_request_hook`, `raw_response_hook` | Access to the outgoing pipeline request or HTTP response object; the request hook could also modify the request. |
 | `headers` | Custom headers on partition-range requests. |
@@ -3903,24 +3903,23 @@ as resolved or generalize one API's behavior to every operation.
 
 ### Timeout settings are explicit about their scope
 
-Client-level socket timeouts and per-operation budgets are different settings:
+Client-default and per-call overall budgets are separate from runtime HTTP limits:
 
 ```python
-client = CosmosClient(endpoint, credential=key, read_timeout=10)
+client = CosmosClient(endpoint, credential=key, timeout=10)
 database = client.get_database_client("sales")
 properties = database.read(timeout=5)
 ```
 
-`read_timeout=10` controls socket read waiting. `timeout=5` limits this supported
+`timeout=10` sets the client default. `timeout=5` overrides it for this supported
 operation's work. The reviewed operation-timeout inputs must be finite numeric
 durations of at least one second, within the supported range, and not booleans.
 This initial-input rule does not prevent an operation from passing a remaining
 fraction of a second to its next internal request.
 
-`database.read(read_timeout=10)` raises `TypeError`; APIs with this rule discard
-an explicit `None`. Database get-or-create retains its per-call read-timeout
-control. Check the individual API rather than assuming every method has the
-same options.
+`read_timeout` is removed from both execution paths, including constructors,
+operations, and nested options. Even explicit `None` raises `TypeError`.
+For the supported overall `timeout`, omission or `None` inherits the client default.
 
 | With `timeout=5` | Budget |
 |---|---|

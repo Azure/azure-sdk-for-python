@@ -24,7 +24,7 @@ What these protect, and the customer behavior behind each:
   that key; a database feed uses ``Databases``. Getting it wrong yields a
   silently empty list rather than an error, which is the worst kind of wrong.
 * routing away from Rust when Rust cannot honor an option exactly -- a
-  sub-second ``timeout``, a socket-level ``read_timeout``, a query in the
+  sub-second ``timeout``, a query in the
   legacy-only string form that goes on the wire as ``text/plain``.
 * create rejects obsolete keywords and unsupported Rust calls rather than
   silently switching transports. Conditional-header normalization is preserved.
@@ -223,24 +223,6 @@ def test_container_create_rejects_obsolete_keywords(container_create_case, use_l
     hook.assert_not_called()
 
 
-@pytest.mark.parametrize("use_legacy", [False, True])
-@pytest.mark.parametrize("method", ["create_container", "create_container_if_not_exists"])
-@pytest.mark.parametrize("timeout", [False, 0.5, 1, "invalid"])
-def test_container_create_rejects_per_call_socket_timeout(container_create_case, use_legacy, method, timeout):
-    """The socket-level ``read_timeout`` is not accepted per call on either create
-    method or either engine.
-
-    False, half a second, one second, and a string all raise ``TypeError`` naming
-    the option, so the error points straight at what to remove. Nothing is
-    created.
-    """
-    case = container_create_case
-    if use_legacy:
-        case.connection._backend = case.legacy_backend
-    with pytest.raises(TypeError, match="read_timeout"):
-        _call_container_create(case, "c1", PartitionKey(path="/pk"), method=method, read_timeout=timeout)
-    case.backend.execute.assert_not_called()
-    case.connection.CreateContainer.assert_not_called()
 
 
 @pytest.mark.parametrize("extra_args", [(None,), (None, None), (None, None, False), (None, None, None, 400)])
@@ -410,7 +392,7 @@ def test_container_create_preserves_required_arguments_and_return_shapes(
     args = ("c1", PartitionKey(path="/pk"))
     kwargs = dict(zip(("id", "partition_key")[positional_count:], args[positional_count:]))
     result = _call_container_create(
-        case, *args[:positional_count], **kwargs, return_properties=return_properties, read_timeout=None,
+        case, *args[:positional_count], **kwargs, return_properties=return_properties,
     )
     proxy = result[0] if return_properties else result
     assert proxy.id == "c1"
@@ -424,7 +406,6 @@ def test_container_create_preserves_required_arguments_and_return_shapes(
     case.connection._set_container_properties_cache.assert_called_once()
     if use_legacy:
         case.backend.execute.assert_not_called()
-        assert "read_timeout" not in case.connection.CreateContainer.call_args.kwargs
     else:
         case.connection.CreateContainer.assert_not_called()
         case.backend.execute.assert_called_once()
@@ -849,7 +830,7 @@ def test_container_get_or_create_preserves_shapes_and_existing_settings(
     result = _call_container_create(
         case, *args[:positional_count], **kwargs, method="create_container_if_not_exists",
         default_ttl=99, offer_throughput=400, return_properties=return_properties,
-        read_timeout=None, response_hook=hook, timeout=10,
+        response_hook=hook, timeout=10,
         initial_headers={"x-company-trace": "setup"},
     )
     proxy = result[0] if return_properties else result
@@ -870,7 +851,6 @@ def test_container_get_or_create_preserves_shapes_and_existing_settings(
         case.backend.execute.assert_not_called()
         read = case.connection.ReadContainer.call_args
         assert "offerThroughput" not in read.kwargs["options"]
-        assert "read_timeout" not in read.kwargs
         assert "response_hook" not in read.kwargs
         assert read.kwargs["timeout"] == 10
         assert case.connection.CreateContainer.call_count == int(case.missing)
@@ -1371,9 +1351,6 @@ def test_create_container_is_rust_eligible_for_a_plain_create():
     assert is_create_container_rust_eligible({"offerThroughput": 400}, {"timeout": 3.5}) is True
 
 
-def test_create_container_is_not_rust_eligible_with_a_read_timeout():
-    """A per-call socket timeout cannot run on the Rust create path."""
-    assert is_create_container_rust_eligible({}, {"read_timeout": 2}) is False
 
 
 def test_create_container_is_not_rust_eligible_with_an_intended_container_rid():
@@ -1412,33 +1389,6 @@ def test_sync_create_container_routes_to_rust_and_fires_the_hook_once():
     assert hooks[0][1] == {"id": "c1", "_rid": "rid1"}
 
 
-def test_sync_create_container_explicit_legacy_helper_preserves_read_timeout():
-    """The legacy call gets the definition and options unchanged, and the hook still
-    fires exactly once with the same shape as on the Rust path."""
-    legacy_headers = CaseInsensitiveDict({"x-ms-request-charge": "1.0"})
-    legacy_body = CosmosDict({"id": "c1", "_rid": "legacy"}, response_headers=legacy_headers)
-    connection = SimpleNamespace(
-        CreateContainer=MagicMock(return_value=legacy_body),
-        last_response_headers=legacy_headers,
-    )
-    hooks = []
-
-    result = ContainerHelper(connection, LEGACY_BACKEND).create_container(
-        "dbs/db1",
-        {"id": "c1"},
-        {"offerThroughput": 400},
-        response_hook=lambda headers, body: hooks.append((headers, body)),
-        kwargs={"read_timeout": 2},
-    )
-
-    assert result == legacy_body
-    call = connection.CreateContainer.call_args
-    assert call.kwargs["database_link"] == "dbs/db1"
-    assert call.kwargs["collection"] == {"id": "c1"}
-    assert call.kwargs["read_timeout"] == 2
-    assert len(hooks) == 1
-    assert hooks[0][0] == legacy_headers
-    assert hooks[0][1] == legacy_body
 
 
 def test_async_create_container_routes_to_rust():
@@ -1549,10 +1499,6 @@ def test_list_containers_page_is_not_eligible_for_another_resource_type():
     assert _list_gate(resource_type=http_constants.ResourceType.Database) is False
 
 
-def test_list_containers_page_is_not_eligible_with_a_read_timeout():
-    """A socket-level timeout or sub-second timeout must stay on the legacy path."""
-    assert _list_gate(kwargs={"read_timeout": 2}) is False
-    assert _list_gate(options={Constants.Kwargs.TIMEOUT: 0.5}) is False
 
 
 def test_query_containers_page_is_rust_eligible_for_a_dict_query():
@@ -1952,28 +1898,6 @@ def test_sync_read_container_routes_to_rust_and_fires_the_hook_once():
     assert len(hooks) == 1
 
 
-def test_sync_read_container_explicit_legacy_helper_preserves_read_timeout():
-    """Explicit legacy helper calls retain transport options; public reads reject them."""
-    legacy_headers = CaseInsensitiveDict({"x-ms-request-charge": "1.0"})
-    legacy_body = CosmosDict({"id": "c1", "_rid": "legacy"}, response_headers=legacy_headers)
-    connection = SimpleNamespace(
-        ReadContainer=MagicMock(return_value=legacy_body),
-        last_response_headers=legacy_headers,
-    )
-    hooks = []
-
-    result = ContainerHelper(connection, LEGACY_BACKEND).read_container(
-        "dbs/db1/colls/c1",
-        {},
-        response_hook=lambda headers, body: hooks.append((headers, body)),
-        kwargs={"read_timeout": 2},
-    )
-
-    assert result == legacy_body
-    call = connection.ReadContainer.call_args
-    assert call.args[0] == "dbs/db1/colls/c1"
-    assert call.kwargs["read_timeout"] == 2
-    assert len(hooks) == 1
 
 
 def test_read_container_does_not_pass_the_hook_to_the_legacy_call():
@@ -1990,7 +1914,7 @@ def test_read_container_does_not_pass_the_hook_to_the_legacy_call():
         "dbs/db1/colls/c1",
         {},
         response_hook=lambda headers, body: hooks.append(body),
-        kwargs={"read_timeout": 2, "response_hook": lambda *a: hooks.append("legacy")},
+        kwargs={"response_hook": lambda *a: hooks.append("legacy")},
     )
 
     assert "response_hook" not in connection.ReadContainer.call_args.kwargs
@@ -2027,66 +1951,8 @@ def test_async_read_container_routes_to_rust():
 # arm is the one code path in this family with no coverage at all.
 
 
-def test_async_create_container_explicit_legacy_helper_preserves_read_timeout():
-    """Explicit legacy helper selection keeps the timeout handling it passes through."""
-    legacy_headers = CaseInsensitiveDict({"x-ms-request-charge": "1.0"})
-    legacy_body = CosmosDict({"id": "c1", "_rid": "legacy"}, response_headers=legacy_headers)
-    connection = SimpleNamespace(
-        CreateContainer=AsyncMock(return_value=legacy_body),
-        last_response_headers=legacy_headers,
-    )
-    hooks = []
-
-    result = asyncio.run(
-        AsyncContainerHelper(connection, ASYNC_LEGACY_BACKEND).create_container(
-            "dbs/db1",
-            {"id": "c1"},
-            {"offerThroughput": 400},
-            response_hook=lambda headers, body: hooks.append((headers, body)),
-            kwargs={"read_timeout": 2},
-        )
-    )
-
-    assert result == legacy_body
-    call = connection.CreateContainer.call_args
-    assert call.kwargs["database_link"] == "dbs/db1"
-    assert call.kwargs["collection"] == {"id": "c1"}
-    assert call.kwargs["options"] == {"offerThroughput": 400}
-    assert call.kwargs["read_timeout"] == 2
-    assert "response_hook" not in call.kwargs
-    assert len(hooks) == 1
-    assert hooks[0][0] == legacy_headers
-    assert hooks[0][1] == legacy_body
 
 
-def test_async_read_container_explicit_legacy_helper_preserves_read_timeout():
-    """Explicit legacy helper calls retain transport options and one response hook."""
-    legacy_headers = CaseInsensitiveDict({"x-ms-request-charge": "1.0"})
-    legacy_body = CosmosDict({"id": "c1", "_rid": "legacy"}, response_headers=legacy_headers)
-    connection = SimpleNamespace(
-        ReadContainer=AsyncMock(return_value=legacy_body),
-        last_response_headers=legacy_headers,
-    )
-    hooks = []
-
-    result = asyncio.run(
-        AsyncContainerHelper(connection, ASYNC_LEGACY_BACKEND).read_container(
-            "dbs/db1/colls/c1",
-            {},
-            response_hook=lambda headers, body: hooks.append((headers, body)),
-            kwargs={"read_timeout": 2, "response_hook": lambda *a: hooks.append("legacy")},
-        )
-    )
-
-    assert result == legacy_body
-    call = connection.ReadContainer.call_args
-    assert call.args[0] == "dbs/db1/colls/c1"
-    assert call.kwargs["read_timeout"] == 2
-    # The helper owns the hook, so the legacy pipeline must not get a copy and
-    # fire it a second time.
-    assert "response_hook" not in call.kwargs
-    assert len(hooks) == 1
-    assert hooks[0][0] == legacy_headers
 
 
 def test_async_create_container_fires_the_hook_once_on_the_rust_path():

@@ -20,6 +20,7 @@
 # SOFTWARE.
 
 from ._version import VERSION
+from .runtime import CosmosRuntime, ConnectionPoolOptions
 from ._cosmos_responses import CosmosDict, CosmosList
 from ._retry_utility import ConnectionRetryPolicy
 from .container import ContainerProxy
@@ -44,6 +45,8 @@ from ._global_secondary_index import GlobalSecondaryIndexDefinition
 
 __all__ = (
     "CosmosClient",
+    "CosmosRuntime",
+    "ConnectionPoolOptions",
     "DatabaseProxy",
     "ContainerProxy",
     "PartitionKey",

@@ -38,6 +38,8 @@ def load_module(name, path):
     ("query_items", "test_query_async.py", "::TestQueryAsync::test_offset_limit_async", "offset", "aio"),
     ("query_items", "test_query.py", "::TestQuery::test_distinct", "distinct", "sync"),
     ("query_items", "test_query_async.py", "::TestQueryAsync::test_distinct_async", "distinct", "aio"),
+    ("query_items", "test_query.py", "::TestQuery::test_partition_scoped_count_is_index_only", "count", "sync"),
+    ("query_items", "test_query_async.py", "::TestQueryAsync::test_partition_scoped_count_is_index_only_async", "count", "aio"),
 ])
 def test_owned_runner_selects_original_or_copy(monkeypatch, backend, operation, filename, method, query_test, surface):
     monkeypatch.chdir(ROOT)
@@ -58,7 +60,13 @@ def test_owned_runner_selects_original_or_copy(monkeypatch, backend, operation, 
     client.__enter__.return_value = client
     monkeypatch.setattr(runner, "CosmosClient", MagicMock(return_value=client))
     selections = []
-    monkeypatch.setattr(runner.pytest, "main", lambda options: selections.append(options) or 0)
+    def run(options):
+        if backend == "core-python" and (operation == "upsert_item" or query_test == "count"):
+            assert config.TEST_MULTI_PARTITION_CONTAINER_ID == config.TEST_SINGLE_PARTITION_CONTAINER_ID == "orders"
+        selections.append(options)
+        return 0
+
+    monkeypatch.setattr(runner.pytest, "main", run)
 
     args = ["--backend", backend]
     if operation != "read_item":
@@ -82,6 +90,8 @@ def test_owned_runner_selects_original_or_copy(monkeypatch, backend, operation, 
     assert runner.os.environ["COSMOS_PARITY_CAPTURE_OP"] == operation
     assert "COSMOS_PARITY_CAPTURE_BACKEND_LABEL" not in runner.os.environ
     assert config.TEST_DATABASE_ID == "previous-db"
+    assert config.TEST_SINGLE_PARTITION_CONTAINER_ID == "previous-single"
+    assert config.TEST_MULTI_PARTITION_CONTAINER_ID == "previous-multi"
     if backend == "core-python":
         client.delete_database.assert_called_once()
     else:
@@ -95,6 +105,7 @@ def test_owned_runner_selects_original_or_copy(monkeypatch, backend, operation, 
     ("_validate_offset_limit", 0, None),
     ("_validate_distinct_offset_limit", 0, None),
     ("_validate_distinct", 0, None),
+    ("test_partition_scoped_count_is_index_only", 1, None),
 ])
 def test_filter_copy_preserves_original_query_body(method_name, start, stop):
     def body(path):
@@ -115,6 +126,20 @@ def test_query_selector_rejects_other_operations():
     with pytest.raises(SystemExit) as error:
         runner.main(["--backend", "rust", "--query-test", "ordering"])
     assert error.value.code == 2
+
+
+def test_async_count_copy_preserves_original_body():
+    def body(path):
+        module = ast.parse(path.read_text(encoding="utf-8"))
+        cls = next(node for node in module.body if isinstance(node, ast.ClassDef) and node.name == "TestQueryAsync")
+        method = next(node for node in cls.body if isinstance(node, ast.AsyncFunctionDef)
+                      and node.name == "test_partition_scoped_count_is_index_only_async")
+        # Only the container lookup is adapted to the owned fixture.
+        return [ast.dump(node) for node in method.body[1:]]
+
+    assert body(ROOT / "tests" / "test_query_async.py") == body(
+        ROOT / "tests" / "query_items" / "aio" / "legacy" / "test_query_async.py"
+    )
 
 
 @pytest.mark.parametrize("options", [

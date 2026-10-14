@@ -169,15 +169,14 @@ class TestContainerUpsertItemPreservesLegacyBehaviour(unittest.TestCase):
         self.assertIn("dbs/db/colls/c", cache)
 
     def test_cache_miss_forwards_timeout_kwargs_into_cache_fetch(self):
-        """Cache miss: ``timeout`` / ``read_timeout`` reach the cache-refresh read."""
+        """Cache miss: the remaining ``timeout`` reaches the cache-refresh read."""
         proxy, _cc, _cache = _make_proxy_with_mock_connection(precached=False)
 
-        proxy.upsert_item({"id": "x", "pk": "a"}, timeout=10, read_timeout=5)
+        proxy.upsert_item({"id": "x", "pk": "a"}, timeout=10)
 
         proxy.read.assert_called_once()
         read_kwargs = proxy.read.call_args.kwargs
         self.assertEqual(read_kwargs.get(Constants.Kwargs.TIMEOUT), 10)
-        self.assertEqual(read_kwargs.get(Constants.Kwargs.READ_TIMEOUT), 5)
 
     def test_cache_populate_step_takes_container_cache_lock(self):
         """Cache populate runs under ``container_cache_lock`` (thread-safety)."""

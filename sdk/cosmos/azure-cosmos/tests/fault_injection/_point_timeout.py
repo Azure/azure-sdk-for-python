@@ -16,7 +16,7 @@ MIN_TIMEOUT_ELAPSED = 0.9  # Allow 100 ms of clock/timer precision, not immediat
 MAX_OPERATION_ELAPSED = 2.0  # One second of scheduling allowance, still below the fault delay.
 
 
-def read_timeout_rule(rule_id, container_id, inject):
+def read_operation_timeout_rule(rule_id, container_id, inject):
     return {
         "id": rule_id,  # Identify the rule whose applications we count.
         "operation_type": "ReadItem",  # Do not delay setup or metadata resolution.

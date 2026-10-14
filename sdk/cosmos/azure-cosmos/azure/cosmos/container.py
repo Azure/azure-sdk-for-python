@@ -76,7 +76,7 @@ from .partition_key import (_build_partition_key_from_properties, PartitionKeyTy
                             _return_undefined_or_empty_partition_key, _SequentialPartitionKeyType,
                             NonePartitionKeyValue, NullPartitionKeyValue, PartitionKey)
 from .scripts import ScriptsProxy
-from ._backend.capabilities import reject_unsupported_rust_arguments
+from ._backend.capabilities import prepare_operation_kwargs
 
 if TYPE_CHECKING:
     from ._backend.cosmos_backend import CosmosBackend
@@ -173,8 +173,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
             if Constants.Kwargs.TIMEOUT in options:
                 kwargs[Constants.Kwargs.TIMEOUT] = options[Constants.Kwargs.TIMEOUT]
-            if Constants.Kwargs.READ_TIMEOUT in options:
-                kwargs[Constants.Kwargs.READ_TIMEOUT] = options[Constants.Kwargs.READ_TIMEOUT]
         return self._get_properties(**kwargs)
 
     def _get_properties(self, **kwargs: Any) -> dict[str, Any]:
@@ -244,7 +242,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """Read the container properties.
 
         All optional arguments must be passed by keyword. Session/query-metrics
-        options and non-``None`` per-call ``read_timeout`` are rejected.
+        options are rejected.
         Unsupported Rust settings raise rather than using legacy Python.
         The response hook receives independent copies of the response headers
         and container properties, including nested values.
@@ -260,12 +258,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.
-        :raises TypeError: A positional argument, retired option, or non-None per-call read_timeout is supplied.
+        :raises TypeError: A positional argument or retired option is supplied.
         :raises NotImplementedError: Rust cannot honor the requested settings.
         :returns: Container properties with response headers available through ``get_response_headers()``.
         :rtype: ~azure.cosmos.CosmosDict
         """
-        reject_unsupported_rust_arguments(self, kwargs, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, headers=initial_headers)
         validate_container_create_kwargs(kwargs, method_name="ContainerProxy.read")
         if priority is not None:
             kwargs['priority'] = priority
@@ -359,7 +357,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :dedent: 0
                 :caption: Get an item from the database and update one of its properties:
         """
-        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
         prepare_item_target(kwargs, item)
         # Check the cache-staleness value here rather than deeper in, so a bad
         # value raises where the caller can see it. None means skip the check.
@@ -443,7 +441,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             Repeated pairs produce one result per occurrence. Empty input performs no network calls.
         :rtype: ~azure.cosmos.CosmosList
         """
-        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
 
         items, deadline = prepare_read_items(items, max_concurrency, kwargs)
         if not items:
@@ -541,7 +539,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
-        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
         if session_token is not None:
             kwargs['session_token'] = session_token
         if initial_headers is not None:
@@ -804,7 +802,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: An Iterable of items (dicts), or change records for AllVersionsAndDeletes.
         :rtype: Iterable[dict[str, Any]]
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
 
         from ._helpers._change_feed import query_items_change_feed
 
@@ -1103,7 +1101,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 :dedent: 0
                 :caption: Parameterized query to get all products that have been discontinued:
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
         # Add positional arguments to keyword argument to support backward compatibility.
         original_positional_arg_names = ["query", "parameters", "partition_key", "enable_cross_partition_query",
                                          "max_item_count", "enable_scan_in_query", "populate_query_metrics"]
@@ -1301,7 +1299,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
         prepare_item_target(kwargs, item)
         # The id of the item to overwrite comes from ``item`` -- either a
         # string id, or the ``id`` of a dict -- and not from the body. This
@@ -1386,7 +1384,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: A CosmosDict representing the upserted item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
         # Upsert sends a body, like create, so the partition key is read out
         # of that body during the send. It also accepts etag and
         # match_condition, which narrow it to insert-only or to a replace
@@ -1477,7 +1475,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
         deadline = prepare_create_item_kwargs(kwargs, response_hook=response_hook)
         # Fold the named keyword arguments back into kwargs so the helper
         # receives a single dict.
@@ -1574,7 +1572,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy)
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy)
         # Fold the named keyword arguments into kwargs, then hand off.
         merge_patch_item_explicit_kwargs(
             kwargs,
@@ -1652,7 +1650,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
         :rtype: ~azure.cosmos.CosmosList[dict[str, Any]]
         """
-        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy)
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy)
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
@@ -1742,7 +1740,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
         :rtype: None
         """
-        reject_unsupported_rust_arguments(self, kwargs, strategy=availability_strategy, headers=initial_headers)
+        prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
         if populate_query_metrics is not None:
             # populate_query_metrics does nothing on a single-item delete, since
             # there is no query to measure. Warn and drop it so no header is built.
@@ -1801,7 +1799,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :raises TypeError: The response hook or an options dictionary is invalid.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs, inherit_timeout=False)
         return _get_throughput(
             client_connection=self.client_connection,
             container_link=self.container_link,
@@ -1832,7 +1830,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             or the throughput properties could not be updated.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs, inherit_timeout=False)
         return _replace_container_throughput(
             client_connection=self.client_connection,
             container_link=self.container_link,
@@ -1858,7 +1856,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: An Iterable of conflicts (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -1902,7 +1900,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: An Iterable of conflicts (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -1944,7 +1942,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: A CosmosDict representing the retrieved conflict.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
         self._get_properties_with_options(request_options)
@@ -1977,7 +1975,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The conflict does not exist in the container.
         :rtype: None
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
         self._get_properties_with_options(request_options)
@@ -2017,7 +2015,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype response_hook: Callable[[Mapping[str, str], None], None] = None,
         :rtype: None
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
@@ -2078,7 +2076,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
           are present. It therefore should only be treated as an opaque value.
 
         """
-        reject_unsupported_rust_arguments(self, kwargs)
+        prepare_operation_kwargs(self, kwargs)
         return _read_feed_ranges(
             client_connection=self.client_connection,
             container_link=self.container_link,

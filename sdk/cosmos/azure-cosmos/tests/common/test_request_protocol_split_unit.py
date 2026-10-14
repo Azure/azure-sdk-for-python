@@ -296,7 +296,8 @@ def test_native_rejects_old_private_request_shape(monkeypatch):
         native.read_item("unused-handle", old)
 
 
-def test_native_driver_handle_exports_and_keyword_contract():
+@pytest.mark.parametrize("runtime_kwargs", [{}, {"runtime": None}])
+def test_native_driver_handle_exports_and_keyword_contract(runtime_kwargs):
     """The Rust side offers exactly one way to take and give back a driver, with a fixed
     argument list.
 
@@ -308,7 +309,8 @@ def test_native_driver_handle_exports_and_keyword_contract():
     account address defaults to nothing, so callers can name only what they
     have. Asking for a driver with neither a key nor a credential is refused
     rather than producing one that cannot authenticate and fails later on a real
-    request.
+    request. Omitting the runtime or explicitly passing None selects the default
+    runtime contract without bypassing that credential check.
 
     Releasing a handle nobody knows succeeds quietly. Cleanup runs while things
     are already going wrong, so it must not raise over a handle that is already
@@ -318,12 +320,13 @@ def test_native_driver_handle_exports_and_keyword_contract():
     assert not hasattr(native, "init_client")
     assert not hasattr(native, "close_client")
     acquire = inspect.signature(native.acquire_driver_handle).parameters
-    assert tuple(acquire) == ("endpoint", "master_key", "config", "credential")
+    assert tuple(acquire) == ("endpoint", "master_key", "config", "credential", "runtime")
     assert acquire["endpoint"].default is inspect.Parameter.empty
-    assert all(acquire[name].default is None for name in ("master_key", "config", "credential"))
+    assert all(acquire[name].default is None for name in ("master_key", "config", "credential", "runtime"))
     assert tuple(inspect.signature(native.release_driver_handle).parameters) == ("driver_handle",)
     with pytest.raises(ValueError, match="acquire_driver_handle requires either"):
         native.acquire_driver_handle(
-            endpoint="https://unused.invalid", master_key=None, config=None, credential=None
+            endpoint="https://unused.invalid", master_key=None, config=None, credential=None,
+            **runtime_kwargs,
         )
     assert native.release_driver_handle(driver_handle="unused-protocol-test-handle") is None

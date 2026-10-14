@@ -44,6 +44,7 @@ from ._query_aggregate_utils import (
     _classify_aggregate_partial,
     _get_select_value_aggregate_function,
 )
+from ._backend.capabilities import reject_removed_options
 from ._constants import _Constants as Constants
 from .auth import _get_authorization_header
 from .offer import ThroughputProperties
@@ -74,12 +75,11 @@ def _get_match_headers(kwargs: dict[str, Any]) -> Tuple[Optional[str], Optional[
 
 
 def build_options(kwargs: dict[str, Any]) -> dict[str, Any]:
+    reject_removed_options(kwargs)
     options = kwargs.pop('request_options', kwargs.pop('feed_options', {}))
     for key, value in _COMMON_OPTIONS.items():
         if key in kwargs:
             options[value] = kwargs.pop(key)
-    if Constants.Kwargs.READ_TIMEOUT in kwargs:
-        options[Constants.Kwargs.READ_TIMEOUT] = kwargs[Constants.Kwargs.READ_TIMEOUT]
     if Constants.Kwargs.TIMEOUT in kwargs:
         options[Constants.Kwargs.TIMEOUT] = kwargs[Constants.Kwargs.TIMEOUT]
 
@@ -237,6 +237,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     """
     headers = dict(default_headers)
     options = options or {}
+    reject_removed_options(options)
 
     # SDK supported capabilities header for partition merge support
     headers[http_constants.HttpHeaders.SDKSupportedCapabilities] = \

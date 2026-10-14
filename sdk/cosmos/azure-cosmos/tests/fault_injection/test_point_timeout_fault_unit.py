@@ -7,13 +7,13 @@ from azure.cosmos import exceptions
 from azure.cosmos._backend.client_config import _prepare_fault_injection_rules
 from fault_injection._point_timeout import (
     DELAY_MS, MAX_OPERATION_ELAPSED, MIN_TIMEOUT_ELAPSED, OPERATION_TIMEOUT,
-    assert_point_timeout, assert_read_budget, assert_read_elapsed, read_timeout_rule,
+    assert_point_timeout, assert_read_budget, assert_read_elapsed, read_operation_timeout_rule,
 )
 
 
 @pytest.mark.parametrize("inject", [True, False])
 def test_point_timeout_rule_preserves_scope_delay_and_control(inject):
-    prepared, = _prepare_fault_injection_rules([read_timeout_rule("rule", "owned-container", inject)])
+    prepared, = _prepare_fault_injection_rules([read_operation_timeout_rule("rule", "owned-container", inject)])
     assert prepared.id == "rule"
     assert prepared.container_id == "owned-container"
     assert prepared.operation_type == "ReadItem"

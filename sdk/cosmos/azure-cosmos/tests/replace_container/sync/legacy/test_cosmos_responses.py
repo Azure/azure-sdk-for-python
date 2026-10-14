@@ -14,7 +14,7 @@ from replace_container._legacy_setup import SyncReplacementCase
 @pytest.mark.cosmosEmulator
 class TestCosmosResponses(SyncReplacementCase):
     def _create_key_client(self):
-        return CosmosClient(self.host, self.key, _backend="rust", read_timeout=30)
+        return CosmosClient(self.host, self.key, _backend="rust")
 
     def test_replace_container_headers(self):
         """``replace_container`` with ``return_properties`` returns populated headers.

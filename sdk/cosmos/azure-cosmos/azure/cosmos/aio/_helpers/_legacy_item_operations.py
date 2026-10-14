@@ -53,7 +53,7 @@ class AsyncLegacyItemHelper(LegacyItemHelper):
                 metadata_options = legacy_item_metadata_options(options)
                 properties = await self.client_connection.ReadContainer(
                     link, options=metadata_options,
-                    **{key: metadata_options[key] for key in ("timeout", "read_timeout") if key in metadata_options},
+                    **{key: metadata_options[key] for key in ("timeout",) if key in metadata_options},
                 )
                 self.client_connection._set_container_properties_cache(
                     link, _build_properties_cache(properties, link)

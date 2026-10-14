@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Copied async paging, OFFSET LIMIT, and DISTINCT tests against Rust.
+"""Copied async paging, OFFSET LIMIT, DISTINCT, and COUNT tests against Rust.
 
 Self-contained: builds its own database + container in ``asyncSetUp``
 and registers cleanup immediately. Class and method names match
@@ -17,7 +17,7 @@ import uuid
 
 import pytest
 
-from azure.cosmos import PartitionKey
+from azure.cosmos import PartitionKey, http_constants
 from azure.cosmos.aio import CosmosClient
 from query_items._legacy_distinct_helpers import DistinctConfig
 
@@ -167,6 +167,54 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
                                              fields=[different_field])
 
         await self.database.delete_container(container_id)
+
+    async def test_partition_scoped_count_is_index_only_async(self):
+        # Source: tests/test_query_async.py::TestQueryAsync.test_partition_scoped_count_is_index_only_async
+        created_collection = self.container
+        partition_key = "PowerCut-" + str(uuid.uuid4())
+        other_partition_key = "Other-" + str(uuid.uuid4())
+        created_items = []
+        try:
+            for i in range(25):
+                item = await created_collection.create_item({
+                    "id": f"power-cut-{i}-{uuid.uuid4()}",
+                    "pk": partition_key,
+                    "value": i,
+                })
+                created_items.append((item["id"], item["pk"]))
+            item = await created_collection.create_item({
+                "id": "other-document-type-" + str(uuid.uuid4()),
+                "pk": other_partition_key,
+            })
+            created_items.append((item["id"], item["pk"]))
+
+            query_iterable = created_collection.query_items(
+                query="SELECT VALUE COUNT(1) FROM c",
+                partition_key=partition_key,
+                populate_query_metrics=True,
+            )
+            pager = query_iterable.by_page()
+            pages = []
+            async for page in pager:
+                pages.append([item async for item in page])
+
+            assert pages == [[25]]
+            assert pager.continuation_token is None
+
+            response_headers = query_iterable.get_response_headers()
+            metrics_header = response_headers[http_constants.HttpHeaders.QueryMetrics]
+            metrics = dict(
+                entry.split("=", 1)
+                for entry in metrics_header.split(";")
+                if entry
+            )
+            assert int(metrics["retrievedDocumentCount"]) == 0
+            assert int(metrics["retrievedDocumentSize"]) == 0
+            assert float(metrics["indexUtilizationRatio"]) == 1.0
+            assert float(response_headers[http_constants.HttpHeaders.RequestCharge]) < 20.0
+        finally:
+            for item_id, item_partition_key in created_items:
+                await created_collection.delete_item(item_id, item_partition_key)
 
     async def test_paging_with_continuation_token_async(self):
         """A continuation token replays the page that follows it.
