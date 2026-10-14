@@ -39,6 +39,14 @@ parameters:
     displayName: 'Automatically approve the release stage'
     type: boolean
     default: false
+  - name: ForceColdPSModuleCache
+    displayName: 'Force a cold PowerShell module cache for this run'
+    type: boolean
+    default: false
+  - name: ForceColdCondaCache
+    displayName: 'Force cold Conda caches for this run'
+    type: boolean
+    default: false
   # Switch to canary to test canary 1es branch. 1es template validation will set this parameter
   # to canary on run.
   - name: oneESTemplateTag
@@ -47,6 +55,13 @@ parameters:
     values:
       - release
       - canary
+
+variables:
+  ${{ if eq(parameters.ForceColdPSModuleCache, true) }}:
+    CacheSalt: '$(Build.BuildId)'
+  ${{ if eq(parameters.ForceColdCondaCache, true) }}:
+    CONDA_ENVS_PATH: '$(Agent.TempDirectory)/conda-envs-$(Build.BuildId)'
+    CONDA_PKGS_DIRS: '$(Agent.TempDirectory)/conda-pkgs-$(Build.BuildId)'
 
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
