@@ -10,8 +10,6 @@ from devtools_testutils import (
     AzureRecordedTestCase,
     RecordedTransport,
     remove_batch_sanitizers,
-    add_body_regex_sanitizer,
-    add_general_string_sanitizer,
 )
 from devtools_testutils.helpers import get_recording_id
 from test_base import (
@@ -68,23 +66,6 @@ class TestSamples(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
-        if os.path.basename(sample_path) == "sample_agent_browser_automation.py":
-            add_general_string_sanitizer(
-                function_scoped=True,
-                target=kwargs["browser_automation_project_connection_id"].rsplit("/", 1)[-1],
-                value="sanitized-browser-automation-connection",
-            )
-            add_body_regex_sanitizer(
-                function_scoped=True,
-                regex=r'https://live\.playwright\.microsoft\.com/[^\s"\\<>)]*',
-                value="https://live.playwright.microsoft.com/#lv=sanitized",
-            )
-            # Access tokens can span text deltas; the sample only reads completed items and text.
-            add_body_regex_sanitizer(
-                function_scoped=True,
-                regex=r'"delta"\s*:\s*"(?:\\.|[^"\\])*"',
-                value='"delta": ""',
-            )
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
