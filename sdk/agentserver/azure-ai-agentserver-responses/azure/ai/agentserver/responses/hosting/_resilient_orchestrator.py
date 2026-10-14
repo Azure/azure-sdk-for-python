@@ -861,7 +861,6 @@ class ResilientResponseOrchestrator:
                     conversation_id=conversation_id,
                     history_limit=history_limit,
                     runtime_state=runtime_state,
-                    runtime_options=self._options,
                 )
 
             # Spec 023 — handler returned without a terminal AND graceful shutdown

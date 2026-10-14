@@ -722,7 +722,6 @@ def _bg_resolve_cancelled(
     cancellation_signal: asyncio.Event,
     context: "ResponseContext | None",
     first_event_processed: bool,
-    runtime_options: "ResponsesServerOptions | None",
     response_id: str,
     agent_reference: "generated_models.AgentReference | dict[str, Any]",
     model: str | None,
@@ -742,8 +741,6 @@ def _bg_resolve_cancelled(
     :paramtype context: ResponseContext | None
     :keyword first_event_processed: Whether any handler event was processed.
     :paramtype first_event_processed: bool
-    :keyword runtime_options: Server runtime options.
-    :paramtype runtime_options: ResponsesServerOptions | None
     :keyword response_id: The response id.
     :paramtype response_id: str
     :keyword agent_reference: The normalized agent reference.
@@ -953,7 +950,6 @@ async def _bg_drain_handler_events(
     agent_session_id: str | None,
     conversation_id: str | None,
     history_limit: int,
-    runtime_options: "ResponsesServerOptions | None",
 ) -> bool:
     """Drive the handler event loop for a bg non-stream run (Spec 033 §3.2).
 
@@ -992,8 +988,6 @@ async def _bg_drain_handler_events(
     :paramtype conversation_id: str | None
     :keyword history_limit: History fetch limit.
     :paramtype history_limit: int
-    :keyword runtime_options: Server runtime options.
-    :paramtype runtime_options: ResponsesServerOptions | None
     :returns: True if the caller should ``return`` immediately.
     :rtype: bool
     """
@@ -1061,7 +1055,6 @@ async def _bg_drain_handler_events(
             cancellation_signal=cancellation_signal,
             context=context,
             first_event_processed=st.first_event_processed,
-            runtime_options=runtime_options,
             response_id=response_id,
             agent_reference=agent_reference,
             model=model,
@@ -1111,7 +1104,6 @@ async def _run_background_non_stream(
     conversation_id: str | None = None,
     history_limit: int = -1,
     runtime_state: _RuntimeState | None = None,
-    runtime_options: ResponsesServerOptions | None = None,
 ) -> None:
     """Execute a non-stream handler in the background and update the execution record.
 
@@ -1147,8 +1139,6 @@ async def _run_background_non_stream(
     :keyword type history_limit: int
     :keyword runtime_state: Runtime state tracker for eager eviction after persist.
     :keyword type runtime_state: _RuntimeState | None
-    :keyword runtime_options: Runtime options controlling response execution behavior.
-    :keyword type runtime_options: ResponsesServerOptions | None
     :return: None
     :rtype: None
     """
@@ -1171,7 +1161,6 @@ async def _run_background_non_stream(
                 agent_session_id=agent_session_id,
                 conversation_id=conversation_id,
                 history_limit=history_limit,
-                runtime_options=runtime_options,
             ):
                 return
         except ResponseExitForRecovery:
@@ -3655,7 +3644,6 @@ class _ResponseOrchestrator:
                 conversation_id=ctx.conversation_id,
                 history_limit=self._runtime_options.default_fetch_history_count,
                 runtime_state=self._runtime_state,
-                runtime_options=self._runtime_options,
             )
 
         await self._start_resilient_response(
@@ -3960,7 +3948,6 @@ class _ResponseOrchestrator:
                         conversation_id=ctx.conversation_id,
                         history_limit=self._runtime_options.default_fetch_history_count,
                         runtime_state=self._runtime_state,
-                        runtime_options=self._runtime_options,
                     )
             except asyncio.CancelledError:
                 pass  # event-loop teardown; background work already done

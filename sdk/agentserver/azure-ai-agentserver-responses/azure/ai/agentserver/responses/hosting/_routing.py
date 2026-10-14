@@ -202,10 +202,6 @@ def _log_startup_configuration(
         runtime_options.shutdown_grace_period_seconds,
     )
 
-    from azure.ai.agentserver.core.tasks import (  # pylint: disable=import-outside-toplevel
-        resilient_tasks_enabled,
-    )
-
     if resilient_tasks_enabled():
         logger.info(
             "Responses resilience: ENABLED - store=true responses run inside durable "
