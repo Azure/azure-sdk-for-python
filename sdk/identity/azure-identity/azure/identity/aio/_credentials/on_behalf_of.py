@@ -113,6 +113,8 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         await self._client.close()
 
     async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
+        # The cache namespace binds tokens to the exact assertion, not this instance or decoded account claims.
+        # This permits per-request credentials to reuse tokens without trusting an assertion Entra hasn't accepted.
         return self._client.get_cached_access_token(scopes, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:

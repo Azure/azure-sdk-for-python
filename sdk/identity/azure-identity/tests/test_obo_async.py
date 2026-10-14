@@ -407,6 +407,55 @@ async def test_no_cross_user_refresh_token_from_shared_cache(get_token_method):
     assert credential_b._client.last_home_account_id == "b.utid"
 
 
+@pytest.mark.asyncio
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+@pytest.mark.parametrize("expired", [True, False])
+async def test_shared_cache_per_request_credentials(get_token_method, expired):
+    """Per-request credentials reuse exact-assertion tokens, including after refresh.
+
+    Different assertions for one account can coexist, as with concurrent sessions or upstream token renewal.
+    """
+    shared_cache = msal.TokenCache()
+    requests = []
+
+    async def send(request, **kwargs):
+        assertion = request.body.get("assertion")
+        refresh_token = request.body.get("refresh_token")
+        requests.append((assertion, refresh_token))
+        if refresh_token:
+            assert refresh_token == "refresh-a"
+            return mock_response(json_payload=build_aad_response(access_token="refreshed-a"))
+        return mock_response(
+            json_payload=build_aad_response(
+                access_token="access-" + assertion,
+                refresh_token="refresh-" + assertion,
+                expires_in=0 if expired and assertion == "a" else 3600,
+                uid="same-user",
+                utid="tenant",
+            )
+        )
+
+    transport = AsyncMockTransport(send=send)
+    for assertion, expected_token in (
+        ("a", "access-a"),
+        ("b", "access-b"),
+        ("a", "refreshed-a" if expired else "access-a"),
+        ("a", "refreshed-a" if expired else "access-a"),
+        ("b", "access-b"),
+    ):
+        async with OnBehalfOfCredential(
+            "tenant-id",
+            "client-id",
+            client_secret="secret",
+            user_assertion=assertion,
+            cache=shared_cache,
+            transport=transport,
+        ) as credential:
+            assert (await getattr(credential, get_token_method)("scope")).token == expected_token
+
+    assert requests == ([("a", None), ("b", None), (None, "refresh-a")] if expired else [("a", None), ("b", None)])
+
+
 @pytest.fixture
 def persistent_obo_cache(tmp_path, monkeypatch):
     from msal_extensions import FilePersistence
@@ -423,6 +472,7 @@ def persistent_obo_cache(tmp_path, monkeypatch):
 @pytest.mark.parametrize("enable_cae", [True, False])
 @pytest.mark.parametrize("account_info", [True, False])
 async def test_persistent_cache_new_instance(persistent_obo_cache, get_token_method, enable_cae, account_info):
+    """A new per-request credential reads the same assertion's token from a separate persistent cache object."""
     async def send(request, **kwargs):
         assert request.body["client_id"] == "client-id"
         assert request.body["assertion"] == "assertion"
@@ -462,6 +512,7 @@ async def test_persistent_cache_new_instance(persistent_obo_cache, get_token_met
 async def test_persistent_cache_assertion_isolation(
     persistent_obo_cache, get_token_method, enable_cae, same_account, expired
 ):
+    """Assertion renewal must not overwrite another assertion's access or refresh tokens, even for one account."""
     requests = []
 
     async def send(request, **kwargs):
