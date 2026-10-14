@@ -20,9 +20,9 @@
 ### Other Changes
 
 - Require Core's snapshot lifecycle integration. While task startup is deferred
-  (`FOUNDRY_MEMORY_SNAPSHOT_ENABLED` absent or `true`), enabled-but-uninitialized
+  (`FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true`), enabled-but-uninitialized
   task errors are propagated instead of running non-durably; intentional opt-out
-  and `false` keep the existing in-process fallback. No new HTTP 503 mapping or
+  and absent/`false` keep the existing in-process fallback. No new HTTP 503 mapping or
   author startup-task replay is introduced.
 
 ## 2.3.0 (2026-10-05)

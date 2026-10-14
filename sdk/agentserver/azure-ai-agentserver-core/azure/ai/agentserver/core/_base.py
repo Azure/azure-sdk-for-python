@@ -56,10 +56,10 @@ _MEMORY_SNAPSHOT_ENV = "FOUNDRY_MEMORY_SNAPSHOT_ENABLED"
 _MISSING_ENV = object()
 
 
-def _read_memory_snapshot_enabled() -> bool | None:
+def _read_memory_snapshot_enabled() -> bool:
     raw = os.environ.get(_MEMORY_SNAPSHOT_ENV)
     if raw is None:
-        return None
+        return False
     value = raw.strip().lower()
     if value not in ("true", "false"):
         raise ValueError(f"{_MEMORY_SNAPSHOT_ENV} must be 'true' or 'false' when set")
@@ -364,7 +364,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
             )
 
             snapshot_mode = _read_memory_snapshot_enabled()
-            if _resilient_tasks_enabled() and snapshot_mode is False:
+            if _resilient_tasks_enabled() and not snapshot_mode:
                 try:
                     await self._activate_task_manager()
                 except BaseException:
@@ -510,9 +510,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
 
         async with self._task_manager_lock:
             if self._task_manager_stopping:
-                raise RuntimeError(
-                    "Cannot activate tasks while the host is shutting down"
-                )
+                raise RuntimeError("Cannot activate tasks while the host is shutting down")
             binding = (self.config.session_id, self.config.session_guid)
             try:
                 installed = get_task_manager()
@@ -566,23 +564,16 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 self._task_manager_binding = None
                 logger.info("TaskManager shut down")
 
-    async def _quiesce_tasks_before_rollback(
-        self, previous_session_id: str, previous_session_guid: str
-    ) -> bool:
+    async def _quiesce_tasks_before_rollback(self, previous_session_id: str, previous_session_guid: str) -> bool:
         async with self._task_manager_lock:
             if (
                 self._task_manager is None
-                or self._task_manager_binding
-                == (previous_session_id, previous_session_guid)
+                or self._task_manager_binding == (previous_session_id, previous_session_guid)
                 or not self._task_manager._has_live_workers  # pylint: disable=protected-access
             ):
                 return False
-        logger.warning(
-            "Stopping task runtime before restoring its previous session binding"
-        )
-        cleanup = asyncio.create_task(
-            self._shutdown_task_manager(wait_for_workers=True)
-        )
+        logger.warning("Stopping task runtime before restoring its previous session binding")
+        cleanup = asyncio.create_task(self._shutdown_task_manager(wait_for_workers=True))
         interrupted = False
         while True:
             try:
@@ -590,14 +581,10 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 return interrupted
             except asyncio.CancelledError:
                 if cleanup.cancelled():
-                    raise RuntimeError(
-                        "Task runtime cleanup was cancelled before binding rollback"
-                    ) from None
+                    raise RuntimeError("Task runtime cleanup was cancelled before binding rollback") from None
                 interrupted = True
             except Exception:
-                logger.exception(
-                    "Task runtime cleanup failed; retaining its restored session binding"
-                )
+                logger.exception("Task runtime cleanup failed; retaining its restored session binding")
                 raise
 
     # ------------------------------------------------------------------
@@ -803,14 +790,10 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
         if not isinstance(restore_id, str) or not restore_id:
             raise ValueError("restore_id must be a non-empty string")
         if not isinstance(raw_overrides, dict) or any(
-            not isinstance(key, str) or not isinstance(value, str)
-            for key, value in raw_overrides.items()
+            not isinstance(key, str) or not isinstance(value, str) for key, value in raw_overrides.items()
         ):
             raise ValueError("session_env_overrides must map strings to strings")
-        if any(
-            not key or "=" in key or "\0" in key or "\0" in value
-            for key, value in raw_overrides.items()
-        ):
+        if any(not key or "=" in key or "\0" in key or "\0" in value for key, value in raw_overrides.items()):
             raise ValueError("session_env_overrides contains an invalid environment entry")
         override_session_id = raw_overrides.get(_SESSION_ID_ENV)
         if override_session_id is not None and override_session_id != session_id:
@@ -846,15 +829,12 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                     status_code=500,
                 )
             self._lifecycle.captured_environment_values = {
-                key: os.environ.get(key)
-                for key in self._lifecycle.applied_environment_variables
+                key: os.environ.get(key) for key in self._lifecycle.applied_environment_variables
             }
             self._lifecycle.before_snapshot_completed = True
             return JSONResponse({"status": "ok"})
 
-    async def _after_restore_endpoint(  # pylint: disable=too-many-statements
-        self, request: Request
-    ) -> Response:
+    async def _after_restore_endpoint(self, request: Request) -> Response:  # pylint: disable=too-many-statements
         try:
             payload = await AgentServerHost._read_json_object(request)
             context = AgentServerHost._parse_session_context(payload)
@@ -869,10 +849,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
             )
 
         async with self._lifecycle.lock:
-            if (
-                self._task_manager_binding is not None
-                and self._task_manager_binding[0] != context.session_id
-            ):
+            if self._task_manager_binding is not None and self._task_manager_binding[0] != context.session_id:
                 return create_error_response(
                     "session_mismatch",
                     "The task runtime is already assigned to another session.",
@@ -892,20 +869,12 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
 
             effective_environment = dict(context.session_env_overrides)
             effective_environment.setdefault(_SESSION_ID_ENV, context.session_id)
-            environment_variables = (
-                self._lifecycle.applied_environment_variables
-                | effective_environment.keys()
-            )
-            previous_environment = {
-                key: os.environ.get(key, _MISSING_ENV)
-                for key in environment_variables
-            }
+            environment_variables = self._lifecycle.applied_environment_variables | effective_environment.keys()
+            previous_environment = {key: os.environ.get(key, _MISSING_ENV) for key in environment_variables}
             captured_environment = dict(self._lifecycle.captured_environment_values)
             for key, value in previous_environment.items():
                 if key not in captured_environment:
-                    captured_environment[key] = (
-                        None if value is _MISSING_ENV else str(value)
-                    )
+                    captured_environment[key] = None if value is _MISSING_ENV else str(value)
             previous_session_id, previous_session_guid = (
                 self.config.session_id,
                 self.config.session_guid,
@@ -923,9 +892,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 restored_config = _config.AgentConfig.from_env()
                 vars(self.config).update(vars(restored_config))
                 if task_manager is not None:
-                    task_manager._rehydrate_session_state(  # pylint: disable=protected-access
-                        context.restore_id
-                    )
+                    task_manager._rehydrate_session_state(context.restore_id)  # pylint: disable=protected-access
 
                 current_request_context = get_request_context()
                 request_context_token = set_request_context(
@@ -943,9 +910,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 finally:
                     reset_request_context(request_context_token)
             except asyncio.CancelledError:
-                await self._quiesce_tasks_before_rollback(
-                    previous_session_id, previous_session_guid
-                )
+                await self._quiesce_tasks_before_rollback(previous_session_id, previous_session_guid)
                 AgentServerHost._restore_lifecycle_environment(
                     self,
                     previous_environment,
@@ -954,9 +919,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 )
                 raise
             except Exception as exc:  # pylint: disable=broad-exception-caught
-                interrupted = await self._quiesce_tasks_before_rollback(
-                    previous_session_id, previous_session_guid
-                )
+                interrupted = await self._quiesce_tasks_before_rollback(previous_session_id, previous_session_guid)
                 AgentServerHost._restore_lifecycle_environment(
                     self,
                     previous_environment,

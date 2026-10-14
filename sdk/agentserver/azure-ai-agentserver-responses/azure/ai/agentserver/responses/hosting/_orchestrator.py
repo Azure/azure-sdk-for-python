@@ -85,14 +85,13 @@ _MEMORY_SNAPSHOT_ENV = "FOUNDRY_MEMORY_SNAPSHOT_ENABLED"
 def _task_activation_deferred() -> bool:
     """Return whether Core defers task startup until session activation.
 
-    Core starts tasks during ordinary startup only when the memory snapshot
-    variable is explicitly ``false``; an absent or ``true`` value waits for the
-    platform after-restore hook.
+    Core defers enabled tasks only when the memory snapshot variable is
+    explicitly ``true``. An absent or ``false`` value uses ordinary startup.
 
     :return: True when a missing task runtime can mean activation is pending.
     :rtype: bool
     """
-    return os.environ.get(_MEMORY_SNAPSHOT_ENV, "").strip().lower() != "false"
+    return os.environ.get(_MEMORY_SNAPSHOT_ENV, "").strip().lower() == "true"
 
 
 _STORAGE_ERROR_MESSAGE = (
@@ -4277,7 +4276,7 @@ class _ResponseOrchestrator:
 
         - **No manager installed** — the start raises
           :class:`~azure.ai.agentserver.core.tasks.TaskManagerNotInitialized`.
-          When ``FOUNDRY_MEMORY_SNAPSHOT_ENABLED`` is ``false`` (cold startup),
+          When ``FOUNDRY_MEMORY_SNAPSHOT_ENABLED`` is absent or ``false`` (cold startup),
           ``AgentServerHost`` fails the lifespan when resilient tasks are
           ENABLED but construction/startup fails, so a missing manager in a
           running deployment means resilient tasks are DISABLED (opt-out) —
@@ -4285,7 +4284,7 @@ class _ResponseOrchestrator:
           whose lifespan never ran). The signal is **swallowed** and the handler
           runs in-process via ``fallback_runner`` — the response still executes
           and persists (GET works); it is simply not crash-recoverable. NOT a
-          failure. When the variable is absent or ``true``, startup is deferred
+          failure. When the variable is ``true``, startup is deferred
           to the after-restore hook, so a missing manager with resilient tasks
           ENABLED means session activation is pending or failed; the error is
           tagged as a platform infrastructure error and re-raised instead of

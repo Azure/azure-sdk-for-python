@@ -12,12 +12,12 @@ pip install azure-ai-agentserver-responses
 
 This automatically installs `azure-ai-agentserver-core` as a dependency.
 
-The snapshot task integration requires Core `2.3.0b1` or later. For ordinary
-non-snapshot/local startup, set `FOUNDRY_MEMORY_SNAPSHOT_ENABLED=false` when
-resilient tasks are enabled. Capture/snapshot startup defers task initialization
-until the after-restore hook. Intentional opt-out still uses the non-durable
-path; while initialization is deferred (the variable is absent or `true`), an
-enabled but uninitialized runtime does not silently fall back.
+The snapshot task integration requires Core `2.3.0b1` or later. For capture,
+set `FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true` to defer enabled tasks until the
+after-restore hook. Ordinary non-snapshot/local startup uses an absent value or
+`false`. Intentional resilience opt-out keeps the subsystem disabled and uses
+the non-durable path; while initialization is deferred (the variable is `true`),
+an enabled but uninitialized runtime does not silently fall back.
 See the [task snapshot design](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/memory-snapshot-task-integration.md)
 for compatibility requirements and unresolved startup-submission options.
 

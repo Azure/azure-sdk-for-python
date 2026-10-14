@@ -7,11 +7,13 @@ The `azure-ai-agentserver-core` package provides the foundation host framework f
 The draft integration separates task definitions from session-bound TaskManager
 initialization. Resilient tasks must still be explicitly enabled.
 
-`FOUNDRY_MEMORY_SNAPSHOT_ENABLED=false` activates tasks during ordinary cold/local
-startup. An absent value (capture) or `true` defers activation until the platform
-after-restore hook, after session hydration and dependency callbacks. Present
-values must be literal `true` or `false` (case-insensitive). Missing does not mean
-false. The flag does not gate running tasks or lease renewal.
+`FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true` defers enabled tasks in the temporary
+capture sandbox until the platform after-restore hook, after session hydration
+and dependency callbacks. An absent value or `false` activates enabled tasks
+during ordinary cold/local startup. `set_resilient_tasks_enabled(False)` keeps
+the subsystem disabled at startup and after-restore regardless of this variable.
+Present values must be literal `true` or `false` (case-insensitive). The variable
+does not gate running tasks or lease renewal after activation.
 
 Task startup checkpoints completed phases by restore ID and owns the manager
 through shutdown, including managers created after lifespan startup. Existing
