@@ -67,23 +67,41 @@ def test_destructive_sample_examples_are_standalone(sample):
     )
 
 
-def test_batch_delete_request_keys_encode_as_amqp_strings():
-    message = PyamqpTransport.create_mgmt_msg(
+@pytest.mark.parametrize("uamqp_transport", [False, True], ids=["pyamqp", "uamqp"])
+def test_batch_delete_request_keys_encode_as_amqp_strings(uamqp_transport):
+    transport = PyamqpTransport
+    if uamqp_transport:
+        pytest.importorskip("uamqp")
+        from azure.servicebus._transport._uamqp_transport import UamqpTransport
+        transport = UamqpTransport
+    message = transport.create_mgmt_msg(
         message={
-            MGMT_REQUEST_MESSAGE_COUNT: PyamqpTransport.AMQP_INT_VALUE(1),
-            MGMT_REQUEST_ENQUEUED_TIME_UTC: PyamqpTransport.AMQP_TIMESTAMP_VALUE(2),
+            MGMT_REQUEST_MESSAGE_COUNT: transport.AMQP_INT_VALUE(1),
+            MGMT_REQUEST_ENQUEUED_TIME_UTC: transport.AMQP_TIMESTAMP_VALUE(2),
         },
         application_properties={},
         config=MagicMock(encoding="UTF-8"),
         reply_to="queue/$management",
     )
-    encoded = bytearray()
-    encode_payload(encoded, message)
+    if uamqp_transport:
+        encoded = message.encode_message()
+    else:
+        encoded = bytearray()
+        encode_payload(encoded, message)
 
     assert b"\xa1\x0dmessage-count" in encoded
     assert b"\xa1\x11enqueued-time-utc" in encoded
     assert b"\xa0\x0dmessage-count" not in encoded
     assert b"\xa0\x11enqueued-time-utc" not in encoded
+
+
+@pytest.mark.parametrize("deleted_count", [0, 2])
+def test_batch_delete_uamqp_response_round_trip(deleted_count):
+    uamqp = pytest.importorskip("uamqp")
+    from azure.servicebus._transport._uamqp_transport import UamqpTransport
+    response = uamqp.Message(body={b"message-count": deleted_count}, application_properties={b"status-code": 200})
+    decoded = uamqp.Message.decode_from_bytes(response.encode_message())
+    assert mgmt_handlers.batch_delete_op(200, decoded, None, UamqpTransport, 10) == deleted_count
 
 
 def test_batch_delete_handler_returns_actual_count_and_rejects_204():
