@@ -434,8 +434,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         raise ValueError("Subclass should override the method.")
 
     async def _open_with_timeout(self, timeout: float):
-        del timeout
-        return await self._open()
+        return await self._open(timeout=timeout)
 
     async def _open_with_retry(
         self,

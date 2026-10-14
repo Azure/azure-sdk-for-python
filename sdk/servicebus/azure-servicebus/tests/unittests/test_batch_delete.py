@@ -25,6 +25,8 @@ from azure.servicebus._common.constants import (
     ServiceBusReceiveMode,
 )
 from azure.servicebus._common import mgmt_handlers
+from azure.servicebus._base_handler import BaseHandler
+from azure.servicebus.aio._base_handler_async import BaseHandler as AsyncBaseHandler
 from azure.servicebus._pyamqp._encode import encode_payload
 from azure.servicebus._pyamqp.client import AMQPClient
 from azure.servicebus._pyamqp.aio._client_async import AMQPClientAsync
@@ -33,7 +35,17 @@ from azure.servicebus.aio._transport._pyamqp_transport_async import PyamqpTransp
 from azure.servicebus.exceptions import OperationTimeoutError
 
 
-MAX_DELETE_MESSAGE_COUNT = 500
+@pytest.mark.asyncio
+@pytest.mark.parametrize("is_async", [False, True])
+async def test_default_open_with_timeout_forwards_budget(is_async):
+    handler = object.__new__(AsyncBaseHandler if is_async else BaseHandler)
+    handler._open = AsyncMock() if is_async else MagicMock()
+    if is_async:
+        await handler._open_with_timeout(1.5)
+        handler._open.assert_awaited_once_with(timeout=1.5)
+    else:
+        handler._open_with_timeout(1.5)
+        handler._open.assert_called_once_with(timeout=1.5)
 
 
 @pytest.mark.parametrize("sample", [
