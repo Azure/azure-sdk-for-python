@@ -13,6 +13,7 @@ from PIL import Image
 def init():
     global g_tf_sess
 
+    tf.compat.v1.disable_eager_execution()
     parser = argparse.ArgumentParser(allow_abbrev=False, description="ParallelRunStep Agent")
     parser.add_argument("--model", type=str, default=0)
     args, _ = parser.parse_known_args()
@@ -21,9 +22,9 @@ def init():
     model_path = args.model
 
     # contruct graph to execute
-    tf.reset_default_graph()
-    saver = tf.train.import_meta_graph(os.path.join(model_path, "mnist-tf.model.meta"))
-    g_tf_sess = tf.Session(config=tf.ConfigProto(device_count={"GPU": 0}))
+    tf.compat.v1.reset_default_graph()
+    saver = tf.compat.v1.train.import_meta_graph(os.path.join(model_path, "mnist-tf.model.meta"))
+    g_tf_sess = tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(device_count={"GPU": 0}))
     saver.restore(g_tf_sess, os.path.join(model_path, "mnist-tf.model"))
 
 

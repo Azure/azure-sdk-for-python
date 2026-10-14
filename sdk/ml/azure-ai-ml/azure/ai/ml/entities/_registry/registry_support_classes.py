@@ -32,11 +32,11 @@ class SystemCreatedAcrAccount:
     ):
         """Azure ML ACR account.
 
-        :param acr_account_sku: The storage account service tier. Currently
+        :keyword acr_account_sku: The storage account service tier. Currently
             only Premium is a valid option for registries.
-        :type acr_account_sku: str
-        :param arm_resource_id: Resource ID of the ACR account.
-        :type arm_resource_id: str. Default value is None.
+        :paramtype acr_account_sku: str
+        :keyword arm_resource_id: Resource ID of the ACR account.
+        :paramtype arm_resource_id: str. Default value is None.
         """
         self.acr_account_sku = acr_account_sku
         self.arm_resource_id = arm_resource_id
@@ -100,22 +100,22 @@ class SystemCreatedStorageAccount:
         replication_count: int = 1,
     ):
         """
-        :param arm_resource_id: Resource ID of the storage account.
-        :type arm_resource_id: str
-        :param storage_account_hns: Whether or not this storage account
+        :keyword arm_resource_id: Resource ID of the storage account.
+        :paramtype arm_resource_id: str
+        :keyword storage_account_hns: Whether or not this storage account
             has hierarchical namespaces enabled.
-        :type storage_account_hns: bool
-        :param storage_account_type: Allowed values: "Standard_LRS",
+        :paramtype storage_account_hns: bool
+        :keyword storage_account_type: Allowed values: "Standard_LRS",
             "Standard_GRS, "Standard_RAGRS", "Standard_ZRS", "Standard_GZRS",
             "Standard_RAGZRS", "Premium_LRS", "Premium_ZRS"
-        :type storage_account_type: StorageAccountType
-        :param replication_count: The number of replicas of this storage account
+        :paramtype storage_account_type: StorageAccountType
+        :keyword replication_count: The number of replicas of this storage account
             that should be created. Defaults to 1. Values less than 1 are invalid.
-        :type replication_count: int
-        :param replicated_ids: If this storage was replicated, then this is a
+        :paramtype replication_count: int
+        :keyword replicated_ids: If this storage was replicated, then this is a
             list of all storage IDs with these settings for this registry.
             Defaults to none for un-replicated storage accounts.
-        :type replicated_ids: List[str]
+        :paramtype replicated_ids: List[str]
         """
         self.arm_resource_id = arm_resource_id
         self.storage_account_hns = storage_account_hns
@@ -139,8 +139,8 @@ class RegistryRegionDetails:
             single string representing the arm_resource_id of a user-created
             acr_details object, or a entire SystemCreatedAcrAccount object.
         :type acr_details: List[Union[str, SystemCreatedAcrAccount]]
-        :param location: The location where the registry exists.
-        :type location: str
+        :keyword location: The location where the registry exists.
+        :paramtype location: str
         :param storage_account_details: List of storage accounts. Each value
             can either be a single string representing the arm_resource_id of
             a user-created storage account, or an entire

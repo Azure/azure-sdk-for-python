@@ -30,7 +30,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -43,7 +43,6 @@ from .._configuration import DataBoundaryMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
@@ -343,7 +342,7 @@ class DataBoundariesOperations:
     async def put(
         self,
         default: Union[str, _models.DefaultName],
-        data_boundary_definition: JSON,
+        data_boundary_definition: _types.DataBoundaryDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -354,7 +353,8 @@ class DataBoundariesOperations:
          "default" Required.
         :type default: str or ~azure.mgmt.resource.databoundaries.models.DefaultName
         :param data_boundary_definition: The data boundary to opt the tenant to. Required.
-        :type data_boundary_definition: JSON
+        :type data_boundary_definition:
+         ~azure.mgmt.resource.databoundaries.types.DataBoundaryDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -391,7 +391,7 @@ class DataBoundariesOperations:
     async def put(
         self,
         default: Union[str, _models.DefaultName],
-        data_boundary_definition: Union[_models.DataBoundaryDefinition, JSON, IO[bytes]],
+        data_boundary_definition: Union[_models.DataBoundaryDefinition, _types.DataBoundaryDefinition, IO[bytes]],
         **kwargs: Any
     ) -> _models.DataBoundaryDefinition:
         """Opt-in tenant to data boundary.
@@ -399,10 +399,11 @@ class DataBoundariesOperations:
         :param default: Default string modeled as parameter for auto generation to work correctly.
          "default" Required.
         :type default: str or ~azure.mgmt.resource.databoundaries.models.DefaultName
-        :param data_boundary_definition: The data boundary to opt the tenant to. Is one of the
-         following types: DataBoundaryDefinition, JSON, IO[bytes] Required.
+        :param data_boundary_definition: The data boundary to opt the tenant to. Is either a
+         DataBoundaryDefinition type or a IO[bytes] type. Required.
         :type data_boundary_definition:
-         ~azure.mgmt.resource.databoundaries.models.DataBoundaryDefinition or JSON or IO[bytes]
+         ~azure.mgmt.resource.databoundaries.models.DataBoundaryDefinition or
+         ~azure.mgmt.resource.databoundaries.types.DataBoundaryDefinition or IO[bytes]
         :return: DataBoundaryDefinition. The DataBoundaryDefinition is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.databoundaries.models.DataBoundaryDefinition
         :raises ~azure.core.exceptions.HttpResponseError:

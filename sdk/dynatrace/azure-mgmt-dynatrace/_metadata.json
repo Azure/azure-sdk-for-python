@@ -3,9 +3,9 @@
   "apiVersions": {
     "Dynatrace.Observability": "2024-04-24"
   },
-  "commit": "3d1de464b5576fa149aed429795f6030313e31bb",
+  "commit": "801a60cdad2669e8f824fedfbabbfe7f7093b940",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "typespec_src": "specification/dynatrace/Dynatrace.Management",
-  "emitterVersion": "0.63.2",
-  "httpClientPythonVersion": "^0.34.0"
+  "typespec_src": "specification/dynatrace/resource-manager/Dynatrace.Observability/DynatraceObservability",
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.34.2"
 }

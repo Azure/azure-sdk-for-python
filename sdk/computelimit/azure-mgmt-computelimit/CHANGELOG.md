@@ -1,5 +1,13 @@
 # Release History
 
+## 1.3.0 (2026-07-17)
+
+### Features Added
+
+  - Client `ComputeLimitMgmtClient` added operation group `trusted_host_subscriptions`
+  - Added model `TrustedHostSubscription`
+  - Added operation group `TrustedHostSubscriptionsOperations`
+
 ## 1.2.1 (2026-07-07)
 
 ### Other Changes

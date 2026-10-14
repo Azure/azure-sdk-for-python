@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,15 +16,18 @@ Covers:
   5. Single audio/video with time range
   6. Multi-segment audio/video separated by *****
   7. Document classification hierarchy (parent skipped, children rendered)
-  8. Parameter combinations (include_fields, include_markdown, metadata)
+  8. Parameter combinations (include_fields, include_markdown, custom_metadata)
   9. YAML front matter key ordering
   10. Edge cases (no fields, no markdown, None field values)
 """
 
+import re
+
 import pytest
+import yaml
 
 from azure.ai.contentunderstanding import to_llm_input
-from azure.ai.contentunderstanding._helpers import _resolve_fields
+from azure.ai.contentunderstanding._patch_llm_input import _resolve_fields
 from azure.ai.contentunderstanding.models import (
     AnalysisResult,
     AudioVisualContent,
@@ -48,10 +51,12 @@ from azure.ai.contentunderstanding.models import (
 # Fixtures / helpers
 # ---------------------------------------------------------------------------
 
+
 def _make_invoice_doc(**kwargs):
     """Create a simple invoice DocumentContent for reuse."""
     defaults = dict(
         kind="document",
+        mime_type="application/pdf",
         markdown="CONTOSO LTD.\n\n# INVOICE\n\nAmount: $165.00",
         fields={
             "VendorName": StringField(type="string", value_string="CONTOSO LTD."),
@@ -73,20 +78,24 @@ def _make_result(contents, warnings=None):
 # 1. Import and public API
 # ===========================================================================
 
+
 class TestPublicAPI:
 
     def test_importable_from_package(self):
         from azure.ai.contentunderstanding import to_llm_input as fn
+
         assert callable(fn)
 
     def test_in_package_all(self):
         import azure.ai.contentunderstanding as pkg
+
         assert "to_llm_input" in pkg.__all__
 
 
 # ===========================================================================
 # 2. Error handling
 # ===========================================================================
+
 
 class TestErrorHandling:
 
@@ -114,6 +123,7 @@ class TestErrorHandling:
 # ===========================================================================
 # 3. Field resolution
 # ===========================================================================
+
 
 class TestResolveFields:
 
@@ -262,18 +272,32 @@ class TestResolveFields:
 # 4. Single document with page markers
 # ===========================================================================
 
+
 class TestSingleDocument:
 
     def test_basic_document(self):
         doc = _make_invoice_doc()
         output = to_llm_input(_make_result([doc]))
         assert "---" in output
-        assert "contentType: document" in output
+        assert "mimeType: application/pdf" in output
+        assert "contentType:" not in output
         assert "VendorName: CONTOSO LTD." in output
         assert "InvoiceDate: '2019-11-15'" in output
         assert "Amount: 165" in output
         assert "CONTOSO LTD." in output
         assert "# INVOICE" in output
+
+    def test_image_uses_detected_mime_type(self):
+        doc = DocumentContent(
+            kind="document",
+            mime_type="image/jpeg",
+            markdown="![image](pages/1)",
+            start_page_number=1,
+            end_page_number=1,
+        )
+        output = to_llm_input(_make_result([doc]))
+        assert "mimeType: image/jpeg" in output
+        assert "contentType:" not in output
 
     def test_page_markers_from_spans(self):
         doc = DocumentContent(
@@ -344,18 +368,21 @@ class TestSingleDocument:
 # 5. Single audio/video
 # ===========================================================================
 
+
 class TestSingleAudioVisual:
 
     def test_basic_av(self):
         av = AudioVisualContent(
             kind="audioVisual",
+            mime_type="audio/mpeg",
             markdown="Speaker 1: Hello world.",
             fields={"Summary": StringField(type="string", value_string="A greeting.")},
             start_time_ms=0,
             end_time_ms=30000,
         )
         output = to_llm_input(_make_result([av]))
-        assert "contentType: audioVisual" in output
+        assert "mimeType: audio/mpeg" in output
+        assert "contentType:" not in output
         # Single AV: no timeRange per design doc
         assert "timeRange" not in output
         assert "Summary: A greeting." in output
@@ -385,11 +412,13 @@ class TestSingleAudioVisual:
 # 6. Multi-segment audio/video
 # ===========================================================================
 
+
 class TestMultiSegmentAV:
 
     def test_segments_separated_by_separator(self):
         seg1 = AudioVisualContent(
             kind="audioVisual",
+            mime_type="video/mp4",
             markdown="Speaker 1: First segment.",
             fields={"Summary": StringField(type="string", value_string="Seg 1.")},
             start_time_ms=0,
@@ -397,6 +426,7 @@ class TestMultiSegmentAV:
         )
         seg2 = AudioVisualContent(
             kind="audioVisual",
+            mime_type="video/mp4",
             markdown="Speaker 2: Second segment.",
             fields={"Summary": StringField(type="string", value_string="Seg 2.")},
             start_time_ms=15500,
@@ -408,20 +438,22 @@ class TestMultiSegmentAV:
         assert "Speaker 1: First segment." in output
         assert "Speaker 2: Second segment." in output
         # Both have their own front matter
-        assert output.count("contentType: audioVisual") == 2
+        assert output.count("mimeType: video/mp4") == 2
+        assert "contentType:" not in output
         assert "timeRange: 00:00 \u2013 00:15" in output
         assert "timeRange: 00:15 \u2013 00:43" in output
 
     def test_metadata_repeated_per_segment(self):
         seg1 = AudioVisualContent(kind="audioVisual", markdown="A", start_time_ms=0, end_time_ms=10000)
         seg2 = AudioVisualContent(kind="audioVisual", markdown="B", start_time_ms=10000, end_time_ms=20000)
-        output = to_llm_input(_make_result([seg1, seg2]), metadata={"source": "clip.mp4"})
+        output = to_llm_input(_make_result([seg1, seg2]), custom_metadata={"source": "clip.mp4"})
         assert output.count("source: clip.mp4") == 2
 
 
 # ===========================================================================
 # 7. Document classification hierarchy
 # ===========================================================================
+
 
 class TestClassificationHierarchy:
 
@@ -435,14 +467,18 @@ class TestClassificationHierarchy:
             end_page_number=3,
             segments=[
                 DocumentContentSegment(
-                    segment_id="segment1", category="Invoice",
+                    segment_id="segment1",
+                    category="Invoice",
                     span=ContentSpan(offset=0, length=13),
-                    start_page_number=1, end_page_number=1,
+                    start_page_number=1,
+                    end_page_number=1,
                 ),
                 DocumentContentSegment(
-                    segment_id="segment2", category="BankStatement",
+                    segment_id="segment2",
+                    category="BankStatement",
                     span=ContentSpan(offset=15, length=10),
-                    start_page_number=2, end_page_number=3,
+                    start_page_number=2,
+                    end_page_number=3,
                 ),
             ],
         )
@@ -497,14 +533,18 @@ class TestClassificationHierarchy:
             end_page_number=3,
             segments=[
                 DocumentContentSegment(
-                    segment_id="segment1", category="Invoice",
+                    segment_id="segment1",
+                    category="Invoice",
                     span=ContentSpan(offset=0, length=13),
-                    start_page_number=1, end_page_number=1,
+                    start_page_number=1,
+                    end_page_number=1,
                 ),
                 DocumentContentSegment(
-                    segment_id="segment2", category="BankStatement",
+                    segment_id="segment2",
+                    category="BankStatement",
                     span=ContentSpan(offset=15, length=10),
-                    start_page_number=2, end_page_number=3,
+                    start_page_number=2,
+                    end_page_number=3,
                 ),
             ],
         )
@@ -526,14 +566,18 @@ class TestClassificationHierarchy:
             end_page_number=3,
             segments=[
                 DocumentContentSegment(
-                    segment_id="segment1", category="Invoice",
+                    segment_id="segment1",
+                    category="Invoice",
                     span=ContentSpan(offset=0, length=13),
-                    start_page_number=1, end_page_number=1,
+                    start_page_number=1,
+                    end_page_number=1,
                 ),
                 DocumentContentSegment(
-                    segment_id="segment2", category="BankStatement",
+                    segment_id="segment2",
+                    category="BankStatement",
                     span=ContentSpan(offset=15, length=10),
-                    start_page_number=2, end_page_number=3,
+                    start_page_number=2,
+                    end_page_number=3,
                 ),
             ],
         )
@@ -566,19 +610,25 @@ class TestClassificationHierarchy:
             end_page_number=3,
             segments=[
                 DocumentContentSegment(
-                    segment_id="segment1", category="TypeA",
+                    segment_id="segment1",
+                    category="TypeA",
                     span=ContentSpan(offset=0, length=6),
-                    start_page_number=1, end_page_number=1,
+                    start_page_number=1,
+                    end_page_number=1,
                 ),
                 DocumentContentSegment(
-                    segment_id="segment2", category="TypeB",
+                    segment_id="segment2",
+                    category="TypeB",
                     span=ContentSpan(offset=8, length=6),
-                    start_page_number=2, end_page_number=2,
+                    start_page_number=2,
+                    end_page_number=2,
                 ),
                 DocumentContentSegment(
-                    segment_id="segment3", category="TypeC",
+                    segment_id="segment3",
+                    category="TypeC",
                     span=ContentSpan(offset=16, length=6),
-                    start_page_number=3, end_page_number=3,
+                    start_page_number=3,
+                    end_page_number=3,
                 ),
             ],
         )
@@ -611,14 +661,18 @@ class TestClassificationHierarchy:
             end_page_number=2,
             segments=[
                 DocumentContentSegment(
-                    segment_id="segment1", category="Invoice",
+                    segment_id="segment1",
+                    category="Invoice",
                     span=ContentSpan(offset=0, length=5),
-                    start_page_number=1, end_page_number=1,
+                    start_page_number=1,
+                    end_page_number=1,
                 ),
                 DocumentContentSegment(
-                    segment_id="segment2", category="Invoice",
+                    segment_id="segment2",
+                    category="Invoice",
                     span=ContentSpan(offset=7, length=5),
-                    start_page_number=2, end_page_number=2,
+                    start_page_number=2,
+                    end_page_number=2,
                 ),
             ],
         )
@@ -647,6 +701,7 @@ class TestClassificationHierarchy:
 # 8. Parameter combinations
 # ===========================================================================
 
+
 class TestParameterCombinations:
 
     def test_include_fields_false(self):
@@ -655,52 +710,62 @@ class TestParameterCombinations:
         assert "fields:" not in output
         assert "VendorName" not in output
         assert "CONTOSO LTD." in output  # markdown body still present
-        assert "contentType: document" in output
+        assert "mimeType: application/pdf" in output
 
     def test_include_markdown_false(self):
         doc = _make_invoice_doc()
         output = to_llm_input(_make_result([doc]), include_markdown=False)
         assert "# INVOICE" not in output
         assert "VendorName: CONTOSO LTD." in output
-        assert "contentType: document" in output
+        assert "mimeType: application/pdf" in output
 
     def test_both_false_gives_frontmatter_only(self):
         doc = _make_invoice_doc()
         output = to_llm_input(_make_result([doc]), include_fields=False, include_markdown=False)
-        assert "contentType: document" in output
+        assert "mimeType: application/pdf" in output
         assert "fields:" not in output
         assert "INVOICE" not in output
 
-    def test_metadata_in_output(self):
+    def test_custom_metadata_nests_under_custom_metadata_block(self):
         doc = _make_invoice_doc()
         output = to_llm_input(
             _make_result([doc]),
-            metadata={"source": "invoice.pdf", "batch_id": "B-123"},
+            custom_metadata={"source": "invoice.pdf", "batch_id": "B-123"},
         )
+        assert "customMetadata:" in output
         assert "source: invoice.pdf" in output
         assert "batch_id: B-123" in output
+        assert output.index("mimeType:") < output.index("customMetadata:")
+        assert output.index("customMetadata:") < output.index("source:")
 
-    def test_metadata_position_after_content_type(self):
+    def test_custom_metadata_position_after_mime_type(self):
         doc = _make_invoice_doc()
         output = to_llm_input(
             _make_result([doc]),
-            metadata={"source": "test.pdf"},
+            custom_metadata={"source": "test.pdf"},
         )
         lines = output.split("\n")
-        ct_idx = next(i for i, l in enumerate(lines) if "contentType:" in l)
+        mime_idx = next(i for i, l in enumerate(lines) if "mimeType:" in l)
+        custom_idx = next(i for i, l in enumerate(lines) if "customMetadata:" in l)
         src_idx = next(i for i, l in enumerate(lines) if "source:" in l)
         fields_idx = next(i for i, l in enumerate(lines) if l.strip() == "fields:")
-        assert ct_idx < src_idx < fields_idx
+        assert mime_idx < custom_idx < src_idx < fields_idx
 
     @pytest.mark.parametrize(
-        "reserved_key",
-        ["contentType", "timeRange", "category", "pages", "fields", "rai_warnings"],
+        "helper_owned_key",
+        ["mimeType", "metadata", "fields", "pages"],
     )
-    def test_reserved_metadata_key_raises(self, reserved_key):
+    def test_custom_metadata_allows_keys_matching_helper_owned_names(self, helper_owned_key):
         doc = _make_invoice_doc()
+        output = to_llm_input(_make_result([doc]), custom_metadata={helper_owned_key: "caller-value"})
 
-        with pytest.raises(ValueError, match="reserved front matter key"):
-            to_llm_input(_make_result([doc]), metadata={reserved_key: "custom"})
+        # Nested under customMetadata — does not replace top-level helper keys.
+        assert "customMetadata:" in output
+        assert f"{helper_owned_key}: caller-value" in output
+        assert "mimeType: application/pdf" in output
+        if helper_owned_key == "pages":
+            assert re.search(r"(?m)^pages: 1$", output)
+            assert re.search(r"(?m)^  pages: caller-value$", output)
 
     def test_non_classification_documents_preserve_input_order(self):
         doc_page_2 = DocumentContent(
@@ -720,10 +785,148 @@ class TestParameterCombinations:
 
         assert output.index("Second input document.") < output.index("First input document.")
 
+    def test_empty_custom_metadata_dict_is_serialized(self):
+        """An explicitly-empty custom_metadata dict is distinct from omitting it."""
+        doc = _make_invoice_doc()
+        output = to_llm_input(_make_result([doc]), custom_metadata={})
+        assert "customMetadata: {}" in output
+
+    def test_none_custom_metadata_omits_block(self):
+        doc = _make_invoice_doc()
+        output = to_llm_input(_make_result([doc]), custom_metadata=None)
+        assert "customMetadata:" not in output
+
+    def test_custom_metadata_preserves_nested_empty_containers(self):
+        """Nested empty dict/list values are kept, not dropped by normalization."""
+        doc = _make_invoice_doc()
+        output = to_llm_input(
+            _make_result([doc]),
+            custom_metadata={"tags": [], "extra": {}, "source": "invoice.pdf"},
+        )
+        assert "tags: []" in output
+        assert "extra: {}" in output
+        assert "source: invoice.pdf" in output
+
+    def test_custom_metadata_preserves_null_properties(self):
+        doc = _make_invoice_doc()
+        output = to_llm_input(
+            _make_result([doc]),
+            custom_metadata={"missing": None, "source": "invoice.pdf"},
+        )
+
+        assert "missing: null" in output
+        assert "source: invoice.pdf" in output
+
+    def test_custom_metadata_all_null_dict_preserves_null_property(self):
+        doc = _make_invoice_doc()
+        output = to_llm_input(
+            _make_result([doc]),
+            custom_metadata={"missing": None},
+        )
+
+        assert "customMetadata:" in output
+        assert "missing: null" in output
+
+    def test_custom_metadata_preserves_empty_string_values_and_keys(self):
+        doc = _make_invoice_doc()
+        output = to_llm_input(
+            _make_result([doc]),
+            custom_metadata={"emptyValue": "", "": "empty-key"},
+        )
+
+        assert "emptyValue: ''" in output
+        assert "  '': empty-key" in output
+
 
 # ===========================================================================
 # 9. YAML front matter structure
 # ===========================================================================
+
+
+class TestAnalysisContentMetadata:
+    """Preview (2026-06-01-preview): AnalysisContent.metadata rendered in front matter."""
+
+    def test_metadata_block_included_after_content_type(self):
+        doc = DocumentContent(
+            kind="document",
+            markdown="text",
+            metadata={
+                "author": "Contoso Metadata Team",
+                "title": "Contoso Metadata Extraction Sample",
+            },
+            start_page_number=1,
+            end_page_number=1,
+        )
+        output = to_llm_input(_make_result([doc]))
+
+        assert "metadata:" in output
+        assert "author: Contoso Metadata Team" in output
+        assert "title: Contoso Metadata Extraction Sample" in output
+        assert output.index("metadata:") > output.index("mimeType:")
+        assert output.index("pages:") > output.index("metadata:")
+
+    def test_metadata_json_string_remains_opaque(self):
+        json_value = (
+            '{"document":{"createdAt":"2026-07-16T19:00:00Z",'
+            '"tags":["finance","invoice"],"properties":{"pageCount":1}}}'
+        )
+        doc = DocumentContent(
+            kind="document",
+            markdown="text",
+            metadata={"xmp": json_value},
+            start_page_number=1,
+            end_page_number=1,
+        )
+        output = to_llm_input(_make_result([doc]))
+
+        # String metadata values are not auto-parsed as JSON; they stay a single scalar.
+        assert "metadata:" in output
+        assert "xmp:" in output
+        assert json_value in output
+        assert "\n  document:" not in output
+        assert "pageCount: 1" not in output
+
+    def test_multiline_metadata_cannot_imitate_front_matter_delimiter(self):
+        # Expected YAML (continuation lines stay indented inside the quoted scalar):
+        # metadata:
+        #   description: 'Q3 notes
+        #     ---
+        #     reviewer: bob'
+        #   author: Jane
+        doc = DocumentContent(
+            kind="document",
+            markdown="Document body",
+            metadata={
+                "description": "Q3 notes\n---\nreviewer: bob",
+                "author": "Jane",
+            },
+            start_page_number=1,
+            end_page_number=3,
+        )
+
+        output = to_llm_input(_make_result([doc]))
+        front_matter, body = output.removeprefix("---\n").split("\n---\n", 1)
+        parsed = yaml.safe_load(front_matter)
+
+        assert "\n    ---\n" in output
+        assert parsed["metadata"]["description"] == "Q3 notes --- reviewer: bob"
+        assert parsed["metadata"]["author"] == "Jane"
+        assert parsed["pages"] == "1-3"
+        assert body.rstrip().endswith("Document body")
+        assert "author: Jane" not in body
+        assert "pages: 1-3" not in body
+
+    def test_empty_metadata_dict_is_serialized(self):
+        """An explicitly-empty AnalysisContent.metadata dict is distinct from it being absent."""
+        doc = DocumentContent(kind="document", markdown="text", metadata={})
+        output = to_llm_input(_make_result([doc]))
+        assert "metadata: {}" in output
+
+    def test_none_metadata_omits_block(self):
+        doc = DocumentContent(kind="document", markdown="text", metadata=None)
+        output = to_llm_input(_make_result([doc]))
+        assert "metadata:" not in output
+
 
 class TestFrontMatter:
 
@@ -733,15 +936,16 @@ class TestFrontMatter:
         assert output.startswith("---\n")
         assert "\n---\n" in output
 
-    def test_content_type_always_present(self):
-        doc = DocumentContent(kind="document", markdown="text")
+    def test_mime_type_always_present(self):
+        doc = DocumentContent(kind="document", mime_type="application/pdf", markdown="text")
         output = to_llm_input(_make_result([doc]))
-        assert "contentType: document" in output
+        assert "mimeType: application/pdf" in output
 
     def test_key_order(self):
-        """Verify front matter key order: contentType → metadata → timeRange → category → pages → fields."""
+        """Verify front matter key order: mimeType → customMetadata → category → pages → fields."""
         doc = DocumentContent(
             kind="document",
+            mime_type="application/pdf",
             category="Invoice",
             markdown="text",
             fields={"X": StringField(type="string", value_string="val")},
@@ -750,18 +954,24 @@ class TestFrontMatter:
         )
         output = to_llm_input(
             _make_result([doc]),
-            metadata={"source": "f.pdf"},
+            custom_metadata={"source": "f.pdf"},
         )
         lines = output.split("\n")
         positions = {}
         for i, line in enumerate(lines):
-            for key in ["contentType:", "source:", "category:", "pages:", "fields:"]:
+            for key in [
+                "mimeType:",
+                "customMetadata:",
+                "category:",
+                "pages:",
+                "fields:",
+            ]:
                 if line.startswith(key) or line.strip().startswith(key):
                     positions[key] = i
                     break
 
-        assert positions["contentType:"] < positions["source:"]
-        assert positions["source:"] < positions["category:"]
+        assert positions["mimeType:"] < positions["customMetadata:"]
+        assert positions["customMetadata:"] < positions["category:"]
         assert positions["category:"] < positions["pages:"]
         assert positions["pages:"] < positions["fields:"]
 
@@ -795,10 +1005,16 @@ class TestFrontMatter:
 # 10. Edge cases
 # ===========================================================================
 
+
 class TestEdgeCases:
 
     def test_no_fields_content(self):
-        doc = DocumentContent(kind="document", markdown="Just text.", start_page_number=1, end_page_number=1)
+        doc = DocumentContent(
+            kind="document",
+            markdown="Just text.",
+            start_page_number=1,
+            end_page_number=1,
+        )
         output = to_llm_input(_make_result([doc]))
         assert "fields:" not in output
         assert "Just text." in output
@@ -866,61 +1082,70 @@ class TestEdgeCases:
 
     def test_result_level_warnings_included(self):
         from azure.core.exceptions import ODataV4Format
+
         doc = _make_invoice_doc()
         warning = ODataV4Format({"code": "ContentWarning", "message": "Potentially sensitive content."})
         result = AnalysisResult(contents=[doc], warnings=[warning])
         output = to_llm_input(result)
-        assert "rai_warnings:" in output
+        assert "warnings:" in output
         assert "ContentWarning" in output
         assert "Potentially sensitive content." in output
 
     def test_warnings_present_regardless_of_include_flags(self):
         from azure.core.exceptions import ODataV4Format
+
         doc = _make_invoice_doc()
         warning = ODataV4Format({"code": "W1", "message": "msg"})
         result = AnalysisResult(contents=[doc], warnings=[warning])
         output = to_llm_input(result, include_fields=False, include_markdown=False)
-        assert "rai_warnings:" in output
+        assert "warnings:" in output
 
-    def test_llm_stats_warning_filtered_from_rai_warnings(self):
+    def test_llm_stats_warning_filtered_from_warnings(self):
         from azure.core.exceptions import ODataV4Format
+
         doc = _make_invoice_doc()
         telemetry_warning = ODataV4Format(
-            {"code": "Telemetry", "message": "LLMStats: completion calls: 2; embedding calls: 1"}
+            {
+                "code": "Telemetry",
+                "message": "LLMStats: completion calls: 2; embedding calls: 1",
+            }
         )
         real_warning = ODataV4Format({"code": "ContentWarning", "message": "Potentially sensitive content."})
         result = AnalysisResult(contents=[doc], warnings=[telemetry_warning, real_warning])
 
         output = to_llm_input(result)
 
-        assert "rai_warnings:" in output
+        assert "warnings:" in output
         assert "LLMStats:" not in output
         assert "Potentially sensitive content." in output
 
-    def test_llm_stats_warning_only_omits_rai_warnings_block(self):
+    def test_llm_stats_warning_only_omits_warnings_block(self):
         from azure.core.exceptions import ODataV4Format
+
         doc = _make_invoice_doc()
         warning = ODataV4Format({"code": "Telemetry", "message": "LLMStats: completion latency: 7.71s"})
         result = AnalysisResult(contents=[doc], warnings=[warning])
 
         output = to_llm_input(result)
 
-        assert "rai_warnings:" not in output
+        assert "warnings:" not in output
         assert "LLMStats:" not in output
 
     def test_llm_stats_filter_is_case_sensitive(self):
         from azure.core.exceptions import ODataV4Format
+
         doc = _make_invoice_doc()
         warning = ODataV4Format({"code": "ContentWarning", "message": "llmstats: keep as a real warning"})
         result = AnalysisResult(contents=[doc], warnings=[warning])
 
         output = to_llm_input(result)
 
-        assert "rai_warnings:" in output
+        assert "warnings:" in output
         assert "llmstats: keep as a real warning" in output
 
     def test_llm_stats_text_in_markdown_body_is_preserved(self):
         from azure.core.exceptions import ODataV4Format
+
         body_text = "A log excerpt:\n- LLMStats: keep this body text"
         doc = _make_invoice_doc(markdown=body_text)
         warning = ODataV4Format({"code": "Telemetry", "message": "LLMStats: remove this warning text"})
@@ -928,19 +1153,20 @@ class TestEdgeCases:
 
         output = to_llm_input(result)
 
-        assert "rai_warnings:" not in output
+        assert "warnings:" not in output
         assert "LLMStats: keep this body text" in output
         assert "LLMStats: remove this warning text" not in output
 
     def test_llm_stats_warning_filtered_with_leading_whitespace(self):
         from azure.core.exceptions import ODataV4Format
+
         doc = _make_invoice_doc()
         warning = ODataV4Format({"code": "Telemetry", "message": "  LLMStats: completion calls: 2"})
         result = AnalysisResult(contents=[doc], warnings=[warning])
 
         output = to_llm_input(result)
 
-        assert "rai_warnings:" not in output
+        assert "warnings:" not in output
         assert "LLMStats:" not in output
 
     def test_empty_string_field_value_quoted(self):
@@ -955,6 +1181,7 @@ class TestEdgeCases:
 # ===========================================================================
 # 11. Real CU output patterns (from sample_cu_output files)
 # ===========================================================================
+
 
 class TestRealCUPatterns:
     """Tests modeled after actual CU service responses in sample_cu_output/."""
@@ -977,22 +1204,34 @@ class TestRealCUPatterns:
                 "LineItems": ArrayField(
                     type="array",
                     value_array=[
-                        ObjectField(type="object", value_object={
-                            "Description": StringField(type="string", value_string="Consulting Services"),
-                            "Quantity": NumberField(type="number", value_number=2),
-                            "TotalAmount": ObjectField(type="object", value_object={
-                                "Amount": NumberField(type="number", value_number=80),
-                                "CurrencyCode": StringField(type="string", value_string="USD"),
-                            }),
-                        }),
-                        ObjectField(type="object", value_object={
-                            "Description": StringField(type="string", value_string="Document Fee"),
-                            "Quantity": NumberField(type="number", value_number=3),
-                            "TotalAmount": ObjectField(type="object", value_object={
-                                "Amount": NumberField(type="number", value_number=85),
-                                "CurrencyCode": StringField(type="string", value_string="USD"),
-                            }),
-                        }),
+                        ObjectField(
+                            type="object",
+                            value_object={
+                                "Description": StringField(type="string", value_string="Consulting Services"),
+                                "Quantity": NumberField(type="number", value_number=2),
+                                "TotalAmount": ObjectField(
+                                    type="object",
+                                    value_object={
+                                        "Amount": NumberField(type="number", value_number=80),
+                                        "CurrencyCode": StringField(type="string", value_string="USD"),
+                                    },
+                                ),
+                            },
+                        ),
+                        ObjectField(
+                            type="object",
+                            value_object={
+                                "Description": StringField(type="string", value_string="Document Fee"),
+                                "Quantity": NumberField(type="number", value_number=3),
+                                "TotalAmount": ObjectField(
+                                    type="object",
+                                    value_object={
+                                        "Amount": NumberField(type="number", value_number=85),
+                                        "CurrencyCode": StringField(type="string", value_string="USD"),
+                                    },
+                                ),
+                            },
+                        ),
                     ],
                 ),
             },
@@ -1000,7 +1239,7 @@ class TestRealCUPatterns:
             end_page_number=1,
             pages=[DocumentPage(page_number=1, spans=[ContentSpan(offset=0, length=76)])],
         )
-        output = to_llm_input(_make_result([doc]), metadata={"source": "invoice.pdf"})
+        output = to_llm_input(_make_result([doc]), custom_metadata={"source": "invoice.pdf"})
         assert "VendorName: CONTOSO LTD." in output
         assert "InvoiceDate: '2019-11-15'" in output
         # Nested object
@@ -1014,34 +1253,50 @@ class TestRealCUPatterns:
         """Matches post_call_analysis_en_us.mp3.json: arrays of strings and objects."""
         av = AudioVisualContent(
             kind="audioVisual",
+            mime_type="audio/wav",
             markdown="# Audio: 00:00.000 => 01:02.573\n\nTranscript\n```\nAgent 1: Good afternoon...\nCustomer 1: I need help.\n```",
             fields={
                 "Summary": StringField(type="string", value_string="Customer called about a transfer."),
-                "Topics": ArrayField(type="array", value_array=[
-                    StringField(type="string", value_string="Money transfer"),
-                    StringField(type="string", value_string="Certificate of deposit"),
-                    StringField(type="string", value_string="Customer service"),
-                ]),
-                "People": ArrayField(type="array", value_array=[
-                    ObjectField(type="object", value_object={
-                        "Name": StringField(type="string", value_string="Mary Smith"),
-                        "Role": StringField(type="string", value_string="Customer"),
-                    }),
-                    ObjectField(type="object", value_object={
-                        "Name": StringField(type="string", value_string="Agent"),
-                        "Role": StringField(type="string", value_string="Agent"),
-                    }),
-                ]),
+                "Topics": ArrayField(
+                    type="array",
+                    value_array=[
+                        StringField(type="string", value_string="Money transfer"),
+                        StringField(type="string", value_string="Certificate of deposit"),
+                        StringField(type="string", value_string="Customer service"),
+                    ],
+                ),
+                "People": ArrayField(
+                    type="array",
+                    value_array=[
+                        ObjectField(
+                            type="object",
+                            value_object={
+                                "Name": StringField(type="string", value_string="Mary Smith"),
+                                "Role": StringField(type="string", value_string="Customer"),
+                            },
+                        ),
+                        ObjectField(
+                            type="object",
+                            value_object={
+                                "Name": StringField(type="string", value_string="Agent"),
+                                "Role": StringField(type="string", value_string="Agent"),
+                            },
+                        ),
+                    ],
+                ),
                 "Sentiment": StringField(type="string", value_string="Positive"),
-                "Companies": ArrayField(type="array", value_array=[
-                    StringField(type="string", value_string="Contoso"),
-                ]),
+                "Companies": ArrayField(
+                    type="array",
+                    value_array=[
+                        StringField(type="string", value_string="Contoso"),
+                    ],
+                ),
             },
             start_time_ms=0,
             end_time_ms=62573,
         )
-        output = to_llm_input(_make_result([av]), metadata={"source": "call.wav"})
-        assert "contentType: audioVisual" in output
+        output = to_llm_input(_make_result([av]), custom_metadata={"source": "call.wav"})
+        assert "mimeType: audio/wav" in output
         # Single AV: no timeRange per design doc
         assert "timeRange" not in output
         assert "Summary: Customer called about a transfer." in output
@@ -1059,6 +1314,7 @@ class TestRealCUPatterns:
         segments = [
             AudioVisualContent(
                 kind="audioVisual",
+                mime_type="video/mp4",
                 markdown="Speaker 1: When it comes to the neural TTS...",
                 fields={"Summary": StringField(type="string", value_string="About TTS technology.")},
                 start_time_ms=733,
@@ -1066,6 +1322,7 @@ class TestRealCUPatterns:
             ),
             AudioVisualContent(
                 kind="audioVisual",
+                mime_type="video/mp4",
                 markdown="[key frames only, no transcript]",
                 fields={"Summary": StringField(type="string", value_string="Visual transition.")},
                 start_time_ms=15467,
@@ -1073,16 +1330,17 @@ class TestRealCUPatterns:
             ),
             AudioVisualContent(
                 kind="audioVisual",
+                mime_type="video/mp4",
                 markdown="Speaker 3: What we liked about cognitive services...",
                 fields={"Summary": StringField(type="string", value_string="About Azure services.")},
                 start_time_ms=23100,
                 end_time_ms=43233,
             ),
         ]
-        output = to_llm_input(_make_result(segments), metadata={"source": "video.mp4"})
+        output = to_llm_input(_make_result(segments), custom_metadata={"source": "video.mp4"})
         # 3 segments, 2 separators
         assert output.count("*****") == 2
-        assert output.count("contentType: audioVisual") == 3
+        assert output.count("mimeType: video/mp4") == 3
         assert output.count("source: video.mp4") == 3
         assert "timeRange: 00:00 \u2013 00:15" in output
         assert "timeRange: 00:15 \u2013 00:23" in output
@@ -1094,6 +1352,7 @@ class TestRealCUPatterns:
         # Real CU data: spans are contiguous, PageBreak text falls within the preceding page's span
         doc = DocumentContent(
             kind="document",
+            mime_type="application/pdf",
             markdown=markdown,
             start_page_number=1,
             end_page_number=3,
@@ -1147,6 +1406,7 @@ class TestRealCUPatterns:
         """Matches mixed_financial_invoices.pdf.json with prebuilt-read: no fields extracted."""
         doc = DocumentContent(
             kind="document",
+            mime_type="application/pdf",
             markdown="Page 1 text.\n\n<!-- PageBreak -->\n\nPage 2 text.",
             start_page_number=1,
             end_page_number=2,
@@ -1156,7 +1416,7 @@ class TestRealCUPatterns:
             ],
         )
         output = to_llm_input(_make_result([doc]))
-        assert "contentType: document" in output
+        assert "mimeType: application/pdf" in output
         assert "fields:" not in output
         assert "<!-- InputPageNumber: 1 -->" in output
         assert "<!-- InputPageNumber: 2 -->" in output
@@ -1166,7 +1426,7 @@ class TestRealCUPatterns:
         doc = DocumentContent(kind="document", markdown="Hello")
         output = to_llm_input(
             _make_result([doc]),
-            metadata={
+            custom_metadata={
                 "with: colon": "val1",
                 "with# hash": "val2",
                 "- dash_start": "val3",
@@ -1182,13 +1442,14 @@ class TestRealCUPatterns:
         """Matches audio_analysis.mp3.json: single audioVisual, no path, with transcriptPhrases."""
         av = AudioVisualContent(
             kind="audioVisual",
+            mime_type="audio/mpeg",
             markdown="# Audio: 00:00.000 => 01:02.573\n\nTranscript\nSpeaker 1: Good afternoon...",
             fields={"Summary": StringField(type="string", value_string="A greeting call.")},
             start_time_ms=0,
             end_time_ms=62573,
         )
         output = to_llm_input(_make_result([av]))
-        assert "contentType: audioVisual" in output
+        assert "mimeType: audio/mpeg" in output
         # Single AV: no timeRange per design doc
         assert "timeRange" not in output
         assert "Summary: A greeting call." in output
@@ -1203,13 +1464,19 @@ class TestRealCUPatterns:
                 "Items": ArrayField(
                     type="array",
                     value_array=[
-                        ObjectField(type="object", value_object={
-                            "Name": StringField(type="string", value_string="Widget"),
-                            "Cost": ObjectField(type="object", value_object={
-                                "Amount": NumberField(type="number", value_number=50),
-                                "Currency": StringField(type="string", value_string="USD"),
-                            }),
-                        }),
+                        ObjectField(
+                            type="object",
+                            value_object={
+                                "Name": StringField(type="string", value_string="Widget"),
+                                "Cost": ObjectField(
+                                    type="object",
+                                    value_object={
+                                        "Amount": NumberField(type="number", value_number=50),
+                                        "Currency": StringField(type="string", value_string="USD"),
+                                    },
+                                ),
+                            },
+                        ),
                     ],
                 ),
             },
@@ -1238,13 +1505,19 @@ class TestRealCUPatterns:
                 "Items": ArrayField(
                     type="array",
                     value_array=[
-                        ObjectField(type="object", value_object={
-                            "Name": StringField(type="string", value_string="Widget"),
-                            "Tags": ArrayField(type="array", value_array=[
-                                StringField(type="string", value_string="red"),
-                                StringField(type="string", value_string="blue"),
-                            ]),
-                        }),
+                        ObjectField(
+                            type="object",
+                            value_object={
+                                "Name": StringField(type="string", value_string="Widget"),
+                                "Tags": ArrayField(
+                                    type="array",
+                                    value_array=[
+                                        StringField(type="string", value_string="red"),
+                                        StringField(type="string", value_string="blue"),
+                                    ],
+                                ),
+                            },
+                        ),
                     ],
                 ),
             },

@@ -58,6 +58,8 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
                     },
                     "capabilities": {"str": "str"},
                     "capacitySettings": {"designatedCapacity": 0, "priority": 0},
+                    "contextCacheContainerId": "str",
+                    "costControlIds": ["str"],
                     "currentCapacity": 0,
                     "deploymentState": "str",
                     "dynamicThrottlingEnabled": bool,

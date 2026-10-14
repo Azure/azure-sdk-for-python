@@ -5,7 +5,7 @@ import pytest
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_connection
-from azure.ai.ml._restclient.v2024_04_01_preview.models import ConnectionAuthType, ConnectionCategory
+from azure.ai.ml._restclient.arm_ml_service.models import ConnectionAuthType, ConnectionCategory
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import WorkspaceConnection, AzureOpenAIConnection
 from azure.ai.ml.constants._common import ConnectionTypes, CognitiveServiceKinds

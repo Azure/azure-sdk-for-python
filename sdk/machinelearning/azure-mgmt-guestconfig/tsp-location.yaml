@@ -1,4 +1,4 @@
 directory: specification/guestconfiguration/resource-manager/Microsoft.GuestConfiguration/Assignments
-commit: a7bdbe741c0ef1f1b159d8569b173757bd823ae9
+commit: 52872c1f699ca9dfbf721c79b6e50fed8b041335
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 

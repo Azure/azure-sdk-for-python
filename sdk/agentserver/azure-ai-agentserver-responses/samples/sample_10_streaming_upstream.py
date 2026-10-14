@@ -61,23 +61,28 @@ upstream = openai.AsyncOpenAI(
 )
 
 
-def _build_response_snapshot(request: CreateResponse, context: ResponseContext) -> dict[str, Any]:
+def _build_response_snapshot(
+    request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
+) -> dict[str, Any]:
     """Construct a response snapshot dict from request + context."""
     snapshot: dict[str, Any] = {
         "id": context.response_id,
         "object": "response",
         "status": "in_progress",
-        "model": request.model or "",
+        "model": request.get("model") or "",
         "output": [],
     }
-    if request.metadata is not None:
-        snapshot["metadata"] = request.metadata
-    if request.background is not None:
-        snapshot["background"] = request.background
-    if request.previous_response_id is not None:
-        snapshot["previous_response_id"] = request.previous_response_id
+    metadata = request.get("metadata")
+    if metadata is not None:
+        snapshot["metadata"] = metadata
+    background = request.get("background")
+    if background is not None:
+        snapshot["background"] = background
+    previous_response_id = request.get("previous_response_id")
+    if previous_response_id is not None:
+        snapshot["previous_response_id"] = previous_response_id
     # Normalize conversation to ConversationReference form.
-    conv = request.conversation
+    conv = request.get("conversation")
     if isinstance(conv, str):
         snapshot["conversation"] = {"id": conv}
     elif isinstance(conv, dict) and conv.get("id"):
@@ -100,12 +105,12 @@ async def handler(
     # Build the upstream request — translate every input item.
     # Both model stacks share the same JSON wire contract, so
     # serializing our Item to dict round-trips to the OpenAI SDK.
-    input_items = [item.as_dict() for item in await context.get_input_items()]
+    input_items = [dict(item) for item in await context.get_input_items()]
 
     # This handler owns the response lifecycle — construct the
     # response snapshot directly instead of forwarding the upstream's.
     # Seeding from the request preserves metadata, conversation, model.
-    snapshot = _build_response_snapshot(request, context)
+    snapshot = _build_response_snapshot(request, context, cancellation_signal)
 
     # Lifecycle events nest the response snapshot under "response"
     # — matching the SSE wire format.
@@ -119,12 +124,13 @@ async def handler(
     upstream_failed = False
 
     async with await upstream.responses.create(
-        model=request.model or "gpt-4o-mini",
+        model=request.get("model") or "gpt-4o-mini",
         input=input_items,  # type: ignore[arg-type]
         stream=True,
     ) as upstream_stream:
         upstream_stream = cast(
-            openai.AsyncStream[openai.types.responses.response_stream_event.ResponseStreamEvent], upstream_stream
+            openai.AsyncStream[openai.types.responses.response_stream_event.ResponseStreamEvent],
+            upstream_stream,
         )
         async for event in upstream_stream:
             # Skip lifecycle events — we own the response envelope.
@@ -161,7 +167,10 @@ async def handler(
     # Emit terminal event — the handler decides the outcome.
     if upstream_failed:
         snapshot["status"] = "failed"
-        snapshot["error"] = {"code": "server_error", "message": "Upstream request failed"}
+        snapshot["error"] = {
+            "code": "server_error",
+            "message": "Upstream request failed",
+        }
         yield {"type": "response.failed", "response": snapshot}
     else:
         snapshot["status"] = "completed"

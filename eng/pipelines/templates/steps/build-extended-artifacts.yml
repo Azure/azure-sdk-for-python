@@ -46,8 +46,8 @@ steps:
 
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
-      PackageName: "azure-template"
-      ServiceDirectory: "template"
+      Artifacts: ${{ parameters.Artifacts }}
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestPipeline: ${{ parameters.TestPipeline }}
 
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
@@ -81,6 +81,12 @@ steps:
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+
+    - script: >-
+        python eng/scripts/save_package_api_hash.py
+        --artifact-staging-directory "$(Build.ArtifactStagingDirectory)"
+        --repo-root "$(Build.SourcesDirectory)"
+      displayName: 'Update package properties with API hashes'
 
   - ${{ parameters.BeforePublishSteps }}
 

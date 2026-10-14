@@ -23,6 +23,7 @@ OpenTelemetry tracing with Azure Monitor and OTLP exporters is included by defau
 `AgentServerHost` is the host process for Azure AI Hosted Agent containers. It provides:
 
 - **Health probe** — `GET /readiness` returns `200 OK` when the server is ready.
+- **Snapshot lifecycle** — Private platform hooks prepare a process for capture and restore session-specific state.
 - **Graceful shutdown** — On `SIGTERM` the server drains in-flight requests (default 30 s timeout) before exiting.
 - **OpenTelemetry tracing** — Automatic span creation with Azure Monitor and OTLP export when configured.
 - **Hypercorn ASGI server** — Serves on `0.0.0.0:${PORT:-8088}` with HTTP/1.1.
@@ -113,6 +114,30 @@ app = MyAgentHost()
 app.run()
 ```
 
+### Readiness handler
+
+By default, `GET /readiness` returns `200 OK` with
+`{"status": "healthy"}`. Register a readiness handler to replace the default
+response with application-specific readiness logic:
+
+```python
+from azure.ai.agentserver.core import AgentServerHost
+from starlette.requests import Request
+from starlette.responses import JSONResponse, Response
+
+app = AgentServerHost()
+
+@app.readiness_handler
+async def readiness(request: Request) -> Response:
+    if await dependencies_ready():
+        return JSONResponse({"status": "healthy"})
+
+    return JSONResponse({"status": "not_ready"}, status_code=503)
+```
+
+When no handler is registered, the built-in healthy response remains
+unchanged.
+
 ### Shutdown handler
 
 Register a cleanup function that runs during graceful shutdown:
@@ -125,6 +150,85 @@ async def on_shutdown():
     # Close database connections, flush buffers, etc.
     pass
 ```
+
+### Memory snapshot lifecycle handlers
+
+The host always registers the private platform routes
+`POST /_agent/before-snapshot` and `POST /_agent/after-restore`, with equivalent
+aliases at `POST /_before_snapshot` and `POST /_after_restore`. All four routes
+are processed by the framework, including restore validation and environment
+and configuration hydration. Registering application handlers is optional;
+when absent, only the application callbacks are skipped. Use the hooks to
+release connections that must not be copied into a memory snapshot and rebuild
+them for the restored session:
+
+```python
+from azure.ai.agentserver.core import AgentServerHost, AgentSessionContext
+
+app = AgentServerHost()
+
+@app.before_snapshot_handler
+async def before_snapshot():
+    await database.close()
+
+@app.after_restore_handler
+async def after_restore(context: AgentSessionContext):
+    # context.session_env_overrides has already been applied to os.environ.
+    await database.connect()
+```
+
+Lifecycle calls are serialized and idempotent. A repeated `after-restore`
+request with the same `restore_id` does not invoke the handler again, while a
+new `restore_id` for the same session starts a new restore cycle. The server
+rejects attempts to reuse a restored process for a different session.
+
+Protocol-specific hosts can override the protected `_before_snapshot` and
+`_after_restore` methods to extend the lifecycle before application callbacks
+run. The host still performs validation, session environment and configuration
+hydration, serialization, rollback, and idempotency, so subclass extensions
+cannot accidentally omit those required steps. Overrides should call the
+corresponding `super()` method first so multiple protocol layers compose
+cooperatively:
+
+```python
+class ProtocolAgentHost(AgentServerHost):
+    async def _after_restore(self, context: AgentSessionContext):
+        await super()._after_restore(context)
+        await self._rebuild_protocol_state(context)
+```
+
+### Durable state storage
+
+`FoundryStateStore` is a durable, server-backed key-value store for agent state
+— session memory, per-user preferences, counters, and checkpoints — bound to
+one explicit, caller-named store, with single-item optimistic concurrency,
+tag-filtered key listing, and store-level TTL.
+
+```python
+from azure.ai.agentserver.core.storage import FoundryStateStore
+
+# Endpoint and credential resolve from FOUNDRY_PROJECT_ENDPOINT + DefaultAzureCredential.
+# get_or_create() resolves (or creates, on first use) the store in one call.
+store = await FoundryStateStore.get_or_create("checkpoints/thread-abc", user_isolation=True)
+async with store:
+    await store.set_item("step-1", {"done": False})
+    item = await store.get_item("step-1")
+    print(item.value)  # {"done": False}
+```
+
+> The default credential path uses `DefaultAzureCredential`, which requires the
+> optional `azure-identity` package (`pip install azure-identity`). Alternatively,
+> pass any `azure.core.credentials_async.AsyncTokenCredential` explicitly to
+> `get_or_create()` and `azure-identity` is not needed.
+
+Reads return typed `StateStoreItem` values; writes return typed item metadata and use
+single-item `If-Match` concurrency. Session/conversation scoping is expressed in
+the store name itself, and item expiry is controlled by the store's
+`item_ttl_seconds` setting. See the [Durable State Store Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/state-store-guide.md)
+for the full API, the store lifecycle, and common gotchas, and
+[state_store_sample.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/samples/state_store_sample.py)
+for a runnable end-to-end example.
+
 
 ### Configuring tracing
 
@@ -143,6 +247,76 @@ export APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=..."
 python my_agent.py
 ```
 
+Azure Monitor uses 100% trace sampling by default. Standard OpenTelemetry
+sampling configuration through `OTEL_TRACES_SAMPLER` and
+`OTEL_TRACES_SAMPLER_ARG` takes precedence when explicitly set. This controls
+sampling only; exporter queues, process termination, and transport or ingestion
+failures can still prevent trace delivery.
+
+Azure SDK, HTTPX, Requests, urllib, and urllib3 instrumentation are disabled by
+default to avoid automatically tracing every outbound HTTP request. To enable
+selected instrumentations, configure the host's observability callback:
+
+```python
+from functools import partial
+
+from azure.ai.agentserver.core import AgentServerHost, configure_observability
+
+app = AgentServerHost(
+    configure_observability=partial(
+        configure_observability,
+        instrumentation_options={
+            "azure_sdk": {"enabled": True},
+            "httpx": {"enabled": True},
+            "requests": {"enabled": True},
+        },
+    )
+)
+```
+
+OTLP export is enabled when `OTEL_EXPORTER_OTLP_ENDPOINT` is set. HTTP/protobuf
+is the default protocol. To use an OTLP/gRPC collector, install the optional
+gRPC extra and set `OTEL_EXPORTER_OTLP_PROTOCOL=grpc`:
+
+```bash
+pip install "azure-ai-agentserver-core[otlp-grpc]"
+export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4317"
+export OTEL_EXPORTER_OTLP_PROTOCOL="grpc"
+python my_agent.py
+```
+
+### Resilient long-running agents
+
+The `@task` decorator builds crash-resilient agents that survive container restarts, OOM kills, and redeployments. Task state is persisted to a task store, enabling automatic recovery and multi-turn suspend/resume patterns.
+
+The resilient task subsystem is **opt-in**: call `set_resilient_tasks_enabled(True)` (before host startup, typically at import time) so the framework constructs the `TaskManager` and runs crash recovery. Without it, `.run()` / `.start()` raise `TaskManagerNotInitialized`.
+
+```python
+from azure.ai.agentserver.core.tasks import (
+    set_resilient_tasks_enabled,
+    task,
+    TaskContext,
+)
+
+# Opt in to the durable task subsystem (required for @task to run).
+set_resilient_tasks_enabled(True)
+
+@task(name="process_document")
+async def process_document(ctx: TaskContext[dict]) -> dict:
+    # ctx.entry_mode is "fresh" | "resumed" | "recovered".
+    # The framework re-invokes the handler from the top after a
+    # crash; ctx.input survives, so the handler picks up.
+    summary = await analyze(ctx.input["document_url"])
+    return {"summary": summary}
+
+result = await process_document.run(
+    task_id="doc-42", input={"document_url": "..."},
+)
+print(result)  # {"summary": "..."}
+```
+See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for streaming, multi-turn suspend/resume, retries, timeouts, steering, and the patterns reference.
+See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for streaming, multi-turn suspend/resume, retries, timeouts, steering, and the patterns reference.
+
 ## Troubleshooting
 
 ### Logging
@@ -160,6 +334,7 @@ To report an issue with the client library, or request additional features, plea
 ## Next steps
 
 - Install [`azure-ai-agentserver-invocations`](https://pypi.org/project/azure-ai-agentserver-invocations/) to add the invocation protocol endpoints.
+- Read the [Resilient Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for crash-resilient long-running agents.
 - See the [container image spec](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver) for the full hosted agent contract.
 
 ## Contributing

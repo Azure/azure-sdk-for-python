@@ -30,14 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.scenario_configurations.execute(
+    response = client.scenario_configurations.begin_execute(
         resource_group_name="exampleRG",
         workspace_name="exampleWorkspace",
         scenario_name="12345678-1234-1234-1234-123456789012",
         scenario_configuration_name="config-5678-9012-3456-789012345678",
-    )
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/ScenarioConfigurations_Execute.json
+# x-ms-original-file: 2026-08-01-preview/ScenarioConfigurations_Execute.json
 if __name__ == "__main__":
     main()

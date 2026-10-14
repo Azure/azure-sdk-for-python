@@ -19,6 +19,15 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
+class BlobStorageMountProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The protocol to use for mounting an Azure Storage Blob store."""
+
+    NFS = "NFS"
+    """NFS protocol. Version of NFS used may vary based on storage type."""
+    BLOBFUSE_CACHING = "BlobfuseCaching"
+    """Blobfuse in file cache mode."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -39,6 +48,13 @@ class CustomerManagedKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Customer managed keys are enabled."""
     DISABLED = "Disabled"
     """Customer managed keys are disabled."""
+
+
+class NetAppMountProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The protocol to use for mounting an Azure NetApp Files store."""
+
+    NFS = "NFS"
+    """NFS protocol. Version of NFS used may vary based on storage type."""
 
 
 class NetworkEgressType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -133,6 +149,15 @@ class StorageStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Azure storage blob kind."""
     AZURE_NET_APP_FILES = "AzureNetAppFiles"
     """The Azure NetApp Files kind."""
+
+
+class SystemAssignedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (either system assigned, or none)."""
+
+    NONE = "None"
+    """No managed system identity."""
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """System assigned managed system identity."""
 
 
 class SystemSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):

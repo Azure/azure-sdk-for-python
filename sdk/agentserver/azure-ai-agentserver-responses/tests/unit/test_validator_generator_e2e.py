@@ -134,7 +134,8 @@ def test_regeneration_overwrites_previous_output_cleanly(tmp_path: Path) -> None
 
     content = out_path.read_text(encoding="utf-8")
     assert "stale-content" not in content
-    assert content.startswith("# pylint: disable=line-too-long,useless-suppression,too-many-lines")
+    assert content.startswith("# --------------------------------------------------------------------------")
+    assert "# pylint: disable=line-too-long,useless-suppression,too-many-lines" in content
 
 
 def test_generator_handles_inline_create_response_schema(tmp_path: Path) -> None:

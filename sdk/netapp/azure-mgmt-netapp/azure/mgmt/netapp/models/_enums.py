@@ -478,7 +478,9 @@ class ElasticVolumeRestorationState(str, Enum, metaclass=CaseInsensitiveEnumMeta
 
 
 class EnableSubvolumes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Flag indicating whether subvolume operations are enabled on the volume."""
+    """Flag indicating whether subvolume operations are enabled on the volume Deprecated. This type
+    will be removed in a future API version.
+    """
 
     ENABLED = "Enabled"
     """subvolumes are enabled."""
@@ -899,6 +901,17 @@ class ReplicationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cross region replication."""
     CROSS_ZONE_REPLICATION = "CrossZoneReplication"
     """Cross zone replication."""
+
+
+class SecureLdapType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the secure LDAP mode for encrypting communication between ANF storage and customer
+    LDAP servers.
+    """
+
+    LDAP_OVER_TLS = "LdapOverTLS"
+    """LDAP traffic is encrypted using LDAP over TLS."""
+    NONE = "None"
+    """LDAP traffic is not encrypted."""
 
 
 class SecurityStyle(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -13,15 +13,15 @@
     "@typespec/sse": "~0.87.0",
     "@typespec/streams": "~0.87.0",
     "@typespec/xml": "~0.87.0",
-    "@typespec/openapi3": "1.17.0",
-    "@typespec/http-client-python": "^0.39.0",
-    "@azure-tools/openai-typespec": "1.21.1",
-    "@azure-tools/typespec-azure-portal-core": "0.73.0",
+    "@typespec/openapi3": "^1.17.0",
+    "@typespec/http-client-python": "0.39.0",
     "@azure-tools/typespec-autorest": "~0.73.0",
     "@azure-tools/typespec-azure-core": "~0.73.0",
     "@azure-tools/typespec-azure-resource-manager": "~0.73.0",
     "@azure-tools/typespec-azure-rulesets": "~0.73.0",
     "@azure-tools/typespec-client-generator-core": "~0.73.0",
-    "@azure-tools/typespec-liftr-base": "0.13.0"
+    "@azure-tools/typespec-azure-portal-core": "~0.73.0",
+    "@azure-tools/typespec-liftr-base": "0.13.0",
+    "@azure-tools/openai-typespec": "1.28.0"
   }
 }

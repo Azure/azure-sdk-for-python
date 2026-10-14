@@ -2913,13 +2913,6 @@ namespace azure.mgmt.elastic.operations
 
 namespace azure.mgmt.elastic.types
 
-    class azure.mgmt.elastic.types.BillingInfoResponse(TypedDict, total=False):
-        key "marketplaceSaasInfo": ForwardRef('MarketplaceSaaSInfo', module='types')
-        key "partnerBillingEntity": ForwardRef('PartnerBillingEntity', module='types')
-        marketplace_saas_info: MarketplaceSaaSInfo
-        partner_billing_entity: PartnerBillingEntity
-
-
     class azure.mgmt.elastic.types.CompanyInfo(TypedDict, total=False):
         key "business": str
         key "country": str
@@ -2931,45 +2924,6 @@ namespace azure.mgmt.elastic.types
         domain: str
         employees_number: str
         state: str
-
-
-    class azure.mgmt.elastic.types.ConnectedPartnerResourceProperties(TypedDict, total=False):
-        key "azureResourceId": str
-        key "location": str
-        key "partnerDeploymentName": str
-        key "partnerDeploymentUri": str
-        key "type": str
-        azure_resource_id: str
-        location: str
-        partner_deployment_name: str
-        partner_deployment_uri: str
-        type: str
-
-
-    class azure.mgmt.elastic.types.ConnectedPartnerResourcesListFormat(TypedDict, total=False):
-        key "properties": ForwardRef('ConnectedPartnerResourceProperties', module='types')
-        properties: ConnectedPartnerResourceProperties
-
-
-    class azure.mgmt.elastic.types.DeploymentInfoResponse(TypedDict, total=False):
-        key "configurationType": str
-        key "deploymentUrl": str
-        key "diskCapacity": str
-        key "elasticsearchEndPoint": str
-        key "marketplaceSaasInfo": ForwardRef('MarketplaceSaaSInfo', module='types')
-        key "memoryCapacity": str
-        key "projectType": str
-        key "status": Union[str, ElasticDeploymentStatus]
-        key "version": str
-        configuration_type: str
-        deployment_url: str
-        disk_capacity: str
-        elasticsearch_end_point: str
-        marketplace_saas_info: MarketplaceSaaSInfo
-        memory_capacity: str
-        project_type: str
-        status: Union[str, ElasticDeploymentStatus]
-        version: str
 
 
     class azure.mgmt.elastic.types.ElasticCloudDeployment(TypedDict, total=False):
@@ -3029,109 +2983,11 @@ namespace azure.mgmt.elastic.types
         version: str
 
 
-    class azure.mgmt.elastic.types.ElasticOrganizationToAzureSubscriptionMappingResponse(TypedDict, total=False):
-        key "properties": ForwardRef('ElasticOrganizationToAzureSubscriptionMappingResponseProperties', module='types')
-        properties: ElasticOrganizationToAzureSubscriptionMappingResponseProperties
-
-
-    class azure.mgmt.elastic.types.ElasticOrganizationToAzureSubscriptionMappingResponseProperties(TypedDict, total=False):
-        key "billedAzureSubscriptionId": str
-        key "elasticOrganizationId": str
-        key "elasticOrganizationName": str
-        key "marketplaceSaasInfo": ForwardRef('MarketplaceSaaSInfo', module='types')
-        billed_azure_subscription_id: str
-        elastic_organization_id: str
-        elastic_organization_name: str
-        marketplace_saas_info: MarketplaceSaaSInfo
-
-
     class azure.mgmt.elastic.types.ElasticProperties(TypedDict, total=False):
         key "elasticCloudDeployment": ForwardRef('ElasticCloudDeployment', module='types')
         key "elasticCloudUser": ForwardRef('ElasticCloudUser', module='types')
         elastic_cloud_deployment: ElasticCloudDeployment
         elastic_cloud_user: ElasticCloudUser
-
-
-    class azure.mgmt.elastic.types.ElasticTrafficFilter(TypedDict, total=False):
-        key "description": str
-        key "id": str
-        key "includeByDefault": bool
-        key "name": str
-        key "region": str
-        key "type": Union[str, Type]
-        description: str
-        id: str
-        include_by_default: bool
-        name: str
-        region: str
-        rules: list[ElasticTrafficFilterRule]
-        type: Union[str, Type]
-
-
-    class azure.mgmt.elastic.types.ElasticTrafficFilterResponse(TypedDict, total=False):
-        rulesets: list[ElasticTrafficFilter]
-
-
-    class azure.mgmt.elastic.types.ElasticTrafficFilterRule(TypedDict, total=False):
-        key "azureEndpointGuid": str
-        key "azureEndpointName": str
-        key "description": str
-        key "id": str
-        key "source": str
-        azure_endpoint_guid: str
-        azure_endpoint_name: str
-        description: str
-        id: str
-        source: str
-
-
-    class azure.mgmt.elastic.types.ElasticVersionListFormat(TypedDict, total=False):
-        key "properties": ForwardRef('ElasticVersionListProperties', module='types')
-        properties: ElasticVersionListProperties
-
-
-    class azure.mgmt.elastic.types.ElasticVersionListProperties(TypedDict, total=False):
-        key "version": str
-        version: str
-
-
-    class azure.mgmt.elastic.types.ErrorAdditionalInfo(TypedDict, total=False):
-        key "info": Any
-        key "type": str
-        info: Any
-        type: str
-
-
-    class azure.mgmt.elastic.types.ErrorDetail(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        key "target": str
-        additionalInfo: list[ErrorAdditionalInfo]
-        additional_info: list[ErrorAdditionalInfo]
-        code: str
-        details: list[ErrorDetail]
-        message: str
-        target: str
-
-
-    class azure.mgmt.elastic.types.ErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ErrorDetail', module='types')
-        error: ErrorDetail
-
-
-    class azure.mgmt.elastic.types.ErrorResponseBody(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        key "target": str
-        code: str
-        details: list[ErrorResponseBody]
-        message: str
-        target: str
-
-
-    class azure.mgmt.elastic.types.ExternalUserCreationResponse(TypedDict, total=False):
-        key "created": bool
-        created: bool
 
 
     class azure.mgmt.elastic.types.ExternalUserInfo(TypedDict, total=False):
@@ -3175,30 +3031,6 @@ namespace azure.mgmt.elastic.types
         send_subscription_logs: bool
 
 
-    class azure.mgmt.elastic.types.MarketplaceSaaSInfo(TypedDict, total=False):
-        key "billedAzureSubscriptionId": str
-        key "marketplaceName": str
-        key "marketplaceResourceId": str
-        key "marketplaceStatus": str
-        key "marketplaceSubscription": ForwardRef('MarketplaceSaaSInfoMarketplaceSubscription', module='types')
-        key "subscribed": bool
-        billed_azure_subscription_id: str
-        marketplace_name: str
-        marketplace_resource_id: str
-        marketplace_status: str
-        marketplace_subscription: MarketplaceSaaSInfoMarketplaceSubscription
-        subscribed: bool
-
-
-    class azure.mgmt.elastic.types.MarketplaceSaaSInfoMarketplaceSubscription(TypedDict, total=False):
-        key "id": str
-        key "offerId": str
-        key "publisherId": str
-        id: str
-        offer_id: str
-        publisher_id: str
-
-
     class azure.mgmt.elastic.types.MonitorProperties(TypedDict, total=False):
         key "elasticProperties": ForwardRef('ElasticProperties', module='types')
         key "generateApiKey": bool
@@ -3230,15 +3062,6 @@ namespace azure.mgmt.elastic.types
         subscription_state: str
         user_info: UserInfo
         version: str
-
-
-    class azure.mgmt.elastic.types.MonitoredResource(TypedDict, total=False):
-        key "id": str
-        key "reasonForLogsStatus": str
-        key "sendingLogs": Union[str, SendingLogs]
-        id: str
-        reason_for_logs_status: str
-        sending_logs: Union[str, SendingLogs]
 
 
     class azure.mgmt.elastic.types.MonitoredSubscription(TypedDict, total=False):
@@ -3311,47 +3134,6 @@ namespace azure.mgmt.elastic.types
         type: str
 
 
-    class azure.mgmt.elastic.types.OpenAIIntegrationStatusResponse(TypedDict, total=False):
-        key "properties": ForwardRef('OpenAIIntegrationStatusResponseProperties', module='types')
-        properties: OpenAIIntegrationStatusResponseProperties
-
-
-    class azure.mgmt.elastic.types.OpenAIIntegrationStatusResponseProperties(TypedDict, total=False):
-        key "status": str
-        status: str
-
-
-    class azure.mgmt.elastic.types.OperationDisplay(TypedDict, total=False):
-        key "description": str
-        key "operation": str
-        key "provider": str
-        key "resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
-
-
-    class azure.mgmt.elastic.types.OperationResult(TypedDict, total=False):
-        key "display": ForwardRef('OperationDisplay', module='types')
-        key "isDataAction": bool
-        key "name": str
-        key "origin": str
-        display: OperationDisplay
-        is_data_action: bool
-        name: str
-        origin: str
-
-
-    class azure.mgmt.elastic.types.PartnerBillingEntity(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        key "partnerEntityUri": str
-        id: str
-        name: str
-        partner_entity_uri: str
-
-
     class azure.mgmt.elastic.types.PlanDetails(TypedDict, total=False):
         key "offerID": str
         key "planID": str
@@ -3392,11 +3174,6 @@ namespace azure.mgmt.elastic.types
         name: str
         system_data: SystemData
         type: str
-
-
-    class azure.mgmt.elastic.types.ResourceProviderDefaultErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ErrorResponseBody', module='types')
-        error: ErrorResponseBody
 
 
     class azure.mgmt.elastic.types.ResourceSku(TypedDict, total=False):
@@ -3455,23 +3232,6 @@ namespace azure.mgmt.elastic.types
         type: str
 
 
-    class azure.mgmt.elastic.types.UpgradableVersionsList(TypedDict, total=False):
-        key "currentVersion": str
-        current_version: str
-        upgradableVersions: list[str]
-        upgradable_versions: list[str]
-
-
-    class azure.mgmt.elastic.types.UserApiKeyResponse(TypedDict, total=False):
-        key "properties": ForwardRef('UserApiKeyResponseProperties', module='types')
-        properties: UserApiKeyResponseProperties
-
-
-    class azure.mgmt.elastic.types.UserApiKeyResponseProperties(TypedDict, total=False):
-        key "apiKey": str
-        api_key: str
-
-
     class azure.mgmt.elastic.types.UserEmailId(TypedDict, total=False):
         key "emailId": str
         email_id: str
@@ -3494,18 +3254,6 @@ namespace azure.mgmt.elastic.types
         key "operationName": Union[str, OperationName]
         key "vmResourceId": str
         operation_name: Union[str, OperationName]
-        vm_resource_id: str
-
-
-    class azure.mgmt.elastic.types.VMIngestionDetailsResponse(TypedDict, total=False):
-        key "cloudId": str
-        key "ingestionKey": str
-        cloud_id: str
-        ingestion_key: str
-
-
-    class azure.mgmt.elastic.types.VMResources(TypedDict, total=False):
-        key "vmResourceId": str
         vm_resource_id: str
 
 

@@ -379,7 +379,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 database_name: str, 
                 policy_name: Union[str, ShortTermRetentionPolicyName], 
-                parameters: JSON, 
+                parameters: BackupShortTermRetentionPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -418,7 +418,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 database_name: str, 
                 policy_name: Union[str, ShortTermRetentionPolicyName], 
-                parameters: JSON, 
+                parameters: BackupShortTermRetentionPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -501,7 +501,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: DataMaskingPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -557,7 +557,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 database_name: str, 
                 data_masking_rule_name: str, 
-                parameters: JSON, 
+                parameters: DataMaskingRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -577,11 +577,14 @@ namespace azure.mgmt.sql.aio.operations
             ) -> DataMaskingRule: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2025-02-01-preview': ['skip']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_database(
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
+                *, 
+                skip: Optional[int] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[DataMaskingRule]: ...
 
@@ -642,7 +645,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 database_name: str, 
                 advanced_threat_protection_name: Union[str, AdvancedThreatProtectionName], 
-                parameters: JSON, 
+                parameters: DatabaseAdvancedThreatProtection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -730,7 +733,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 database_name: str, 
                 advisor_name: str, 
-                parameters: JSON, 
+                parameters: Advisor, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -785,7 +788,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: DatabaseAutomaticTuning, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -830,7 +833,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: DatabaseBlobAuditingPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -973,7 +976,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 database_name: str, 
                 extension_name: str, 
-                parameters: JSON, 
+                parameters: DatabaseExtensions, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1091,7 +1094,7 @@ namespace azure.mgmt.sql.aio.operations
                 database_name: str, 
                 advisor_name: str, 
                 recommended_action_name: str, 
-                parameters: JSON, 
+                parameters: RecommendedAction, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1170,7 +1173,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 database_name: str, 
                 security_alert_policy_name: Union[str, SecurityAlertPolicyName], 
-                parameters: JSON, 
+                parameters: DatabaseSecurityAlertPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1239,7 +1242,7 @@ namespace azure.mgmt.sql.aio.operations
                 database_name: str, 
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
                 baseline_name: Union[str, BaselineName], 
-                parameters: JSON, 
+                parameters: DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1332,7 +1335,7 @@ namespace azure.mgmt.sql.aio.operations
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
                 baseline_name: Union[str, BaselineName], 
                 rule_id: str, 
-                parameters: JSON, 
+                parameters: DatabaseSqlVulnerabilityAssessmentRuleBaselineInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1561,7 +1564,7 @@ namespace azure.mgmt.sql.aio.operations
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
                 rule_id: str, 
                 baseline_name: Union[str, VulnerabilityAssessmentPolicyBaselineName], 
-                parameters: JSON, 
+                parameters: DatabaseVulnerabilityAssessmentRuleBaseline, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1687,7 +1690,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 database_name: str, 
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
-                parameters: JSON, 
+                parameters: DatabaseVulnerabilityAssessment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1762,7 +1765,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: Database, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1807,7 +1810,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: ExportDatabaseDefinition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1854,7 +1857,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: ImportExistingDatabaseDefinition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1908,7 +1911,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: DatabaseUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1957,12 +1960,16 @@ namespace azure.mgmt.sql.aio.operations
             ) -> AsyncItemPaged[Database]: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2025-02-01-preview': ['top', 'skip', 'filter', 'orderby']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_server(
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
                 *, 
-                skip_token: Optional[str] = ..., 
+                filter: Optional[str] = ..., 
+                orderby: Optional[str] = ..., 
+                skip: Optional[int] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[Database]: ...
 
@@ -1992,7 +1999,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: ResourceMoveDefinition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2072,7 +2079,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 distributed_availability_group_name: str, 
-                parameters: JSON, 
+                parameters: DistributedAvailabilityGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2117,7 +2124,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 distributed_availability_group_name: str, 
-                parameters: JSON, 
+                parameters: DistributedAvailabilityGroupsFailoverRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2153,7 +2160,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 distributed_availability_group_name: str, 
-                parameters: JSON, 
+                parameters: DistributedAvailabilityGroupSetRole, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2189,7 +2196,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 distributed_availability_group_name: str, 
-                parameters: JSON, 
+                parameters: DistributedAvailabilityGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2279,7 +2286,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 elastic_pool_name: str, 
-                parameters: JSON, 
+                parameters: ElasticPool, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2333,7 +2340,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 elastic_pool_name: str, 
-                parameters: JSON, 
+                parameters: ElasticPoolUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2397,7 +2404,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 encryption_protector_name: Union[str, EncryptionProtectorName], 
-                parameters: JSON, 
+                parameters: EncryptionProtector, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2494,7 +2501,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: ExtendedDatabaseBlobAuditingPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2555,7 +2562,7 @@ namespace azure.mgmt.sql.aio.operations
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
-                parameters: JSON, 
+                parameters: ExtendedServerBlobAuditingPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2615,7 +2622,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 failover_group_name: str, 
-                parameters: JSON, 
+                parameters: FailoverGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2687,7 +2694,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 failover_group_name: str, 
-                parameters: JSON, 
+                parameters: FailoverGroupUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2749,7 +2756,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 firewall_rule_name: str, 
-                parameters: JSON, 
+                parameters: FirewallRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2809,7 +2816,7 @@ namespace azure.mgmt.sql.aio.operations
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
-                parameters: JSON, 
+                parameters: FirewallRuleList, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2855,7 +2862,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 database_name: str, 
                 geo_backup_policy_name: Union[str, GeoBackupPolicyName], 
-                parameters: JSON, 
+                parameters: GeoBackupPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2920,7 +2927,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 firewall_rule_name: str, 
-                parameters: JSON, 
+                parameters: IPv6FirewallRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2991,7 +2998,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 location_name: str, 
                 failover_group_name: str, 
-                parameters: JSON, 
+                parameters: InstanceFailoverGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3104,7 +3111,7 @@ namespace azure.mgmt.sql.aio.operations
                 self, 
                 resource_group_name: str, 
                 instance_pool_name: str, 
-                parameters: JSON, 
+                parameters: InstancePool, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3145,7 +3152,7 @@ namespace azure.mgmt.sql.aio.operations
                 self, 
                 resource_group_name: str, 
                 instance_pool_name: str, 
-                parameters: JSON, 
+                parameters: InstancePoolUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3207,7 +3214,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 job_agent_name: str, 
-                parameters: JSON, 
+                parameters: JobAgent, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3252,7 +3259,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 job_agent_name: str, 
-                parameters: JSON, 
+                parameters: JobAgentUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3316,7 +3323,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 job_agent_name: str, 
                 credential_name: str, 
-                parameters: JSON, 
+                parameters: JobCredential, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3480,7 +3487,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 job_agent_name: str, 
                 private_endpoint_name: str, 
-                parameters: JSON, 
+                parameters: JobPrivateEndpoint, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3599,7 +3606,7 @@ namespace azure.mgmt.sql.aio.operations
                 job_agent_name: str, 
                 job_name: str, 
                 step_name: str, 
-                parameters: JSON, 
+                parameters: JobStep, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3764,7 +3771,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 job_agent_name: str, 
                 target_group_name: str, 
-                parameters: JSON, 
+                parameters: JobTargetGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3871,7 +3878,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 job_agent_name: str, 
                 job_name: str, 
-                parameters: JSON, 
+                parameters: Job, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3948,7 +3955,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 database_name: str, 
                 ledger_digest_uploads: Union[str, LedgerDigestUploadsName], 
-                parameters: JSON, 
+                parameters: LedgerDigestUploads, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4025,7 +4032,7 @@ namespace azure.mgmt.sql.aio.operations
                 long_term_retention_server_name: str, 
                 long_term_retention_database_name: str, 
                 backup_name: str, 
-                parameters: JSON, 
+                parameters: ChangeLongTermRetentionBackupAccessTierParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4066,7 +4073,7 @@ namespace azure.mgmt.sql.aio.operations
                 long_term_retention_server_name: str, 
                 long_term_retention_database_name: str, 
                 backup_name: str, 
-                parameters: JSON, 
+                parameters: ChangeLongTermRetentionBackupAccessTierParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4106,7 +4113,7 @@ namespace azure.mgmt.sql.aio.operations
                 long_term_retention_server_name: str, 
                 long_term_retention_database_name: str, 
                 backup_name: str, 
-                parameters: JSON, 
+                parameters: CopyLongTermRetentionBackupParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4147,7 +4154,7 @@ namespace azure.mgmt.sql.aio.operations
                 long_term_retention_server_name: str, 
                 long_term_retention_database_name: str, 
                 backup_name: str, 
-                parameters: JSON, 
+                parameters: CopyLongTermRetentionBackupParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4292,7 +4299,7 @@ namespace azure.mgmt.sql.aio.operations
                 long_term_retention_server_name: str, 
                 long_term_retention_database_name: str, 
                 backup_name: str, 
-                parameters: JSON, 
+                parameters: UpdateLongTermRetentionBackupParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4333,7 +4340,7 @@ namespace azure.mgmt.sql.aio.operations
                 long_term_retention_server_name: str, 
                 long_term_retention_database_name: str, 
                 backup_name: str, 
-                parameters: JSON, 
+                parameters: UpdateLongTermRetentionBackupParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4387,12 +4394,15 @@ namespace azure.mgmt.sql.aio.operations
             ) -> AsyncItemPaged[LongTermRetentionBackup]: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['skiptoken', 'top']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_location(
                 self, 
                 location_name: str, 
                 *, 
                 database_state: Optional[Union[str, DatabaseState]] = ..., 
                 only_latest_per_database: Optional[bool] = ..., 
+                skiptoken: Optional[str] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[LongTermRetentionBackup]: ...
 
@@ -4410,6 +4420,7 @@ namespace azure.mgmt.sql.aio.operations
             ) -> AsyncItemPaged[LongTermRetentionBackup]: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['skiptoken', 'top']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_resource_group_location(
                 self, 
                 resource_group_name: str, 
@@ -4417,10 +4428,13 @@ namespace azure.mgmt.sql.aio.operations
                 *, 
                 database_state: Optional[Union[str, DatabaseState]] = ..., 
                 only_latest_per_database: Optional[bool] = ..., 
+                skiptoken: Optional[str] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[LongTermRetentionBackup]: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['skiptoken', 'top']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_resource_group_server(
                 self, 
                 resource_group_name: str, 
@@ -4429,10 +4443,13 @@ namespace azure.mgmt.sql.aio.operations
                 *, 
                 database_state: Optional[Union[str, DatabaseState]] = ..., 
                 only_latest_per_database: Optional[bool] = ..., 
+                skiptoken: Optional[str] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[LongTermRetentionBackup]: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['skiptoken', 'top']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_server(
                 self, 
                 location_name: str, 
@@ -4440,6 +4457,8 @@ namespace azure.mgmt.sql.aio.operations
                 *, 
                 database_state: Optional[Union[str, DatabaseState]] = ..., 
                 only_latest_per_database: Optional[bool] = ..., 
+                skiptoken: Optional[str] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[LongTermRetentionBackup]: ...
 
@@ -4598,7 +4617,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 database_name: str, 
                 policy_name: Union[str, LongTermRetentionPolicyName], 
-                parameters: JSON, 
+                parameters: LongTermRetentionPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4684,7 +4703,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: MaintenanceWindows, 
                 *, 
                 content_type: str = "application/json", 
                 maintenance_window_name: str, 
@@ -4744,7 +4763,7 @@ namespace azure.mgmt.sql.aio.operations
                 managed_instance_name: str, 
                 database_name: str, 
                 policy_name: Union[str, ManagedShortTermRetentionPolicyName], 
-                parameters: JSON, 
+                parameters: ManagedBackupShortTermRetentionPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4783,7 +4802,7 @@ namespace azure.mgmt.sql.aio.operations
                 managed_instance_name: str, 
                 database_name: str, 
                 policy_name: Union[str, ManagedShortTermRetentionPolicyName], 
-                parameters: JSON, 
+                parameters: ManagedBackupShortTermRetentionPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4850,7 +4869,7 @@ namespace azure.mgmt.sql.aio.operations
                 managed_instance_name: str, 
                 database_name: str, 
                 advanced_threat_protection_name: Union[str, AdvancedThreatProtectionName], 
-                parameters: JSON, 
+                parameters: ManagedDatabaseAdvancedThreatProtection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5026,7 +5045,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: RecommendedSensitivityLabelUpdateList, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5122,7 +5141,7 @@ namespace azure.mgmt.sql.aio.operations
                 managed_instance_name: str, 
                 database_name: str, 
                 security_alert_policy_name: Union[str, SecurityAlertPolicyName], 
-                parameters: JSON, 
+                parameters: ManagedDatabaseSecurityAlertPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5216,7 +5235,7 @@ namespace azure.mgmt.sql.aio.operations
                 schema_name: str, 
                 table_name: str, 
                 column_name: str, 
-                parameters: JSON, 
+                parameters: SensitivityLabel, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5341,7 +5360,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: SensitivityLabelUpdateList, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5420,7 +5439,7 @@ namespace azure.mgmt.sql.aio.operations
                 managed_instance_name: str, 
                 database_name: str, 
                 tde_name: Union[str, TransparentDataEncryptionName], 
-                parameters: JSON, 
+                parameters: ManagedTransparentDataEncryption, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5491,7 +5510,7 @@ namespace azure.mgmt.sql.aio.operations
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
                 rule_id: str, 
                 baseline_name: Union[str, VulnerabilityAssessmentPolicyBaselineName], 
-                parameters: JSON, 
+                parameters: DatabaseVulnerabilityAssessmentRuleBaseline, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5617,7 +5636,7 @@ namespace azure.mgmt.sql.aio.operations
                 managed_instance_name: str, 
                 database_name: str, 
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
-                parameters: JSON, 
+                parameters: DatabaseVulnerabilityAssessment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5692,7 +5711,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: ManagedDatabaseMoveDefinition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5728,7 +5747,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: ManagedDatabaseMoveDefinition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5764,7 +5783,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: CompleteDatabaseRestoreDefinition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5800,7 +5819,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: ManagedDatabase, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5854,7 +5873,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: ManagedDatabaseStartMoveDefinition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5890,7 +5909,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: ManagedDatabaseUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5960,7 +5979,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 administrator_name: Union[str, AdministratorName], 
-                parameters: JSON, 
+                parameters: ManagedInstanceAdministrator, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6031,7 +6050,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 advanced_threat_protection_name: Union[str, AdvancedThreatProtectionName], 
-                parameters: JSON, 
+                parameters: ManagedInstanceAdvancedThreatProtection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6093,7 +6112,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 authentication_name: Union[str, AuthenticationName], 
-                parameters: JSON, 
+                parameters: ManagedInstanceAzureADOnlyAuthentication, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6164,7 +6183,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 dtc_name: Union[str, DtcName], 
-                parameters: JSON, 
+                parameters: ManagedInstanceDtc, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6226,7 +6245,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 encryption_protector_name: Union[str, EncryptionProtectorName], 
-                parameters: JSON, 
+                parameters: ManagedInstanceEncryptionProtector, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6297,7 +6316,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 key_name: str, 
-                parameters: JSON, 
+                parameters: ManagedInstanceKey, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6372,7 +6391,7 @@ namespace azure.mgmt.sql.aio.operations
                 managed_instance_name: str, 
                 database_name: str, 
                 policy_name: Union[str, ManagedInstanceLongTermRetentionPolicyName], 
-                parameters: JSON, 
+                parameters: ManagedInstanceLongTermRetentionPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6482,7 +6501,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 private_endpoint_connection_name: str, 
-                parameters: JSON, 
+                parameters: ManagedInstancePrivateEndpointConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6577,7 +6596,7 @@ namespace azure.mgmt.sql.aio.operations
                 self, 
                 resource_group_name: str, 
                 managed_instance_name: str, 
-                parameters: JSON, 
+                parameters: TdeCertificate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6621,7 +6640,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
-                parameters: JSON, 
+                parameters: ManagedInstanceVulnerabilityAssessment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6690,7 +6709,7 @@ namespace azure.mgmt.sql.aio.operations
                 self, 
                 resource_group_name: str, 
                 managed_instance_name: str, 
-                parameters: JSON, 
+                parameters: ManagedInstance, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6773,7 +6792,7 @@ namespace azure.mgmt.sql.aio.operations
                 self, 
                 resource_group_name: str, 
                 managed_instance_name: str, 
-                parameters: JSON, 
+                parameters: ManagedInstanceUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6806,7 +6825,7 @@ namespace azure.mgmt.sql.aio.operations
                 self, 
                 resource_group_name: str, 
                 managed_instance_name: str, 
-                parameters: JSON, 
+                parameters: ManagedInstanceValidateAzureKeyVaultEncryptionKeyRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6913,7 +6932,7 @@ namespace azure.mgmt.sql.aio.operations
                 managed_instance_name: str, 
                 database_name: str, 
                 ledger_digest_uploads: Union[str, ManagedLedgerDigestUploadsName], 
-                parameters: JSON, 
+                parameters: ManagedLedgerDigestUploads, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -6990,7 +7009,7 @@ namespace azure.mgmt.sql.aio.operations
                 managed_instance_name: str, 
                 restorable_dropped_database_id: str, 
                 policy_name: Union[str, ManagedShortTermRetentionPolicyName], 
-                parameters: JSON, 
+                parameters: ManagedBackupShortTermRetentionPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7029,7 +7048,7 @@ namespace azure.mgmt.sql.aio.operations
                 managed_instance_name: str, 
                 restorable_dropped_database_id: str, 
                 policy_name: Union[str, ManagedShortTermRetentionPolicyName], 
-                parameters: JSON, 
+                parameters: ManagedBackupShortTermRetentionPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7094,7 +7113,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 dns_alias_name: str, 
-                parameters: JSON, 
+                parameters: ManagedServerDnsAliasAcquisition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7130,7 +7149,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 dns_alias_name: str, 
-                parameters: JSON, 
+                parameters: ManagedServerDnsAliasCreation, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7201,7 +7220,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 security_alert_policy_name: Union[str, SecurityAlertPolicyName], 
-                parameters: JSON, 
+                parameters: ManagedServerSecurityAlertPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7354,7 +7373,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 private_endpoint_connection_name: str, 
-                parameters: JSON, 
+                parameters: PrivateEndpointConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7451,7 +7470,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: RecommendedSensitivityLabelUpdateList, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7553,7 +7572,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 database_name: str, 
                 link_id: str, 
-                parameters: JSON, 
+                parameters: ReplicationLink, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7622,7 +7641,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 database_name: str, 
                 link_id: str, 
-                parameters: JSON, 
+                parameters: ReplicationLinkUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7690,10 +7709,14 @@ namespace azure.mgmt.sql.aio.operations
             ) -> RestorableDroppedDatabase: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['skiptoken', 'top']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_server(
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
+                *, 
+                skiptoken: Optional[str] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[RestorableDroppedDatabase]: ...
 
@@ -7750,7 +7773,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: CreateDatabaseRestorePointDefinition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7830,7 +7853,7 @@ namespace azure.mgmt.sql.aio.operations
                 schema_name: str, 
                 table_name: str, 
                 column_name: str, 
-                parameters: JSON, 
+                parameters: SensitivityLabel, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7955,7 +7978,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: SensitivityLabelUpdateList, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8000,7 +8023,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 advanced_threat_protection_name: Union[str, AdvancedThreatProtectionName], 
-                parameters: JSON, 
+                parameters: ServerAdvancedThreatProtection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8081,7 +8104,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 advisor_name: str, 
-                parameters: JSON, 
+                parameters: Advisor, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8132,7 +8155,7 @@ namespace azure.mgmt.sql.aio.operations
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
-                parameters: JSON, 
+                parameters: ServerAutomaticTuning, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8176,7 +8199,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 administrator_name: Union[str, AdministratorName], 
-                parameters: JSON, 
+                parameters: ServerAzureADAdministrator, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8247,7 +8270,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 authentication_name: Union[str, AuthenticationName], 
-                parameters: JSON, 
+                parameters: ServerAzureADOnlyAuthentication, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8316,7 +8339,7 @@ namespace azure.mgmt.sql.aio.operations
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
-                parameters: JSON, 
+                parameters: ServerBlobAuditingPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8376,7 +8399,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 server_configuration_option_name: Union[str, ServerConfigurationOptionName], 
-                parameters: JSON, 
+                parameters: ServerConfigurationOption, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8438,7 +8461,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 connection_policy_name: Union[str, ConnectionPolicyName], 
-                parameters: JSON, 
+                parameters: ServerConnectionPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8500,7 +8523,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 dev_ops_auditing_settings_name: Union[str, DevOpsAuditingSettingsName], 
-                parameters: JSON, 
+                parameters: ServerDevOpsAuditingSettings, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8562,7 +8585,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 dns_alias_name: str, 
-                parameters: JSON, 
+                parameters: ServerDnsAliasAcquisition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8642,7 +8665,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 key_name: str, 
-                parameters: JSON, 
+                parameters: ServerKey, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8730,7 +8753,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 security_alert_policy_name: Union[str, SecurityAlertPolicyName], 
-                parameters: JSON, 
+                parameters: ServerSecurityAlertPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8792,7 +8815,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 certificate_name: str, 
-                parameters: JSON, 
+                parameters: ServerTrustCertificate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8863,7 +8886,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 location_name: str, 
                 server_trust_group_name: str, 
-                parameters: JSON, 
+                parameters: ServerTrustGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8959,7 +8982,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
-                parameters: JSON, 
+                parameters: ServerVulnerabilityAssessment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9028,7 +9051,7 @@ namespace azure.mgmt.sql.aio.operations
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
-                parameters: JSON, 
+                parameters: Server, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9069,7 +9092,7 @@ namespace azure.mgmt.sql.aio.operations
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
-                parameters: JSON, 
+                parameters: ImportNewDatabaseDefinition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9110,7 +9133,7 @@ namespace azure.mgmt.sql.aio.operations
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
-                parameters: JSON, 
+                parameters: ServerUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9139,7 +9162,7 @@ namespace azure.mgmt.sql.aio.operations
         @overload
         async def check_name_availability(
                 self, 
-                parameters: JSON, 
+                parameters: CheckNameAvailabilityRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9206,7 +9229,7 @@ namespace azure.mgmt.sql.aio.operations
                 self, 
                 resource_group_name: str, 
                 managed_instance_name: str, 
-                parameters: JSON, 
+                parameters: SqlAgentConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9288,7 +9311,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
                 baseline_name: Union[str, BaselineName], 
-                parameters: JSON, 
+                parameters: DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9356,7 +9379,7 @@ namespace azure.mgmt.sql.aio.operations
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
                 baseline_name: Union[str, BaselineName], 
                 rule_id: str, 
-                parameters: JSON, 
+                parameters: DatabaseSqlVulnerabilityAssessmentRuleBaselineInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9520,7 +9543,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
-                parameters: JSON, 
+                parameters: SqlVulnerabilityAssessment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9582,7 +9605,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 start_stop_schedule_name: Union[str, StartStopScheduleName], 
-                parameters: JSON, 
+                parameters: StartStopManagedInstanceSchedule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9695,7 +9718,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 sync_agent_name: str, 
-                parameters: JSON, 
+                parameters: SyncAgent, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9786,7 +9809,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 database_name: str, 
                 sync_group_name: str, 
-                parameters: JSON, 
+                parameters: SyncGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9845,7 +9868,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 database_name: str, 
                 sync_group_name: str, 
-                parameters: JSON, 
+                parameters: SyncGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9966,7 +9989,7 @@ namespace azure.mgmt.sql.aio.operations
                 database_name: str, 
                 sync_group_name: str, 
                 sync_member_name: str, 
-                parameters: JSON, 
+                parameters: SyncMember, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10030,7 +10053,7 @@ namespace azure.mgmt.sql.aio.operations
                 database_name: str, 
                 sync_group_name: str, 
                 sync_member_name: str, 
-                parameters: JSON, 
+                parameters: SyncMember, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10107,7 +10130,7 @@ namespace azure.mgmt.sql.aio.operations
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
-                parameters: JSON, 
+                parameters: TdeCertificate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10177,7 +10200,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 database_name: str, 
                 tde_name: Union[str, TransparentDataEncryptionName], 
-                parameters: JSON, 
+                parameters: LogicalDatabaseTransparentDataEncryption, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10279,7 +10302,7 @@ namespace azure.mgmt.sql.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_cluster_name: str, 
-                parameters: JSON, 
+                parameters: VirtualCluster, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10320,7 +10343,7 @@ namespace azure.mgmt.sql.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_cluster_name: str, 
-                parameters: JSON, 
+                parameters: VirtualClusterUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10390,7 +10413,7 @@ namespace azure.mgmt.sql.aio.operations
                 resource_group_name: str, 
                 server_name: str, 
                 virtual_network_rule_name: str, 
-                parameters: JSON, 
+                parameters: VirtualNetworkRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10465,7 +10488,7 @@ namespace azure.mgmt.sql.aio.operations
                 database_name: str, 
                 workload_group_name: str, 
                 workload_classifier_name: str, 
-                parameters: JSON, 
+                parameters: WorkloadClassifier, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10546,7 +10569,7 @@ namespace azure.mgmt.sql.aio.operations
                 server_name: str, 
                 database_name: str, 
                 workload_group_name: str, 
-                parameters: JSON, 
+                parameters: WorkloadGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10891,6 +10914,8 @@ namespace azure.mgmt.sql.models
 
     class azure.mgmt.sql.models.BackupShortTermRetentionPolicyProperties(_Model):
         diff_backup_interval_in_hours: Optional[Union[int, DiffBackupIntervalInHours]]
+        immutability_status: Optional[Union[str, ImmutabilityStatus]]
+        lock_immutability: Optional[bool]
         retention_days: Optional[int]
 
         @overload
@@ -10898,6 +10923,7 @@ namespace azure.mgmt.sql.models
                 self, 
                 *, 
                 diff_backup_interval_in_hours: Optional[Union[int, DiffBackupIntervalInHours]] = ..., 
+                lock_immutability: Optional[bool] = ..., 
                 retention_days: Optional[int] = ...
             ) -> None: ...
 
@@ -11293,6 +11319,36 @@ namespace azure.mgmt.sql.models
         ENABLED = "Enabled"
 
 
+    class azure.mgmt.sql.models.DataSyncParticipantIdentity(_Model):
+        tenant_id: Optional[str]
+        type: Union[str, DataSyncParticipantIdentityType]
+        user_assigned_identities: Optional[dict[str, DataSyncParticipantUserAssignedIdentity]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                tenant_id: Optional[str] = ..., 
+                type: Union[str, DataSyncParticipantIdentityType], 
+                user_assigned_identities: Optional[dict[str, DataSyncParticipantUserAssignedIdentity]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.sql.models.DataSyncParticipantIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        NONE = "None"
+        SYSTEM_ASSIGNED = "SystemAssigned"
+        SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssignedUserAssigned"
+        USER_ASSIGNED = "UserAssigned"
+
+
+    class azure.mgmt.sql.models.DataSyncParticipantUserAssignedIdentity(_Model):
+        client_id: Optional[str]
+        principal_id: Optional[str]
+
+
     class azure.mgmt.sql.models.DataWarehouseUserActivities(ProxyResource):
         id: str
         name: str
@@ -11465,6 +11521,7 @@ namespace azure.mgmt.sql.models
         is_managed_identity_in_use: Optional[bool]
         is_storage_secondary_key_in_use: Optional[bool]
         queue_delay_ms: Optional[int]
+        required_fields: Optional[list[str]]
         retention_days: Optional[int]
         state: Union[str, BlobAuditingPolicyState]
         storage_account_access_key: Optional[str]
@@ -11480,6 +11537,7 @@ namespace azure.mgmt.sql.models
                 is_managed_identity_in_use: Optional[bool] = ..., 
                 is_storage_secondary_key_in_use: Optional[bool] = ..., 
                 queue_delay_ms: Optional[int] = ..., 
+                required_fields: Optional[list[str]] = ..., 
                 retention_days: Optional[int] = ..., 
                 state: Union[str, BlobAuditingPolicyState], 
                 storage_account_access_key: Optional[str] = ..., 
@@ -11713,6 +11771,7 @@ namespace azure.mgmt.sql.models
         paused_date: Optional[datetime]
         perform_cutover: Optional[bool]
         preferred_enclave_type: Optional[Union[str, AlwaysEncryptedEnclaveType]]
+        provisioning_state: Optional[str]
         read_scale: Optional[Union[str, DatabaseReadScale]]
         recoverable_database_id: Optional[str]
         recovery_services_recovery_point_id: Optional[str]
@@ -12111,6 +12170,7 @@ namespace azure.mgmt.sql.models
         paused_date: Optional[datetime]
         perform_cutover: Optional[bool]
         preferred_enclave_type: Optional[Union[str, AlwaysEncryptedEnclaveType]]
+        provisioning_state: Optional[str]
         read_scale: Optional[Union[str, DatabaseReadScale]]
         recoverable_database_id: Optional[str]
         recovery_services_recovery_point_id: Optional[str]
@@ -12377,6 +12437,8 @@ namespace azure.mgmt.sql.models
         deletion_time: Optional[datetime]
         fully_qualified_domain_name: Optional[str]
         original_id: Optional[str]
+        original_resource_group: Optional[str]
+        scheduled_purge_time: Optional[datetime]
         version: Optional[str]
 
 
@@ -12456,6 +12518,10 @@ namespace azure.mgmt.sql.models
         failover_mode: Optional[Union[str, FailoverModeType]]
         instance_availability_group_name: Optional[str]
         instance_link_role: Optional[Union[str, LinkRole]]
+        link_mode: Optional[Union[str, LinkModeType]]
+        most_recent_error: Optional[str]
+        most_recent_error_message: Optional[str]
+        most_recent_error_time: Optional[datetime]
         partner_availability_group_name: Optional[str]
         partner_endpoint: Optional[str]
         partner_link_role: Optional[Union[str, LinkRole]]
@@ -12470,6 +12536,7 @@ namespace azure.mgmt.sql.models
                 failover_mode: Optional[Union[str, FailoverModeType]] = ..., 
                 instance_availability_group_name: Optional[str] = ..., 
                 instance_link_role: Optional[Union[str, LinkRole]] = ..., 
+                link_mode: Optional[Union[str, LinkModeType]] = ..., 
                 partner_availability_group_name: Optional[str] = ..., 
                 partner_endpoint: Optional[str] = ..., 
                 replication_mode: Optional[Union[str, ReplicationModeType]] = ..., 
@@ -12721,6 +12788,7 @@ namespace azure.mgmt.sql.models
         auto_pause_delay: Optional[int]
         availability_zone: Optional[Union[str, AvailabilityZoneType]]
         creation_date: Optional[datetime]
+        current_sku: Optional[Sku]
         high_availability_replica_count: Optional[int]
         license_type: Optional[Union[str, ElasticPoolLicenseType]]
         maintenance_configuration_id: Optional[str]
@@ -12786,6 +12854,7 @@ namespace azure.mgmt.sql.models
     class azure.mgmt.sql.models.ElasticPoolUpdateProperties(_Model):
         auto_pause_delay: Optional[int]
         availability_zone: Optional[Union[str, AvailabilityZoneType]]
+        current_sku: Optional[Sku]
         high_availability_replica_count: Optional[int]
         license_type: Optional[Union[str, ElasticPoolLicenseType]]
         maintenance_configuration_id: Optional[str]
@@ -12897,6 +12966,7 @@ namespace azure.mgmt.sql.models
 
     class azure.mgmt.sql.models.EndpointCertificateProperties(_Model):
         public_blob: Optional[str]
+        trusted_root_certificates: Optional[list[EndpointTrustedRootCertificateInfo]]
 
         @overload
         def __init__(
@@ -12916,6 +12986,22 @@ namespace azure.mgmt.sql.models
 
     class azure.mgmt.sql.models.EndpointDetail(_Model):
         port: Optional[int]
+
+
+    class azure.mgmt.sql.models.EndpointTrustedRootCertificateInfo(_Model):
+        public_blob: Optional[str]
+        subject: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                public_blob: Optional[str] = ..., 
+                subject: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.sql.models.ErrorAdditionalInfo(_Model):
@@ -13009,6 +13095,7 @@ namespace azure.mgmt.sql.models
         is_storage_secondary_key_in_use: Optional[bool]
         predicate_expression: Optional[str]
         queue_delay_ms: Optional[int]
+        required_fields: Optional[list[str]]
         retention_days: Optional[int]
         state: Union[str, BlobAuditingPolicyState]
         storage_account_access_key: Optional[str]
@@ -13025,6 +13112,7 @@ namespace azure.mgmt.sql.models
                 is_storage_secondary_key_in_use: Optional[bool] = ..., 
                 predicate_expression: Optional[str] = ..., 
                 queue_delay_ms: Optional[int] = ..., 
+                required_fields: Optional[list[str]] = ..., 
                 retention_days: Optional[int] = ..., 
                 state: Union[str, BlobAuditingPolicyState], 
                 storage_account_access_key: Optional[str] = ..., 
@@ -13070,6 +13158,7 @@ namespace azure.mgmt.sql.models
         is_storage_secondary_key_in_use: Optional[bool]
         predicate_expression: Optional[str]
         queue_delay_ms: Optional[int]
+        required_fields: Optional[list[str]]
         retention_days: Optional[int]
         state: Union[str, BlobAuditingPolicyState]
         storage_account_access_key: Optional[str]
@@ -13087,6 +13176,7 @@ namespace azure.mgmt.sql.models
                 is_storage_secondary_key_in_use: Optional[bool] = ..., 
                 predicate_expression: Optional[str] = ..., 
                 queue_delay_ms: Optional[int] = ..., 
+                required_fields: Optional[list[str]] = ..., 
                 retention_days: Optional[int] = ..., 
                 state: Union[str, BlobAuditingPolicyState], 
                 storage_account_access_key: Optional[str] = ..., 
@@ -13413,6 +13503,12 @@ namespace azure.mgmt.sql.models
         SYSTEM_ASSIGNED = "SystemAssigned"
         SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
         USER_ASSIGNED = "UserAssigned"
+
+
+    class azure.mgmt.sql.models.ImmutabilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DISABLED = "Disabled"
+        ENABLED = "Enabled"
+        LOCKED = "Locked"
 
 
     class azure.mgmt.sql.models.ImplementationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -14500,6 +14596,11 @@ namespace azure.mgmt.sql.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.sql.models.LinkModeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MULTI_DATABASE = "MultiDatabase"
+        SINGLE_DATABASE = "SingleDatabase"
+
+
     class azure.mgmt.sql.models.LinkRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         PRIMARY = "Primary"
         SECONDARY = "Secondary"
@@ -14864,12 +14965,15 @@ namespace azure.mgmt.sql.models
 
 
     class azure.mgmt.sql.models.ManagedBackupShortTermRetentionPolicyProperties(_Model):
+        immutability_status: Optional[Union[str, ImmutabilityStatus]]
+        lock_immutability: Optional[bool]
         retention_days: Optional[int]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                lock_immutability: Optional[bool] = ..., 
                 retention_days: Optional[int] = ...
             ) -> None: ...
 
@@ -15264,9 +15368,16 @@ namespace azure.mgmt.sql.models
             ) -> None: ...
 
 
+    class azure.mgmt.sql.models.ManagedInstanceAdministratorPrincipalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        APPLICATION = "Application"
+        GROUP = "Group"
+        USER = "User"
+
+
     class azure.mgmt.sql.models.ManagedInstanceAdministratorProperties(_Model):
         administrator_type: Union[str, ManagedInstanceAdministratorType]
         login: str
+        principal_type: Optional[Union[str, ManagedInstanceAdministratorPrincipalType]]
         sid: str
         tenant_id: Optional[str]
 
@@ -15276,6 +15387,7 @@ namespace azure.mgmt.sql.models
                 *, 
                 administrator_type: Union[str, ManagedInstanceAdministratorType], 
                 login: str, 
+                principal_type: Optional[Union[str, ManagedInstanceAdministratorPrincipalType]] = ..., 
                 sid: str, 
                 tenant_id: Optional[str] = ...
             ) -> None: ...
@@ -15390,6 +15502,7 @@ namespace azure.mgmt.sql.models
         dtc_enabled: Optional[bool]
         dtc_host_name_dns_suffix: Optional[str]
         external_dns_suffix_search_list: Optional[list[str]]
+        fqdn_enabled: Optional[bool]
         provisioning_state: Optional[Union[str, ProvisioningState]]
         security_settings: Optional[ManagedInstanceDtcSecuritySettings]
 
@@ -15399,6 +15512,7 @@ namespace azure.mgmt.sql.models
                 *, 
                 dtc_enabled: Optional[bool] = ..., 
                 external_dns_suffix_search_list: Optional[list[str]] = ..., 
+                fqdn_enabled: Optional[bool] = ..., 
                 security_settings: Optional[ManagedInstanceDtcSecuritySettings] = ...
             ) -> None: ...
 
@@ -15640,8 +15754,12 @@ namespace azure.mgmt.sql.models
         backup_time: Optional[datetime]
         database_deletion_time: Optional[datetime]
         database_name: Optional[str]
+        is_backup_immutable: Optional[bool]
+        legal_hold_immutability: Optional[Union[str, SetLegalHoldImmutability]]
         managed_instance_create_time: Optional[datetime]
         managed_instance_name: Optional[str]
+        time_based_immutability: Optional[Union[str, TimeBasedImmutability]]
+        time_based_immutability_mode: Optional[Union[str, TimeBasedImmutabilityMode]]
 
 
     class azure.mgmt.sql.models.ManagedInstanceLongTermRetentionPolicy(ProxyResource):
@@ -15677,6 +15795,8 @@ namespace azure.mgmt.sql.models
     class azure.mgmt.sql.models.ManagedInstanceLongTermRetentionPolicyProperties(_Model):
         backup_storage_access_tier: Optional[Union[str, BackupStorageAccessTier]]
         monthly_retention: Optional[str]
+        time_based_immutability: Optional[Union[str, TimeBasedImmutability]]
+        time_based_immutability_mode: Optional[Union[str, TimeBasedImmutabilityMode]]
         week_of_year: Optional[int]
         weekly_retention: Optional[str]
         yearly_retention: Optional[str]
@@ -15687,6 +15807,8 @@ namespace azure.mgmt.sql.models
                 *, 
                 backup_storage_access_tier: Optional[Union[str, BackupStorageAccessTier]] = ..., 
                 monthly_retention: Optional[str] = ..., 
+                time_based_immutability: Optional[Union[str, TimeBasedImmutability]] = ..., 
+                time_based_immutability_mode: Optional[Union[str, TimeBasedImmutabilityMode]] = ..., 
                 week_of_year: Optional[int] = ..., 
                 weekly_retention: Optional[str] = ..., 
                 yearly_retention: Optional[str] = ...
@@ -16842,11 +16964,11 @@ namespace azure.mgmt.sql.models
 
 
     class azure.mgmt.sql.models.PrivateEndpointProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        APPROVING = "Approving"
-        DROPPING = "Dropping"
+        CANCELED = "Canceled"
+        CREATED = "Created"
         FAILED = "Failed"
-        READY = "Ready"
-        REJECTING = "Rejecting"
+        IN_PROGRESS = "InProgress"
+        SUCCEEDED = "Succeeded"
 
 
     class azure.mgmt.sql.models.PrivateLinkResource(ProxyResource):
@@ -18213,6 +18335,7 @@ namespace azure.mgmt.sql.models
         is_managed_identity_in_use: Optional[bool]
         is_storage_secondary_key_in_use: Optional[bool]
         queue_delay_ms: Optional[int]
+        required_fields: Optional[list[str]]
         retention_days: Optional[int]
         state: Union[str, BlobAuditingPolicyState]
         storage_account_access_key: Optional[str]
@@ -18229,6 +18352,7 @@ namespace azure.mgmt.sql.models
                 is_managed_identity_in_use: Optional[bool] = ..., 
                 is_storage_secondary_key_in_use: Optional[bool] = ..., 
                 queue_delay_ms: Optional[int] = ..., 
+                required_fields: Optional[list[str]] = ..., 
                 retention_days: Optional[int] = ..., 
                 state: Union[str, BlobAuditingPolicyState], 
                 storage_account_access_key: Optional[str] = ..., 
@@ -18543,6 +18667,7 @@ namespace azure.mgmt.sql.models
     class azure.mgmt.sql.models.ServerNetworkAccessFlag(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         DISABLED = "Disabled"
         ENABLED = "Enabled"
+        SECURED_BY_PERIMETER = "SecuredByPerimeter"
 
 
     class azure.mgmt.sql.models.ServerOperation(ProxyResource):
@@ -18812,6 +18937,8 @@ namespace azure.mgmt.sql.models
         current_value: Optional[float]
         display_name: Optional[str]
         limit: Optional[float]
+        next_reset_time: Optional[datetime]
+        resource_name: Optional[str]
         unit: Optional[str]
 
 
@@ -19448,6 +19575,7 @@ namespace azure.mgmt.sql.models
 
     class azure.mgmt.sql.models.SyncGroup(ProxyResource):
         id: str
+        identity: Optional[DataSyncParticipantIdentity]
         name: str
         properties: Optional[SyncGroupProperties]
         sku: Optional[Sku]
@@ -19460,6 +19588,7 @@ namespace azure.mgmt.sql.models
         def __init__(
                 self, 
                 *, 
+                identity: Optional[DataSyncParticipantIdentity] = ..., 
                 properties: Optional[SyncGroupProperties] = ..., 
                 sku: Optional[Sku] = ...
             ) -> None: ...
@@ -19590,6 +19719,7 @@ namespace azure.mgmt.sql.models
 
     class azure.mgmt.sql.models.SyncMember(ProxyResource):
         id: str
+        identity: Optional[DataSyncParticipantIdentity]
         name: str
         properties: Optional[SyncMemberProperties]
         system_data: SystemData
@@ -19601,6 +19731,7 @@ namespace azure.mgmt.sql.models
         def __init__(
                 self, 
                 *, 
+                identity: Optional[DataSyncParticipantIdentity] = ..., 
                 properties: Optional[SyncMemberProperties] = ...
             ) -> None: ...
 
@@ -20356,7 +20487,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 database_name: str, 
                 policy_name: Union[str, ShortTermRetentionPolicyName], 
-                parameters: JSON, 
+                parameters: BackupShortTermRetentionPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20395,7 +20526,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 database_name: str, 
                 policy_name: Union[str, ShortTermRetentionPolicyName], 
-                parameters: JSON, 
+                parameters: BackupShortTermRetentionPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20478,7 +20609,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: DataMaskingPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20534,7 +20665,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 database_name: str, 
                 data_masking_rule_name: str, 
-                parameters: JSON, 
+                parameters: DataMaskingRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20554,11 +20685,14 @@ namespace azure.mgmt.sql.operations
             ) -> DataMaskingRule: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2025-02-01-preview': ['skip']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_database(
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
+                *, 
+                skip: Optional[int] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[DataMaskingRule]: ...
 
@@ -20619,7 +20753,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 database_name: str, 
                 advanced_threat_protection_name: Union[str, AdvancedThreatProtectionName], 
-                parameters: JSON, 
+                parameters: DatabaseAdvancedThreatProtection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20707,7 +20841,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 database_name: str, 
                 advisor_name: str, 
-                parameters: JSON, 
+                parameters: Advisor, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20762,7 +20896,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: DatabaseAutomaticTuning, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20807,7 +20941,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: DatabaseBlobAuditingPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20950,7 +21084,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 database_name: str, 
                 extension_name: str, 
-                parameters: JSON, 
+                parameters: DatabaseExtensions, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21068,7 +21202,7 @@ namespace azure.mgmt.sql.operations
                 database_name: str, 
                 advisor_name: str, 
                 recommended_action_name: str, 
-                parameters: JSON, 
+                parameters: RecommendedAction, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21147,7 +21281,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 database_name: str, 
                 security_alert_policy_name: Union[str, SecurityAlertPolicyName], 
-                parameters: JSON, 
+                parameters: DatabaseSecurityAlertPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21216,7 +21350,7 @@ namespace azure.mgmt.sql.operations
                 database_name: str, 
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
                 baseline_name: Union[str, BaselineName], 
-                parameters: JSON, 
+                parameters: DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21309,7 +21443,7 @@ namespace azure.mgmt.sql.operations
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
                 baseline_name: Union[str, BaselineName], 
                 rule_id: str, 
-                parameters: JSON, 
+                parameters: DatabaseSqlVulnerabilityAssessmentRuleBaselineInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21538,7 +21672,7 @@ namespace azure.mgmt.sql.operations
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
                 rule_id: str, 
                 baseline_name: Union[str, VulnerabilityAssessmentPolicyBaselineName], 
-                parameters: JSON, 
+                parameters: DatabaseVulnerabilityAssessmentRuleBaseline, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21664,7 +21798,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 database_name: str, 
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
-                parameters: JSON, 
+                parameters: DatabaseVulnerabilityAssessment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21739,7 +21873,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: Database, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21784,7 +21918,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: ExportDatabaseDefinition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21831,7 +21965,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: ImportExistingDatabaseDefinition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21885,7 +22019,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: DatabaseUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21934,12 +22068,16 @@ namespace azure.mgmt.sql.operations
             ) -> ItemPaged[Database]: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2025-02-01-preview': ['top', 'skip', 'filter', 'orderby']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_server(
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
                 *, 
-                skip_token: Optional[str] = ..., 
+                filter: Optional[str] = ..., 
+                orderby: Optional[str] = ..., 
+                skip: Optional[int] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[Database]: ...
 
@@ -21969,7 +22107,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: ResourceMoveDefinition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -22049,7 +22187,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 distributed_availability_group_name: str, 
-                parameters: JSON, 
+                parameters: DistributedAvailabilityGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -22094,7 +22232,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 distributed_availability_group_name: str, 
-                parameters: JSON, 
+                parameters: DistributedAvailabilityGroupsFailoverRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -22130,7 +22268,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 distributed_availability_group_name: str, 
-                parameters: JSON, 
+                parameters: DistributedAvailabilityGroupSetRole, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -22166,7 +22304,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 distributed_availability_group_name: str, 
-                parameters: JSON, 
+                parameters: DistributedAvailabilityGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -22256,7 +22394,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 elastic_pool_name: str, 
-                parameters: JSON, 
+                parameters: ElasticPool, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -22310,7 +22448,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 elastic_pool_name: str, 
-                parameters: JSON, 
+                parameters: ElasticPoolUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -22374,7 +22512,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 encryption_protector_name: Union[str, EncryptionProtectorName], 
-                parameters: JSON, 
+                parameters: EncryptionProtector, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -22471,7 +22609,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: ExtendedDatabaseBlobAuditingPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -22532,7 +22670,7 @@ namespace azure.mgmt.sql.operations
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
-                parameters: JSON, 
+                parameters: ExtendedServerBlobAuditingPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -22592,7 +22730,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 failover_group_name: str, 
-                parameters: JSON, 
+                parameters: FailoverGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -22664,7 +22802,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 failover_group_name: str, 
-                parameters: JSON, 
+                parameters: FailoverGroupUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -22726,7 +22864,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 firewall_rule_name: str, 
-                parameters: JSON, 
+                parameters: FirewallRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -22786,7 +22924,7 @@ namespace azure.mgmt.sql.operations
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
-                parameters: JSON, 
+                parameters: FirewallRuleList, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -22832,7 +22970,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 database_name: str, 
                 geo_backup_policy_name: Union[str, GeoBackupPolicyName], 
-                parameters: JSON, 
+                parameters: GeoBackupPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -22897,7 +23035,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 firewall_rule_name: str, 
-                parameters: JSON, 
+                parameters: IPv6FirewallRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -22968,7 +23106,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 location_name: str, 
                 failover_group_name: str, 
-                parameters: JSON, 
+                parameters: InstanceFailoverGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -23081,7 +23219,7 @@ namespace azure.mgmt.sql.operations
                 self, 
                 resource_group_name: str, 
                 instance_pool_name: str, 
-                parameters: JSON, 
+                parameters: InstancePool, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -23122,7 +23260,7 @@ namespace azure.mgmt.sql.operations
                 self, 
                 resource_group_name: str, 
                 instance_pool_name: str, 
-                parameters: JSON, 
+                parameters: InstancePoolUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -23184,7 +23322,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 job_agent_name: str, 
-                parameters: JSON, 
+                parameters: JobAgent, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -23229,7 +23367,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 job_agent_name: str, 
-                parameters: JSON, 
+                parameters: JobAgentUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -23293,7 +23431,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 job_agent_name: str, 
                 credential_name: str, 
-                parameters: JSON, 
+                parameters: JobCredential, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -23457,7 +23595,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 job_agent_name: str, 
                 private_endpoint_name: str, 
-                parameters: JSON, 
+                parameters: JobPrivateEndpoint, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -23576,7 +23714,7 @@ namespace azure.mgmt.sql.operations
                 job_agent_name: str, 
                 job_name: str, 
                 step_name: str, 
-                parameters: JSON, 
+                parameters: JobStep, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -23741,7 +23879,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 job_agent_name: str, 
                 target_group_name: str, 
-                parameters: JSON, 
+                parameters: JobTargetGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -23848,7 +23986,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 job_agent_name: str, 
                 job_name: str, 
-                parameters: JSON, 
+                parameters: Job, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -23925,7 +24063,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 database_name: str, 
                 ledger_digest_uploads: Union[str, LedgerDigestUploadsName], 
-                parameters: JSON, 
+                parameters: LedgerDigestUploads, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -24002,7 +24140,7 @@ namespace azure.mgmt.sql.operations
                 long_term_retention_server_name: str, 
                 long_term_retention_database_name: str, 
                 backup_name: str, 
-                parameters: JSON, 
+                parameters: ChangeLongTermRetentionBackupAccessTierParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -24043,7 +24181,7 @@ namespace azure.mgmt.sql.operations
                 long_term_retention_server_name: str, 
                 long_term_retention_database_name: str, 
                 backup_name: str, 
-                parameters: JSON, 
+                parameters: ChangeLongTermRetentionBackupAccessTierParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -24083,7 +24221,7 @@ namespace azure.mgmt.sql.operations
                 long_term_retention_server_name: str, 
                 long_term_retention_database_name: str, 
                 backup_name: str, 
-                parameters: JSON, 
+                parameters: CopyLongTermRetentionBackupParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -24124,7 +24262,7 @@ namespace azure.mgmt.sql.operations
                 long_term_retention_server_name: str, 
                 long_term_retention_database_name: str, 
                 backup_name: str, 
-                parameters: JSON, 
+                parameters: CopyLongTermRetentionBackupParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -24269,7 +24407,7 @@ namespace azure.mgmt.sql.operations
                 long_term_retention_server_name: str, 
                 long_term_retention_database_name: str, 
                 backup_name: str, 
-                parameters: JSON, 
+                parameters: UpdateLongTermRetentionBackupParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -24310,7 +24448,7 @@ namespace azure.mgmt.sql.operations
                 long_term_retention_server_name: str, 
                 long_term_retention_database_name: str, 
                 backup_name: str, 
-                parameters: JSON, 
+                parameters: UpdateLongTermRetentionBackupParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -24364,12 +24502,15 @@ namespace azure.mgmt.sql.operations
             ) -> ItemPaged[LongTermRetentionBackup]: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['skiptoken', 'top']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_location(
                 self, 
                 location_name: str, 
                 *, 
                 database_state: Optional[Union[str, DatabaseState]] = ..., 
                 only_latest_per_database: Optional[bool] = ..., 
+                skiptoken: Optional[str] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[LongTermRetentionBackup]: ...
 
@@ -24387,6 +24528,7 @@ namespace azure.mgmt.sql.operations
             ) -> ItemPaged[LongTermRetentionBackup]: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['skiptoken', 'top']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_resource_group_location(
                 self, 
                 resource_group_name: str, 
@@ -24394,10 +24536,13 @@ namespace azure.mgmt.sql.operations
                 *, 
                 database_state: Optional[Union[str, DatabaseState]] = ..., 
                 only_latest_per_database: Optional[bool] = ..., 
+                skiptoken: Optional[str] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[LongTermRetentionBackup]: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['skiptoken', 'top']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_resource_group_server(
                 self, 
                 resource_group_name: str, 
@@ -24406,10 +24551,13 @@ namespace azure.mgmt.sql.operations
                 *, 
                 database_state: Optional[Union[str, DatabaseState]] = ..., 
                 only_latest_per_database: Optional[bool] = ..., 
+                skiptoken: Optional[str] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[LongTermRetentionBackup]: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['skiptoken', 'top']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_server(
                 self, 
                 location_name: str, 
@@ -24417,6 +24565,8 @@ namespace azure.mgmt.sql.operations
                 *, 
                 database_state: Optional[Union[str, DatabaseState]] = ..., 
                 only_latest_per_database: Optional[bool] = ..., 
+                skiptoken: Optional[str] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[LongTermRetentionBackup]: ...
 
@@ -24575,7 +24725,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 database_name: str, 
                 policy_name: Union[str, LongTermRetentionPolicyName], 
-                parameters: JSON, 
+                parameters: LongTermRetentionPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -24661,7 +24811,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: MaintenanceWindows, 
                 *, 
                 content_type: str = "application/json", 
                 maintenance_window_name: str, 
@@ -24721,7 +24871,7 @@ namespace azure.mgmt.sql.operations
                 managed_instance_name: str, 
                 database_name: str, 
                 policy_name: Union[str, ManagedShortTermRetentionPolicyName], 
-                parameters: JSON, 
+                parameters: ManagedBackupShortTermRetentionPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -24760,7 +24910,7 @@ namespace azure.mgmt.sql.operations
                 managed_instance_name: str, 
                 database_name: str, 
                 policy_name: Union[str, ManagedShortTermRetentionPolicyName], 
-                parameters: JSON, 
+                parameters: ManagedBackupShortTermRetentionPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -24827,7 +24977,7 @@ namespace azure.mgmt.sql.operations
                 managed_instance_name: str, 
                 database_name: str, 
                 advanced_threat_protection_name: Union[str, AdvancedThreatProtectionName], 
-                parameters: JSON, 
+                parameters: ManagedDatabaseAdvancedThreatProtection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -25003,7 +25153,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: RecommendedSensitivityLabelUpdateList, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -25099,7 +25249,7 @@ namespace azure.mgmt.sql.operations
                 managed_instance_name: str, 
                 database_name: str, 
                 security_alert_policy_name: Union[str, SecurityAlertPolicyName], 
-                parameters: JSON, 
+                parameters: ManagedDatabaseSecurityAlertPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -25193,7 +25343,7 @@ namespace azure.mgmt.sql.operations
                 schema_name: str, 
                 table_name: str, 
                 column_name: str, 
-                parameters: JSON, 
+                parameters: SensitivityLabel, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -25318,7 +25468,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: SensitivityLabelUpdateList, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -25397,7 +25547,7 @@ namespace azure.mgmt.sql.operations
                 managed_instance_name: str, 
                 database_name: str, 
                 tde_name: Union[str, TransparentDataEncryptionName], 
-                parameters: JSON, 
+                parameters: ManagedTransparentDataEncryption, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -25468,7 +25618,7 @@ namespace azure.mgmt.sql.operations
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
                 rule_id: str, 
                 baseline_name: Union[str, VulnerabilityAssessmentPolicyBaselineName], 
-                parameters: JSON, 
+                parameters: DatabaseVulnerabilityAssessmentRuleBaseline, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -25594,7 +25744,7 @@ namespace azure.mgmt.sql.operations
                 managed_instance_name: str, 
                 database_name: str, 
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
-                parameters: JSON, 
+                parameters: DatabaseVulnerabilityAssessment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -25669,7 +25819,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: ManagedDatabaseMoveDefinition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -25705,7 +25855,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: ManagedDatabaseMoveDefinition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -25741,7 +25891,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: CompleteDatabaseRestoreDefinition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -25777,7 +25927,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: ManagedDatabase, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -25831,7 +25981,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: ManagedDatabaseStartMoveDefinition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -25867,7 +26017,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: ManagedDatabaseUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -25937,7 +26087,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 administrator_name: Union[str, AdministratorName], 
-                parameters: JSON, 
+                parameters: ManagedInstanceAdministrator, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -26008,7 +26158,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 advanced_threat_protection_name: Union[str, AdvancedThreatProtectionName], 
-                parameters: JSON, 
+                parameters: ManagedInstanceAdvancedThreatProtection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -26070,7 +26220,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 authentication_name: Union[str, AuthenticationName], 
-                parameters: JSON, 
+                parameters: ManagedInstanceAzureADOnlyAuthentication, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -26141,7 +26291,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 dtc_name: Union[str, DtcName], 
-                parameters: JSON, 
+                parameters: ManagedInstanceDtc, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -26203,7 +26353,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 encryption_protector_name: Union[str, EncryptionProtectorName], 
-                parameters: JSON, 
+                parameters: ManagedInstanceEncryptionProtector, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -26274,7 +26424,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 key_name: str, 
-                parameters: JSON, 
+                parameters: ManagedInstanceKey, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -26349,7 +26499,7 @@ namespace azure.mgmt.sql.operations
                 managed_instance_name: str, 
                 database_name: str, 
                 policy_name: Union[str, ManagedInstanceLongTermRetentionPolicyName], 
-                parameters: JSON, 
+                parameters: ManagedInstanceLongTermRetentionPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -26459,7 +26609,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 private_endpoint_connection_name: str, 
-                parameters: JSON, 
+                parameters: ManagedInstancePrivateEndpointConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -26554,7 +26704,7 @@ namespace azure.mgmt.sql.operations
                 self, 
                 resource_group_name: str, 
                 managed_instance_name: str, 
-                parameters: JSON, 
+                parameters: TdeCertificate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -26598,7 +26748,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
-                parameters: JSON, 
+                parameters: ManagedInstanceVulnerabilityAssessment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -26667,7 +26817,7 @@ namespace azure.mgmt.sql.operations
                 self, 
                 resource_group_name: str, 
                 managed_instance_name: str, 
-                parameters: JSON, 
+                parameters: ManagedInstance, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -26750,7 +26900,7 @@ namespace azure.mgmt.sql.operations
                 self, 
                 resource_group_name: str, 
                 managed_instance_name: str, 
-                parameters: JSON, 
+                parameters: ManagedInstanceUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -26783,7 +26933,7 @@ namespace azure.mgmt.sql.operations
                 self, 
                 resource_group_name: str, 
                 managed_instance_name: str, 
-                parameters: JSON, 
+                parameters: ManagedInstanceValidateAzureKeyVaultEncryptionKeyRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -26890,7 +27040,7 @@ namespace azure.mgmt.sql.operations
                 managed_instance_name: str, 
                 database_name: str, 
                 ledger_digest_uploads: Union[str, ManagedLedgerDigestUploadsName], 
-                parameters: JSON, 
+                parameters: ManagedLedgerDigestUploads, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -26967,7 +27117,7 @@ namespace azure.mgmt.sql.operations
                 managed_instance_name: str, 
                 restorable_dropped_database_id: str, 
                 policy_name: Union[str, ManagedShortTermRetentionPolicyName], 
-                parameters: JSON, 
+                parameters: ManagedBackupShortTermRetentionPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -27006,7 +27156,7 @@ namespace azure.mgmt.sql.operations
                 managed_instance_name: str, 
                 restorable_dropped_database_id: str, 
                 policy_name: Union[str, ManagedShortTermRetentionPolicyName], 
-                parameters: JSON, 
+                parameters: ManagedBackupShortTermRetentionPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -27071,7 +27221,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 dns_alias_name: str, 
-                parameters: JSON, 
+                parameters: ManagedServerDnsAliasAcquisition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -27107,7 +27257,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 dns_alias_name: str, 
-                parameters: JSON, 
+                parameters: ManagedServerDnsAliasCreation, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -27178,7 +27328,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 security_alert_policy_name: Union[str, SecurityAlertPolicyName], 
-                parameters: JSON, 
+                parameters: ManagedServerSecurityAlertPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -27331,7 +27481,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 private_endpoint_connection_name: str, 
-                parameters: JSON, 
+                parameters: PrivateEndpointConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -27428,7 +27578,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: RecommendedSensitivityLabelUpdateList, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -27530,7 +27680,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 database_name: str, 
                 link_id: str, 
-                parameters: JSON, 
+                parameters: ReplicationLink, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -27599,7 +27749,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 database_name: str, 
                 link_id: str, 
-                parameters: JSON, 
+                parameters: ReplicationLinkUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -27667,10 +27817,14 @@ namespace azure.mgmt.sql.operations
             ) -> RestorableDroppedDatabase: ...
 
         @distributed_trace
+        @api_version_validation(params_added_on={'2026-08-01-preview': ['skiptoken', 'top']}, api_versions_list=['2025-01-01', '2025-02-01-preview', '2025-08-01-preview', '2026-08-01-preview'])
         def list_by_server(
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
+                *, 
+                skiptoken: Optional[str] = ..., 
+                top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[RestorableDroppedDatabase]: ...
 
@@ -27727,7 +27881,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: CreateDatabaseRestorePointDefinition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -27807,7 +27961,7 @@ namespace azure.mgmt.sql.operations
                 schema_name: str, 
                 table_name: str, 
                 column_name: str, 
-                parameters: JSON, 
+                parameters: SensitivityLabel, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -27932,7 +28086,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 database_name: str, 
-                parameters: JSON, 
+                parameters: SensitivityLabelUpdateList, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -27977,7 +28131,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 advanced_threat_protection_name: Union[str, AdvancedThreatProtectionName], 
-                parameters: JSON, 
+                parameters: ServerAdvancedThreatProtection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -28058,7 +28212,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 advisor_name: str, 
-                parameters: JSON, 
+                parameters: Advisor, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -28109,7 +28263,7 @@ namespace azure.mgmt.sql.operations
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
-                parameters: JSON, 
+                parameters: ServerAutomaticTuning, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -28153,7 +28307,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 administrator_name: Union[str, AdministratorName], 
-                parameters: JSON, 
+                parameters: ServerAzureADAdministrator, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -28224,7 +28378,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 authentication_name: Union[str, AuthenticationName], 
-                parameters: JSON, 
+                parameters: ServerAzureADOnlyAuthentication, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -28293,7 +28447,7 @@ namespace azure.mgmt.sql.operations
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
-                parameters: JSON, 
+                parameters: ServerBlobAuditingPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -28353,7 +28507,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 server_configuration_option_name: Union[str, ServerConfigurationOptionName], 
-                parameters: JSON, 
+                parameters: ServerConfigurationOption, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -28415,7 +28569,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 connection_policy_name: Union[str, ConnectionPolicyName], 
-                parameters: JSON, 
+                parameters: ServerConnectionPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -28477,7 +28631,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 dev_ops_auditing_settings_name: Union[str, DevOpsAuditingSettingsName], 
-                parameters: JSON, 
+                parameters: ServerDevOpsAuditingSettings, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -28539,7 +28693,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 dns_alias_name: str, 
-                parameters: JSON, 
+                parameters: ServerDnsAliasAcquisition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -28619,7 +28773,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 key_name: str, 
-                parameters: JSON, 
+                parameters: ServerKey, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -28707,7 +28861,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 security_alert_policy_name: Union[str, SecurityAlertPolicyName], 
-                parameters: JSON, 
+                parameters: ServerSecurityAlertPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -28769,7 +28923,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 certificate_name: str, 
-                parameters: JSON, 
+                parameters: ServerTrustCertificate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -28840,7 +28994,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 location_name: str, 
                 server_trust_group_name: str, 
-                parameters: JSON, 
+                parameters: ServerTrustGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -28936,7 +29090,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
-                parameters: JSON, 
+                parameters: ServerVulnerabilityAssessment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -29005,7 +29159,7 @@ namespace azure.mgmt.sql.operations
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
-                parameters: JSON, 
+                parameters: Server, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -29046,7 +29200,7 @@ namespace azure.mgmt.sql.operations
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
-                parameters: JSON, 
+                parameters: ImportNewDatabaseDefinition, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -29087,7 +29241,7 @@ namespace azure.mgmt.sql.operations
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
-                parameters: JSON, 
+                parameters: ServerUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -29116,7 +29270,7 @@ namespace azure.mgmt.sql.operations
         @overload
         def check_name_availability(
                 self, 
-                parameters: JSON, 
+                parameters: CheckNameAvailabilityRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -29183,7 +29337,7 @@ namespace azure.mgmt.sql.operations
                 self, 
                 resource_group_name: str, 
                 managed_instance_name: str, 
-                parameters: JSON, 
+                parameters: SqlAgentConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -29265,7 +29419,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
                 baseline_name: Union[str, BaselineName], 
-                parameters: JSON, 
+                parameters: DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -29333,7 +29487,7 @@ namespace azure.mgmt.sql.operations
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
                 baseline_name: Union[str, BaselineName], 
                 rule_id: str, 
-                parameters: JSON, 
+                parameters: DatabaseSqlVulnerabilityAssessmentRuleBaselineInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -29497,7 +29651,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 vulnerability_assessment_name: Union[str, VulnerabilityAssessmentName], 
-                parameters: JSON, 
+                parameters: SqlVulnerabilityAssessment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -29559,7 +29713,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 managed_instance_name: str, 
                 start_stop_schedule_name: Union[str, StartStopScheduleName], 
-                parameters: JSON, 
+                parameters: StartStopManagedInstanceSchedule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -29672,7 +29826,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 sync_agent_name: str, 
-                parameters: JSON, 
+                parameters: SyncAgent, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -29763,7 +29917,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 database_name: str, 
                 sync_group_name: str, 
-                parameters: JSON, 
+                parameters: SyncGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -29822,7 +29976,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 database_name: str, 
                 sync_group_name: str, 
-                parameters: JSON, 
+                parameters: SyncGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -29943,7 +30097,7 @@ namespace azure.mgmt.sql.operations
                 database_name: str, 
                 sync_group_name: str, 
                 sync_member_name: str, 
-                parameters: JSON, 
+                parameters: SyncMember, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -30007,7 +30161,7 @@ namespace azure.mgmt.sql.operations
                 database_name: str, 
                 sync_group_name: str, 
                 sync_member_name: str, 
-                parameters: JSON, 
+                parameters: SyncMember, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -30084,7 +30238,7 @@ namespace azure.mgmt.sql.operations
                 self, 
                 resource_group_name: str, 
                 server_name: str, 
-                parameters: JSON, 
+                parameters: TdeCertificate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -30154,7 +30308,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 database_name: str, 
                 tde_name: Union[str, TransparentDataEncryptionName], 
-                parameters: JSON, 
+                parameters: LogicalDatabaseTransparentDataEncryption, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -30256,7 +30410,7 @@ namespace azure.mgmt.sql.operations
                 self, 
                 resource_group_name: str, 
                 virtual_cluster_name: str, 
-                parameters: JSON, 
+                parameters: VirtualCluster, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -30297,7 +30451,7 @@ namespace azure.mgmt.sql.operations
                 self, 
                 resource_group_name: str, 
                 virtual_cluster_name: str, 
-                parameters: JSON, 
+                parameters: VirtualClusterUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -30367,7 +30521,7 @@ namespace azure.mgmt.sql.operations
                 resource_group_name: str, 
                 server_name: str, 
                 virtual_network_rule_name: str, 
-                parameters: JSON, 
+                parameters: VirtualNetworkRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -30442,7 +30596,7 @@ namespace azure.mgmt.sql.operations
                 database_name: str, 
                 workload_group_name: str, 
                 workload_classifier_name: str, 
-                parameters: JSON, 
+                parameters: WorkloadClassifier, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -30523,7 +30677,7 @@ namespace azure.mgmt.sql.operations
                 server_name: str, 
                 database_name: str, 
                 workload_group_name: str, 
-                parameters: JSON, 
+                parameters: WorkloadGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -30570,6 +30724,3424 @@ namespace azure.mgmt.sql.operations
                 database_name: str, 
                 **kwargs: Any
             ) -> ItemPaged[WorkloadGroup]: ...
+
+
+namespace azure.mgmt.sql.types
+
+    class azure.mgmt.sql.types.AdministratorProperties(TypedDict, total=False):
+        key "administratorType": Union[str, AdministratorType]
+        key "azureADOnlyAuthentication": bool
+        key "login": Required[str]
+        key "sid": Required[str]
+        key "tenantId": str
+        administratorType: Union[str, AdministratorType]
+        azureADOnlyAuthentication: bool
+        login: str
+        sid: str
+        tenantId: str
+
+
+    class azure.mgmt.sql.types.AdvancedThreatProtectionProperties(TypedDict, total=False):
+        key "creationTime": str
+        key "state": Required[Union[str, AdvancedThreatProtectionState]]
+        creationTime: str
+        state: Union[str, AdvancedThreatProtectionState]
+
+
+    class azure.mgmt.sql.types.Advisor(ProxyResource):
+        key "id": str
+        key "kind": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('AdvisorProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        kind: str
+        location: str
+        name: str
+        properties: AdvisorProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.AdvisorProperties(TypedDict, total=False):
+        key "advisorStatus": Union[str, AdvisorStatus]
+        key "autoExecuteStatus": Required[Union[str, AutoExecuteStatus]]
+        key "autoExecuteStatusInheritedFrom": Union[str, AutoExecuteStatusInheritedFrom]
+        key "lastChecked": str
+        key "recommendationsStatus": str
+        advisorStatus: Union[str, AdvisorStatus]
+        autoExecuteStatus: Union[str, AutoExecuteStatus]
+        autoExecuteStatusInheritedFrom: Union[str, AutoExecuteStatusInheritedFrom]
+        lastChecked: str
+        recommendationsStatus: str
+        recommendedActions: list[RecommendedAction]
+
+
+    class azure.mgmt.sql.types.AutomaticTuningOptions(TypedDict, total=False):
+        key "actualState": Union[str, AutomaticTuningOptionModeActual]
+        key "desiredState": Union[str, AutomaticTuningOptionModeDesired]
+        key "reasonCode": int
+        key "reasonDesc": Union[str, AutomaticTuningDisabledReason]
+        actualState: Union[str, AutomaticTuningOptionModeActual]
+        desiredState: Union[str, AutomaticTuningOptionModeDesired]
+        reasonCode: int
+        reasonDesc: Union[str, AutomaticTuningDisabledReason]
+
+
+    class azure.mgmt.sql.types.AutomaticTuningServerOptions(TypedDict, total=False):
+        key "actualState": Union[str, AutomaticTuningOptionModeActual]
+        key "desiredState": Union[str, AutomaticTuningOptionModeDesired]
+        key "reasonCode": int
+        key "reasonDesc": Union[str, AutomaticTuningServerReason]
+        actualState: Union[str, AutomaticTuningOptionModeActual]
+        desiredState: Union[str, AutomaticTuningOptionModeDesired]
+        reasonCode: int
+        reasonDesc: Union[str, AutomaticTuningServerReason]
+
+
+    class azure.mgmt.sql.types.AutomaticTuningServerProperties(TypedDict, total=False):
+        key "actualState": Union[str, AutomaticTuningServerMode]
+        key "desiredState": Union[str, AutomaticTuningServerMode]
+        actualState: Union[str, AutomaticTuningServerMode]
+        desiredState: Union[str, AutomaticTuningServerMode]
+        options: dict[str, AutomaticTuningServerOptions]
+
+
+    class azure.mgmt.sql.types.AzureADOnlyAuthProperties(TypedDict, total=False):
+        key "azureADOnlyAuthentication": Required[bool]
+        azureADOnlyAuthentication: bool
+
+
+    class azure.mgmt.sql.types.BackupShortTermRetentionPolicy(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('BackupShortTermRetentionPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: BackupShortTermRetentionPolicyProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.BackupShortTermRetentionPolicyProperties(TypedDict, total=False):
+        key "diffBackupIntervalInHours": Union[int, DiffBackupIntervalInHours]
+        key "immutabilityStatus": Union[str, ImmutabilityStatus]
+        key "lockImmutability": bool
+        key "retentionDays": int
+        diffBackupIntervalInHours: Union[int, DiffBackupIntervalInHours]
+        immutabilityStatus: Union[str, ImmutabilityStatus]
+        lockImmutability: bool
+        retentionDays: int
+
+
+    class azure.mgmt.sql.types.CertificateInfo(TypedDict, total=False):
+        key "certificateName": str
+        key "expiryDate": str
+        certificateName: str
+        expiryDate: str
+
+
+    class azure.mgmt.sql.types.ChangeLongTermRetentionBackupAccessTierParameters(TypedDict, total=False):
+        key "backupStorageAccessTier": Required[str]
+        key "operationMode": Required[str]
+        backupStorageAccessTier: str
+        operationMode: str
+
+
+    class azure.mgmt.sql.types.CheckNameAvailabilityRequest(TypedDict, total=False):
+        key "name": Required[str]
+        key "type": Required[Union[str, CheckNameAvailabilityResourceType]]
+        name: str
+        type: Union[str, CheckNameAvailabilityResourceType]
+
+
+    class azure.mgmt.sql.types.CompleteDatabaseRestoreDefinition(TypedDict, total=False):
+        key "lastBackupName": Required[str]
+        lastBackupName: str
+
+
+    class azure.mgmt.sql.types.CopyLongTermRetentionBackupParameters(TypedDict, total=False):
+        key "properties": ForwardRef('CopyLongTermRetentionBackupParametersProperties', module='types')
+        properties: CopyLongTermRetentionBackupParametersProperties
+
+
+    class azure.mgmt.sql.types.CopyLongTermRetentionBackupParametersProperties(TypedDict, total=False):
+        key "targetBackupStorageRedundancy": Union[str, BackupStorageRedundancy]
+        key "targetDatabaseName": str
+        key "targetResourceGroup": str
+        key "targetServerFullyQualifiedDomainName": str
+        key "targetServerResourceId": str
+        key "targetSubscriptionId": str
+        targetBackupStorageRedundancy: Union[str, BackupStorageRedundancy]
+        targetDatabaseName: str
+        targetResourceGroup: str
+        targetServerFullyQualifiedDomainName: str
+        targetServerResourceId: str
+        targetSubscriptionId: str
+
+
+    class azure.mgmt.sql.types.CreateDatabaseRestorePointDefinition(TypedDict, total=False):
+        key "restorePointLabel": Required[str]
+        restorePointLabel: str
+
+
+    class azure.mgmt.sql.types.DataMaskingPolicy(ProxyResource):
+        key "id": str
+        key "kind": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('DataMaskingPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        kind: str
+        location: str
+        name: str
+        properties: DataMaskingPolicyProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.DataMaskingPolicyProperties(TypedDict, total=False):
+        key "applicationPrincipals": str
+        key "dataMaskingState": Required[Union[str, DataMaskingState]]
+        key "exemptPrincipals": str
+        key "maskingLevel": str
+        applicationPrincipals: str
+        dataMaskingState: Union[str, DataMaskingState]
+        exemptPrincipals: str
+        maskingLevel: str
+
+
+    class azure.mgmt.sql.types.DataMaskingRule(ProxyResource):
+        key "id": str
+        key "kind": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('DataMaskingRuleProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        kind: str
+        location: str
+        name: str
+        properties: DataMaskingRuleProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.DataMaskingRuleProperties(TypedDict, total=False):
+        key "aliasName": str
+        key "columnName": Required[str]
+        key "id": str
+        key "maskingFunction": Required[Union[str, DataMaskingFunction]]
+        key "numberFrom": str
+        key "numberTo": str
+        key "prefixSize": str
+        key "replacementString": str
+        key "ruleState": Union[str, DataMaskingRuleState]
+        key "schemaName": Required[str]
+        key "suffixSize": str
+        key "tableName": Required[str]
+        aliasName: str
+        columnName: str
+        id: str
+        maskingFunction: Union[str, DataMaskingFunction]
+        numberFrom: str
+        numberTo: str
+        prefixSize: str
+        replacementString: str
+        ruleState: Union[str, DataMaskingRuleState]
+        schemaName: str
+        suffixSize: str
+        tableName: str
+
+
+    class azure.mgmt.sql.types.DataSyncParticipantIdentity(TypedDict, total=False):
+        key "tenantId": str
+        key "type": Required[Union[str, DataSyncParticipantIdentityType]]
+        tenantId: str
+        type: Union[str, DataSyncParticipantIdentityType]
+        userAssignedIdentities: dict[str, DataSyncParticipantUserAssignedIdentity]
+
+
+    class azure.mgmt.sql.types.DataSyncParticipantUserAssignedIdentity(TypedDict, total=False):
+        key "clientId": str
+        key "principalId": str
+        clientId: str
+        principalId: str
+
+
+    class azure.mgmt.sql.types.Database(TrackedResource):
+        key "id": str
+        key "identity": ForwardRef('DatabaseIdentity', module='types')
+        key "kind": str
+        key "location": Required[str]
+        key "managedBy": str
+        key "name": str
+        key "properties": ForwardRef('DatabaseProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        identity: DatabaseIdentity
+        kind: str
+        location: str
+        managedBy: str
+        name: str
+        properties: DatabaseProperties
+        sku: Sku
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.sql.types.DatabaseAdvancedThreatProtection(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('AdvancedThreatProtectionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: AdvancedThreatProtectionProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.DatabaseAutomaticTuning(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('DatabaseAutomaticTuningProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: DatabaseAutomaticTuningProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.DatabaseAutomaticTuningProperties(TypedDict, total=False):
+        key "actualState": Union[str, AutomaticTuningMode]
+        key "desiredState": Union[str, AutomaticTuningMode]
+        actualState: Union[str, AutomaticTuningMode]
+        desiredState: Union[str, AutomaticTuningMode]
+        options: dict[str, AutomaticTuningOptions]
+
+
+    class azure.mgmt.sql.types.DatabaseBlobAuditingPolicy(ProxyResource):
+        key "id": str
+        key "kind": str
+        key "name": str
+        key "properties": ForwardRef('DatabaseBlobAuditingPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        kind: str
+        name: str
+        properties: DatabaseBlobAuditingPolicyProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.DatabaseBlobAuditingPolicyProperties(TypedDict, total=False):
+        key "isAzureMonitorTargetEnabled": bool
+        key "isManagedIdentityInUse": bool
+        key "isStorageSecondaryKeyInUse": bool
+        key "queueDelayMs": int
+        key "retentionDays": int
+        key "state": Required[Union[str, BlobAuditingPolicyState]]
+        key "storageAccountAccessKey": str
+        key "storageAccountSubscriptionId": str
+        key "storageEndpoint": str
+        auditActionsAndGroups: list[str]
+        isAzureMonitorTargetEnabled: bool
+        isManagedIdentityInUse: bool
+        isStorageSecondaryKeyInUse: bool
+        queueDelayMs: int
+        requiredFields: list[str]
+        retentionDays: int
+        state: Union[str, BlobAuditingPolicyState]
+        storageAccountAccessKey: str
+        storageAccountSubscriptionId: str
+        storageEndpoint: str
+
+
+    class azure.mgmt.sql.types.DatabaseExtensions(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('DatabaseExtensionsProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: DatabaseExtensionsProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.DatabaseExtensionsProperties(TypedDict, total=False):
+        key "administratorLogin": str
+        key "administratorLoginPassword": str
+        key "authenticationType": str
+        key "databaseEdition": str
+        key "maxSizeBytes": str
+        key "networkIsolation": ForwardRef('NetworkIsolationSettings', module='types')
+        key "operationMode": Required[Union[str, OperationMode]]
+        key "serviceObjectiveName": str
+        key "storageKey": Required[str]
+        key "storageKeyType": Required[Union[str, StorageKeyType]]
+        key "storageUri": Required[str]
+        administratorLogin: str
+        administratorLoginPassword: str
+        authenticationType: str
+        databaseEdition: str
+        maxSizeBytes: str
+        networkIsolation: NetworkIsolationSettings
+        operationMode: Union[str, OperationMode]
+        serviceObjectiveName: str
+        storageKey: str
+        storageKeyType: Union[str, StorageKeyType]
+        storageUri: str
+
+
+    class azure.mgmt.sql.types.DatabaseIdentity(TypedDict, total=False):
+        key "tenantId": str
+        key "type": Union[str, DatabaseIdentityType]
+        tenantId: str
+        type: Union[str, DatabaseIdentityType]
+        userAssignedIdentities: dict[str, DatabaseUserIdentity]
+
+
+    class azure.mgmt.sql.types.DatabaseKey(TypedDict, total=False):
+        key "creationDate": str
+        key "keyVersion": str
+        key "subregion": str
+        key "thumbprint": str
+        key "type": Union[str, DatabaseKeyType]
+        creationDate: str
+        keyVersion: str
+        subregion: str
+        thumbprint: str
+        type: Union[str, DatabaseKeyType]
+
+
+    class azure.mgmt.sql.types.DatabaseProperties(TypedDict, total=False):
+        key "autoPauseDelay": int
+        key "availabilityZone": Union[str, AvailabilityZoneType]
+        key "catalogCollation": Union[str, CatalogCollationType]
+        key "collation": str
+        key "createMode": Union[str, CreateMode]
+        key "creationDate": str
+        key "currentBackupStorageRedundancy": Union[str, BackupStorageRedundancy]
+        key "currentServiceObjectiveName": str
+        key "currentSku": ForwardRef('Sku', module='types')
+        key "databaseId": str
+        key "defaultSecondaryLocation": str
+        key "earliestRestoreDate": str
+        key "elasticPoolId": str
+        key "encryptionProtector": str
+        key "encryptionProtectorAutoRotation": bool
+        key "failoverGroupId": str
+        key "federatedClientId": str
+        key "freeLimitExhaustionBehavior": Union[str, FreeLimitExhaustionBehavior]
+        key "highAvailabilityReplicaCount": int
+        key "isInfraEncryptionEnabled": bool
+        key "isLedgerOn": bool
+        key "licenseType": Union[str, DatabaseLicenseType]
+        key "longTermRetentionBackupResourceId": str
+        key "maintenanceConfigurationId": str
+        key "manualCutover": bool
+        key "maxLogSizeBytes": int
+        key "maxSizeBytes": int
+        key "minCapacity": float
+        key "pausedDate": str
+        key "performCutover": bool
+        key "preferredEnclaveType": Union[str, AlwaysEncryptedEnclaveType]
+        key "provisioningState": str
+        key "readScale": Union[str, DatabaseReadScale]
+        key "recoverableDatabaseId": str
+        key "recoveryServicesRecoveryPointId": str
+        key "requestedBackupStorageRedundancy": Union[str, BackupStorageRedundancy]
+        key "requestedServiceObjectiveName": str
+        key "restorableDroppedDatabaseId": str
+        key "restorePointInTime": str
+        key "resumedDate": str
+        key "sampleName": Union[str, SampleName]
+        key "secondaryType": Union[str, SecondaryType]
+        key "sourceDatabaseDeletionDate": str
+        key "sourceDatabaseId": str
+        key "sourceResourceId": str
+        key "status": Union[str, DatabaseStatus]
+        key "useFreeLimit": bool
+        key "zoneRedundant": bool
+        autoPauseDelay: int
+        availabilityZone: Union[str, AvailabilityZoneType]
+        catalogCollation: Union[str, CatalogCollationType]
+        collation: str
+        createMode: Union[str, CreateMode]
+        creationDate: str
+        currentBackupStorageRedundancy: Union[str, BackupStorageRedundancy]
+        currentServiceObjectiveName: str
+        currentSku: Sku
+        databaseId: str
+        defaultSecondaryLocation: str
+        earliestRestoreDate: str
+        elasticPoolId: str
+        encryptionProtector: str
+        encryptionProtectorAutoRotation: bool
+        failoverGroupId: str
+        federatedClientId: str
+        freeLimitExhaustionBehavior: Union[str, FreeLimitExhaustionBehavior]
+        highAvailabilityReplicaCount: int
+        isInfraEncryptionEnabled: bool
+        isLedgerOn: bool
+        keys: dict[str, DatabaseKey]
+        licenseType: Union[str, DatabaseLicenseType]
+        longTermRetentionBackupResourceId: str
+        maintenanceConfigurationId: str
+        manualCutover: bool
+        maxLogSizeBytes: int
+        maxSizeBytes: int
+        minCapacity: float
+        pausedDate: str
+        performCutover: bool
+        preferredEnclaveType: Union[str, AlwaysEncryptedEnclaveType]
+        provisioningState: str
+        readScale: Union[str, DatabaseReadScale]
+        recoverableDatabaseId: str
+        recoveryServicesRecoveryPointId: str
+        requestedBackupStorageRedundancy: Union[str, BackupStorageRedundancy]
+        requestedServiceObjectiveName: str
+        restorableDroppedDatabaseId: str
+        restorePointInTime: str
+        resumedDate: str
+        sampleName: Union[str, SampleName]
+        secondaryType: Union[str, SecondaryType]
+        sourceDatabaseDeletionDate: str
+        sourceDatabaseId: str
+        sourceResourceId: str
+        status: Union[str, DatabaseStatus]
+        useFreeLimit: bool
+        zoneRedundant: bool
+
+
+    class azure.mgmt.sql.types.DatabaseSecurityAlertPolicy(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SecurityAlertsPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: SecurityAlertsPolicyProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.DatabaseSqlVulnerabilityAssessmentRuleBaselineInput(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('DatabaseSqlVulnerabilityAssessmentRuleBaselineInputProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: DatabaseSqlVulnerabilityAssessmentRuleBaselineInputProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.DatabaseSqlVulnerabilityAssessmentRuleBaselineInputProperties(TypedDict, total=False):
+        key "latestScan": Required[bool]
+        key "results": Required[list[list[str]]]
+        latestScan: bool
+        results: list[list[str]]
+
+
+    class azure.mgmt.sql.types.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('DatabaseSqlVulnerabilityAssessmentRuleBaselineListInputProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: DatabaseSqlVulnerabilityAssessmentRuleBaselineListInputProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.DatabaseSqlVulnerabilityAssessmentRuleBaselineListInputProperties(TypedDict, total=False):
+        key "latestScan": Required[bool]
+        key "results": Required[dict[str, list[list[str]]]]
+        latestScan: bool
+        results: dict[str, list[list[str]]]
+
+
+    class azure.mgmt.sql.types.DatabaseUpdate(TypedDict, total=False):
+        key "identity": ForwardRef('DatabaseIdentity', module='types')
+        key "properties": ForwardRef('DatabaseUpdateProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        identity: DatabaseIdentity
+        properties: DatabaseUpdateProperties
+        sku: Sku
+        tags: dict[str, str]
+
+
+    class azure.mgmt.sql.types.DatabaseUpdateProperties(TypedDict, total=False):
+        key "autoPauseDelay": int
+        key "catalogCollation": Union[str, CatalogCollationType]
+        key "collation": str
+        key "createMode": Union[str, CreateMode]
+        key "creationDate": str
+        key "currentBackupStorageRedundancy": Union[str, BackupStorageRedundancy]
+        key "currentServiceObjectiveName": str
+        key "currentSku": ForwardRef('Sku', module='types')
+        key "databaseId": str
+        key "defaultSecondaryLocation": str
+        key "earliestRestoreDate": str
+        key "elasticPoolId": str
+        key "encryptionProtector": str
+        key "encryptionProtectorAutoRotation": bool
+        key "failoverGroupId": str
+        key "federatedClientId": str
+        key "freeLimitExhaustionBehavior": Union[str, FreeLimitExhaustionBehavior]
+        key "highAvailabilityReplicaCount": int
+        key "isInfraEncryptionEnabled": bool
+        key "isLedgerOn": bool
+        key "licenseType": Union[str, DatabaseLicenseType]
+        key "longTermRetentionBackupResourceId": str
+        key "maintenanceConfigurationId": str
+        key "manualCutover": bool
+        key "maxLogSizeBytes": int
+        key "maxSizeBytes": int
+        key "minCapacity": float
+        key "pausedDate": str
+        key "performCutover": bool
+        key "preferredEnclaveType": Union[str, AlwaysEncryptedEnclaveType]
+        key "provisioningState": str
+        key "readScale": Union[str, DatabaseReadScale]
+        key "recoverableDatabaseId": str
+        key "recoveryServicesRecoveryPointId": str
+        key "requestedBackupStorageRedundancy": Union[str, BackupStorageRedundancy]
+        key "requestedServiceObjectiveName": str
+        key "restorableDroppedDatabaseId": str
+        key "restorePointInTime": str
+        key "resumedDate": str
+        key "sampleName": Union[str, SampleName]
+        key "secondaryType": Union[str, SecondaryType]
+        key "sourceDatabaseDeletionDate": str
+        key "sourceDatabaseId": str
+        key "status": Union[str, DatabaseStatus]
+        key "useFreeLimit": bool
+        key "zoneRedundant": bool
+        autoPauseDelay: int
+        catalogCollation: Union[str, CatalogCollationType]
+        collation: str
+        createMode: Union[str, CreateMode]
+        creationDate: str
+        currentBackupStorageRedundancy: Union[str, BackupStorageRedundancy]
+        currentServiceObjectiveName: str
+        currentSku: Sku
+        databaseId: str
+        defaultSecondaryLocation: str
+        earliestRestoreDate: str
+        elasticPoolId: str
+        encryptionProtector: str
+        encryptionProtectorAutoRotation: bool
+        failoverGroupId: str
+        federatedClientId: str
+        freeLimitExhaustionBehavior: Union[str, FreeLimitExhaustionBehavior]
+        highAvailabilityReplicaCount: int
+        isInfraEncryptionEnabled: bool
+        isLedgerOn: bool
+        keys: dict[str, DatabaseKey]
+        licenseType: Union[str, DatabaseLicenseType]
+        longTermRetentionBackupResourceId: str
+        maintenanceConfigurationId: str
+        manualCutover: bool
+        maxLogSizeBytes: int
+        maxSizeBytes: int
+        minCapacity: float
+        pausedDate: str
+        performCutover: bool
+        preferredEnclaveType: Union[str, AlwaysEncryptedEnclaveType]
+        provisioningState: str
+        readScale: Union[str, DatabaseReadScale]
+        recoverableDatabaseId: str
+        recoveryServicesRecoveryPointId: str
+        requestedBackupStorageRedundancy: Union[str, BackupStorageRedundancy]
+        requestedServiceObjectiveName: str
+        restorableDroppedDatabaseId: str
+        restorePointInTime: str
+        resumedDate: str
+        sampleName: Union[str, SampleName]
+        secondaryType: Union[str, SecondaryType]
+        sourceDatabaseDeletionDate: str
+        sourceDatabaseId: str
+        status: Union[str, DatabaseStatus]
+        useFreeLimit: bool
+        zoneRedundant: bool
+
+
+    class azure.mgmt.sql.types.DatabaseUserIdentity(TypedDict, total=False):
+        key "clientId": str
+        key "principalId": str
+        clientId: str
+        principalId: str
+
+
+    class azure.mgmt.sql.types.DatabaseVulnerabilityAssessment(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('DatabaseVulnerabilityAssessmentProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: DatabaseVulnerabilityAssessmentProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.DatabaseVulnerabilityAssessmentProperties(TypedDict, total=False):
+        key "recurringScans": ForwardRef('VulnerabilityAssessmentRecurringScansProperties', module='types')
+        key "storageAccountAccessKey": str
+        key "storageContainerPath": str
+        key "storageContainerSasKey": str
+        recurringScans: VulnerabilityAssessmentRecurringScansProperties
+        storageAccountAccessKey: str
+        storageContainerPath: str
+        storageContainerSasKey: str
+
+
+    class azure.mgmt.sql.types.DatabaseVulnerabilityAssessmentRuleBaseline(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('DatabaseVulnerabilityAssessmentRuleBaselineProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: DatabaseVulnerabilityAssessmentRuleBaselineProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.DatabaseVulnerabilityAssessmentRuleBaselineItem(TypedDict, total=False):
+        key "result": Required[list[str]]
+        result: list[str]
+
+
+    class azure.mgmt.sql.types.DatabaseVulnerabilityAssessmentRuleBaselineProperties(TypedDict, total=False):
+        key "baselineResults": Required[list[DatabaseVulnerabilityAssessmentRuleBaselineItem]]
+        baselineResults: list[DatabaseVulnerabilityAssessmentRuleBaselineItem]
+
+
+    class azure.mgmt.sql.types.DistributedAvailabilityGroup(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('DistributedAvailabilityGroupProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: DistributedAvailabilityGroupProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.DistributedAvailabilityGroupDatabase(TypedDict, total=False):
+        key "connectedState": Union[str, ReplicaConnectedState]
+        key "databaseName": str
+        key "instanceRedoReplicationLagSeconds": int
+        key "instanceReplicaId": str
+        key "instanceSendReplicationLagSeconds": int
+        key "lastBackupLsn": str
+        key "lastBackupTime": str
+        key "lastCommitLsn": str
+        key "lastCommitTime": str
+        key "lastHardenedLsn": str
+        key "lastHardenedTime": str
+        key "lastReceivedLsn": str
+        key "lastReceivedTime": str
+        key "lastSentLsn": str
+        key "lastSentTime": str
+        key "mostRecentLinkError": str
+        key "partnerAuthCertValidity": ForwardRef('CertificateInfo', module='types')
+        key "partnerReplicaId": str
+        key "replicaState": str
+        key "seedingProgress": str
+        key "synchronizationHealth": Union[str, ReplicaSynchronizationHealth]
+        connectedState: Union[str, ReplicaConnectedState]
+        databaseName: str
+        instanceRedoReplicationLagSeconds: int
+        instanceReplicaId: str
+        instanceSendReplicationLagSeconds: int
+        lastBackupLsn: str
+        lastBackupTime: str
+        lastCommitLsn: str
+        lastCommitTime: str
+        lastHardenedLsn: str
+        lastHardenedTime: str
+        lastReceivedLsn: str
+        lastReceivedTime: str
+        lastSentLsn: str
+        lastSentTime: str
+        mostRecentLinkError: str
+        partnerAuthCertValidity: CertificateInfo
+        partnerReplicaId: str
+        replicaState: str
+        seedingProgress: str
+        synchronizationHealth: Union[str, ReplicaSynchronizationHealth]
+
+
+    class azure.mgmt.sql.types.DistributedAvailabilityGroupProperties(TypedDict, total=False):
+        key "distributedAvailabilityGroupId": str
+        key "distributedAvailabilityGroupName": str
+        key "failoverMode": Union[str, FailoverModeType]
+        key "instanceAvailabilityGroupName": str
+        key "instanceLinkRole": Union[str, LinkRole]
+        key "linkMode": Union[str, LinkModeType]
+        key "mostRecentError": str
+        key "mostRecentErrorMessage": str
+        key "mostRecentErrorTime": str
+        key "partnerAvailabilityGroupName": str
+        key "partnerEndpoint": str
+        key "partnerLinkRole": Union[str, LinkRole]
+        key "replicationMode": Union[str, ReplicationModeType]
+        key "seedingMode": Union[str, SeedingModeType]
+        databases: list[DistributedAvailabilityGroupDatabase]
+        distributedAvailabilityGroupId: str
+        distributedAvailabilityGroupName: str
+        failoverMode: Union[str, FailoverModeType]
+        instanceAvailabilityGroupName: str
+        instanceLinkRole: Union[str, LinkRole]
+        linkMode: Union[str, LinkModeType]
+        mostRecentError: str
+        mostRecentErrorMessage: str
+        mostRecentErrorTime: str
+        partnerAvailabilityGroupName: str
+        partnerEndpoint: str
+        partnerLinkRole: Union[str, LinkRole]
+        replicationMode: Union[str, ReplicationModeType]
+        seedingMode: Union[str, SeedingModeType]
+
+
+    class azure.mgmt.sql.types.DistributedAvailabilityGroupSetRole(TypedDict, total=False):
+        key "instanceRole": Required[Union[str, InstanceRole]]
+        key "roleChangeType": Required[Union[str, RoleChangeType]]
+        instanceRole: Union[str, InstanceRole]
+        roleChangeType: Union[str, RoleChangeType]
+
+
+    class azure.mgmt.sql.types.DistributedAvailabilityGroupsFailoverRequest(TypedDict, total=False):
+        key "failoverType": Required[Union[str, FailoverType]]
+        failoverType: Union[str, FailoverType]
+
+
+    class azure.mgmt.sql.types.ElasticPool(TrackedResource):
+        key "id": str
+        key "kind": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('ElasticPoolProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        kind: str
+        location: str
+        name: str
+        properties: ElasticPoolProperties
+        sku: Sku
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.sql.types.ElasticPoolPerDatabaseSettings(TypedDict, total=False):
+        key "autoPauseDelay": int
+        key "maxCapacity": float
+        key "minCapacity": float
+        autoPauseDelay: int
+        maxCapacity: float
+        minCapacity: float
+
+
+    class azure.mgmt.sql.types.ElasticPoolProperties(TypedDict, total=False):
+        key "autoPauseDelay": int
+        key "availabilityZone": Union[str, AvailabilityZoneType]
+        key "creationDate": str
+        key "currentSku": ForwardRef('Sku', module='types')
+        key "highAvailabilityReplicaCount": int
+        key "licenseType": Union[str, ElasticPoolLicenseType]
+        key "maintenanceConfigurationId": str
+        key "maxSizeBytes": int
+        key "minCapacity": float
+        key "perDatabaseSettings": ForwardRef('ElasticPoolPerDatabaseSettings', module='types')
+        key "preferredEnclaveType": Union[str, AlwaysEncryptedEnclaveType]
+        key "state": Union[str, ElasticPoolState]
+        key "zoneRedundant": bool
+        autoPauseDelay: int
+        availabilityZone: Union[str, AvailabilityZoneType]
+        creationDate: str
+        currentSku: Sku
+        highAvailabilityReplicaCount: int
+        licenseType: Union[str, ElasticPoolLicenseType]
+        maintenanceConfigurationId: str
+        maxSizeBytes: int
+        minCapacity: float
+        perDatabaseSettings: ElasticPoolPerDatabaseSettings
+        preferredEnclaveType: Union[str, AlwaysEncryptedEnclaveType]
+        state: Union[str, ElasticPoolState]
+        zoneRedundant: bool
+
+
+    class azure.mgmt.sql.types.ElasticPoolUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('ElasticPoolUpdateProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        properties: ElasticPoolUpdateProperties
+        sku: Sku
+        tags: dict[str, str]
+
+
+    class azure.mgmt.sql.types.ElasticPoolUpdateProperties(TypedDict, total=False):
+        key "autoPauseDelay": int
+        key "availabilityZone": Union[str, AvailabilityZoneType]
+        key "currentSku": ForwardRef('Sku', module='types')
+        key "highAvailabilityReplicaCount": int
+        key "licenseType": Union[str, ElasticPoolLicenseType]
+        key "maintenanceConfigurationId": str
+        key "maxSizeBytes": int
+        key "minCapacity": float
+        key "perDatabaseSettings": ForwardRef('ElasticPoolPerDatabaseSettings', module='types')
+        key "preferredEnclaveType": Union[str, AlwaysEncryptedEnclaveType]
+        key "zoneRedundant": bool
+        autoPauseDelay: int
+        availabilityZone: Union[str, AvailabilityZoneType]
+        currentSku: Sku
+        highAvailabilityReplicaCount: int
+        licenseType: Union[str, ElasticPoolLicenseType]
+        maintenanceConfigurationId: str
+        maxSizeBytes: int
+        minCapacity: float
+        perDatabaseSettings: ElasticPoolPerDatabaseSettings
+        preferredEnclaveType: Union[str, AlwaysEncryptedEnclaveType]
+        zoneRedundant: bool
+
+
+    class azure.mgmt.sql.types.EncryptionProtector(ProxyResource):
+        key "id": str
+        key "kind": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('EncryptionProtectorProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        kind: str
+        location: str
+        name: str
+        properties: EncryptionProtectorProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.EncryptionProtectorProperties(TypedDict, total=False):
+        key "autoRotationEnabled": bool
+        key "keyVersion": str
+        key "serverKeyName": str
+        key "serverKeyType": Required[Union[str, ServerKeyType]]
+        key "subregion": str
+        key "thumbprint": str
+        key "uri": str
+        autoRotationEnabled: bool
+        keyVersion: str
+        serverKeyName: str
+        serverKeyType: Union[str, ServerKeyType]
+        subregion: str
+        thumbprint: str
+        uri: str
+
+
+    class azure.mgmt.sql.types.ExportDatabaseDefinition(TypedDict, total=False):
+        key "administratorLogin": Required[str]
+        key "administratorLoginPassword": str
+        key "authenticationType": str
+        key "networkIsolation": ForwardRef('NetworkIsolationSettings', module='types')
+        key "storageKey": Required[str]
+        key "storageKeyType": Required[Union[str, StorageKeyType]]
+        key "storageUri": Required[str]
+        administratorLogin: str
+        administratorLoginPassword: str
+        authenticationType: str
+        networkIsolation: NetworkIsolationSettings
+        storageKey: str
+        storageKeyType: Union[str, StorageKeyType]
+        storageUri: str
+
+
+    class azure.mgmt.sql.types.ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ExtendedDatabaseBlobAuditingPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ExtendedDatabaseBlobAuditingPolicyProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ExtendedDatabaseBlobAuditingPolicyProperties(TypedDict, total=False):
+        key "isAzureMonitorTargetEnabled": bool
+        key "isManagedIdentityInUse": bool
+        key "isStorageSecondaryKeyInUse": bool
+        key "predicateExpression": str
+        key "queueDelayMs": int
+        key "retentionDays": int
+        key "state": Required[Union[str, BlobAuditingPolicyState]]
+        key "storageAccountAccessKey": str
+        key "storageAccountSubscriptionId": str
+        key "storageEndpoint": str
+        auditActionsAndGroups: list[str]
+        isAzureMonitorTargetEnabled: bool
+        isManagedIdentityInUse: bool
+        isStorageSecondaryKeyInUse: bool
+        predicateExpression: str
+        queueDelayMs: int
+        requiredFields: list[str]
+        retentionDays: int
+        state: Union[str, BlobAuditingPolicyState]
+        storageAccountAccessKey: str
+        storageAccountSubscriptionId: str
+        storageEndpoint: str
+
+
+    class azure.mgmt.sql.types.ExtendedServerBlobAuditingPolicy(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ExtendedServerBlobAuditingPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ExtendedServerBlobAuditingPolicyProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ExtendedServerBlobAuditingPolicyProperties(TypedDict, total=False):
+        key "isAzureMonitorTargetEnabled": bool
+        key "isDevopsAuditEnabled": bool
+        key "isManagedIdentityInUse": bool
+        key "isStorageSecondaryKeyInUse": bool
+        key "predicateExpression": str
+        key "queueDelayMs": int
+        key "retentionDays": int
+        key "state": Required[Union[str, BlobAuditingPolicyState]]
+        key "storageAccountAccessKey": str
+        key "storageAccountSubscriptionId": str
+        key "storageEndpoint": str
+        auditActionsAndGroups: list[str]
+        isAzureMonitorTargetEnabled: bool
+        isDevopsAuditEnabled: bool
+        isManagedIdentityInUse: bool
+        isStorageSecondaryKeyInUse: bool
+        predicateExpression: str
+        queueDelayMs: int
+        requiredFields: list[str]
+        retentionDays: int
+        state: Union[str, BlobAuditingPolicyState]
+        storageAccountAccessKey: str
+        storageAccountSubscriptionId: str
+        storageEndpoint: str
+
+
+    class azure.mgmt.sql.types.FailoverGroup(ProxyResource):
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('FailoverGroupProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: FailoverGroupProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.sql.types.FailoverGroupProperties(TypedDict, total=False):
+        key "partnerServers": Required[list[PartnerInfo]]
+        key "readOnlyEndpoint": ForwardRef('FailoverGroupReadOnlyEndpoint', module='types')
+        key "readWriteEndpoint": Required[FailoverGroupReadWriteEndpoint]
+        key "replicationRole": Union[str, FailoverGroupReplicationRole]
+        key "replicationState": str
+        key "secondaryType": Union[str, FailoverGroupDatabasesSecondaryType]
+        databases: list[str]
+        partnerServers: list[PartnerInfo]
+        readOnlyEndpoint: FailoverGroupReadOnlyEndpoint
+        readWriteEndpoint: FailoverGroupReadWriteEndpoint
+        replicationRole: Union[str, FailoverGroupReplicationRole]
+        replicationState: str
+        secondaryType: Union[str, FailoverGroupDatabasesSecondaryType]
+
+
+    class azure.mgmt.sql.types.FailoverGroupReadOnlyEndpoint(TypedDict, total=False):
+        key "failoverPolicy": Union[str, ReadOnlyEndpointFailoverPolicy]
+        key "targetServer": str
+        failoverPolicy: Union[str, ReadOnlyEndpointFailoverPolicy]
+        targetServer: str
+
+
+    class azure.mgmt.sql.types.FailoverGroupReadWriteEndpoint(TypedDict, total=False):
+        key "failoverPolicy": Required[Union[str, ReadWriteEndpointFailoverPolicy]]
+        key "failoverWithDataLossGracePeriodMinutes": int
+        failoverPolicy: Union[str, ReadWriteEndpointFailoverPolicy]
+        failoverWithDataLossGracePeriodMinutes: int
+
+
+    class azure.mgmt.sql.types.FailoverGroupUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('FailoverGroupUpdateProperties', module='types')
+        properties: FailoverGroupUpdateProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.sql.types.FailoverGroupUpdateProperties(TypedDict, total=False):
+        key "readOnlyEndpoint": ForwardRef('FailoverGroupReadOnlyEndpoint', module='types')
+        key "readWriteEndpoint": ForwardRef('FailoverGroupReadWriteEndpoint', module='types')
+        key "secondaryType": Union[str, FailoverGroupDatabasesSecondaryType]
+        databases: list[str]
+        partnerServers: list[PartnerInfo]
+        readOnlyEndpoint: FailoverGroupReadOnlyEndpoint
+        readWriteEndpoint: FailoverGroupReadWriteEndpoint
+        secondaryType: Union[str, FailoverGroupDatabasesSecondaryType]
+
+
+    class azure.mgmt.sql.types.FirewallRule(ProxyResourceWithWritableName):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ServerFirewallRuleProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ServerFirewallRuleProperties
+        type: str
+
+
+    class azure.mgmt.sql.types.FirewallRuleList(TypedDict, total=False):
+        values: list[FirewallRule]
+
+
+    class azure.mgmt.sql.types.GeoBackupPolicy(ProxyResource):
+        key "id": str
+        key "kind": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('GeoBackupPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        kind: str
+        location: str
+        name: str
+        properties: GeoBackupPolicyProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.GeoBackupPolicyProperties(TypedDict, total=False):
+        key "state": Required[Union[str, GeoBackupPolicyState]]
+        key "storageType": str
+        state: Union[str, GeoBackupPolicyState]
+        storageType: str
+
+
+    class azure.mgmt.sql.types.IPv6FirewallRule(ProxyResourceWithWritableName):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('IPv6ServerFirewallRuleProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: IPv6ServerFirewallRuleProperties
+        type: str
+
+
+    class azure.mgmt.sql.types.IPv6ServerFirewallRuleProperties(TypedDict, total=False):
+        key "endIPv6Address": str
+        key "startIPv6Address": str
+        endIPv6Address: str
+        startIPv6Address: str
+
+
+    class azure.mgmt.sql.types.ImportExistingDatabaseDefinition(TypedDict, total=False):
+        key "administratorLogin": Required[str]
+        key "administratorLoginPassword": str
+        key "authenticationType": str
+        key "networkIsolation": ForwardRef('NetworkIsolationSettings', module='types')
+        key "storageKey": Required[str]
+        key "storageKeyType": Required[Union[str, StorageKeyType]]
+        key "storageUri": Required[str]
+        administratorLogin: str
+        administratorLoginPassword: str
+        authenticationType: str
+        networkIsolation: NetworkIsolationSettings
+        storageKey: str
+        storageKeyType: Union[str, StorageKeyType]
+        storageUri: str
+
+
+    class azure.mgmt.sql.types.ImportNewDatabaseDefinition(TypedDict, total=False):
+        key "administratorLogin": Required[str]
+        key "administratorLoginPassword": str
+        key "authenticationType": str
+        key "databaseName": str
+        key "edition": str
+        key "maxSizeBytes": str
+        key "networkIsolation": ForwardRef('NetworkIsolationSettings', module='types')
+        key "serviceObjectiveName": str
+        key "storageKey": Required[str]
+        key "storageKeyType": Required[Union[str, StorageKeyType]]
+        key "storageUri": Required[str]
+        administratorLogin: str
+        administratorLoginPassword: str
+        authenticationType: str
+        databaseName: str
+        edition: str
+        maxSizeBytes: str
+        networkIsolation: NetworkIsolationSettings
+        serviceObjectiveName: str
+        storageKey: str
+        storageKeyType: Union[str, StorageKeyType]
+        storageUri: str
+
+
+    class azure.mgmt.sql.types.InstanceFailoverGroup(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('InstanceFailoverGroupProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: InstanceFailoverGroupProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.InstanceFailoverGroupProperties(TypedDict, total=False):
+        key "managedInstancePairs": Required[list[ManagedInstancePairInfo]]
+        key "partnerRegions": Required[list[PartnerRegionInfo]]
+        key "readOnlyEndpoint": ForwardRef('InstanceFailoverGroupReadOnlyEndpoint', module='types')
+        key "readWriteEndpoint": Required[InstanceFailoverGroupReadWriteEndpoint]
+        key "replicationRole": Union[str, InstanceFailoverGroupReplicationRole]
+        key "replicationState": str
+        key "secondaryType": Union[str, SecondaryInstanceType]
+        managedInstancePairs: list[ManagedInstancePairInfo]
+        partnerRegions: list[PartnerRegionInfo]
+        readOnlyEndpoint: InstanceFailoverGroupReadOnlyEndpoint
+        readWriteEndpoint: InstanceFailoverGroupReadWriteEndpoint
+        replicationRole: Union[str, InstanceFailoverGroupReplicationRole]
+        replicationState: str
+        secondaryType: Union[str, SecondaryInstanceType]
+
+
+    class azure.mgmt.sql.types.InstanceFailoverGroupReadOnlyEndpoint(TypedDict, total=False):
+        key "failoverPolicy": Union[str, ReadOnlyEndpointFailoverPolicy]
+        failoverPolicy: Union[str, ReadOnlyEndpointFailoverPolicy]
+
+
+    class azure.mgmt.sql.types.InstanceFailoverGroupReadWriteEndpoint(TypedDict, total=False):
+        key "failoverPolicy": Required[Union[str, ReadWriteEndpointFailoverPolicy]]
+        key "failoverWithDataLossGracePeriodMinutes": int
+        failoverPolicy: Union[str, ReadWriteEndpointFailoverPolicy]
+        failoverWithDataLossGracePeriodMinutes: int
+
+
+    class azure.mgmt.sql.types.InstancePool(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('InstancePoolProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: InstancePoolProperties
+        sku: Sku
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.sql.types.InstancePoolProperties(TypedDict, total=False):
+        key "dnsZone": str
+        key "licenseType": Required[Union[str, InstancePoolLicenseType]]
+        key "maintenanceConfigurationId": str
+        key "subnetId": Required[str]
+        key "vCores": Required[int]
+        dnsZone: str
+        licenseType: Union[str, InstancePoolLicenseType]
+        maintenanceConfigurationId: str
+        subnetId: str
+        vCores: int
+
+
+    class azure.mgmt.sql.types.InstancePoolUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('InstancePoolProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        properties: InstancePoolProperties
+        sku: Sku
+        tags: dict[str, str]
+
+
+    class azure.mgmt.sql.types.Job(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('JobProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: JobProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.JobAgent(TrackedResource):
+        key "id": str
+        key "identity": ForwardRef('JobAgentIdentity', module='types')
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('JobAgentProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        identity: JobAgentIdentity
+        location: str
+        name: str
+        properties: JobAgentProperties
+        sku: Sku
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.sql.types.JobAgentIdentity(TypedDict, total=False):
+        key "tenantId": str
+        key "type": Required[Union[str, JobAgentIdentityType]]
+        tenantId: str
+        type: Union[str, JobAgentIdentityType]
+        userAssignedIdentities: dict[str, JobAgentUserAssignedIdentity]
+
+
+    class azure.mgmt.sql.types.JobAgentProperties(TypedDict, total=False):
+        key "databaseId": Required[str]
+        key "state": Union[str, JobAgentState]
+        databaseId: str
+        state: Union[str, JobAgentState]
+
+
+    class azure.mgmt.sql.types.JobAgentUpdate(TypedDict, total=False):
+        key "identity": ForwardRef('JobAgentIdentity', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        identity: JobAgentIdentity
+        sku: Sku
+        tags: dict[str, str]
+
+
+    class azure.mgmt.sql.types.JobAgentUserAssignedIdentity(TypedDict, total=False):
+        key "clientId": str
+        key "principalId": str
+        clientId: str
+        principalId: str
+
+
+    class azure.mgmt.sql.types.JobCredential(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('JobCredentialProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: JobCredentialProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.JobCredentialProperties(TypedDict, total=False):
+        key "password": Required[str]
+        key "username": Required[str]
+        password: str
+        username: str
+
+
+    class azure.mgmt.sql.types.JobPrivateEndpoint(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('JobPrivateEndpointProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: JobPrivateEndpointProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.JobPrivateEndpointProperties(TypedDict, total=False):
+        key "privateEndpointId": str
+        key "targetServerAzureResourceId": Required[str]
+        privateEndpointId: str
+        targetServerAzureResourceId: str
+
+
+    class azure.mgmt.sql.types.JobProperties(TypedDict, total=False):
+        key "description": str
+        key "schedule": ForwardRef('JobSchedule', module='types')
+        key "version": int
+        description: str
+        schedule: JobSchedule
+        version: int
+
+
+    class azure.mgmt.sql.types.JobSchedule(TypedDict, total=False):
+        key "enabled": bool
+        key "endTime": str
+        key "interval": str
+        key "startTime": str
+        key "type": Union[str, JobScheduleType]
+        enabled: bool
+        endTime: str
+        interval: str
+        startTime: str
+        type: Union[str, JobScheduleType]
+
+
+    class azure.mgmt.sql.types.JobStep(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('JobStepProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: JobStepProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.JobStepAction(TypedDict, total=False):
+        key "source": Union[str, JobStepActionSource]
+        key "type": Union[str, JobStepActionType]
+        key "value": Required[str]
+        source: Union[str, JobStepActionSource]
+        type: Union[str, JobStepActionType]
+        value: str
+
+
+    class azure.mgmt.sql.types.JobStepExecutionOptions(TypedDict, total=False):
+        key "initialRetryIntervalSeconds": int
+        key "maximumRetryIntervalSeconds": int
+        key "retryAttempts": int
+        key "retryIntervalBackoffMultiplier": float
+        key "timeoutSeconds": int
+        initialRetryIntervalSeconds: int
+        maximumRetryIntervalSeconds: int
+        retryAttempts: int
+        retryIntervalBackoffMultiplier: float
+        timeoutSeconds: int
+
+
+    class azure.mgmt.sql.types.JobStepOutput(TypedDict, total=False):
+        key "credential": str
+        key "databaseName": Required[str]
+        key "resourceGroupName": str
+        key "schemaName": str
+        key "serverName": Required[str]
+        key "subscriptionId": str
+        key "tableName": Required[str]
+        key "type": Union[str, JobStepOutputType]
+        credential: str
+        databaseName: str
+        resourceGroupName: str
+        schemaName: str
+        serverName: str
+        subscriptionId: str
+        tableName: str
+        type: Union[str, JobStepOutputType]
+
+
+    class azure.mgmt.sql.types.JobStepProperties(TypedDict, total=False):
+        key "action": Required[JobStepAction]
+        key "credential": str
+        key "executionOptions": ForwardRef('JobStepExecutionOptions', module='types')
+        key "output": ForwardRef('JobStepOutput', module='types')
+        key "stepId": int
+        key "targetGroup": Required[str]
+        action: JobStepAction
+        credential: str
+        executionOptions: JobStepExecutionOptions
+        output: JobStepOutput
+        stepId: int
+        targetGroup: str
+
+
+    class azure.mgmt.sql.types.JobTarget(TypedDict, total=False):
+        key "databaseName": str
+        key "elasticPoolName": str
+        key "membershipType": Union[str, JobTargetGroupMembershipType]
+        key "refreshCredential": str
+        key "serverName": str
+        key "shardMapName": str
+        key "type": Required[Union[str, JobTargetType]]
+        databaseName: str
+        elasticPoolName: str
+        membershipType: Union[str, JobTargetGroupMembershipType]
+        refreshCredential: str
+        serverName: str
+        shardMapName: str
+        type: Union[str, JobTargetType]
+
+
+    class azure.mgmt.sql.types.JobTargetGroup(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('JobTargetGroupProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: JobTargetGroupProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.JobTargetGroupProperties(TypedDict, total=False):
+        key "members": Required[list[JobTarget]]
+        members: list[JobTarget]
+
+
+    class azure.mgmt.sql.types.LedgerDigestUploads(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('LedgerDigestUploadsProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: LedgerDigestUploadsProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.LedgerDigestUploadsProperties(TypedDict, total=False):
+        key "digestStorageEndpoint": str
+        key "state": Union[str, LedgerDigestUploadsState]
+        digestStorageEndpoint: str
+        state: Union[str, LedgerDigestUploadsState]
+
+
+    class azure.mgmt.sql.types.LogicalDatabaseTransparentDataEncryption(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('TransparentDataEncryptionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: TransparentDataEncryptionProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.LongTermRetentionPolicy(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('LongTermRetentionPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: LongTermRetentionPolicyProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.LongTermRetentionPolicyProperties(TypedDict, total=False):
+        key "monthlyRetention": str
+        key "timeBasedImmutability": Union[str, TimeBasedImmutability]
+        key "timeBasedImmutabilityMode": Union[str, TimeBasedImmutabilityMode]
+        key "weekOfYear": int
+        key "weeklyRetention": str
+        key "yearlyRetention": str
+        monthlyRetention: str
+        timeBasedImmutability: Union[str, TimeBasedImmutability]
+        timeBasedImmutabilityMode: Union[str, TimeBasedImmutabilityMode]
+        weekOfYear: int
+        weeklyRetention: str
+        yearlyRetention: str
+
+
+    class azure.mgmt.sql.types.MaintenanceWindowTimeRange(TypedDict, total=False):
+        key "dayOfWeek": Union[str, DayOfWeek]
+        key "duration": str
+        key "startTime": str
+        dayOfWeek: Union[str, DayOfWeek]
+        duration: str
+        startTime: str
+
+
+    class azure.mgmt.sql.types.MaintenanceWindows(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('MaintenanceWindowsProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: MaintenanceWindowsProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.MaintenanceWindowsProperties(TypedDict, total=False):
+        timeRanges: list[MaintenanceWindowTimeRange]
+
+
+    class azure.mgmt.sql.types.ManagedBackupShortTermRetentionPolicy(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ManagedBackupShortTermRetentionPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ManagedBackupShortTermRetentionPolicyProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ManagedBackupShortTermRetentionPolicyProperties(TypedDict, total=False):
+        key "immutabilityStatus": Union[str, ImmutabilityStatus]
+        key "lockImmutability": bool
+        key "retentionDays": int
+        immutabilityStatus: Union[str, ImmutabilityStatus]
+        lockImmutability: bool
+        retentionDays: int
+
+
+    class azure.mgmt.sql.types.ManagedDatabase(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('ManagedDatabaseProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: ManagedDatabaseProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.sql.types.ManagedDatabaseAdvancedThreatProtection(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('AdvancedThreatProtectionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: AdvancedThreatProtectionProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ManagedDatabaseExtendedAccessibilityInfo(TypedDict, total=False):
+        key "inaccessibilityReasonDescription": Required[str]
+        key "inaccessibilityReasonErrorCode": Required[str]
+        key "inaccessibilityReasonKind": Required[Union[str, InaccessibilityReason]]
+        key "inaccessibilityReasonTdeKeyUri": str
+        inaccessibilityReasonDescription: str
+        inaccessibilityReasonErrorCode: str
+        inaccessibilityReasonKind: Union[str, InaccessibilityReason]
+        inaccessibilityReasonTdeKeyUri: str
+
+
+    class azure.mgmt.sql.types.ManagedDatabaseMoveDefinition(TypedDict, total=False):
+        key "destinationManagedDatabaseId": Required[str]
+        destinationManagedDatabaseId: str
+
+
+    class azure.mgmt.sql.types.ManagedDatabaseProperties(TypedDict, total=False):
+        key "autoCompleteRestore": bool
+        key "catalogCollation": Union[str, CatalogCollationType]
+        key "collation": str
+        key "createMode": Union[str, ManagedDatabaseCreateMode]
+        key "creationDate": str
+        key "crossSubscriptionRestorableDroppedDatabaseId": str
+        key "crossSubscriptionSourceDatabaseId": str
+        key "crossSubscriptionTargetManagedInstanceId": str
+        key "defaultSecondaryLocation": str
+        key "earliestRestorePoint": str
+        key "extendedAccessibilityInfo": ForwardRef('ManagedDatabaseExtendedAccessibilityInfo', module='types')
+        key "failoverGroupId": str
+        key "isLedgerOn": bool
+        key "lastBackupName": str
+        key "longTermRetentionBackupResourceId": str
+        key "recoverableDatabaseId": str
+        key "restorableDroppedDatabaseId": str
+        key "restorePointInTime": str
+        key "sourceDatabaseId": str
+        key "status": Union[str, ManagedDatabaseStatus]
+        key "storageContainerIdentity": str
+        key "storageContainerSasToken": str
+        key "storageContainerUri": str
+        autoCompleteRestore: bool
+        catalogCollation: Union[str, CatalogCollationType]
+        collation: str
+        createMode: Union[str, ManagedDatabaseCreateMode]
+        creationDate: str
+        crossSubscriptionRestorableDroppedDatabaseId: str
+        crossSubscriptionSourceDatabaseId: str
+        crossSubscriptionTargetManagedInstanceId: str
+        defaultSecondaryLocation: str
+        earliestRestorePoint: str
+        extendedAccessibilityInfo: ManagedDatabaseExtendedAccessibilityInfo
+        failoverGroupId: str
+        isLedgerOn: bool
+        lastBackupName: str
+        longTermRetentionBackupResourceId: str
+        recoverableDatabaseId: str
+        restorableDroppedDatabaseId: str
+        restorePointInTime: str
+        sourceDatabaseId: str
+        status: Union[str, ManagedDatabaseStatus]
+        storageContainerIdentity: str
+        storageContainerSasToken: str
+        storageContainerUri: str
+
+
+    class azure.mgmt.sql.types.ManagedDatabaseSecurityAlertPolicy(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SecurityAlertPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: SecurityAlertPolicyProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ManagedDatabaseStartMoveDefinition(TypedDict, total=False):
+        key "destinationManagedDatabaseId": Required[str]
+        key "operationMode": Union[str, MoveOperationMode]
+        destinationManagedDatabaseId: str
+        operationMode: Union[str, MoveOperationMode]
+
+
+    class azure.mgmt.sql.types.ManagedDatabaseUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('ManagedDatabaseProperties', module='types')
+        properties: ManagedDatabaseProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.sql.types.ManagedInstance(TrackedResource):
+        key "id": str
+        key "identity": ForwardRef('ResourceIdentity', module='types')
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('ManagedInstanceProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        identity: ResourceIdentity
+        location: str
+        name: str
+        properties: ManagedInstanceProperties
+        sku: Sku
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.sql.types.ManagedInstanceAdministrator(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ManagedInstanceAdministratorProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ManagedInstanceAdministratorProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ManagedInstanceAdministratorProperties(TypedDict, total=False):
+        key "administratorType": Required[Union[str, ManagedInstanceAdministratorType]]
+        key "login": Required[str]
+        key "principalType": Union[str, ManagedInstanceAdministratorPrincipalType]
+        key "sid": Required[str]
+        key "tenantId": str
+        administratorType: Union[str, ManagedInstanceAdministratorType]
+        login: str
+        principalType: Union[str, ManagedInstanceAdministratorPrincipalType]
+        sid: str
+        tenantId: str
+
+
+    class azure.mgmt.sql.types.ManagedInstanceAdvancedThreatProtection(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('AdvancedThreatProtectionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: AdvancedThreatProtectionProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ManagedInstanceAzureADOnlyAuthProperties(TypedDict, total=False):
+        key "azureADOnlyAuthentication": Required[bool]
+        azureADOnlyAuthentication: bool
+
+
+    class azure.mgmt.sql.types.ManagedInstanceAzureADOnlyAuthentication(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ManagedInstanceAzureADOnlyAuthProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ManagedInstanceAzureADOnlyAuthProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ManagedInstanceDtc(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ManagedInstanceDtcProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ManagedInstanceDtcProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ManagedInstanceDtcProperties(TypedDict, total=False):
+        key "dtcEnabled": bool
+        key "dtcHostNameDnsSuffix": str
+        key "fqdnEnabled": bool
+        key "provisioningState": Union[str, ProvisioningState]
+        key "securitySettings": ForwardRef('ManagedInstanceDtcSecuritySettings', module='types')
+        dtcEnabled: bool
+        dtcHostNameDnsSuffix: str
+        externalDnsSuffixSearchList: list[str]
+        fqdnEnabled: bool
+        provisioningState: Union[str, ProvisioningState]
+        securitySettings: ManagedInstanceDtcSecuritySettings
+
+
+    class azure.mgmt.sql.types.ManagedInstanceDtcSecuritySettings(TypedDict, total=False):
+        key "snaLu6point2TransactionsEnabled": bool
+        key "transactionManagerCommunicationSettings": ForwardRef('ManagedInstanceDtcTransactionManagerCommunicationSettings', module='types')
+        key "xaTransactionsDefaultTimeout": int
+        key "xaTransactionsEnabled": bool
+        key "xaTransactionsMaximumTimeout": int
+        snaLu6point2TransactionsEnabled: bool
+        transactionManagerCommunicationSettings: ManagedInstanceDtcTransactionManagerCommunicationSettings
+        xaTransactionsDefaultTimeout: int
+        xaTransactionsEnabled: bool
+        xaTransactionsMaximumTimeout: int
+
+
+    class azure.mgmt.sql.types.ManagedInstanceDtcTransactionManagerCommunicationSettings(TypedDict, total=False):
+        key "allowInboundEnabled": bool
+        key "allowOutboundEnabled": bool
+        key "authentication": str
+        allowInboundEnabled: bool
+        allowOutboundEnabled: bool
+        authentication: str
+
+
+    class azure.mgmt.sql.types.ManagedInstanceEncryptionProtector(ProxyResource):
+        key "id": str
+        key "kind": str
+        key "name": str
+        key "properties": ForwardRef('ManagedInstanceEncryptionProtectorProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        kind: str
+        name: str
+        properties: ManagedInstanceEncryptionProtectorProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ManagedInstanceEncryptionProtectorProperties(TypedDict, total=False):
+        key "autoRotationEnabled": bool
+        key "serverKeyName": str
+        key "serverKeyType": Required[Union[str, ServerKeyType]]
+        key "thumbprint": str
+        key "uri": str
+        autoRotationEnabled: bool
+        serverKeyName: str
+        serverKeyType: Union[str, ServerKeyType]
+        thumbprint: str
+        uri: str
+
+
+    class azure.mgmt.sql.types.ManagedInstanceExternalAdministrator(TypedDict, total=False):
+        key "administratorType": Union[str, AdministratorType]
+        key "azureADOnlyAuthentication": bool
+        key "login": str
+        key "principalType": Union[str, PrincipalType]
+        key "sid": str
+        key "tenantId": str
+        administratorType: Union[str, AdministratorType]
+        azureADOnlyAuthentication: bool
+        login: str
+        principalType: Union[str, PrincipalType]
+        sid: str
+        tenantId: str
+
+
+    class azure.mgmt.sql.types.ManagedInstanceKey(ProxyResource):
+        key "id": str
+        key "kind": str
+        key "name": str
+        key "properties": ForwardRef('ManagedInstanceKeyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        kind: str
+        name: str
+        properties: ManagedInstanceKeyProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ManagedInstanceKeyProperties(TypedDict, total=False):
+        key "autoRotationEnabled": bool
+        key "creationDate": str
+        key "serverKeyType": Required[Union[str, ServerKeyType]]
+        key "thumbprint": str
+        key "uri": str
+        autoRotationEnabled: bool
+        creationDate: str
+        serverKeyType: Union[str, ServerKeyType]
+        thumbprint: str
+        uri: str
+
+
+    class azure.mgmt.sql.types.ManagedInstanceLongTermRetentionPolicy(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ManagedInstanceLongTermRetentionPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ManagedInstanceLongTermRetentionPolicyProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ManagedInstanceLongTermRetentionPolicyProperties(TypedDict, total=False):
+        key "backupStorageAccessTier": Union[str, BackupStorageAccessTier]
+        key "monthlyRetention": str
+        key "timeBasedImmutability": Union[str, TimeBasedImmutability]
+        key "timeBasedImmutabilityMode": Union[str, TimeBasedImmutabilityMode]
+        key "weekOfYear": int
+        key "weeklyRetention": str
+        key "yearlyRetention": str
+        backupStorageAccessTier: Union[str, BackupStorageAccessTier]
+        monthlyRetention: str
+        timeBasedImmutability: Union[str, TimeBasedImmutability]
+        timeBasedImmutabilityMode: Union[str, TimeBasedImmutabilityMode]
+        weekOfYear: int
+        weeklyRetention: str
+        yearlyRetention: str
+
+
+    class azure.mgmt.sql.types.ManagedInstancePairInfo(TypedDict, total=False):
+        key "partnerManagedInstanceId": str
+        key "primaryManagedInstanceId": str
+        partnerManagedInstanceId: str
+        primaryManagedInstanceId: str
+
+
+    class azure.mgmt.sql.types.ManagedInstancePecProperty(TypedDict, total=False):
+        key "id": str
+        key "properties": ForwardRef('ManagedInstancePrivateEndpointConnectionProperties', module='types')
+        id: str
+        properties: ManagedInstancePrivateEndpointConnectionProperties
+
+
+    class azure.mgmt.sql.types.ManagedInstancePrivateEndpointConnection(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ManagedInstancePrivateEndpointConnectionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ManagedInstancePrivateEndpointConnectionProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ManagedInstancePrivateEndpointConnectionProperties(TypedDict, total=False):
+        key "privateEndpoint": ForwardRef('ManagedInstancePrivateEndpointProperty', module='types')
+        key "privateLinkServiceConnectionState": ForwardRef('ManagedInstancePrivateLinkServiceConnectionStateProperty', module='types')
+        key "provisioningState": str
+        privateEndpoint: ManagedInstancePrivateEndpointProperty
+        privateLinkServiceConnectionState: ManagedInstancePrivateLinkServiceConnectionStateProperty
+        provisioningState: str
+
+
+    class azure.mgmt.sql.types.ManagedInstancePrivateEndpointProperty(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.sql.types.ManagedInstancePrivateLinkServiceConnectionStateProperty(TypedDict, total=False):
+        key "actionsRequired": str
+        key "description": Required[str]
+        key "status": Required[str]
+        actionsRequired: str
+        description: str
+        status: str
+
+
+    class azure.mgmt.sql.types.ManagedInstanceProperties(TypedDict, total=False):
+        key "administratorLogin": str
+        key "administratorLoginPassword": str
+        key "administrators": ForwardRef('ManagedInstanceExternalAdministrator', module='types')
+        key "authenticationMetadata": Union[str, AuthMetadataLookupModes]
+        key "collation": str
+        key "createTime": str
+        key "currentBackupStorageRedundancy": Union[str, BackupStorageRedundancy]
+        key "databaseFormat": Union[str, ManagedInstanceDatabaseFormat]
+        key "dnsZone": str
+        key "dnsZonePartner": str
+        key "externalGovernanceStatus": Union[str, ExternalGovernanceStatus]
+        key "fullyQualifiedDomainName": str
+        key "hybridSecondaryUsage": Union[str, HybridSecondaryUsage]
+        key "hybridSecondaryUsageDetected": Union[str, HybridSecondaryUsageDetected]
+        key "instancePoolId": str
+        key "isGeneralPurposeV2": bool
+        key "keyId": str
+        key "licenseType": Union[str, ManagedInstanceLicenseType]
+        key "maintenanceConfigurationId": str
+        key "managedInstanceCreateMode": Union[str, ManagedServerCreateMode]
+        key "memorySizeInGB": int
+        key "minimalTlsVersion": str
+        key "pricingModel": Union[str, PricingModel]
+        key "primaryUserAssignedIdentityId": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "proxyOverride": Union[str, ManagedInstanceProxyOverride]
+        key "publicDataEndpointEnabled": bool
+        key "requestedBackupStorageRedundancy": Union[str, BackupStorageRedundancy]
+        key "requestedLogicalAvailabilityZone": Union[str, AvailabilityZoneType]
+        key "restorePointInTime": str
+        key "servicePrincipal": ForwardRef('ServicePrincipal', module='types')
+        key "sourceManagedInstanceId": str
+        key "state": str
+        key "storageIOps": int
+        key "storageSizeInGB": int
+        key "storageThroughputMBps": int
+        key "subnetId": str
+        key "timezoneId": str
+        key "vCores": int
+        key "virtualClusterId": str
+        key "zoneRedundant": bool
+        administratorLogin: str
+        administratorLoginPassword: str
+        administrators: ManagedInstanceExternalAdministrator
+        authenticationMetadata: Union[str, AuthMetadataLookupModes]
+        collation: str
+        createTime: str
+        currentBackupStorageRedundancy: Union[str, BackupStorageRedundancy]
+        databaseFormat: Union[str, ManagedInstanceDatabaseFormat]
+        dnsZone: str
+        dnsZonePartner: str
+        externalGovernanceStatus: Union[str, ExternalGovernanceStatus]
+        fullyQualifiedDomainName: str
+        hybridSecondaryUsage: Union[str, HybridSecondaryUsage]
+        hybridSecondaryUsageDetected: Union[str, HybridSecondaryUsageDetected]
+        instancePoolId: str
+        isGeneralPurposeV2: bool
+        keyId: str
+        licenseType: Union[str, ManagedInstanceLicenseType]
+        maintenanceConfigurationId: str
+        managedInstanceCreateMode: Union[str, ManagedServerCreateMode]
+        memorySizeInGB: int
+        minimalTlsVersion: str
+        pricingModel: Union[str, PricingModel]
+        primaryUserAssignedIdentityId: str
+        privateEndpointConnections: list[ManagedInstancePecProperty]
+        provisioningState: Union[str, ProvisioningState]
+        proxyOverride: Union[str, ManagedInstanceProxyOverride]
+        publicDataEndpointEnabled: bool
+        requestedBackupStorageRedundancy: Union[str, BackupStorageRedundancy]
+        requestedLogicalAvailabilityZone: Union[str, AvailabilityZoneType]
+        restorePointInTime: str
+        servicePrincipal: ServicePrincipal
+        sourceManagedInstanceId: str
+        state: str
+        storageIOps: int
+        storageSizeInGB: int
+        storageThroughputMBps: int
+        subnetId: str
+        timezoneId: str
+        vCores: int
+        virtualClusterId: str
+        zoneRedundant: bool
+
+
+    class azure.mgmt.sql.types.ManagedInstanceUpdate(TypedDict, total=False):
+        key "identity": ForwardRef('ResourceIdentity', module='types')
+        key "properties": ForwardRef('ManagedInstanceProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        identity: ResourceIdentity
+        properties: ManagedInstanceProperties
+        sku: Sku
+        tags: dict[str, str]
+
+
+    class azure.mgmt.sql.types.ManagedInstanceValidateAzureKeyVaultEncryptionKeyRequest(TypedDict, total=False):
+        key "tdeKeyUri": Required[str]
+        tdeKeyUri: str
+
+
+    class azure.mgmt.sql.types.ManagedInstanceVulnerabilityAssessment(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ManagedInstanceVulnerabilityAssessmentProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ManagedInstanceVulnerabilityAssessmentProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ManagedInstanceVulnerabilityAssessmentProperties(TypedDict, total=False):
+        key "recurringScans": ForwardRef('VulnerabilityAssessmentRecurringScansProperties', module='types')
+        key "storageAccountAccessKey": str
+        key "storageContainerPath": Required[str]
+        key "storageContainerSasKey": str
+        recurringScans: VulnerabilityAssessmentRecurringScansProperties
+        storageAccountAccessKey: str
+        storageContainerPath: str
+        storageContainerSasKey: str
+
+
+    class azure.mgmt.sql.types.ManagedLedgerDigestUploads(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ManagedLedgerDigestUploadsProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ManagedLedgerDigestUploadsProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ManagedLedgerDigestUploadsProperties(TypedDict, total=False):
+        key "digestStorageEndpoint": str
+        key "state": Union[str, ManagedLedgerDigestUploadsState]
+        digestStorageEndpoint: str
+        state: Union[str, ManagedLedgerDigestUploadsState]
+
+
+    class azure.mgmt.sql.types.ManagedServerDnsAliasAcquisition(TypedDict, total=False):
+        key "oldManagedServerDnsAliasResourceId": Required[str]
+        oldManagedServerDnsAliasResourceId: str
+
+
+    class azure.mgmt.sql.types.ManagedServerDnsAliasCreation(TypedDict, total=False):
+        key "createDnsRecord": bool
+        createDnsRecord: bool
+
+
+    class azure.mgmt.sql.types.ManagedServerSecurityAlertPolicy(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SecurityAlertsPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: SecurityAlertsPolicyProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ManagedTransparentDataEncryption(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ManagedTransparentDataEncryptionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ManagedTransparentDataEncryptionProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ManagedTransparentDataEncryptionProperties(TypedDict, total=False):
+        key "state": Required[Union[str, TransparentDataEncryptionState]]
+        state: Union[str, TransparentDataEncryptionState]
+
+
+    class azure.mgmt.sql.types.NetworkIsolationSettings(TypedDict, total=False):
+        key "sqlServerResourceId": str
+        key "storageAccountResourceId": str
+        sqlServerResourceId: str
+        storageAccountResourceId: str
+
+
+    class azure.mgmt.sql.types.PartnerInfo(TypedDict, total=False):
+        key "id": Required[str]
+        key "location": str
+        key "replicationRole": Union[str, FailoverGroupReplicationRole]
+        id: str
+        location: str
+        replicationRole: Union[str, FailoverGroupReplicationRole]
+
+
+    class azure.mgmt.sql.types.PartnerRegionInfo(TypedDict, total=False):
+        key "location": str
+        key "replicationRole": Union[str, InstanceFailoverGroupReplicationRole]
+        location: str
+        replicationRole: Union[str, InstanceFailoverGroupReplicationRole]
+
+
+    class azure.mgmt.sql.types.PrivateEndpointConnection(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('PrivateEndpointConnectionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: PrivateEndpointConnectionProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.PrivateEndpointConnectionProperties(TypedDict, total=False):
+        key "privateEndpoint": ForwardRef('PrivateEndpointProperty', module='types')
+        key "privateLinkServiceConnectionState": ForwardRef('PrivateLinkServiceConnectionStateProperty', module='types')
+        key "provisioningState": Union[str, PrivateEndpointProvisioningState]
+        groupIds: list[str]
+        privateEndpoint: PrivateEndpointProperty
+        privateLinkServiceConnectionState: PrivateLinkServiceConnectionStateProperty
+        provisioningState: Union[str, PrivateEndpointProvisioningState]
+
+
+    class azure.mgmt.sql.types.PrivateEndpointProperty(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.sql.types.PrivateLinkServiceConnectionStateProperty(TypedDict, total=False):
+        key "actionsRequired": Union[str, PrivateLinkServiceConnectionStateActionsRequire]
+        key "description": Required[str]
+        key "status": Required[Union[str, PrivateLinkServiceConnectionStateStatus]]
+        actionsRequired: Union[str, PrivateLinkServiceConnectionStateActionsRequire]
+        description: str
+        status: Union[str, PrivateLinkServiceConnectionStateStatus]
+
+
+    class azure.mgmt.sql.types.ProxyResource(Resource):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ProxyResourceWithWritableName(ResourceWithWritableName):
+        key "id": str
+        key "name": str
+        key "type": str
+        id: str
+        name: str
+        type: str
+
+
+    class azure.mgmt.sql.types.RecommendedAction(ProxyResource):
+        key "id": str
+        key "kind": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('RecommendedActionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        kind: str
+        location: str
+        name: str
+        properties: RecommendedActionProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.RecommendedActionErrorInfo(TypedDict, total=False):
+        key "errorCode": str
+        key "isRetryable": Union[str, IsRetryable]
+        errorCode: str
+        isRetryable: Union[str, IsRetryable]
+
+
+    class azure.mgmt.sql.types.RecommendedActionImpactRecord(TypedDict, total=False):
+        key "absoluteValue": float
+        key "changeValueAbsolute": float
+        key "changeValueRelative": float
+        key "dimensionName": str
+        key "unit": str
+        absoluteValue: float
+        changeValueAbsolute: float
+        changeValueRelative: float
+        dimensionName: str
+        unit: str
+
+
+    class azure.mgmt.sql.types.RecommendedActionImplementationInfo(TypedDict, total=False):
+        key "method": Union[str, ImplementationMethod]
+        key "script": str
+        method: Union[str, ImplementationMethod]
+        script: str
+
+
+    class azure.mgmt.sql.types.RecommendedActionMetricInfo(TypedDict, total=False):
+        key "metricName": str
+        key "startTime": str
+        key "timeGrain": str
+        key "unit": str
+        key "value": float
+        metricName: str
+        startTime: str
+        timeGrain: str
+        unit: str
+        value: float
+
+
+    class azure.mgmt.sql.types.RecommendedActionProperties(TypedDict, total=False):
+        key "errorDetails": ForwardRef('RecommendedActionErrorInfo', module='types')
+        key "executeActionDuration": str
+        key "executeActionInitiatedBy": Union[str, RecommendedActionInitiatedBy]
+        key "executeActionInitiatedTime": str
+        key "executeActionStartTime": str
+        key "implementationDetails": ForwardRef('RecommendedActionImplementationInfo', module='types')
+        key "isArchivedAction": bool
+        key "isExecutableAction": bool
+        key "isRevertableAction": bool
+        key "lastRefresh": str
+        key "recommendationReason": str
+        key "revertActionDuration": str
+        key "revertActionInitiatedBy": Union[str, RecommendedActionInitiatedBy]
+        key "revertActionInitiatedTime": str
+        key "revertActionStartTime": str
+        key "score": int
+        key "state": Required[RecommendedActionStateInfo]
+        key "validSince": str
+        details: dict[str, str]
+        errorDetails: RecommendedActionErrorInfo
+        estimatedImpact: list[RecommendedActionImpactRecord]
+        executeActionDuration: str
+        executeActionInitiatedBy: Union[str, RecommendedActionInitiatedBy]
+        executeActionInitiatedTime: str
+        executeActionStartTime: str
+        implementationDetails: RecommendedActionImplementationInfo
+        isArchivedAction: bool
+        isExecutableAction: bool
+        isRevertableAction: bool
+        lastRefresh: str
+        linkedObjects: list[str]
+        observedImpact: list[RecommendedActionImpactRecord]
+        recommendationReason: str
+        revertActionDuration: str
+        revertActionInitiatedBy: Union[str, RecommendedActionInitiatedBy]
+        revertActionInitiatedTime: str
+        revertActionStartTime: str
+        score: int
+        state: RecommendedActionStateInfo
+        timeSeries: list[RecommendedActionMetricInfo]
+        validSince: str
+
+
+    class azure.mgmt.sql.types.RecommendedActionStateInfo(TypedDict, total=False):
+        key "actionInitiatedBy": Union[str, RecommendedActionInitiatedBy]
+        key "currentValue": Required[Union[str, RecommendedActionCurrentState]]
+        key "lastModified": str
+        actionInitiatedBy: Union[str, RecommendedActionInitiatedBy]
+        currentValue: Union[str, RecommendedActionCurrentState]
+        lastModified: str
+
+
+    class azure.mgmt.sql.types.RecommendedSensitivityLabelUpdate(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RecommendedSensitivityLabelUpdateProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: RecommendedSensitivityLabelUpdateProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.RecommendedSensitivityLabelUpdateList(TypedDict, total=False):
+        operations: list[RecommendedSensitivityLabelUpdate]
+
+
+    class azure.mgmt.sql.types.RecommendedSensitivityLabelUpdateProperties(TypedDict, total=False):
+        key "column": Required[str]
+        key "op": Required[Union[str, RecommendedSensitivityLabelUpdateKind]]
+        key "schema": Required[str]
+        key "table": Required[str]
+        column: str
+        op: Union[str, RecommendedSensitivityLabelUpdateKind]
+        schema: str
+        table: str
+
+
+    class azure.mgmt.sql.types.ReplicationLink(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ReplicationLinkProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ReplicationLinkProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ReplicationLinkProperties(TypedDict, total=False):
+        key "isTerminationAllowed": bool
+        key "linkType": Union[str, ReplicationLinkType]
+        key "partnerDatabase": str
+        key "partnerDatabaseId": str
+        key "partnerLocation": str
+        key "partnerRole": Union[str, ReplicationRole]
+        key "partnerServer": str
+        key "percentComplete": int
+        key "replicationMode": str
+        key "replicationState": Union[str, ReplicationState]
+        key "role": Union[str, ReplicationRole]
+        key "startTime": str
+        isTerminationAllowed: bool
+        linkType: Union[str, ReplicationLinkType]
+        partnerDatabase: str
+        partnerDatabaseId: str
+        partnerLocation: str
+        partnerRole: Union[str, ReplicationRole]
+        partnerServer: str
+        percentComplete: int
+        replicationMode: str
+        replicationState: Union[str, ReplicationState]
+        role: Union[str, ReplicationRole]
+        startTime: str
+
+
+    class azure.mgmt.sql.types.ReplicationLinkUpdate(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ReplicationLinkUpdateProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ReplicationLinkUpdateProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ReplicationLinkUpdateProperties(TypedDict, total=False):
+        key "linkType": Union[str, ReplicationLinkType]
+        linkType: Union[str, ReplicationLinkType]
+
+
+    class azure.mgmt.sql.types.Resource(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ResourceIdentity(TypedDict, total=False):
+        key "principalId": str
+        key "tenantId": str
+        key "type": Union[str, IdentityType]
+        principalId: str
+        tenantId: str
+        type: Union[str, IdentityType]
+        userAssignedIdentities: dict[str, UserIdentity]
+
+
+    class azure.mgmt.sql.types.ResourceMoveDefinition(TypedDict, total=False):
+        key "id": Required[str]
+        id: str
+
+
+    class azure.mgmt.sql.types.ResourceWithWritableName(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "type": str
+        id: str
+        name: str
+        type: str
+
+
+    class azure.mgmt.sql.types.ScheduleItem(TypedDict, total=False):
+        key "startDay": Required[Union[str, DayOfWeek]]
+        key "startTime": Required[str]
+        key "stopDay": Required[Union[str, DayOfWeek]]
+        key "stopTime": Required[str]
+        startDay: Union[str, DayOfWeek]
+        startTime: str
+        stopDay: Union[str, DayOfWeek]
+        stopTime: str
+
+
+    class azure.mgmt.sql.types.SecurityAlertPolicyProperties(TypedDict, total=False):
+        key "creationTime": str
+        key "emailAccountAdmins": bool
+        key "retentionDays": int
+        key "state": Required[Union[str, SecurityAlertPolicyState]]
+        key "storageAccountAccessKey": str
+        key "storageEndpoint": str
+        creationTime: str
+        disabledAlerts: list[str]
+        emailAccountAdmins: bool
+        emailAddresses: list[str]
+        retentionDays: int
+        state: Union[str, SecurityAlertPolicyState]
+        storageAccountAccessKey: str
+        storageEndpoint: str
+
+
+    class azure.mgmt.sql.types.SecurityAlertsPolicyProperties(TypedDict, total=False):
+        key "creationTime": str
+        key "emailAccountAdmins": bool
+        key "retentionDays": int
+        key "state": Required[Union[str, SecurityAlertsPolicyState]]
+        key "storageAccountAccessKey": str
+        key "storageEndpoint": str
+        creationTime: str
+        disabledAlerts: list[str]
+        emailAccountAdmins: bool
+        emailAddresses: list[str]
+        retentionDays: int
+        state: Union[str, SecurityAlertsPolicyState]
+        storageAccountAccessKey: str
+        storageEndpoint: str
+
+
+    class azure.mgmt.sql.types.SensitivityLabel(ProxyResource):
+        key "id": str
+        key "managedBy": str
+        key "name": str
+        key "properties": ForwardRef('SensitivityLabelProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        managedBy: str
+        name: str
+        properties: SensitivityLabelProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.SensitivityLabelProperties(TypedDict, total=False):
+        key "clientClassificationSource": Union[str, ClientClassificationSource]
+        key "columnName": str
+        key "informationType": str
+        key "informationTypeId": str
+        key "isDisabled": bool
+        key "labelId": str
+        key "labelName": str
+        key "rank": Union[str, SensitivityLabelRank]
+        key "schemaName": str
+        key "tableName": str
+        clientClassificationSource: Union[str, ClientClassificationSource]
+        columnName: str
+        informationType: str
+        informationTypeId: str
+        isDisabled: bool
+        labelId: str
+        labelName: str
+        rank: Union[str, SensitivityLabelRank]
+        schemaName: str
+        tableName: str
+
+
+    class azure.mgmt.sql.types.SensitivityLabelUpdate(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SensitivityLabelUpdateProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: SensitivityLabelUpdateProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.SensitivityLabelUpdateList(TypedDict, total=False):
+        operations: list[SensitivityLabelUpdate]
+
+
+    class azure.mgmt.sql.types.SensitivityLabelUpdateProperties(TypedDict, total=False):
+        key "column": Required[str]
+        key "op": Required[Union[str, SensitivityLabelUpdateKind]]
+        key "schema": Required[str]
+        key "sensitivityLabel": ForwardRef('SensitivityLabel', module='types')
+        key "table": Required[str]
+        column: str
+        op: Union[str, SensitivityLabelUpdateKind]
+        schema: str
+        sensitivityLabel: SensitivityLabel
+        table: str
+
+
+    class azure.mgmt.sql.types.Server(TrackedResource):
+        key "id": str
+        key "identity": ForwardRef('ResourceIdentity', module='types')
+        key "kind": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('ServerProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        identity: ResourceIdentity
+        kind: str
+        location: str
+        name: str
+        properties: ServerProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.sql.types.ServerAdvancedThreatProtection(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('AdvancedThreatProtectionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: AdvancedThreatProtectionProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ServerAutomaticTuning(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('AutomaticTuningServerProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: AutomaticTuningServerProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ServerAzureADAdministrator(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('AdministratorProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: AdministratorProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ServerAzureADOnlyAuthentication(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('AzureADOnlyAuthProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: AzureADOnlyAuthProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ServerBlobAuditingPolicy(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ServerBlobAuditingPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ServerBlobAuditingPolicyProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ServerBlobAuditingPolicyProperties(TypedDict, total=False):
+        key "isAzureMonitorTargetEnabled": bool
+        key "isDevopsAuditEnabled": bool
+        key "isManagedIdentityInUse": bool
+        key "isStorageSecondaryKeyInUse": bool
+        key "queueDelayMs": int
+        key "retentionDays": int
+        key "state": Required[Union[str, BlobAuditingPolicyState]]
+        key "storageAccountAccessKey": str
+        key "storageAccountSubscriptionId": str
+        key "storageEndpoint": str
+        auditActionsAndGroups: list[str]
+        isAzureMonitorTargetEnabled: bool
+        isDevopsAuditEnabled: bool
+        isManagedIdentityInUse: bool
+        isStorageSecondaryKeyInUse: bool
+        queueDelayMs: int
+        requiredFields: list[str]
+        retentionDays: int
+        state: Union[str, BlobAuditingPolicyState]
+        storageAccountAccessKey: str
+        storageAccountSubscriptionId: str
+        storageEndpoint: str
+
+
+    class azure.mgmt.sql.types.ServerConfigurationOption(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ServerConfigurationOptionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ServerConfigurationOptionProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ServerConfigurationOptionProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "serverConfigurationOptionValue": Required[int]
+        provisioningState: Union[str, ProvisioningState]
+        serverConfigurationOptionValue: int
+
+
+    class azure.mgmt.sql.types.ServerConnectionPolicy(ProxyResource):
+        key "id": str
+        key "kind": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('ServerConnectionPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        kind: str
+        location: str
+        name: str
+        properties: ServerConnectionPolicyProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ServerConnectionPolicyProperties(TypedDict, total=False):
+        key "connectionType": Required[Union[str, ServerConnectionType]]
+        connectionType: Union[str, ServerConnectionType]
+
+
+    class azure.mgmt.sql.types.ServerDevOpsAuditSettingsProperties(TypedDict, total=False):
+        key "isAzureMonitorTargetEnabled": bool
+        key "isManagedIdentityInUse": bool
+        key "state": Required[Union[str, BlobAuditingPolicyState]]
+        key "storageAccountAccessKey": str
+        key "storageAccountSubscriptionId": str
+        key "storageEndpoint": str
+        isAzureMonitorTargetEnabled: bool
+        isManagedIdentityInUse: bool
+        state: Union[str, BlobAuditingPolicyState]
+        storageAccountAccessKey: str
+        storageAccountSubscriptionId: str
+        storageEndpoint: str
+
+
+    class azure.mgmt.sql.types.ServerDevOpsAuditingSettings(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ServerDevOpsAuditSettingsProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ServerDevOpsAuditSettingsProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ServerDnsAliasAcquisition(TypedDict, total=False):
+        key "oldServerDnsAliasId": Required[str]
+        oldServerDnsAliasId: str
+
+
+    class azure.mgmt.sql.types.ServerExternalAdministrator(TypedDict, total=False):
+        key "administratorType": Union[str, AdministratorType]
+        key "azureADOnlyAuthentication": bool
+        key "login": str
+        key "principalType": Union[str, PrincipalType]
+        key "sid": str
+        key "tenantId": str
+        administratorType: Union[str, AdministratorType]
+        azureADOnlyAuthentication: bool
+        login: str
+        principalType: Union[str, PrincipalType]
+        sid: str
+        tenantId: str
+
+
+    class azure.mgmt.sql.types.ServerFirewallRuleProperties(TypedDict, total=False):
+        key "endIpAddress": str
+        key "startIpAddress": str
+        endIpAddress: str
+        startIpAddress: str
+
+
+    class azure.mgmt.sql.types.ServerInfo(TypedDict, total=False):
+        key "serverId": Required[str]
+        serverId: str
+
+
+    class azure.mgmt.sql.types.ServerKey(ProxyResource):
+        key "id": str
+        key "kind": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('ServerKeyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        kind: str
+        location: str
+        name: str
+        properties: ServerKeyProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ServerKeyProperties(TypedDict, total=False):
+        key "autoRotationEnabled": bool
+        key "creationDate": str
+        key "keyVersion": str
+        key "serverKeyType": Required[Union[str, ServerKeyType]]
+        key "subregion": str
+        key "thumbprint": str
+        key "uri": str
+        autoRotationEnabled: bool
+        creationDate: str
+        keyVersion: str
+        serverKeyType: Union[str, ServerKeyType]
+        subregion: str
+        thumbprint: str
+        uri: str
+
+
+    class azure.mgmt.sql.types.ServerPrivateEndpointConnection(TypedDict, total=False):
+        key "id": str
+        key "properties": ForwardRef('PrivateEndpointConnectionProperties', module='types')
+        id: str
+        properties: PrivateEndpointConnectionProperties
+
+
+    class azure.mgmt.sql.types.ServerProperties(TypedDict, total=False):
+        key "administratorLogin": str
+        key "administratorLoginPassword": str
+        key "administrators": ForwardRef('ServerExternalAdministrator', module='types')
+        key "createMode": Union[str, ServerCreateMode]
+        key "externalGovernanceStatus": Union[str, ExternalGovernanceStatus]
+        key "federatedClientId": str
+        key "fullyQualifiedDomainName": str
+        key "isIPv6Enabled": Union[str, ServerNetworkAccessFlag]
+        key "keyId": str
+        key "minimalTlsVersion": Union[str, MinimalTlsVersion]
+        key "primaryUserAssignedIdentityId": str
+        key "publicNetworkAccess": Union[str, ServerPublicNetworkAccessFlag]
+        key "restrictOutboundNetworkAccess": Union[str, ServerNetworkAccessFlag]
+        key "retentionDays": int
+        key "state": str
+        key "version": str
+        key "workspaceFeature": Union[str, ServerWorkspaceFeature]
+        administratorLogin: str
+        administratorLoginPassword: str
+        administrators: ServerExternalAdministrator
+        createMode: Union[str, ServerCreateMode]
+        externalGovernanceStatus: Union[str, ExternalGovernanceStatus]
+        federatedClientId: str
+        fullyQualifiedDomainName: str
+        isIPv6Enabled: Union[str, ServerNetworkAccessFlag]
+        keyId: str
+        minimalTlsVersion: Union[str, MinimalTlsVersion]
+        primaryUserAssignedIdentityId: str
+        privateEndpointConnections: list[ServerPrivateEndpointConnection]
+        publicNetworkAccess: Union[str, ServerPublicNetworkAccessFlag]
+        restrictOutboundNetworkAccess: Union[str, ServerNetworkAccessFlag]
+        retentionDays: int
+        state: str
+        version: str
+        workspaceFeature: Union[str, ServerWorkspaceFeature]
+
+
+    class azure.mgmt.sql.types.ServerSecurityAlertPolicy(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SecurityAlertsPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: SecurityAlertsPolicyProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ServerTrustCertificate(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ServerTrustCertificateProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ServerTrustCertificateProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ServerTrustCertificateProperties(TypedDict, total=False):
+        key "certificateName": str
+        key "publicBlob": str
+        key "thumbprint": str
+        certificateName: str
+        publicBlob: str
+        thumbprint: str
+
+
+    class azure.mgmt.sql.types.ServerTrustGroup(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ServerTrustGroupProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ServerTrustGroupProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ServerTrustGroupProperties(TypedDict, total=False):
+        key "groupMembers": Required[list[ServerInfo]]
+        key "trustScopes": Required[list[Union[str, ServerTrustGroupPropertiesTrustScopesItem]]]
+        groupMembers: list[ServerInfo]
+        trustScopes: list[Union[str, ServerTrustGroupPropertiesTrustScopesItem]]
+
+
+    class azure.mgmt.sql.types.ServerUpdate(TypedDict, total=False):
+        key "identity": ForwardRef('ResourceIdentity', module='types')
+        key "properties": ForwardRef('ServerProperties', module='types')
+        identity: ResourceIdentity
+        properties: ServerProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.sql.types.ServerVulnerabilityAssessment(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ServerVulnerabilityAssessmentProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ServerVulnerabilityAssessmentProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.ServerVulnerabilityAssessmentProperties(TypedDict, total=False):
+        key "recurringScans": ForwardRef('VulnerabilityAssessmentRecurringScansProperties', module='types')
+        key "storageAccountAccessKey": str
+        key "storageContainerPath": Required[str]
+        key "storageContainerSasKey": str
+        recurringScans: VulnerabilityAssessmentRecurringScansProperties
+        storageAccountAccessKey: str
+        storageContainerPath: str
+        storageContainerSasKey: str
+
+
+    class azure.mgmt.sql.types.ServicePrincipal(TypedDict, total=False):
+        key "clientId": str
+        key "principalId": str
+        key "tenantId": str
+        key "type": Union[str, ServicePrincipalType]
+        clientId: str
+        principalId: str
+        tenantId: str
+        type: Union[str, ServicePrincipalType]
+
+
+    class azure.mgmt.sql.types.Sku(TypedDict, total=False):
+        key "capacity": int
+        key "family": str
+        key "name": Required[str]
+        key "size": str
+        key "tier": str
+        capacity: int
+        family: str
+        name: str
+        size: str
+        tier: str
+
+
+    class azure.mgmt.sql.types.SqlAgentConfiguration(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SqlAgentConfigurationProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: SqlAgentConfigurationProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.SqlAgentConfigurationProperties(TypedDict, total=False):
+        key "state": Union[str, SqlAgentConfigurationPropertiesState]
+        state: Union[str, SqlAgentConfigurationPropertiesState]
+
+
+    class azure.mgmt.sql.types.SqlVulnerabilityAssessment(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SqlVulnerabilityAssessmentPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: SqlVulnerabilityAssessmentPolicyProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.SqlVulnerabilityAssessmentPolicyProperties(TypedDict, total=False):
+        key "state": Union[str, SqlVulnerabilityAssessmentState]
+        state: Union[str, SqlVulnerabilityAssessmentState]
+
+
+    class azure.mgmt.sql.types.StartStopManagedInstanceSchedule(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('StartStopManagedInstanceScheduleProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: StartStopManagedInstanceScheduleProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.StartStopManagedInstanceScheduleProperties(TypedDict, total=False):
+        key "description": str
+        key "nextExecutionTime": str
+        key "nextRunAction": str
+        key "scheduleList": Required[list[ScheduleItem]]
+        key "timeZoneId": str
+        description: str
+        nextExecutionTime: str
+        nextRunAction: str
+        scheduleList: list[ScheduleItem]
+        timeZoneId: str
+
+
+    class azure.mgmt.sql.types.SyncAgent(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('SyncAgentProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: SyncAgentProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.SyncAgentProperties(TypedDict, total=False):
+        key "expiryTime": str
+        key "isUpToDate": bool
+        key "lastAliveTime": str
+        key "name": str
+        key "state": Union[str, SyncAgentState]
+        key "syncDatabaseId": str
+        key "version": str
+        expiryTime: str
+        isUpToDate: bool
+        lastAliveTime: str
+        name: str
+        state: Union[str, SyncAgentState]
+        syncDatabaseId: str
+        version: str
+
+
+    class azure.mgmt.sql.types.SyncGroup(ProxyResource):
+        key "id": str
+        key "identity": ForwardRef('DataSyncParticipantIdentity', module='types')
+        key "name": str
+        key "properties": ForwardRef('SyncGroupProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        identity: DataSyncParticipantIdentity
+        name: str
+        properties: SyncGroupProperties
+        sku: Sku
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.SyncGroupProperties(TypedDict, total=False):
+        key "conflictLoggingRetentionInDays": int
+        key "conflictResolutionPolicy": Union[str, SyncConflictResolutionPolicy]
+        key "enableConflictLogging": bool
+        key "hubDatabasePassword": str
+        key "hubDatabaseUserName": str
+        key "interval": int
+        key "lastSyncTime": str
+        key "privateEndpointName": str
+        key "schema": ForwardRef('SyncGroupSchema', module='types')
+        key "syncDatabaseId": str
+        key "syncState": Union[str, SyncGroupState]
+        key "usePrivateLinkConnection": bool
+        conflictLoggingRetentionInDays: int
+        conflictResolutionPolicy: Union[str, SyncConflictResolutionPolicy]
+        enableConflictLogging: bool
+        hubDatabasePassword: str
+        hubDatabaseUserName: str
+        interval: int
+        lastSyncTime: str
+        privateEndpointName: str
+        schema: SyncGroupSchema
+        syncDatabaseId: str
+        syncState: Union[str, SyncGroupState]
+        usePrivateLinkConnection: bool
+
+
+    class azure.mgmt.sql.types.SyncGroupSchema(TypedDict, total=False):
+        key "masterSyncMemberName": str
+        masterSyncMemberName: str
+        tables: list[SyncGroupSchemaTable]
+
+
+    class azure.mgmt.sql.types.SyncGroupSchemaTable(TypedDict, total=False):
+        key "quotedName": str
+        columns: list[SyncGroupSchemaTableColumn]
+        quotedName: str
+
+
+    class azure.mgmt.sql.types.SyncGroupSchemaTableColumn(TypedDict, total=False):
+        key "dataSize": str
+        key "dataType": str
+        key "quotedName": str
+        dataSize: str
+        dataType: str
+        quotedName: str
+
+
+    class azure.mgmt.sql.types.SyncMember(ProxyResource):
+        key "id": str
+        key "identity": ForwardRef('DataSyncParticipantIdentity', module='types')
+        key "name": str
+        key "properties": ForwardRef('SyncMemberProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        identity: DataSyncParticipantIdentity
+        name: str
+        properties: SyncMemberProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.SyncMemberProperties(TypedDict, total=False):
+        key "databaseName": str
+        key "databaseType": Union[str, SyncMemberDbType]
+        key "password": str
+        key "privateEndpointName": str
+        key "serverName": str
+        key "sqlServerDatabaseId": str
+        key "syncAgentId": str
+        key "syncDirection": Union[str, SyncDirection]
+        key "syncMemberAzureDatabaseResourceId": str
+        key "syncState": Union[str, SyncMemberState]
+        key "usePrivateLinkConnection": bool
+        key "userName": str
+        databaseName: str
+        databaseType: Union[str, SyncMemberDbType]
+        password: str
+        privateEndpointName: str
+        serverName: str
+        sqlServerDatabaseId: str
+        syncAgentId: str
+        syncDirection: Union[str, SyncDirection]
+        syncMemberAzureDatabaseResourceId: str
+        syncState: Union[str, SyncMemberState]
+        usePrivateLinkConnection: bool
+        userName: str
+
+
+    class azure.mgmt.sql.types.SystemData(TypedDict, total=False):
+        key "createdAt": str
+        key "createdBy": str
+        key "createdByType": Union[str, CreatedByType]
+        key "lastModifiedAt": str
+        key "lastModifiedBy": str
+        key "lastModifiedByType": Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
+
+
+    class azure.mgmt.sql.types.TdeCertificate(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('TdeCertificateProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: TdeCertificateProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.TdeCertificateProperties(TypedDict, total=False):
+        key "certPassword": str
+        key "privateBlob": Required[str]
+        certPassword: str
+        privateBlob: str
+
+
+    class azure.mgmt.sql.types.TrackedResource(Resource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.sql.types.TransparentDataEncryptionProperties(TypedDict, total=False):
+        key "scanState": Union[str, TransparentDataEncryptionScanState]
+        key "state": Required[Union[str, TransparentDataEncryptionState]]
+        scanState: Union[str, TransparentDataEncryptionScanState]
+        state: Union[str, TransparentDataEncryptionState]
+
+
+    class azure.mgmt.sql.types.UpdateLongTermRetentionBackupParameters(TypedDict, total=False):
+        key "properties": ForwardRef('UpdateLongTermRetentionBackupParametersProperties', module='types')
+        properties: UpdateLongTermRetentionBackupParametersProperties
+
+
+    class azure.mgmt.sql.types.UpdateLongTermRetentionBackupParametersProperties(TypedDict, total=False):
+        key "requestedBackupStorageRedundancy": Union[str, BackupStorageRedundancy]
+        requestedBackupStorageRedundancy: Union[str, BackupStorageRedundancy]
+
+
+    class azure.mgmt.sql.types.UserIdentity(TypedDict, total=False):
+        key "clientId": str
+        key "principalId": str
+        clientId: str
+        principalId: str
+
+
+    class azure.mgmt.sql.types.VirtualCluster(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('VirtualClusterProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: VirtualClusterProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.sql.types.VirtualClusterProperties(TypedDict, total=False):
+        key "subnetId": str
+        key "version": str
+        childResources: list[str]
+        subnetId: str
+        version: str
+
+
+    class azure.mgmt.sql.types.VirtualClusterUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('VirtualClusterProperties', module='types')
+        properties: VirtualClusterProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.sql.types.VirtualNetworkRule(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VirtualNetworkRuleProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: VirtualNetworkRuleProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.VirtualNetworkRuleProperties(TypedDict, total=False):
+        key "ignoreMissingVnetServiceEndpoint": bool
+        key "state": Union[str, VirtualNetworkRuleState]
+        key "virtualNetworkSubnetId": Required[str]
+        ignoreMissingVnetServiceEndpoint: bool
+        state: Union[str, VirtualNetworkRuleState]
+        virtualNetworkSubnetId: str
+
+
+    class azure.mgmt.sql.types.VulnerabilityAssessmentRecurringScansProperties(TypedDict, total=False):
+        key "emailSubscriptionAdmins": bool
+        key "isEnabled": bool
+        emailSubscriptionAdmins: bool
+        emails: list[str]
+        isEnabled: bool
+
+
+    class azure.mgmt.sql.types.WorkloadClassifier(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('WorkloadClassifierProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: WorkloadClassifierProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.WorkloadClassifierProperties(TypedDict, total=False):
+        key "context": str
+        key "endTime": str
+        key "importance": str
+        key "label": str
+        key "memberName": Required[str]
+        key "startTime": str
+        context: str
+        endTime: str
+        importance: str
+        label: str
+        memberName: str
+        startTime: str
+
+
+    class azure.mgmt.sql.types.WorkloadGroup(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('WorkloadGroupProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: WorkloadGroupProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.sql.types.WorkloadGroupProperties(TypedDict, total=False):
+        key "importance": str
+        key "maxResourcePercent": Required[int]
+        key "maxResourcePercentPerRequest": float
+        key "minResourcePercent": Required[int]
+        key "minResourcePercentPerRequest": Required[float]
+        key "queryExecutionTimeout": int
+        importance: str
+        maxResourcePercent: int
+        maxResourcePercentPerRequest: float
+        minResourcePercent: int
+        minResourcePercentPerRequest: float
+        queryExecutionTimeout: int
 
 
 ```

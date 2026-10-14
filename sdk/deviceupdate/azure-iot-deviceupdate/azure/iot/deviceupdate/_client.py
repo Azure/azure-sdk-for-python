@@ -28,12 +28,7 @@ if TYPE_CHECKING:
 
 
 class DeviceUpdateClient:
-    """Device Update for IoT Hub is an Azure service that enables customers to publish updates for
-    their IoT devices to the cloud, and then deploy that update to their devices (approve updates
-    to groups of devices managed and provisioned in IoT Hub). It leverages the proven security and
-    reliability of the Windows Update platform, optimized for IoT devices. It works globally and
-    knows when and how to update devices, enabling customers to focus on their business goals and
-    let Device Update for IoT Hub handle the updates.
+    """DeviceUpdateClient.
 
     :ivar device_update: DeviceUpdateOperations operations
     :vartype device_update: azure.iot.deviceupdate.operations.DeviceUpdateOperations
@@ -107,7 +102,7 @@ class DeviceUpdateClient:
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

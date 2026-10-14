@@ -77,7 +77,7 @@ def is_crc64_validation(
 
 
 def calculate_content_md5(data: Union[bytes, IO[bytes]]) -> bytes:
-    md5 = hashlib.md5()  # nosec
+    md5 = hashlib.md5(usedforsecurity=False)  # nosec
     if isinstance(data, bytes):
         md5.update(data)
     elif hasattr(data, "read"):

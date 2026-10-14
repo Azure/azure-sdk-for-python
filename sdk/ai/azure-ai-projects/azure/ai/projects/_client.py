@@ -23,6 +23,7 @@ from .operations import (
     DatasetsOperations,
     DeploymentsOperations,
     EvaluationRulesOperations,
+    EvaluatorsOperations,
     IndexesOperations,
     ToolboxesOperations,
 )
@@ -36,7 +37,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AIProjectClient:  # pylint: disable=too-many-instance-attributes
+class AIProjectClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """AIProjectClient.
 
     :ivar beta: BetaOperations operations
@@ -45,14 +46,16 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     :vartype agents: azure.ai.projects.operations.AgentsOperations
     :ivar evaluation_rules: EvaluationRulesOperations operations
     :vartype evaluation_rules: azure.ai.projects.operations.EvaluationRulesOperations
-    :ivar connections: ConnectionsOperations operations
-    :vartype connections: azure.ai.projects.operations.ConnectionsOperations
     :ivar datasets: DatasetsOperations operations
     :vartype datasets: azure.ai.projects.operations.DatasetsOperations
+    :ivar connections: ConnectionsOperations operations
+    :vartype connections: azure.ai.projects.operations.ConnectionsOperations
     :ivar deployments: DeploymentsOperations operations
     :vartype deployments: azure.ai.projects.operations.DeploymentsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.ai.projects.operations.IndexesOperations
+    :ivar evaluators: EvaluatorsOperations operations
+    :vartype evaluators: azure.ai.projects.operations.EvaluatorsOperations
     :ivar toolboxes: ToolboxesOperations operations
     :vartype toolboxes: azure.ai.projects.operations.ToolboxesOperations
     :param endpoint: Foundry Project endpoint in the form
@@ -70,6 +73,8 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
      None. Default value is None. If not set, the operation's default API version will be used. Note
      that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
@@ -107,10 +112,11 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
         self.evaluation_rules = EvaluationRulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.evaluators = EvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.toolboxes = ToolboxesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:

@@ -16,6 +16,7 @@ steps:
     displayName: "Use Python $(PythonVersion)"
     inputs:
       versionSpec: $(PythonVersion)
+      architecture: $(PythonArchitecture)
 
   - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
     parameters:

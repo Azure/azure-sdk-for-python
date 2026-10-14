@@ -77,6 +77,7 @@ def main():
                             "sourceMetadata": {
                                 "diagnosticsProfile": {"bootDiagnostics": {"enabled": bool, "storageUri": "str"}},
                                 "hardwareProfile": {
+                                    "processorMode": "str",
                                     "vmSize": "str",
                                     "vmSizeProperties": {"vCPUsAvailable": 0, "vCPUsPerCore": 0},
                                 },
@@ -141,10 +142,18 @@ def main():
                                     "proxyAgentSettings": {
                                         "addProxyAgentExtension": bool,
                                         "enabled": bool,
-                                        "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                                        "imds": {
+                                            "inVMAccessControlProfileReferenceId": "str",
+                                            "mode": "str",
+                                            "useLocalFileRules": bool,
+                                        },
                                         "keyIncarnationId": 0,
                                         "mode": "str",
-                                        "wireServer": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                                        "wireServer": {
+                                            "inVMAccessControlProfileReferenceId": "str",
+                                            "mode": "str",
+                                            "useLocalFileRules": bool,
+                                        },
                                     },
                                     "securityType": "str",
                                     "uefiSettings": {"secureBootEnabled": bool, "vTpmEnabled": bool},
@@ -161,6 +170,21 @@ def main():
                                             "diskSizeGB": 0,
                                             "lun": 0,
                                             "managedDisk": {
+                                                "additionalDiskProperties": {
+                                                    "managedDiskProperties": {
+                                                        "availabilityPolicy": {"actionOnDiskDelay": "str"},
+                                                        "burstingEnabled": bool,
+                                                        "diskAccessId": "str",
+                                                        "diskIOPSReadOnly": 0,
+                                                        "diskMBpsReadOnly": 0,
+                                                        "logicalSectorSize": 0,
+                                                        "maxShares": 0,
+                                                        "networkAccessPolicy": "str",
+                                                        "optimizedForFrequentAttach": bool,
+                                                        "performancePlus": bool,
+                                                        "tier": "str",
+                                                    }
+                                                },
                                                 "diskEncryptionSet": {"id": "str"},
                                                 "id": "str",
                                                 "securityProfile": {
@@ -188,6 +212,21 @@ def main():
                                             "keyEncryptionKey": {"keyUrl": "str", "sourceVault": {"id": "str"}},
                                         },
                                         "managedDisk": {
+                                            "additionalDiskProperties": {
+                                                "managedDiskProperties": {
+                                                    "availabilityPolicy": {"actionOnDiskDelay": "str"},
+                                                    "burstingEnabled": bool,
+                                                    "diskAccessId": "str",
+                                                    "diskIOPSReadOnly": 0,
+                                                    "diskMBpsReadOnly": 0,
+                                                    "logicalSectorSize": 0,
+                                                    "maxShares": 0,
+                                                    "networkAccessPolicy": "str",
+                                                    "optimizedForFrequentAttach": bool,
+                                                    "performancePlus": bool,
+                                                    "tier": "str",
+                                                }
+                                            },
                                             "diskEncryptionSet": {"id": "str"},
                                             "id": "str",
                                             "securityProfile": {
@@ -226,6 +265,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/restorePointExamples/RestorePointCollection_Update_MinimumSet_Gen.json
+# x-ms-original-file: 2026-04-01/restorePointExamples/RestorePointCollection_Update_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

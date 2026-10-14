@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class BackupRequest(_Model):
+class BackupRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup request.
 
     :ivar azure_file_share: Azure File Share.
@@ -47,7 +47,7 @@ class BackupRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityParameters(_Model):
+class CheckNameAvailabilityParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for a check name availability request.
 
     :ivar name: The name to check for availability. Required.
@@ -152,7 +152,7 @@ class ProxyResource(Resource):
     """
 
 
-class CloudEndpoint(ProxyResource):
+class CloudEndpoint(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cloud Endpoint object.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -186,6 +186,7 @@ class CloudEndpoint(ProxyResource):
         "last_workflow_id",
         "last_operation_name",
         "change_enumeration_status",
+        "change_enumeration_interval_days",
     ]
 
     @overload
@@ -338,7 +339,7 @@ class CloudEndpointChangeEnumerationStatus(_Model):
     """Change enumeration activity."""
 
 
-class CloudEndpointCreateParameters(ProxyResource):
+class CloudEndpointCreateParameters(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters used when creating a cloud endpoint.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -366,6 +367,7 @@ class CloudEndpointCreateParameters(ProxyResource):
         "azure_file_share_name",
         "storage_account_tenant_id",
         "friendly_name",
+        "change_enumeration_interval_days",
     ]
 
     @overload
@@ -404,7 +406,7 @@ class CloudEndpointCreateParameters(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CloudEndpointCreateParametersProperties(_Model):
+class CloudEndpointCreateParametersProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CloudEndpoint Properties object.
 
     :ivar storage_account_resource_id: Storage Account Resource Id.
@@ -415,6 +417,9 @@ class CloudEndpointCreateParametersProperties(_Model):
     :vartype storage_account_tenant_id: str
     :ivar friendly_name: Friendly Name.
     :vartype friendly_name: str
+    :ivar change_enumeration_interval_days: The interval for enumerating changes on the cloud
+     endpoint.
+    :vartype change_enumeration_interval_days: int
     """
 
     storage_account_resource_id: Optional[str] = rest_field(
@@ -433,6 +438,10 @@ class CloudEndpointCreateParametersProperties(_Model):
         name="friendlyName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Friendly Name."""
+    change_enumeration_interval_days: Optional[int] = rest_field(
+        name="changeEnumerationIntervalDays", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The interval for enumerating changes on the cloud endpoint."""
 
     @overload
     def __init__(
@@ -442,6 +451,7 @@ class CloudEndpointCreateParametersProperties(_Model):
         azure_file_share_name: Optional[str] = None,
         storage_account_tenant_id: Optional[str] = None,
         friendly_name: Optional[str] = None,
+        change_enumeration_interval_days: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -492,7 +502,7 @@ class CloudEndpointLastChangeEnumerationStatus(_Model):
     """Timestamp of when change enumeration is expected to run again."""
 
 
-class CloudEndpointProperties(_Model):
+class CloudEndpointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CloudEndpoint Properties object.
 
     :ivar storage_account_resource_id: Storage Account Resource Id.
@@ -516,6 +526,9 @@ class CloudEndpointProperties(_Model):
     :ivar change_enumeration_status: Cloud endpoint change enumeration status.
     :vartype change_enumeration_status:
      ~azure.mgmt.storagesync.models.CloudEndpointChangeEnumerationStatus
+    :ivar change_enumeration_interval_days: The interval for enumerating changes on the cloud
+     endpoint.
+    :vartype change_enumeration_interval_days: int
     """
 
     storage_account_resource_id: Optional[str] = rest_field(
@@ -556,6 +569,10 @@ class CloudEndpointProperties(_Model):
         name="changeEnumerationStatus", visibility=["read"]
     )
     """Cloud endpoint change enumeration status."""
+    change_enumeration_interval_days: Optional[int] = rest_field(
+        name="changeEnumerationIntervalDays", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The interval for enumerating changes on the cloud endpoint."""
 
     @overload
     def __init__(
@@ -569,6 +586,68 @@ class CloudEndpointProperties(_Model):
         provisioning_state: Optional[str] = None,
         last_workflow_id: Optional[str] = None,
         last_operation_name: Optional[str] = None,
+        change_enumeration_interval_days: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CloudEndpointUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The parameters used when updating a cloud endpoint.
+
+    :ivar properties: The properties of the cloud endpoint.
+    :vartype properties: ~azure.mgmt.storagesync.models.CloudEndpointUpdateProperties
+    """
+
+    properties: Optional["_models.CloudEndpointUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The properties of the cloud endpoint."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.CloudEndpointUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CloudEndpointUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """CloudEndpoint Update Properties object.
+
+    :ivar change_enumeration_interval_days: The interval for enumerating changes on the cloud
+     endpoint.
+    :vartype change_enumeration_interval_days: int
+    """
+
+    change_enumeration_interval_days: Optional[int] = rest_field(
+        name="changeEnumerationIntervalDays", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The interval for enumerating changes on the cloud endpoint."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        change_enumeration_interval_days: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -769,7 +848,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -847,7 +926,7 @@ class LocationOperationStatus(_Model):
     """Percent complete."""
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -899,7 +978,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplayInfo(_Model):
+class OperationDisplayInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The operation supported by storage sync.
 
     :ivar description: The description of the operation.
@@ -942,7 +1021,7 @@ class OperationDisplayInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationEntity(_Model):
+class OperationEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The operation supported by storage sync.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -989,7 +1068,7 @@ class OperationEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationProperties(_Model):
+class OperationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the operations resource.
 
     :ivar service_specification: Service specification for the operations resource.
@@ -1020,7 +1099,7 @@ class OperationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationResourceMetricSpecification(_Model):
+class OperationResourceMetricSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operation Display Resource object.
 
     :ivar name: Name of the metric.
@@ -1103,7 +1182,9 @@ class OperationResourceMetricSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationResourceMetricSpecificationDimension(_Model):  # pylint: disable=name-too-long
+class OperationResourceMetricSpecificationDimension(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """OperationResourceMetricSpecificationDimension object.
 
     :ivar name: Name of the dimension.
@@ -1145,7 +1226,7 @@ class OperationResourceMetricSpecificationDimension(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class OperationResourceServiceSpecification(_Model):
+class OperationResourceServiceSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Service specification.
 
     :ivar metric_specifications: List of metric specifications.
@@ -1203,7 +1284,7 @@ class OperationStatus(_Model):
     """Error details."""
 
 
-class PostBackupResponse(_Model):
+class PostBackupResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Post Backup Response.
 
     :ivar backup_metadata: Post Backup Response Properties.
@@ -1264,7 +1345,7 @@ class PostBackupResponseProperties(_Model):
     """cloud endpoint Name."""
 
 
-class PostRestoreRequest(_Model):
+class PostRestoreRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Post Restore Request.
 
     :ivar partition: Post Restore partition.
@@ -1337,7 +1418,7 @@ class PostRestoreRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PreRestoreRequest(_Model):
+class PreRestoreRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Pre Restore request object.
 
     :ivar partition: Pre Restore partition.
@@ -1429,7 +1510,7 @@ class PrivateEndpoint(_Model):
     """The resource identifier of the private endpoint."""
 
 
-class PrivateEndpointConnection(Resource):
+class PrivateEndpointConnection(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The private endpoint connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1490,7 +1571,7 @@ class PrivateEndpointConnection(Resource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the private endpoint connection.
 
     :ivar group_ids: The group ids for the private endpoint resource.
@@ -1543,7 +1624,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(Resource):
+class PrivateLinkResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1584,7 +1665,7 @@ class PrivateLinkResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourceListResult(_Model):
+class PrivateLinkResourceListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of private link resources for versions before v6.
 
     This model represents the standard ``PrivateLinkResourceListResult`` envelope for versions v3,
@@ -1622,7 +1703,7 @@ class PrivateLinkResourceListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private link resource.
 
     :ivar group_id: The private link resource group id.
@@ -1660,7 +1741,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A collection of information about the state of the connection between service consumer and
     provider.
 
@@ -1706,7 +1787,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecallActionParameters(_Model):
+class RecallActionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters used when calling recall action on server endpoint.
 
     :ivar pattern: Pattern of the files.
@@ -1741,7 +1822,7 @@ class RecallActionParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegisteredServer(ProxyResource):
+class RegisteredServer(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Registered Server resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1830,7 +1911,7 @@ class RegisteredServer(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RegisteredServerCreateParameters(ProxyResource):
+class RegisteredServerCreateParameters(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters used when creating a registered server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1903,7 +1984,9 @@ class RegisteredServerCreateParameters(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RegisteredServerCreateParametersProperties(_Model):  # pylint: disable=name-too-long
+class RegisteredServerCreateParametersProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """RegisteredServer Create Properties object.
 
     :ivar server_certificate: Registered Server Certificate.
@@ -1997,7 +2080,7 @@ class RegisteredServerCreateParametersProperties(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class RegisteredServerProperties(_Model):
+class RegisteredServerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RegisteredServer Properties object.
 
     :ivar server_certificate: Registered Server Certificate.
@@ -2201,7 +2284,7 @@ class RegisteredServerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegisteredServerUpdateParameters(ProxyResource):
+class RegisteredServerUpdateParameters(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters used when updating a registered server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2262,7 +2345,7 @@ class RegisteredServerUpdateParameters(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RegisteredServerUpdateProperties(_Model):
+class RegisteredServerUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RegisteredServer Update Properties object.
 
     :ivar identity: Apply server with newly discovered ApplicationId if available.
@@ -2297,7 +2380,7 @@ class RegisteredServerUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestoreFileSpec(_Model):
+class RestoreFileSpec(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Restore file spec.
 
     :ivar path: Restore file spec path.
@@ -2330,7 +2413,7 @@ class RestoreFileSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerEndpoint(ProxyResource):
+class ServerEndpoint(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Server Endpoint object.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2506,7 +2589,7 @@ class ServerEndpointCloudTieringStatus(_Model):
     """Information regarding the low disk mode state."""
 
 
-class ServerEndpointCreateParameters(ProxyResource):
+class ServerEndpointCreateParameters(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters used when creating a server endpoint.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2579,7 +2662,7 @@ class ServerEndpointCreateParameters(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ServerEndpointCreateParametersProperties(_Model):
+class ServerEndpointCreateParametersProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ServerEndpoint Properties object.
 
     :ivar server_local_path: Server Local path.
@@ -2707,7 +2790,7 @@ class ServerEndpointFilesNotSyncingError(_Model):
     """Count of transient files not syncing with the specified error code."""
 
 
-class ServerEndpointProperties(_Model):
+class ServerEndpointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ServerEndpoint Properties object.
 
     :ivar server_local_path: Server Local path.
@@ -2992,6 +3075,29 @@ class ServerEndpointSyncActivityStatus(_Model):
     :vartype sync_mode: str or ~azure.mgmt.storagesync.models.ServerEndpointSyncMode
     :ivar session_minutes_remaining: Session minutes remaining (if available).
     :vartype session_minutes_remaining: int
+    :ivar remaining_file_count: Remaining file count (if totals are final).
+    :vartype remaining_file_count: int
+    :ivar remaining_directory_count: Remaining directory count (if totals are final).
+    :vartype remaining_directory_count: int
+    :ivar remaining_delete_count: Remaining delete count (if totals are final).
+    :vartype remaining_delete_count: int
+    :ivar remaining_logical_size_bytes: Remaining logical size in bytes (if totals are final).
+    :vartype remaining_logical_size_bytes: int
+    :ivar is_remaining_final: Whether the remaining counts are final.
+    :vartype is_remaining_final: bool
+    :ivar recent_items_per_second: Recent throughput in items per second.
+    :vartype recent_items_per_second: float
+    :ivar recent_megabytes_per_second: Recent throughput in megabytes per second.
+    :vartype recent_megabytes_per_second: float
+    :ivar in_progress_large_file_path: Path of large file currently in progress.
+    :vartype in_progress_large_file_path: str
+    :ivar in_progress_large_file_size_bytes: Size in bytes of large file currently in progress.
+    :vartype in_progress_large_file_size_bytes: int
+    :ivar in_progress_large_file_percent_complete: Percent complete (0-100) of large file currently
+     in progress.
+    :vartype in_progress_large_file_percent_complete: int
+    :ivar warning: Warning type (if any). Known values are: "NoWarning" and "BlockedByLargeFile".
+    :vartype warning: str or ~azure.mgmt.storagesync.models.ServerEndpointSyncSessionWarningType
     """
 
     timestamp: Optional[datetime.datetime] = rest_field(visibility=["read"], format="rfc3339")
@@ -3011,6 +3117,32 @@ class ServerEndpointSyncActivityStatus(_Model):
      \"SnapshotUpload\", and \"InitialFullDownload\"."""
     session_minutes_remaining: Optional[int] = rest_field(name="sessionMinutesRemaining", visibility=["read"])
     """Session minutes remaining (if available)."""
+    remaining_file_count: Optional[int] = rest_field(name="remainingFileCount", visibility=["read"])
+    """Remaining file count (if totals are final)."""
+    remaining_directory_count: Optional[int] = rest_field(name="remainingDirectoryCount", visibility=["read"])
+    """Remaining directory count (if totals are final)."""
+    remaining_delete_count: Optional[int] = rest_field(name="remainingDeleteCount", visibility=["read"])
+    """Remaining delete count (if totals are final)."""
+    remaining_logical_size_bytes: Optional[int] = rest_field(name="remainingLogicalSizeBytes", visibility=["read"])
+    """Remaining logical size in bytes (if totals are final)."""
+    is_remaining_final: Optional[bool] = rest_field(name="isRemainingFinal", visibility=["read"])
+    """Whether the remaining counts are final."""
+    recent_items_per_second: Optional[float] = rest_field(name="recentItemsPerSecond", visibility=["read"])
+    """Recent throughput in items per second."""
+    recent_megabytes_per_second: Optional[float] = rest_field(name="recentMegabytesPerSecond", visibility=["read"])
+    """Recent throughput in megabytes per second."""
+    in_progress_large_file_path: Optional[str] = rest_field(name="inProgressLargeFilePath", visibility=["read"])
+    """Path of large file currently in progress."""
+    in_progress_large_file_size_bytes: Optional[int] = rest_field(
+        name="inProgressLargeFileSizeBytes", visibility=["read"]
+    )
+    """Size in bytes of large file currently in progress."""
+    in_progress_large_file_percent_complete: Optional[int] = rest_field(
+        name="inProgressLargeFilePercentComplete", visibility=["read"]
+    )
+    """Percent complete (0-100) of large file currently in progress."""
+    warning: Optional[Union[str, "_models.ServerEndpointSyncSessionWarningType"]] = rest_field(visibility=["read"])
+    """Warning type (if any). Known values are: \"NoWarning\" and \"BlockedByLargeFile\"."""
 
 
 class ServerEndpointSyncSessionStatus(_Model):
@@ -3155,7 +3287,7 @@ class ServerEndpointSyncStatus(_Model):
     """Background data download activity."""
 
 
-class ServerEndpointUpdateParameters(_Model):
+class ServerEndpointUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for updating an Server Endpoint.
 
     :ivar properties: The properties of the server endpoint.
@@ -3212,7 +3344,7 @@ class ServerEndpointUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class ServerEndpointUpdateProperties(_Model):
+class ServerEndpointUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ServerEndpoint Update Properties object.
 
     :ivar cloud_tiering: Cloud Tiering. Known values are: "on" and "off".
@@ -3282,7 +3414,7 @@ class ServerEndpointUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageSyncApiError(_Model):
+class StorageSyncApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error type.
 
     :ivar code: Error code of the given entry.
@@ -3334,7 +3466,7 @@ class StorageSyncApiError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageSyncError(_Model):
+class StorageSyncError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error type.
 
     :ivar error: Error details of the given entry.
@@ -3371,7 +3503,7 @@ class StorageSyncError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageSyncErrorDetails(_Model):
+class StorageSyncErrorDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error Details object.
 
     :ivar code: Error code of the given entry.
@@ -3444,7 +3576,7 @@ class StorageSyncErrorDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageSyncInnerErrorDetails(_Model):
+class StorageSyncInnerErrorDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error Details object.
 
     :ivar call_stack: Call stack of the error.
@@ -3491,7 +3623,7 @@ class StorageSyncInnerErrorDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3535,7 +3667,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class StorageSyncService(TrackedResource):
+class StorageSyncService(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage Sync Service object.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3618,7 +3750,9 @@ class StorageSyncService(TrackedResource):
             super().__setattr__(key, value)
 
 
-class StorageSyncServiceCreateParameters(TrackedResource):
+class StorageSyncServiceCreateParameters(
+    TrackedResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters used when creating a storage sync service.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3695,7 +3829,9 @@ class StorageSyncServiceCreateParameters(TrackedResource):
             super().__setattr__(key, value)
 
 
-class StorageSyncServiceCreateParametersProperties(_Model):  # pylint: disable=name-too-long
+class StorageSyncServiceCreateParametersProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """StorageSyncService Properties object.
 
     :ivar incoming_traffic_policy: Incoming Traffic Policy. Known values are: "AllowAllTraffic" and
@@ -3735,7 +3871,7 @@ class StorageSyncServiceCreateParametersProperties(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class StorageSyncServiceProperties(_Model):
+class StorageSyncServiceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage Sync Service Properties object.
 
     :ivar incoming_traffic_policy: Incoming Traffic Policy. Known values are: "AllowAllTraffic" and
@@ -3800,7 +3936,7 @@ class StorageSyncServiceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageSyncServiceUpdateParameters(_Model):
+class StorageSyncServiceUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for updating an Storage sync service.
 
     :ivar tags: The user-specified tags associated with the storage sync service.
@@ -3864,7 +4000,7 @@ class StorageSyncServiceUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class StorageSyncServiceUpdateProperties(_Model):
+class StorageSyncServiceUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StorageSyncService Properties object.
 
     :ivar incoming_traffic_policy: Incoming Traffic Policy. Known values are: "AllowAllTraffic" and
@@ -3904,7 +4040,7 @@ class StorageSyncServiceUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SyncGroup(ProxyResource):
+class SyncGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sync Group object.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3965,7 +4101,7 @@ class SyncGroup(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SyncGroupCreateParameters(ProxyResource):
+class SyncGroupCreateParameters(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters used when creating a sync group.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4039,7 +4175,7 @@ class SyncGroupProperties(_Model):
     """Sync group status."""
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -4106,7 +4242,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TriggerChangeDetectionParameters(_Model):
+class TriggerChangeDetectionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters used when calling trigger change detection action on cloud endpoint.
 
     :ivar directory_path: Relative path to a directory Azure File share for which change detection
@@ -4153,7 +4289,7 @@ class TriggerChangeDetectionParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TriggerRolloverRequest(_Model):
+class TriggerRolloverRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Trigger Rollover Request.
 
     :ivar server_certificate: Certificate Data.
@@ -4198,7 +4334,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class Workflow(ProxyResource):
+class Workflow(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workflow resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4268,7 +4404,7 @@ class Workflow(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkflowProperties(_Model):
+class WorkflowProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workflow Properties object.
 
     :ivar last_step_name: last step name.

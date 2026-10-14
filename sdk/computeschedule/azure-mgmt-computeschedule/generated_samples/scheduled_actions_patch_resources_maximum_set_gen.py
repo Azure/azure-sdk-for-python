@@ -33,17 +33,12 @@ def main():
 
     response = client.scheduled_actions.patch_resources(
         resource_group_name="rgcomputeschedule",
-        scheduled_action_name="myScheduledAction",
+        scheduled_action_name="scheduled-action-01",
         body={
             "resources": [
                 {
                     "notificationSettings": [
-                        {
-                            "destination": "wbhryycyolvnypjxzlawwvb",
-                            "disabled": True,
-                            "language": "en-us",
-                            "type": "Email",
-                        }
+                        {"destination": "admin@contoso.com", "disabled": True, "language": "en-us", "type": "Email"}
                     ],
                     "resourceId": "/subscriptions/1d04e8f1-ee04-4056-b0b2-718f5bb45b04/resourceGroups/myRg/providers/Microsoft.Compute/virtualMachines/myVm",
                 }
@@ -53,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-04-15-preview/ScheduledActions_PatchResources_MaximumSet_Gen.json
+# x-ms-original-file: 2026-04-15-preview/ScheduledActions_PatchResources_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

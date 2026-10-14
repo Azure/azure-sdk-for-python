@@ -126,7 +126,7 @@ class BlobServiceClient(  # type: ignore [misc]
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(BlobServiceClient, self).__init__(parsed_url, service="blob", credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, get_api_version(kwargs), base_url=self.url, pipeline=self._pipeline)
+        self._client = AzureBlobStorage(self.url, version=get_api_version(kwargs), pipeline=self._pipeline)
         self._configure_encryption(kwargs)
 
     async def __aenter__(self) -> Self:
@@ -369,7 +369,7 @@ class BlobServiceClient(  # type: ignore [misc]
             process_storage_error(error)
 
     @distributed_trace_async
-    async def set_service_properties(
+    async def set_service_properties(  # pylint: disable=protected-access
         self,
         analytics_logging: Optional["BlobAnalyticsLogging"] = None,
         hour_metrics: Optional["Metrics"] = None,
@@ -446,13 +446,13 @@ class BlobServiceClient(  # type: ignore [misc]
             raise ValueError("set_service_properties should be called with at least one parameter")
 
         props = StorageServiceProperties(
-            logging=analytics_logging,
-            hour_metrics=hour_metrics,
-            minute_metrics=minute_metrics,
-            cors=CorsRule._to_generated(cors),  # pylint: disable=protected-access
+            logging=(analytics_logging._to_generated() if analytics_logging else None),
+            hour_metrics=hour_metrics._to_generated() if hour_metrics else None,
+            minute_metrics=(minute_metrics._to_generated() if minute_metrics else None),
+            cors=CorsRule._to_generated(cors),
             default_service_version=target_version,
-            delete_retention_policy=delete_retention_policy,
-            static_website=static_website,
+            delete_retention_policy=(delete_retention_policy._to_generated() if delete_retention_policy else None),
+            static_website=(static_website._to_generated() if static_website else None),
         )
         timeout = kwargs.pop("timeout", None)
         try:
@@ -700,7 +700,9 @@ class BlobServiceClient(  # type: ignore [misc]
         except AttributeError:
             kwargs["source_lease_id"] = lease
         try:
-            await renamed_container._client.container.rename(name, **kwargs)  # pylint: disable = protected-access
+            await renamed_container._client.container.rename(  # pylint: disable=protected-access
+                source_container_name=name, **kwargs
+            )
             return renamed_container
         except HttpResponseError as error:
             process_storage_error(error)
@@ -735,7 +737,7 @@ class BlobServiceClient(  # type: ignore [misc]
             warnings.warn("`new_name` is no longer supported.", DeprecationWarning)
         container = self.get_container_client(new_name or deleted_container_name)
         try:
-            await container._client.container.restore(  # pylint: disable = protected-access
+            await container._client.container.restore(  # pylint: disable=protected-access
                 deleted_container_name=deleted_container_name,
                 deleted_container_version=deleted_container_version,
                 timeout=kwargs.pop("timeout", None),
@@ -842,7 +844,7 @@ class BlobServiceClient(  # type: ignore [misc]
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
             policies=cast(
-                Iterable["AsyncHTTPPolicy"], self._pipeline._impl_policies  # pylint: disable = protected-access
+                Iterable["AsyncHTTPPolicy"], self._pipeline._impl_policies  # pylint: disable=protected-access
             ),
         )
         return BlobClient(

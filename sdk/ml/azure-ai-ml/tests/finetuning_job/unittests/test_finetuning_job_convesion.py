@@ -5,13 +5,6 @@ from azure.ai.ml._restclient.arm_ml_service.models import (
     UriFileJobInput,
     MLFlowModelJobInput,
 )
-
-# The Azure OpenAI fine-tuning path stays on its own v2024-01-01-preview msrest models (it is not part
-# of the arm_ml_service migration), so its nested inputs are that api version's types, not arm.
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
-    UriFileJobInput as AoaiUriFileJobInput,
-    MLFlowModelJobInput as AoaiMLFlowModelJobInput,
-)
 from azure.ai.ml.constants._job.finetuning import FineTuningTaskTypes
 from azure.ai.ml.entities._job.finetuning.custom_model_finetuning_job import (
     CustomModelFineTuningJob,
@@ -185,17 +178,17 @@ class TestCustomModelFineTuningJob:
             name="gpt4-finetuning",
             experiment_name="foo_exp",
             tags={"foo_tag": "bar"},
-            properties={"my_property": True},
+            properties={"my_property": "True"},
         )
         rest_obj = custom_model_finetuning_job._to_rest_object()
         assert isinstance(
-            rest_obj.properties.fine_tuning_details.model, AoaiMLFlowModelJobInput
+            rest_obj.properties.fine_tuning_details.model, MLFlowModelJobInput
         ), "Model is not MLFlowModelJobInput"
         assert isinstance(
-            rest_obj.properties.fine_tuning_details.training_data, AoaiUriFileJobInput
+            rest_obj.properties.fine_tuning_details.training_data, UriFileJobInput
         ), "Training data is not UriFileJobInput"
         assert isinstance(
-            rest_obj.properties.fine_tuning_details.validation_data, AoaiUriFileJobInput
+            rest_obj.properties.fine_tuning_details.validation_data, UriFileJobInput
         ), "Validation data is not UriFileJobInput"
 
         original_obj = AzureOpenAIFineTuningJob._from_rest_object(rest_obj)
@@ -204,7 +197,7 @@ class TestCustomModelFineTuningJob:
         assert original_obj.name == "gpt4-finetuning", "Name not set correctly"
         assert original_obj.experiment_name == "foo_exp", "Experiment name not set correctly"
         assert original_obj.tags == {"foo_tag": "bar"}, "Tags not set correctly"
-        assert original_obj.properties == {"my_property": True}, "Properties not set correctly"
+        assert original_obj.properties == {"my_property": "True"}, "Properties not set correctly"
         # check if the original job inputs were restored
         assert isinstance(original_obj.training_data, Input), "Training data is not Input"
         assert original_obj.training_data.type == AssetTypes.URI_FILE, "Training data type not set correctly"

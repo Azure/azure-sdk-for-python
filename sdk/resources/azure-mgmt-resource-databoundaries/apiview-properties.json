@@ -26,5 +26,5 @@
         "azure.mgmt.resource.databoundaries.operations.DataBoundariesOperations.put": "Microsoft.Resources.DataBoundaryDefinitions.put",
         "azure.mgmt.resource.databoundaries.aio.operations.DataBoundariesOperations.put": "Microsoft.Resources.DataBoundaryDefinitions.put"
     },
-    "CrossLanguageVersion": "01d78bc1d1b0"
+    "CrossLanguageVersion": "17ca5d5165ee"
 }

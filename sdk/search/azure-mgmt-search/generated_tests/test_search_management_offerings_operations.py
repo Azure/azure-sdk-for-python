@@ -20,8 +20,8 @@ class TestSearchManagementOfferingsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_offerings_list(self, resource_group):
-        response = self.client.offerings.list()
+    def test_offerings_fetch(self, resource_group):
+        response = self.client.offerings.fetch()
 
         # please add some check logic here by yourself
         # ...

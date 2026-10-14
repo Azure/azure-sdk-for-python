@@ -46,24 +46,24 @@ class Registry(Resource):
     ):
         """Azure ML registry.
 
-        :param name: Name of the registry. Must be globally unique and is immutable.
-        :type name: str
-        :param location: The location this registry resource is located in.
-        :type location: str
-        :param identity: registry's System Managed Identity
-        :type identity: ManagedServiceIdentity
-        :param tags: Tags of the registry.
-        :type tags: dict
-        :param public_network_access: Whether to allow public endpoint connectivity.
-        :type public_network_access: str
-        :param discovery_url: Backend service base url for the registry.
-        :type discovery_url: str
-        :param intellectual_property: **Experimental** Intellectual property publisher.
-        :type intellectual_property: ~azure.ai.ml.entities.IntellectualProperty
-        :param managed_resource_group: Managed resource group created for the registry.
-        :type managed_resource_group: str
-        :param mlflow_registry_uri: Ml flow tracking uri for the registry.
-        :type mlflow_registry_uri: str
+        :keyword name: Name of the registry. Must be globally unique and is immutable.
+        :paramtype name: str
+        :keyword location: The location this registry resource is located in.
+        :paramtype location: str
+        :keyword identity: registry's System Managed Identity
+        :paramtype identity: ManagedServiceIdentity
+        :keyword tags: Tags of the registry.
+        :paramtype tags: dict
+        :keyword public_network_access: Whether to allow public endpoint connectivity.
+        :paramtype public_network_access: str
+        :keyword discovery_url: Backend service base url for the registry.
+        :paramtype discovery_url: str
+        :keyword intellectual_property: **Experimental** Intellectual property publisher.
+        :paramtype intellectual_property: ~azure.ai.ml.entities.IntellectualProperty
+        :keyword managed_resource_group: Managed resource group created for the registry.
+        :paramtype managed_resource_group: str
+        :keyword mlflow_registry_uri: Ml flow tracking uri for the registry.
+        :paramtype mlflow_registry_uri: str
         :param region_details: Details of each region the registry is in.
         :type region_details: List[RegistryRegionDetails]
         :param kwargs: A dictionary of additional configuration parameters.

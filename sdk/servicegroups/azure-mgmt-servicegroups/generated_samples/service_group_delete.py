@@ -34,6 +34,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2024-02-01-preview/ServiceGroup_Delete.json
+# x-ms-original-file: 2026-08-01/ServiceGroup_Delete.json
 if __name__ == "__main__":
     main()

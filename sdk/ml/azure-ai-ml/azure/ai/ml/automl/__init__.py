@@ -45,7 +45,7 @@ from azure.ai.ml.entities._job.automl.tabular import (
     TabularLimitSettings,
 )
 
-from .._restclient.v2023_04_01_preview.models import (
+from .._restclient.arm_ml_service.models import (
     BlockedTransformers,
     ClassificationModels,
     ClassificationMultilabelPrimaryMetrics,

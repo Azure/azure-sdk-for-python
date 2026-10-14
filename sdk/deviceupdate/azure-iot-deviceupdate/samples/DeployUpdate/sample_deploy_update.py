@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import json
 import os
 import uuid
 from datetime import datetime, timezone
@@ -40,7 +39,9 @@ try:
     deployment = {
         "deploymentId": deployment_id,
         "startDateTime": str(datetime.now(timezone.utc)),
-        "updateId": {"provider": update_provider, "name": update_name, "version": update_version},
+        "update": {
+            "updateId": {"provider": update_provider, "name": update_name, "version": update_version},
+        },
         "groupId": group,
     }
 

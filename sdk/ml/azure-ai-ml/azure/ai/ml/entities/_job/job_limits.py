@@ -6,9 +6,17 @@ import logging
 from abc import ABC
 from typing import Any, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2023_08_01_preview.models import SweepJobLimits as RestSweepJobLimits
-from azure.ai.ml._utils.utils import from_iso_duration_format, is_data_binding_expression, to_iso_duration_format
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    CommandJobLimits as RestCommandJobLimits,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    SweepJobLimits as RestSweepJobLimits,
+)
+from azure.ai.ml._utils.utils import (
+    from_iso_duration_format,
+    is_data_binding_expression,
+    to_iso_duration_format,
+)
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -69,7 +77,7 @@ class CommandJobLimits(JobLimits):
             if is_data_binding_expression(timeout_value):
                 return cls(timeout=timeout_value)
             # if response timeout is a normal iso date string
-            obj = RestCommandJobLimits.from_dict(obj)
+            obj = RestCommandJobLimits._deserialize(obj, [])  # pylint: disable=protected-access
         return cls(timeout=from_iso_duration_format(obj.timeout))
 
 

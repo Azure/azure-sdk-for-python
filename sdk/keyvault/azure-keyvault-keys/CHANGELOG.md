@@ -1,5 +1,29 @@
 # Release History
 
+## 4.12.0b4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed an issue where cached authentication challenges could bypass challenge resource verification.
+- Preserve newer cached authentication challenges installed by concurrent requests when an older request fails.
+  Failed requests now clear only the cache entry they observed or accepted.
+- Hardened challenge cache reuse as a follow-up to [#48710](https://github.com/Azure/azure-sdk-for-python/pull/48710).
+  Cached challenges are now verified before token use, and stale entries are cleared when challenge parsing or resource verification fails.
+  Request replay and existing CAE scope/tenant precedence are preserved when concurrent requests invalidate the shared cache.
+- Preserved redirect header cleanup and header updates when restoring request bodies during authentication.
+- Reject request URLs containing backslashes in the authority before authentication.
+- Clear the request's cached challenge when a 401 response omits `WWW-Authenticate`, returning that response without an authentication retry.
+  If no newer challenge remains, the next request rediscovers it, which can add an unauthenticated request even when
+  resource verification is disabled.
+
+- Fixed a bug in the challenge authentication policy where the authentication challenge was cached before the challenge resource was verified. The challenge is now cached only after resource verification succeeds [#48710](https://github.com/Azure/azure-sdk-for-python/pull/48710).
+
+### Other Changes
+
 ## 4.12.0b3 (2026-07-08)
 
 ### Features Added

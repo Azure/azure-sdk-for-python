@@ -1,5 +1,92 @@
 # Release History
 
+## 14.0.0 (2026-07-13)
+
+### Features Added
+
+  - Client `CdnManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `CdnManagementClient` added method `send_request`
+  - Model `AFDDomainHttpsParameters` added property `cipher_suite_set_type`
+  - Model `AFDDomainHttpsParameters` added property `customized_cipher_suite_set`
+  - Model `AFDOriginGroupProperties` added property `authentication`
+  - Model `AFDOriginGroupUpdatePropertiesParameters` added property `authentication`
+  - Enum `AfdMinimumTlsVersion` added member `TLS13`
+  - Model `RuleSetProperties` added property `batch_mode`
+  - Model `RuleSetProperties` added property `rules`
+  - Added model `AFDDomainHttpsCustomizedCipherSuiteSet`
+  - Added enum `AfdCipherSuiteSetType`
+  - Added enum `AfdCustomizedCipherSuiteForTls12`
+  - Added enum `AfdCustomizedCipherSuiteForTls13`
+  - Added model `BatchRuleProperties`
+  - Added model `CdnMigrationToAfdParameters`
+  - Added model `CertificateSourceParameters`
+  - Added enum `CreatedByType`
+  - Added model `DeliveryRuleActionParameters`
+  - Added model `DeliveryRuleConditionParameters`
+  - Added model `MigrationEndpointMapping`
+  - Added model `OriginAuthenticationProperties`
+  - Added enum `OriginAuthenticationType`
+  - Operation group `ProfilesOperations` added method `begin_cdn_can_migrate_to_afd`
+  - Operation group `ProfilesOperations` added method `begin_cdn_migrate_to_afd`
+  - Operation group `ProfilesOperations` added method `begin_migration_abort`
+  - Operation group `RuleSetsOperations` added method `begin_create`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `AFDDomain` moved instance variable `azure_dns_zone`, `deployment_status`, `domain_validation_state`, `extended_properties`, `host_name`, `pre_validated_custom_domain_resource_id`, `profile_name`, `provisioning_state`, `tls_settings` and `validation_properties` under property `properties` whose type is `AFDDomainProperties`
+  - Model `AFDDomainUpdateParameters` moved instance variable `azure_dns_zone`, `pre_validated_custom_domain_resource_id`, `profile_name` and `tls_settings` under property `properties` whose type is `AFDDomainUpdatePropertiesParameters`
+  - Model `AFDEndpoint` moved instance variable `auto_generated_domain_name_label_scope`, `deployment_status`, `enabled_state`, `host_name`, `profile_name` and `provisioning_state` under property `properties` whose type is `AFDEndpointProperties`
+  - Model `AFDEndpointUpdateParameters` moved instance variable `enabled_state` and `profile_name` under property `properties` whose type is `AFDEndpointPropertiesUpdateParameters`
+  - Model `AFDOrigin` moved instance variable `azure_origin`, `deployment_status`, `enabled_state`, `enforce_certificate_name_check`, `host_name`, `http_port`, `https_port`, `origin_group_name`, `origin_host_header`, `priority`, `provisioning_state`, `shared_private_link_resource` and `weight` under property `properties` whose type is `AFDOriginProperties`
+  - Model `AFDOriginGroup` moved instance variable `deployment_status`, `health_probe_settings`, `load_balancing_settings`, `profile_name`, `provisioning_state`, `session_affinity_state` and `traffic_restoration_time_to_healed_or_new_endpoints_in_minutes` under property `properties` whose type is `AFDOriginGroupProperties`
+  - Model `AFDOriginGroupUpdateParameters` moved instance variable `health_probe_settings`, `load_balancing_settings`, `profile_name`, `session_affinity_state` and `traffic_restoration_time_to_healed_or_new_endpoints_in_minutes` under property `properties` whose type is `AFDOriginGroupUpdatePropertiesParameters`
+  - Model `AFDOriginUpdateParameters` moved instance variable `azure_origin`, `enabled_state`, `enforce_certificate_name_check`, `host_name`, `http_port`, `https_port`, `origin_group_name`, `origin_host_header`, `priority`, `shared_private_link_resource` and `weight` under property `properties` whose type is `AFDOriginUpdatePropertiesParameters`
+  - Model `CanMigrateResult` moved instance variable `can_migrate`, `default_sku` and `errors` under property `properties` whose type is `CanMigrateProperties`
+  - Model `CdnWebApplicationFirewallPolicy` moved instance variable `custom_rules`, `endpoint_links`, `extended_properties`, `managed_rules`, `policy_settings`, `provisioning_state`, `rate_limit_rules` and `resource_state` under property `properties` whose type is `CdnWebApplicationFirewallPolicyProperties`
+  - Model `CustomDomain` moved instance variable `custom_https_parameters`, `custom_https_provisioning_state`, `custom_https_provisioning_substate`, `host_name`, `provisioning_state`, `resource_state` and `validation_data` under property `properties` whose type is `CustomDomainProperties`
+  - Model `CustomDomainParameters` moved instance variable `host_name` under property `properties` whose type is `CustomDomainPropertiesParameters`
+  - Model `DeepCreatedCustomDomain` moved instance variable `host_name` and `validation_data` under property `properties` whose type is `DeepCreatedCustomDomainProperties`
+  - Model `DeepCreatedOrigin` moved instance variable `enabled`, `host_name`, `http_port`, `https_port`, `origin_host_header`, `priority`, `private_endpoint_status`, `private_link_alias`, `private_link_approval_message`, `private_link_location`, `private_link_resource_id` and `weight` under property `properties` whose type is `DeepCreatedOriginProperties`
+  - Model `DeepCreatedOriginGroup` moved instance variable `health_probe_settings`, `origins`, `response_based_origin_error_detection_settings` and `traffic_restoration_time_to_healed_or_new_endpoints_in_minutes` under property `properties` whose type is `DeepCreatedOriginGroupProperties`
+  - Model `EdgeNode` moved instance variable `ip_address_groups` under property `properties` whose type is `EdgeNodeProperties`
+  - Model `Endpoint` moved instance variable `content_types_to_compress`, `custom_domains`, `default_origin_group`, `delivery_policy`, `geo_filters`, `host_name`, `is_compression_enabled`, `is_http_allowed`, `is_https_allowed`, `optimization_type`, `origin_groups`, `origin_host_header`, `origin_path`, `origins`, `probe_path`, `provisioning_state`, `query_string_caching_behavior`, `resource_state`, `url_signing_keys` and `web_application_firewall_policy_link` under property `properties` whose type is `EndpointProperties`
+  - Model `EndpointUpdateParameters` moved instance variable `content_types_to_compress`, `default_origin_group`, `delivery_policy`, `geo_filters`, `is_compression_enabled`, `is_http_allowed`, `is_https_allowed`, `optimization_type`, `origin_host_header`, `origin_path`, `probe_path`, `query_string_caching_behavior`, `url_signing_keys` and `web_application_firewall_policy_link` under property `properties` whose type is `EndpointPropertiesUpdateParameters`
+  - Model `ManagedRuleSetDefinition` moved instance variable `provisioning_state`, `rule_groups`, `rule_set_type` and `rule_set_version` under property `properties` whose type is `ManagedRuleSetDefinitionProperties`
+  - Model `MigrateResult` moved instance variable `migrated_profile_resource_id` under property `properties` whose type is `MigrateResultProperties`
+  - Model `Operation` moved instance variable `service_specification` under property `operation_properties` whose type is `OperationProperties`
+  - Model `Origin` moved instance variable `enabled`, `host_name`, `http_port`, `https_port`, `origin_host_header`, `priority`, `private_endpoint_status`, `private_link_alias`, `private_link_approval_message`, `private_link_location`, `private_link_resource_id`, `provisioning_state`, `resource_state` and `weight` under property `properties` whose type is `OriginProperties`
+  - Model `OriginGroup` moved instance variable `health_probe_settings`, `origins`, `provisioning_state`, `resource_state`, `response_based_origin_error_detection_settings` and `traffic_restoration_time_to_healed_or_new_endpoints_in_minutes` under property `properties` whose type is `OriginGroupProperties`
+  - Model `OriginGroupUpdateParameters` moved instance variable `health_probe_settings`, `origins`, `response_based_origin_error_detection_settings` and `traffic_restoration_time_to_healed_or_new_endpoints_in_minutes` under property `properties` whose type is `OriginGroupUpdatePropertiesParameters`
+  - Model `OriginUpdateParameters` moved instance variable `enabled`, `host_name`, `http_port`, `https_port`, `origin_host_header`, `priority`, `private_link_alias`, `private_link_approval_message`, `private_link_location`, `private_link_resource_id` and `weight` under property `properties` whose type is `OriginUpdatePropertiesParameters`
+  - Model `Profile` moved instance variable `extended_properties`, `front_door_id`, `log_scrubbing`, `origin_response_timeout_seconds`, `provisioning_state` and `resource_state` under property `properties` whose type is `ProfileProperties`
+  - Model `ProfileUpdateParameters` moved instance variable `log_scrubbing` and `origin_response_timeout_seconds` under property `properties` whose type is `ProfilePropertiesUpdateParameters`
+  - Model `Route` moved instance variable `cache_configuration`, `custom_domains`, `deployment_status`, `enabled_state`, `endpoint_name`, `forwarding_protocol`, `https_redirect`, `link_to_default_domain`, `origin_group`, `origin_path`, `patterns_to_match`, `provisioning_state`, `rule_sets` and `supported_protocols` under property `properties` whose type is `RouteProperties`
+  - Model `RouteUpdateParameters` moved instance variable `cache_configuration`, `custom_domains`, `enabled_state`, `endpoint_name`, `forwarding_protocol`, `https_redirect`, `link_to_default_domain`, `origin_group`, `origin_path`, `patterns_to_match`, `rule_sets` and `supported_protocols` under property `properties` whose type is `RouteUpdatePropertiesParameters`
+  - Model `Rule` moved instance variable `actions`, `conditions`, `deployment_status`, `match_processing_behavior`, `order`, `provisioning_state` and `rule_set_name` under property `properties` whose type is `RuleProperties`
+  - Model `RuleSet` moved instance variable `deployment_status`, `profile_name` and `provisioning_state` under property `properties` whose type is `RuleSetProperties`
+  - Model `RuleUpdateParameters` moved instance variable `actions`, `conditions`, `match_processing_behavior`, `order` and `rule_set_name` under property `properties` whose type is `RuleUpdatePropertiesParameters`
+  - Model `Secret` moved instance variable `deployment_status`, `parameters`, `profile_name` and `provisioning_state` under property `properties` whose type is `SecretProperties`
+  - Model `SecurityPolicy` moved instance variable `deployment_status`, `parameters`, `profile_name` and `provisioning_state` under property `properties` whose type is `SecurityPolicyProperties`
+  - Model `SecurityPolicyUpdateParameters` moved instance variable `parameters` under property `properties` whose type is `SecurityPolicyUpdateProperties`
+  - Combined enum `CacheExpirationActionParametersTypeName`/`CacheKeyQueryStringActionParametersTypeName`/`HeaderActionParametersTypeName`/`OriginGroupOverrideActionParametersTypeName`/`RouteConfigurationOverrideActionParametersTypeName`/`UrlRedirectActionParametersTypeName`/`UrlRewriteActionParametersTypeName`/`UrlSigningActionParametersTypeName` to `DeliveryRuleActionParametersType`
+  - Combined enum `CdnCertificateSourceParametersTypeName`/`KeyVaultCertificateSourceParametersTypeName` to `CertificateSourceParametersType`
+  - Combined enum `ClientPortMatchConditionParametersTypeName`/`CookiesMatchConditionParametersTypeName`/`HostNameMatchConditionParametersTypeName`/`HttpVersionMatchConditionParametersTypeName`/`IsDeviceMatchConditionParametersTypeName`/`PostArgsMatchConditionParametersTypeName`/`QueryStringMatchConditionParametersTypeName`/`RemoteAddressMatchConditionParametersTypeName`/`RequestBodyMatchConditionParametersTypeName`/`RequestHeaderMatchConditionParametersTypeName`/`RequestMethodMatchConditionParametersTypeName`/`RequestSchemeMatchConditionParametersTypeName`/`RequestUriMatchConditionParametersTypeName`/`ServerPortMatchConditionParametersTypeName`/`SocketAddrMatchConditionParametersTypeName`/`SslProtocolMatchConditionParametersTypeName`/`UrlFileExtensionMatchConditionParametersTypeName`/`UrlFileNameMatchConditionParametersTypeName`/`UrlPathMatchConditionParametersTypeName` to `DeliveryRuleConditionParametersType`
+  - Method `LogAnalyticsOperations.get_log_analytics_metrics` changed its parameter `continents`/`country_or_regions`/`custom_domains`/`date_time_begin`/`date_time_end`/`granularity`/`group_by`/`metrics`/`protocols` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_log_analytics_rankings` changed its parameter `custom_domains`/`date_time_begin`/`date_time_end`/`max_ranking`/`metrics`/`rankings` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_waf_log_analytics_metrics` changed its parameter `actions`/`date_time_begin`/`date_time_end`/`granularity`/`group_by`/`metrics`/`rule_types` from `positional_or_keyword` to `keyword_only`
+  - Method `LogAnalyticsOperations.get_waf_log_analytics_rankings` changed its parameter `actions`/`date_time_begin`/`date_time_end`/`max_ranking`/`metrics`/`rankings`/`rule_types` from `positional_or_keyword` to `keyword_only`
+  - Operation group `RuleSetsOperations` renamed method `create` to `begin_create`
+  - Renamed operation group `CdnManagementClientOperationsMixin` to `_CdnManagementClientOperationsMixin`
+  - Deleted model `AfdErrorResponse` and you could use `ErrorResponse` instead if needed
+
+### Other Changes
+
+  - Deleted model `AFDDomainListResult`/`AFDEndpointListResult`/`AFDOriginGroupListResult`/`AFDOriginListResult`/`CdnWebApplicationFirewallPolicyList`/`CustomDomainListResult`/`EdgenodeResult`/`EndpointListResult`/`ManagedRuleSetDefinitionList`/`OperationsListResult`/`OriginGroupListResult`/`OriginListResult`/`ProfileListResult`/`ResourceUsageListResult`/`RouteListResult`/`RuleListResult`/`RuleSetListResult`/`SecretListResult`/`SecurityPolicyListResult`/`UsagesListResult` which actually were not used by SDK users
+  - Deleted model `AzureFirstPartyManagedCertificate`/`Certificate`/`CustomerCertificate`/`ManagedCertificate`/`ValidationToken`/`CdnManagementClientOperationsMixin` which actually were not used by SDK users
+  - Deleted enum `IdentityType` which actually were not used by SDK users
+
 ## 14.0.0b1 (2026-05-22)
 
 ### Features Added

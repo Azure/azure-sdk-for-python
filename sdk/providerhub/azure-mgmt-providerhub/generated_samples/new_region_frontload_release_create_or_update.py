@@ -32,7 +32,7 @@ def main():
 
     response = client.new_region_frontload_release.create_or_update(
         provider_namespace="Microsoft.Contoso",
-        release_name="2020week10",
+        release_name="2020week11",
         properties={
             "properties": {
                 "copyFromLocation": "eastus",
@@ -75,6 +75,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-09-01/NewRegionFrontloadRelease_CreateOrUpdate.json
+# x-ms-original-file: 2025-10-01/NewRegionFrontloadRelease_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

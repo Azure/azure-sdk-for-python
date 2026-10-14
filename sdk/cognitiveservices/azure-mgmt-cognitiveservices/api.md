@@ -5,12 +5,15 @@ namespace azure.mgmt.cognitiveservices
         account_capability_hosts: AccountCapabilityHostsOperations
         account_connections: AccountConnectionsOperations
         accounts: AccountsOperations
+        adapter_deployments: AdapterDeploymentsOperations
         agent_applications: AgentApplicationsOperations
         agent_deployments: AgentDeploymentsOperations
+        arc_deployments: ArcDeploymentsOperations
         commitment_plans: CommitmentPlansOperations
         commitment_tiers: CommitmentTiersOperations
         compute_operations: ComputeOperationsOperations
         computes: ComputesOperations
+        cost_controls: CostControlsOperations
         defender_for_ai_settings: DefenderForAISettingsOperations
         deleted_accounts: DeletedAccountsOperations
         deployments: DeploymentsOperations
@@ -33,12 +36,14 @@ namespace azure.mgmt.cognitiveservices
         project_connections: ProjectConnectionsOperations
         projects: ProjectsOperations
         quota_tiers: QuotaTiersOperations
+        rai_bindings: RaiBindingsOperations
         rai_blocklist_items: RaiBlocklistItemsOperations
         rai_blocklists: RaiBlocklistsOperations
         rai_content_filters: RaiContentFiltersOperations
         rai_external_safety_provider: RaiExternalSafetyProviderOperations
         rai_external_safety_providers: RaiExternalSafetyProvidersOperations
         rai_policies: RaiPoliciesOperations
+        rai_regos: RaiRegosOperations
         rai_tool_labels: RaiToolLabelsOperations
         rai_topics: RaiTopicsOperations
         resource_skus: ResourceSkusOperations
@@ -71,7 +76,7 @@ namespace azure.mgmt.cognitiveservices
         @overload
         def calculate_model_capacity(
                 self, 
-                parameters: JSON, 
+                parameters: CalculateModelCapacityParameter, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -98,7 +103,7 @@ namespace azure.mgmt.cognitiveservices
         @overload
         def check_domain_availability(
                 self, 
-                parameters: JSON, 
+                parameters: CheckDomainAvailabilityParameter, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -127,7 +132,7 @@ namespace azure.mgmt.cognitiveservices
         def check_sku_availability(
                 self, 
                 location: str, 
-                parameters: JSON, 
+                parameters: CheckSkuAvailabilityParameter, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -160,12 +165,15 @@ namespace azure.mgmt.cognitiveservices.aio
         account_capability_hosts: AccountCapabilityHostsOperations
         account_connections: AccountConnectionsOperations
         accounts: AccountsOperations
+        adapter_deployments: AdapterDeploymentsOperations
         agent_applications: AgentApplicationsOperations
         agent_deployments: AgentDeploymentsOperations
+        arc_deployments: ArcDeploymentsOperations
         commitment_plans: CommitmentPlansOperations
         commitment_tiers: CommitmentTiersOperations
         compute_operations: ComputeOperationsOperations
         computes: ComputesOperations
+        cost_controls: CostControlsOperations
         defender_for_ai_settings: DefenderForAISettingsOperations
         deleted_accounts: DeletedAccountsOperations
         deployments: DeploymentsOperations
@@ -188,12 +196,14 @@ namespace azure.mgmt.cognitiveservices.aio
         project_connections: ProjectConnectionsOperations
         projects: ProjectsOperations
         quota_tiers: QuotaTiersOperations
+        rai_bindings: RaiBindingsOperations
         rai_blocklist_items: RaiBlocklistItemsOperations
         rai_blocklists: RaiBlocklistsOperations
         rai_content_filters: RaiContentFiltersOperations
         rai_external_safety_provider: RaiExternalSafetyProviderOperations
         rai_external_safety_providers: RaiExternalSafetyProvidersOperations
         rai_policies: RaiPoliciesOperations
+        rai_regos: RaiRegosOperations
         rai_tool_labels: RaiToolLabelsOperations
         rai_topics: RaiTopicsOperations
         resource_skus: ResourceSkusOperations
@@ -226,7 +236,7 @@ namespace azure.mgmt.cognitiveservices.aio
         @overload
         async def calculate_model_capacity(
                 self, 
-                parameters: JSON, 
+                parameters: CalculateModelCapacityParameter, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -253,7 +263,7 @@ namespace azure.mgmt.cognitiveservices.aio
         @overload
         async def check_domain_availability(
                 self, 
-                parameters: JSON, 
+                parameters: CheckDomainAvailabilityParameter, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -282,7 +292,7 @@ namespace azure.mgmt.cognitiveservices.aio
         async def check_sku_availability(
                 self, 
                 location: str, 
-                parameters: JSON, 
+                parameters: CheckSkuAvailabilityParameter, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -337,7 +347,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 capability_host_name: str, 
-                capability_host: JSON, 
+                capability_host: CapabilityHost, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -408,7 +418,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 connection_name: str, 
-                connection: Optional[JSON] = None, 
+                connection: Optional[ConnectionPropertiesV2BasicResource] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -474,7 +484,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 connection_name: str, 
-                connection: Optional[JSON] = None, 
+                connection: Optional[ConnectionUpdateContent] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -517,7 +527,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                account: JSON, 
+                account: Account, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -558,7 +568,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                account: JSON, 
+                account: Account, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -591,7 +601,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                body: JSON, 
+                body: EvaluateDeploymentPoliciesRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -676,7 +686,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                parameters: JSON, 
+                parameters: RegenerateKeyParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -692,6 +702,89 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> ApiKeys: ...
+
+
+    class azure.mgmt.cognitiveservices.aio.operations.AdapterDeploymentsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                adapter_deployment_name: str, 
+                resource: AdapterDeployment, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AdapterDeployment]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                adapter_deployment_name: str, 
+                resource: AdapterDeployment, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AdapterDeployment]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                adapter_deployment_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AdapterDeployment]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'adapter_deployment_name', 'etag', 'match_condition']}, api_versions_list=['2026-09-15-preview'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                adapter_deployment_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'adapter_deployment_name', 'accept']}, api_versions_list=['2026-09-15-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                adapter_deployment_name: str, 
+                **kwargs: Any
+            ) -> AdapterDeployment: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-09-15-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[AdapterDeployment]: ...
 
 
     class azure.mgmt.cognitiveservices.aio.operations.AgentApplicationsOperations:
@@ -722,7 +815,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 account_name: str, 
                 project_name: str, 
                 name: str, 
-                body: JSON, 
+                body: AgentApplication, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -839,7 +932,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 project_name: str, 
                 app_name: str, 
                 deployment_name: str, 
-                body: JSON, 
+                body: AgentDeployment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -920,6 +1013,116 @@ namespace azure.mgmt.cognitiveservices.aio.operations
             ) -> None: ...
 
 
+    class azure.mgmt.cognitiveservices.aio.operations.ArcDeploymentsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                deployment_name: str, 
+                resource: ArcDeployment, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ArcDeployment]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                deployment_name: str, 
+                resource: ArcDeployment, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ArcDeployment]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                deployment_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ArcDeployment]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-15-preview', params_added_on={'2026-07-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'deployment_name']}, api_versions_list=['2026-07-15-preview', '2026-09-15-preview'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                deployment_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                deployment_name: str, 
+                properties: ArcDeploymentUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ArcDeployment]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                deployment_name: str, 
+                properties: ArcDeploymentUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ArcDeployment]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                deployment_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ArcDeployment]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-15-preview', params_added_on={'2026-07-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'deployment_name', 'accept']}, api_versions_list=['2026-07-15-preview', '2026-09-15-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                deployment_name: str, 
+                **kwargs: Any
+            ) -> ArcDeployment: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-15-preview', params_added_on={'2026-07-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-07-15-preview', '2026-09-15-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[ArcDeployment]: ...
+
+
     class azure.mgmt.cognitiveservices.aio.operations.CommitmentPlansOperations:
 
         def __init__(
@@ -946,7 +1149,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 commitment_plan_name: str, 
                 commitment_plan_association_name: str, 
-                association: JSON, 
+                association: CommitmentPlanAccountAssociation, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -980,7 +1183,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 self, 
                 resource_group_name: str, 
                 commitment_plan_name: str, 
-                commitment_plan: JSON, 
+                commitment_plan: CommitmentPlan, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1039,7 +1242,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 self, 
                 resource_group_name: str, 
                 commitment_plan_name: str, 
-                commitment_plan: JSON, 
+                commitment_plan: PatchResourceTagsAndSku, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1074,7 +1277,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 commitment_plan_name: str, 
-                commitment_plan: JSON, 
+                commitment_plan: CommitmentPlan, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1170,7 +1373,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-15-preview', params_added_on={'2026-01-15-preview': ['api_version', 'subscription_id', 'location', 'operation_id', 'accept']}, api_versions_list=['2026-01-15-preview', '2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-01-15-preview', params_added_on={'2026-01-15-preview': ['api_version', 'subscription_id', 'location', 'operation_id', 'accept']}, api_versions_list=['2026-01-15-preview', '2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         async def get(
                 self, 
                 location: str, 
@@ -1205,7 +1408,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 compute_name: str, 
-                resource: JSON, 
+                resource: Compute, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1224,7 +1427,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
             ) -> AsyncLROPoller[Compute]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1234,7 +1437,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         async def begin_restart(
                 self, 
                 resource_group_name: str, 
@@ -1244,7 +1447,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         async def begin_start(
                 self, 
                 resource_group_name: str, 
@@ -1254,7 +1457,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         async def begin_stop(
                 self, 
                 resource_group_name: str, 
@@ -1263,44 +1466,8 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 **kwargs: Any
             ) -> AsyncLROPoller[None]: ...
 
-        @overload
-        async def begin_update(
-                self, 
-                resource_group_name: str, 
-                account_name: str, 
-                compute_name: str, 
-                properties: Compute, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[Compute]: ...
-
-        @overload
-        async def begin_update(
-                self, 
-                resource_group_name: str, 
-                account_name: str, 
-                compute_name: str, 
-                properties: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[Compute]: ...
-
-        @overload
-        async def begin_update(
-                self, 
-                resource_group_name: str, 
-                account_name: str, 
-                compute_name: str, 
-                properties: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[Compute]: ...
-
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1310,13 +1477,138 @@ namespace azure.mgmt.cognitiveservices.aio.operations
             ) -> Compute: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[Compute]: ...
+
+
+    class azure.mgmt.cognitiveservices.aio.operations.CostControlsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                cost_control_name: str, 
+                resource: CostControl, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> CostControl: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                cost_control_name: str, 
+                resource: CostControl, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> CostControl: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                cost_control_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> CostControl: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'cost_control_name', 'etag', 'match_condition']}, api_versions_list=['2026-09-15-preview'])
+        async def delete(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                cost_control_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'cost_control_name', 'accept']}, api_versions_list=['2026-09-15-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                cost_control_name: str, 
+                **kwargs: Any
+            ) -> CostControl: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-09-15-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[CostControl]: ...
+
+        @overload
+        async def update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                cost_control_name: str, 
+                properties: CostControlPatch, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> CostControl: ...
+
+        @overload
+        async def update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                cost_control_name: str, 
+                properties: CostControlPatch, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> CostControl: ...
+
+        @overload
+        async def update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                cost_control_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> CostControl: ...
 
 
     class azure.mgmt.cognitiveservices.aio.operations.DefenderForAISettingsOperations:
@@ -1345,7 +1637,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 defender_for_ai_setting_name: str, 
-                defender_for_ai_settings: JSON, 
+                defender_for_ai_settings: DefenderForAISetting, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1398,7 +1690,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 defender_for_ai_setting_name: str, 
-                defender_for_ai_settings: JSON, 
+                defender_for_ai_settings: DefenderForAISetting, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1473,7 +1765,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 deployment_name: str, 
-                deployment: JSON, 
+                deployment: Deployment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1518,7 +1810,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 deployment_name: str, 
-                deployment: JSON, 
+                deployment: PatchResourceTagsAndSku, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1616,7 +1908,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 encryption_scope_name: str, 
-                encryption_scope: JSON, 
+                encryption_scope: EncryptionScope, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1681,7 +1973,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'offer', 'accelerator_type', 'deployment_id', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'offer', 'accelerator_type', 'deployment_id', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def list(
                 self, 
                 *, 
@@ -1718,7 +2010,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 deployment_name: str, 
-                resource: JSON, 
+                resource: ManagedComputeDeployment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1737,7 +2029,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
             ) -> AsyncLROPoller[ManagedComputeDeployment]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'deployment_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'deployment_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1764,7 +2056,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 deployment_name: str, 
-                properties: JSON, 
+                properties: PatchResourceSku, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1783,7 +2075,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
             ) -> AsyncLROPoller[ManagedComputeDeployment]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'deployment_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'deployment_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1793,7 +2085,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
             ) -> ManagedComputeDeployment: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -1811,7 +2103,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def list(
                 self, 
                 location: str, 
@@ -1845,7 +2137,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 managed_network_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[ManagedNetworkProvisionOptions] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1873,7 +2165,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-15-preview', params_added_on={'2026-01-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'managed_network_name']}, api_versions_list=['2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-05-01', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-01-15-preview', params_added_on={'2026-01-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'managed_network_name']}, api_versions_list=['2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-05-01', '2026-05-15-preview', '2026-07-01', '2026-07-15-preview', '2026-09-01', '2026-09-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1900,7 +2192,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 managed_network_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[ManagedNetworkSettingsPropertiesBasicResource] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1936,7 +2228,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 managed_network_name: str, 
-                body: JSON, 
+                body: ManagedNetworkSettingsPropertiesBasicResource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2082,7 +2374,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 account_name: str, 
                 managed_network_name: str, 
                 rule_name: str, 
-                body: JSON, 
+                body: OutboundRuleBasicResource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2157,7 +2449,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 managed_network_name: str, 
-                body: JSON, 
+                body: ManagedNetworkSettingsBasicResource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2202,7 +2494,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 private_endpoint_connection_name: str, 
-                properties: JSON, 
+                properties: PrivateEndpointConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2292,7 +2584,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 account_name: str, 
                 project_name: str, 
                 capability_host_name: str, 
-                capability_host: JSON, 
+                capability_host: ProjectCapabilityHost, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2369,7 +2661,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 account_name: str, 
                 project_name: str, 
                 connection_name: str, 
-                connection: Optional[JSON] = None, 
+                connection: Optional[ConnectionPropertiesV2BasicResource] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2441,7 +2733,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 account_name: str, 
                 project_name: str, 
                 connection_name: str, 
-                connection: Optional[JSON] = None, 
+                connection: Optional[ConnectionUpdateContent] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2487,7 +2779,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 project_name: str, 
-                project: JSON, 
+                project: Project, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2532,7 +2824,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 project_name: str, 
-                project: JSON, 
+                project: Project, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2590,7 +2882,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
         async def create_or_update(
                 self, 
                 default: str, 
-                tier: JSON, 
+                tier: QuotaTier, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2630,7 +2922,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
         async def update(
                 self, 
                 default: str, 
-                tier: JSON, 
+                tier: QuotaTier, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2645,6 +2937,91 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> QuotaTier: ...
+
+
+    class azure.mgmt.cognitiveservices.aio.operations.RaiBindingsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                rai_binding_name: str, 
+                rai_binding: RaiBinding, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> RaiBinding: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                rai_binding_name: str, 
+                rai_binding: RaiBinding, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> RaiBinding: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                rai_binding_name: str, 
+                rai_binding: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> RaiBinding: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'rai_binding_name', 'etag', 'match_condition']}, api_versions_list=['2026-09-15-preview'])
+        async def delete(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                rai_binding_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'rai_binding_name', 'accept']}, api_versions_list=['2026-09-15-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                rai_binding_name: str, 
+                **kwargs: Any
+            ) -> RaiBinding: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'top', 'accept']}, api_versions_list=['2026-09-15-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                *, 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[RaiBinding]: ...
 
 
     class azure.mgmt.cognitiveservices.aio.operations.RaiBlocklistItemsOperations:
@@ -2673,7 +3050,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 rai_blocklist_name: str, 
-                rai_blocklist_items: List[JSON], 
+                rai_blocklist_items: List[RaiBlocklistItemBulkRequest], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2745,7 +3122,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 account_name: str, 
                 rai_blocklist_name: str, 
                 rai_blocklist_item_name: str, 
-                rai_blocklist_item: JSON, 
+                rai_blocklist_item: RaiBlocklistItem, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2819,7 +3196,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 rai_blocklist_name: str, 
-                rai_blocklist: JSON, 
+                rai_blocklist: RaiBlocklist, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2908,7 +3285,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
         async def create_or_update(
                 self, 
                 safety_provider_name: str, 
-                safety_provider: JSON, 
+                safety_provider: RaiExternalSafetyProviderSchema, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2953,11 +3330,15 @@ namespace azure.mgmt.cognitiveservices.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'rai_policy_name', 'etag', 'match_condition']}, api_versions_list=['2026-09-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
                 rai_policy_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> AsyncLROPoller[None]: ...
 
@@ -2970,6 +3351,8 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 rai_policy: RaiPolicy, 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> RaiPolicy: ...
 
@@ -2979,9 +3362,11 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 rai_policy_name: str, 
-                rai_policy: JSON, 
+                rai_policy: RaiPolicy, 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> RaiPolicy: ...
 
@@ -2994,10 +3379,13 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 rai_policy: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> RaiPolicy: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'rai_policy_name', 'accept']}, api_versions_list=['2026-09-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -3013,6 +3401,91 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 account_name: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[RaiPolicy]: ...
+
+
+    class azure.mgmt.cognitiveservices.aio.operations.RaiRegosOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                rai_rego_name: str, 
+                rai_rego: RaiRego, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> RaiRego: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                rai_rego_name: str, 
+                rai_rego: RaiRego, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> RaiRego: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                rai_rego_name: str, 
+                rai_rego: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> RaiRego: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'rai_rego_name', 'etag', 'match_condition']}, api_versions_list=['2026-09-15-preview'])
+        async def delete(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                rai_rego_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'rai_rego_name', 'accept']}, api_versions_list=['2026-09-15-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                rai_rego_name: str, 
+                **kwargs: Any
+            ) -> RaiRego: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'top', 'accept']}, api_versions_list=['2026-09-15-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                *, 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[RaiRego]: ...
 
 
     class azure.mgmt.cognitiveservices.aio.operations.RaiToolLabelsOperations:
@@ -3050,7 +3523,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 rai_tool_connection_name: str, 
-                rai_tool_label: JSON, 
+                rai_tool_label: RaiToolLabel, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3121,7 +3594,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 rai_topic_name: str, 
-                rai_topic: JSON, 
+                rai_topic: RaiTopic, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3198,7 +3671,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
         async def create_or_update(
                 self, 
                 rai_policy_name: str, 
-                rai_policy: JSON, 
+                rai_policy: RaiPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3248,7 +3721,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 safety_provider_name: str, 
-                safety_provider: JSON, 
+                safety_provider: RaiExternalSafetyProviderSchema, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3313,7 +3786,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 account_name: str, 
                 project_name: str, 
                 workbench_name: str, 
-                resource: JSON, 
+                resource: Workbench, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3333,7 +3806,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
             ) -> AsyncLROPoller[Workbench]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'workbench_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'workbench_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -3344,7 +3817,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'workbench_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'workbench_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         async def begin_restart(
                 self, 
                 resource_group_name: str, 
@@ -3355,7 +3828,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'workbench_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'workbench_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         async def begin_start(
                 self, 
                 resource_group_name: str, 
@@ -3366,7 +3839,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'workbench_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'workbench_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         async def begin_stop(
                 self, 
                 resource_group_name: str, 
@@ -3376,47 +3849,8 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 **kwargs: Any
             ) -> AsyncLROPoller[None]: ...
 
-        @overload
-        async def begin_update(
-                self, 
-                resource_group_name: str, 
-                account_name: str, 
-                project_name: str, 
-                workbench_name: str, 
-                properties: Workbench, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[Workbench]: ...
-
-        @overload
-        async def begin_update(
-                self, 
-                resource_group_name: str, 
-                account_name: str, 
-                project_name: str, 
-                workbench_name: str, 
-                properties: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[Workbench]: ...
-
-        @overload
-        async def begin_update(
-                self, 
-                resource_group_name: str, 
-                account_name: str, 
-                project_name: str, 
-                workbench_name: str, 
-                properties: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[Workbench]: ...
-
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'workbench_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'workbench_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -3427,7 +3861,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
             ) -> Workbench: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -3435,6 +3869,45 @@ namespace azure.mgmt.cognitiveservices.aio.operations
                 project_name: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[Workbench]: ...
+
+        @overload
+        async def update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                project_name: str, 
+                workbench_name: str, 
+                properties: WorkbenchUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Workbench: ...
+
+        @overload
+        async def update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                project_name: str, 
+                workbench_name: str, 
+                properties: WorkbenchUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Workbench: ...
+
+        @overload
+        async def update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                project_name: str, 
+                workbench_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Workbench: ...
 
 
 namespace azure.mgmt.cognitiveservices.models
@@ -3647,7 +4120,9 @@ namespace azure.mgmt.cognitiveservices.models
 
 
     class azure.mgmt.cognitiveservices.models.AccountProperties(_Model):
+        a365_logging_enabled: Optional[bool]
         abuse_penalty: Optional[AbusePenalty]
+        agent_hosting_configurations: Optional[list[AgentHostingConfiguration]]
         allow_project_management: Optional[bool]
         allowed_fqdn_list: Optional[list[str]]
         aml_workspace: Optional[UserOwnedAmlWorkspace]
@@ -3655,7 +4130,10 @@ namespace azure.mgmt.cognitiveservices.models
         associated_projects: Optional[list[str]]
         call_rate_limit: Optional[CallRateLimit]
         capabilities: Optional[list[SkuCapability]]
+        capability_settings: Optional[CapabilitySettings]
         commitment_plan_associations: Optional[list[CommitmentPlanAssociation]]
+        cost_control_connections: Optional[CostControlConnections]
+        cost_control_ids: Optional[list[str]]
         custom_sub_domain_name: Optional[str]
         date_created: Optional[str]
         default_project: Optional[str]
@@ -3688,11 +4166,16 @@ namespace azure.mgmt.cognitiveservices.models
         def __init__(
                 self, 
                 *, 
+                a365_logging_enabled: Optional[bool] = ..., 
+                agent_hosting_configurations: Optional[list[AgentHostingConfiguration]] = ..., 
                 allow_project_management: Optional[bool] = ..., 
                 allowed_fqdn_list: Optional[list[str]] = ..., 
                 aml_workspace: Optional[UserOwnedAmlWorkspace] = ..., 
                 api_properties: Optional[ApiProperties] = ..., 
                 associated_projects: Optional[list[str]] = ..., 
+                capability_settings: Optional[CapabilitySettings] = ..., 
+                cost_control_connections: Optional[CostControlConnections] = ..., 
+                cost_control_ids: Optional[list[str]] = ..., 
                 custom_sub_domain_name: Optional[str] = ..., 
                 default_project: Optional[str] = ..., 
                 disable_local_auth: Optional[bool] = ..., 
@@ -3747,6 +4230,79 @@ namespace azure.mgmt.cognitiveservices.models
 
     class azure.mgmt.cognitiveservices.models.ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         INTERNAL = "Internal"
+
+
+    class azure.mgmt.cognitiveservices.models.AdapterDeployment(ProxyResource):
+        etag: Optional[str]
+        id: str
+        name: str
+        properties: Optional[AdapterDeploymentProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[AdapterDeploymentProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.AdapterDeploymentLastOperation(_Model):
+        completed_at: Optional[datetime]
+        requested_target_deployment_name: Optional[str]
+        started_at: datetime
+        status: Union[str, AdapterDeploymentOperationState]
+        type: Union[str, AdapterDeploymentOperationType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                completed_at: Optional[datetime] = ..., 
+                requested_target_deployment_name: Optional[str] = ..., 
+                started_at: datetime, 
+                status: Union[str, AdapterDeploymentOperationState], 
+                type: Union[str, AdapterDeploymentOperationType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.AdapterDeploymentOperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACCEPTED = "Accepted"
+        FAILED = "Failed"
+        RUNNING = "Running"
+        SUCCEEDED = "Succeeded"
+
+
+    class azure.mgmt.cognitiveservices.models.AdapterDeploymentOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CREATE = "Create"
+        DELETE = "Delete"
+        UPDATE = "Update"
+
+
+    class azure.mgmt.cognitiveservices.models.AdapterDeploymentProperties(_Model):
+        active_target_deployment_name: Optional[str]
+        last_operation: Optional[AdapterDeploymentLastOperation]
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        source_model_id: str
+        target_deployment_name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                source_model_id: str, 
+                target_deployment_name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.cognitiveservices.models.AgentApplication(ProxyResource):
@@ -3838,6 +4394,26 @@ namespace azure.mgmt.cognitiveservices.models
         CUSTOM = "Custom"
         HOSTED = "Hosted"
         MANAGED = "Managed"
+
+
+    class azure.mgmt.cognitiveservices.models.AgentHostingConfiguration(_Model):
+        hosting_type: str
+        name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                hosting_type: str, 
+                name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.AgentHostingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MANAGED_CLUSTER = "ManagedCluster"
 
 
     class azure.mgmt.cognitiveservices.models.AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -4068,6 +4644,258 @@ namespace azure.mgmt.cognitiveservices.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.cognitiveservices.models.ArcDeployment(ProxyResource):
+        etag: Optional[str]
+        id: str
+        name: str
+        properties: ArcDeploymentProperties
+        sku: ArcDeploymentSku
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: ArcDeploymentProperties, 
+                sku: ArcDeploymentSku
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.ArcDeploymentComputeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CPU = "cpu"
+        GPU = "gpu"
+
+
+    class azure.mgmt.cognitiveservices.models.ArcDeploymentCpuMemoryResourceRequirements(_Model):
+        cpu: str
+        memory: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                cpu: str, 
+                memory: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.ArcDeploymentKubernetesResources(_Model):
+        limits: Optional[ArcDeploymentResourceRequirements]
+        requests: Optional[ArcDeploymentCpuMemoryResourceRequirements]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                limits: Optional[ArcDeploymentResourceRequirements] = ..., 
+                requests: Optional[ArcDeploymentCpuMemoryResourceRequirements] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.ArcDeploymentModel(_Model):
+        format: str
+        name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                format: str, 
+                name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.ArcDeploymentPatchCpuMemoryResourceRequirements(_Model):
+        cpu: Optional[str]
+        memory: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                cpu: Optional[str] = ..., 
+                memory: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.ArcDeploymentPatchKubernetesResources(_Model):
+        limits: Optional[ArcDeploymentResourceRequirements]
+        requests: Optional[ArcDeploymentPatchCpuMemoryResourceRequirements]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                limits: Optional[ArcDeploymentResourceRequirements] = ..., 
+                requests: Optional[ArcDeploymentPatchCpuMemoryResourceRequirements] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.ArcDeploymentProperties(_Model):
+        capabilities: Optional[dict[str, str]]
+        compute: Union[str, ArcDeploymentComputeType]
+        deployment_state: Optional[Union[str, DeploymentState]]
+        deployment_template: Optional[str]
+        extension_id: str
+        inference_endpoint: Optional[str]
+        model: ArcDeploymentModel
+        node_selector: Optional[dict[str, str]]
+        provisioning_details: Optional[ArcDeploymentProvisioningDetails]
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        rai_policy_name: Optional[str]
+        replicas: int
+        resources: ArcDeploymentKubernetesResources
+        runtime: Union[str, ArcDeploymentRuntime]
+        vllm_parameters: Optional[ArcDeploymentVllmParameters]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                compute: Union[str, ArcDeploymentComputeType], 
+                deployment_state: Optional[Union[str, DeploymentState]] = ..., 
+                deployment_template: Optional[str] = ..., 
+                extension_id: str, 
+                model: ArcDeploymentModel, 
+                node_selector: Optional[dict[str, str]] = ..., 
+                rai_policy_name: Optional[str] = ..., 
+                replicas: int, 
+                resources: ArcDeploymentKubernetesResources, 
+                runtime: Union[str, ArcDeploymentRuntime]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.ArcDeploymentProvisioningDetails(_Model):
+        last_operation_timestamp: Optional[datetime]
+        message: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                last_operation_timestamp: Optional[datetime] = ..., 
+                message: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.ArcDeploymentResourceRequirements(_Model):
+        cpu: Optional[str]
+        gpu: Optional[int]
+        memory: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                cpu: Optional[str] = ..., 
+                gpu: Optional[int] = ..., 
+                memory: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.ArcDeploymentRuntime(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ONNX = "onnx-genai"
+        VLLM = "vllm"
+
+
+    class azure.mgmt.cognitiveservices.models.ArcDeploymentSku(_Model):
+        name: Union[str, ArcDeploymentSkuName]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: Union[str, ArcDeploymentSkuName]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.ArcDeploymentSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ARC = "Arc"
+
+
+    class azure.mgmt.cognitiveservices.models.ArcDeploymentUpdate(_Model):
+        properties: Optional[ArcDeploymentUpdateProperties]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[ArcDeploymentUpdateProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.ArcDeploymentUpdateProperties(_Model):
+        node_selector: Optional[dict[str, str]]
+        replicas: Optional[int]
+        resources: Optional[ArcDeploymentPatchKubernetesResources]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                node_selector: Optional[dict[str, str]] = ..., 
+                replicas: Optional[int] = ..., 
+                resources: Optional[ArcDeploymentPatchKubernetesResources] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.ArcDeploymentVllmParameters(_Model):
+        enforce_eager: Optional[bool]
+        gpu_memory_utilization: Optional[float]
+        max_model_len: Optional[int]
+        tensor_parallel_size: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                enforce_eager: Optional[bool] = ..., 
+                gpu_memory_utilization: Optional[float] = ..., 
+                max_model_len: Optional[int] = ..., 
+                tensor_parallel_size: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.cognitiveservices.models.AssignedIdentity(_Model):
         client_id: str
         kind: Union[str, IdentityKind]
@@ -4255,6 +5083,24 @@ namespace azure.mgmt.cognitiveservices.models
         UPDATING = "Updating"
 
 
+    class azure.mgmt.cognitiveservices.models.CapabilitySettings(_Model):
+        blob_store: Optional[str]
+        document_store: Optional[str]
+        vector_store: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                blob_store: Optional[str] = ..., 
+                document_store: Optional[str] = ..., 
+                vector_store: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.cognitiveservices.models.CapacityConfig(_Model):
         allowed_values: Optional[list[int]]
         default: Optional[int]
@@ -4327,6 +5173,7 @@ namespace azure.mgmt.cognitiveservices.models
         compute_type: Literal[ComputeType.CLUSTER]
         creation_time: datetime
         errors: list[ErrorDetail]
+        location: str
         pools: list[Pool]
         provisioning_state: Union[str, ComputeProvisioningState]
         subnet_arm_id: Optional[str]
@@ -4335,6 +5182,7 @@ namespace azure.mgmt.cognitiveservices.models
         def __init__(
                 self, 
                 *, 
+                location: str, 
                 pools: list[Pool], 
                 subnet_arm_id: Optional[str] = ...
             ) -> None: ...
@@ -4550,11 +5398,9 @@ namespace azure.mgmt.cognitiveservices.models
         id: str
         identity: Optional[Identity]
         kind: Optional[str]
-        location: Optional[str]
         name: str
         properties: ComputeProperties
         system_data: SystemData
-        tags: Optional[dict[str, str]]
         type: str
 
         @overload
@@ -4563,9 +5409,7 @@ namespace azure.mgmt.cognitiveservices.models
                 *, 
                 identity: Optional[Identity] = ..., 
                 kind: Optional[str] = ..., 
-                location: Optional[str] = ..., 
-                properties: ComputeProperties, 
-                tags: Optional[dict[str, str]] = ...
+                properties: ComputeProperties
             ) -> None: ...
 
         @overload
@@ -4619,13 +5463,15 @@ namespace azure.mgmt.cognitiveservices.models
         compute_type: str
         creation_time: Optional[datetime]
         errors: Optional[list[ErrorDetail]]
+        location: str
         provisioning_state: Optional[Union[str, ComputeProvisioningState]]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                compute_type: str
+                compute_type: str, 
+                location: str
             ) -> None: ...
 
         @overload
@@ -4795,6 +5641,7 @@ namespace azure.mgmt.cognitiveservices.models
         ODBC = "Odbc"
         OFFICE365 = "Office365"
         OPEN_AI = "OpenAI"
+        OPEN_API = "OpenAPI"
         ORACLE = "Oracle"
         ORACLE_CLOUD_STORAGE = "OracleCloudStorage"
         ORACLE_SERVICE_CLOUD = "OracleServiceCloud"
@@ -5038,6 +5885,7 @@ namespace azure.mgmt.cognitiveservices.models
         errors: list[ErrorDetail]
         idle_time_before_shutdown: Optional[str]
         image_link: str
+        location: str
         provisioning_state: Union[str, ComputeProvisioningState]
         ssh_settings: Optional[SshSettings]
         target_cluster_id: str
@@ -5048,6 +5896,7 @@ namespace azure.mgmt.cognitiveservices.models
                 *, 
                 idle_time_before_shutdown: Optional[str] = ..., 
                 image_link: str, 
+                location: str, 
                 ssh_settings: Optional[SshSettings] = ..., 
                 target_cluster_id: str
             ) -> None: ...
@@ -5060,6 +5909,201 @@ namespace azure.mgmt.cognitiveservices.models
         HIGH = "High"
         LOW = "Low"
         MEDIUM = "Medium"
+
+
+    class azure.mgmt.cognitiveservices.models.CostControl(ProxyResource):
+        etag: Optional[str]
+        id: str
+        name: str
+        properties: Optional[CostControlProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[CostControlProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.CostControlConnections(_Model):
+        app_insights_connection_id: Optional[str]
+        event_grid_connection_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                app_insights_connection_id: Optional[str] = ..., 
+                event_grid_connection_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.CostControlDimension(_Model):
+        attribute: Optional[str]
+        type: Union[str, CostControlDimensionType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: Union[str, CostControlDimensionType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.CostControlDimensionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACCOUNT = "Account"
+        AGENT = "Agent"
+        CUSTOM = "Custom"
+        IDENTITY = "Identity"
+        PROJECT = "Project"
+        SESSION = "Session"
+
+
+    class azure.mgmt.cognitiveservices.models.CostControlMatch(_Model):
+        agent_resource_ids: Optional[list[str]]
+        identity_object_ids: Optional[list[str]]
+        project_ids: Optional[list[str]]
+        session_ids: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_resource_ids: Optional[list[str]] = ..., 
+                identity_object_ids: Optional[list[str]] = ..., 
+                project_ids: Optional[list[str]] = ..., 
+                session_ids: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.CostControlPatch(_Model):
+        properties: Optional[CostControlPatchProperties]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[CostControlPatchProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.CostControlPatchProperties(_Model):
+        display_name: Optional[str]
+        rules: Optional[list[CostControlRule]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                display_name: Optional[str] = ..., 
+                rules: Optional[list[CostControlRule]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.CostControlPeriod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DAY = "Day"
+        HOUR = "Hour"
+        MINUTE = "Minute"
+        MONTH = "Month"
+        WEEK = "Week"
+        YEAR = "Year"
+
+
+    class azure.mgmt.cognitiveservices.models.CostControlProperties(_Model):
+        display_name: Optional[str]
+        rules: list[CostControlRule]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                display_name: Optional[str] = ..., 
+                rules: list[CostControlRule]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.CostControlRule(_Model):
+        amount: float
+        counter_key: CostControlDimension
+        match: Optional[CostControlMatch]
+        name: str
+        period: Optional[Union[str, CostControlPeriod]]
+        recurring: Optional[bool]
+        thresholds: Optional[list[CostControlThreshold]]
+        unit: Union[str, CostControlUnit]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                amount: float, 
+                counter_key: CostControlDimension, 
+                match: Optional[CostControlMatch] = ..., 
+                name: str, 
+                period: Optional[Union[str, CostControlPeriod]] = ..., 
+                recurring: Optional[bool] = ..., 
+                thresholds: Optional[list[CostControlThreshold]] = ..., 
+                unit: Union[str, CostControlUnit]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.CostControlThreshold(_Model):
+        action: Union[str, CostControlThresholdAction]
+        type: Union[str, CostControlThresholdType]
+        value: float
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                action: Union[str, CostControlThresholdAction], 
+                type: Union[str, CostControlThresholdType], 
+                value: float
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.CostControlThresholdAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ALERT = "Alert"
+        AUDIT = "Audit"
+        BLOCK = "Block"
+
+
+    class azure.mgmt.cognitiveservices.models.CostControlThresholdType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ABSOLUTE = "Absolute"
+        PERCENTAGE = "Percentage"
+
+
+    class azure.mgmt.cognitiveservices.models.CostControlUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        USD = "Usd"
 
 
     class azure.mgmt.cognitiveservices.models.CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -5278,6 +6322,8 @@ namespace azure.mgmt.cognitiveservices.models
         call_rate_limit: Optional[CallRateLimit]
         capabilities: Optional[dict[str, str]]
         capacity_settings: Optional[DeploymentCapacitySettings]
+        context_cache_container_id: Optional[str]
+        cost_control_ids: Optional[list[str]]
         current_capacity: Optional[int]
         deployment_state: Optional[Union[str, DeploymentState]]
         dynamic_throttling_enabled: Optional[bool]
@@ -5298,6 +6344,8 @@ namespace azure.mgmt.cognitiveservices.models
                 self, 
                 *, 
                 capacity_settings: Optional[DeploymentCapacitySettings] = ..., 
+                context_cache_container_id: Optional[str] = ..., 
+                cost_control_ids: Optional[list[str]] = ..., 
                 current_capacity: Optional[int] = ..., 
                 deployment_state: Optional[Union[str, DeploymentState]] = ..., 
                 model: Optional[DeploymentModel] = ..., 
@@ -5627,6 +6675,20 @@ namespace azure.mgmt.cognitiveservices.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.cognitiveservices.models.GatedModelAccessProperties(_Model):
+        connection_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.cognitiveservices.models.HostedAgentDeployment(AgentDeploymentProperties, discriminator='Hosted'):
         agents: list[VersionedAgentReference]
         deployment_id: str
@@ -5785,6 +6847,29 @@ namespace azure.mgmt.cognitiveservices.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.cognitiveservices.models.ManagedClusterAgentHostingConfiguration(AgentHostingConfiguration, discriminator='ManagedCluster'):
+        cluster_resource_id: str
+        hosting_management_identity_resource_id: str
+        hosting_type: Literal[AgentHostingType.MANAGED_CLUSTER]
+        name: str
+        storage_account_resource_id: str
+        workload_identity_resource_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                cluster_resource_id: str, 
+                hosting_management_identity_resource_id: str, 
+                name: str, 
+                storage_account_resource_id: str, 
+                workload_identity_resource_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.cognitiveservices.models.ManagedComputeCapacity(ProxyResource):
         id: str
         name: str
@@ -5858,6 +6943,7 @@ namespace azure.mgmt.cognitiveservices.models
         capabilities: Optional[dict[str, str]]
         compute_id: Optional[str]
         deployment_template: Optional[str]
+        gated_model_access: Optional[GatedModelAccessProperties]
         model: str
         priority: Optional[str]
         provisioning_details: Optional[ManagedComputeDeploymentProvisioningDetails]
@@ -5873,6 +6959,7 @@ namespace azure.mgmt.cognitiveservices.models
                 accelerator_type: Optional[str] = ..., 
                 compute_id: Optional[str] = ..., 
                 deployment_template: Optional[str] = ..., 
+                gated_model_access: Optional[GatedModelAccessProperties] = ..., 
                 model: str, 
                 priority: Optional[str] = ..., 
                 version_upgrade_option: Optional[Union[str, DeploymentModelVersionUpgradeOption]] = ...
@@ -6794,7 +7881,7 @@ namespace azure.mgmt.cognitiveservices.models
         instance_type: str
         name: str
         node_count: int
-        vm_priority: Union[str, VmPriority]
+        vm_priority: Optional[Union[str, VmPriority]]
 
         @overload
         def __init__(
@@ -6803,7 +7890,7 @@ namespace azure.mgmt.cognitiveservices.models
                 instance_type: str, 
                 name: str, 
                 node_count: int, 
-                vm_priority: Union[str, VmPriority]
+                vm_priority: Optional[Union[str, VmPriority]] = ...
             ) -> None: ...
 
         @overload
@@ -7052,6 +8139,7 @@ namespace azure.mgmt.cognitiveservices.models
 
 
     class azure.mgmt.cognitiveservices.models.ProjectProperties(_Model):
+        capability_settings: Optional[CapabilitySettings]
         description: Optional[str]
         display_name: Optional[str]
         endpoints: Optional[dict[str, str]]
@@ -7062,6 +8150,7 @@ namespace azure.mgmt.cognitiveservices.models
         def __init__(
                 self, 
                 *, 
+                capability_settings: Optional[CapabilitySettings] = ..., 
                 description: Optional[str] = ..., 
                 display_name: Optional[str] = ...
             ) -> None: ...
@@ -7113,6 +8202,7 @@ namespace azure.mgmt.cognitiveservices.models
         CANCELED = "Canceled"
         CREATING = "Creating"
         DELETING = "Deleting"
+        EXTENSION_UNREACHABLE = "ExtensionUnreachable"
         FAILED = "Failed"
         MOVING = "Moving"
         RESOLVING_DNS = "ResolvingDNS"
@@ -7218,12 +8308,264 @@ namespace azure.mgmt.cognitiveservices.models
         UNKNOWN = "Unknown"
 
 
+    class azure.mgmt.cognitiveservices.models.RaiAcsEmptyObject(_Model):
+
+
+    class azure.mgmt.cognitiveservices.models.RaiAcsHarmCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        HATE = "Hate"
+        PROMPT_INJECTION = "PromptInjection"
+        PROTECTED_MATERIAL_CODE = "ProtectedMaterialCode"
+        PROTECTED_MATERIAL_TEXT = "ProtectedMaterialText"
+        SELF_HARM = "SelfHarm"
+        SEXUAL = "Sexual"
+        VIOLENCE = "Violence"
+
+
+    class azure.mgmt.cognitiveservices.models.RaiAcsHarmConfiguration(_Model):
+        category: Union[str, RaiAcsHarmCategory]
+        harm_config_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                category: Union[str, RaiAcsHarmCategory], 
+                harm_config_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.RaiAcsInterventionPoint(_Model):
+        annotations: Optional[RaiAcsEmptyObject]
+        policy: RaiAcsPolicyBinding
+        policy_target: Union[str, RaiAcsPolicyTarget]
+        policy_target_kind: Union[str, RaiAcsPolicyTargetKind]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                annotations: Optional[RaiAcsEmptyObject] = ..., 
+                policy: RaiAcsPolicyBinding, 
+                policy_target: Union[str, RaiAcsPolicyTarget], 
+                policy_target_kind: Union[str, RaiAcsPolicyTargetKind]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.RaiAcsInterventionPoints(_Model):
+        input: Optional[RaiAcsInterventionPoint]
+        output: Optional[RaiAcsInterventionPoint]
+        post_tool_call: Optional[RaiAcsToolInterventionPoint]
+        pre_tool_call: Optional[RaiAcsToolInterventionPoint]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                input: Optional[RaiAcsInterventionPoint] = ..., 
+                output: Optional[RaiAcsInterventionPoint] = ..., 
+                post_tool_call: Optional[RaiAcsToolInterventionPoint] = ..., 
+                pre_tool_call: Optional[RaiAcsToolInterventionPoint] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.RaiAcsManifest(_Model):
+        agent_control_specification_version: str
+        annotators: Optional[RaiAcsEmptyObject]
+        intervention_points: RaiAcsInterventionPoints
+        metadata: Optional[dict[str, Any]]
+        policies: dict[str, RaiAcsRegoPolicyDefinition]
+        tools: Optional[dict[str, RaiAcsToolDefinition]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_control_specification_version: str, 
+                annotators: Optional[RaiAcsEmptyObject] = ..., 
+                intervention_points: RaiAcsInterventionPoints, 
+                metadata: Optional[dict[str, Any]] = ..., 
+                policies: dict[str, RaiAcsRegoPolicyDefinition], 
+                tools: Optional[dict[str, RaiAcsToolDefinition]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.RaiAcsModerationBindingExtension(_Model):
+        harm_configs: list[RaiAcsHarmConfiguration]
+        subject_format: Union[str, RaiAcsModerationSubjectFormat]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                harm_configs: list[RaiAcsHarmConfiguration], 
+                subject_format: Union[str, RaiAcsModerationSubjectFormat]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.RaiAcsModerationSubjectFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CANONICAL_JSON = "canonical_json"
+        TEXT = "text"
+
+
+    class azure.mgmt.cognitiveservices.models.RaiAcsPolicyBinding(_Model):
+        aacs_moderation: Optional[RaiAcsModerationBindingExtension]
+        id: str
+        query: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                aacs_moderation: Optional[RaiAcsModerationBindingExtension] = ..., 
+                id: str, 
+                query: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.RaiAcsPolicyDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        REGO = "rego"
+
+
+    class azure.mgmt.cognitiveservices.models.RaiAcsPolicyTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        INPUT = "$snap.input"
+        OUTPUT = "$snap.output"
+        TOOL_ARGUMENTS = "$snap.tool_call.args"
+        TOOL_RESULT = "$snap.tool_result.value"
+
+
+    class azure.mgmt.cognitiveservices.models.RaiAcsPolicyTargetKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ASSISTANT_OUTPUT = "assistant_output"
+        TOOL_ARGUMENTS = "tool_args"
+        TOOL_RESULT = "tool_result"
+        USER_INPUT = "user_input"
+
+
+    class azure.mgmt.cognitiveservices.models.RaiAcsRegoPolicyDefinition(_Model):
+        query: str
+        type: Union[str, RaiAcsPolicyDefinitionType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                query: str, 
+                type: Union[str, RaiAcsPolicyDefinitionType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.RaiAcsToolDefinition(_Model):
+        clearance: Optional[str]
+        description: Optional[str]
+        id: Optional[str]
+        security_labels: Optional[list[str]]
+        type: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                clearance: Optional[str] = ..., 
+                description: Optional[str] = ..., 
+                id: Optional[str] = ..., 
+                security_labels: Optional[list[str]] = ..., 
+                type: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.RaiAcsToolInterventionPoint(_Model):
+        annotations: Optional[RaiAcsEmptyObject]
+        policy: RaiAcsPolicyBinding
+        policy_target: Union[str, RaiAcsPolicyTarget]
+        policy_target_kind: Union[str, RaiAcsPolicyTargetKind]
+        tool_name_from: Optional[Union[str, RaiAcsToolNameSelector]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                annotations: Optional[RaiAcsEmptyObject] = ..., 
+                policy: RaiAcsPolicyBinding, 
+                policy_target: Union[str, RaiAcsPolicyTarget], 
+                policy_target_kind: Union[str, RaiAcsPolicyTargetKind], 
+                tool_name_from: Optional[Union[str, RaiAcsToolNameSelector]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.RaiAcsToolNameSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        TOOL_CALL_NAME = "$snap.tool_call.name"
+        TOOL_CALL_NAME_ALIAS = "$.tool_call.name"
+
+
     class azure.mgmt.cognitiveservices.models.RaiActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ANNOTATING = "ANNOTATING"
         BLOCKING = "BLOCKING"
         HITL = "HITL"
         NONE = "None"
         RETRY = "RETRY"
+
+
+    class azure.mgmt.cognitiveservices.models.RaiBinding(ProxyResource):
+        etag: Optional[str]
+        id: str
+        name: str
+        properties: Optional[RaiBindingProperties]
+        system_data: SystemData
+        tags: Optional[dict[str, str]]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[RaiBindingProperties] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.RaiBindingProperties(_Model):
+        bound_resource_id: str
+        target_policy_name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                bound_resource_id: str, 
+                target_policy_name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.cognitiveservices.models.RaiBlocklist(ProxyResource):
@@ -7680,6 +9022,31 @@ namespace azure.mgmt.cognitiveservices.models
         PROMPT = "Prompt"
 
 
+    class azure.mgmt.cognitiveservices.models.RaiPolicyCustomExternalSafetyProviderReference(_Model):
+        blocking: Optional[bool]
+        external_safety_provider_name: str
+        managed_identity_resource_id: Optional[str]
+        source: Union[str, RaiPolicyContentSource]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                blocking: Optional[bool] = ..., 
+                external_safety_provider_name: str, 
+                managed_identity_resource_id: Optional[str] = ..., 
+                source: Union[str, RaiPolicyContentSource]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.RaiPolicyFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACS = "ACS"
+        CONTENT_FILTERS = "ContentFilters"
+
+
     class azure.mgmt.cognitiveservices.models.RaiPolicyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ASYNCHRONOUS_FILTER = "Asynchronous_filter"
         BLOCKING = "Blocking"
@@ -7688,10 +9055,14 @@ namespace azure.mgmt.cognitiveservices.models
 
 
     class azure.mgmt.cognitiveservices.models.RaiPolicyProperties(_Model):
+        acs: Optional[RaiAcsManifest]
+        acs_regos: Optional[list[RaiRegoReference]]
         base_policy_name: Optional[str]
         content_filters: Optional[list[RaiPolicyContentFilter]]
         custom_blocklists: Optional[list[CustomBlocklistConfig]]
+        custom_external_safety_providers: Optional[list[RaiPolicyCustomExternalSafetyProviderReference]]
         egress_policy: Optional[RaiEgressPolicyConfig]
+        format: Optional[Union[str, RaiPolicyFormat]]
         mode: Optional[Union[str, RaiPolicyMode]]
         safety_providers: Optional[list[SafetyProviderConfig]]
         type: Optional[Union[str, RaiPolicyType]]
@@ -7700,10 +9071,14 @@ namespace azure.mgmt.cognitiveservices.models
         def __init__(
                 self, 
                 *, 
+                acs: Optional[RaiAcsManifest] = ..., 
+                acs_regos: Optional[list[RaiRegoReference]] = ..., 
                 base_policy_name: Optional[str] = ..., 
                 content_filters: Optional[list[RaiPolicyContentFilter]] = ..., 
                 custom_blocklists: Optional[list[CustomBlocklistConfig]] = ..., 
+                custom_external_safety_providers: Optional[list[RaiPolicyCustomExternalSafetyProviderReference]] = ..., 
                 egress_policy: Optional[RaiEgressPolicyConfig] = ..., 
+                format: Optional[Union[str, RaiPolicyFormat]] = ..., 
                 mode: Optional[Union[str, RaiPolicyMode]] = ..., 
                 safety_providers: Optional[list[SafetyProviderConfig]] = ...
             ) -> None: ...
@@ -7715,6 +9090,62 @@ namespace azure.mgmt.cognitiveservices.models
     class azure.mgmt.cognitiveservices.models.RaiPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         SYSTEM_MANAGED = "SystemManaged"
         USER_MANAGED = "UserManaged"
+
+
+    class azure.mgmt.cognitiveservices.models.RaiRego(ProxyResource):
+        etag: Optional[str]
+        id: str
+        name: str
+        properties: Optional[RaiRegoProperties]
+        system_data: SystemData
+        tags: Optional[dict[str, str]]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[RaiRegoProperties] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.RaiRegoEncoding(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        BASE64 = "Base64"
+        NONE = "None"
+
+
+    class azure.mgmt.cognitiveservices.models.RaiRegoProperties(_Model):
+        encoding: Optional[Union[str, RaiRegoEncoding]]
+        rego: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                encoding: Optional[Union[str, RaiRegoEncoding]] = ..., 
+                rego: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.RaiRegoReference(_Model):
+        rego_name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                rego_name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.cognitiveservices.models.RaiSafetyProviderConfig(_Model):
@@ -8442,6 +9873,7 @@ namespace azure.mgmt.cognitiveservices.models
 
     class azure.mgmt.cognitiveservices.models.Usage(_Model):
         current_value: Optional[float]
+        id: Optional[str]
         limit: Optional[float]
         name: Optional[MetricName]
         next_reset_time: Optional[str]
@@ -8449,6 +9881,7 @@ namespace azure.mgmt.cognitiveservices.models
         scope_id: Optional[str]
         scope_type: Optional[Union[str, QuotaScopeType]]
         status: Optional[Union[str, QuotaUsageStatus]]
+        type: Optional[str]
         unit: Optional[Union[str, UnitType]]
 
         @overload
@@ -8597,19 +10030,17 @@ namespace azure.mgmt.cognitiveservices.models
 
 
     class azure.mgmt.cognitiveservices.models.VmPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        LOW_PRIORITY = "LowPriority"
         REGULAR = "Regular"
+        SPOT = "Spot"
 
 
     class azure.mgmt.cognitiveservices.models.Workbench(ProxyResource):
         etag: Optional[str]
         id: str
         identity: Optional[Identity]
-        location: Optional[str]
         name: str
         properties: WorkbenchProperties
         system_data: SystemData
-        tags: Optional[dict[str, str]]
         type: str
 
         @overload
@@ -8617,9 +10048,7 @@ namespace azure.mgmt.cognitiveservices.models
                 self, 
                 *, 
                 identity: Optional[Identity] = ..., 
-                location: Optional[str] = ..., 
-                properties: WorkbenchProperties, 
-                tags: Optional[dict[str, str]] = ...
+                properties: WorkbenchProperties
             ) -> None: ...
 
         @overload
@@ -8631,10 +10060,13 @@ namespace azure.mgmt.cognitiveservices.models
         creation_time: Optional[datetime]
         dataset_id: Optional[str]
         errors: Optional[list[ErrorDetail]]
+        gpu_count: Optional[int]
         idle_time_before_shutdown: Optional[str]
         image_link: str
-        provisioning_state: Optional[Union[str, ComputeProvisioningState]]
+        instance_type: Optional[str]
+        provisioning_state: Optional[Union[str, WorkbenchProvisioningState]]
         ssh_settings: Optional[SshSettings]
+        status: Optional[Union[str, WorkbenchStatus]]
         target_cluster_id: str
         web_endpoint: Optional[str]
 
@@ -8643,10 +10075,68 @@ namespace azure.mgmt.cognitiveservices.models
                 self, 
                 *, 
                 dataset_id: Optional[str] = ..., 
+                gpu_count: Optional[int] = ..., 
                 idle_time_before_shutdown: Optional[str] = ..., 
                 image_link: str, 
+                instance_type: Optional[str] = ..., 
                 ssh_settings: Optional[SshSettings] = ..., 
                 target_cluster_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.WorkbenchProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CANCELED = "Canceled"
+        CREATING = "Creating"
+        FAILED = "Failed"
+        SUCCEEDED = "Succeeded"
+
+
+    class azure.mgmt.cognitiveservices.models.WorkbenchStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CREATING = "Creating"
+        DELETING = "Deleting"
+        FAILED = "Failed"
+        RESTARTING = "Restarting"
+        RUNNING = "Running"
+        STARTING = "Starting"
+        STOPPED = "Stopped"
+        STOPPING = "Stopping"
+        UNKNOWN = "Unknown"
+        UPDATING = "Updating"
+
+
+    class azure.mgmt.cognitiveservices.models.WorkbenchUpdate(_Model):
+        identity: Optional[Identity]
+        properties: Optional[WorkbenchUpdateProperties]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: Optional[Identity] = ..., 
+                properties: Optional[WorkbenchUpdateProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cognitiveservices.models.WorkbenchUpdateProperties(_Model):
+        gpu_count: Optional[int]
+        idle_time_before_shutdown: Optional[str]
+        instance_type: Optional[str]
+        target_cluster_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                gpu_count: Optional[int] = ..., 
+                idle_time_before_shutdown: Optional[str] = ..., 
+                instance_type: Optional[str] = ..., 
+                target_cluster_id: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -8681,7 +10171,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 capability_host_name: str, 
-                capability_host: JSON, 
+                capability_host: CapabilityHost, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8752,7 +10242,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 connection_name: str, 
-                connection: Optional[JSON] = None, 
+                connection: Optional[ConnectionPropertiesV2BasicResource] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8818,7 +10308,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 connection_name: str, 
-                connection: Optional[JSON] = None, 
+                connection: Optional[ConnectionUpdateContent] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8861,7 +10351,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                account: JSON, 
+                account: Account, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8902,7 +10392,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                account: JSON, 
+                account: Account, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8935,7 +10425,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                body: JSON, 
+                body: EvaluateDeploymentPoliciesRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9020,7 +10510,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                parameters: JSON, 
+                parameters: RegenerateKeyParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9036,6 +10526,89 @@ namespace azure.mgmt.cognitiveservices.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> ApiKeys: ...
+
+
+    class azure.mgmt.cognitiveservices.operations.AdapterDeploymentsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                adapter_deployment_name: str, 
+                resource: AdapterDeployment, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[AdapterDeployment]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                adapter_deployment_name: str, 
+                resource: AdapterDeployment, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[AdapterDeployment]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                adapter_deployment_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[AdapterDeployment]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'adapter_deployment_name', 'etag', 'match_condition']}, api_versions_list=['2026-09-15-preview'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                adapter_deployment_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'adapter_deployment_name', 'accept']}, api_versions_list=['2026-09-15-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                adapter_deployment_name: str, 
+                **kwargs: Any
+            ) -> AdapterDeployment: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-09-15-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[AdapterDeployment]: ...
 
 
     class azure.mgmt.cognitiveservices.operations.AgentApplicationsOperations:
@@ -9066,7 +10639,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 account_name: str, 
                 project_name: str, 
                 name: str, 
-                body: JSON, 
+                body: AgentApplication, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9183,7 +10756,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 project_name: str, 
                 app_name: str, 
                 deployment_name: str, 
-                body: JSON, 
+                body: AgentDeployment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9264,6 +10837,116 @@ namespace azure.mgmt.cognitiveservices.operations
             ) -> None: ...
 
 
+    class azure.mgmt.cognitiveservices.operations.ArcDeploymentsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                deployment_name: str, 
+                resource: ArcDeployment, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ArcDeployment]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                deployment_name: str, 
+                resource: ArcDeployment, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ArcDeployment]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                deployment_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ArcDeployment]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-15-preview', params_added_on={'2026-07-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'deployment_name']}, api_versions_list=['2026-07-15-preview', '2026-09-15-preview'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                deployment_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                deployment_name: str, 
+                properties: ArcDeploymentUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ArcDeployment]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                deployment_name: str, 
+                properties: ArcDeploymentUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ArcDeployment]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                deployment_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ArcDeployment]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-15-preview', params_added_on={'2026-07-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'deployment_name', 'accept']}, api_versions_list=['2026-07-15-preview', '2026-09-15-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                deployment_name: str, 
+                **kwargs: Any
+            ) -> ArcDeployment: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-15-preview', params_added_on={'2026-07-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-07-15-preview', '2026-09-15-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[ArcDeployment]: ...
+
+
     class azure.mgmt.cognitiveservices.operations.CommitmentPlansOperations:
 
         def __init__(
@@ -9290,7 +10973,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 commitment_plan_name: str, 
                 commitment_plan_association_name: str, 
-                association: JSON, 
+                association: CommitmentPlanAccountAssociation, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9324,7 +11007,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 self, 
                 resource_group_name: str, 
                 commitment_plan_name: str, 
-                commitment_plan: JSON, 
+                commitment_plan: CommitmentPlan, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9383,7 +11066,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 self, 
                 resource_group_name: str, 
                 commitment_plan_name: str, 
-                commitment_plan: JSON, 
+                commitment_plan: PatchResourceTagsAndSku, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9418,7 +11101,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 commitment_plan_name: str, 
-                commitment_plan: JSON, 
+                commitment_plan: CommitmentPlan, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9514,7 +11197,7 @@ namespace azure.mgmt.cognitiveservices.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-15-preview', params_added_on={'2026-01-15-preview': ['api_version', 'subscription_id', 'location', 'operation_id', 'accept']}, api_versions_list=['2026-01-15-preview', '2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-01-15-preview', params_added_on={'2026-01-15-preview': ['api_version', 'subscription_id', 'location', 'operation_id', 'accept']}, api_versions_list=['2026-01-15-preview', '2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def get(
                 self, 
                 location: str, 
@@ -9549,7 +11232,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 compute_name: str, 
-                resource: JSON, 
+                resource: Compute, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9568,7 +11251,7 @@ namespace azure.mgmt.cognitiveservices.operations
             ) -> LROPoller[Compute]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -9578,7 +11261,7 @@ namespace azure.mgmt.cognitiveservices.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def begin_restart(
                 self, 
                 resource_group_name: str, 
@@ -9588,7 +11271,7 @@ namespace azure.mgmt.cognitiveservices.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def begin_start(
                 self, 
                 resource_group_name: str, 
@@ -9598,7 +11281,7 @@ namespace azure.mgmt.cognitiveservices.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def begin_stop(
                 self, 
                 resource_group_name: str, 
@@ -9607,44 +11290,8 @@ namespace azure.mgmt.cognitiveservices.operations
                 **kwargs: Any
             ) -> LROPoller[None]: ...
 
-        @overload
-        def begin_update(
-                self, 
-                resource_group_name: str, 
-                account_name: str, 
-                compute_name: str, 
-                properties: Compute, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[Compute]: ...
-
-        @overload
-        def begin_update(
-                self, 
-                resource_group_name: str, 
-                account_name: str, 
-                compute_name: str, 
-                properties: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[Compute]: ...
-
-        @overload
-        def begin_update(
-                self, 
-                resource_group_name: str, 
-                account_name: str, 
-                compute_name: str, 
-                properties: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[Compute]: ...
-
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'compute_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -9654,13 +11301,138 @@ namespace azure.mgmt.cognitiveservices.operations
             ) -> Compute: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
                 **kwargs: Any
             ) -> ItemPaged[Compute]: ...
+
+
+    class azure.mgmt.cognitiveservices.operations.CostControlsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                cost_control_name: str, 
+                resource: CostControl, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> CostControl: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                cost_control_name: str, 
+                resource: CostControl, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> CostControl: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                cost_control_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> CostControl: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'cost_control_name', 'etag', 'match_condition']}, api_versions_list=['2026-09-15-preview'])
+        def delete(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                cost_control_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'cost_control_name', 'accept']}, api_versions_list=['2026-09-15-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                cost_control_name: str, 
+                **kwargs: Any
+            ) -> CostControl: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-09-15-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[CostControl]: ...
+
+        @overload
+        def update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                cost_control_name: str, 
+                properties: CostControlPatch, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> CostControl: ...
+
+        @overload
+        def update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                cost_control_name: str, 
+                properties: CostControlPatch, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> CostControl: ...
+
+        @overload
+        def update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                cost_control_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> CostControl: ...
 
 
     class azure.mgmt.cognitiveservices.operations.DefenderForAISettingsOperations:
@@ -9689,7 +11461,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 defender_for_ai_setting_name: str, 
-                defender_for_ai_settings: JSON, 
+                defender_for_ai_settings: DefenderForAISetting, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9742,7 +11514,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 defender_for_ai_setting_name: str, 
-                defender_for_ai_settings: JSON, 
+                defender_for_ai_settings: DefenderForAISetting, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9817,7 +11589,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 deployment_name: str, 
-                deployment: JSON, 
+                deployment: Deployment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9862,7 +11634,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 deployment_name: str, 
-                deployment: JSON, 
+                deployment: PatchResourceTagsAndSku, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9960,7 +11732,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 encryption_scope_name: str, 
-                encryption_scope: JSON, 
+                encryption_scope: EncryptionScope, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10025,7 +11797,7 @@ namespace azure.mgmt.cognitiveservices.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'offer', 'accelerator_type', 'deployment_id', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'offer', 'accelerator_type', 'deployment_id', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def list(
                 self, 
                 *, 
@@ -10062,7 +11834,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 deployment_name: str, 
-                resource: JSON, 
+                resource: ManagedComputeDeployment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10081,7 +11853,7 @@ namespace azure.mgmt.cognitiveservices.operations
             ) -> LROPoller[ManagedComputeDeployment]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'deployment_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'deployment_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -10108,7 +11880,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 deployment_name: str, 
-                properties: JSON, 
+                properties: PatchResourceSku, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10127,7 +11899,7 @@ namespace azure.mgmt.cognitiveservices.operations
             ) -> LROPoller[ManagedComputeDeployment]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'deployment_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'deployment_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -10137,7 +11909,7 @@ namespace azure.mgmt.cognitiveservices.operations
             ) -> ManagedComputeDeployment: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -10155,7 +11927,7 @@ namespace azure.mgmt.cognitiveservices.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def list(
                 self, 
                 location: str, 
@@ -10189,7 +11961,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 managed_network_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[ManagedNetworkProvisionOptions] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10217,7 +11989,7 @@ namespace azure.mgmt.cognitiveservices.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-15-preview', params_added_on={'2026-01-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'managed_network_name']}, api_versions_list=['2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-05-01', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-01-15-preview', params_added_on={'2026-01-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'managed_network_name']}, api_versions_list=['2026-01-15-preview', '2026-03-01', '2026-03-15-preview', '2026-05-01', '2026-05-15-preview', '2026-07-01', '2026-07-15-preview', '2026-09-01', '2026-09-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -10244,7 +12016,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 managed_network_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[ManagedNetworkSettingsPropertiesBasicResource] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10280,7 +12052,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 managed_network_name: str, 
-                body: JSON, 
+                body: ManagedNetworkSettingsPropertiesBasicResource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10426,7 +12198,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 account_name: str, 
                 managed_network_name: str, 
                 rule_name: str, 
-                body: JSON, 
+                body: OutboundRuleBasicResource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10501,7 +12273,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 managed_network_name: str, 
-                body: JSON, 
+                body: ManagedNetworkSettingsBasicResource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10546,7 +12318,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 private_endpoint_connection_name: str, 
-                properties: JSON, 
+                properties: PrivateEndpointConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10636,7 +12408,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 account_name: str, 
                 project_name: str, 
                 capability_host_name: str, 
-                capability_host: JSON, 
+                capability_host: ProjectCapabilityHost, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10713,7 +12485,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 account_name: str, 
                 project_name: str, 
                 connection_name: str, 
-                connection: Optional[JSON] = None, 
+                connection: Optional[ConnectionPropertiesV2BasicResource] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10785,7 +12557,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 account_name: str, 
                 project_name: str, 
                 connection_name: str, 
-                connection: Optional[JSON] = None, 
+                connection: Optional[ConnectionUpdateContent] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10831,7 +12603,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 project_name: str, 
-                project: JSON, 
+                project: Project, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10876,7 +12648,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 project_name: str, 
-                project: JSON, 
+                project: Project, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10934,7 +12706,7 @@ namespace azure.mgmt.cognitiveservices.operations
         def create_or_update(
                 self, 
                 default: str, 
-                tier: JSON, 
+                tier: QuotaTier, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10974,7 +12746,7 @@ namespace azure.mgmt.cognitiveservices.operations
         def update(
                 self, 
                 default: str, 
-                tier: JSON, 
+                tier: QuotaTier, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10989,6 +12761,91 @@ namespace azure.mgmt.cognitiveservices.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> QuotaTier: ...
+
+
+    class azure.mgmt.cognitiveservices.operations.RaiBindingsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                rai_binding_name: str, 
+                rai_binding: RaiBinding, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> RaiBinding: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                rai_binding_name: str, 
+                rai_binding: RaiBinding, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> RaiBinding: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                rai_binding_name: str, 
+                rai_binding: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> RaiBinding: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'rai_binding_name', 'etag', 'match_condition']}, api_versions_list=['2026-09-15-preview'])
+        def delete(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                rai_binding_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'rai_binding_name', 'accept']}, api_versions_list=['2026-09-15-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                rai_binding_name: str, 
+                **kwargs: Any
+            ) -> RaiBinding: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'top', 'accept']}, api_versions_list=['2026-09-15-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                *, 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[RaiBinding]: ...
 
 
     class azure.mgmt.cognitiveservices.operations.RaiBlocklistItemsOperations:
@@ -11017,7 +12874,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 rai_blocklist_name: str, 
-                rai_blocklist_items: List[JSON], 
+                rai_blocklist_items: List[RaiBlocklistItemBulkRequest], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11089,7 +12946,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 account_name: str, 
                 rai_blocklist_name: str, 
                 rai_blocklist_item_name: str, 
-                rai_blocklist_item: JSON, 
+                rai_blocklist_item: RaiBlocklistItem, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11163,7 +13020,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 rai_blocklist_name: str, 
-                rai_blocklist: JSON, 
+                rai_blocklist: RaiBlocklist, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11252,7 +13109,7 @@ namespace azure.mgmt.cognitiveservices.operations
         def create_or_update(
                 self, 
                 safety_provider_name: str, 
-                safety_provider: JSON, 
+                safety_provider: RaiExternalSafetyProviderSchema, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11297,11 +13154,15 @@ namespace azure.mgmt.cognitiveservices.operations
             ) -> None: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'rai_policy_name', 'etag', 'match_condition']}, api_versions_list=['2026-09-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
                 rai_policy_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> LROPoller[None]: ...
 
@@ -11314,6 +13175,8 @@ namespace azure.mgmt.cognitiveservices.operations
                 rai_policy: RaiPolicy, 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> RaiPolicy: ...
 
@@ -11323,9 +13186,11 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 rai_policy_name: str, 
-                rai_policy: JSON, 
+                rai_policy: RaiPolicy, 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> RaiPolicy: ...
 
@@ -11338,10 +13203,13 @@ namespace azure.mgmt.cognitiveservices.operations
                 rai_policy: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> RaiPolicy: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'rai_policy_name', 'accept']}, api_versions_list=['2026-09-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -11357,6 +13225,91 @@ namespace azure.mgmt.cognitiveservices.operations
                 account_name: str, 
                 **kwargs: Any
             ) -> ItemPaged[RaiPolicy]: ...
+
+
+    class azure.mgmt.cognitiveservices.operations.RaiRegosOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                rai_rego_name: str, 
+                rai_rego: RaiRego, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> RaiRego: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                rai_rego_name: str, 
+                rai_rego: RaiRego, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> RaiRego: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                rai_rego_name: str, 
+                rai_rego: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> RaiRego: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'rai_rego_name', 'etag', 'match_condition']}, api_versions_list=['2026-09-15-preview'])
+        def delete(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                rai_rego_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'rai_rego_name', 'accept']}, api_versions_list=['2026-09-15-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                rai_rego_name: str, 
+                **kwargs: Any
+            ) -> RaiRego: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-15-preview', params_added_on={'2026-09-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'top', 'accept']}, api_versions_list=['2026-09-15-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                *, 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[RaiRego]: ...
 
 
     class azure.mgmt.cognitiveservices.operations.RaiToolLabelsOperations:
@@ -11394,7 +13347,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 rai_tool_connection_name: str, 
-                rai_tool_label: JSON, 
+                rai_tool_label: RaiToolLabel, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11465,7 +13418,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 rai_topic_name: str, 
-                rai_topic: JSON, 
+                rai_topic: RaiTopic, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11542,7 +13495,7 @@ namespace azure.mgmt.cognitiveservices.operations
         def create_or_update(
                 self, 
                 rai_policy_name: str, 
-                rai_policy: JSON, 
+                rai_policy: RaiPolicy, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11592,7 +13545,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 resource_group_name: str, 
                 account_name: str, 
                 safety_provider_name: str, 
-                safety_provider: JSON, 
+                safety_provider: RaiExternalSafetyProviderSchema, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11657,7 +13610,7 @@ namespace azure.mgmt.cognitiveservices.operations
                 account_name: str, 
                 project_name: str, 
                 workbench_name: str, 
-                resource: JSON, 
+                resource: Workbench, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11677,7 +13630,7 @@ namespace azure.mgmt.cognitiveservices.operations
             ) -> LROPoller[Workbench]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'workbench_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'workbench_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -11688,7 +13641,7 @@ namespace azure.mgmt.cognitiveservices.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'workbench_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'workbench_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def begin_restart(
                 self, 
                 resource_group_name: str, 
@@ -11699,7 +13652,7 @@ namespace azure.mgmt.cognitiveservices.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'workbench_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'workbench_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def begin_start(
                 self, 
                 resource_group_name: str, 
@@ -11710,7 +13663,7 @@ namespace azure.mgmt.cognitiveservices.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'workbench_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'workbench_name']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def begin_stop(
                 self, 
                 resource_group_name: str, 
@@ -11720,47 +13673,8 @@ namespace azure.mgmt.cognitiveservices.operations
                 **kwargs: Any
             ) -> LROPoller[None]: ...
 
-        @overload
-        def begin_update(
-                self, 
-                resource_group_name: str, 
-                account_name: str, 
-                project_name: str, 
-                workbench_name: str, 
-                properties: Workbench, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[Workbench]: ...
-
-        @overload
-        def begin_update(
-                self, 
-                resource_group_name: str, 
-                account_name: str, 
-                project_name: str, 
-                workbench_name: str, 
-                properties: JSON, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[Workbench]: ...
-
-        @overload
-        def begin_update(
-                self, 
-                resource_group_name: str, 
-                account_name: str, 
-                project_name: str, 
-                workbench_name: str, 
-                properties: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[Workbench]: ...
-
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'workbench_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'workbench_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -11771,7 +13685,7 @@ namespace azure.mgmt.cognitiveservices.operations
             ) -> Workbench: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview'])
+        @api_version_validation(method_added_on='2026-03-15-preview', params_added_on={'2026-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'account_name', 'project_name', 'accept']}, api_versions_list=['2026-03-15-preview', '2026-05-15-preview', '2026-07-15-preview', '2026-09-15-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -11779,6 +13693,2701 @@ namespace azure.mgmt.cognitiveservices.operations
                 project_name: str, 
                 **kwargs: Any
             ) -> ItemPaged[Workbench]: ...
+
+        @overload
+        def update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                project_name: str, 
+                workbench_name: str, 
+                properties: WorkbenchUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Workbench: ...
+
+        @overload
+        def update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                project_name: str, 
+                workbench_name: str, 
+                properties: WorkbenchUpdate, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Workbench: ...
+
+        @overload
+        def update(
+                self, 
+                resource_group_name: str, 
+                account_name: str, 
+                project_name: str, 
+                workbench_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> Workbench: ...
+
+
+namespace azure.mgmt.cognitiveservices.types
+
+    class azure.mgmt.cognitiveservices.types.AADAuthTypeConnectionProperties(TypedDict, total=False):
+        key "authType": Required[Literal[ConnectionAuthType.AAD]]
+        key "category": Union[str, ConnectionCategory]
+        key "createdByWorkspaceArmId": str
+        key "error": str
+        key "expiryTime": str
+        key "group": Union[str, ConnectionGroup]
+        key "isSharedToAll": bool
+        key "peRequirement": Union[str, ManagedPERequirement]
+        key "peStatus": Union[str, ManagedPEStatus]
+        key "target": str
+        key "useWorkspaceManagedIdentity": bool
+        authType: Literal[ConnectionAuthType.AAD]
+        category: Union[str, ConnectionCategory]
+        createdByWorkspaceArmId: str
+        error: str
+        expiryTime: str
+        group: Union[str, ConnectionGroup]
+        isSharedToAll: bool
+        metadata: dict[str, str]
+        peRequirement: Union[str, ManagedPERequirement]
+        peStatus: Union[str, ManagedPEStatus]
+        sharedUserList: list[str]
+        target: str
+        useWorkspaceManagedIdentity: bool
+
+
+    class azure.mgmt.cognitiveservices.types.AbusePenalty(TypedDict, total=False):
+        key "action": Union[str, AbusePenaltyAction]
+        key "expiration": str
+        key "rateLimitPercentage": float
+        action: Union[str, AbusePenaltyAction]
+        expiration: str
+        rateLimitPercentage: float
+
+
+    class azure.mgmt.cognitiveservices.types.AccessKeyAuthTypeConnectionProperties(TypedDict, total=False):
+        key "authType": Required[Literal[ConnectionAuthType.ACCESS_KEY]]
+        key "category": Union[str, ConnectionCategory]
+        key "createdByWorkspaceArmId": str
+        key "credentials": ForwardRef('ConnectionAccessKey', module='types')
+        key "error": str
+        key "expiryTime": str
+        key "group": Union[str, ConnectionGroup]
+        key "isSharedToAll": bool
+        key "peRequirement": Union[str, ManagedPERequirement]
+        key "peStatus": Union[str, ManagedPEStatus]
+        key "target": str
+        key "useWorkspaceManagedIdentity": bool
+        authType: Literal[ConnectionAuthType.ACCESS_KEY]
+        category: Union[str, ConnectionCategory]
+        createdByWorkspaceArmId: str
+        credentials: ConnectionAccessKey
+        error: str
+        expiryTime: str
+        group: Union[str, ConnectionGroup]
+        isSharedToAll: bool
+        metadata: dict[str, str]
+        peRequirement: Union[str, ManagedPERequirement]
+        peStatus: Union[str, ManagedPEStatus]
+        sharedUserList: list[str]
+        target: str
+        useWorkspaceManagedIdentity: bool
+
+
+    class azure.mgmt.cognitiveservices.types.Account(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "identity": ForwardRef('Identity', module='types')
+        key "kind": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('AccountProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        identity: Identity
+        kind: str
+        location: str
+        name: str
+        properties: AccountProperties
+        sku: Sku
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.AccountKeyAuthTypeConnectionProperties(TypedDict, total=False):
+        key "authType": Required[Literal[ConnectionAuthType.ACCOUNT_KEY]]
+        key "category": Union[str, ConnectionCategory]
+        key "createdByWorkspaceArmId": str
+        key "credentials": ForwardRef('ConnectionAccountKey', module='types')
+        key "error": str
+        key "expiryTime": str
+        key "group": Union[str, ConnectionGroup]
+        key "isSharedToAll": bool
+        key "peRequirement": Union[str, ManagedPERequirement]
+        key "peStatus": Union[str, ManagedPEStatus]
+        key "target": str
+        key "useWorkspaceManagedIdentity": bool
+        authType: Literal[ConnectionAuthType.ACCOUNT_KEY]
+        category: Union[str, ConnectionCategory]
+        createdByWorkspaceArmId: str
+        credentials: ConnectionAccountKey
+        error: str
+        expiryTime: str
+        group: Union[str, ConnectionGroup]
+        isSharedToAll: bool
+        metadata: dict[str, str]
+        peRequirement: Union[str, ManagedPERequirement]
+        peStatus: Union[str, ManagedPEStatus]
+        sharedUserList: list[str]
+        target: str
+        useWorkspaceManagedIdentity: bool
+
+
+    class azure.mgmt.cognitiveservices.types.AccountProperties(TypedDict, total=False):
+        key "a365LoggingEnabled": bool
+        key "abusePenalty": ForwardRef('AbusePenalty', module='types')
+        key "allowProjectManagement": bool
+        key "amlWorkspace": ForwardRef('UserOwnedAmlWorkspace', module='types')
+        key "apiProperties": ForwardRef('ApiProperties', module='types')
+        key "callRateLimit": ForwardRef('CallRateLimit', module='types')
+        key "capabilitySettings": ForwardRef('CapabilitySettings', module='types')
+        key "costControlConnections": Optional[CostControlConnections]
+        key "customSubDomainName": str
+        key "dateCreated": str
+        key "defaultProject": str
+        key "deletionDate": str
+        key "disableLocalAuth": bool
+        key "dynamicThrottlingEnabled": bool
+        key "encryption": ForwardRef('Encryption', module='types')
+        key "endpoint": str
+        key "foundryAutoUpgrade": ForwardRef('FoundryAutoUpgrade', module='types')
+        key "internalId": str
+        key "isMigrated": bool
+        key "locations": ForwardRef('MultiRegionSettings', module='types')
+        key "migrationToken": str
+        key "networkAcls": ForwardRef('NetworkRuleSet', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "publicNetworkAccess": Union[str, PublicNetworkAccess]
+        key "quotaLimit": ForwardRef('QuotaLimit', module='types')
+        key "raiMonitorConfig": ForwardRef('RaiMonitorConfig', module='types')
+        key "restore": bool
+        key "restrictOutboundNetworkAccess": bool
+        key "scheduledPurgeDate": str
+        key "skuChangeInfo": ForwardRef('SkuChangeInfo', module='types')
+        key "storedCompletionsDisabled": bool
+        a365LoggingEnabled: bool
+        abusePenalty: AbusePenalty
+        agentHostingConfigurations: list[AgentHostingConfiguration]
+        allowProjectManagement: bool
+        allowedFqdnList: list[str]
+        amlWorkspace: UserOwnedAmlWorkspace
+        apiProperties: ApiProperties
+        associatedProjects: list[str]
+        callRateLimit: CallRateLimit
+        capabilities: list[SkuCapability]
+        capabilitySettings: CapabilitySettings
+        commitmentPlanAssociations: list[CommitmentPlanAssociation]
+        costControlConnections: CostControlConnections
+        costControlIds: list[str]
+        customSubDomainName: str
+        dateCreated: str
+        defaultProject: str
+        deletionDate: str
+        disableLocalAuth: bool
+        dynamicThrottlingEnabled: bool
+        encryption: Encryption
+        endpoint: str
+        endpoints: dict[str, str]
+        foundryAutoUpgrade: FoundryAutoUpgrade
+        internalId: str
+        isMigrated: bool
+        locations: MultiRegionSettings
+        migrationToken: str
+        networkAcls: NetworkRuleSet
+        networkInjections: list[NetworkInjection]
+        privateEndpointConnections: list[PrivateEndpointConnection]
+        provisioningState: Union[str, ProvisioningState]
+        publicNetworkAccess: Union[str, PublicNetworkAccess]
+        quotaLimit: QuotaLimit
+        raiMonitorConfig: RaiMonitorConfig
+        restore: bool
+        restrictOutboundNetworkAccess: bool
+        scheduledPurgeDate: str
+        skuChangeInfo: SkuChangeInfo
+        storedCompletionsDisabled: bool
+        userOwnedStorage: list[UserOwnedStorage]
+
+
+    class azure.mgmt.cognitiveservices.types.AdapterDeployment(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('AdapterDeploymentProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: AdapterDeploymentProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.AdapterDeploymentLastOperation(TypedDict, total=False):
+        key "completedAt": str
+        key "requestedTargetDeploymentName": str
+        key "startedAt": Required[str]
+        key "status": Required[Union[str, AdapterDeploymentOperationState]]
+        key "type": Required[Union[str, AdapterDeploymentOperationType]]
+        completedAt: str
+        requestedTargetDeploymentName: str
+        startedAt: str
+        status: Union[str, AdapterDeploymentOperationState]
+        type: Union[str, AdapterDeploymentOperationType]
+
+
+    class azure.mgmt.cognitiveservices.types.AdapterDeploymentProperties(TypedDict, total=False):
+        key "activeTargetDeploymentName": str
+        key "lastOperation": ForwardRef('AdapterDeploymentLastOperation', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "sourceModelId": Required[str]
+        key "targetDeploymentName": Required[str]
+        activeTargetDeploymentName: str
+        lastOperation: AdapterDeploymentLastOperation
+        provisioningState: Union[str, ProvisioningState]
+        sourceModelId: str
+        targetDeploymentName: str
+
+
+    class azure.mgmt.cognitiveservices.types.AgentApplication(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": Required[AgenticApplicationProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: AgenticApplicationProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.AgentDeployment(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": Required[AgentDeploymentProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: AgentDeploymentProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.AgentDeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CUSTOM = "Custom"
+        HOSTED = "Hosted"
+        MANAGED = "Managed"
+
+
+    class azure.mgmt.cognitiveservices.types.AgentHostingConfiguration(TypedDict, total=False):
+        key "clusterResourceId": Required[str]
+        key "hostingManagementIdentityResourceId": Required[str]
+        key "hostingType": Required[Literal[AgentHostingType.MANAGED_CLUSTER]]
+        key "name": Required[str]
+        key "storageAccountResourceId": Required[str]
+        key "workloadIdentityResourceId": Required[str]
+        clusterResourceId: str
+        hostingManagementIdentityResourceId: str
+        hostingType: Literal[AgentHostingType.MANAGED_CLUSTER]
+        name: str
+        storageAccountResourceId: str
+        workloadIdentityResourceId: str
+
+
+    class azure.mgmt.cognitiveservices.types.AgentHostingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MANAGED_CLUSTER = "ManagedCluster"
+
+
+    class azure.mgmt.cognitiveservices.types.AgentProtocolVersion(TypedDict, total=False):
+        key "protocol": Union[str, AgentProtocol]
+        key "version": Optional[str]
+        protocol: Union[str, AgentProtocol]
+        version: str
+
+
+    class azure.mgmt.cognitiveservices.types.AgentReferenceProperties(TypedDict, total=False):
+        key "agentId": Optional[str]
+        key "agentName": Optional[str]
+        agentId: str
+        agentName: str
+
+
+    class azure.mgmt.cognitiveservices.types.AgenticApplicationProperties(ResourceBase):
+        key "agentIdentityBlueprint": Optional[AssignedIdentity]
+        key "agents": Optional[list[AgentReferenceProperties]]
+        key "authorizationPolicy": Optional[ApplicationAuthorizationPolicy]
+        key "baseUrl": Optional[str]
+        key "defaultInstanceIdentity": Optional[AssignedIdentity]
+        key "description": Optional[str]
+        key "displayName": Optional[str]
+        key "isEnabled": bool
+        key "provisioningState": Union[str, AgenticApplicationProvisioningState]
+        key "tags": Optional[dict[str, str]]
+        key "trafficRoutingPolicy": Optional[ApplicationTrafficRoutingPolicy]
+        agentIdentityBlueprint: AssignedIdentity
+        agents: list[AgentReferenceProperties]
+        authorizationPolicy: ApplicationAuthorizationPolicy
+        baseUrl: str
+        defaultInstanceIdentity: AssignedIdentity
+        description: str
+        displayName: str
+        isEnabled: bool
+        provisioningState: Union[str, AgenticApplicationProvisioningState]
+        tags: dict[str, str]
+        trafficRoutingPolicy: ApplicationTrafficRoutingPolicy
+
+
+    class azure.mgmt.cognitiveservices.types.ApiKeyAuthConnectionProperties(TypedDict, total=False):
+        key "authType": Required[Literal[ConnectionAuthType.API_KEY]]
+        key "category": Union[str, ConnectionCategory]
+        key "createdByWorkspaceArmId": str
+        key "credentials": ForwardRef('ConnectionApiKey', module='types')
+        key "error": str
+        key "expiryTime": str
+        key "group": Union[str, ConnectionGroup]
+        key "isSharedToAll": bool
+        key "peRequirement": Union[str, ManagedPERequirement]
+        key "peStatus": Union[str, ManagedPEStatus]
+        key "target": str
+        key "useWorkspaceManagedIdentity": bool
+        authType: Literal[ConnectionAuthType.API_KEY]
+        category: Union[str, ConnectionCategory]
+        createdByWorkspaceArmId: str
+        credentials: ConnectionApiKey
+        error: str
+        expiryTime: str
+        group: Union[str, ConnectionGroup]
+        isSharedToAll: bool
+        metadata: dict[str, str]
+        peRequirement: Union[str, ManagedPERequirement]
+        peStatus: Union[str, ManagedPEStatus]
+        sharedUserList: list[str]
+        target: str
+        useWorkspaceManagedIdentity: bool
+
+
+    class azure.mgmt.cognitiveservices.types.ApiProperties(TypedDict, total=False):
+        key "aadClientId": str
+        key "aadTenantId": str
+        key "eventHubConnectionString": str
+        key "qnaAzureSearchEndpointId": str
+        key "qnaAzureSearchEndpointKey": str
+        key "qnaRuntimeEndpoint": str
+        key "statisticsEnabled": bool
+        key "storageAccountConnectionString": str
+        key "superUser": str
+        key "websiteName": str
+        aadClientId: str
+        aadTenantId: str
+        eventHubConnectionString: str
+        qnaAzureSearchEndpointId: str
+        qnaAzureSearchEndpointKey: str
+        qnaRuntimeEndpoint: str
+        statisticsEnabled: bool
+        storageAccountConnectionString: str
+        superUser: str
+        websiteName: str
+
+
+    class azure.mgmt.cognitiveservices.types.ApplicationTrafficRoutingPolicy(TypedDict, total=False):
+        key "protocol": Union[str, TrafficRoutingProtocol]
+        key "rules": Optional[list[TrafficRoutingRule]]
+        protocol: Union[str, TrafficRoutingProtocol]
+        rules: list[TrafficRoutingRule]
+
+
+    class azure.mgmt.cognitiveservices.types.ArcDeployment(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": Required[ArcDeploymentProperties]
+        key "sku": Required[ArcDeploymentSku]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ArcDeploymentProperties
+        sku: ArcDeploymentSku
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.ArcDeploymentCpuMemoryResourceRequirements(TypedDict, total=False):
+        key "cpu": Required[str]
+        key "memory": Required[str]
+        cpu: str
+        memory: str
+
+
+    class azure.mgmt.cognitiveservices.types.ArcDeploymentKubernetesResources(TypedDict, total=False):
+        key "limits": ForwardRef('ArcDeploymentResourceRequirements', module='types')
+        key "requests": ForwardRef('ArcDeploymentCpuMemoryResourceRequirements', module='types')
+        limits: ArcDeploymentResourceRequirements
+        requests: ArcDeploymentCpuMemoryResourceRequirements
+
+
+    class azure.mgmt.cognitiveservices.types.ArcDeploymentModel(TypedDict, total=False):
+        key "format": Required[str]
+        key "name": Required[str]
+        format: str
+        name: str
+
+
+    class azure.mgmt.cognitiveservices.types.ArcDeploymentPatchCpuMemoryResourceRequirements(TypedDict, total=False):
+        key "cpu": str
+        key "memory": str
+        cpu: str
+        memory: str
+
+
+    class azure.mgmt.cognitiveservices.types.ArcDeploymentPatchKubernetesResources(TypedDict, total=False):
+        key "limits": ForwardRef('ArcDeploymentResourceRequirements', module='types')
+        key "requests": ForwardRef('ArcDeploymentPatchCpuMemoryResourceRequirements', module='types')
+        limits: ArcDeploymentResourceRequirements
+        requests: ArcDeploymentPatchCpuMemoryResourceRequirements
+
+
+    class azure.mgmt.cognitiveservices.types.ArcDeploymentProperties(TypedDict, total=False):
+        key "compute": Required[Union[str, ArcDeploymentComputeType]]
+        key "deploymentState": Union[str, DeploymentState]
+        key "deploymentTemplate": str
+        key "extensionId": Required[str]
+        key "inferenceEndpoint": str
+        key "model": Required[ArcDeploymentModel]
+        key "provisioningDetails": ForwardRef('ArcDeploymentProvisioningDetails', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "raiPolicyName": str
+        key "replicas": Required[int]
+        key "resources": Required[ArcDeploymentKubernetesResources]
+        key "runtime": Required[Union[str, ArcDeploymentRuntime]]
+        key "vllmParameters": ForwardRef('ArcDeploymentVllmParameters', module='types')
+        capabilities: dict[str, str]
+        compute: Union[str, ArcDeploymentComputeType]
+        deploymentState: Union[str, DeploymentState]
+        deploymentTemplate: str
+        extensionId: str
+        inferenceEndpoint: str
+        model: ArcDeploymentModel
+        nodeSelector: dict[str, str]
+        provisioningDetails: ArcDeploymentProvisioningDetails
+        provisioningState: Union[str, ProvisioningState]
+        raiPolicyName: str
+        replicas: int
+        resources: ArcDeploymentKubernetesResources
+        runtime: Union[str, ArcDeploymentRuntime]
+        vllmParameters: ArcDeploymentVllmParameters
+
+
+    class azure.mgmt.cognitiveservices.types.ArcDeploymentProvisioningDetails(TypedDict, total=False):
+        key "lastOperationTimestamp": str
+        key "message": str
+        lastOperationTimestamp: str
+        message: str
+
+
+    class azure.mgmt.cognitiveservices.types.ArcDeploymentResourceRequirements(TypedDict, total=False):
+        key "cpu": str
+        key "gpu": int
+        key "memory": str
+        cpu: str
+        gpu: int
+        memory: str
+
+
+    class azure.mgmt.cognitiveservices.types.ArcDeploymentSku(TypedDict, total=False):
+        key "name": Required[Union[str, ArcDeploymentSkuName]]
+        name: Union[str, ArcDeploymentSkuName]
+
+
+    class azure.mgmt.cognitiveservices.types.ArcDeploymentUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('ArcDeploymentUpdateProperties', module='types')
+        properties: ArcDeploymentUpdateProperties
+
+
+    class azure.mgmt.cognitiveservices.types.ArcDeploymentUpdateProperties(TypedDict, total=False):
+        key "replicas": int
+        key "resources": ForwardRef('ArcDeploymentPatchKubernetesResources', module='types')
+        nodeSelector: dict[str, str]
+        replicas: int
+        resources: ArcDeploymentPatchKubernetesResources
+
+
+    class azure.mgmt.cognitiveservices.types.ArcDeploymentVllmParameters(TypedDict, total=False):
+        key "enforceEager": bool
+        key "gpuMemoryUtilization": float
+        key "maxModelLen": int
+        key "tensorParallelSize": int
+        enforceEager: bool
+        gpuMemoryUtilization: float
+        maxModelLen: int
+        tensorParallelSize: int
+
+
+    class azure.mgmt.cognitiveservices.types.AssignedIdentity(TypedDict, total=False):
+        key "clientId": Required[str]
+        key "kind": Required[Union[str, IdentityKind]]
+        key "principalId": Required[str]
+        key "provisioningState": Union[str, IdentityProvisioningState]
+        key "subject": Optional[str]
+        key "tenantId": Required[str]
+        key "type": Required[Union[str, IdentityManagementType]]
+        clientId: str
+        kind: Union[str, IdentityKind]
+        principalId: str
+        provisioningState: Union[str, IdentityProvisioningState]
+        subject: str
+        tenantId: str
+        type: Union[str, IdentityManagementType]
+
+
+    class azure.mgmt.cognitiveservices.types.BuiltInAuthorizationScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CHANNELS = "Channels"
+        CUSTOM = "Custom"
+        DEFAULT = "Default"
+        ORGANIZATION_SCOPE = "OrganizationScope"
+
+
+    class azure.mgmt.cognitiveservices.types.CalculateModelCapacityParameter(TypedDict, total=False):
+        key "model": ForwardRef('DeploymentModel', module='types')
+        key "skuName": str
+        model: DeploymentModel
+        skuName: str
+        workloads: list[ModelCapacityCalculatorWorkload]
+
+
+    class azure.mgmt.cognitiveservices.types.CallRateLimit(TypedDict, total=False):
+        key "count": float
+        key "renewalPeriod": float
+        count: float
+        renewalPeriod: float
+        rules: list[ThrottlingRule]
+
+
+    class azure.mgmt.cognitiveservices.types.CapabilityHost(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": Required[CapabilityHostProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: CapabilityHostProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.CapabilityHostProperties(ResourceBase):
+        key "aiServicesConnections": Optional[list[str]]
+        key "capabilityHostKind": Union[str, CapabilityHostKind]
+        key "customerSubnet": Optional[str]
+        key "description": Optional[str]
+        key "enablePublicHostingEnvironment": bool
+        key "provisioningState": Union[str, CapabilityHostProvisioningState]
+        key "storageConnections": Optional[list[str]]
+        key "tags": Optional[dict[str, str]]
+        key "threadStorageConnections": Optional[list[str]]
+        key "vectorStoreConnections": Optional[list[str]]
+        aiServicesConnections: list[str]
+        capabilityHostKind: Union[str, CapabilityHostKind]
+        customerSubnet: str
+        description: str
+        enablePublicHostingEnvironment: bool
+        provisioningState: Union[str, CapabilityHostProvisioningState]
+        storageConnections: list[str]
+        tags: dict[str, str]
+        threadStorageConnections: list[str]
+        vectorStoreConnections: list[str]
+
+
+    class azure.mgmt.cognitiveservices.types.CapabilitySettings(TypedDict, total=False):
+        key "blobStore": str
+        key "documentStore": str
+        key "vectorStore": str
+        blobStore: str
+        documentStore: str
+        vectorStore: str
+
+
+    class azure.mgmt.cognitiveservices.types.ChannelsBuiltInAuthorizationPolicy(TypedDict, total=False):
+        key "type": Required[Literal[BuiltInAuthorizationScheme.CHANNELS]]
+        type: Literal[BuiltInAuthorizationScheme.CHANNELS]
+
+
+    class azure.mgmt.cognitiveservices.types.CheckDomainAvailabilityParameter(TypedDict, total=False):
+        key "kind": str
+        key "subdomainName": Required[str]
+        key "type": Required[str]
+        kind: str
+        subdomainName: str
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.CheckSkuAvailabilityParameter(TypedDict, total=False):
+        key "kind": Required[str]
+        key "skus": Required[list[str]]
+        key "type": Required[str]
+        kind: str
+        skus: list[str]
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.ClusterComputeProperties(TypedDict, total=False):
+        key "computeType": Required[Literal[ComputeType.CLUSTER]]
+        key "creationTime": str
+        key "location": Required[str]
+        key "pools": Required[list[Pool]]
+        key "provisioningState": Union[str, ComputeProvisioningState]
+        key "subnetArmId": str
+        computeType: Literal[ComputeType.CLUSTER]
+        creationTime: str
+        errors: list[ErrorDetail]
+        location: str
+        pools: list[Pool]
+        provisioningState: Union[str, ComputeProvisioningState]
+        subnetArmId: str
+
+
+    class azure.mgmt.cognitiveservices.types.CommitmentPeriod(TypedDict, total=False):
+        key "count": int
+        key "endDate": str
+        key "quota": ForwardRef('CommitmentQuota', module='types')
+        key "startDate": str
+        key "tier": str
+        count: int
+        endDate: str
+        quota: CommitmentQuota
+        startDate: str
+        tier: str
+
+
+    class azure.mgmt.cognitiveservices.types.CommitmentPlan(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "kind": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('CommitmentPlanProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        kind: str
+        location: str
+        name: str
+        properties: CommitmentPlanProperties
+        sku: Sku
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.CommitmentPlanAccountAssociation(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('CommitmentPlanAccountAssociationProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: CommitmentPlanAccountAssociationProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.CommitmentPlanAccountAssociationProperties(TypedDict, total=False):
+        key "accountId": str
+        accountId: str
+
+
+    class azure.mgmt.cognitiveservices.types.CommitmentPlanAssociation(TypedDict, total=False):
+        key "commitmentPlanId": str
+        key "commitmentPlanLocation": str
+        commitmentPlanId: str
+        commitmentPlanLocation: str
+
+
+    class azure.mgmt.cognitiveservices.types.CommitmentPlanProperties(TypedDict, total=False):
+        key "autoRenew": bool
+        key "commitmentPlanGuid": str
+        key "current": ForwardRef('CommitmentPeriod', module='types')
+        key "hostingModel": Union[str, HostingModel]
+        key "last": ForwardRef('CommitmentPeriod', module='types')
+        key "next": ForwardRef('CommitmentPeriod', module='types')
+        key "planType": str
+        key "provisioningState": Union[str, CommitmentPlanProvisioningState]
+        autoRenew: bool
+        commitmentPlanGuid: str
+        current: CommitmentPeriod
+        hostingModel: Union[str, HostingModel]
+        last: CommitmentPeriod
+        next: CommitmentPeriod
+        planType: str
+        provisioningIssues: list[str]
+        provisioningState: Union[str, CommitmentPlanProvisioningState]
+
+
+    class azure.mgmt.cognitiveservices.types.CommitmentQuota(TypedDict, total=False):
+        key "quantity": int
+        key "unit": str
+        quantity: int
+        unit: str
+
+
+    class azure.mgmt.cognitiveservices.types.Compute(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "identity": ForwardRef('Identity', module='types')
+        key "kind": str
+        key "name": str
+        key "properties": Required[ComputeProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        identity: Identity
+        kind: str
+        name: str
+        properties: ComputeProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.ComputeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CLUSTER = "Cluster"
+        CONTAINER_INSTANCE = "ContainerInstance"
+
+
+    class azure.mgmt.cognitiveservices.types.ConnectionAccessKey(TypedDict, total=False):
+        key "accessKeyId": str
+        key "secretAccessKey": str
+        accessKeyId: str
+        secretAccessKey: str
+
+
+    class azure.mgmt.cognitiveservices.types.ConnectionAccountKey(TypedDict, total=False):
+        key "key": str
+        key: str
+
+
+    class azure.mgmt.cognitiveservices.types.ConnectionApiKey(TypedDict, total=False):
+        key "key": str
+        key: str
+
+
+    class azure.mgmt.cognitiveservices.types.ConnectionAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AAD = "AAD"
+        ACCESS_KEY = "AccessKey"
+        ACCOUNT_KEY = "AccountKey"
+        ACCOUNT_MANAGED_IDENTITY = "AccountManagedIdentity"
+        AGENTIC_IDENTITY_TOKEN = "AgenticIdentityToken"
+        AGENTIC_USER = "AgenticUser"
+        AGENT_USER_IMPERSONATION = "AgentUserImpersonation"
+        API_KEY = "ApiKey"
+        CUSTOM_KEYS = "CustomKeys"
+        DELEGATED_SAS = "DelegatedSAS"
+        MANAGED_IDENTITY = "ManagedIdentity"
+        NONE = "None"
+        O_AUTH2 = "OAuth2"
+        PAT = "PAT"
+        PROJECT_MANAGED_IDENTITY = "ProjectManagedIdentity"
+        SAS = "SAS"
+        SERVICE_PRINCIPAL = "ServicePrincipal"
+        USERNAME_PASSWORD = "UsernamePassword"
+        USER_ENTRA_TOKEN = "UserEntraToken"
+
+
+    class azure.mgmt.cognitiveservices.types.ConnectionManagedIdentity(TypedDict, total=False):
+        key "clientId": str
+        key "resourceId": str
+        clientId: str
+        resourceId: str
+
+
+    class azure.mgmt.cognitiveservices.types.ConnectionOAuth2(TypedDict, total=False):
+        key "authUrl": str
+        key "clientId": str
+        key "clientSecret": str
+        key "developerToken": str
+        key "password": str
+        key "refreshToken": str
+        key "tenantId": str
+        key "username": str
+        authUrl: str
+        clientId: str
+        clientSecret: str
+        developerToken: str
+        password: str
+        refreshToken: str
+        tenantId: str
+        username: str
+
+
+    class azure.mgmt.cognitiveservices.types.ConnectionPersonalAccessToken(TypedDict, total=False):
+        key "pat": str
+        pat: str
+
+
+    class azure.mgmt.cognitiveservices.types.ConnectionPropertiesV2BasicResource(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": Required[ConnectionPropertiesV2]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ConnectionPropertiesV2
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.ConnectionServicePrincipal(TypedDict, total=False):
+        key "clientId": str
+        key "clientSecret": str
+        key "tenantId": str
+        clientId: str
+        clientSecret: str
+        tenantId: str
+
+
+    class azure.mgmt.cognitiveservices.types.ConnectionSharedAccessSignature(TypedDict, total=False):
+        key "sas": str
+        sas: str
+
+
+    class azure.mgmt.cognitiveservices.types.ConnectionUpdateContent(TypedDict, total=False):
+        key "properties": ForwardRef('ConnectionPropertiesV2', module='types')
+        properties: ConnectionPropertiesV2
+
+
+    class azure.mgmt.cognitiveservices.types.ConnectionUsernamePassword(TypedDict, total=False):
+        key "password": str
+        key "securityToken": str
+        key "username": str
+        password: str
+        securityToken: str
+        username: str
+
+
+    class azure.mgmt.cognitiveservices.types.ConnectivityEndpoints(TypedDict, total=False):
+        key "publicIpAddress": str
+        key "sshPort": int
+        publicIpAddress: str
+        sshPort: int
+
+
+    class azure.mgmt.cognitiveservices.types.ContainerInstanceComputeProperties(TypedDict, total=False):
+        key "computeType": Required[Literal[ComputeType.CONTAINER_INSTANCE]]
+        key "connectivityEndpoints": ForwardRef('ConnectivityEndpoints', module='types')
+        key "creationTime": str
+        key "idleTimeBeforeShutdown": str
+        key "imageLink": Required[str]
+        key "location": Required[str]
+        key "provisioningState": Union[str, ComputeProvisioningState]
+        key "sshSettings": ForwardRef('SshSettings', module='types')
+        key "targetClusterId": Required[str]
+        computeType: Literal[ComputeType.CONTAINER_INSTANCE]
+        connectivityEndpoints: ConnectivityEndpoints
+        creationTime: str
+        errors: list[ErrorDetail]
+        idleTimeBeforeShutdown: str
+        imageLink: str
+        location: str
+        provisioningState: Union[str, ComputeProvisioningState]
+        sshSettings: SshSettings
+        targetClusterId: str
+
+
+    class azure.mgmt.cognitiveservices.types.CostControl(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('CostControlProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: CostControlProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.CostControlConnections(TypedDict, total=False):
+        key "appInsightsConnectionId": Optional[str]
+        key "eventGridConnectionId": Optional[str]
+        appInsightsConnectionId: str
+        eventGridConnectionId: str
+
+
+    class azure.mgmt.cognitiveservices.types.CostControlDimension(TypedDict, total=False):
+        key "attribute": str
+        key "type": Required[Union[str, CostControlDimensionType]]
+        attribute: str
+        type: Union[str, CostControlDimensionType]
+
+
+    class azure.mgmt.cognitiveservices.types.CostControlMatch(TypedDict, total=False):
+        agentResourceIds: list[str]
+        identityObjectIds: list[str]
+        projectIds: list[str]
+        sessionIds: list[str]
+
+
+    class azure.mgmt.cognitiveservices.types.CostControlPatch(TypedDict, total=False):
+        key "properties": ForwardRef('CostControlPatchProperties', module='types')
+        properties: CostControlPatchProperties
+
+
+    class azure.mgmt.cognitiveservices.types.CostControlPatchProperties(TypedDict, total=False):
+        key "displayName": Optional[str]
+        displayName: str
+        rules: list[CostControlRule]
+
+
+    class azure.mgmt.cognitiveservices.types.CostControlProperties(TypedDict, total=False):
+        key "displayName": str
+        key "rules": Required[list[CostControlRule]]
+        displayName: str
+        rules: list[CostControlRule]
+
+
+    class azure.mgmt.cognitiveservices.types.CostControlRule(TypedDict, total=False):
+        key "amount": Required[float]
+        key "counterKey": Required[CostControlDimension]
+        key "match": ForwardRef('CostControlMatch', module='types')
+        key "name": Required[str]
+        key "period": Union[str, CostControlPeriod]
+        key "recurring": bool
+        key "thresholds": Optional[list[CostControlThreshold]]
+        key "unit": Required[Union[str, CostControlUnit]]
+        amount: float
+        counterKey: CostControlDimension
+        match: CostControlMatch
+        name: str
+        period: Union[str, CostControlPeriod]
+        recurring: bool
+        thresholds: list[CostControlThreshold]
+        unit: Union[str, CostControlUnit]
+
+
+    class azure.mgmt.cognitiveservices.types.CostControlThreshold(TypedDict, total=False):
+        key "action": Required[Union[str, CostControlThresholdAction]]
+        key "type": Required[Union[str, CostControlThresholdType]]
+        key "value": Required[float]
+        action: Union[str, CostControlThresholdAction]
+        type: Union[str, CostControlThresholdType]
+        value: float
+
+
+    class azure.mgmt.cognitiveservices.types.CustomBlocklistConfig(RaiBlocklistConfig):
+        key "blocking": bool
+        key "blocklistName": str
+        key "source": Union[str, RaiPolicyContentSource]
+        blocking: bool
+        blocklistName: str
+        source: Union[str, RaiPolicyContentSource]
+
+
+    class azure.mgmt.cognitiveservices.types.CustomKeys(TypedDict, total=False):
+        keys: dict[str, str]
+
+
+    class azure.mgmt.cognitiveservices.types.CustomKeysConnectionProperties(TypedDict, total=False):
+        key "authType": Required[Literal[ConnectionAuthType.CUSTOM_KEYS]]
+        key "category": Union[str, ConnectionCategory]
+        key "createdByWorkspaceArmId": str
+        key "credentials": ForwardRef('CustomKeys', module='types')
+        key "error": str
+        key "expiryTime": str
+        key "group": Union[str, ConnectionGroup]
+        key "isSharedToAll": bool
+        key "peRequirement": Union[str, ManagedPERequirement]
+        key "peStatus": Union[str, ManagedPEStatus]
+        key "target": str
+        key "useWorkspaceManagedIdentity": bool
+        authType: Literal[ConnectionAuthType.CUSTOM_KEYS]
+        category: Union[str, ConnectionCategory]
+        createdByWorkspaceArmId: str
+        credentials: CustomKeys
+        error: str
+        expiryTime: str
+        group: Union[str, ConnectionGroup]
+        isSharedToAll: bool
+        metadata: dict[str, str]
+        peRequirement: Union[str, ManagedPERequirement]
+        peStatus: Union[str, ManagedPEStatus]
+        sharedUserList: list[str]
+        target: str
+        useWorkspaceManagedIdentity: bool
+
+
+    class azure.mgmt.cognitiveservices.types.DefenderForAISetting(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('DefenderForAISettingProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: DefenderForAISettingProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.DefenderForAISettingProperties(TypedDict, total=False):
+        key "state": Union[str, DefenderForAISettingState]
+        state: Union[str, DefenderForAISettingState]
+
+
+    class azure.mgmt.cognitiveservices.types.Deployment(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('DeploymentProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: DeploymentProperties
+        sku: Sku
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.DeploymentCapacitySettings(TypedDict, total=False):
+        key "designatedCapacity": int
+        key "priority": int
+        designatedCapacity: int
+        priority: int
+
+
+    class azure.mgmt.cognitiveservices.types.DeploymentModel(TypedDict, total=False):
+        key "callRateLimit": ForwardRef('CallRateLimit', module='types')
+        key "format": str
+        key "name": str
+        key "publisher": str
+        key "source": str
+        key "sourceAccount": str
+        key "version": str
+        callRateLimit: CallRateLimit
+        format: str
+        name: str
+        publisher: str
+        source: str
+        sourceAccount: str
+        version: str
+
+
+    class azure.mgmt.cognitiveservices.types.DeploymentProperties(TypedDict, total=False):
+        key "callRateLimit": ForwardRef('CallRateLimit', module='types')
+        key "capacitySettings": ForwardRef('DeploymentCapacitySettings', module='types')
+        key "contextCacheContainerId": str
+        key "currentCapacity": int
+        key "deploymentState": Optional[Union[str, DeploymentState]]
+        key "dynamicThrottlingEnabled": bool
+        key "model": ForwardRef('DeploymentModel', module='types')
+        key "parentDeploymentName": str
+        key "provisioningState": Union[str, DeploymentProvisioningState]
+        key "raiPolicyName": str
+        key "routing": ForwardRef('DeploymentRouting', module='types')
+        key "scaleSettings": ForwardRef('DeploymentScaleSettings', module='types')
+        key "serviceTier": Optional[Union[str, ServiceTier]]
+        key "speculativeDecoding": ForwardRef('DeploymentSpeculativeDecoding', module='types')
+        key "spilloverDeploymentName": str
+        key "versionUpgradeOption": Union[str, DeploymentModelVersionUpgradeOption]
+        callRateLimit: CallRateLimit
+        capabilities: dict[str, str]
+        capacitySettings: DeploymentCapacitySettings
+        contextCacheContainerId: str
+        costControlIds: list[str]
+        currentCapacity: int
+        deploymentState: Union[str, DeploymentState]
+        dynamicThrottlingEnabled: bool
+        model: DeploymentModel
+        parentDeploymentName: str
+        provisioningState: Union[str, DeploymentProvisioningState]
+        raiPolicyName: str
+        rateLimits: list[ThrottlingRule]
+        routing: DeploymentRouting
+        scaleSettings: DeploymentScaleSettings
+        serviceTier: Union[str, ServiceTier]
+        speculativeDecoding: DeploymentSpeculativeDecoding
+        spilloverDeploymentName: str
+        versionUpgradeOption: Union[str, DeploymentModelVersionUpgradeOption]
+
+
+    class azure.mgmt.cognitiveservices.types.DeploymentRouting(TypedDict, total=False):
+        key "mode": Union[str, RoutingMode]
+        mode: Union[str, RoutingMode]
+        models: list[DeploymentModel]
+
+
+    class azure.mgmt.cognitiveservices.types.DeploymentScaleSettings(TypedDict, total=False):
+        key "activeCapacity": int
+        key "capacity": int
+        key "scaleType": Union[str, DeploymentScaleType]
+        activeCapacity: int
+        capacity: int
+        scaleType: Union[str, DeploymentScaleType]
+
+
+    class azure.mgmt.cognitiveservices.types.DeploymentSpeculativeDecoding(TypedDict, total=False):
+        key "draftModel": Required[DeploymentModel]
+        key "draftTokenCount": int
+        draftModel: DeploymentModel
+        draftTokenCount: int
+
+
+    class azure.mgmt.cognitiveservices.types.Encryption(TypedDict, total=False):
+        key "keySource": Union[str, KeySource]
+        key "keyVaultProperties": ForwardRef('KeyVaultProperties', module='types')
+        keySource: Union[str, KeySource]
+        keyVaultProperties: KeyVaultProperties
+
+
+    class azure.mgmt.cognitiveservices.types.EncryptionScope(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('EncryptionScopeProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: EncryptionScopeProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.EncryptionScopeProperties(Encryption):
+        key "keySource": Union[str, KeySource]
+        key "keyVaultProperties": ForwardRef('KeyVaultProperties', module='types')
+        key "provisioningState": Union[str, EncryptionScopeProvisioningState]
+        key "state": Union[str, EncryptionScopeState]
+        keySource: Union[str, KeySource]
+        keyVaultProperties: KeyVaultProperties
+        provisioningState: Union[str, EncryptionScopeProvisioningState]
+        state: Union[str, EncryptionScopeState]
+
+
+    class azure.mgmt.cognitiveservices.types.ErrorAdditionalInfo(TypedDict, total=False):
+        key "info": Any
+        key "type": str
+        info: Any
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.ErrorDetail(TypedDict, total=False):
+        key "code": str
+        key "message": str
+        key "target": str
+        additionalInfo: list[ErrorAdditionalInfo]
+        code: str
+        details: list[ErrorDetail]
+        message: str
+        target: str
+
+
+    class azure.mgmt.cognitiveservices.types.EvaluateDeploymentPoliciesDeployment(TypedDict, total=False):
+        key "name": Required[str]
+        key "properties": Required[EvaluateDeploymentPoliciesDeploymentProperties]
+        name: str
+        properties: EvaluateDeploymentPoliciesDeploymentProperties
+
+
+    class azure.mgmt.cognitiveservices.types.EvaluateDeploymentPoliciesDeploymentProperties(TypedDict, total=False):
+        key "model": Required[DeploymentModel]
+        key "raiPolicyName": str
+        model: DeploymentModel
+        raiPolicyName: str
+
+
+    class azure.mgmt.cognitiveservices.types.EvaluateDeploymentPoliciesRequest(TypedDict, total=False):
+        key "deployments": Required[list[EvaluateDeploymentPoliciesDeployment]]
+        deployments: list[EvaluateDeploymentPoliciesDeployment]
+
+
+    class azure.mgmt.cognitiveservices.types.FoundryAutoUpgrade(TypedDict, total=False):
+        key "mode": Union[str, FoundryAutoUpgradeMode]
+        key "plannedByMicrosoft": bool
+        key "scheduledAt": str
+        key "statusReason": str
+        mode: Union[str, FoundryAutoUpgradeMode]
+        plannedByMicrosoft: bool
+        scheduledAt: str
+        statusReason: str
+
+
+    class azure.mgmt.cognitiveservices.types.FqdnOutboundRule(TypedDict, total=False):
+        key "category": Union[str, RuleCategory]
+        key "destination": str
+        key "errorInformation": str
+        key "status": Union[str, RuleStatus]
+        key "type": Required[Literal[RuleType.FQDN]]
+        category: Union[str, RuleCategory]
+        destination: str
+        errorInformation: str
+        parentRuleNames: list[str]
+        status: Union[str, RuleStatus]
+        type: Literal[RuleType.FQDN]
+
+
+    class azure.mgmt.cognitiveservices.types.GatedModelAccessProperties(TypedDict, total=False):
+        key "connectionId": Required[str]
+        connectionId: str
+
+
+    class azure.mgmt.cognitiveservices.types.HostedAgentDeployment(TypedDict, total=False):
+        key "agents": Optional[list[VersionedAgentReference]]
+        key "deploymentId": Optional[str]
+        key "deploymentType": Required[Literal[AgentDeploymentType.HOSTED]]
+        key "description": Optional[str]
+        key "displayName": Optional[str]
+        key "maxReplicas": int
+        key "minReplicas": int
+        key "protocols": Optional[list[AgentProtocolVersion]]
+        key "provisioningState": Union[str, AgentDeploymentProvisioningState]
+        key "state": Optional[Union[str, AgentDeploymentState]]
+        key "tags": Optional[dict[str, str]]
+        agents: list[VersionedAgentReference]
+        deploymentId: str
+        deploymentType: Literal[AgentDeploymentType.HOSTED]
+        description: str
+        displayName: str
+        maxReplicas: int
+        minReplicas: int
+        protocols: list[AgentProtocolVersion]
+        provisioningState: Union[str, AgentDeploymentProvisioningState]
+        state: Union[str, AgentDeploymentState]
+        tags: dict[str, str]
+
+
+    class azure.mgmt.cognitiveservices.types.Identity(TypedDict, total=False):
+        key "principalId": str
+        key "tenantId": str
+        key "type": Union[str, ResourceIdentityType]
+        principalId: str
+        tenantId: str
+        type: Union[str, ResourceIdentityType]
+        userAssignedIdentities: dict[str, UserAssignedIdentity]
+
+
+    class azure.mgmt.cognitiveservices.types.IpRule(TypedDict, total=False):
+        key "value": Required[str]
+        value: str
+
+
+    class azure.mgmt.cognitiveservices.types.KeyVaultProperties(TypedDict, total=False):
+        key "identityClientId": str
+        key "keyName": str
+        key "keyVaultUri": str
+        key "keyVersion": str
+        identityClientId: str
+        keyName: str
+        keyVaultUri: str
+        keyVersion: str
+
+
+    class azure.mgmt.cognitiveservices.types.ManagedAgentDeployment(TypedDict, total=False):
+        key "agents": Optional[list[VersionedAgentReference]]
+        key "deploymentId": Optional[str]
+        key "deploymentType": Required[Literal[AgentDeploymentType.MANAGED]]
+        key "description": Optional[str]
+        key "displayName": Optional[str]
+        key "protocols": Optional[list[AgentProtocolVersion]]
+        key "provisioningState": Union[str, AgentDeploymentProvisioningState]
+        key "state": Optional[Union[str, AgentDeploymentState]]
+        key "tags": Optional[dict[str, str]]
+        agents: list[VersionedAgentReference]
+        deploymentId: str
+        deploymentType: Literal[AgentDeploymentType.MANAGED]
+        description: str
+        displayName: str
+        protocols: list[AgentProtocolVersion]
+        provisioningState: Union[str, AgentDeploymentProvisioningState]
+        state: Union[str, AgentDeploymentState]
+        tags: dict[str, str]
+
+
+    class azure.mgmt.cognitiveservices.types.ManagedClusterAgentHostingConfiguration(TypedDict, total=False):
+        key "clusterResourceId": Required[str]
+        key "hostingManagementIdentityResourceId": Required[str]
+        key "hostingType": Required[Literal[AgentHostingType.MANAGED_CLUSTER]]
+        key "name": Required[str]
+        key "storageAccountResourceId": Required[str]
+        key "workloadIdentityResourceId": Required[str]
+        clusterResourceId: str
+        hostingManagementIdentityResourceId: str
+        hostingType: Literal[AgentHostingType.MANAGED_CLUSTER]
+        name: str
+        storageAccountResourceId: str
+        workloadIdentityResourceId: str
+
+
+    class azure.mgmt.cognitiveservices.types.ManagedComputeDeployment(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ManagedComputeDeploymentProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: ManagedComputeDeploymentProperties
+        sku: Sku
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.ManagedComputeDeploymentProperties(TypedDict, total=False):
+        key "acceleratorType": str
+        key "acceleratorsPerInstance": int
+        key "computeId": str
+        key "deploymentTemplate": str
+        key "gatedModelAccess": ForwardRef('GatedModelAccessProperties', module='types')
+        key "model": Required[str]
+        key "priority": str
+        key "provisioningDetails": ForwardRef('ManagedComputeDeploymentProvisioningDetails', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "routes": ForwardRef('ManagedComputeDeploymentRoutes', module='types')
+        key "totalAccelerators": int
+        key "versionUpgradeOption": Union[str, DeploymentModelVersionUpgradeOption]
+        acceleratorType: str
+        acceleratorsPerInstance: int
+        capabilities: dict[str, str]
+        computeId: str
+        deploymentTemplate: str
+        gatedModelAccess: GatedModelAccessProperties
+        model: str
+        priority: str
+        provisioningDetails: ManagedComputeDeploymentProvisioningDetails
+        provisioningState: Union[str, ProvisioningState]
+        routes: ManagedComputeDeploymentRoutes
+        totalAccelerators: int
+        versionUpgradeOption: Union[str, DeploymentModelVersionUpgradeOption]
+
+
+    class azure.mgmt.cognitiveservices.types.ManagedComputeDeploymentProvisioningDetails(TypedDict, total=False):
+        key "lastOperationTimestamp": str
+        key "message": str
+        lastOperationTimestamp: str
+        message: str
+
+
+    class azure.mgmt.cognitiveservices.types.ManagedComputeDeploymentRoutes(TypedDict, total=False):
+        key "chatCompletionsScoringPath": str
+        key "messagesApiScoringPath": str
+        key "swagger": str
+        chatCompletionsScoringPath: str
+        messagesApiScoringPath: str
+        swagger: str
+
+
+    class azure.mgmt.cognitiveservices.types.ManagedIdentityAuthTypeConnectionProperties(TypedDict, total=False):
+        key "authType": Required[Literal[ConnectionAuthType.MANAGED_IDENTITY]]
+        key "category": Union[str, ConnectionCategory]
+        key "createdByWorkspaceArmId": str
+        key "credentials": ForwardRef('ConnectionManagedIdentity', module='types')
+        key "error": str
+        key "expiryTime": str
+        key "group": Union[str, ConnectionGroup]
+        key "isSharedToAll": bool
+        key "peRequirement": Union[str, ManagedPERequirement]
+        key "peStatus": Union[str, ManagedPEStatus]
+        key "target": str
+        key "useWorkspaceManagedIdentity": bool
+        authType: Literal[ConnectionAuthType.MANAGED_IDENTITY]
+        category: Union[str, ConnectionCategory]
+        createdByWorkspaceArmId: str
+        credentials: ConnectionManagedIdentity
+        error: str
+        expiryTime: str
+        group: Union[str, ConnectionGroup]
+        isSharedToAll: bool
+        metadata: dict[str, str]
+        peRequirement: Union[str, ManagedPERequirement]
+        peStatus: Union[str, ManagedPEStatus]
+        sharedUserList: list[str]
+        target: str
+        useWorkspaceManagedIdentity: bool
+
+
+    class azure.mgmt.cognitiveservices.types.ManagedNetworkProvisionOptions(TypedDict, total=False):
+
+
+    class azure.mgmt.cognitiveservices.types.ManagedNetworkProvisionStatus(TypedDict, total=False):
+        key "status": Union[str, ManagedNetworkStatus]
+        status: Union[str, ManagedNetworkStatus]
+
+
+    class azure.mgmt.cognitiveservices.types.ManagedNetworkSettings(TypedDict, total=False):
+        key "firewallPublicIpAddress": Optional[str]
+        key "firewallSku": Union[str, FirewallSku]
+        key "isolationMode": Union[str, IsolationMode]
+        key "managedNetworkKind": Union[str, ManagedNetworkKind]
+        key "networkId": str
+        key "outboundRules": Optional[dict[str, OutboundRule]]
+        key "provisioningState": Union[str, ManagedNetworkProvisioningState]
+        key "status": ForwardRef('ManagedNetworkProvisionStatus', module='types')
+        firewallPublicIpAddress: str
+        firewallSku: Union[str, FirewallSku]
+        isolationMode: Union[str, IsolationMode]
+        managedNetworkKind: Union[str, ManagedNetworkKind]
+        networkId: str
+        outboundRules: dict[str, OutboundRule]
+        provisioningState: Union[str, ManagedNetworkProvisioningState]
+        status: ManagedNetworkProvisionStatus
+
+
+    class azure.mgmt.cognitiveservices.types.ManagedNetworkSettingsBasicResource(Resource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ManagedNetworkSettings', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ManagedNetworkSettings
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.ManagedNetworkSettingsEx(ManagedNetworkSettings):
+        key "firewallPublicIpAddress": Optional[str]
+        key "firewallSku": Union[str, FirewallSku]
+        key "isolationMode": Union[str, IsolationMode]
+        key "managedNetworkKind": Union[str, ManagedNetworkKind]
+        key "networkId": str
+        key "outboundRules": Optional[dict[str, OutboundRule]]
+        key "provisioningState": Union[str, ManagedNetworkProvisioningState]
+        key "status": ForwardRef('ManagedNetworkProvisionStatus', module='types')
+        changeableIsolationModes: list[Union[str, IsolationMode]]
+        firewallPublicIpAddress: str
+        firewallSku: Union[str, FirewallSku]
+        isolationMode: Union[str, IsolationMode]
+        managedNetworkKind: Union[str, ManagedNetworkKind]
+        networkId: str
+        outboundRules: dict[str, OutboundRule]
+        provisioningState: Union[str, ManagedNetworkProvisioningState]
+        status: ManagedNetworkProvisionStatus
+
+
+    class azure.mgmt.cognitiveservices.types.ManagedNetworkSettingsProperties(TypedDict, total=False):
+        key "managedNetwork": ForwardRef('ManagedNetworkSettingsEx', module='types')
+        key "provisioningState": Union[str, ManagedNetworkProvisioningState]
+        managedNetwork: ManagedNetworkSettingsEx
+        provisioningState: Union[str, ManagedNetworkProvisioningState]
+
+
+    class azure.mgmt.cognitiveservices.types.ManagedNetworkSettingsPropertiesBasicResource(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ManagedNetworkSettingsProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ManagedNetworkSettingsProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.ModelCapacityCalculatorWorkload(TypedDict, total=False):
+        key "requestParameters": ForwardRef('ModelCapacityCalculatorWorkloadRequestParam', module='types')
+        key "requestPerMinute": int
+        requestParameters: ModelCapacityCalculatorWorkloadRequestParam
+        requestPerMinute: int
+
+
+    class azure.mgmt.cognitiveservices.types.ModelCapacityCalculatorWorkloadRequestParam(TypedDict, total=False):
+        key "avgGeneratedTokens": int
+        key "avgPromptTokens": int
+        avgGeneratedTokens: int
+        avgPromptTokens: int
+
+
+    class azure.mgmt.cognitiveservices.types.MultiRegionSettings(TypedDict, total=False):
+        key "routingMethod": Union[str, RoutingMethods]
+        regions: list[RegionSetting]
+        routingMethod: Union[str, RoutingMethods]
+
+
+    class azure.mgmt.cognitiveservices.types.NetworkInjection(TypedDict, total=False):
+        key "scenario": Union[str, ScenarioType]
+        key "subnetArmId": str
+        key "useMicrosoftManagedNetwork": bool
+        scenario: Union[str, ScenarioType]
+        subnetArmId: str
+        useMicrosoftManagedNetwork: bool
+
+
+    class azure.mgmt.cognitiveservices.types.NetworkRuleSet(TypedDict, total=False):
+        key "bypass": Union[str, ByPassSelection]
+        key "defaultAction": Union[str, NetworkRuleAction]
+        bypass: Union[str, ByPassSelection]
+        defaultAction: Union[str, NetworkRuleAction]
+        ipRules: list[IpRule]
+        virtualNetworkRules: list[VirtualNetworkRule]
+
+
+    class azure.mgmt.cognitiveservices.types.NoneAuthTypeConnectionProperties(TypedDict, total=False):
+        key "authType": Required[Literal[ConnectionAuthType.NONE]]
+        key "category": Union[str, ConnectionCategory]
+        key "createdByWorkspaceArmId": str
+        key "error": str
+        key "expiryTime": str
+        key "group": Union[str, ConnectionGroup]
+        key "isSharedToAll": bool
+        key "peRequirement": Union[str, ManagedPERequirement]
+        key "peStatus": Union[str, ManagedPEStatus]
+        key "target": str
+        key "useWorkspaceManagedIdentity": bool
+        authType: Literal[ConnectionAuthType.NONE]
+        category: Union[str, ConnectionCategory]
+        createdByWorkspaceArmId: str
+        error: str
+        expiryTime: str
+        group: Union[str, ConnectionGroup]
+        isSharedToAll: bool
+        metadata: dict[str, str]
+        peRequirement: Union[str, ManagedPERequirement]
+        peStatus: Union[str, ManagedPEStatus]
+        sharedUserList: list[str]
+        target: str
+        useWorkspaceManagedIdentity: bool
+
+
+    class azure.mgmt.cognitiveservices.types.OAuth2AuthTypeConnectionProperties(TypedDict, total=False):
+        key "authType": Required[Literal[ConnectionAuthType.O_AUTH2]]
+        key "category": Union[str, ConnectionCategory]
+        key "createdByWorkspaceArmId": str
+        key "credentials": ForwardRef('ConnectionOAuth2', module='types')
+        key "error": str
+        key "expiryTime": str
+        key "group": Union[str, ConnectionGroup]
+        key "isSharedToAll": bool
+        key "peRequirement": Union[str, ManagedPERequirement]
+        key "peStatus": Union[str, ManagedPEStatus]
+        key "target": str
+        key "useWorkspaceManagedIdentity": bool
+        authType: Literal[ConnectionAuthType.O_AUTH2]
+        category: Union[str, ConnectionCategory]
+        createdByWorkspaceArmId: str
+        credentials: ConnectionOAuth2
+        error: str
+        expiryTime: str
+        group: Union[str, ConnectionGroup]
+        isSharedToAll: bool
+        metadata: dict[str, str]
+        peRequirement: Union[str, ManagedPERequirement]
+        peStatus: Union[str, ManagedPEStatus]
+        sharedUserList: list[str]
+        target: str
+        useWorkspaceManagedIdentity: bool
+
+
+    class azure.mgmt.cognitiveservices.types.OrganizationSharedBuiltInAuthorizationPolicy(TypedDict, total=False):
+        key "type": Required[Literal[BuiltInAuthorizationScheme.ORGANIZATION_SCOPE]]
+        type: Literal[BuiltInAuthorizationScheme.ORGANIZATION_SCOPE]
+
+
+    class azure.mgmt.cognitiveservices.types.OutboundRuleBasicResource(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": Required[OutboundRule]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: OutboundRule
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.PATAuthTypeConnectionProperties(TypedDict, total=False):
+        key "authType": Required[Literal[ConnectionAuthType.PAT]]
+        key "category": Union[str, ConnectionCategory]
+        key "createdByWorkspaceArmId": str
+        key "credentials": ForwardRef('ConnectionPersonalAccessToken', module='types')
+        key "error": str
+        key "expiryTime": str
+        key "group": Union[str, ConnectionGroup]
+        key "isSharedToAll": bool
+        key "peRequirement": Union[str, ManagedPERequirement]
+        key "peStatus": Union[str, ManagedPEStatus]
+        key "target": str
+        key "useWorkspaceManagedIdentity": bool
+        authType: Literal[ConnectionAuthType.PAT]
+        category: Union[str, ConnectionCategory]
+        createdByWorkspaceArmId: str
+        credentials: ConnectionPersonalAccessToken
+        error: str
+        expiryTime: str
+        group: Union[str, ConnectionGroup]
+        isSharedToAll: bool
+        metadata: dict[str, str]
+        peRequirement: Union[str, ManagedPERequirement]
+        peStatus: Union[str, ManagedPEStatus]
+        sharedUserList: list[str]
+        target: str
+        useWorkspaceManagedIdentity: bool
+
+
+    class azure.mgmt.cognitiveservices.types.PatchResourceSku(TypedDict, total=False):
+        key "sku": ForwardRef('Sku', module='types')
+        sku: Sku
+
+
+    class azure.mgmt.cognitiveservices.types.PatchResourceTags(TypedDict, total=False):
+        tags: dict[str, str]
+
+
+    class azure.mgmt.cognitiveservices.types.PatchResourceTagsAndSku(PatchResourceTags):
+        key "sku": ForwardRef('Sku', module='types')
+        sku: Sku
+        tags: dict[str, str]
+
+
+    class azure.mgmt.cognitiveservices.types.Pool(TypedDict, total=False):
+        key "instanceType": Required[str]
+        key "name": Required[str]
+        key "nodeCount": Required[int]
+        key "vmPriority": Union[str, VmPriority]
+        instanceType: str
+        name: str
+        nodeCount: int
+        vmPriority: Union[str, VmPriority]
+
+
+    class azure.mgmt.cognitiveservices.types.PrivateEndpoint(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.cognitiveservices.types.PrivateEndpointConnection(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('PrivateEndpointConnectionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: PrivateEndpointConnectionProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.PrivateEndpointConnectionProperties(TypedDict, total=False):
+        key "privateEndpoint": ForwardRef('PrivateEndpoint', module='types')
+        key "privateLinkServiceConnectionState": Required[PrivateLinkServiceConnectionState]
+        key "provisioningState": Union[str, PrivateEndpointConnectionProvisioningState]
+        groupIds: list[str]
+        privateEndpoint: PrivateEndpoint
+        privateLinkServiceConnectionState: PrivateLinkServiceConnectionState
+        provisioningState: Union[str, PrivateEndpointConnectionProvisioningState]
+
+
+    class azure.mgmt.cognitiveservices.types.PrivateEndpointOutboundRule(TypedDict, total=False):
+        key "category": Union[str, RuleCategory]
+        key "destination": ForwardRef('PrivateEndpointOutboundRuleDestination', module='types')
+        key "errorInformation": str
+        key "status": Union[str, RuleStatus]
+        key "type": Required[Literal[RuleType.PRIVATE_ENDPOINT]]
+        category: Union[str, RuleCategory]
+        destination: PrivateEndpointOutboundRuleDestination
+        errorInformation: str
+        fqdns: list[str]
+        parentRuleNames: list[str]
+        status: Union[str, RuleStatus]
+        type: Literal[RuleType.PRIVATE_ENDPOINT]
+
+
+    class azure.mgmt.cognitiveservices.types.PrivateEndpointOutboundRuleDestination(TypedDict, total=False):
+        key "serviceResourceId": str
+        key "subresourceTarget": str
+        serviceResourceId: str
+        subresourceTarget: str
+
+
+    class azure.mgmt.cognitiveservices.types.PrivateLinkServiceConnectionState(TypedDict, total=False):
+        key "actionsRequired": str
+        key "description": str
+        key "status": Union[str, PrivateEndpointServiceConnectionStatus]
+        actionsRequired: str
+        description: str
+        status: Union[str, PrivateEndpointServiceConnectionStatus]
+
+
+    class azure.mgmt.cognitiveservices.types.Project(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "identity": ForwardRef('Identity', module='types')
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('ProjectProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        identity: Identity
+        location: str
+        name: str
+        properties: ProjectProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.ProjectCapabilityHost(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": Required[ProjectCapabilityHostProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ProjectCapabilityHostProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.ProjectCapabilityHostProperties(TypedDict, total=False):
+        key "aiServicesConnections": Optional[list[str]]
+        key "provisioningState": Union[str, CapabilityHostProvisioningState]
+        key "storageConnections": Optional[list[str]]
+        key "threadStorageConnections": Optional[list[str]]
+        key "vectorStoreConnections": Optional[list[str]]
+        aiServicesConnections: list[str]
+        provisioningState: Union[str, CapabilityHostProvisioningState]
+        storageConnections: list[str]
+        threadStorageConnections: list[str]
+        vectorStoreConnections: list[str]
+
+
+    class azure.mgmt.cognitiveservices.types.ProjectProperties(TypedDict, total=False):
+        key "capabilitySettings": ForwardRef('CapabilitySettings', module='types')
+        key "description": str
+        key "displayName": str
+        key "isDefault": bool
+        key "provisioningState": Union[str, ProvisioningState]
+        capabilitySettings: CapabilitySettings
+        description: str
+        displayName: str
+        endpoints: dict[str, str]
+        isDefault: bool
+        provisioningState: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.cognitiveservices.types.ProxyResource(Resource):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.QuotaLimit(TypedDict, total=False):
+        key "count": float
+        key "renewalPeriod": float
+        count: float
+        renewalPeriod: float
+        rules: list[ThrottlingRule]
+
+
+    class azure.mgmt.cognitiveservices.types.QuotaTier(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('QuotaTierProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: QuotaTierProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.QuotaTierProperties(TypedDict, total=False):
+        key "assignmentDate": str
+        key "currentTierName": str
+        key "tierUpgradeEligibilityInfo": Optional[QuotaTierUpgradeEligibilityInfo]
+        key "tierUpgradePolicy": Union[str, TierUpgradePolicy]
+        assignmentDate: str
+        currentTierName: str
+        tierUpgradeEligibilityInfo: QuotaTierUpgradeEligibilityInfo
+        tierUpgradePolicy: Union[str, TierUpgradePolicy]
+
+
+    class azure.mgmt.cognitiveservices.types.QuotaTierUpgradeEligibilityInfo(TypedDict, total=False):
+        key "nextTierName": Optional[str]
+        key "upgradeApplicableDate": Optional[str]
+        key "upgradeAvailabilityStatus": Union[str, UpgradeAvailabilityStatus]
+        key "upgradeUnavailabilityReason": Optional[str]
+        nextTierName: str
+        upgradeApplicableDate: str
+        upgradeAvailabilityStatus: Union[str, UpgradeAvailabilityStatus]
+        upgradeUnavailabilityReason: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiAcsEmptyObject(TypedDict, total=False):
+
+
+    class azure.mgmt.cognitiveservices.types.RaiAcsHarmConfiguration(TypedDict, total=False):
+        key "category": Required[Union[str, RaiAcsHarmCategory]]
+        key "harm_config_id": str
+        category: Union[str, RaiAcsHarmCategory]
+        harm_config_id: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiAcsInterventionPoint(TypedDict, total=False):
+        key "annotations": ForwardRef('RaiAcsEmptyObject', module='types')
+        key "policy": Required[RaiAcsPolicyBinding]
+        key "policy_target": Required[Union[str, RaiAcsPolicyTarget]]
+        key "policy_target_kind": Required[Union[str, RaiAcsPolicyTargetKind]]
+        annotations: RaiAcsEmptyObject
+        policy: RaiAcsPolicyBinding
+        policy_target: Union[str, RaiAcsPolicyTarget]
+        policy_target_kind: Union[str, RaiAcsPolicyTargetKind]
+
+
+    class azure.mgmt.cognitiveservices.types.RaiAcsInterventionPoints(TypedDict, total=False):
+        key "input": ForwardRef('RaiAcsInterventionPoint', module='types')
+        key "output": ForwardRef('RaiAcsInterventionPoint', module='types')
+        key "post_tool_call": ForwardRef('RaiAcsToolInterventionPoint', module='types')
+        key "pre_tool_call": ForwardRef('RaiAcsToolInterventionPoint', module='types')
+        input: RaiAcsInterventionPoint
+        output: RaiAcsInterventionPoint
+        post_tool_call: RaiAcsToolInterventionPoint
+        pre_tool_call: RaiAcsToolInterventionPoint
+
+
+    class azure.mgmt.cognitiveservices.types.RaiAcsManifest(TypedDict, total=False):
+        key "agent_control_specification_version": Required[str]
+        key "annotators": ForwardRef('RaiAcsEmptyObject', module='types')
+        key "intervention_points": Required[RaiAcsInterventionPoints]
+        key "policies": Required[dict[str, RaiAcsRegoPolicyDefinition]]
+        agent_control_specification_version: str
+        annotators: RaiAcsEmptyObject
+        intervention_points: RaiAcsInterventionPoints
+        metadata: dict[str, Any]
+        policies: dict[str, RaiAcsRegoPolicyDefinition]
+        tools: dict[str, RaiAcsToolDefinition]
+
+
+    class azure.mgmt.cognitiveservices.types.RaiAcsModerationBindingExtension(TypedDict, total=False):
+        key "harm_configs": Required[list[RaiAcsHarmConfiguration]]
+        key "subject_format": Required[Union[str, RaiAcsModerationSubjectFormat]]
+        harm_configs: list[RaiAcsHarmConfiguration]
+        subject_format: Union[str, RaiAcsModerationSubjectFormat]
+
+
+    class azure.mgmt.cognitiveservices.types.RaiAcsPolicyBinding(TypedDict, total=False):
+        key "aacs_moderation": ForwardRef('RaiAcsModerationBindingExtension', module='types')
+        key "id": Required[str]
+        key "query": str
+        aacs_moderation: RaiAcsModerationBindingExtension
+        id: str
+        query: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiAcsRegoPolicyDefinition(TypedDict, total=False):
+        key "query": Required[str]
+        key "type": Required[Union[str, RaiAcsPolicyDefinitionType]]
+        query: str
+        type: Union[str, RaiAcsPolicyDefinitionType]
+
+
+    class azure.mgmt.cognitiveservices.types.RaiAcsToolDefinition(TypedDict, total=False):
+        key "clearance": str
+        key "description": str
+        key "id": str
+        key "type": str
+        clearance: str
+        description: str
+        id: str
+        security_labels: list[str]
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiAcsToolInterventionPoint(TypedDict, total=False):
+        key "annotations": ForwardRef('RaiAcsEmptyObject', module='types')
+        key "policy": Required[RaiAcsPolicyBinding]
+        key "policy_target": Required[Union[str, RaiAcsPolicyTarget]]
+        key "policy_target_kind": Required[Union[str, RaiAcsPolicyTargetKind]]
+        key "tool_name_from": Union[str, RaiAcsToolNameSelector]
+        annotations: RaiAcsEmptyObject
+        policy: RaiAcsPolicyBinding
+        policy_target: Union[str, RaiAcsPolicyTarget]
+        policy_target_kind: Union[str, RaiAcsPolicyTargetKind]
+        tool_name_from: Union[str, RaiAcsToolNameSelector]
+
+
+    class azure.mgmt.cognitiveservices.types.RaiBinding(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RaiBindingProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: RaiBindingProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiBindingProperties(TypedDict, total=False):
+        key "boundResourceId": Required[str]
+        key "targetPolicyName": Required[str]
+        boundResourceId: str
+        targetPolicyName: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiBlocklist(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RaiBlocklistProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: RaiBlocklistProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiBlocklistConfig(TypedDict, total=False):
+        key "blocking": bool
+        key "blocklistName": str
+        blocking: bool
+        blocklistName: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiBlocklistItem(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RaiBlocklistItemProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: RaiBlocklistItemProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiBlocklistItemBulkRequest(TypedDict, total=False):
+        key "name": str
+        key "properties": ForwardRef('RaiBlocklistItemProperties', module='types')
+        name: str
+        properties: RaiBlocklistItemProperties
+
+
+    class azure.mgmt.cognitiveservices.types.RaiBlocklistItemProperties(TypedDict, total=False):
+        key "isRegex": bool
+        key "pattern": str
+        isRegex: bool
+        pattern: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiBlocklistProperties(TypedDict, total=False):
+        key "description": str
+        description: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiEgressHeaderTransform(TypedDict, total=False):
+        key "name": Required[str]
+        key "operation": Required[Union[str, RaiEgressHeaderOperation]]
+        key "value": str
+        key "valueRef": ForwardRef('RaiEgressHeaderValueRef', module='types')
+        name: str
+        operation: Union[str, RaiEgressHeaderOperation]
+        value: str
+        valueRef: RaiEgressHeaderValueRef
+
+
+    class azure.mgmt.cognitiveservices.types.RaiEgressHeaderValueRef(TypedDict, total=False):
+        key "managedIdentityRef": ForwardRef('RaiEgressManagedIdentityRef', module='types')
+        key "secretRef": ForwardRef('RaiEgressSecretRef', module='types')
+        managedIdentityRef: RaiEgressManagedIdentityRef
+        secretRef: RaiEgressSecretRef
+
+
+    class azure.mgmt.cognitiveservices.types.RaiEgressManagedIdentityRef(TypedDict, total=False):
+        key "format": str
+        key "resource": Required[str]
+        format: str
+        resource: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiEgressPolicyConfig(TypedDict, total=False):
+        key "defaultAction": Union[str, RaiEgressDefaultAction]
+        key "description": str
+        key "mode": Union[str, RaiEgressMode]
+        defaultAction: Union[str, RaiEgressDefaultAction]
+        description: str
+        mode: Union[str, RaiEgressMode]
+        rules: list[RaiEgressRule]
+
+
+    class azure.mgmt.cognitiveservices.types.RaiEgressRewriteTarget(TypedDict, total=False):
+        key "host": str
+        key "path": str
+        key "scheme": Union[str, RaiEgressScheme]
+        host: str
+        path: str
+        scheme: Union[str, RaiEgressScheme]
+
+
+    class azure.mgmt.cognitiveservices.types.RaiEgressRule(TypedDict, total=False):
+        key "action": Required[RaiEgressRuleAction]
+        key "description": str
+        key "match": ForwardRef('RaiEgressRuleMatch', module='types')
+        key "name": Required[str]
+        key "ruleType": Required[Union[str, RaiEgressRuleType]]
+        action: RaiEgressRuleAction
+        description: str
+        match: RaiEgressRuleMatch
+        name: str
+        ruleType: Union[str, RaiEgressRuleType]
+
+
+    class azure.mgmt.cognitiveservices.types.RaiEgressRuleAction(TypedDict, total=False):
+        key "actionType": Required[Union[str, RaiEgressRuleActionType]]
+        key "rewrite": ForwardRef('RaiEgressRewriteTarget', module='types')
+        actionType: Union[str, RaiEgressRuleActionType]
+        headers: list[RaiEgressHeaderTransform]
+        rewrite: RaiEgressRewriteTarget
+
+
+    class azure.mgmt.cognitiveservices.types.RaiEgressRuleMatch(TypedDict, total=False):
+        key "host": str
+        key "path": str
+        host: str
+        path: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiEgressSecretRef(TypedDict, total=False):
+        key "format": str
+        key "secretId": Required[str]
+        key "secretKey": str
+        format: str
+        secretId: str
+        secretKey: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiExternalSafetyProviderSchema(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RaiExternalSafetyProviderSchemaProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: RaiExternalSafetyProviderSchemaProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiExternalSafetyProviderSchemaProperties(TypedDict, total=False):
+        key "createdAt": str
+        key "keyVaultUri": str
+        key "lastModifiedAt": str
+        key "managedIdentity": str
+        key "mode": str
+        key "providerId": str
+        key "providerName": str
+        key "secretName": str
+        key "url": str
+        createdAt: str
+        keyVaultUri: str
+        lastModifiedAt: str
+        managedIdentity: str
+        mode: str
+        providerId: str
+        providerName: str
+        secretName: str
+        url: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiMonitorConfig(TypedDict, total=False):
+        key "adxStorageResourceId": str
+        key "identityClientId": str
+        adxStorageResourceId: str
+        identityClientId: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiPolicy(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RaiPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: RaiPolicyProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiPolicyContentFilter(TypedDict, total=False):
+        key "action": Union[str, RaiActionType]
+        key "blocking": bool
+        key "enabled": bool
+        key "name": str
+        key "severityThreshold": Union[str, ContentLevel]
+        key "source": Union[str, RaiPolicyContentSource]
+        action: Union[str, RaiActionType]
+        blocking: bool
+        enabled: bool
+        name: str
+        severityThreshold: Union[str, ContentLevel]
+        source: Union[str, RaiPolicyContentSource]
+
+
+    class azure.mgmt.cognitiveservices.types.RaiPolicyCustomExternalSafetyProviderReference(TypedDict, total=False):
+        key "blocking": bool
+        key "externalSafetyProviderName": Required[str]
+        key "managedIdentityResourceId": str
+        key "source": Required[Union[str, RaiPolicyContentSource]]
+        blocking: bool
+        externalSafetyProviderName: str
+        managedIdentityResourceId: str
+        source: Union[str, RaiPolicyContentSource]
+
+
+    class azure.mgmt.cognitiveservices.types.RaiPolicyProperties(TypedDict, total=False):
+        key "acs": ForwardRef('RaiAcsManifest', module='types')
+        key "basePolicyName": str
+        key "egressPolicy": ForwardRef('RaiEgressPolicyConfig', module='types')
+        key "format": Union[str, RaiPolicyFormat]
+        key "mode": Union[str, RaiPolicyMode]
+        key "type": Union[str, RaiPolicyType]
+        acs: RaiAcsManifest
+        acsRegos: list[RaiRegoReference]
+        basePolicyName: str
+        contentFilters: list[RaiPolicyContentFilter]
+        customBlocklists: list[CustomBlocklistConfig]
+        customExternalSafetyProviders: list[RaiPolicyCustomExternalSafetyProviderReference]
+        egressPolicy: RaiEgressPolicyConfig
+        format: Union[str, RaiPolicyFormat]
+        mode: Union[str, RaiPolicyMode]
+        safetyProviders: list[SafetyProviderConfig]
+        type: Union[str, RaiPolicyType]
+
+
+    class azure.mgmt.cognitiveservices.types.RaiRego(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RaiRegoProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: RaiRegoProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiRegoProperties(TypedDict, total=False):
+        key "encoding": Union[str, RaiRegoEncoding]
+        key "rego": Required[str]
+        encoding: Union[str, RaiRegoEncoding]
+        rego: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiRegoReference(TypedDict, total=False):
+        key "regoName": Required[str]
+        regoName: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiSafetyProviderConfig(TypedDict, total=False):
+        key "blocking": bool
+        key "safetyProviderName": str
+        blocking: bool
+        safetyProviderName: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiToolLabel(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RaiToolLabelProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: RaiToolLabelProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiToolLabelProperties(TypedDict, total=False):
+        key "accountScope": ForwardRef('RaiToolLabelPropertiesAccountScope', module='types')
+        key "toolConnectionName": Required[str]
+        accountScope: RaiToolLabelPropertiesAccountScope
+        projectScopes: list[RaiToolLabelPropertiesProjectScopesItem]
+        toolConnectionName: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiToolLabelPropertiesAccountScope(TypedDict, total=False):
+        labelValues: dict[str, str]
+
+
+    class azure.mgmt.cognitiveservices.types.RaiToolLabelPropertiesProjectScopesItem(TypedDict, total=False):
+        key "labelValues": Required[dict[str, str]]
+        key "project": Required[str]
+        labelValues: dict[str, str]
+        project: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiTopic(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RaiTopicProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        name: str
+        properties: RaiTopicProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.RaiTopicProperties(TypedDict, total=False):
+        key "createdAt": str
+        key "description": str
+        key "failedReason": str
+        key "lastModifiedAt": str
+        key "sampleBlobUrl": str
+        key "status": str
+        key "topicId": str
+        key "topicName": str
+        createdAt: str
+        description: str
+        failedReason: str
+        lastModifiedAt: str
+        sampleBlobUrl: str
+        status: str
+        topicId: str
+        topicName: str
+
+
+    class azure.mgmt.cognitiveservices.types.RegenerateKeyParameters(TypedDict, total=False):
+        key "keyName": Required[Union[str, KeyName]]
+        keyName: Union[str, KeyName]
+
+
+    class azure.mgmt.cognitiveservices.types.RegionSetting(TypedDict, total=False):
+        key "customsubdomain": str
+        key "name": str
+        key "value": float
+        customsubdomain: str
+        name: str
+        value: float
+
+
+    class azure.mgmt.cognitiveservices.types.RequestMatchPattern(TypedDict, total=False):
+        key "method": str
+        key "path": str
+        method: str
+        path: str
+
+
+    class azure.mgmt.cognitiveservices.types.Resource(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.ResourceBase(TypedDict, total=False):
+        key "description": Optional[str]
+        key "tags": Optional[dict[str, str]]
+        description: str
+        tags: dict[str, str]
+
+
+    class azure.mgmt.cognitiveservices.types.RoleBasedBuiltInAuthorizationPolicy(TypedDict, total=False):
+        key "type": Required[Literal[BuiltInAuthorizationScheme.DEFAULT]]
+        type: Literal[BuiltInAuthorizationScheme.DEFAULT]
+
+
+    class azure.mgmt.cognitiveservices.types.RuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FQDN = "FQDN"
+        PRIVATE_ENDPOINT = "PrivateEndpoint"
+        SERVICE_TAG = "ServiceTag"
+
+
+    class azure.mgmt.cognitiveservices.types.SASAuthTypeConnectionProperties(TypedDict, total=False):
+        key "authType": Required[Literal[ConnectionAuthType.SAS]]
+        key "category": Union[str, ConnectionCategory]
+        key "createdByWorkspaceArmId": str
+        key "credentials": ForwardRef('ConnectionSharedAccessSignature', module='types')
+        key "error": str
+        key "expiryTime": str
+        key "group": Union[str, ConnectionGroup]
+        key "isSharedToAll": bool
+        key "peRequirement": Union[str, ManagedPERequirement]
+        key "peStatus": Union[str, ManagedPEStatus]
+        key "target": str
+        key "useWorkspaceManagedIdentity": bool
+        authType: Literal[ConnectionAuthType.SAS]
+        category: Union[str, ConnectionCategory]
+        createdByWorkspaceArmId: str
+        credentials: ConnectionSharedAccessSignature
+        error: str
+        expiryTime: str
+        group: Union[str, ConnectionGroup]
+        isSharedToAll: bool
+        metadata: dict[str, str]
+        peRequirement: Union[str, ManagedPERequirement]
+        peStatus: Union[str, ManagedPEStatus]
+        sharedUserList: list[str]
+        target: str
+        useWorkspaceManagedIdentity: bool
+
+
+    class azure.mgmt.cognitiveservices.types.SafetyProviderConfig(RaiSafetyProviderConfig):
+        key "blocking": bool
+        key "safetyProviderName": str
+        key "source": Union[str, RaiPolicyContentSource]
+        blocking: bool
+        safetyProviderName: str
+        source: Union[str, RaiPolicyContentSource]
+
+
+    class azure.mgmt.cognitiveservices.types.ServicePrincipalAuthTypeConnectionProperties(TypedDict, total=False):
+        key "authType": Required[Literal[ConnectionAuthType.SERVICE_PRINCIPAL]]
+        key "category": Union[str, ConnectionCategory]
+        key "createdByWorkspaceArmId": str
+        key "credentials": ForwardRef('ConnectionServicePrincipal', module='types')
+        key "error": str
+        key "expiryTime": str
+        key "group": Union[str, ConnectionGroup]
+        key "isSharedToAll": bool
+        key "peRequirement": Union[str, ManagedPERequirement]
+        key "peStatus": Union[str, ManagedPEStatus]
+        key "target": str
+        key "useWorkspaceManagedIdentity": bool
+        authType: Literal[ConnectionAuthType.SERVICE_PRINCIPAL]
+        category: Union[str, ConnectionCategory]
+        createdByWorkspaceArmId: str
+        credentials: ConnectionServicePrincipal
+        error: str
+        expiryTime: str
+        group: Union[str, ConnectionGroup]
+        isSharedToAll: bool
+        metadata: dict[str, str]
+        peRequirement: Union[str, ManagedPERequirement]
+        peStatus: Union[str, ManagedPEStatus]
+        sharedUserList: list[str]
+        target: str
+        useWorkspaceManagedIdentity: bool
+
+
+    class azure.mgmt.cognitiveservices.types.ServiceTagOutboundRule(TypedDict, total=False):
+        key "category": Union[str, RuleCategory]
+        key "destination": ForwardRef('ServiceTagOutboundRuleDestination', module='types')
+        key "errorInformation": str
+        key "status": Union[str, RuleStatus]
+        key "type": Required[Literal[RuleType.SERVICE_TAG]]
+        category: Union[str, RuleCategory]
+        destination: ServiceTagOutboundRuleDestination
+        errorInformation: str
+        parentRuleNames: list[str]
+        status: Union[str, RuleStatus]
+        type: Literal[RuleType.SERVICE_TAG]
+
+
+    class azure.mgmt.cognitiveservices.types.ServiceTagOutboundRuleDestination(TypedDict, total=False):
+        key "action": Union[str, RuleAction]
+        key "portRanges": str
+        key "protocol": str
+        key "serviceTag": str
+        action: Union[str, RuleAction]
+        addressPrefixes: list[str]
+        portRanges: str
+        protocol: str
+        serviceTag: str
+
+
+    class azure.mgmt.cognitiveservices.types.Sku(TypedDict, total=False):
+        key "capacity": int
+        key "family": str
+        key "name": Required[str]
+        key "size": str
+        key "tier": Union[str, SkuTier]
+        capacity: int
+        family: str
+        name: str
+        size: str
+        tier: Union[str, SkuTier]
+
+
+    class azure.mgmt.cognitiveservices.types.SkuCapability(TypedDict, total=False):
+        key "name": str
+        key "value": str
+        name: str
+        value: str
+
+
+    class azure.mgmt.cognitiveservices.types.SkuChangeInfo(TypedDict, total=False):
+        key "countOfDowngrades": float
+        key "countOfUpgradesAfterDowngrades": float
+        key "lastChangeDate": str
+        countOfDowngrades: float
+        countOfUpgradesAfterDowngrades: float
+        lastChangeDate: str
+
+
+    class azure.mgmt.cognitiveservices.types.SshSettings(TypedDict, total=False):
+        key "adminEnabled": bool
+        key "sshPublicKey": str
+        adminEnabled: bool
+        sshPublicKey: str
+
+
+    class azure.mgmt.cognitiveservices.types.SystemData(TypedDict, total=False):
+        key "createdAt": str
+        key "createdBy": str
+        key "createdByType": Union[str, CreatedByType]
+        key "lastModifiedAt": str
+        key "lastModifiedBy": str
+        key "lastModifiedByType": Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
+
+
+    class azure.mgmt.cognitiveservices.types.ThrottlingRule(TypedDict, total=False):
+        key "count": float
+        key "dynamicThrottlingEnabled": bool
+        key "key": str
+        key "minCount": float
+        key "renewalPeriod": float
+        count: float
+        dynamicThrottlingEnabled: bool
+        key: str
+        matchPatterns: list[RequestMatchPattern]
+        minCount: float
+        renewalPeriod: float
+
+
+    class azure.mgmt.cognitiveservices.types.TrafficRoutingRule(TypedDict, total=False):
+        key "deploymentId": Optional[str]
+        key "description": Optional[str]
+        key "ruleId": Optional[str]
+        key "trafficPercentage": int
+        deploymentId: str
+        description: str
+        ruleId: str
+        trafficPercentage: int
+
+
+    class azure.mgmt.cognitiveservices.types.UserAssignedIdentity(TypedDict, total=False):
+        key "clientId": str
+        key "principalId": str
+        clientId: str
+        principalId: str
+
+
+    class azure.mgmt.cognitiveservices.types.UserOwnedAmlWorkspace(TypedDict, total=False):
+        key "identityClientId": str
+        key "resourceId": str
+        identityClientId: str
+        resourceId: str
+
+
+    class azure.mgmt.cognitiveservices.types.UserOwnedStorage(TypedDict, total=False):
+        key "identityClientId": str
+        key "resourceId": str
+        identityClientId: str
+        resourceId: str
+
+
+    class azure.mgmt.cognitiveservices.types.UsernamePasswordAuthTypeConnectionProperties(TypedDict, total=False):
+        key "authType": Required[Literal[ConnectionAuthType.USERNAME_PASSWORD]]
+        key "category": Union[str, ConnectionCategory]
+        key "createdByWorkspaceArmId": str
+        key "credentials": ForwardRef('ConnectionUsernamePassword', module='types')
+        key "error": str
+        key "expiryTime": str
+        key "group": Union[str, ConnectionGroup]
+        key "isSharedToAll": bool
+        key "peRequirement": Union[str, ManagedPERequirement]
+        key "peStatus": Union[str, ManagedPEStatus]
+        key "target": str
+        key "useWorkspaceManagedIdentity": bool
+        authType: Literal[ConnectionAuthType.USERNAME_PASSWORD]
+        category: Union[str, ConnectionCategory]
+        createdByWorkspaceArmId: str
+        credentials: ConnectionUsernamePassword
+        error: str
+        expiryTime: str
+        group: Union[str, ConnectionGroup]
+        isSharedToAll: bool
+        metadata: dict[str, str]
+        peRequirement: Union[str, ManagedPERequirement]
+        peStatus: Union[str, ManagedPEStatus]
+        sharedUserList: list[str]
+        target: str
+        useWorkspaceManagedIdentity: bool
+
+
+    class azure.mgmt.cognitiveservices.types.VersionedAgentReference(AgentReferenceProperties):
+        key "agentId": Optional[str]
+        key "agentName": Optional[str]
+        key "agentVersion": Optional[str]
+        agentId: str
+        agentName: str
+        agentVersion: str
+
+
+    class azure.mgmt.cognitiveservices.types.VirtualNetworkRule(TypedDict, total=False):
+        key "id": Required[str]
+        key "ignoreMissingVnetServiceEndpoint": bool
+        key "state": str
+        id: str
+        ignoreMissingVnetServiceEndpoint: bool
+        state: str
+
+
+    class azure.mgmt.cognitiveservices.types.Workbench(ProxyResource):
+        key "etag": str
+        key "id": str
+        key "identity": ForwardRef('Identity', module='types')
+        key "name": str
+        key "properties": Required[WorkbenchProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        identity: Identity
+        name: str
+        properties: WorkbenchProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cognitiveservices.types.WorkbenchProperties(TypedDict, total=False):
+        key "connectivityEndpoints": ForwardRef('ConnectivityEndpoints', module='types')
+        key "creationTime": str
+        key "datasetId": str
+        key "gpuCount": int
+        key "idleTimeBeforeShutdown": str
+        key "imageLink": Required[str]
+        key "instanceType": str
+        key "provisioningState": Union[str, WorkbenchProvisioningState]
+        key "sshSettings": ForwardRef('SshSettings', module='types')
+        key "status": Union[str, WorkbenchStatus]
+        key "targetClusterId": Required[str]
+        key "webEndpoint": str
+        connectivityEndpoints: ConnectivityEndpoints
+        creationTime: str
+        datasetId: str
+        errors: list[ErrorDetail]
+        gpuCount: int
+        idleTimeBeforeShutdown: str
+        imageLink: str
+        instanceType: str
+        provisioningState: Union[str, WorkbenchProvisioningState]
+        sshSettings: SshSettings
+        status: Union[str, WorkbenchStatus]
+        targetClusterId: str
+        webEndpoint: str
+
+
+    class azure.mgmt.cognitiveservices.types.WorkbenchUpdate(TypedDict, total=False):
+        key "identity": ForwardRef('Identity', module='types')
+        key "properties": ForwardRef('WorkbenchUpdateProperties', module='types')
+        identity: Identity
+        properties: WorkbenchUpdateProperties
+
+
+    class azure.mgmt.cognitiveservices.types.WorkbenchUpdateProperties(TypedDict, total=False):
+        key "gpuCount": Optional[int]
+        key "idleTimeBeforeShutdown": str
+        key "instanceType": Optional[str]
+        key "targetClusterId": str
+        gpuCount: int
+        idleTimeBeforeShutdown: str
+        instanceType: str
+        targetClusterId: str
 
 
 ```

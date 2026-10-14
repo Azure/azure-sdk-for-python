@@ -8,6 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import Any, Dict, List, Optional, Union, cast
 import base64
 import itertools
@@ -248,7 +249,7 @@ class SearchPageIterator(PageIterator):
         self._initial_request = initial_request
         self._kwargs = kwargs
         self._facets: Optional[Dict[str, List[Dict[str, Any]]]] = None
-        self._api_version = kwargs.get("api_version", "2026-05-01-preview")
+        self._api_version = kwargs.get("api_version", "2026-08-01-preview")
 
     def _get_next_cb(self, continuation_token):
         if continuation_token is None:
@@ -372,7 +373,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         :param batch: A batch of document operations to perform.
         :type batch: IndexDocumentsBatch
         :return: List of IndexingResult
-        :rtype:  list[IndexingResult]
+        :rtype: list[~azure.search.documents.types.IndexingResult]
 
         :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
         """

@@ -3390,49 +3390,10 @@ namespace azure.mgmt.databox.operations
 
 namespace azure.mgmt.databox.types
 
-    class azure.mgmt.databox.types.AccountCredentialDetails(TypedDict, total=False):
-        key "accountConnectionString": str
-        key "accountName": str
-        key "dataAccountType": Union[str, DataAccountType]
-        account_connection_string: str
-        account_name: str
-        data_account_type: Union[str, DataAccountType]
-        shareCredentialDetails: list[ShareCredentialDetails]
-        share_credential_details: list[ShareCredentialDetails]
-
-
     class azure.mgmt.databox.types.AdditionalErrorInfo(TypedDict, total=False):
         key "type": str
         info: dict[str, Any]
         type: str
-
-
-    class azure.mgmt.databox.types.AddressValidationOutput(TypedDict, total=False):
-        key "properties": ForwardRef('AddressValidationProperties', module='types')
-        properties: AddressValidationProperties
-
-
-    class azure.mgmt.databox.types.AddressValidationProperties(TypedDict, total=False):
-        key "error": ForwardRef('CloudError', module='types')
-        key "validationStatus": Union[str, AddressValidationStatus]
-        key "validationType": Required[Literal[ValidationInputDiscriminator.VALIDATE_ADDRESS]]
-        alternateAddresses: list[ShippingAddress]
-        alternate_addresses: list[ShippingAddress]
-        error: CloudError
-        validation_status: Union[str, AddressValidationStatus]
-        validation_type: Literal[ValidationInputDiscriminator.VALIDATE_ADDRESS]
-
-
-    class azure.mgmt.databox.types.ApiError(TypedDict, total=False):
-        key "error": Required[ErrorDetail]
-        error: ErrorDetail
-
-
-    class azure.mgmt.databox.types.ApplianceNetworkConfiguration(TypedDict, total=False):
-        key "macAddress": str
-        key "name": str
-        mac_address: str
-        name: str
 
 
     class azure.mgmt.databox.types.AvailableSkuRequest(TypedDict, total=False):
@@ -3564,28 +3525,6 @@ namespace azure.mgmt.databox.types
         device_type: Union[str, SkuName]
         model: Union[str, ModelName]
         validation_type: Literal[ValidationInputDiscriminator.VALIDATE_CREATE_ORDER_LIMIT]
-
-
-    class azure.mgmt.databox.types.CreateOrderLimitForSubscriptionValidationResponseProperties(TypedDict, total=False):
-        key "error": ForwardRef('CloudError', module='types')
-        key "status": Union[str, ValidationStatus]
-        key "validationType": Required[Literal[ValidationInputDiscriminator.VALIDATE_CREATE_ORDER_LIMIT]]
-        error: CloudError
-        status: Union[str, ValidationStatus]
-        validation_type: Literal[ValidationInputDiscriminator.VALIDATE_CREATE_ORDER_LIMIT]
-
-
-    class azure.mgmt.databox.types.CustomerDiskJobSecrets(TypedDict, total=False):
-        key "carrierAccountNumber": str
-        key "dcAccessSecurityCode": ForwardRef('DcAccessSecurityCode', module='types')
-        key "error": ForwardRef('CloudError', module='types')
-        key "jobSecretsType": Required[Literal[ClassDiscriminator.DATA_BOX_CUSTOMER_DISK]]
-        carrier_account_number: str
-        dc_access_security_code: DcAccessSecurityCode
-        diskSecrets: list[DiskSecret]
-        disk_secrets: list[DiskSecret]
-        error: CloudError
-        job_secrets_type: Literal[ClassDiscriminator.DATA_BOX_CUSTOMER_DISK]
 
 
     class azure.mgmt.databox.types.DataAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3841,21 +3780,6 @@ namespace azure.mgmt.databox.types
         shipping_address: ShippingAddress
 
 
-    class azure.mgmt.databox.types.DataBoxDiskJobSecrets(TypedDict, total=False):
-        key "dcAccessSecurityCode": ForwardRef('DcAccessSecurityCode', module='types')
-        key "error": ForwardRef('CloudError', module='types')
-        key "isPasskeyUserDefined": bool
-        key "jobSecretsType": Required[Literal[ClassDiscriminator.DATA_BOX_DISK]]
-        key "passKey": str
-        dc_access_security_code: DcAccessSecurityCode
-        diskSecrets: list[DiskSecret]
-        disk_secrets: list[DiskSecret]
-        error: CloudError
-        is_passkey_user_defined: bool
-        job_secrets_type: Literal[ClassDiscriminator.DATA_BOX_DISK]
-        pass_key: str
-
-
     class azure.mgmt.databox.types.DataBoxHeavyAccountCopyLogDetails(TypedDict, total=False):
         key "accountName": str
         key "copyLogDetailsType": Required[Literal[ClassDiscriminator.DATA_BOX_HEAVY]]
@@ -3911,30 +3835,6 @@ namespace azure.mgmt.databox.types
         reverse_shipment_label_sas_key: str
         reverse_shipping_details: ReverseShippingDetails
         shipping_address: ShippingAddress
-
-
-    class azure.mgmt.databox.types.DataBoxHeavyJobSecrets(TypedDict, total=False):
-        key "dcAccessSecurityCode": ForwardRef('DcAccessSecurityCode', module='types')
-        key "error": ForwardRef('CloudError', module='types')
-        key "jobSecretsType": Required[Literal[ClassDiscriminator.DATA_BOX_HEAVY]]
-        cabinetPodSecrets: list[DataBoxHeavySecret]
-        cabinet_pod_secrets: list[DataBoxHeavySecret]
-        dc_access_security_code: DcAccessSecurityCode
-        error: CloudError
-        job_secrets_type: Literal[ClassDiscriminator.DATA_BOX_HEAVY]
-
-
-    class azure.mgmt.databox.types.DataBoxHeavySecret(TypedDict, total=False):
-        key "devicePassword": str
-        key "deviceSerialNumber": str
-        key "encodedValidationCertPubKey": str
-        accountCredentialDetails: list[AccountCredentialDetails]
-        account_credential_details: list[AccountCredentialDetails]
-        device_password: str
-        device_serial_number: str
-        encoded_validation_cert_pub_key: str
-        networkConfigurations: list[ApplianceNetworkConfiguration]
-        network_configurations: list[ApplianceNetworkConfiguration]
 
 
     class azure.mgmt.databox.types.DataBoxJobDetails(TypedDict, total=False):
@@ -3994,19 +3894,6 @@ namespace azure.mgmt.databox.types
         storage_location: str
 
 
-    class azure.mgmt.databox.types.DataBoxSecret(TypedDict, total=False):
-        key "devicePassword": str
-        key "deviceSerialNumber": str
-        key "encodedValidationCertPubKey": str
-        accountCredentialDetails: list[AccountCredentialDetails]
-        account_credential_details: list[AccountCredentialDetails]
-        device_password: str
-        device_serial_number: str
-        encoded_validation_cert_pub_key: str
-        networkConfigurations: list[ApplianceNetworkConfiguration]
-        network_configurations: list[ApplianceNetworkConfiguration]
-
-
     class azure.mgmt.databox.types.DataExportDetails(TypedDict, total=False):
         key "accountDetails": Required[DataAccountDetails]
         key "logCollectionLevel": Union[str, LogCollectionLevel]
@@ -4023,13 +3910,6 @@ namespace azure.mgmt.databox.types
         log_collection_level: Union[str, LogCollectionLevel]
 
 
-    class azure.mgmt.databox.types.DataLocationToServiceLocationMap(TypedDict, total=False):
-        key "dataLocation": str
-        key "serviceLocation": str
-        data_location: str
-        service_location: str
-
-
     class azure.mgmt.databox.types.DataTransferDetailsValidationRequest(TypedDict, total=False):
         key "deviceType": Required[Union[str, SkuName]]
         key "model": Union[str, ModelName]
@@ -4043,26 +3923,6 @@ namespace azure.mgmt.databox.types
         model: Union[str, ModelName]
         transfer_type: Union[str, TransferType]
         validation_type: Literal[ValidationInputDiscriminator.VALIDATE_DATA_TRANSFER_DETAILS]
-
-
-    class azure.mgmt.databox.types.DataTransferDetailsValidationResponseProperties(TypedDict, total=False):
-        key "error": ForwardRef('CloudError', module='types')
-        key "status": Union[str, ValidationStatus]
-        key "validationType": Required[Literal[ValidationInputDiscriminator.VALIDATE_DATA_TRANSFER_DETAILS]]
-        error: CloudError
-        status: Union[str, ValidationStatus]
-        validation_type: Literal[ValidationInputDiscriminator.VALIDATE_DATA_TRANSFER_DETAILS]
-
-
-    class azure.mgmt.databox.types.DataboxJobSecrets(TypedDict, total=False):
-        key "dcAccessSecurityCode": ForwardRef('DcAccessSecurityCode', module='types')
-        key "error": ForwardRef('CloudError', module='types')
-        key "jobSecretsType": Required[Literal[ClassDiscriminator.DATA_BOX]]
-        dc_access_security_code: DcAccessSecurityCode
-        error: CloudError
-        job_secrets_type: Literal[ClassDiscriminator.DATA_BOX]
-        podSecrets: list[DataBoxSecret]
-        pod_secrets: list[DataBoxSecret]
 
 
     class azure.mgmt.databox.types.DatacenterAddressInstructionResponse(TypedDict, total=False):
@@ -4125,35 +3985,11 @@ namespace azure.mgmt.databox.types
         DATACENTER_ADDRESS_LOCATION = "DatacenterAddressLocation"
 
 
-    class azure.mgmt.databox.types.DcAccessSecurityCode(TypedDict, total=False):
-        key "forwardDCAccessCode": str
-        key "reverseDCAccessCode": str
-        forward_dc_access_code: str
-        reverse_dc_access_code: str
-
-
-    class azure.mgmt.databox.types.Details(TypedDict, total=False):
-        key "code": Required[str]
-        key "message": Required[str]
-        code: str
-        message: str
-
-
-    class azure.mgmt.databox.types.DeviceCapabilityDetails(TypedDict, total=False):
-        key "hardwareEncryption": Union[str, HardwareEncryption]
-        hardware_encryption: Union[str, HardwareEncryption]
-
-
     class azure.mgmt.databox.types.DeviceCapabilityRequest(TypedDict, total=False):
         key "model": Union[str, ModelName]
         key "skuName": Union[str, SkuName]
         model: Union[str, ModelName]
         sku_name: Union[str, SkuName]
-
-
-    class azure.mgmt.databox.types.DeviceCapabilityResponse(TypedDict, total=False):
-        deviceCapabilityDetails: list[DeviceCapabilityDetails]
-        device_capability_details: list[DeviceCapabilityDetails]
 
 
     class azure.mgmt.databox.types.DeviceErasureDetails(TypedDict, total=False):
@@ -4178,28 +4014,11 @@ namespace azure.mgmt.databox.types
         storage_location: str
 
 
-    class azure.mgmt.databox.types.DiskSecret(TypedDict, total=False):
-        key "bitLockerKey": str
-        key "diskSerialNumber": str
-        bit_locker_key: str
-        disk_serial_number: str
-
-
     class azure.mgmt.databox.types.EncryptionPreferences(TypedDict, total=False):
         key "doubleEncryption": Union[str, DoubleEncryption]
         key "hardwareEncryption": Union[str, HardwareEncryption]
         double_encryption: Union[str, DoubleEncryption]
         hardware_encryption: Union[str, HardwareEncryption]
-
-
-    class azure.mgmt.databox.types.ErrorDetail(TypedDict, total=False):
-        key "code": Required[str]
-        key "message": Required[str]
-        key "target": str
-        code: str
-        details: list[Details]
-        message: str
-        target: str
 
 
     class azure.mgmt.databox.types.ExportDiskDetails(TypedDict, total=False):
@@ -4444,33 +4263,6 @@ namespace azure.mgmt.databox.types
         stage_name: Union[str, NotificationStageName]
 
 
-    class azure.mgmt.databox.types.Operation(TypedDict, total=False):
-        key "display": ForwardRef('OperationDisplay', module='types')
-        key "isDataAction": bool
-        key "name": str
-        key "origin": str
-        key "properties": ForwardRef('OperationProperties', module='types')
-        display: OperationDisplay
-        is_data_action: bool
-        name: str
-        origin: str
-        properties: OperationProperties
-
-
-    class azure.mgmt.databox.types.OperationDisplay(TypedDict, total=False):
-        key "description": str
-        key "operation": str
-        key "provider": str
-        key "resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
-
-
-    class azure.mgmt.databox.types.OperationProperties(TypedDict, total=False):
-
-
     class azure.mgmt.databox.types.PackageCarrierDetails(TypedDict, total=False):
         key "carrierAccountNumber": str
         key "carrierName": str
@@ -4520,15 +4312,6 @@ namespace azure.mgmt.databox.types
         validation_type: Literal[ValidationInputDiscriminator.VALIDATE_PREFERENCES]
 
 
-    class azure.mgmt.databox.types.PreferencesValidationResponseProperties(TypedDict, total=False):
-        key "error": ForwardRef('CloudError', module='types')
-        key "status": Union[str, ValidationStatus]
-        key "validationType": Required[Literal[ValidationInputDiscriminator.VALIDATE_PREFERENCES]]
-        error: CloudError
-        status: Union[str, ValidationStatus]
-        validation_type: Literal[ValidationInputDiscriminator.VALIDATE_PREFERENCES]
-
-
     class azure.mgmt.databox.types.RegionConfigurationRequest(TypedDict, total=False):
         key "datacenterAddressRequest": ForwardRef('DatacenterAddressRequest', module='types')
         key "deviceCapabilityRequest": ForwardRef('DeviceCapabilityRequest', module='types')
@@ -4538,17 +4321,6 @@ namespace azure.mgmt.databox.types
         device_capability_request: DeviceCapabilityRequest
         schedule_availability_request: ScheduleAvailabilityRequest
         transport_availability_request: TransportAvailabilityRequest
-
-
-    class azure.mgmt.databox.types.RegionConfigurationResponse(TypedDict, total=False):
-        key "datacenterAddressResponse": ForwardRef('DatacenterAddressResponse', module='types')
-        key "deviceCapabilityResponse": ForwardRef('DeviceCapabilityResponse', module='types')
-        key "scheduleAvailabilityResponse": ForwardRef('ScheduleAvailabilityResponse', module='types')
-        key "transportAvailabilityResponse": ForwardRef('TransportAvailabilityResponse', module='types')
-        datacenter_address_response: DatacenterAddressResponse
-        device_capability_response: DeviceCapabilityResponse
-        schedule_availability_response: ScheduleAvailabilityResponse
-        transport_availability_response: TransportAvailabilityResponse
 
 
     class azure.mgmt.databox.types.Resource(TypedDict, total=False):
@@ -4582,24 +4354,6 @@ namespace azure.mgmt.databox.types
         shipping_address: ShippingAddress
 
 
-    class azure.mgmt.databox.types.ScheduleAvailabilityResponse(TypedDict, total=False):
-        availableDates: list[str]
-        available_dates: list[str]
-
-
-    class azure.mgmt.databox.types.ShareCredentialDetails(TypedDict, total=False):
-        key "password": str
-        key "shareName": str
-        key "shareType": Union[str, ShareDestinationFormatType]
-        key "userName": str
-        password: str
-        share_name: str
-        share_type: Union[str, ShareDestinationFormatType]
-        supportedAccessProtocols: list[Union[str, AccessProtocol]]
-        supported_access_protocols: list[Union[str, AccessProtocol]]
-        user_name: str
-
-
     class azure.mgmt.databox.types.ShipmentPickUpRequest(TypedDict, total=False):
         key "endTime": Required[str]
         key "shipmentLocation": Required[str]
@@ -4607,13 +4361,6 @@ namespace azure.mgmt.databox.types
         end_time: str
         shipment_location: str
         start_time: str
-
-
-    class azure.mgmt.databox.types.ShipmentPickUpResponse(TypedDict, total=False):
-        key "confirmationNumber": str
-        key "readyByTime": str
-        confirmation_number: str
-        ready_by_time: str
 
 
     class azure.mgmt.databox.types.ShippingAddress(TypedDict, total=False):
@@ -4669,65 +4416,11 @@ namespace azure.mgmt.databox.types
         validation_type: Literal[ValidationInputDiscriminator.VALIDATE_SKU_AVAILABILITY]
 
 
-    class azure.mgmt.databox.types.SkuAvailabilityValidationResponseProperties(TypedDict, total=False):
-        key "error": ForwardRef('CloudError', module='types')
-        key "status": Union[str, ValidationStatus]
-        key "validationType": Required[Literal[ValidationInputDiscriminator.VALIDATE_SKU_AVAILABILITY]]
-        error: CloudError
-        status: Union[str, ValidationStatus]
-        validation_type: Literal[ValidationInputDiscriminator.VALIDATE_SKU_AVAILABILITY]
-
-
-    class azure.mgmt.databox.types.SkuCapacity(TypedDict, total=False):
-        key "individualSkuUsable": str
-        key "maximum": str
-        key "usable": str
-        individual_sku_usable: str
-        maximum: str
-        usable: str
-
-
-    class azure.mgmt.databox.types.SkuCost(TypedDict, total=False):
-        key "meterId": str
-        key "meterType": str
-        key "multiplier": float
-        meter_id: str
-        meter_type: str
-        multiplier: float
-
-
-    class azure.mgmt.databox.types.SkuInformation(TypedDict, total=False):
-        key "enabled": bool
-        key "properties": ForwardRef('SkuProperties', module='types')
-        key "sku": ForwardRef('Sku', module='types')
-        enabled: bool
-        properties: SkuProperties
-        sku: Sku
-
-
     class azure.mgmt.databox.types.SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         DATA_BOX = "DataBox"
         DATA_BOX_CUSTOMER_DISK = "DataBoxCustomerDisk"
         DATA_BOX_DISK = "DataBoxDisk"
         DATA_BOX_HEAVY = "DataBoxHeavy"
-
-
-    class azure.mgmt.databox.types.SkuProperties(TypedDict, total=False):
-        key "capacity": ForwardRef('SkuCapacity', module='types')
-        key "disabledReason": Union[str, SkuDisabledReason]
-        key "disabledReasonMessage": str
-        key "requiredFeature": str
-        apiVersions: list[str]
-        api_versions: list[str]
-        capacity: SkuCapacity
-        costs: list[SkuCost]
-        countriesWithinCommerceBoundary: list[str]
-        countries_within_commerce_boundary: list[str]
-        dataLocationToServiceLocationMap: list[DataLocationToServiceLocationMap]
-        data_location_to_service_location_map: list[DataLocationToServiceLocationMap]
-        disabled_reason: Union[str, SkuDisabledReason]
-        disabled_reason_message: str
-        required_feature: str
 
 
     class azure.mgmt.databox.types.StorageAccountDetails(TypedDict, total=False):
@@ -4741,15 +4434,6 @@ namespace azure.mgmt.databox.types
 
     class azure.mgmt.databox.types.SubscriptionIsAllowedToCreateJobValidationRequest(TypedDict, total=False):
         key "validationType": Required[Literal[ValidationInputDiscriminator.VALIDATE_SUBSCRIPTION_IS_ALLOWED_TO_CREATE_JOB]]
-        validation_type: Literal[ValidationInputDiscriminator.VALIDATE_SUBSCRIPTION_IS_ALLOWED_TO_CREATE_JOB]
-
-
-    class azure.mgmt.databox.types.SubscriptionIsAllowedToCreateJobValidationResponseProperties(TypedDict, total=False):
-        key "error": ForwardRef('CloudError', module='types')
-        key "status": Union[str, ValidationStatus]
-        key "validationType": Required[Literal[ValidationInputDiscriminator.VALIDATE_SUBSCRIPTION_IS_ALLOWED_TO_CREATE_JOB]]
-        error: CloudError
-        status: Union[str, ValidationStatus]
         validation_type: Literal[ValidationInputDiscriminator.VALIDATE_SUBSCRIPTION_IS_ALLOWED_TO_CREATE_JOB]
 
 
@@ -4821,11 +4505,6 @@ namespace azure.mgmt.databox.types
         filter_file_details: list[FilterFileDetails]
 
 
-    class azure.mgmt.databox.types.TransportAvailabilityDetails(TypedDict, total=False):
-        key "shipmentType": Union[str, TransportShipmentTypes]
-        shipment_type: Union[str, TransportShipmentTypes]
-
-
     class azure.mgmt.databox.types.TransportAvailabilityRequest(TypedDict, total=False):
         key "model": Union[str, ModelName]
         key "skuName": Union[str, SkuName]
@@ -4833,23 +4512,11 @@ namespace azure.mgmt.databox.types
         sku_name: Union[str, SkuName]
 
 
-    class azure.mgmt.databox.types.TransportAvailabilityResponse(TypedDict, total=False):
-        transportAvailabilityDetails: list[TransportAvailabilityDetails]
-        transport_availability_details: list[TransportAvailabilityDetails]
-
-
     class azure.mgmt.databox.types.TransportPreferences(TypedDict, total=False):
         key "isUpdated": bool
         key "preferredShipmentType": Required[Union[str, TransportShipmentTypes]]
         is_updated: bool
         preferred_shipment_type: Union[str, TransportShipmentTypes]
-
-
-    class azure.mgmt.databox.types.UnencryptedCredentials(TypedDict, total=False):
-        key "jobName": str
-        key "jobSecrets": ForwardRef('JobSecrets', module='types')
-        job_name: str
-        job_secrets: JobSecrets
 
 
     class azure.mgmt.databox.types.UpdateJobDetails(TypedDict, total=False):
@@ -4911,18 +4578,6 @@ namespace azure.mgmt.databox.types
         key "validationCategory": Required[Literal["JobCreationValidation"]]
         individual_request_details: list[ValidationInputRequest]
         validation_category: Literal[JobCreationValidation]
-
-
-    class azure.mgmt.databox.types.ValidationResponse(TypedDict, total=False):
-        key "properties": ForwardRef('ValidationResponseProperties', module='types')
-        properties: ValidationResponseProperties
-
-
-    class azure.mgmt.databox.types.ValidationResponseProperties(TypedDict, total=False):
-        key "status": Union[str, OverallValidationStatus]
-        individualResponseDetails: list[ValidationInputResponse]
-        individual_response_details: list[ValidationInputResponse]
-        status: Union[str, OverallValidationStatus]
 
 
 ```

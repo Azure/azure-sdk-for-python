@@ -156,9 +156,9 @@ class TestScheduleEntity:
         inner_job = load_job(inner_job_path)._to_job()
         schedule = load_schedule(test_path)
         rest_schedule_job_dict = schedule._to_rest_object().as_dict()["properties"]["action"]["jobDefinition"]
-        # SparkJob builds a v2023_04 msrest envelope; the schedule embeds it as its camelCase wire dict
-        # (``.serialize()``), so compare against the standalone job serialized the same way.
-        loaded_job_dict = inner_job._to_rest_object().properties.serialize()
+        # SparkJob now builds the shared arm_ml_service hybrid envelope; the schedule embeds it directly,
+        # so compare against the standalone job's arm ``as_dict()`` (camelCase) wire form.
+        loaded_job_dict = inner_job._to_rest_object().properties.as_dict()
         assert rest_schedule_job_dict == loaded_job_dict
         # Test with local file + overwrites
         test_path = "./tests/test_configs/schedule/local_cron_spark_job2.yml"
@@ -172,7 +172,11 @@ class TestScheduleEntity:
             "spark.executor.memory": "2g",
             "spark.executor.instances": "2",
         }
-        assert "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04" in rest_schedule_job_dict["environmentId"]
+        # The inline anonymous environment is resolved to an arm-id by the operations layer at submit
+        # time; offline the arm envelope keeps it as an ``Environment`` object, so assert on its image.
+        environment_id = rest_schedule_job_dict["environmentId"]
+        environment_image = getattr(environment_id, "image", environment_id)
+        assert "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04" in str(environment_image)
 
     def test_invalid_date_string(self):
         pipeline_job = load_job(

@@ -24,6 +24,10 @@ DESCRIPTION:
     - Inspecting prebuilt analyzers: Learn about available prebuilt analyzers and their capabilities
     - Debugging: Understand why an analyzer behaves a certain way
 
+
+    You can dump the analyzer configuration as JSON (for example via the model's serialization
+    helpers) to inspect the full schema, config, and model mappings returned by the service.
+
 USAGE:
     python sample_get_analyzer.py
 
@@ -124,7 +128,7 @@ def main() -> None:
         description="Test analyzer for GetAnalyzer sample",
         config=config,
         field_schema=field_schema,
-        models={"completion": "gpt-4.1"},
+        models={"completion": "gpt-5.2"},
     )
 
     # Create the analyzer

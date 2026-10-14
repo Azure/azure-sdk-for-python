@@ -25,6 +25,7 @@
         "azure.mgmt.computelimit.models.SharedLimitCapProperties": "Microsoft.ComputeLimit.SharedLimitCapProperties",
         "azure.mgmt.computelimit.models.SharedLimitProperties": "Microsoft.ComputeLimit.SharedLimitProperties",
         "azure.mgmt.computelimit.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
+        "azure.mgmt.computelimit.models.TrustedHostSubscription": "Microsoft.ComputeLimit.TrustedHostSubscription",
         "azure.mgmt.computelimit.models.VmFamily": "Microsoft.ComputeLimit.VmFamily",
         "azure.mgmt.computelimit.models.VmFamilyProperties": "Microsoft.ComputeLimit.VmFamilyProperties",
         "azure.mgmt.computelimit.models.Origin": "Azure.ResourceManager.CommonTypes.Origin",
@@ -42,6 +43,14 @@
         "azure.mgmt.computelimit.aio.operations.GuestSubscriptionsOperations.delete": "Microsoft.ComputeLimit.GuestSubscriptions.delete",
         "azure.mgmt.computelimit.operations.GuestSubscriptionsOperations.list_by_subscription_location_resource": "Microsoft.ComputeLimit.GuestSubscriptions.listBySubscriptionLocationResource",
         "azure.mgmt.computelimit.aio.operations.GuestSubscriptionsOperations.list_by_subscription_location_resource": "Microsoft.ComputeLimit.GuestSubscriptions.listBySubscriptionLocationResource",
+        "azure.mgmt.computelimit.operations.TrustedHostSubscriptionsOperations.create": "Microsoft.ComputeLimit.TrustedHostSubscriptions.create",
+        "azure.mgmt.computelimit.aio.operations.TrustedHostSubscriptionsOperations.create": "Microsoft.ComputeLimit.TrustedHostSubscriptions.create",
+        "azure.mgmt.computelimit.operations.TrustedHostSubscriptionsOperations.get": "Microsoft.ComputeLimit.TrustedHostSubscriptions.get",
+        "azure.mgmt.computelimit.aio.operations.TrustedHostSubscriptionsOperations.get": "Microsoft.ComputeLimit.TrustedHostSubscriptions.get",
+        "azure.mgmt.computelimit.operations.TrustedHostSubscriptionsOperations.delete": "Microsoft.ComputeLimit.TrustedHostSubscriptions.delete",
+        "azure.mgmt.computelimit.aio.operations.TrustedHostSubscriptionsOperations.delete": "Microsoft.ComputeLimit.TrustedHostSubscriptions.delete",
+        "azure.mgmt.computelimit.operations.TrustedHostSubscriptionsOperations.list_by_subscription_location_resource": "Microsoft.ComputeLimit.TrustedHostSubscriptions.listBySubscriptionLocationResource",
+        "azure.mgmt.computelimit.aio.operations.TrustedHostSubscriptionsOperations.list_by_subscription_location_resource": "Microsoft.ComputeLimit.TrustedHostSubscriptions.listBySubscriptionLocationResource",
         "azure.mgmt.computelimit.operations.SharedLimitsOperations.get": "Microsoft.ComputeLimit.SharedLimits.get",
         "azure.mgmt.computelimit.aio.operations.SharedLimitsOperations.get": "Microsoft.ComputeLimit.SharedLimits.get",
         "azure.mgmt.computelimit.operations.SharedLimitsOperations.create": "Microsoft.ComputeLimit.SharedLimits.create",
@@ -81,5 +90,5 @@
         "azure.mgmt.computelimit.operations.MemberCapOverridesOperations.list_by_parent": "Microsoft.ComputeLimit.MemberCapOverrides.listByParent",
         "azure.mgmt.computelimit.aio.operations.MemberCapOverridesOperations.list_by_parent": "Microsoft.ComputeLimit.MemberCapOverrides.listByParent"
     },
-    "CrossLanguageVersion": "b7b6a993f3b0"
+    "CrossLanguageVersion": "62a2471f49fc"
 }

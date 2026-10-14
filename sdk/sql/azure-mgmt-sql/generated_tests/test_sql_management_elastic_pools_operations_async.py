@@ -48,6 +48,7 @@ class TestSqlManagementElasticPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                         "autoPauseDelay": 0,
                         "availabilityZone": "str",
                         "creationDate": "2020-02-20 00:00:00",
+                        "currentSku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
                         "highAvailabilityReplicaCount": 0,
                         "licenseType": "str",
                         "maintenanceConfigurationId": "str",
@@ -88,6 +89,7 @@ class TestSqlManagementElasticPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                     "properties": {
                         "autoPauseDelay": 0,
                         "availabilityZone": "str",
+                        "currentSku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
                         "highAvailabilityReplicaCount": 0,
                         "licenseType": "str",
                         "maintenanceConfigurationId": "str",

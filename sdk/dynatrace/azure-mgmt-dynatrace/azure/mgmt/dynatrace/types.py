@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,31 +13,22 @@ from typing_extensions import Required, TypedDict
 if TYPE_CHECKING:
     from .models import (
         Action,
-        ActionType,
-        AutoUpdateSetting,
-        AvailabilityState,
         CreatedByType,
         LiftrResourceCategories,
-        LogModule,
         ManagedIdentityType,
         ManagedServiceIdentityType,
         MarketplaceSaasAutoRenew,
         MarketplaceSubscriptionStatus,
         MonitoringStatus,
-        MonitoringType,
-        Origin,
         ProvisioningState,
-        SSOStatus,
         SendAadLogsStatus,
         SendActivityLogsStatus,
         SendSubscriptionLogsStatus,
-        SendingLogsStatus,
         SendingMetricsStatus,
         SingleSignOnStates,
         Status,
         SubscriptionListOperation,
         TagAction,
-        UpdateStatus,
     )
 
 
@@ -58,104 +49,6 @@ class AccountInfo(TypedDict, total=False):
     """Region in which the account is created."""
     companyName: str
     """Name of the customer account / company."""
-
-
-class AppServiceInfo(TypedDict, total=False):
-    """Details of App Services having Dynatrace OneAgent installed.
-
-    :ivar resource_id: App service resource ID.
-    :vartype resource_id: str
-    :ivar version: Version of the Dynatrace agent installed on the App Service.
-    :vartype version: str
-    :ivar monitoring_type: The monitoring mode of OneAgent. Known values are:
-     "CLOUD_INFRASTRUCTURE", "FULL_STACK", and "DISCOVERY".
-    :vartype monitoring_type: Union[str, "MonitoringType"]
-    :ivar auto_update_setting: Update settings of OneAgent. Known values are: "ENABLED" and
-     "DISABLED".
-    :vartype auto_update_setting: Union[str, "AutoUpdateSetting"]
-    :ivar update_status: The current update status of OneAgent. Known values are: "INCOMPATIBLE",
-     "OUTDATED", "SCHEDULED", "SUPPRESSED", "UNKNOWN", "UP2DATE", "UPDATE_IN_PROGRESS",
-     "UPDATE_PENDING", and "UPDATE_PROBLEM".
-    :vartype update_status: Union[str, "UpdateStatus"]
-    :ivar availability_state: The availability state of OneAgent. Known values are: "CRASHED",
-     "LOST", "MONITORED", "PRE_MONITORED", "SHUTDOWN", "UNEXPECTED_SHUTDOWN", "UNKNOWN", and
-     "UNMONITORED".
-    :vartype availability_state: Union[str, "AvailabilityState"]
-    :ivar log_module: Tells whether log modules are enabled or not. Known values are: "ENABLED" and
-     "DISABLED".
-    :vartype log_module: Union[str, "LogModule"]
-    :ivar host_group: The name of the host group.
-    :vartype host_group: str
-    :ivar host_name: The name of the host.
-    :vartype host_name: str
-    """
-
-    resourceId: str
-    """App service resource ID."""
-    version: str
-    """Version of the Dynatrace agent installed on the App Service."""
-    monitoringType: Union[str, "MonitoringType"]
-    """The monitoring mode of OneAgent. Known values are: \"CLOUD_INFRASTRUCTURE\", \"FULL_STACK\",
-     and \"DISCOVERY\"."""
-    autoUpdateSetting: Union[str, "AutoUpdateSetting"]
-    """Update settings of OneAgent. Known values are: \"ENABLED\" and \"DISABLED\"."""
-    updateStatus: Union[str, "UpdateStatus"]
-    """The current update status of OneAgent. Known values are: \"INCOMPATIBLE\", \"OUTDATED\",
-     \"SCHEDULED\", \"SUPPRESSED\", \"UNKNOWN\", \"UP2DATE\", \"UPDATE_IN_PROGRESS\",
-     \"UPDATE_PENDING\", and \"UPDATE_PROBLEM\"."""
-    availabilityState: Union[str, "AvailabilityState"]
-    """The availability state of OneAgent. Known values are: \"CRASHED\", \"LOST\", \"MONITORED\",
-     \"PRE_MONITORED\", \"SHUTDOWN\", \"UNEXPECTED_SHUTDOWN\", \"UNKNOWN\", and \"UNMONITORED\"."""
-    logModule: Union[str, "LogModule"]
-    """Tells whether log modules are enabled or not. Known values are: \"ENABLED\" and \"DISABLED\"."""
-    hostGroup: str
-    """The name of the host group."""
-    hostName: str
-    """The name of the host."""
-
-
-class ConnectedResourcesCountResponse(TypedDict, total=False):
-    """Response for getting Connected resources for a MP SaaS Resource.
-
-    :ivar connected_resources_count: Count of the connected resources.
-    :vartype connected_resources_count: int
-    """
-
-    connectedResourcesCount: int
-    """Count of the connected resources."""
-
-
-class CreateResourceSupportedProperties(TypedDict, total=False):
-    """Properties related to the support for creating Dynatrace resources.
-
-    :ivar name: The ARM id of the subscription.
-    :vartype name: str
-    :ivar creation_supported: Indicates if selected subscription supports Dynatrace resource
-     creation, if not it is already being monitored for the selected organization via multi
-     subscription feature.
-    :vartype creation_supported: bool
-    """
-
-    name: str
-    """The ARM id of the subscription."""
-    creationSupported: bool
-    """Indicates if selected subscription supports Dynatrace resource creation, if not it is already
-     being monitored for the selected organization via multi subscription feature."""
-
-
-class CreateResourceSupportedResponse(TypedDict, total=False):
-    """Dynatrace resource can be created or not.
-
-    :ivar value: Represents the properties of the resource.
-    :vartype value: list["CreateResourceSupportedProperties"]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: list["CreateResourceSupportedProperties"]
-    """Represents the properties of the resource."""
-    nextLink: str
-    """The link to the next page of items."""
 
 
 class DynatraceEnvironmentProperties(TypedDict, total=False):
@@ -303,59 +196,6 @@ class EnvironmentInfo(TypedDict, total=False):
     """Landing URL for Dynatrace environment."""
 
 
-class ErrorAdditionalInfo(TypedDict, total=False):
-    """The resource management error additional info.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: Any
-    """
-
-    type: str
-    """The additional info type."""
-    info: Any
-    """The additional info."""
-
-
-class ErrorDetail(TypedDict, total=False):
-    """The error detail.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list["ErrorDetail"]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list["ErrorAdditionalInfo"]
-    """
-
-    code: str
-    """The error code."""
-    message: str
-    """The error message."""
-    target: str
-    """The error target."""
-    details: list["ErrorDetail"]
-    """The error details."""
-    additionalInfo: list["ErrorAdditionalInfo"]
-    """The error additional info."""
-
-
-class ErrorResponse(TypedDict, total=False):
-    """Error response.
-
-    :ivar error: The error object.
-    :vartype error: "ErrorDetail"
-    """
-
-    error: "ErrorDetail"
-    """The error object."""
-
-
 class FilteringTag(TypedDict, total=False):
     """The definition of a filtering tag. Filtering tags are used for capturing resources and
     include/exclude them from being monitored.
@@ -420,25 +260,6 @@ class LinkableEnvironmentRequest(TypedDict, total=False):
     """user principal id of the user. Required."""
     region: Required[str]
     """Azure region in which we want to link the environment. Required."""
-
-
-class LinkableEnvironmentResponse(TypedDict, total=False):
-    """Response for getting all the linkable environments.
-
-    :ivar environment_id: environment id for which user is an admin.
-    :vartype environment_id: str
-    :ivar environment_name: Name of the environment.
-    :vartype environment_name: str
-    :ivar plan_data: Billing plan information.
-    :vartype plan_data: "PlanData"
-    """
-
-    environmentId: str
-    """environment id for which user is an admin."""
-    environmentName: str
-    """Name of the environment."""
-    planData: "PlanData"
-    """Billing plan information."""
 
 
 class LogRules(TypedDict, total=False):
@@ -555,31 +376,6 @@ class MarketplaceSaaSResourceDetailsRequest(TypedDict, total=False):
     """Tenant Id. Required."""
 
 
-class MarketplaceSaaSResourceDetailsResponse(TypedDict, total=False):
-    """Marketplace SaaS resource details linked to the given tenant Id.
-
-    :ivar marketplace_saa_s_resource_id: Id of the Marketplace SaaS Resource.
-    :vartype marketplace_saa_s_resource_id: str
-    :ivar plan_id: Id of the plan.
-    :vartype plan_id: str
-    :ivar marketplace_subscription_status: Marketplace subscription status. Known values are:
-     "Active", "Suspended", and "Unsubscribed".
-    :vartype marketplace_subscription_status: Union[str, "MarketplaceSubscriptionStatus"]
-    :ivar marketplace_saa_s_resource_name: Name of the Marketplace SaaS Resource.
-    :vartype marketplace_saa_s_resource_name: str
-    """
-
-    marketplaceSaaSResourceId: str
-    """Id of the Marketplace SaaS Resource."""
-    planId: str
-    """Id of the plan."""
-    marketplaceSubscriptionStatus: Union[str, "MarketplaceSubscriptionStatus"]
-    """Marketplace subscription status. Known values are: \"Active\", \"Suspended\", and
-     \"Unsubscribed\"."""
-    marketplaceSaaSResourceName: str
-    """Name of the Marketplace SaaS Resource."""
-
-
 class MarketplaceSubscriptionIdRequest(TypedDict, total=False):
     """Request for getting connected resources count for a Marketplace Subscription Id.
 
@@ -614,17 +410,6 @@ class MetricRules(TypedDict, total=False):
      with the associated tags."""
 
 
-class MetricsStatusResponse(TypedDict, total=False):
-    """Response of get metrics status operation.
-
-    :ivar azure_resource_ids: Azure resource IDs.
-    :vartype azure_resource_ids: list[str]
-    """
-
-    azureResourceIds: list[str]
-    """Azure resource IDs."""
-
-
 class MetricStatusRequest(TypedDict, total=False):
     """Request for getting metric status for given monitored resource Ids.
 
@@ -635,39 +420,6 @@ class MetricStatusRequest(TypedDict, total=False):
 
     monitoredResourceIds: list[str]
     """List of azure resource Id of monitored resources for which we get the metric status."""
-
-
-class MonitoredResource(TypedDict, total=False):
-    """Details of resource being monitored by Dynatrace monitor resource.
-
-    :ivar id: The ARM id of the resource.
-    :vartype id: str
-    :ivar sending_metrics: Flag indicating if resource is sending metrics to Dynatrace. Known
-     values are: "Enabled" and "Disabled".
-    :vartype sending_metrics: Union[str, "SendingMetricsStatus"]
-    :ivar reason_for_metrics_status: Reason for why the resource is sending metrics (or why it is
-     not sending).
-    :vartype reason_for_metrics_status: str
-    :ivar sending_logs: Flag indicating if resource is sending logs to Dynatrace. Known values are:
-     "Enabled" and "Disabled".
-    :vartype sending_logs: Union[str, "SendingLogsStatus"]
-    :ivar reason_for_logs_status: Reason for why the resource is sending logs (or why it is not
-     sending).
-    :vartype reason_for_logs_status: str
-    """
-
-    id: str
-    """The ARM id of the resource."""
-    sendingMetrics: Union[str, "SendingMetricsStatus"]
-    """Flag indicating if resource is sending metrics to Dynatrace. Known values are: \"Enabled\" and
-     \"Disabled\"."""
-    reasonForMetricsStatus: str
-    """Reason for why the resource is sending metrics (or why it is not sending)."""
-    sendingLogs: Union[str, "SendingLogsStatus"]
-    """Flag indicating if resource is sending logs to Dynatrace. Known values are: \"Enabled\" and
-     \"Disabled\"."""
-    reasonForLogsStatus: str
-    """Reason for why the resource is sending logs (or why it is not sending)."""
 
 
 class MonitoredSubscription(TypedDict, total=False):
@@ -877,75 +629,6 @@ class MonitorUpdateProperties(TypedDict, total=False):
     """The new Billing plan information."""
 
 
-class Operation(TypedDict, total=False):
-    """REST API Operation.
-
-    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
-     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
-    :vartype name: str
-    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
-     data-plane operations and "false" for Azure Resource Manager/control-plane operations.
-    :vartype is_data_action: bool
-    :ivar display: Localized display information for this particular operation.
-    :vartype display: "OperationDisplay"
-    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
-     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
-     and "user,system".
-    :vartype origin: Union[str, "Origin"]
-    :ivar action_type: Extensible enum. Indicates the action type. "Internal" refers to actions
-     that are for internal only APIs. "Internal"
-    :vartype action_type: Union[str, "ActionType"]
-    """
-
-    name: str
-    """The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
-     \"Microsoft.Compute/virtualMachines/write\",
-     \"Microsoft.Compute/virtualMachines/capture/action\"."""
-    isDataAction: bool
-    """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
-     \"false\" for Azure Resource Manager/control-plane operations."""
-    display: "OperationDisplay"
-    """Localized display information for this particular operation."""
-    origin: Union[str, "Origin"]
-    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-     logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
-     \"user,system\"."""
-    actionType: Union[str, "ActionType"]
-    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for
-     internal only APIs. \"Internal\""""
-
-
-class OperationDisplay(TypedDict, total=False):
-    """Localized display information for an operation.
-
-    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
-     Monitoring Insights" or "Microsoft Compute".
-    :vartype provider: str
-    :ivar resource: The localized friendly name of the resource type related to this operation.
-     E.g. "Virtual Machines" or "Job Schedule Collections".
-    :vartype resource: str
-    :ivar operation: The concise, localized friendly name for the operation; suitable for
-     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
-    :vartype operation: str
-    :ivar description: The short, localized friendly description of the operation; suitable for
-     tool tips and detailed views.
-    :vartype description: str
-    """
-
-    provider: str
-    """The localized friendly form of the resource provider name, e.g. \"Microsoft Monitoring
-     Insights\" or \"Microsoft Compute\"."""
-    resource: str
-    """The localized friendly name of the resource type related to this operation. E.g. \"Virtual
-     Machines\" or \"Job Schedule Collections\"."""
-    operation: str
-    """The concise, localized friendly name for the operation; suitable for dropdowns. E.g. \"Create
-     or Update Virtual Machine\", \"Restart Virtual Machine\"."""
-    description: str
-    """The short, localized friendly description of the operation; suitable for tool tips and detailed
-     views."""
-
-
 class PlanData(TypedDict, total=False):
     """Billing plan information.
 
@@ -978,35 +661,6 @@ class SSODetailsRequest(TypedDict, total=False):
 
     userPrincipal: Required[str]
     """user principal id of the user. Required."""
-
-
-class SSODetailsResponse(TypedDict, total=False):
-    """SSO details from the Dynatrace partner.
-
-    :ivar is_sso_enabled: Whether the SSO is enabled for this resource or not. Known values are:
-     "Enabled" and "Disabled".
-    :vartype is_sso_enabled: Union[str, "SSOStatus"]
-    :ivar metadata_url: URL for Azure AD metadata.
-    :vartype metadata_url: str
-    :ivar single_sign_on_url: The login URL specific to this Dynatrace Environment.
-    :vartype single_sign_on_url: str
-    :ivar aad_domains: array of Aad(azure active directory) domains.
-    :vartype aad_domains: list[str]
-    :ivar admin_users: Array of admin user emails.
-    :vartype admin_users: list[str]
-    """
-
-    isSsoEnabled: Union[str, "SSOStatus"]
-    """Whether the SSO is enabled for this resource or not. Known values are: \"Enabled\" and
-     \"Disabled\"."""
-    metadataUrl: str
-    """URL for Azure AD metadata."""
-    singleSignOnUrl: str
-    """The login URL specific to this Dynatrace Environment."""
-    aadDomains: list[str]
-    """array of Aad(azure active directory) domains."""
-    adminUsers: list[str]
-    """Array of admin user emails."""
 
 
 class SubscriptionList(TypedDict, total=False):
@@ -1141,72 +795,3 @@ class UserInfo(TypedDict, total=False):
     """Phone number of the user used by Dynatrace for contacting them if needed."""
     country: str
     """Country of the user."""
-
-
-class VMExtensionPayload(TypedDict, total=False):
-    """Response of payload to be passed while installing VM agent.
-
-    :ivar ingestion_key: Ingestion key of the environment.
-    :vartype ingestion_key: str
-    :ivar environment_id: Id of the environment created.
-    :vartype environment_id: str
-    """
-
-    ingestionKey: str
-    """Ingestion key of the environment."""
-    environmentId: str
-    """Id of the environment created."""
-
-
-class VMInfo(TypedDict, total=False):
-    """Details of VM Resource having Dynatrace OneAgent installed.
-
-    :ivar resource_id: Azure VM resource ID.
-    :vartype resource_id: str
-    :ivar version: Version of the Dynatrace agent installed on the VM.
-    :vartype version: str
-    :ivar monitoring_type: The monitoring mode of OneAgent. Known values are:
-     "CLOUD_INFRASTRUCTURE", "FULL_STACK", and "DISCOVERY".
-    :vartype monitoring_type: Union[str, "MonitoringType"]
-    :ivar auto_update_setting: Update settings of OneAgent. Known values are: "ENABLED" and
-     "DISABLED".
-    :vartype auto_update_setting: Union[str, "AutoUpdateSetting"]
-    :ivar update_status: The current update status of OneAgent. Known values are: "INCOMPATIBLE",
-     "OUTDATED", "SCHEDULED", "SUPPRESSED", "UNKNOWN", "UP2DATE", "UPDATE_IN_PROGRESS",
-     "UPDATE_PENDING", and "UPDATE_PROBLEM".
-    :vartype update_status: Union[str, "UpdateStatus"]
-    :ivar availability_state: The availability state of OneAgent. Known values are: "CRASHED",
-     "LOST", "MONITORED", "PRE_MONITORED", "SHUTDOWN", "UNEXPECTED_SHUTDOWN", "UNKNOWN", and
-     "UNMONITORED".
-    :vartype availability_state: Union[str, "AvailabilityState"]
-    :ivar log_module: Tells whether log modules are enabled or not. Known values are: "ENABLED" and
-     "DISABLED".
-    :vartype log_module: Union[str, "LogModule"]
-    :ivar host_group: The name of the host group.
-    :vartype host_group: str
-    :ivar host_name: The name of the host.
-    :vartype host_name: str
-    """
-
-    resourceId: str
-    """Azure VM resource ID."""
-    version: str
-    """Version of the Dynatrace agent installed on the VM."""
-    monitoringType: Union[str, "MonitoringType"]
-    """The monitoring mode of OneAgent. Known values are: \"CLOUD_INFRASTRUCTURE\", \"FULL_STACK\",
-     and \"DISCOVERY\"."""
-    autoUpdateSetting: Union[str, "AutoUpdateSetting"]
-    """Update settings of OneAgent. Known values are: \"ENABLED\" and \"DISABLED\"."""
-    updateStatus: Union[str, "UpdateStatus"]
-    """The current update status of OneAgent. Known values are: \"INCOMPATIBLE\", \"OUTDATED\",
-     \"SCHEDULED\", \"SUPPRESSED\", \"UNKNOWN\", \"UP2DATE\", \"UPDATE_IN_PROGRESS\",
-     \"UPDATE_PENDING\", and \"UPDATE_PROBLEM\"."""
-    availabilityState: Union[str, "AvailabilityState"]
-    """The availability state of OneAgent. Known values are: \"CRASHED\", \"LOST\", \"MONITORED\",
-     \"PRE_MONITORED\", \"SHUTDOWN\", \"UNEXPECTED_SHUTDOWN\", \"UNKNOWN\", and \"UNMONITORED\"."""
-    logModule: Union[str, "LogModule"]
-    """Tells whether log modules are enabled or not. Known values are: \"ENABLED\" and \"DISABLED\"."""
-    hostGroup: str
-    """The name of the host group."""
-    hostName: str
-    """The name of the host."""

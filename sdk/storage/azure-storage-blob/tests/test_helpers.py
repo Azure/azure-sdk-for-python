@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from itertools import count
 from datetime import datetime, timezone
 from io import IOBase, UnsupportedOperation
 from typing import Any, Dict, Optional, Tuple
@@ -19,6 +20,11 @@ from azure.core.pipeline.transport import (  # pylint: disable=no-name-in-module
 )
 from azure.core.rest import HttpRequest
 from azure.storage.blob._serialize import get_api_version
+
+
+def _deterministic_urandom():
+    counter = count(1)
+    return lambda size: next(counter).to_bytes(size, "big")
 
 
 def _build_base_file_share_headers(bearer_token_string: str, content_length: int = 0) -> Dict[str, Any]:

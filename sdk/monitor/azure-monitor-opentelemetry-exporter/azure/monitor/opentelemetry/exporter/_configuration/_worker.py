@@ -5,6 +5,7 @@ import logging
 import threading
 import random
 from azure.monitor.opentelemetry.exporter._constants import (
+    _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
     _ONE_SETTINGS_PYTHON_TARGETING,
 )
 
@@ -22,15 +23,15 @@ class _ConfigurationWorker:
     operations in the background, including error handling and dynamic interval adjustment.
 
     Attributes:
-        _default_refresh_interval (int): Default refresh interval (3600 seconds/1 hour)
+        _default_refresh_interval_s (int): Default refresh interval (3600 seconds/1 hour)
         _lock (threading.Lock): Thread lock for worker state management
         _shutdown_event (threading.Event): Event for coordinating graceful shutdown
         _refresh_thread (threading.Thread): Background daemon thread for configuration refresh
-        _refresh_interval (int): Current refresh interval in seconds
+        _refresh_interval_s (int): Current refresh interval in seconds
         _running (bool): Flag indicating if the worker is currently running
     """
 
-    def __init__(self, configuration_manager, refresh_interval=None) -> None:
+    def __init__(self, configuration_manager, refresh_interval_s=None) -> None:
         """Initialize and start the configuration worker thread.
 
         Creates and starts a background daemon thread that will periodically refresh
@@ -39,21 +40,21 @@ class _ConfigurationWorker:
 
         Args:
             configuration_manager: The ConfigurationManager instance to update
-            refresh_interval (Optional[int]): Initial refresh interval in seconds.
+            refresh_interval_s (Optional[int]): Initial refresh interval in seconds.
                 If None, defaults to 3600 seconds (1 hour).
 
         Note:
             The background thread is created as a daemon thread and includes a random
-            0-15 second startup delay to stagger configuration requests across multiple
+            5-15 second startup delay to stagger configuration requests across multiple
             SDK instances during startup or recovery from outages.
         """
         self._configuration_manager = configuration_manager
-        self._default_refresh_interval = 3600  # Default to 60 minutes in seconds
+        self._default_refresh_interval_s = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
         self._lock = threading.Lock()  # Single lock for all worker state
 
         self._shutdown_event = threading.Event()
         self._refresh_thread = threading.Thread(target=self._get_configuration, name="ConfigurationWorker", daemon=True)
-        self._refresh_interval = refresh_interval or self._default_refresh_interval
+        self._refresh_interval_s = refresh_interval_s or self._default_refresh_interval_s
         self._shutdown_event.clear()
         self._refresh_thread.start()
         self._running = True
@@ -87,7 +88,7 @@ class _ConfigurationWorker:
         if thread_to_join:
             thread_to_join.join()
 
-    def get_refresh_interval(self) -> int:
+    def get_refresh_interval_s(self) -> int:
         """Get the current configuration refresh interval.
 
         Returns the current refresh interval that determines how often the worker
@@ -101,13 +102,13 @@ class _ConfigurationWorker:
             This method is thread-safe and can be called from any thread.
         """
         with self._lock:
-            return self._refresh_interval
+            return self._refresh_interval_s
 
     def _get_configuration(self) -> None:
         """Main configuration refresh loop executed in the background thread.
 
         This method implements the core logic of the configuration worker:
-        1. Applies random startup delay (0-15 seconds) to stagger requests
+        1. Applies random startup delay (5-15 seconds) to stagger requests
         2. Continuously loops until shutdown is requested
         3. Calls the configuration update function to fetch new settings
         4. Updates the refresh interval based on the server response
@@ -117,7 +118,8 @@ class _ConfigurationWorker:
         SDK instances start up simultaneously after service outages or deployments.
 
         Error Handling:
-            - All exceptions are caught and logged as warnings
+            - All exceptions are caught and logged at debug level (OneSettings config fetching is
+              internal, so failures are never surfaced to users)
             - Errors do not stop the worker from continuing its refresh cycle
             - The worker maintains operation even if individual requests fail
 
@@ -136,15 +138,17 @@ class _ConfigurationWorker:
 
         while not self._shutdown_event.is_set():
             try:
+                # Fetch configuration WITHOUT holding _lock: this performs blocking network I/O and
+                # callback invocation, and _lock only guards _refresh_interval_s. Holding it here would
+                # make shutdown() and get_refresh_interval_s() block for the full request duration.
+                interval = self._configuration_manager.get_configuration_and_refresh_interval(
+                    _ONE_SETTINGS_PYTHON_TARGETING
+                )
                 with self._lock:
-                    self._refresh_interval = self._configuration_manager.get_configuration_and_refresh_interval(
-                        _ONE_SETTINGS_PYTHON_TARGETING
-                    )
-                    # Capture interval while we have the lock
-                    interval = self._refresh_interval
+                    self._refresh_interval_s = interval
             except Exception as ex:  # pylint: disable=broad-exception-caught
                 logger.debug("Configuration refresh failed: %s", ex)
                 # Use current interval on error
-                interval = self.get_refresh_interval()
+                interval = self.get_refresh_interval_s()
 
             self._shutdown_event.wait(interval)

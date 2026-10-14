@@ -57,6 +57,7 @@
         "azure.mgmt.containerregistry.models.KeyVaultProperties": "Microsoft.ContainerRegistry.KeyVaultProperties",
         "azure.mgmt.containerregistry.models.LoggingProperties": "Microsoft.ContainerRegistry.LoggingProperties",
         "azure.mgmt.containerregistry.models.LoginServerProperties": "Microsoft.ContainerRegistry.LoginServerProperties",
+        "azure.mgmt.containerregistry.models.ManagedServiceIdentity": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentity",
         "azure.mgmt.containerregistry.models.NetworkRuleSet": "Microsoft.ContainerRegistry.NetworkRuleSet",
         "azure.mgmt.containerregistry.models.OperationDefinition": "Microsoft.ContainerRegistry.OperationDefinition",
         "azure.mgmt.containerregistry.models.OperationDisplayDefinition": "Microsoft.ContainerRegistry.OperationDisplayDefinition",
@@ -126,6 +127,7 @@
         "azure.mgmt.containerregistry.models.TokenUpdateParameters": "Microsoft.ContainerRegistry.TokenUpdateParameters",
         "azure.mgmt.containerregistry.models.TokenUpdateProperties": "Microsoft.ContainerRegistry.TokenUpdateProperties",
         "azure.mgmt.containerregistry.models.TrustPolicy": "Microsoft.ContainerRegistry.TrustPolicy",
+        "azure.mgmt.containerregistry.models.UserAssignedIdentity": "Azure.ResourceManager.CommonTypes.UserAssignedIdentity",
         "azure.mgmt.containerregistry.models.UserIdentityProperties": "Microsoft.ContainerRegistry.UserIdentityProperties",
         "azure.mgmt.containerregistry.models.VirtualNetworkRule": "Microsoft.ContainerRegistry.VirtualNetworkRule",
         "azure.mgmt.containerregistry.models.Webhook": "Microsoft.ContainerRegistry.Webhook",
@@ -169,12 +171,14 @@
         "azure.mgmt.containerregistry.models.ConnectedRegistryMode": "Microsoft.ContainerRegistry.ConnectedRegistryMode",
         "azure.mgmt.containerregistry.models.ConnectionState": "Microsoft.ContainerRegistry.ConnectionState",
         "azure.mgmt.containerregistry.models.ActivationStatus": "Microsoft.ContainerRegistry.ActivationStatus",
+        "azure.mgmt.containerregistry.models.AuthType": "Microsoft.ContainerRegistry.AuthType",
         "azure.mgmt.containerregistry.models.TlsStatus": "Microsoft.ContainerRegistry.TlsStatus",
         "azure.mgmt.containerregistry.models.CertificateType": "Microsoft.ContainerRegistry.CertificateType",
         "azure.mgmt.containerregistry.models.LogLevel": "Microsoft.ContainerRegistry.LogLevel",
         "azure.mgmt.containerregistry.models.AuditLogStatus": "Microsoft.ContainerRegistry.AuditLogStatus",
         "azure.mgmt.containerregistry.models.SyncTrigger": "Microsoft.ContainerRegistry.SyncTrigger",
         "azure.mgmt.containerregistry.models.SyncState": "Microsoft.ContainerRegistry.SyncState",
+        "azure.mgmt.containerregistry.models.ManagedServiceIdentityType": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentityType",
         "azure.mgmt.containerregistry.models.TokenCertificateName": "Microsoft.ContainerRegistry.TokenCertificateName",
         "azure.mgmt.containerregistry.models.TokenStatus": "Microsoft.ContainerRegistry.TokenStatus",
         "azure.mgmt.containerregistry.models.StorageAccessMode": "Microsoft.ContainerRegistry.StorageAccessMode",
@@ -346,5 +350,5 @@
         "azure.mgmt.containerregistry.operations.WebhooksOperations.get_callback_config": "Microsoft.ContainerRegistry.Webhooks.getCallbackConfig",
         "azure.mgmt.containerregistry.aio.operations.WebhooksOperations.get_callback_config": "Microsoft.ContainerRegistry.Webhooks.getCallbackConfig"
     },
-    "CrossLanguageVersion": "e738b4dff530"
+    "CrossLanguageVersion": "9e79c32c7f25"
 }

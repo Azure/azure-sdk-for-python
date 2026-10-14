@@ -153,7 +153,7 @@ namespace azure.mgmt.recoveryservices.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01', '2026-05-31-preview', '2026-07-01'])
         async def get(
                 self, 
                 location: str, 
@@ -162,7 +162,7 @@ namespace azure.mgmt.recoveryservices.aio.operations
             ) -> DeletedVault: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'operation_id', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'operation_id', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01', '2026-05-31-preview', '2026-07-01'])
         async def get_operation_status(
                 self, 
                 location: str, 
@@ -172,7 +172,7 @@ namespace azure.mgmt.recoveryservices.aio.operations
             ) -> OperationResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01', '2026-05-31-preview', '2026-07-01'])
         def list_by_subscription_id(
                 self, 
                 location: str, 
@@ -1387,6 +1387,20 @@ namespace azure.mgmt.recoveryservices.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.recoveryservices.models.RegionOfChoiceSettings(_Model):
+        status: Optional[Union[str, State]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                status: Optional[Union[str, State]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.recoveryservices.models.ReplicationUsage(_Model):
         jobs_summary: Optional[JobsSummary]
         monitoring_summary: Optional[MonitoringSummary]
@@ -1884,6 +1898,7 @@ namespace azure.mgmt.recoveryservices.models
         provisioning_state: Optional[str]
         public_network_access: Optional[Union[str, PublicNetworkAccess]]
         redundancy_settings: Optional[VaultPropertiesRedundancySettings]
+        region_of_choice_settings: Optional[RegionOfChoiceSettings]
         resource_guard_operation_requests: Optional[list[str]]
         restore_settings: Optional[RestoreSettings]
         secure_score: Optional[Union[str, SecureScoreLevel]]
@@ -1900,6 +1915,7 @@ namespace azure.mgmt.recoveryservices.models
                 move_details: Optional[VaultPropertiesMoveDetails] = ..., 
                 public_network_access: Optional[Union[str, PublicNetworkAccess]] = ..., 
                 redundancy_settings: Optional[VaultPropertiesRedundancySettings] = ..., 
+                region_of_choice_settings: Optional[RegionOfChoiceSettings] = ..., 
                 resource_guard_operation_requests: Optional[list[str]] = ..., 
                 restore_settings: Optional[RestoreSettings] = ..., 
                 security_settings: Optional[SecuritySettings] = ..., 
@@ -2033,7 +2049,7 @@ namespace azure.mgmt.recoveryservices.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01', '2026-05-31-preview', '2026-07-01'])
         def get(
                 self, 
                 location: str, 
@@ -2042,7 +2058,7 @@ namespace azure.mgmt.recoveryservices.operations
             ) -> DeletedVault: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'operation_id', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'deleted_vault_name', 'operation_id', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01', '2026-05-31-preview', '2026-07-01'])
         def get_operation_status(
                 self, 
                 location: str, 
@@ -2052,7 +2068,7 @@ namespace azure.mgmt.recoveryservices.operations
             ) -> OperationResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01'])
+        @api_version_validation(method_added_on='2025-08-01', params_added_on={'2025-08-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2025-08-01', '2026-01-01', '2026-02-01', '2026-03-31-preview', '2026-05-01', '2026-05-31-preview', '2026-07-01'])
         def list_by_subscription_id(
                 self, 
                 location: str, 
@@ -2462,34 +2478,21 @@ namespace azure.mgmt.recoveryservices.types
     class azure.mgmt.recoveryservices.types.AssociatedIdentity(TypedDict, total=False):
         key "operationIdentityType": Union[str, IdentityType]
         key "userAssignedIdentity": str
-        operation_identity_type: Union[str, IdentityType]
-        user_assigned_identity: str
+        operationIdentityType: Union[str, IdentityType]
+        userAssignedIdentity: str
 
 
     class azure.mgmt.recoveryservices.types.AzureMonitorAlertSettings(TypedDict, total=False):
         key "alertsForAllFailoverIssues": Union[str, AlertsState]
         key "alertsForAllJobFailures": Union[str, AlertsState]
         key "alertsForAllReplicationIssues": Union[str, AlertsState]
-        alerts_for_all_failover_issues: Union[str, AlertsState]
-        alerts_for_all_job_failures: Union[str, AlertsState]
-        alerts_for_all_replication_issues: Union[str, AlertsState]
+        alertsForAllFailoverIssues: Union[str, AlertsState]
+        alertsForAllJobFailures: Union[str, AlertsState]
+        alertsForAllReplicationIssues: Union[str, AlertsState]
 
 
     class azure.mgmt.recoveryservices.types.CapabilitiesProperties(TypedDict, total=False):
         dnsZones: list[DNSZone]
-        dns_zones: list[DNSZone]
-
-
-    class azure.mgmt.recoveryservices.types.CapabilitiesResponse(ResourceCapabilitiesBase):
-        key "properties": ForwardRef('CapabilitiesResponseProperties', module='types')
-        key "type": Required[str]
-        properties: CapabilitiesResponseProperties
-        type: str
-
-
-    class azure.mgmt.recoveryservices.types.CapabilitiesResponseProperties(TypedDict, total=False):
-        dnsZones: list[DNSZoneResponse]
-        dns_zones: list[DNSZoneResponse]
 
 
     class azure.mgmt.recoveryservices.types.CertificateRequest(TypedDict, total=False):
@@ -2504,122 +2507,38 @@ namespace azure.mgmt.recoveryservices.types
         type: str
 
 
-    class azure.mgmt.recoveryservices.types.CheckNameAvailabilityResult(TypedDict, total=False):
-        key "message": str
-        key "nameAvailable": bool
-        key "reason": str
-        message: str
-        name_available: bool
-        reason: str
-
-
     class azure.mgmt.recoveryservices.types.ClassicAlertSettings(TypedDict, total=False):
         key "alertsForCriticalOperations": Union[str, AlertsState]
         key "emailNotificationsForSiteRecovery": Union[str, AlertsState]
-        alerts_for_critical_operations: Union[str, AlertsState]
-        email_notifications_for_site_recovery: Union[str, AlertsState]
-
-
-    class azure.mgmt.recoveryservices.types.ClientDiscoveryDisplay(TypedDict, total=False):
-        key "description": str
-        key "operation": str
-        key "provider": str
-        key "resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
-
-
-    class azure.mgmt.recoveryservices.types.ClientDiscoveryForLogSpecification(TypedDict, total=False):
-        key "blobDuration": str
-        key "displayName": str
-        key "name": str
-        blob_duration: str
-        display_name: str
-        name: str
-
-
-    class azure.mgmt.recoveryservices.types.ClientDiscoveryForProperties(TypedDict, total=False):
-        key "serviceSpecification": ForwardRef('ClientDiscoveryForServiceSpecification', module='types')
-        service_specification: ClientDiscoveryForServiceSpecification
-
-
-    class azure.mgmt.recoveryservices.types.ClientDiscoveryForServiceSpecification(TypedDict, total=False):
-        logSpecifications: list[ClientDiscoveryForLogSpecification]
-        log_specifications: list[ClientDiscoveryForLogSpecification]
-
-
-    class azure.mgmt.recoveryservices.types.ClientDiscoveryValueForSingleApi(TypedDict, total=False):
-        key "display": ForwardRef('ClientDiscoveryDisplay', module='types')
-        key "name": str
-        key "origin": str
-        key "properties": ForwardRef('ClientDiscoveryForProperties', module='types')
-        display: ClientDiscoveryDisplay
-        name: str
-        origin: str
-        properties: ClientDiscoveryForProperties
-
-
-    class azure.mgmt.recoveryservices.types.CloudError(TypedDict, total=False):
-        key "error": ForwardRef('Error', module='types')
-        error: Error
+        alertsForCriticalOperations: Union[str, AlertsState]
+        emailNotificationsForSiteRecovery: Union[str, AlertsState]
 
 
     class azure.mgmt.recoveryservices.types.CmkKekIdentity(TypedDict, total=False):
         key "useSystemAssignedIdentity": bool
         key "userAssignedIdentity": str
-        use_system_assigned_identity: bool
-        user_assigned_identity: str
+        useSystemAssignedIdentity: bool
+        userAssignedIdentity: str
 
 
     class azure.mgmt.recoveryservices.types.CmkKeyVaultProperties(TypedDict, total=False):
         key "keyUri": str
-        key_uri: str
+        keyUri: str
 
 
     class azure.mgmt.recoveryservices.types.CostManagementSettings(TypedDict, total=False):
         key "granularityLevel": Union[str, GranularityLevel]
-        granularity_level: Union[str, GranularityLevel]
+        granularityLevel: Union[str, GranularityLevel]
 
 
     class azure.mgmt.recoveryservices.types.CrossSubscriptionRestoreSettings(TypedDict, total=False):
         key "crossSubscriptionRestoreState": Union[str, CrossSubscriptionRestoreState]
-        cross_subscription_restore_state: Union[str, CrossSubscriptionRestoreState]
+        crossSubscriptionRestoreState: Union[str, CrossSubscriptionRestoreState]
 
 
     class azure.mgmt.recoveryservices.types.DNSZone(TypedDict, total=False):
         key "subResource": Union[str, VaultSubResourceType]
-        sub_resource: Union[str, VaultSubResourceType]
-
-
-    class azure.mgmt.recoveryservices.types.DNSZoneResponse(DNSZone):
-        key "subResource": Union[str, VaultSubResourceType]
-        requiredZoneNames: list[str]
-        required_zone_names: list[str]
-        sub_resource: Union[str, VaultSubResourceType]
-
-
-    class azure.mgmt.recoveryservices.types.DeletedVault(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('DeletedVaultProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: DeletedVaultProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.recoveryservices.types.DeletedVaultProperties(TypedDict, total=False):
-        key "purgeAt": str
-        key "vaultDeletionTime": str
-        key "vaultId": str
-        purge_at: str
-        vault_deletion_time: str
-        vault_id: str
+        subResource: Union[str, VaultSubResourceType]
 
 
     class azure.mgmt.recoveryservices.types.DeletedVaultUndeleteInput(TypedDict, total=False):
@@ -2629,60 +2548,23 @@ namespace azure.mgmt.recoveryservices.types
 
     class azure.mgmt.recoveryservices.types.DeletedVaultUndeleteInputProperties(TypedDict, total=False):
         key "recoveryResourceGroupId": Required[str]
-        recovery_resource_group_id: str
-
-
-    class azure.mgmt.recoveryservices.types.Error(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        key "target": str
-        additionalInfo: list[ErrorAdditionalInfo]
-        additional_info: list[ErrorAdditionalInfo]
-        code: str
-        details: list[Error]
-        message: str
-        target: str
-
-
-    class azure.mgmt.recoveryservices.types.ErrorAdditionalInfo(TypedDict, total=False):
-        key "info": Any
-        key "type": str
-        info: Any
-        type: str
-
-
-    class azure.mgmt.recoveryservices.types.ErrorDetail(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        key "target": str
-        additionalInfo: list[ErrorAdditionalInfo]
-        additional_info: list[ErrorAdditionalInfo]
-        code: str
-        details: list[ErrorDetail]
-        message: str
-        target: str
-
-
-    class azure.mgmt.recoveryservices.types.ErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ErrorDetail', module='types')
-        error: ErrorDetail
+        recoveryResourceGroupId: str
 
 
     class azure.mgmt.recoveryservices.types.IdentityData(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Required[Union[str, ResourceIdentityType]]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ResourceIdentityType]
         userAssignedIdentities: dict[str, UserIdentity]
-        user_assigned_identities: dict[str, UserIdentity]
 
 
     class azure.mgmt.recoveryservices.types.ImmutabilityConfiguration(TypedDict, total=False):
         key "durationInDays": int
         key "type": Union[str, ImmutabilityType]
-        duration_in_days: int
+        durationInDays: int
         type: Union[str, ImmutabilityType]
 
 
@@ -2693,57 +2575,11 @@ namespace azure.mgmt.recoveryservices.types
         state: Union[str, ImmutabilityState]
 
 
-    class azure.mgmt.recoveryservices.types.JobsSummary(TypedDict, total=False):
-        key "failedJobs": int
-        key "inProgressJobs": int
-        key "suspendedJobs": int
-        failed_jobs: int
-        in_progress_jobs: int
-        suspended_jobs: int
-
-
     class azure.mgmt.recoveryservices.types.MonitoringSettings(TypedDict, total=False):
         key "azureMonitorAlertSettings": ForwardRef('AzureMonitorAlertSettings', module='types')
         key "classicAlertSettings": ForwardRef('ClassicAlertSettings', module='types')
-        azure_monitor_alert_settings: AzureMonitorAlertSettings
-        classic_alert_settings: ClassicAlertSettings
-
-
-    class azure.mgmt.recoveryservices.types.MonitoringSummary(TypedDict, total=False):
-        key "deprecatedProviderCount": int
-        key "eventsCount": int
-        key "supportedProviderCount": int
-        key "unHealthyProviderCount": int
-        key "unHealthyVmCount": int
-        key "unsupportedProviderCount": int
-        deprecated_provider_count: int
-        events_count: int
-        supported_provider_count: int
-        un_healthy_provider_count: int
-        un_healthy_vm_count: int
-        unsupported_provider_count: int
-
-
-    class azure.mgmt.recoveryservices.types.NameInfo(TypedDict, total=False):
-        key "localizedValue": str
-        key "value": str
-        localized_value: str
-        value: str
-
-
-    class azure.mgmt.recoveryservices.types.OperationResource(TypedDict, total=False):
-        key "endTime": str
-        key "error": ForwardRef('Error', module='types')
-        key "id": str
-        key "name": str
-        key "startTime": str
-        key "status": str
-        end_time: str
-        error: Error
-        id: str
-        name: str
-        start_time: str
-        status: str
+        azureMonitorAlertSettings: AzureMonitorAlertSettings
+        classicAlertSettings: ClassicAlertSettings
 
 
     class azure.mgmt.recoveryservices.types.PatchTrackedResource(Resource):
@@ -2757,7 +2593,7 @@ namespace azure.mgmt.recoveryservices.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -2779,7 +2615,7 @@ namespace azure.mgmt.recoveryservices.types
         name: str
         properties: VaultProperties
         sku: Sku
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -2794,10 +2630,9 @@ namespace azure.mgmt.recoveryservices.types
         key "privateLinkServiceConnectionState": ForwardRef('PrivateLinkServiceConnectionState', module='types')
         key "provisioningState": Union[str, ProvisioningState]
         groupIds: list[Union[str, VaultSubResourceType]]
-        group_ids: list[Union[str, VaultSubResourceType]]
-        private_endpoint: PrivateEndpoint
-        private_link_service_connection_state: PrivateLinkServiceConnectionState
-        provisioning_state: Union[str, ProvisioningState]
+        privateEndpoint: PrivateEndpoint
+        privateLinkServiceConnectionState: PrivateLinkServiceConnectionState
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.recoveryservices.types.PrivateEndpointConnectionVaultProperties(TypedDict, total=False):
@@ -2813,33 +2648,11 @@ namespace azure.mgmt.recoveryservices.types
         type: str
 
 
-    class azure.mgmt.recoveryservices.types.PrivateLinkResource(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('PrivateLinkResourceProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: PrivateLinkResourceProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.recoveryservices.types.PrivateLinkResourceProperties(TypedDict, total=False):
-        key "groupId": str
-        group_id: str
-        requiredMembers: list[str]
-        requiredZoneNames: list[str]
-        required_members: list[str]
-        required_zone_names: list[str]
-
-
     class azure.mgmt.recoveryservices.types.PrivateLinkServiceConnectionState(TypedDict, total=False):
         key "actionsRequired": str
         key "description": str
         key "status": Union[str, PrivateEndpointConnectionStatus]
-        actions_required: str
+        actionsRequired: str
         description: str
         status: Union[str, PrivateEndpointConnectionStatus]
 
@@ -2851,30 +2664,20 @@ namespace azure.mgmt.recoveryservices.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.recoveryservices.types.RawCertificateData(TypedDict, total=False):
         key "authType": Union[str, AuthType]
         key "certificate": str
-        auth_type: Union[str, AuthType]
+        authType: Union[str, AuthType]
         certificate: str
 
 
-    class azure.mgmt.recoveryservices.types.ReplicationUsage(TypedDict, total=False):
-        key "jobsSummary": ForwardRef('JobsSummary', module='types')
-        key "monitoringSummary": ForwardRef('MonitoringSummary', module='types')
-        key "protectedItemCount": int
-        key "recoveryPlanCount": int
-        key "recoveryServicesProviderAuthType": int
-        key "registeredServersCount": int
-        jobs_summary: JobsSummary
-        monitoring_summary: MonitoringSummary
-        protected_item_count: int
-        recovery_plan_count: int
-        recovery_services_provider_auth_type: int
-        registered_servers_count: int
+    class azure.mgmt.recoveryservices.types.RegionOfChoiceSettings(TypedDict, total=False):
+        key "status": Union[str, State]
+        status: Union[str, State]
 
 
     class azure.mgmt.recoveryservices.types.Resource(TypedDict, total=False):
@@ -2884,7 +2687,7 @@ namespace azure.mgmt.recoveryservices.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2900,71 +2703,9 @@ namespace azure.mgmt.recoveryservices.types
         type: str
 
 
-    class azure.mgmt.recoveryservices.types.ResourceCertificateAndAadDetails(TypedDict, total=False):
-        key "aadAudience": str
-        key "aadAuthority": Required[str]
-        key "aadTenantId": Required[str]
-        key "authType": Required[Literal["AzureActiveDirectory"]]
-        key "azureManagementEndpointAudience": Required[str]
-        key "certificate": str
-        key "friendlyName": str
-        key "issuer": str
-        key "resourceId": int
-        key "servicePrincipalClientId": Required[str]
-        key "servicePrincipalObjectId": Required[str]
-        key "serviceResourceId": str
-        key "subject": str
-        key "thumbprint": str
-        key "validFrom": str
-        key "validTo": str
-        aad_audience: str
-        aad_authority: str
-        aad_tenant_id: str
-        auth_type: Literal[AzureActiveDirectory]
-        azure_management_endpoint_audience: str
-        certificate: str
-        friendly_name: str
-        issuer: str
-        resource_id: int
-        service_principal_client_id: str
-        service_principal_object_id: str
-        service_resource_id: str
-        subject: str
-        thumbprint: str
-        valid_from: str
-        valid_to: str
-
-
-    class azure.mgmt.recoveryservices.types.ResourceCertificateAndAcsDetails(TypedDict, total=False):
-        key "authType": Required[Literal["AccessControlService"]]
-        key "certificate": str
-        key "friendlyName": str
-        key "globalAcsHostName": Required[str]
-        key "globalAcsNamespace": Required[str]
-        key "globalAcsRPRealm": Required[str]
-        key "issuer": str
-        key "resourceId": int
-        key "subject": str
-        key "thumbprint": str
-        key "validFrom": str
-        key "validTo": str
-        auth_type: Literal[AccessControlService]
-        certificate: str
-        friendly_name: str
-        global_acs_host_name: str
-        global_acs_namespace: str
-        global_acs_rp_realm: str
-        issuer: str
-        resource_id: int
-        subject: str
-        thumbprint: str
-        valid_from: str
-        valid_to: str
-
-
     class azure.mgmt.recoveryservices.types.RestoreSettings(TypedDict, total=False):
         key "crossSubscriptionRestoreSettings": ForwardRef('CrossSubscriptionRestoreSettings', module='types')
-        cross_subscription_restore_settings: CrossSubscriptionRestoreSettings
+        crossSubscriptionRestoreSettings: CrossSubscriptionRestoreSettings
 
 
     class azure.mgmt.recoveryservices.types.SecuritySettings(TypedDict, total=False):
@@ -2972,10 +2713,10 @@ namespace azure.mgmt.recoveryservices.types
         key "multiUserAuthorization": Union[str, MultiUserAuthorization]
         key "softDeleteSettings": ForwardRef('SoftDeleteSettings', module='types')
         key "sourceScanConfiguration": ForwardRef('SourceScanConfiguration', module='types')
-        immutability_settings: ImmutabilitySettings
-        multi_user_authorization: Union[str, MultiUserAuthorization]
-        soft_delete_settings: SoftDeleteSettings
-        source_scan_configuration: SourceScanConfiguration
+        immutabilitySettings: ImmutabilitySettings
+        multiUserAuthorization: Union[str, MultiUserAuthorization]
+        softDeleteSettings: SoftDeleteSettings
+        sourceScanConfiguration: SourceScanConfiguration
 
 
     class azure.mgmt.recoveryservices.types.Sku(TypedDict, total=False):
@@ -2995,15 +2736,15 @@ namespace azure.mgmt.recoveryservices.types
         key "enhancedSecurityState": Union[str, EnhancedSecurityState]
         key "softDeleteRetentionPeriodInDays": int
         key "softDeleteState": Union[str, SoftDeleteState]
-        enhanced_security_state: Union[str, EnhancedSecurityState]
-        soft_delete_retention_period_in_days: int
-        soft_delete_state: Union[str, SoftDeleteState]
+        enhancedSecurityState: Union[str, EnhancedSecurityState]
+        softDeleteRetentionPeriodInDays: int
+        softDeleteState: Union[str, SoftDeleteState]
 
 
     class azure.mgmt.recoveryservices.types.SourceScanConfiguration(TypedDict, total=False):
         key "sourceScanIdentity": ForwardRef('AssociatedIdentity', module='types')
         key "state": Union[str, State]
-        source_scan_identity: AssociatedIdentity
+        sourceScanIdentity: AssociatedIdentity
         state: Union[str, State]
 
 
@@ -3014,12 +2755,12 @@ namespace azure.mgmt.recoveryservices.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.recoveryservices.types.TrackedResource(Resource):
@@ -3031,7 +2772,7 @@ namespace azure.mgmt.recoveryservices.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -3046,22 +2787,22 @@ namespace azure.mgmt.recoveryservices.types
         key "status": Union[str, VaultUpgradeState]
         key "triggerType": Union[str, TriggerType]
         key "upgradedResourceId": str
-        end_time_utc: str
-        last_updated_time_utc: str
+        endTimeUtc: str
+        lastUpdatedTimeUtc: str
         message: str
-        operation_id: str
-        previous_resource_id: str
-        start_time_utc: str
+        operationId: str
+        previousResourceId: str
+        startTimeUtc: str
         status: Union[str, VaultUpgradeState]
-        trigger_type: Union[str, TriggerType]
-        upgraded_resource_id: str
+        triggerType: Union[str, TriggerType]
+        upgradedResourceId: str
 
 
     class azure.mgmt.recoveryservices.types.UserIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
     class azure.mgmt.recoveryservices.types.Vault(TrackedResource):
@@ -3081,19 +2822,8 @@ namespace azure.mgmt.recoveryservices.types
         name: str
         properties: VaultProperties
         sku: Sku
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
-        type: str
-
-
-    class azure.mgmt.recoveryservices.types.VaultCertificateResponse(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('ResourceCertificateDetails', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: ResourceCertificateDetails
         type: str
 
 
@@ -3103,9 +2833,9 @@ namespace azure.mgmt.recoveryservices.types
         key "encryptionKeyThumbprint": str
         key "integrityKey": str
         algorithm: str
-        encryption_key: str
-        encryption_key_thumbprint: str
-        integrity_key: str
+        encryptionKey: str
+        encryptionKeyThumbprint: str
+        integrityKey: str
 
 
     class azure.mgmt.recoveryservices.types.VaultExtendedInfoResource(ProxyResource):
@@ -3119,7 +2849,7 @@ namespace azure.mgmt.recoveryservices.types
         id: str
         name: str
         properties: VaultExtendedInfo
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3136,39 +2866,39 @@ namespace azure.mgmt.recoveryservices.types
         key "provisioningState": str
         key "publicNetworkAccess": Union[str, PublicNetworkAccess]
         key "redundancySettings": ForwardRef('VaultPropertiesRedundancySettings', module='types')
+        key "regionOfChoiceSettings": ForwardRef('RegionOfChoiceSettings', module='types')
         key "restoreSettings": ForwardRef('RestoreSettings', module='types')
         key "secureScore": Union[str, SecureScoreLevel]
         key "securitySettings": ForwardRef('SecuritySettings', module='types')
         key "upgradeDetails": ForwardRef('UpgradeDetails', module='types')
-        backup_storage_version: Union[str, BackupStorageVersion]
-        bcdr_security_level: Union[str, BCDRSecurityLevel]
-        cost_management_settings: CostManagementSettings
+        backupStorageVersion: Union[str, BackupStorageVersion]
+        bcdrSecurityLevel: Union[str, BCDRSecurityLevel]
+        costManagementSettings: CostManagementSettings
         encryption: VaultPropertiesEncryption
-        monitoring_settings: MonitoringSettings
-        move_details: VaultPropertiesMoveDetails
-        move_state: Union[str, ResourceMoveState]
+        monitoringSettings: MonitoringSettings
+        moveDetails: VaultPropertiesMoveDetails
+        moveState: Union[str, ResourceMoveState]
         privateEndpointConnections: list[PrivateEndpointConnectionVaultProperties]
-        private_endpoint_connections: list[PrivateEndpointConnectionVaultProperties]
-        private_endpoint_state_for_backup: Union[str, VaultPrivateEndpointState]
-        private_endpoint_state_for_site_recovery: Union[str, VaultPrivateEndpointState]
-        provisioning_state: str
-        public_network_access: Union[str, PublicNetworkAccess]
-        redundancy_settings: VaultPropertiesRedundancySettings
+        privateEndpointStateForBackup: Union[str, VaultPrivateEndpointState]
+        privateEndpointStateForSiteRecovery: Union[str, VaultPrivateEndpointState]
+        provisioningState: str
+        publicNetworkAccess: Union[str, PublicNetworkAccess]
+        redundancySettings: VaultPropertiesRedundancySettings
+        regionOfChoiceSettings: RegionOfChoiceSettings
         resourceGuardOperationRequests: list[str]
-        resource_guard_operation_requests: list[str]
-        restore_settings: RestoreSettings
-        secure_score: Union[str, SecureScoreLevel]
-        security_settings: SecuritySettings
-        upgrade_details: UpgradeDetails
+        restoreSettings: RestoreSettings
+        secureScore: Union[str, SecureScoreLevel]
+        securitySettings: SecuritySettings
+        upgradeDetails: UpgradeDetails
 
 
     class azure.mgmt.recoveryservices.types.VaultPropertiesEncryption(TypedDict, total=False):
         key "infrastructureEncryption": Union[str, InfrastructureEncryptionState]
         key "kekIdentity": ForwardRef('CmkKekIdentity', module='types')
         key "keyVaultProperties": ForwardRef('CmkKeyVaultProperties', module='types')
-        infrastructure_encryption: Union[str, InfrastructureEncryptionState]
-        kek_identity: CmkKekIdentity
-        key_vault_properties: CmkKeyVaultProperties
+        infrastructureEncryption: Union[str, InfrastructureEncryptionState]
+        kekIdentity: CmkKekIdentity
+        keyVaultProperties: CmkKeyVaultProperties
 
 
     class azure.mgmt.recoveryservices.types.VaultPropertiesMoveDetails(TypedDict, total=False):
@@ -3177,33 +2907,18 @@ namespace azure.mgmt.recoveryservices.types
         key "sourceResourceId": str
         key "startTimeUtc": str
         key "targetResourceId": str
-        completion_time_utc: str
-        operation_id: str
-        source_resource_id: str
-        start_time_utc: str
-        target_resource_id: str
+        completionTimeUtc: str
+        operationId: str
+        sourceResourceId: str
+        startTimeUtc: str
+        targetResourceId: str
 
 
     class azure.mgmt.recoveryservices.types.VaultPropertiesRedundancySettings(TypedDict, total=False):
         key "crossRegionRestore": Union[str, CrossRegionRestore]
         key "standardTierStorageRedundancy": Union[str, StandardTierStorageRedundancy]
-        cross_region_restore: Union[str, CrossRegionRestore]
-        standard_tier_storage_redundancy: Union[str, StandardTierStorageRedundancy]
-
-
-    class azure.mgmt.recoveryservices.types.VaultUsage(TypedDict, total=False):
-        key "currentValue": int
-        key "limit": int
-        key "name": ForwardRef('NameInfo', module='types')
-        key "nextResetTime": str
-        key "quotaPeriod": str
-        key "unit": Union[str, UsagesUnit]
-        current_value: int
-        limit: int
-        name: NameInfo
-        next_reset_time: str
-        quota_period: str
-        unit: Union[str, UsagesUnit]
+        crossRegionRestore: Union[str, CrossRegionRestore]
+        standardTierStorageRedundancy: Union[str, StandardTierStorageRedundancy]
 
 
 ```

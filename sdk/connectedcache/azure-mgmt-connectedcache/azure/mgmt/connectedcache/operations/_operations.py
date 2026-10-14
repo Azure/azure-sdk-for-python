@@ -32,7 +32,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import ConnectedCacheMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -40,7 +40,6 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -51,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +71,7 @@ def build_isp_customers_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,7 +100,7 @@ def build_isp_customers_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -132,7 +131,7 @@ def build_isp_customers_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -161,7 +160,7 @@ def build_isp_customers_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConnectedCache/ispCustomers/{customerResourceName}"
     path_format_arguments = {
@@ -184,7 +183,7 @@ def build_isp_customers_list_by_resource_group_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -211,7 +210,7 @@ def build_isp_customers_list_by_subscription_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -241,7 +240,7 @@ def build_isp_cache_nodes_operations_get_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -275,7 +274,7 @@ def build_isp_cache_nodes_operations_create_or_update_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -311,7 +310,7 @@ def build_isp_cache_nodes_operations_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -345,7 +344,7 @@ def build_isp_cache_nodes_operations_delete_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConnectedCache/ispCustomers/{customerResourceName}/ispCacheNodes/{cacheNodeResourceName}"
     path_format_arguments = {
@@ -369,7 +368,7 @@ def build_isp_cache_nodes_operations_list_by_isp_customer_resource_request(  # p
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -401,7 +400,7 @@ def build_isp_cache_nodes_operations_get_bgp_cidrs_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -434,7 +433,7 @@ def build_isp_cache_nodes_operations_get_cache_node_install_details_request(  # 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -467,7 +466,7 @@ def build_isp_cache_nodes_operations_get_cache_node_auto_update_history_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -500,7 +499,7 @@ def build_isp_cache_nodes_operations_get_cache_node_mcc_issue_details_history_re
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -529,7 +528,7 @@ def build_enterprise_mcc_customers_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -558,7 +557,7 @@ def build_enterprise_mcc_customers_create_or_update_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -589,7 +588,7 @@ def build_enterprise_mcc_customers_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -618,7 +617,7 @@ def build_enterprise_mcc_customers_delete_request(  # pylint: disable=name-too-l
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConnectedCache/enterpriseMccCustomers/{customerResourceName}"
     path_format_arguments = {
@@ -641,7 +640,7 @@ def build_enterprise_mcc_customers_list_by_resource_group_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -668,7 +667,7 @@ def build_enterprise_mcc_customers_list_by_subscription_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -698,7 +697,7 @@ def build_enterprise_mcc_cache_nodes_operations_get_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -732,7 +731,7 @@ def build_enterprise_mcc_cache_nodes_operations_create_or_update_request(  # pyl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -768,7 +767,7 @@ def build_enterprise_mcc_cache_nodes_operations_update_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -802,7 +801,7 @@ def build_enterprise_mcc_cache_nodes_operations_delete_request(  # pylint: disab
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ConnectedCache/enterpriseMccCustomers/{customerResourceName}/enterpriseMccCacheNodes/{cacheNodeResourceName}"
     path_format_arguments = {
@@ -826,7 +825,7 @@ def build_enterprise_mcc_cache_nodes_operations_list_by_enterprise_mcc_customer_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -858,7 +857,7 @@ def build_enterprise_mcc_cache_nodes_operations_get_cache_node_install_details_r
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -891,7 +890,7 @@ def build_enterprise_mcc_cache_nodes_operations_get_cache_node_auto_update_histo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -924,7 +923,7 @@ def build_enterprise_mcc_cache_nodes_operations_get_cache_node_mcc_issue_details
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -957,7 +956,7 @@ def build_enterprise_mcc_cache_nodes_operations_get_cache_node_tls_certificate_h
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-30-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1044,7 +1043,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1057,7 +1059,10 @@ class Operations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1140,6 +1145,7 @@ class IspCustomersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1161,7 +1167,7 @@ class IspCustomersOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.IspCustomerResource, response.json())
 
@@ -1174,7 +1180,7 @@ class IspCustomersOperations:
         self,
         resource_group_name: str,
         customer_resource_name: str,
-        resource: Union[_models.IspCustomerResource, JSON, IO[bytes]],
+        resource: Union[_models.IspCustomerResource, _types.IspCustomerResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1213,6 +1219,7 @@ class IspCustomersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1239,7 +1246,7 @@ class IspCustomersOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1279,7 +1286,7 @@ class IspCustomersOperations:
         self,
         resource_group_name: str,
         customer_resource_name: str,
-        resource: JSON,
+        resource: _types.IspCustomerResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1292,7 +1299,7 @@ class IspCustomersOperations:
         :param customer_resource_name: Name of the Customer resource. Required.
         :type customer_resource_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.connectedcache.types.IspCustomerResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1335,7 +1342,7 @@ class IspCustomersOperations:
         self,
         resource_group_name: str,
         customer_resource_name: str,
-        resource: Union[_models.IspCustomerResource, JSON, IO[bytes]],
+        resource: Union[_models.IspCustomerResource, _types.IspCustomerResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.IspCustomerResource]:
         """This api creates an ispCustomer with the specified create parameters.
@@ -1345,9 +1352,10 @@ class IspCustomersOperations:
         :type resource_group_name: str
         :param customer_resource_name: Name of the Customer resource. Required.
         :type customer_resource_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         IspCustomerResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.connectedcache.models.IspCustomerResource or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a IspCustomerResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.connectedcache.models.IspCustomerResource or
+         ~azure.mgmt.connectedcache.types.IspCustomerResource or IO[bytes]
         :return: An instance of LROPoller that returns IspCustomerResource. The IspCustomerResource is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.connectedcache.models.IspCustomerResource]
@@ -1437,7 +1445,7 @@ class IspCustomersOperations:
         self,
         resource_group_name: str,
         customer_resource_name: str,
-        properties: JSON,
+        properties: _types.ConnectedCachePatchResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1450,7 +1458,7 @@ class IspCustomersOperations:
         :param customer_resource_name: Name of the Customer resource. Required.
         :type customer_resource_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.connectedcache.types.ConnectedCachePatchResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1491,7 +1499,7 @@ class IspCustomersOperations:
         self,
         resource_group_name: str,
         customer_resource_name: str,
-        properties: Union[_models.ConnectedCachePatchResource, JSON, IO[bytes]],
+        properties: Union[_models.ConnectedCachePatchResource, _types.ConnectedCachePatchResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.IspCustomerResource:
         """This api updates an existing ispCustomer resource.
@@ -1501,10 +1509,10 @@ class IspCustomersOperations:
         :type resource_group_name: str
         :param customer_resource_name: Name of the Customer resource. Required.
         :type customer_resource_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         ConnectedCachePatchResource, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.connectedcache.models.ConnectedCachePatchResource or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a
+         ConnectedCachePatchResource type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.connectedcache.models.ConnectedCachePatchResource or
+         ~azure.mgmt.connectedcache.types.ConnectedCachePatchResource or IO[bytes]
         :return: IspCustomerResource. The IspCustomerResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.connectedcache.models.IspCustomerResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1545,6 +1553,7 @@ class IspCustomersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1566,7 +1575,7 @@ class IspCustomersOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.IspCustomerResource, response.json())
 
@@ -1602,6 +1611,7 @@ class IspCustomersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1626,7 +1636,7 @@ class IspCustomersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1745,7 +1755,10 @@ class IspCustomersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1758,7 +1771,10 @@ class IspCustomersOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.IspCustomerResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.IspCustomerResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1832,7 +1848,10 @@ class IspCustomersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1845,7 +1864,10 @@ class IspCustomersOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.IspCustomerResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.IspCustomerResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1933,6 +1955,7 @@ class IspCacheNodesOperationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1954,7 +1977,7 @@ class IspCacheNodesOperationsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.IspCacheNodeResource, response.json())
 
@@ -1968,7 +1991,7 @@ class IspCacheNodesOperationsOperations:
         resource_group_name: str,
         customer_resource_name: str,
         cache_node_resource_name: str,
-        resource: Union[_models.IspCacheNodeResource, JSON, IO[bytes]],
+        resource: Union[_models.IspCacheNodeResource, _types.IspCacheNodeResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2008,6 +2031,7 @@ class IspCacheNodesOperationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2034,7 +2058,7 @@ class IspCacheNodesOperationsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2078,7 +2102,7 @@ class IspCacheNodesOperationsOperations:
         resource_group_name: str,
         customer_resource_name: str,
         cache_node_resource_name: str,
-        resource: JSON,
+        resource: _types.IspCacheNodeResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2093,7 +2117,7 @@ class IspCacheNodesOperationsOperations:
         :param cache_node_resource_name: Name of the ConnectedCache resource. Required.
         :type cache_node_resource_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.connectedcache.types.IspCacheNodeResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2140,7 +2164,7 @@ class IspCacheNodesOperationsOperations:
         resource_group_name: str,
         customer_resource_name: str,
         cache_node_resource_name: str,
-        resource: Union[_models.IspCacheNodeResource, JSON, IO[bytes]],
+        resource: Union[_models.IspCacheNodeResource, _types.IspCacheNodeResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.IspCacheNodeResource]:
         """This api creates an ispCacheNode with the specified create parameters.
@@ -2152,9 +2176,10 @@ class IspCacheNodesOperationsOperations:
         :type customer_resource_name: str
         :param cache_node_resource_name: Name of the ConnectedCache resource. Required.
         :type cache_node_resource_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         IspCacheNodeResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.connectedcache.models.IspCacheNodeResource or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a IspCacheNodeResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.connectedcache.models.IspCacheNodeResource or
+         ~azure.mgmt.connectedcache.types.IspCacheNodeResource or IO[bytes]
         :return: An instance of LROPoller that returns IspCacheNodeResource. The IspCacheNodeResource
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.connectedcache.models.IspCacheNodeResource]
@@ -2249,7 +2274,7 @@ class IspCacheNodesOperationsOperations:
         resource_group_name: str,
         customer_resource_name: str,
         cache_node_resource_name: str,
-        properties: JSON,
+        properties: _types.ConnectedCachePatchResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2264,7 +2289,7 @@ class IspCacheNodesOperationsOperations:
         :param cache_node_resource_name: Name of the ConnectedCache resource. Required.
         :type cache_node_resource_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.connectedcache.types.ConnectedCachePatchResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2309,7 +2334,7 @@ class IspCacheNodesOperationsOperations:
         resource_group_name: str,
         customer_resource_name: str,
         cache_node_resource_name: str,
-        properties: Union[_models.ConnectedCachePatchResource, JSON, IO[bytes]],
+        properties: Union[_models.ConnectedCachePatchResource, _types.ConnectedCachePatchResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.IspCacheNodeResource:
         """This api updates an existing ispCacheNode resource.
@@ -2321,10 +2346,10 @@ class IspCacheNodesOperationsOperations:
         :type customer_resource_name: str
         :param cache_node_resource_name: Name of the ConnectedCache resource. Required.
         :type cache_node_resource_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         ConnectedCachePatchResource, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.connectedcache.models.ConnectedCachePatchResource or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a
+         ConnectedCachePatchResource type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.connectedcache.models.ConnectedCachePatchResource or
+         ~azure.mgmt.connectedcache.types.ConnectedCachePatchResource or IO[bytes]
         :return: IspCacheNodeResource. The IspCacheNodeResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.connectedcache.models.IspCacheNodeResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2366,6 +2391,7 @@ class IspCacheNodesOperationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2387,7 +2413,7 @@ class IspCacheNodesOperationsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.IspCacheNodeResource, response.json())
 
@@ -2426,6 +2452,7 @@ class IspCacheNodesOperationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2450,7 +2477,7 @@ class IspCacheNodesOperationsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2577,7 +2604,10 @@ class IspCacheNodesOperationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2590,7 +2620,10 @@ class IspCacheNodesOperationsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.IspCacheNodeResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.IspCacheNodeResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2661,6 +2694,7 @@ class IspCacheNodesOperationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2682,7 +2716,7 @@ class IspCacheNodesOperationsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.MccCacheNodeBgpCidrDetails, response.json())
 
@@ -2736,6 +2770,7 @@ class IspCacheNodesOperationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2757,7 +2792,7 @@ class IspCacheNodesOperationsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.MccCacheNodeInstallDetails, response.json())
 
@@ -2779,7 +2814,7 @@ class IspCacheNodesOperationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-11-30-preview"],
+        api_versions_list=["2024-11-30-preview", "2026-06-01"],
     )
     def get_cache_node_auto_update_history(
         self, resource_group_name: str, customer_resource_name: str, cache_node_resource_name: str, **kwargs: Any
@@ -2825,6 +2860,7 @@ class IspCacheNodesOperationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2846,7 +2882,7 @@ class IspCacheNodesOperationsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.MccCacheNodeAutoUpdateHistory, response.json())
 
@@ -2868,7 +2904,7 @@ class IspCacheNodesOperationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-11-30-preview"],
+        api_versions_list=["2024-11-30-preview", "2026-06-01"],
     )
     def get_cache_node_mcc_issue_details_history(
         self, resource_group_name: str, customer_resource_name: str, cache_node_resource_name: str, **kwargs: Any
@@ -2914,6 +2950,7 @@ class IspCacheNodesOperationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2935,7 +2972,7 @@ class IspCacheNodesOperationsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.MccCacheNodeIssueHistory, response.json())
 
@@ -3004,6 +3041,7 @@ class EnterpriseMccCustomersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3025,7 +3063,7 @@ class EnterpriseMccCustomersOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EnterpriseMccCustomerResource, response.json())
 
@@ -3038,7 +3076,7 @@ class EnterpriseMccCustomersOperations:
         self,
         resource_group_name: str,
         customer_resource_name: str,
-        resource: Union[_models.EnterpriseMccCustomerResource, JSON, IO[bytes]],
+        resource: Union[_models.EnterpriseMccCustomerResource, _types.EnterpriseMccCustomerResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3077,6 +3115,7 @@ class EnterpriseMccCustomersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3103,7 +3142,7 @@ class EnterpriseMccCustomersOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3144,7 +3183,7 @@ class EnterpriseMccCustomersOperations:
         self,
         resource_group_name: str,
         customer_resource_name: str,
-        resource: JSON,
+        resource: _types.EnterpriseMccCustomerResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3157,7 +3196,7 @@ class EnterpriseMccCustomersOperations:
         :param customer_resource_name: Name of the Customer resource. Required.
         :type customer_resource_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.connectedcache.types.EnterpriseMccCustomerResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3202,7 +3241,7 @@ class EnterpriseMccCustomersOperations:
         self,
         resource_group_name: str,
         customer_resource_name: str,
-        resource: Union[_models.EnterpriseMccCustomerResource, JSON, IO[bytes]],
+        resource: Union[_models.EnterpriseMccCustomerResource, _types.EnterpriseMccCustomerResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.EnterpriseMccCustomerResource]:
         """This api creates an enterprise mcc customer with the specified create parameters.
@@ -3212,10 +3251,10 @@ class EnterpriseMccCustomersOperations:
         :type resource_group_name: str
         :param customer_resource_name: Name of the Customer resource. Required.
         :type customer_resource_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         EnterpriseMccCustomerResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.connectedcache.models.EnterpriseMccCustomerResource or JSON or
-         IO[bytes]
+        :param resource: Resource create parameters. Is either a EnterpriseMccCustomerResource type or
+         a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.connectedcache.models.EnterpriseMccCustomerResource or
+         ~azure.mgmt.connectedcache.types.EnterpriseMccCustomerResource or IO[bytes]
         :return: An instance of LROPoller that returns EnterpriseMccCustomerResource. The
          EnterpriseMccCustomerResource is compatible with MutableMapping
         :rtype:
@@ -3307,7 +3346,7 @@ class EnterpriseMccCustomersOperations:
         self,
         resource_group_name: str,
         customer_resource_name: str,
-        properties: JSON,
+        properties: _types.ConnectedCachePatchResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3320,7 +3359,7 @@ class EnterpriseMccCustomersOperations:
         :param customer_resource_name: Name of the Customer resource. Required.
         :type customer_resource_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.connectedcache.types.ConnectedCachePatchResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3363,7 +3402,7 @@ class EnterpriseMccCustomersOperations:
         self,
         resource_group_name: str,
         customer_resource_name: str,
-        properties: Union[_models.ConnectedCachePatchResource, JSON, IO[bytes]],
+        properties: Union[_models.ConnectedCachePatchResource, _types.ConnectedCachePatchResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.EnterpriseMccCustomerResource:
         """This api updates an existing enterprise mcc customer resource.
@@ -3373,10 +3412,10 @@ class EnterpriseMccCustomersOperations:
         :type resource_group_name: str
         :param customer_resource_name: Name of the Customer resource. Required.
         :type customer_resource_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         ConnectedCachePatchResource, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.connectedcache.models.ConnectedCachePatchResource or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a
+         ConnectedCachePatchResource type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.connectedcache.models.ConnectedCachePatchResource or
+         ~azure.mgmt.connectedcache.types.ConnectedCachePatchResource or IO[bytes]
         :return: EnterpriseMccCustomerResource. The EnterpriseMccCustomerResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.connectedcache.models.EnterpriseMccCustomerResource
@@ -3418,6 +3457,7 @@ class EnterpriseMccCustomersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3439,7 +3479,7 @@ class EnterpriseMccCustomersOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EnterpriseMccCustomerResource, response.json())
 
@@ -3475,6 +3515,7 @@ class EnterpriseMccCustomersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3499,7 +3540,7 @@ class EnterpriseMccCustomersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3619,7 +3660,10 @@ class EnterpriseMccCustomersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3632,7 +3676,10 @@ class EnterpriseMccCustomersOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.EnterpriseMccCustomerResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.EnterpriseMccCustomerResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3708,7 +3755,10 @@ class EnterpriseMccCustomersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3721,7 +3771,10 @@ class EnterpriseMccCustomersOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.EnterpriseMccCustomerResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.EnterpriseMccCustomerResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3810,6 +3863,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3831,7 +3885,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EnterpriseMccCacheNodeResource, response.json())
 
@@ -3845,7 +3899,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         customer_resource_name: str,
         cache_node_resource_name: str,
-        resource: Union[_models.EnterpriseMccCacheNodeResource, JSON, IO[bytes]],
+        resource: Union[_models.EnterpriseMccCacheNodeResource, _types.EnterpriseMccCacheNodeResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3885,6 +3939,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3911,7 +3966,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3956,7 +4011,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         customer_resource_name: str,
         cache_node_resource_name: str,
-        resource: JSON,
+        resource: _types.EnterpriseMccCacheNodeResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3971,7 +4026,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
         :param cache_node_resource_name: Name of the ConnectedCache resource. Required.
         :type cache_node_resource_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.connectedcache.types.EnterpriseMccCacheNodeResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4020,7 +4075,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         customer_resource_name: str,
         cache_node_resource_name: str,
-        resource: Union[_models.EnterpriseMccCacheNodeResource, JSON, IO[bytes]],
+        resource: Union[_models.EnterpriseMccCacheNodeResource, _types.EnterpriseMccCacheNodeResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.EnterpriseMccCacheNodeResource]:
         """This api creates an ispCacheNode with the specified create parameters.
@@ -4032,10 +4087,10 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
         :type customer_resource_name: str
         :param cache_node_resource_name: Name of the ConnectedCache resource. Required.
         :type cache_node_resource_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         EnterpriseMccCacheNodeResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.connectedcache.models.EnterpriseMccCacheNodeResource or JSON or
-         IO[bytes]
+        :param resource: Resource create parameters. Is either a EnterpriseMccCacheNodeResource type or
+         a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.connectedcache.models.EnterpriseMccCacheNodeResource or
+         ~azure.mgmt.connectedcache.types.EnterpriseMccCacheNodeResource or IO[bytes]
         :return: An instance of LROPoller that returns EnterpriseMccCacheNodeResource. The
          EnterpriseMccCacheNodeResource is compatible with MutableMapping
         :rtype:
@@ -4132,7 +4187,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         customer_resource_name: str,
         cache_node_resource_name: str,
-        properties: JSON,
+        properties: _types.ConnectedCachePatchResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4147,7 +4202,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
         :param cache_node_resource_name: Name of the ConnectedCache resource. Required.
         :type cache_node_resource_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.connectedcache.types.ConnectedCachePatchResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4194,7 +4249,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
         resource_group_name: str,
         customer_resource_name: str,
         cache_node_resource_name: str,
-        properties: Union[_models.ConnectedCachePatchResource, JSON, IO[bytes]],
+        properties: Union[_models.ConnectedCachePatchResource, _types.ConnectedCachePatchResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.EnterpriseMccCacheNodeResource:
         """This api updates an existing ispCacheNode resource.
@@ -4206,10 +4261,10 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
         :type customer_resource_name: str
         :param cache_node_resource_name: Name of the ConnectedCache resource. Required.
         :type cache_node_resource_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         ConnectedCachePatchResource, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.connectedcache.models.ConnectedCachePatchResource or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a
+         ConnectedCachePatchResource type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.connectedcache.models.ConnectedCachePatchResource or
+         ~azure.mgmt.connectedcache.types.ConnectedCachePatchResource or IO[bytes]
         :return: EnterpriseMccCacheNodeResource. The EnterpriseMccCacheNodeResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.connectedcache.models.EnterpriseMccCacheNodeResource
@@ -4252,6 +4307,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4273,7 +4329,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EnterpriseMccCacheNodeResource, response.json())
 
@@ -4312,6 +4368,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4336,7 +4393,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4464,7 +4521,10 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4477,7 +4537,10 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.EnterpriseMccCacheNodeResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.EnterpriseMccCacheNodeResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4548,6 +4611,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4569,7 +4633,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.MccCacheNodeInstallDetails, response.json())
 
@@ -4591,7 +4655,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
                 "accept",
             ]
         },
-        api_versions_list=["2024-11-30-preview"],
+        api_versions_list=["2024-11-30-preview", "2026-06-01"],
     )
     def get_cache_node_auto_update_history(
         self, resource_group_name: str, customer_resource_name: str, cache_node_resource_name: str, **kwargs: Any
@@ -4637,6 +4701,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4658,7 +4723,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.MccCacheNodeAutoUpdateHistory, response.json())
 
@@ -4680,7 +4745,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
                 "accept",
             ]
         },
-        api_versions_list=["2024-11-30-preview"],
+        api_versions_list=["2024-11-30-preview", "2026-06-01"],
     )
     def get_cache_node_mcc_issue_details_history(
         self, resource_group_name: str, customer_resource_name: str, cache_node_resource_name: str, **kwargs: Any
@@ -4726,6 +4791,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4747,7 +4813,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.MccCacheNodeIssueHistory, response.json())
 
@@ -4769,7 +4835,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
                 "accept",
             ]
         },
-        api_versions_list=["2024-11-30-preview"],
+        api_versions_list=["2024-11-30-preview", "2026-06-01"],
     )
     def get_cache_node_tls_certificate_history(
         self, resource_group_name: str, customer_resource_name: str, cache_node_resource_name: str, **kwargs: Any
@@ -4815,6 +4881,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4836,7 +4903,7 @@ class EnterpriseMccCacheNodesOperationsOperations:  # pylint: disable=name-too-l
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.MccCacheNodeTlsCertificateHistory, response.json())
 

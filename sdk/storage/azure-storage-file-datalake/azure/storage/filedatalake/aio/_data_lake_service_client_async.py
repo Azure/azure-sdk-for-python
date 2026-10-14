@@ -15,8 +15,19 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import BlobServiceClient
 from .._data_lake_service_client_helpers import _format_url, _parse_url
 from .._deserialize import get_datalake_service_properties
-from .._generated.aio import AzureDataLakeStorageRESTAPI
-from .._models import DirectoryProperties, FileProperties, FileSystemProperties, LocationMode, UserDelegationKey
+from .._generated.aio import DataLakeClient as AzureDataLakeStorageRESTAPI
+from .._models import (
+    AnalyticsLogging,
+    CorsRule,
+    DirectoryProperties,
+    FileProperties,
+    FileSystemProperties,
+    LocationMode,
+    Metrics,
+    RetentionPolicy,
+    StaticWebsite,
+    UserDelegationKey,
+)
 from .._serialize import convert_dfs_url_to_blob_url, get_api_version
 from .._shared.base_client import parse_query, StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
@@ -116,10 +127,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
 
-        self._api_version = get_api_version(kwargs)
-        self._client = AzureDataLakeStorageRESTAPI(
-            self.url, version=self._api_version, base_url=self.url, pipeline=self._pipeline
-        )
+        self._client = AzureDataLakeStorageRESTAPI(self.url, version=get_api_version(kwargs), pipeline=self._pipeline)
         self._loop = kwargs.get("loop", None)
 
     async def __aenter__(self) -> Self:
@@ -643,6 +651,29 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         """
+        # Convert datalake-public service-property models to blob-public types so
+        # this code path remains correct once azure-storage-blob migrates to typespec
+        # models (msrest duck-typing through StorageServiceProperties goes away).
+        if "analytics_logging" in kwargs:
+            kwargs["analytics_logging"] = AnalyticsLogging._to_generated(  # pylint: disable=protected-access
+                kwargs["analytics_logging"]
+            )
+        if "hour_metrics" in kwargs:
+            kwargs["hour_metrics"] = Metrics._to_generated(kwargs["hour_metrics"])  # pylint: disable=protected-access
+        if "minute_metrics" in kwargs:
+            kwargs["minute_metrics"] = Metrics._to_generated(  # pylint: disable=protected-access
+                kwargs["minute_metrics"]
+            )
+        if "cors" in kwargs:
+            kwargs["cors"] = CorsRule._to_generated(kwargs["cors"])  # pylint: disable=protected-access
+        if "delete_retention_policy" in kwargs:
+            kwargs["delete_retention_policy"] = RetentionPolicy._to_generated(  # pylint: disable=protected-access
+                kwargs["delete_retention_policy"]
+            )
+        if "static_website" in kwargs:
+            kwargs["static_website"] = StaticWebsite._to_generated(  # pylint: disable=protected-access
+                kwargs["static_website"]
+            )
         await self._blob_service_client.set_service_properties(**kwargs)
 
     @distributed_trace_async

@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for Operations operations."""
+
 from azure.mgmt.discovery import DiscoveryMgmtClient
 from devtools_testutils import recorded_by_proxy
 

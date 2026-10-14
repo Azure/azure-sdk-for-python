@@ -43,6 +43,7 @@ class TestHybridComputeManagementGatewaysOperationsAsync(AzureMgmtRecordedTestCa
                     "name": "str",
                     "properties": {
                         "allowedFeatures": ["str"],
+                        "gatewayBypass": ["str"],
                         "gatewayEndpoint": "str",
                         "gatewayId": "str",
                         "gatewayType": "str",
@@ -71,7 +72,7 @@ class TestHybridComputeManagementGatewaysOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.gateways.update(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            parameters={"properties": {"allowedFeatures": ["str"]}, "tags": {"str": "str"}},
+            parameters={"properties": {"allowedFeatures": ["str"], "gatewayBypass": ["str"]}, "tags": {"str": "str"}},
         )
 
         # please add some check logic here by yourself

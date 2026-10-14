@@ -32,11 +32,11 @@ def main():
 
     client.bookshelf_private_endpoint_connections.begin_delete(
         resource_group_name="rgdiscovery",
-        bookshelf_name="9988c91bf62635cea5",
+        bookshelf_name="f26e3436689dc08264",
         private_endpoint_connection_name="connection",
     ).result()
 
 
-# x-ms-original-file: 2026-02-01-preview/BookshelfPrivateEndpointConnections_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/BookshelfPrivateEndpointConnections_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

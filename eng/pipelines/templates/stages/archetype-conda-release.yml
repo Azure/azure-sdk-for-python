@@ -34,9 +34,15 @@ stages:
             runOnce:
               deploy:
                 steps:
-                  - task: UsePythonVersion@0
-                    inputs:
+                  - template: /eng/pipelines/templates/steps/use-python-version.yml
+                    parameters:
                       versionSpec: '3.12'
+
+                  # Authenticate to the Azure Artifacts feed before any pip install.
+                  # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org.
+                  - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                    parameters:
+                      EnableTwineAuth: false
 
                   - pwsh: |
                       Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}} -Filter "*.conda"

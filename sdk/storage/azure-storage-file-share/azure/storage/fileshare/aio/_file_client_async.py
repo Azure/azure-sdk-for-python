@@ -63,12 +63,13 @@ from .._shared.uploads_async import AsyncIterStreamer, FileChunkUploader, IterSt
 from .._shared.validation import CV_TYPE_PARSED, is_crc64_validation, parse_validation_option
 from ._download_async import StorageStreamDownloader
 from ._lease_async import ShareLeaseClient
-from ._models import FileProperties, Handle, HandlesPaged
+from ._models import FileProperties, FileRangePaged, Handle, HandlesPaged
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
     from .._models import ContentSettings, NTFSAttributes
+    from .._models import FileRange
     from .._shared.base_client import StorageConfiguration
 
 
@@ -1533,8 +1534,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
     async def get_ranges(
         self, offset: Optional[int] = None, length: Optional[int] = None, **kwargs: Any
     ) -> List[Dict[str, int]]:
-        """Returns the list of valid page ranges for a file or snapshot
+        """DEPRECATED: Returns the list of valid page ranges for a file or snapshot
         of a file.
+
+        .. deprecated:: 12.27.0b1
+            Use :func:`list_ranges` instead.
 
         :param int offset:
             Specifies the start offset of bytes over which to get ranges.
@@ -1557,6 +1561,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             A list of valid ranges.
         :rtype: List[dict[str, int]]
         """
+        warnings.warn("get_ranges is deprecated, use list_ranges instead", DeprecationWarning)
+
         options = _get_ranges_options(offset=offset, length=length, **kwargs)
         options["allow_trailing_dot"] = self.allow_trailing_dot
         options["file_request_intent"] = self.file_request_intent
@@ -1565,6 +1571,39 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         except HttpResponseError as error:
             process_storage_error(error)
         return [{"start": file_range.start, "end": file_range.end} for file_range in (ranges.ranges or [])]
+
+    @distributed_trace
+    def list_ranges(
+        self, *, offset: Optional[int] = None, length: Optional[int] = None, **kwargs: Any
+    ) -> AsyncItemPaged["FileRange"]:
+        """Returns the list of valid ranges for a file or snapshot of a file.
+
+        :keyword int offset:
+            Specifies the start offset of bytes over which to get ranges.
+        :keyword int length:
+            Number of bytes to use over which to get ranges.
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :keyword int results_per_page:
+            The maximum number of file ranges to retrieve per API call.
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`__.
+        :returns:
+            An iterable (auto-paging) of valid ranges.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.fileshare.FileRange]
+        """
+        results_per_page = kwargs.pop("results_per_page", None)
+        options = _get_ranges_options(offset=offset, length=length, **kwargs)
+        options["allow_trailing_dot"] = self.allow_trailing_dot
+        options["file_request_intent"] = self.file_request_intent
+        command = functools.partial(self._client.file.list_all_ranges, **options)
+        return AsyncItemPaged(command, results_per_page=results_per_page, page_iterator_class=FileRangePaged)
 
     @distributed_trace_async
     async def get_ranges_diff(
@@ -1576,10 +1615,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         include_renames: Optional[bool] = None,
         **kwargs: Any,
     ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
-        """Returns the list of valid page ranges for a file or snapshot
+        """DEPRECATED: Returns the list of valid page ranges for a file or snapshot
         of a file.
 
-        .. versionadded:: 12.6.0
+        .. deprecated:: 12.27.0b1
+            Use :func:`list_ranges_diff` instead.
 
         :param int offset:
             Specifies the start offset of bytes over which to get ranges.
@@ -1609,6 +1649,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             The first element are filled file ranges, the 2nd element is cleared file ranges.
         :rtype: tuple[list[dict[str, int]], list[dict[str, int]]]
         """
+        warnings.warn("get_ranges_diff is deprecated, use list_ranges_diff instead", DeprecationWarning)
+
         options = _get_ranges_options(
             offset=offset,
             length=length,
@@ -1623,6 +1665,62 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         except HttpResponseError as error:
             process_storage_error(error)
         return get_file_ranges_result(ranges)
+
+    @distributed_trace
+    def list_ranges_diff(
+        self,
+        previous_sharesnapshot: Union[str, Dict[str, Any]],
+        *,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        include_renames: Optional[bool] = None,
+        **kwargs: Any,
+    ) -> AsyncItemPaged["FileRange"]:
+        """Returns the list of valid ranges for a file or snapshot of a file, listing only the
+        ranges that changed between the target snapshot (or live file) and a previous snapshot.
+
+        :param str previous_sharesnapshot:
+            The snapshot diff parameter that contains an opaque DateTime value that
+            specifies a previous file snapshot to be compared
+            against a more recent snapshot or the current file.
+        :keyword int offset:
+            Specifies the start offset of bytes over which to get ranges.
+        :keyword int length:
+            Number of bytes to use over which to get ranges.
+        :keyword Optional[bool] include_renames:
+            Only valid if previous_sharesnapshot parameter is provided. Specifies whether the changed ranges for
+            a file that has been renamed or moved between the target snapshot (or live file) and the previous
+            snapshot should be listed. If set to True, the valid changed ranges for the file will be returned.
+            If set to False, the operation will result in a 409 (Conflict) response.
+        :keyword lease:
+            Required if the file has an active lease. Value can be a ShareLeaseClient object
+            or the lease ID as a string.
+        :paramtype lease: ~azure.storage.fileshare.ShareLeaseClient or str
+        :keyword int results_per_page:
+            The maximum number of file ranges to retrieve per API call.
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`__.
+        :returns:
+            An iterable (auto-paging) of valid ranges. Each range has a ``cleared`` attribute indicating
+            whether the range was cleared between the previous snapshot and the target.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.fileshare.FileRange]
+        """
+        results_per_page = kwargs.pop("results_per_page", None)
+        options = _get_ranges_options(
+            offset=offset,
+            length=length,
+            previous_sharesnapshot=previous_sharesnapshot,
+            support_rename=include_renames,
+            **kwargs,
+        )
+        options["allow_trailing_dot"] = self.allow_trailing_dot
+        options["file_request_intent"] = self.file_request_intent
+        command = functools.partial(self._client.file.list_all_ranges, **options)
+        return AsyncItemPaged(command, results_per_page=results_per_page, page_iterator_class=FileRangePaged)
 
     @distributed_trace_async
     async def clear_range(self, offset: int, length: int, **kwargs: Any) -> Dict[str, Any]:

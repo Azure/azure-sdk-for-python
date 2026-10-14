@@ -18,12 +18,12 @@ from azure.ai.ml.entities._util import load_from_dict
 class KubernetesCompute(Compute):
     """Kubernetes Compute resource.
 
-    :param namespace: The namespace of the KubernetesCompute. Defaults to "default".
-    :type namespace: Optional[str]
-    :param properties: The properties of the Kubernetes compute resource.
-    :type properties: Optional[Dict]
-    :param identity: The identities that are associated with the compute cluster.
-    :type identity: ~azure.ai.ml.entities.IdentityConfiguration
+    :keyword namespace: The namespace of the KubernetesCompute. Defaults to "default".
+    :paramtype namespace: Optional[str]
+    :keyword properties: The properties of the Kubernetes compute resource.
+    :paramtype properties: Optional[Dict]
+    :keyword identity: The identities that are associated with the compute cluster.
+    :paramtype identity: ~azure.ai.ml.entities.IdentityConfiguration
 
     .. admonition:: Example:
 
@@ -67,7 +67,11 @@ class KubernetesCompute(Compute):
                 if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
                 else None
             ),
-            created_on=prop.additional_properties.get("createdOn", None),
+            created_on=(
+                prop.additional_properties.get("createdOn", None)
+                if hasattr(prop, "additional_properties")
+                else prop.get("createdOn") if hasattr(prop, "get") else None
+            ),
             properties=prop.properties.as_dict() if prop.properties else None,
             namespace=prop.properties.namespace,
             identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,

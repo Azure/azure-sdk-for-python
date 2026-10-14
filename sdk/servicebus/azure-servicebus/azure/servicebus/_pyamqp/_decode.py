@@ -24,12 +24,17 @@ from typing_extensions import Literal
 
 from . import described
 from .message import Message, Header, Properties
+from . import performatives
 
 if TYPE_CHECKING:
     from .message import MessageDict
 
 _LOGGER = logging.getLogger(__name__)
 _HEADER_PREFIX = memoryview(b"AMQP")
+
+# Max nesting depth for compound types during decode; bounds recursion (matches .NET's 64).
+_MAX_NESTING_DEPTH = 64
+
 
 # Maximum number of elements permitted in any AMQP compound type (list, array, map).
 #
@@ -75,105 +80,108 @@ DECIMAL128_BIAS = 6176
 
 
 
-def _decode_null(buffer: memoryview) -> Tuple[memoryview, None]:
+def _decode_null(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, None]:
     return buffer, None
 
 
-def _decode_true(buffer: memoryview) -> Tuple[memoryview, Literal[True]]:
+def _decode_true(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, Literal[True]]:
     return buffer, True
 
 
-def _decode_false(buffer: memoryview) -> Tuple[memoryview, Literal[False]]:
+def _decode_false(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, Literal[False]]:
     return buffer, False
 
 
-def _decode_zero(buffer: memoryview) -> Tuple[memoryview, Literal[0]]:
+def _decode_zero(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, Literal[0]]:
     return buffer, 0
 
 
-def _decode_empty(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
+def _decode_empty(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, List[Any]]:
+    depth += 1
+    if depth > _MAX_NESTING_DEPTH:
+        raise ValueError(f"AMQP value nesting exceeds maximum depth of {_MAX_NESTING_DEPTH}")
     return buffer, []
 
 
-def _decode_boolean(buffer: memoryview) -> Tuple[memoryview, bool]:
+def _decode_boolean(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, bool]:
     return buffer[1:], buffer[:1] == b"\x01"
 
 
-def _decode_ubyte(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_ubyte(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[1:], buffer[0]
 
 
-def _decode_ushort(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_ushort(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[2:], c_unsigned_short.unpack(buffer[:2])[0]
 
 
-def _decode_uint_small(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_uint_small(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[1:], buffer[0]
 
 
-def _decode_uint_large(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_uint_large(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[4:], c_unsigned_int.unpack(buffer[:4])[0]
 
 
-def _decode_ulong_small(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_ulong_small(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[1:], buffer[0]
 
 
-def _decode_ulong_large(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_ulong_large(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[8:], c_unsigned_long_long.unpack(buffer[:8])[0]
 
 
-def _decode_byte(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_byte(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[1:], c_signed_char.unpack(buffer[:1])[0]
 
 
-def _decode_short(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_short(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[2:], c_signed_short.unpack(buffer[:2])[0]
 
 
-def _decode_int_small(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_int_small(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[1:], c_signed_char.unpack(buffer[:1])[0]
 
 
-def _decode_int_large(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_int_large(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[4:], c_signed_int.unpack(buffer[:4])[0]
 
 
-def _decode_long_small(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_long_small(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[1:], c_signed_char.unpack(buffer[:1])[0]
 
 
-def _decode_long_large(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_long_large(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[8:], c_signed_long_long.unpack(buffer[:8])[0]
 
 
-def _decode_float(buffer: memoryview) -> Tuple[memoryview, float]:
+def _decode_float(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, float]:
     return buffer[4:], c_float.unpack(buffer[:4])[0]
 
 
-def _decode_double(buffer: memoryview) -> Tuple[memoryview, float]:
+def _decode_double(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, float]:
     return buffer[8:], c_double.unpack(buffer[:8])[0]
 
 
-def _decode_timestamp(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_timestamp(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, int]:
     return buffer[8:], c_signed_long_long.unpack(buffer[:8])[0]
 
 
-def _decode_uuid(buffer: memoryview) -> Tuple[memoryview, uuid.UUID]:
+def _decode_uuid(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, uuid.UUID]:
     return buffer[16:], uuid.UUID(bytes=buffer[:16].tobytes())
 
 
-def _decode_binary_small(buffer: memoryview) -> Tuple[memoryview, bytes]:
+def _decode_binary_small(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, bytes]:
     length_index = buffer[0] + 1
     return buffer[length_index:], buffer[1:length_index].tobytes()
 
 
-def _decode_binary_large(buffer: memoryview) -> Tuple[memoryview, bytes]:
+def _decode_binary_large(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, bytes]:
     length_index = c_unsigned_long.unpack(buffer[:4])[0] + 4
     return buffer[length_index:], buffer[4:length_index].tobytes()
 
 
-def _decode_decimal128(buffer: memoryview) -> Tuple[memoryview, decimal.Decimal]:
+def _decode_decimal128(buffer: memoryview, _depth: int = 0) -> Tuple[memoryview, decimal.Decimal]:
     """
     Decode a Decimal128 value from the buffer.
 
@@ -183,6 +191,8 @@ def _decode_decimal128(buffer: memoryview) -> Tuple[memoryview, decimal.Decimal]
 
     :param buffer: The buffer containing the Decimal128 encoded value.
     :type buffer: memoryview
+    :param _depth: Current nesting depth; unused here, accepted to match the decoder dispatch signature.
+    :type _depth: int
     :return: A tuple containing the remaining buffer and the decoded decimal.Decimal value.
     :rtype: Tuple[memoryview, decimal.Decimal]
     """
@@ -229,18 +239,28 @@ def _decode_decimal128(buffer: memoryview) -> Tuple[memoryview, decimal.Decimal]
 
     # Create the decimal value using the context
     with decimal.localcontext(decimal_ctx) as ctx:
-        return buffer[16:], ctx.create_decimal((sign, digits, exponent))
+        try:
+            return buffer[16:], ctx.create_decimal((sign, digits, exponent))
+        except decimal.DecimalException as exc:
+            # Out-of-range decimal128 encoding is malformed wire data; raise a decode error.
+            raise ValueError(f"Invalid AMQP decimal128 encoding: {exc}") from exc
 
-def _decode_list_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
+def _decode_list_small(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, List[Any]]:
+    depth += 1
+    if depth > _MAX_NESTING_DEPTH:
+        raise ValueError(f"AMQP value nesting exceeds maximum depth of {_MAX_NESTING_DEPTH}")
     count = buffer[1]
     buffer = buffer[2:]
     values = [None] * count
     for i in range(count):
-        buffer, values[i] = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
+        buffer, values[i] = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:], depth)
     return buffer, values
 
 
-def _decode_list_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
+def _decode_list_large(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, List[Any]]:
+    depth += 1
+    if depth > _MAX_NESTING_DEPTH:
+        raise ValueError(f"AMQP value nesting exceeds maximum depth of {_MAX_NESTING_DEPTH}")
     count = c_unsigned_long.unpack(buffer[4:8])[0]
     # Validate the wire-supplied count before allocating `[None] * count`,
     # which would otherwise scale linearly with an untrusted 32-bit value.
@@ -251,11 +271,14 @@ def _decode_list_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     buffer = buffer[8:]
     values = [None] * count
     for i in range(count):
-        buffer, values[i] = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
+        buffer, values[i] = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:], depth)
     return buffer, values
 
 
-def _decode_map_small(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
+def _decode_map_small(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, Dict[Any, Any]]:
+    depth += 1
+    if depth > _MAX_NESTING_DEPTH:
+        raise ValueError(f"AMQP value nesting exceeds maximum depth of {_MAX_NESTING_DEPTH}")
     raw_count = buffer[1]
     if raw_count % 2 != 0:
         raise ValueError(
@@ -265,13 +288,16 @@ def _decode_map_small(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
     buffer = buffer[2:]
     values = {}
     for _ in range(count):
-        buffer, key = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
-        buffer, value = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
+        buffer, key = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:], depth)
+        buffer, value = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:], depth)
         values[key] = value
     return buffer, values
 
 
-def _decode_map_large(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
+def _decode_map_large(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, Dict[Any, Any]]:
+    depth += 1
+    if depth > _MAX_NESTING_DEPTH:
+        raise ValueError(f"AMQP value nesting exceeds maximum depth of {_MAX_NESTING_DEPTH}")
     # Validate the raw on-wire count *before* halving it (the AMQP encoding
     # stores total entries; pairs = entries / 2). Checking pre-halve keeps
     # the comparison aligned with the bound used by _decode_list_large /
@@ -291,13 +317,16 @@ def _decode_map_large(buffer: memoryview) -> Tuple[memoryview, Dict[Any, Any]]:
     buffer = buffer[8:]
     values = {}
     for _ in range(count):
-        buffer, key = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
-        buffer, value = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
+        buffer, key = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:], depth)
+        buffer, value = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:], depth)
         values[key] = value
     return buffer, values
 
 
-def _decode_array_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
+def _decode_array_small(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, List[Any]]:
+    depth += 1
+    if depth > _MAX_NESTING_DEPTH:
+        raise ValueError(f"AMQP value nesting exceeds maximum depth of {_MAX_NESTING_DEPTH}")
     count = buffer[1]  # Ignore first byte (size) and just rely on count
     if count:
         values = [None] * count
@@ -305,20 +334,23 @@ def _decode_array_small(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
 
         if subconstructor == 0:
             composite_type = buffer[3]
-            buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[4:])
+            buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[4:], depth)
             subconstructor = buffer[0]
             buffer = buffer[1:]
             for i in range(count):
-                buffer, values[i] = _decode_described_array(buffer, subconstructor, descriptor)
+                buffer, values[i] = _decode_described_array(buffer, subconstructor, descriptor, depth)
         else:
             buffer = buffer[3:]
             for i in range(count):
-                buffer, values[i] = _DECODE_BY_CONSTRUCTOR[subconstructor](buffer)
+                buffer, values[i] = _DECODE_BY_CONSTRUCTOR[subconstructor](buffer, depth)
         return buffer, values
     return buffer[2:], []
 
 
-def _decode_array_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
+def _decode_array_large(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, List[Any]]:
+    depth += 1
+    if depth > _MAX_NESTING_DEPTH:
+        raise ValueError(f"AMQP value nesting exceeds maximum depth of {_MAX_NESTING_DEPTH}")
     count = c_unsigned_long.unpack(buffer[4:8])[0]
     # Validate the wire-supplied count before allocating `[None] * count`.
     # An Array32 frame's COUNT is read directly from the network and would
@@ -333,26 +365,29 @@ def _decode_array_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
 
         if subconstructor == 0:
             composite_type = buffer[9]
-            buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[10:])
+            buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[10:], depth)
             subconstructor = buffer[0]
             buffer = buffer[1:]
             for i in range(count):
-                buffer, values[i] = _decode_described_array(buffer, subconstructor, descriptor)
+                buffer, values[i] = _decode_described_array(buffer, subconstructor, descriptor, depth)
         else:
             buffer = buffer[9:]
             for i in range(count):
-                buffer, values[i] = _DECODE_BY_CONSTRUCTOR[subconstructor](buffer)
+                buffer, values[i] = _DECODE_BY_CONSTRUCTOR[subconstructor](buffer, depth)
         return buffer, values
     return buffer[8:], []
 
 
-def _decode_described(buffer: memoryview) -> Tuple[memoryview, object]:
+def _decode_described(buffer: memoryview, depth: int = 0) -> Tuple[memoryview, object]:
+    depth += 1
+    if depth > _MAX_NESTING_DEPTH:
+        raise ValueError(f"AMQP value nesting exceeds maximum depth of {_MAX_NESTING_DEPTH}")
     # TODO: to move the cursor of the buffer to the described value based on size of the
     #  descriptor without decoding descriptor value
     composite_type = buffer[0]
-    buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[1:])
+    buffer, descriptor = _DECODE_BY_CONSTRUCTOR[composite_type](buffer[1:], depth)
     tp = buffer[0]
-    buffer, value = _DECODE_BY_CONSTRUCTOR[tp](buffer[1:])
+    buffer, value = _DECODE_BY_CONSTRUCTOR[tp](buffer[1:], depth)
     try:
         value = _DESCR_BY_CONSTRUCTOR[tp](value, descriptor=descriptor)
     except KeyError:
@@ -364,8 +399,11 @@ def _decode_described(buffer: memoryview) -> Tuple[memoryview, object]:
         return buffer, value
 
 
-def _decode_described_array(buffer: memoryview, tp: int, descriptor) -> Tuple[memoryview, Any]:
-    buffer, value = _DECODE_BY_CONSTRUCTOR[tp](buffer)
+def _decode_described_array(buffer: memoryview, tp: int, descriptor, depth: int = 0) -> Tuple[memoryview, Any]:
+    depth += 1
+    if depth > _MAX_NESTING_DEPTH:
+        raise ValueError(f"AMQP value nesting exceeds maximum depth of {_MAX_NESTING_DEPTH}")
+    buffer, value = _DECODE_BY_CONSTRUCTOR[tp](buffer, depth)
     try:
         value = _DESCR_BY_CONSTRUCTOR[tp](value, descriptor=descriptor)
     except KeyError:
@@ -416,6 +454,48 @@ def decode_payload(buffer: memoryview) -> Message:
     return Message(**message_properties)
 
 
+# The AMQP-defined default of each wire field of a performative, keyed by its
+# frame-type code and ordered as the fields appear on the wire. The AMQP 1.0
+# spec (section 1.4) lets a sender omit trailing fields whose value is the
+# default, so an incoming performative list can be shorter than the full field
+# count. Padding the decoded list back up to the full count with these defaults
+# keeps positional (frame[N]) access and namedtuple unpacking safe, and makes an
+# omitted field read back as its default rather than None. That distinction
+# matters: an Open that omits max_frame_size means 4294967295, and the connection
+# compares it numerically (frame[2] < 512), which would raise on None.
+# The transfer performative (code 20) carries a trailing payload that is not a
+# wire field, so its _definition uses a None sentinel for that slot, which is
+# excluded here.
+_PERFORMATIVE_FIELD_DEFAULTS: Dict[int, List[Any]] = {
+    # _code and _definition are assigned onto the performative classes at import
+    # time (see performatives.py), so pylint cannot see them statically.
+    # pylint: disable=protected-access,no-member
+    performative._code: [field.default for field in performative._definition if field is not None]  # type: ignore
+    for performative in (
+        performatives.OpenFrame,
+        performatives.BeginFrame,
+        performatives.AttachFrame,
+        performatives.FlowFrame,
+        performatives.TransferFrame,
+        performatives.DispositionFrame,
+        performatives.DetachFrame,
+        performatives.EndFrame,
+        performatives.CloseFrame,
+        performatives.SASLMechanism,
+        performatives.SASLInit,
+        performatives.SASLChallenge,
+        performatives.SASLResponse,
+        performatives.SASLOutcome,
+    )
+}
+
+# The number of wire fields for each performative, derived from the defaults
+# above so the two stay in lockstep.
+_PERFORMATIVE_FIELD_COUNT: Dict[int, int] = {
+    code: len(defaults) for code, defaults in _PERFORMATIVE_FIELD_DEFAULTS.items()
+}
+
+
 def decode_frame(data: memoryview) -> Tuple[int, List[Any]]:
     # Ignore the first two bytes, they will always be the constructors for
     # described type then ulong.
@@ -432,6 +512,12 @@ def decode_frame(data: memoryview) -> Tuple[int, List[Any]]:
                 f"AMQP frame field count {count} exceeds maximum {_MAX_COMPOUND_COUNT}"
             )
         buffer = data[12:]
+    elif compound_list_type == 0x45:
+        # list0 0x45: an empty list with no size or count bytes. A sender may
+        # encode a performative whose fields are all omitted this way, so treat
+        # it as zero fields and let the padding below fill in the nulls.
+        count = 0
+        buffer = data[4:]
     else:
         # list8 0xc0: data[4] is size, data[5] is count (1 byte, bounded at 255).
         count = data[5]
@@ -439,6 +525,25 @@ def decode_frame(data: memoryview) -> Tuple[int, List[Any]]:
     fields: List[Optional[memoryview]] = [None] * count
     for i in range(count):
         buffer, fields[i] = _DECODE_BY_CONSTRUCTOR[buffer[0]](buffer[1:])
+    # A sender may omit trailing fields whose value is the default (AMQP 1.0
+    # section 1.4), so pad the decoded list back up to the performative's full
+    # field count with each omitted field's default before any positional access
+    # or unpacking.
+    field_defaults = _PERFORMATIVE_FIELD_DEFAULTS.get(frame_type)
+    if field_defaults is not None:
+        if count < len(field_defaults):
+            fields.extend(field_defaults[count:])
+        # Only trailing fields may be omitted, so a sender that sets a later
+        # field while wanting an earlier one's default must encode that earlier
+        # field as an explicit null. A decoded null for a field whose AMQP
+        # default is non-null therefore also means that default; normalize it so
+        # it reads back identically to the omitted case. For example, an Open
+        # that nulls max_frame_size must still compare as 4294967295, not None,
+        # when _incoming_open evaluates frame[2] < 512. Fields whose declared
+        # default is null are left as None.
+        for index, default in enumerate(field_defaults):
+            if default is not None and fields[index] is None:
+                fields[index] = default
     if frame_type == 20:
         fields.append(buffer)
     return frame_type, fields

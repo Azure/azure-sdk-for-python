@@ -14,12 +14,13 @@ DESCRIPTION:
 
       1. Creates a `PromptAgentDefinition` agent with domain-specific
          instructions (a small Widgets & Gizmos customer-support persona).
-      2. Creates a `DataGenerationJob` (scenario=EVALUATION, type=simple_qna)
-         whose source is an `Agent` reference pointing at the new agent. The
-         service fetches the agent's instructions / prompt and uses the
-         configured LLM to synthesize question / answer pairs from them.
+      2. Submits an `EvaluationDataGenerationJobInputs` job (scenario `evaluation`,
+         generation type `simple_qna`) whose source is an `Agent` reference
+         pointing at the new agent. The service fetches the agent's
+         instructions / prompt and uses the configured LLM to synthesize
+         question / answer pairs from them.
       3. Polls the job to completion and resolves the resulting `DatasetVersion`.
-      4. Cleans up the data generation job, the generated dataset, and the agent version.
+      4. Cleans up the generated dataset and the agent version.
 
     `simple_qna` REQUIRES `model_options`. For `simple_qna` evaluation jobs the
     deployed model must support the Azure OpenAI Responses API. See the
@@ -35,7 +36,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -56,6 +57,7 @@ import os
 import time
 import uuid
 from datetime import datetime, timezone
+from typing import Optional
 
 from dotenv import load_dotenv
 
@@ -63,16 +65,13 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AgentDataGenerationJobSource,
-    DataGenerationJob,
-    DataGenerationJobInputs,
-    DataGenerationJobOutputOptions,
-    DataGenerationJobScenario,
     DataGenerationModelOptions,
     DatasetDataGenerationJobOutput,
     DatasetVersion,
-    JobStatus,
+    EvaluationDataGenerationJobInputs,
+    EvaluationDataGenerationJobOutputConfiguration,
     PromptAgentDefinition,
-    SimpleQnADataGenerationJobOptions,
+    SimpleQnADataGenerationJobConfiguration,
 )
 
 load_dotenv()
@@ -114,7 +113,6 @@ When asked about anything outside this catalog and policy, politely say you do n
 
 agent_name = f"widgets-gizmos-support-{run_id}"
 
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 
 with (
     DefaultAzureCredential() as credential,
@@ -134,6 +132,8 @@ with (
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version}).")
 
+    dataset: Optional[DatasetVersion] = None
+
     try:
         # ------------------------------------------------------------------
         # 2. Submit a SimpleQnA data generation job sourced from the agent.
@@ -141,69 +141,69 @@ with (
         # The service fetches the agent's instructions / prompt and uses
         # `model_options.model` to synthesize QnA pairs from them.
         print(f"Create a SimpleQnA evaluation job sourced from agent `{agent.name}` (version {agent.version}).")
-        job = DataGenerationJob(
-            inputs=DataGenerationJobInputs(
-                name=f"simpleqna-agent-{run_id}",
-                scenario=DataGenerationJobScenario.EVALUATION,
-                sources=[
-                    AgentDataGenerationJobSource(
-                        description="Agent definition (instructions / prompt) used to seed QnA generation.",
-                        agent_name=agent.name,
-                        agent_version=agent.version,
-                    ),
-                ],
-                options=SimpleQnADataGenerationJobOptions(
-                    # Service requires max_samples to be between 15 and 1000.
-                    max_samples=15,
-                    # `simple_qna` REQUIRES model_options.
-                    model_options=DataGenerationModelOptions(model=model_name),
+        job = EvaluationDataGenerationJobInputs(
+            name=f"simpleqna-agent-{run_id}",
+            sources=[
+                AgentDataGenerationJobSource(
+                    description="Agent definition (instructions / prompt) used to seed QnA generation.",
+                    agent_name=agent.name,
+                    agent_version=agent.version,
                 ),
-                output_options=DataGenerationJobOutputOptions(name=output_dataset_name),
+            ],
+            generation_configuration=SimpleQnADataGenerationJobConfiguration(
+                # For evaluation jobs, the service requires max_samples to be between 1 and 1000.
+                max_samples=15,
+                # `simple_qna` REQUIRES model_options.
+                model_options=DataGenerationModelOptions(model=model_name),
             ),
+            output_configuration=EvaluationDataGenerationJobOutputConfiguration(name=output_dataset_name),
         )
-        job = project_client.beta.datasets.create_generation_job(job=job)
-        print(f"Created data generation job `{job.id}` (status: `{job.status}`).")
+        print("Begin creating a dataset generation job.")
+        poller = project_client.datasets.begin_create_generation_job(
+            job=job,
+            polling_interval=poll_interval_seconds,
+        )
 
-        print(f"Poll job `{job.id}` until it reaches a terminal state.", end="", flush=True)
-        while True:
-            job = project_client.beta.datasets.get_generation_job(job_id=job.id)
-            if job.status in TERMINAL_STATUSES:
-                break
+        # Optional: While SDK is polling, periodically print the job status until the job is complete
+        print("Periodically check job status:")
+        while not poller.done():
+            print(f"\tstatus=`{poller.status()}`")
             time.sleep(poll_interval_seconds)
-            print(".", end="", flush=True)
-        print()
-        print(f"Final job status: `{job.status}`.")
 
-        if job.status != JobStatus.SUCCEEDED:
-            message = job.error.message if job.error is not None else "<no error message>"
-            raise RuntimeError(f"Job `{job.id}` ended with status `{job.status}`: {message}")
+        # Since done() is true, result() returns the final deserialized job result without
+        # waiting further. It also propagates any LRO polling exception.
+        job_result = poller.result()
+        print(f"Final LRO status: `{poller.status()}`.")
+        print(f"Data generation result: {job_result}")
 
         # Locate the Dataset output produced by the job.
         output_name: str = ""
         output_version: str = ""
-        for output in (job.result.outputs if job.result is not None else None) or []:
+        for output in job_result.outputs or []:
             if isinstance(output, DatasetDataGenerationJobOutput):
                 output_name = output.name or ""
                 output_version = output.version or ""
                 break
         if not output_name or not output_version:
-            raise RuntimeError(f"Job `{job.id}` did not produce a dataset output.")
+            raise RuntimeError("The data generation job did not produce a dataset output.")
 
-        dataset: DatasetVersion = project_client.datasets.get(name=output_name, version=output_version)
+        dataset = project_client.datasets.get(name=output_name, version=output_version)
         print(f"Generated dataset: name=`{dataset.name}` version=`{dataset.version}` id=`{dataset.id}`")
-        if job.result is not None and job.result.generated_samples is not None:
-            print(f"Generated samples: {job.result.generated_samples}")
+        if job_result.generated_samples is not None:
+            print(f"Generated samples: {job_result.generated_samples}")
 
-        # ------------------------------------------------------------------
-        # 3. Clean up the generated dataset and the data generation job
-        #    (the agent is deleted in the `finally` block below).
-        # ------------------------------------------------------------------
-        print(f"Delete the generated dataset `{dataset.name}` v{dataset.version}.")
-        project_client.datasets.delete(name=dataset.name or "", version=dataset.version or "")
-
-        print(f"Delete the data generation job `{job.id}`.")
-        project_client.beta.datasets.delete_generation_job(job_id=job.id)
     finally:
+        # ------------------------------------------------------------------
+        # 3. Clean up (best effort, so partial failures do not leak resources).
+        # ------------------------------------------------------------------
+        # Delete the generated dataset.
+        if dataset is not None:
+            print(f"Delete the generated dataset `{dataset.name}` v{dataset.version}.")
+            try:
+                project_client.datasets.delete(name=dataset.name or "", version=dataset.version or "")
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                print(f"  (warning) could not delete dataset: {exc}")
+
         # The agent is short-lived — always delete it, even if the job failed.
         print(f"Delete the prompt agent `{agent.name}` (version {agent.version}).")
         project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)

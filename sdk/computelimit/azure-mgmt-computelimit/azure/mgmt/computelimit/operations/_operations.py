@@ -50,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +71,7 @@ def build_guest_subscriptions_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +100,7 @@ def build_guest_subscriptions_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -129,7 +129,7 @@ def build_guest_subscriptions_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/guestSubscriptions/{guestSubscriptionId}"
     path_format_arguments = {
@@ -152,7 +152,7 @@ def build_guest_subscriptions_list_by_subscription_location_resource_request(  #
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -173,11 +173,121 @@ def build_guest_subscriptions_list_by_subscription_location_resource_request(  #
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_trusted_host_subscriptions_create_request(  # pylint: disable=name-too-long
+    location: str, host_subscription_id: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/trustedHostSubscriptions/{hostSubscriptionId}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+        "hostSubscriptionId": _SERIALIZER.url("host_subscription_id", host_subscription_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_trusted_host_subscriptions_get_request(  # pylint: disable=name-too-long
+    location: str, host_subscription_id: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/trustedHostSubscriptions/{hostSubscriptionId}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+        "hostSubscriptionId": _SERIALIZER.url("host_subscription_id", host_subscription_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_trusted_host_subscriptions_delete_request(  # pylint: disable=name-too-long
+    location: str, host_subscription_id: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/trustedHostSubscriptions/{hostSubscriptionId}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+        "hostSubscriptionId": _SERIALIZER.url("host_subscription_id", host_subscription_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_trusted_host_subscriptions_list_by_subscription_location_resource_request(  # pylint: disable=name-too-long
+    location: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = (
+        "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/trustedHostSubscriptions"
+    )
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_shared_limits_get_request(location: str, name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -204,7 +314,7 @@ def build_shared_limits_create_request(location: str, name: str, subscription_id
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -231,7 +341,7 @@ def build_shared_limits_create_request(location: str, name: str, subscription_id
 def build_shared_limits_delete_request(location: str, name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/sharedLimits/{name}"
     path_format_arguments = {
@@ -254,7 +364,7 @@ def build_shared_limits_list_by_subscription_location_resource_request(  # pylin
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -279,7 +389,7 @@ def build_features_get_request(location: str, feature_name: str, subscription_id
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -309,7 +419,7 @@ def build_features_list_by_subscription_location_resource_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -335,7 +445,7 @@ def build_features_enable_request(location: str, feature_name: str, subscription
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -365,7 +475,7 @@ def build_features_disable_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -393,7 +503,7 @@ def build_vm_families_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -421,7 +531,7 @@ def build_vm_families_list_by_subscription_location_resource_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -450,7 +560,7 @@ def build_shared_limit_caps_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -479,7 +589,7 @@ def build_shared_limit_caps_create_or_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -508,7 +618,7 @@ def build_shared_limit_caps_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/sharedLimitCaps/{vmFamilyName}"
     path_format_arguments = {
@@ -531,7 +641,7 @@ def build_shared_limit_caps_list_by_subscription_location_resource_request(  # p
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -559,7 +669,7 @@ def build_shared_limit_caps_set_member_cap_overrides_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -589,7 +699,7 @@ def build_member_cap_overrides_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -619,7 +729,7 @@ def build_member_cap_overrides_create_or_update_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -649,7 +759,7 @@ def build_member_cap_overrides_delete_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ComputeLimit/locations/{location}/sharedLimitCaps/{vmFamilyName}/memberCapOverrides/{memberSubscriptionId}"
     path_format_arguments = {
@@ -673,7 +783,7 @@ def build_member_cap_overrides_list_by_parent_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-31"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1216,6 +1326,459 @@ class GuestSubscriptionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
+class TrustedHostSubscriptionsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.computelimit.ComputeLimitMgmtClient`'s
+        :attr:`trusted_host_subscriptions` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ComputeLimitMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    def create(
+        self,
+        location: str,
+        host_subscription_id: str,
+        resource: _models.TrustedHostSubscription,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TrustedHostSubscription:
+        """Adds a host subscription to the guest subscription's list of trusted hosts. A guest
+        subscription can trust multiple host subscriptions; this only establishes trust and does not
+        check the guest in to the host. Guest-to-host association is determined at check-in time, where
+        a subscription can be a guest of at most one host per region.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param host_subscription_id: The name of the TrustedHostSubscription. Required.
+        :type host_subscription_id: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.computelimit.models.TrustedHostSubscription
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TrustedHostSubscription. The TrustedHostSubscription is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.TrustedHostSubscription
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self,
+        location: str,
+        host_subscription_id: str,
+        resource: _types.TrustedHostSubscription,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TrustedHostSubscription:
+        """Adds a host subscription to the guest subscription's list of trusted hosts. A guest
+        subscription can trust multiple host subscriptions; this only establishes trust and does not
+        check the guest in to the host. Guest-to-host association is determined at check-in time, where
+        a subscription can be a guest of at most one host per region.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param host_subscription_id: The name of the TrustedHostSubscription. Required.
+        :type host_subscription_id: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.computelimit.types.TrustedHostSubscription
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TrustedHostSubscription. The TrustedHostSubscription is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.TrustedHostSubscription
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self,
+        location: str,
+        host_subscription_id: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TrustedHostSubscription:
+        """Adds a host subscription to the guest subscription's list of trusted hosts. A guest
+        subscription can trust multiple host subscriptions; this only establishes trust and does not
+        check the guest in to the host. Guest-to-host association is determined at check-in time, where
+        a subscription can be a guest of at most one host per region.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param host_subscription_id: The name of the TrustedHostSubscription. Required.
+        :type host_subscription_id: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TrustedHostSubscription. The TrustedHostSubscription is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.TrustedHostSubscription
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-31",
+        params_added_on={
+            "2026-07-31": [
+                "api_version",
+                "subscription_id",
+                "location",
+                "host_subscription_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-31"],
+    )
+    def create(
+        self,
+        location: str,
+        host_subscription_id: str,
+        resource: Union[_models.TrustedHostSubscription, _types.TrustedHostSubscription, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.TrustedHostSubscription:
+        """Adds a host subscription to the guest subscription's list of trusted hosts. A guest
+        subscription can trust multiple host subscriptions; this only establishes trust and does not
+        check the guest in to the host. Guest-to-host association is determined at check-in time, where
+        a subscription can be a guest of at most one host per region.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param host_subscription_id: The name of the TrustedHostSubscription. Required.
+        :type host_subscription_id: str
+        :param resource: Resource create parameters. Is either a TrustedHostSubscription type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.computelimit.models.TrustedHostSubscription or
+         ~azure.mgmt.computelimit.types.TrustedHostSubscription or IO[bytes]
+        :return: TrustedHostSubscription. The TrustedHostSubscription is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.TrustedHostSubscription
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TrustedHostSubscription] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_trusted_host_subscriptions_create_request(
+            location=location,
+            host_subscription_id=host_subscription_id,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TrustedHostSubscription, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-31",
+        params_added_on={
+            "2026-07-31": ["api_version", "subscription_id", "location", "host_subscription_id", "accept"]
+        },
+        api_versions_list=["2026-07-31"],
+    )
+    def get(self, location: str, host_subscription_id: str, **kwargs: Any) -> _models.TrustedHostSubscription:
+        """Gets a host subscription that the guest subscription trusts.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param host_subscription_id: The name of the TrustedHostSubscription. Required.
+        :type host_subscription_id: str
+        :return: TrustedHostSubscription. The TrustedHostSubscription is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.TrustedHostSubscription
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TrustedHostSubscription] = kwargs.pop("cls", None)
+
+        _request = build_trusted_host_subscriptions_get_request(
+            location=location,
+            host_subscription_id=host_subscription_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TrustedHostSubscription, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-31",
+        params_added_on={"2026-07-31": ["api_version", "subscription_id", "location", "host_subscription_id"]},
+        api_versions_list=["2026-07-31"],
+    )
+    def delete(  # pylint: disable=inconsistent-return-statements
+        self, location: str, host_subscription_id: str, **kwargs: Any
+    ) -> None:
+        """Removes a host subscription from the guest subscription's list of trusted hosts.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param host_subscription_id: The name of the TrustedHostSubscription. Required.
+        :type host_subscription_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_trusted_host_subscriptions_delete_request(
+            location=location,
+            host_subscription_id=host_subscription_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-31",
+        params_added_on={"2026-07-31": ["api_version", "subscription_id", "location", "accept"]},
+        api_versions_list=["2026-07-31"],
+    )
+    def list_by_subscription_location_resource(
+        self, location: str, **kwargs: Any
+    ) -> ItemPaged["_models.TrustedHostSubscription"]:
+        """Lists all host subscriptions that the guest subscription trusts in a location.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :return: An iterator like instance of TrustedHostSubscription
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.computelimit.models.TrustedHostSubscription]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.TrustedHostSubscription]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_trusted_host_subscriptions_list_by_subscription_location_resource_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.TrustedHostSubscription],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
 class SharedLimitsOperations:
     """
     .. warning::
@@ -1638,7 +2201,7 @@ class FeaturesOperations:
     @api_version_validation(
         method_added_on="2026-03-20",
         params_added_on={"2026-03-20": ["api_version", "subscription_id", "location", "feature_name", "accept"]},
-        api_versions_list=["2026-03-20", "2026-04-30", "2026-06-01", "2026-07-01"],
+        api_versions_list=["2026-03-20", "2026-04-30", "2026-06-01", "2026-07-01", "2026-07-31"],
     )
     def get(self, location: str, feature_name: str, **kwargs: Any) -> _models.Feature:
         """Gets the properties of a compute limit feature.
@@ -1712,7 +2275,7 @@ class FeaturesOperations:
     @api_version_validation(
         method_added_on="2026-03-20",
         params_added_on={"2026-03-20": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2026-03-20", "2026-04-30", "2026-06-01", "2026-07-01"],
+        api_versions_list=["2026-03-20", "2026-04-30", "2026-06-01", "2026-07-01", "2026-07-31"],
     )
     def list_by_subscription_location_resource(self, location: str, **kwargs: Any) -> ItemPaged["_models.Feature"]:
         """Lists all compute limit features for the subscription at the specified location.
@@ -1814,7 +2377,7 @@ class FeaturesOperations:
         params_added_on={
             "2026-06-01": ["api_version", "subscription_id", "location", "feature_name", "content_type", "accept"]
         },
-        api_versions_list=["2026-06-01", "2026-07-01"],
+        api_versions_list=["2026-06-01", "2026-07-01", "2026-07-31"],
     )
     def _enable_initial(
         self,
@@ -1985,7 +2548,7 @@ class FeaturesOperations:
         params_added_on={
             "2026-06-01": ["api_version", "subscription_id", "location", "feature_name", "content_type", "accept"]
         },
-        api_versions_list=["2026-06-01", "2026-07-01"],
+        api_versions_list=["2026-06-01", "2026-07-01", "2026-07-31"],
     )
     def begin_enable(
         self,
@@ -2066,7 +2629,7 @@ class FeaturesOperations:
     @api_version_validation(
         method_added_on="2026-04-30",
         params_added_on={"2026-04-30": ["api_version", "subscription_id", "location", "feature_name", "accept"]},
-        api_versions_list=["2026-04-30", "2026-06-01", "2026-07-01"],
+        api_versions_list=["2026-04-30", "2026-06-01", "2026-07-01", "2026-07-31"],
     )
     def _disable_initial(self, location: str, feature_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2131,7 +2694,7 @@ class FeaturesOperations:
     @api_version_validation(
         method_added_on="2026-04-30",
         params_added_on={"2026-04-30": ["api_version", "subscription_id", "location", "feature_name", "accept"]},
-        api_versions_list=["2026-04-30", "2026-06-01", "2026-07-01"],
+        api_versions_list=["2026-04-30", "2026-06-01", "2026-07-01", "2026-07-31"],
     )
     def begin_disable(
         self, location: str, feature_name: str, **kwargs: Any
@@ -2219,7 +2782,7 @@ class VmFamiliesOperations:
     @api_version_validation(
         method_added_on="2026-04-30",
         params_added_on={"2026-04-30": ["api_version", "subscription_id", "location", "vm_family_name", "accept"]},
-        api_versions_list=["2026-04-30", "2026-06-01", "2026-07-01"],
+        api_versions_list=["2026-04-30", "2026-06-01", "2026-07-01", "2026-07-31"],
     )
     def get(self, location: str, vm_family_name: str, **kwargs: Any) -> _models.VmFamily:
         """Gets the properties of a VM family.
@@ -2293,7 +2856,7 @@ class VmFamiliesOperations:
     @api_version_validation(
         method_added_on="2026-04-30",
         params_added_on={"2026-04-30": ["api_version", "subscription_id", "location", "filter", "accept"]},
-        api_versions_list=["2026-04-30", "2026-06-01", "2026-07-01"],
+        api_versions_list=["2026-04-30", "2026-06-01", "2026-07-01", "2026-07-31"],
     )
     def list_by_subscription_location_resource(
         self, location: str, *, filter: Optional[str] = None, **kwargs: Any
@@ -2419,7 +2982,7 @@ class SharedLimitCapsOperations:
     @api_version_validation(
         method_added_on="2026-07-01",
         params_added_on={"2026-07-01": ["api_version", "subscription_id", "location", "vm_family_name", "accept"]},
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-07-01", "2026-07-31"],
     )
     def get(self, location: str, vm_family_name: str, **kwargs: Any) -> _models.SharedLimitCap:
         """Gets the shared limit cap configuration for a VM family, as visible to the caller's
@@ -2574,7 +3137,7 @@ class SharedLimitCapsOperations:
         params_added_on={
             "2026-07-01": ["api_version", "subscription_id", "location", "vm_family_name", "content_type", "accept"]
         },
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-07-01", "2026-07-31"],
     )
     def create_or_update(
         self,
@@ -2668,7 +3231,7 @@ class SharedLimitCapsOperations:
     @api_version_validation(
         method_added_on="2026-07-01",
         params_added_on={"2026-07-01": ["api_version", "subscription_id", "location", "vm_family_name"]},
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-07-01", "2026-07-31"],
     )
     def delete(  # pylint: disable=inconsistent-return-statements
         self, location: str, vm_family_name: str, **kwargs: Any
@@ -2732,7 +3295,7 @@ class SharedLimitCapsOperations:
     @api_version_validation(
         method_added_on="2026-07-01",
         params_added_on={"2026-07-01": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-07-01", "2026-07-31"],
     )
     def list_by_subscription_location_resource(
         self, location: str, **kwargs: Any
@@ -2924,7 +3487,7 @@ class SharedLimitCapsOperations:
         params_added_on={
             "2026-07-01": ["api_version", "subscription_id", "location", "vm_family_name", "content_type", "accept"]
         },
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-07-01", "2026-07-31"],
     )
     def set_member_cap_overrides(
         self,
@@ -3048,7 +3611,7 @@ class MemberCapOverridesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-07-01", "2026-07-31"],
     )
     def get(
         self, location: str, vm_family_name: str, member_subscription_id: str, **kwargs: Any
@@ -3224,7 +3787,7 @@ class MemberCapOverridesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-07-01", "2026-07-31"],
     )
     def create_or_update(
         self,
@@ -3324,7 +3887,7 @@ class MemberCapOverridesOperations:
         params_added_on={
             "2026-07-01": ["api_version", "subscription_id", "location", "vm_family_name", "member_subscription_id"]
         },
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-07-01", "2026-07-31"],
     )
     def delete(  # pylint: disable=inconsistent-return-statements
         self, location: str, vm_family_name: str, member_subscription_id: str, **kwargs: Any
@@ -3390,7 +3953,7 @@ class MemberCapOverridesOperations:
     @api_version_validation(
         method_added_on="2026-07-01",
         params_added_on={"2026-07-01": ["api_version", "subscription_id", "location", "vm_family_name", "accept"]},
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-07-01", "2026-07-31"],
     )
     def list_by_parent(
         self, location: str, vm_family_name: str, **kwargs: Any

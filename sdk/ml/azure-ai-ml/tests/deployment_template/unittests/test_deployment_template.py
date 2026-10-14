@@ -350,6 +350,88 @@ class TestDeploymentTemplate:
         assert template.creation_context.last_modified_at is not None
         assert template.creation_context.created_by == "azure-huggingface"
 
+    def test_deployment_template_from_rest_object_populates_last_modified_by_flattened(self):
+        """Regression test for bug #5475875 (get() shape).
+
+        After the service fix, the deployment-template API sends the modifying identity as a
+        flattened ``modifiedBy`` object (a ``lastModifiedBy`` key may also be present but null).
+        ``creation_context.last_modified_by`` must surface ``modifiedBy``.
+        """
+        from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401 import models as rest_models
+
+        rest = rest_models.DeploymentTemplate(
+            {
+                "name": "test",
+                "version": "1",
+                "createdTime": "2026-08-11T11:53:30.4004506+00:00",
+                "modifiedTime": "2026-08-11T13:09:33.7009158+00:00",
+                "createdBy": {"userName": "azure-huggingface"},
+                "modifiedBy": {"userName": "azure-huggingface"},
+                "lastModifiedBy": None,
+            }
+        )
+
+        template = DeploymentTemplate._from_rest_object(rest)
+
+        assert template.creation_context is not None
+        assert template.creation_context.last_modified_by == "azure-huggingface"
+
+    def test_deployment_template_from_rest_object_populates_last_modified_by_nested_in_properties(self):
+        """Regression test for bug #5475875 (list() shape).
+
+        In the list() response the modifying identity is nested under ``properties`` and, like
+        ``createdBy``, arrives as a stringified dict. ``last_modified_by`` must still be surfaced,
+        preferring ``modifiedBy`` over a present-but-null ``lastModifiedBy``.
+        """
+        rest = Mock(spec=[])
+        rest.name = "test"
+        rest.id = None
+        rest.system_data = None
+        rest.properties = {
+            "name": "test",
+            "version": "1",
+            "createdTime": "2026-08-11T11:53:30.4004506+00:00",
+            "modifiedTime": "2026-08-11T10:59:40.5114874+00:00",
+            "createdBy": "{'userName': 'azure-huggingface'}",
+            "modifiedBy": "{'userName': 'azure-huggingface-staging'}",
+            "lastModifiedBy": None,
+        }
+
+        template = DeploymentTemplate._from_rest_object(rest)
+
+        assert template.creation_context is not None
+        assert template.creation_context.last_modified_by == "azure-huggingface-staging"
+
+    def test_deployment_template_from_rest_object_last_modified_by_nested_dict_in_properties(self):
+        """Regression test for bug #5475875 (list() shape, non-stringified dict).
+
+        The live list() response nests ``modifiedBy`` under ``properties`` as a real dict (not
+        only as a stringified one). ``last_modified_by`` must be surfaced from that dict, preferring
+        ``modifiedBy`` over a present-but-null ``lastModifiedBy``.
+        """
+        rest = Mock(spec=[])
+        rest.name = "test"
+        rest.id = None
+        rest.system_data = None
+        rest.properties = {
+            "name": "test",
+            "version": "1",
+            "createdTime": "2026-08-11T11:53:30.4004506+00:00",
+            "modifiedTime": "2026-08-11T10:59:40.5114874+00:00",
+            "createdBy": {"userObjectId": "00000000-0000-0000-0000-000000000000", "userName": "azure-huggingface"},
+            "modifiedBy": {
+                "userObjectId": "00000000-0000-0000-0000-000000000000",
+                "userName": "azure-huggingface-staging",
+            },
+            "lastModifiedBy": None,
+        }
+
+        template = DeploymentTemplate._from_rest_object(rest)
+
+        assert template.creation_context is not None
+        assert template.creation_context.created_by == "azure-huggingface"
+        assert template.creation_context.last_modified_by == "azure-huggingface-staging"
+
     def test_deployment_template_from_rest_object_populates_creation_context_system_data(self):
         """creation_context is also populated from a nested systemData block when present."""
         system_data = Mock(spec=[])

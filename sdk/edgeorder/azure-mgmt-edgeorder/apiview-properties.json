@@ -162,5 +162,5 @@
         "azure.mgmt.edgeorder.operations.ProductsAndConfigurationsOperations.list_product_families_metadata": "Microsoft.EdgeOrder.ProductsAndConfigurationsOperationGroup.listProductFamiliesMetadata",
         "azure.mgmt.edgeorder.aio.operations.ProductsAndConfigurationsOperations.list_product_families_metadata": "Microsoft.EdgeOrder.ProductsAndConfigurationsOperationGroup.listProductFamiliesMetadata"
     },
-    "CrossLanguageVersion": "c450e03f8cfa"
+    "CrossLanguageVersion": "fe8fc56a4a5c"
 }

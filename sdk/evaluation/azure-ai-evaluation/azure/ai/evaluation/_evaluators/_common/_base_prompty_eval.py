@@ -19,6 +19,17 @@ from azure.ai.evaluation._common.constants import PROMPT_BASED_REASON_EVALUATORS
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from ..._common.utils import construct_prompty_model_config, validate_model_config, parse_quality_evaluator_reason_score
+
+# The message-preprocessing helpers now live in ``azure.ai.evaluation._common.utils`` (single source of
+# truth). They are imported here so this module can use them and so callers that historically imported
+# them from this module keep working. ``_drop_mcp_approval_messages`` / ``_normalize_function_call_types``
+# are re-exported only (used indirectly via ``_preprocess_messages``).
+from ..._common.utils import (  # pylint: disable=unused-import
+    _is_intermediate_response,
+    _drop_mcp_approval_messages,
+    _normalize_function_call_types,
+    _preprocess_messages,
+)
 from . import EvaluatorBase
 
 try:
@@ -32,80 +43,6 @@ except ImportError:
 
 
 T = TypeVar("T")
-
-
-def _is_intermediate_response(response):
-    """Check if response is intermediate (last content item is function_call or mcp_approval_request)."""
-    if isinstance(response, list) and len(response) > 0:
-        last_msg = response[-1]
-        if isinstance(last_msg, dict) and last_msg.get("role") == "assistant":
-            content = last_msg.get("content", [])
-            if isinstance(content, list) and len(content) > 0:
-                last_content = content[-1]
-                if isinstance(last_content, dict) and last_content.get("type") in (
-                    "function_call",
-                    "mcp_approval_request",
-                ):
-                    return True
-    return False
-
-
-def _drop_mcp_approval_messages(messages):
-    """Remove MCP approval request/response messages."""
-    if not isinstance(messages, list):
-        return messages
-    return [
-        msg
-        for msg in messages
-        if not (
-            isinstance(msg, dict)
-            and isinstance(msg.get("content"), list)
-            and (
-                (
-                    msg.get("role") == "assistant"
-                    and any(isinstance(c, dict) and c.get("type") == "mcp_approval_request" for c in msg["content"])
-                )
-                or (
-                    msg.get("role") == "tool"
-                    and any(isinstance(c, dict) and c.get("type") == "mcp_approval_response" for c in msg["content"])
-                )
-            )
-        )
-    ]
-
-
-def _normalize_function_call_types(messages):
-    """Normalize function_call/function_call_output/openapi_call/openapi_call_output types to tool_call/tool_result."""
-    if not isinstance(messages, list):
-        return messages
-    for msg in messages:
-        if isinstance(msg, dict) and isinstance(msg.get("content"), list):
-            for item in msg["content"]:
-                if not isinstance(item, dict):
-                    continue
-                item_type = item.get("type")
-                if item_type == "function_call":
-                    item["type"] = "tool_call"
-                    if "function_call" in item:
-                        item["tool_call"] = item.pop("function_call")
-                elif item_type == "function_call_output":
-                    item["type"] = "tool_result"
-                    if "function_call_output" in item:
-                        item["tool_result"] = item.pop("function_call_output")
-                elif item_type == "openapi_call":
-                    item["type"] = "tool_call"
-                elif item_type == "openapi_call_output":
-                    item["type"] = "tool_result"
-                    if "openapi_call_output" in item:
-                        item["tool_result"] = item.pop("openapi_call_output")
-    return messages
-
-
-def _preprocess_messages(messages):
-    """Drop MCP approval messages and normalize function call types."""
-    messages = _drop_mcp_approval_messages(messages)
-    messages = _normalize_function_call_types(messages)
-    return messages
 
 
 class PromptyEvaluatorBase(EvaluatorBase[T]):

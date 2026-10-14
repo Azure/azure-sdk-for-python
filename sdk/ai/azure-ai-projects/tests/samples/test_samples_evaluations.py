@@ -7,7 +7,13 @@ import functools
 import os
 import re
 import pytest
-from devtools_testutils import recorded_by_proxy, AzureRecordedTestCase, RecordedTransport, EnvironmentVariableLoader
+from devtools_testutils import (
+    add_remove_header_sanitizer,
+    recorded_by_proxy,
+    AzureRecordedTestCase,
+    RecordedTransport,
+    EnvironmentVariableLoader,
+)
 from sample_executor import (
     SyncSampleExecutor,
     get_sample_paths,
@@ -92,12 +98,12 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     - sample_evaluations_ai_assisted.py (AI-assisted evaluators: Similarity, ROUGE, METEOR, GLEU, F1, BLEU)
     - sample_evaluation_cluster_insight.py (cluster insights generation)
 
-    Agentic evaluator samples (15):
+    Agentic evaluator samples (17):
     - sample_coherence.py
     - sample_fluency.py
     - sample_groundedness.py
     - sample_intent_resolution.py
-    - sample_quality_grader.py
+    - sample_output_quality.py
     - sample_relevance.py
     - sample_response_completeness.py
     - sample_task_adherence.py
@@ -108,6 +114,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     - sample_tool_input_accuracy.py
     - sample_tool_output_utilization.py
     - sample_tool_selection.py
+    - sample_tool_use_quality.py
     - sample_generic_agentic_evaluator.py
 
     Excluded samples and reasons:
@@ -157,6 +164,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_evaluations_builtin_with_csv.py",  # Requires CSV file upload prerequisite
                 "sample_synthetic_data_agent_evaluation.py",  # Synthetic data gen is long-running preview feature
                 "sample_synthetic_data_model_evaluation.py",  # Synthetic data gen is long-running preview feature
+                "sample_synthetic_multiturn_evaluation.py",  # Covered by dedicated end-to-end recorded test below
                 "sample_eval_catalog_prompt_based_evaluators.py",  # For some reason fails with 500 (Internal server error)
                 "sample_human_evaluations.py",  # Requires real Foundry App Insights connection string + emits OTel events; not suitable for recorded playback
                 "sample_multiturn_conversation_evaluation.py",  # PR #47034: new multi-turn sample, recording not yet available
@@ -176,7 +184,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         ),
     )
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_evaluation_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(
@@ -189,6 +197,33 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm()
 
+    @evaluationsPreparer()
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
+            "evaluations",
+            samples_to_test=["sample_synthetic_multiturn_evaluation.py"],
+        ),
+    )
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
+    def test_synthetic_multiturn_sample(self, sample_path: str, **kwargs) -> None:
+        """Run the synthetic multi-turn sample through generation, simulation, and evaluation."""
+        # The default test-proxy sanitizer rewrites Location to example.com.
+        # This LRO also returns Operation-Location, which is the correct polling URL.
+        add_remove_header_sanitizer(headers="Location", function_scoped=True)
+        env_vars = get_sample_env_vars(kwargs)
+        executor = SyncSampleExecutor(
+            self,
+            sample_path,
+            env_vars=env_vars,
+            validation_text_preprocessor=_preprocess_eval_validation,
+            **kwargs,
+        )
+        executor.execute()
+        # Execution is authoritative: the sample raises unless generation,
+        # simulation, and conversation-level evaluation all complete.
+
     # To run this test with a specific sample, use:
     # pytest tests/samples/test_samples_evaluations.py::TestSamplesEvaluations::test_agentic_evaluator_samples[sample_coherence]
     @evaluationsPreparer()
@@ -199,13 +234,15 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
             samples_to_skip=[
                 "sample_intent_resolution.py",  # Evaluator FAILED_EXECUTION: tool_definitions must be a list of dictionaries
                 "sample_quality_grader.py",
+                "sample_output_quality.py",  # New composite evaluator sample; recording not yet available
                 "sample_task_navigation_efficiency.py",  # Evaluator FAILED_EXECUTION: required 'actions' parameter is missing
                 "sample_tool_call_success.py",  # Sample data evaluates to failure (tool result has DB_CONNECTION_FAILED)
+                "sample_tool_use_quality.py",  # New composite evaluator sample; recording not yet available
             ],
         ),
     )
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agentic_evaluator_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(
@@ -221,7 +258,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     # To run this test, use:
     # pytest tests/samples/test_samples_evaluations.py::TestSamplesEvaluations::test_generic_agentic_evaluator_sample
     @evaluationsPreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_generic_agentic_evaluator_sample(self, **kwargs) -> None:
         # Manually construct path to nested sample
         current_dir = os.path.dirname(os.path.abspath(__file__))

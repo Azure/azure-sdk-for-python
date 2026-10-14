@@ -797,6 +797,22 @@ class TopicRuntimeProperties(object):
         return self._internal_td.subscription_count
 
     @property
+    def sql_filter_count(self) -> Optional[int]:
+        """The total number of SQL filters across all subscriptions of the topic.
+
+        :rtype: int or None
+        """
+        return self._internal_td.sql_filter_count
+
+    @property
+    def correlation_filter_count(self) -> Optional[int]:
+        """The total number of correlation filters across all subscriptions of the topic.
+
+        :rtype: int or None
+        """
+        return self._internal_td.correlation_filter_count
+
+    @property
     def scheduled_message_count(self) -> Optional[int]:
         """Number of scheduled messages.
 

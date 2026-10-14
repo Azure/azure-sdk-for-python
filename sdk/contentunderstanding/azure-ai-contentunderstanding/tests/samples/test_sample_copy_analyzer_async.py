@@ -22,7 +22,10 @@ import uuid
 import pytest
 from typing import Dict
 from devtools_testutils.aio import recorded_by_proxy_async
-from testpreparer_async import ContentUnderstandingPreparer, ContentUnderstandingClientTestBaseAsync
+from testpreparer_async import (
+    ContentUnderstandingPreparer,
+    ContentUnderstandingClientTestBaseAsync,
+)
 from azure.ai.contentunderstanding.models import (
     ContentAnalyzer,
     ContentAnalyzerConfig,
@@ -100,7 +103,9 @@ class TestSampleCopyAnalyzerAsync(ContentUnderstandingClientTestBaseAsync):
                 description="Schema for extracting company information",
                 fields={
                     "company_name": ContentFieldDefinition(
-                        type=ContentFieldType.STRING, method=GenerationMethod.EXTRACT, description="Name of the company"
+                        type=ContentFieldType.STRING,
+                        method=GenerationMethod.EXTRACT,
+                        description="Name of the company",
                     ),
                     "total_amount": ContentFieldDefinition(
                         type=ContentFieldType.NUMBER,
@@ -138,13 +143,15 @@ class TestSampleCopyAnalyzerAsync(ContentUnderstandingClientTestBaseAsync):
                 description="Source analyzer for copying",
                 config=source_config,
                 field_schema=source_field_schema,
-                models={"completion": "gpt-4.1"},
+                models={"completion": "gpt-5.2"},
                 tags={"modelType": "in_development"},
             )
 
             # Create the source analyzer
             create_poller = await client.begin_create_analyzer(
-                analyzer_id=source_analyzer_id, resource=source_analyzer, allow_replace=True
+                analyzer_id=source_analyzer_id,
+                resource=source_analyzer,
+                allow_replace=True,
             )
             source_result = await create_poller.result()
             print(f"[PASS] Source analyzer '{source_analyzer_id}' created successfully")

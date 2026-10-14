@@ -1,5 +1,11 @@
 # Azure Attestation client library for Python (conda)
 
+## 2026.09.01
+
+### Packages included
+
+- azure-security-attestation-1.0.0
+
 ## 2026.06.01
 
 ### Packages included

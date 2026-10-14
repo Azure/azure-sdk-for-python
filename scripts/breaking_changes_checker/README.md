@@ -200,3 +200,17 @@ C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> azpysdk breaking . --cha
 
 > **Note:** The apistub-based report is *functionally equivalent* to the import-based report (same namespaces, classes, enums, methods/overloads, properties and module functions) but not byte-identical — enum values reflect member names and the inherited `str`/`Mapping` boilerplate is omitted. Since both sides of a comparison use the same converter, those differences cancel out in the diff.
 
+## Run tests
+
+The default test command runs the full suite, including slow integration tests that generate full code reports for large packages:
+
+```bash
+python -m pytest tests/
+```
+
+Skip those slow tests for a faster local signal:
+
+```bash
+python -m pytest tests/ --fast
+```
+
