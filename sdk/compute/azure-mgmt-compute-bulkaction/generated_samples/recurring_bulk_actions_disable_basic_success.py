@@ -15,7 +15,7 @@ from azure.mgmt.compute.bulkaction import ComputeBulkActionsMgmtClient
     pip install azure-identity
     pip install azure-mgmt-compute-bulkaction
 # USAGE
-    python scheduled_actions_list_by_subscription_paged_success.py
+    python recurring_bulk_actions_disable_basic_success.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,11 +30,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.scheduled_actions.list_by_subscription()
-    for item in response:
-        print(item)
+    client.scheduled_actions.begin_disable(
+        resource_group_name="example-rg",
+        scheduled_action_name="weekday-start",
+    ).result()
 
 
-# x-ms-original-file: 2026-10-06-preview/ScheduledActions_ListBySubscription_PagedSuccess.json
+# x-ms-original-file: 2026-10-06-preview/RecurringBulkActions_Disable_BasicSuccess.json
 if __name__ == "__main__":
     main()

@@ -1,5 +1,39 @@
 # Release History
 
+## 1.0.0b6 (2026-10-13)
+
+### Features Added
+
+  - Model `BulkCreateCustomOverride` added property `extended_location`
+  - Model `BulkCreateCustomOverride` added property `placement`
+  - Model `BulkCreateCustomOverride` added property `zone`
+  - Model `BulkactionVMProperties` added property `billing_profile`
+  - Model `BulkactionVMProperties` added property `eviction_policy`
+  - Model `BulkactionVMProperties` added property `priority`
+  - Model `LocationBasedBulkCreate` added property `extended_location`
+  - Model `LocationBasedBulkCreate` added property `placement`
+  - Model `LocationBasedBulkCreateCustom` added property `extended_location`
+  - Model `LocationBasedBulkCreateCustom` added property `placement`
+  - Added model `BillingProfile`
+  - Added model `ExtendedLocation`
+  - Added enum `ExtendedLocationType`
+  - Added model `Placement`
+  - Added enum `ZonePlacementPolicyType`
+
+### Breaking Changes
+
+  - Model `BulkCreateCustomProperties` deleted or renamed its instance variable `min_capacity`
+  - Model `BulkCreateCustomProperties` deleted or renamed its instance variable `partial_fulfillment_policy`
+  - Model `BulkCreateCustomProperties` deleted or renamed its instance variable `priority_profile`
+  - Model `BulkCreateProperties` deleted or renamed its instance variable `min_capacity`
+  - Model `BulkCreateProperties` deleted or renamed its instance variable `partial_fulfillment_policy`
+  - Model `BulkCreateProperties` deleted or renamed its instance variable `priority_profile`
+  - Deleted or renamed model `BulkCreateCustomPriorityProfile`
+  - Deleted or renamed model `PartialFulfillmentMode`
+  - Deleted or renamed model `PartialFulfillmentPolicy`
+  - Deleted or renamed model `PartialFulfillmentReason`
+  - Deleted or renamed model `PriorityProfile`
+
 ## 1.0.0b5 (2026-09-29)
 
 ### Features Added
