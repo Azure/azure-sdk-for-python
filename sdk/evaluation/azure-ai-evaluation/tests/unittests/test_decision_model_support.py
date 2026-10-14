@@ -169,9 +169,68 @@ class TestDecisionModelRunnerConfiguration:
             "not-a-url",
         ],
     )
-    def test_endpoint_format_is_left_to_http_client(self, endpoint):
+    def test_endpoint_requires_secure_resource_url(self, endpoint):
+        if endpoint in (
+            "https://example.services.ai.azure.com",
+            "https://example.services.ai.azure.com/",
+            "https://example.services.ai.azure.com/api/projects/proj",
+        ):
+            runner = DecisionModelRunner({**DECISION_CONFIG, "azure_endpoint": endpoint})
+            assert runner._url == endpoint.rstrip("/") + "/providers/microsoft/v1/systemone"
+        else:
+            with pytest.raises(EvaluationException, match="HTTPS"):
+                DecisionModelRunner({**DECISION_CONFIG, "azure_endpoint": endpoint})
+
+    @pytest.mark.parametrize(
+        "endpoint",
+        ["http://localhost:8080", "http://LOCALHOST", "http://127.0.0.1:8080", "http://127.1.2.3", "http://[::1]:8080"],
+    )
+    def test_http_is_allowed_for_loopback(self, endpoint):
         runner = DecisionModelRunner({**DECISION_CONFIG, "azure_endpoint": endpoint})
         assert runner._url == endpoint.rstrip("/") + "/providers/microsoft/v1/systemone"
+
+    @pytest.mark.parametrize("authentication", ["key", "credential", "default"])
+    @pytest.mark.parametrize(
+        "endpoint",
+        [
+            "http://example.services.ai.azure.com",
+            "http://localhost.example.com",
+            "http://example-localhost",
+            "http://127.0.0.1.example.com",
+            "http://localhost@evil.example",
+            "http://evil.example@localhost",
+            "http://0.0.0.0",
+            "http://192.168.1.1",
+            "http://[::2]",
+            "http://local\thost",
+            "https://example.com\\@localhost",
+            "https://example.com?x=1",
+            "https://example.com#fragment",
+            "https://",
+            "https://example.com:bad",
+            "https://example.com:70000",
+            "https://example.com:",
+            "https://bad^host",
+            "https://bad..host",
+            "http://[::1%25anything]",
+            "https://example.com?",
+            "ftp://localhost",
+            "not-a-url",
+        ],
+    )
+    def test_invalid_endpoint_is_rejected_before_authentication_or_transport(self, client, endpoint, authentication):
+        config = {**DECISION_CONFIG, "azure_endpoint": endpoint}
+        credential = Mock()
+        if authentication != "key":
+            config.pop("api_key")
+        with patch.object(DecisionModelRunner, "_get_default_token", new_callable=AsyncMock) as default_token:
+            with pytest.raises(EvaluationException, match="HTTPS") as raised:
+                DecisionModelRunner(config, credential if authentication == "credential" else None)
+        assert raised.value.blame == ErrorBlame.USER_ERROR
+        assert endpoint not in str(raised.value)
+        credential.get_token.assert_not_called()
+        default_token.assert_not_called()
+        assert not client.calls
 
     def test_binary_probability_threshold(self):
         assert DecisionModelRunner(DECISION_CONFIG, binary=True).probability_threshold == 0.75
@@ -273,6 +332,7 @@ class TestDecisionModelRunnerRequests:
         with patch.object(AsyncAzureTokenProvider, "_initialize_async", new=AsyncMock(return_value=credential)):
             run(DecisionModelRunner(config))
         assert token_threads and all(token_thread != loop_thread for token_thread in token_threads)
+        credential.close.assert_called_once_with()
         assert client.calls[0]["headers"]["Authorization"] == "Bearer default-token"
 
     def test_default_credential_does_not_block_request_timeout(self, client):
@@ -297,6 +357,7 @@ class TestDecisionModelRunnerRequests:
         with patch.object(AsyncAzureTokenProvider, "_initialize_async", new=AsyncMock(return_value=credential)):
             asyncio.run(request())
         assert not client.calls
+        credential.close.assert_called_once_with()
 
     @pytest.mark.parametrize(
         "status, blame",

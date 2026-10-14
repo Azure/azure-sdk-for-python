@@ -10,11 +10,13 @@ as an evaluator score; that stays with the evaluator.
 
 import asyncio
 import inspect
+import ipaddress
 import json
 import math
 import os
 import time
 from typing import Any, Callable, Dict, List, Optional
+from urllib.parse import urlsplit
 
 from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy
 
@@ -161,7 +163,8 @@ class DecisionModelRunner:
     The model configuration must be tagged ``type="decision"`` and contain the Foundry resource endpoint
     (``azure_endpoint``) and the deployment name (``azure_deployment``). Authentication uses ``api_key`` when
     present, otherwise an Entra credential (from ``credential`` in the configuration or the constructor, or the
-    SDK default). ``api_version`` is accepted and ignored.
+    SDK default). The endpoint must use HTTPS; HTTP is permitted only for localhost or loopback IP literals.
+    Caller-supplied credentials remain caller-owned. ``api_version`` is accepted and ignored.
     ``probability_threshold`` (default 0.75) is only accepted when ``binary=True``.
 
     Execution controls are keyword-only and separate from model configuration. ``timeout_seconds`` bounds
@@ -219,6 +222,42 @@ class DecisionModelRunner:
         endpoint = model_config.get("azure_endpoint")
         if not isinstance(endpoint, str) or not endpoint.strip():
             raise _invalid_config("'azure_endpoint' must be a nonempty string.")
+        try:
+            parsed = urlsplit(endpoint)
+            hostname = parsed.hostname
+            port = parsed.port
+            loopback = hostname == "localhost"
+            if hostname and not loopback:
+                try:
+                    loopback = ipaddress.ip_address(hostname).is_loopback
+                except ValueError:
+                    labels = hostname.rstrip(".").encode("idna").decode("ascii").split(".")
+                    if any(
+                        not label
+                        or not label[0].isalnum()
+                        or not label[-1].isalnum()
+                        or not all(character.isalnum() or character == "-" for character in label)
+                        for label in labels
+                    ):
+                        raise ValueError
+            if (
+                any(character.isspace() or ord(character) < 32 or ord(character) == 127 for character in endpoint)
+                or "\\" in endpoint
+                or not hostname
+                or "%" in hostname
+                or parsed.netloc.endswith(":")
+                or parsed.username is not None
+                or parsed.password is not None
+                or "?" in endpoint
+                or "#" in endpoint
+                or (port is not None and port == 0)
+                or (parsed.scheme != "https" and not (parsed.scheme == "http" and loopback))
+            ):
+                raise ValueError
+        except ValueError:
+            raise _invalid_config(
+                "'azure_endpoint' must be a valid HTTPS URL; HTTP is allowed only for loopback."
+            ) from None
         deployment = model_config.get("azure_deployment")
         if not isinstance(deployment, str) or not deployment.strip():
             raise _invalid_config("'azure_deployment' must be the decision model deployment name.")
