@@ -516,5 +516,5 @@ example_receive_deferred_sync()
 example_schedule_ops_sync()
 example_receive_deadletter_sync()
 example_session_ops_sync()
-example_delete_and_purge_messages_sync()
-example_purge_messages_from_session_sync()
+# Delete and purge examples are intentionally not run automatically.
+# Call them explicitly only against disposable test entities.

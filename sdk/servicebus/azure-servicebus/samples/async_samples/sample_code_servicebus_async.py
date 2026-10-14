@@ -480,5 +480,5 @@ if __name__ == "__main__":
     asyncio.run(example_schedule_ops_async())
     asyncio.run(example_receive_deadletter_async())
     asyncio.run(example_session_ops_async())
-    asyncio.run(example_delete_and_purge_messages_async())
-    asyncio.run(example_purge_messages_from_session_async())
+    # Delete and purge examples are intentionally not run automatically.
+    # Call them explicitly only against disposable test entities.

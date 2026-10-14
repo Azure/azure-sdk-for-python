@@ -396,12 +396,14 @@ class AMQPClientAsync(AMQPClientSync):
         """
         start_time = time.monotonic()
         mgmt_link = None
+        created_link = False
         try:
             async with self._mgmt_link_lock_async:
                 try:
                     mgmt_link = self._mgmt_links[node]
                 except KeyError:
                     mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
+                    created_link = True
                     self._mgmt_links[node] = mgmt_link
                     await mgmt_link.open()
             while True:
@@ -417,7 +419,7 @@ class AMQPClientAsync(AMQPClientSync):
                 await self._connection.listen(wait=False)
             return mgmt_link
         except BaseException:
-            if mgmt_link is not None:
+            if created_link and mgmt_link is not None:
                 # Evict without yielding so another stalled setup cannot block error cleanup.
                 if self._mgmt_links.get(node) is mgmt_link:
                     self._mgmt_links.pop(node, None)

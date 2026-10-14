@@ -3,9 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import ast
 import asyncio
 import threading
 from datetime import datetime, timezone
+from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -32,6 +34,25 @@ from azure.servicebus.exceptions import OperationTimeoutError
 
 
 MAX_DELETE_MESSAGE_COUNT = 500
+
+
+@pytest.mark.parametrize("sample", [
+    ("sync_samples", "sample_code_servicebus.py"),
+    ("async_samples", "sample_code_servicebus_async.py"),
+])
+def test_destructive_sample_examples_are_standalone(sample):
+    source = Path(__file__).resolve().parents[2].joinpath("samples", *sample).read_text(encoding="utf-8")
+    tree = ast.parse(source)
+    startup = ast.Module(
+        body=[node for node in tree.body if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))],
+        type_ignores=[],
+    )
+    assert not any(
+        isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id.startswith(("example_delete", "example_purge"))
+        for node in ast.walk(startup)
+    )
 
 
 def test_batch_delete_request_keys_encode_as_amqp_strings():
@@ -156,6 +177,40 @@ def test_management_link_setup_converts_timeout_error():
 
     with pytest.raises(OperationTimeoutError):
         PyamqpTransport.mgmt_client_setup(client, node="$management", timeout=1)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("is_async", [False, True])
+@pytest.mark.parametrize(
+    "setup_error", [TimeoutError("setup timed out"), RuntimeError("setup failed"), asyncio.CancelledError()]
+)
+async def test_cached_management_link_is_not_closed_by_failed_borrower(is_async, setup_error):
+    client = object.__new__(AMQPClientAsync if is_async else AMQPClient)
+    link = MagicMock()
+    client._mgmt_links = {"$management": link}
+    if is_async:
+        client._mgmt_link_lock_async = asyncio.Lock()
+        client.auth_complete_async = AsyncMock(return_value=True)
+        link.ready = AsyncMock(side_effect=setup_error)
+        link.close = AsyncMock()
+    else:
+        client._mgmt_link_lock = threading.Lock()
+        client.auth_complete = MagicMock(return_value=True)
+        link.ready.side_effect = setup_error
+    with pytest.raises(type(setup_error)) as caught:
+        if is_async:
+            await client.open_mgmt_link_async()
+        else:
+            client.open_mgmt_link()
+    assert caught.value is setup_error
+    assert client._mgmt_links == {"$management": link}
+    link.close.assert_not_called()
+    link.ready.side_effect = None
+    link.ready.return_value = True
+    if is_async:
+        assert await client.open_mgmt_link_async() is link
+    else:
+        assert client.open_mgmt_link() is link
 
 
 @pytest.mark.asyncio

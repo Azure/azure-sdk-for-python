@@ -493,12 +493,14 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
         """
         start_time = time.monotonic()
         mgmt_link = None
+        created_link = False
         try:
             with self._mgmt_link_lock:
                 try:
                     mgmt_link = self._mgmt_links[node]
                 except KeyError:
                     mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
+                    created_link = True
                     self._mgmt_links[node] = mgmt_link
                     mgmt_link.open()
             while True:
@@ -514,7 +516,7 @@ class AMQPClient(object):  # pylint: disable=too-many-instance-attributes
                 self._connection.listen(wait=False)
             return mgmt_link
         except Exception:
-            if mgmt_link is not None:
+            if created_link and mgmt_link is not None:
                 with self._mgmt_link_lock:
                     if self._mgmt_links.get(node) is mgmt_link:
                         self._mgmt_links.pop(node, None)
