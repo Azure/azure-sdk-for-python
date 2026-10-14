@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.compute.bulkaction import ComputeBulkActionsMgmtClient
     pip install azure-identity
     pip install azure-mgmt-compute-bulkaction
 # USAGE
-    python scheduled_actions_list_by_resource_group_paged_success.py
+    python recurring_bulk_actions_detach_resources_basic_success.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +31,19 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.scheduled_actions.list_by_resource_group(
+    response = client.scheduled_actions.begin_detach_resources(
         resource_group_name="example-rg",
-    )
-    for item in response:
-        print(item)
+        scheduled_action_name="weekday-start",
+        body={
+            "resources": [
+                "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-rg/providers/Microsoft.Compute/virtualMachines/web-vm-01",
+                "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-rg/providers/Microsoft.Compute/virtualMachines/web-vm-02",
+            ]
+        },
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-10-06-preview/ScheduledActions_ListByResourceGroup_PagedSuccess.json
+# x-ms-original-file: 2026-10-06-preview/RecurringBulkActions_DetachResources_BasicSuccess.json
 if __name__ == "__main__":
     main()

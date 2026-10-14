@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +15,7 @@ from azure.mgmt.compute.bulkaction import ComputeBulkActionsMgmtClient
     pip install azure-identity
     pip install azure-mgmt-compute-bulkaction
 # USAGE
-    python scheduled_actions_detach_resources_partial_success.py
+    python recurring_bulk_actions_cancel_next_occurrence_entire_occurrence_success.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,19 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.scheduled_actions.begin_detach_resources(
+    response = client.scheduled_actions.begin_cancel_next_occurrence(
         resource_group_name="example-rg",
         scheduled_action_name="weekday-start",
-        body={
-            "resources": [
-                "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-rg/providers/Microsoft.Compute/virtualMachines/web-vm-01",
-                "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/example-rg/providers/Microsoft.Compute/virtualMachines/web-vm-02",
-            ]
-        },
+        body={"resourceIds": []},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-10-06-preview/ScheduledActions_DetachResources_PartialSuccess.json
+# x-ms-original-file: 2026-10-06-preview/RecurringBulkActions_CancelNextOccurrence_EntireOccurrenceSuccess.json
 if __name__ == "__main__":
     main()
