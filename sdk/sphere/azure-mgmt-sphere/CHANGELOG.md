@@ -8,17 +8,10 @@
   - Client `AzureSphereMgmtClient` added method `send_request`
 
 ### Breaking Changes
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
 
-  - Deleted or renamed model `CatalogListResult`
-  - Deleted or renamed model `CertificateListResult`
-  - Deleted or renamed model `CountDeviceResponse`
-  - Deleted or renamed model `DeploymentListResult`
-  - Deleted or renamed model `DeviceGroupListResult`
-  - Deleted or renamed model `DeviceListResult`
-  - Deleted or renamed model `ImageListResult`
-  - Deleted or renamed model `OperationListResult`
-  - Deleted or renamed model `PagedDeviceInsight`
-  - Deleted or renamed model `ProductListResult`
+### Other Changes
+  - Deleted model `CatalogListResult`/`CertificateListResult`/`CountDeviceResponse`/`DeploymentListResult`/`DeviceGroupListResult`/`DeviceListResult`/`ImageListResult`/`OperationListResult`/`PagedDeviceInsight`/`ProductListResult` which actually were not used by SDK users
 
 ## 1.0.0 (2024-03-26)
 
