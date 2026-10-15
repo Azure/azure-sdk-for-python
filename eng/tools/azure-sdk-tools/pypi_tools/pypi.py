@@ -45,27 +45,16 @@ class PyPIClient:
                 ca_certs=os.getenv("REQUESTS_CA_BUNDLE", None),
             )
 
-    def _pypi_http(self):
-        """Lazy PoolManager for pypi.org fallback when on AzDO backend."""
-        if not hasattr(self, "_pypi_http_pool"):
-            self._pypi_http_pool = PoolManager(
-                retries=Retry(total=3, raise_on_status=True),
-                ca_certs=os.getenv("REQUESTS_CA_BUNDLE", None),
-            )
-        return self._pypi_http_pool
-
     def _pypi_json_request(self, path):
-        """GET from pypi.org JSON API, using the active backend's http pool if on pypi, else fallback."""
-        if self._backend == "pypi":
-            url = "{host}{path}".format(host=self._host, path=path)
-            response = self._http.request("get", url)
-        else:
-            url = "https://pypi.org{path}".format(path=path)
-            response = self._pypi_http().request("get", url)
+        """GET from the configured public PyPI JSON endpoint."""
+        if self._backend != "pypi":
+            raise NotImplementedError("PyPI JSON requests are unavailable against Azure Artifacts")
+        url = "{host}{path}".format(host=self._host, path=path)
+        response = self._http.request("get", url)
         return json.loads(response.data.decode("utf-8"))
 
     # ------------------------------------------------------------------
-    # PyPI JSON endpoints (fall back to pypi.org when on AzDO backend)
+    # PyPI JSON endpoints
     # ------------------------------------------------------------------
 
     def project(self, package_name):
@@ -73,42 +62,52 @@ class PyPIClient:
             raise NotImplementedError("project() is only available against pypi.org")
         return self._pypi_json_request("/pypi/{}/json".format(package_name))
 
-    def project_release(self, package_name, version):
-        return self._pypi_json_request("/pypi/{}/{}/json".format(package_name, version))
-
     # ------------------------------------------------------------------
     # Shared interface
     # ------------------------------------------------------------------
 
-    def filter_packages_for_compatibility(self, package_name, version_set):
+    def filter_packages_for_compatibility(self, package_name, version_set, project=None):
         if self._backend != "pypi":
             raise NotImplementedError(
                 "filter_packages_for_compatibility() requires pypi.org (needs requires_python metadata)"
             )
         from packaging.specifiers import InvalidSpecifier, SpecifierSet
 
+        project = project or self.project(package_name)
+        releases = project.get("releases", {})
+        current_python = parse(".".join(map(str, sys.version_info[:3])))
         results: List[Version] = []
         for version in version_set:
-            requires_python = self.project_release(package_name, version)["info"]["requires_python"]
-            if requires_python:
-                try:
-                    if parse(".".join(map(str, sys.version_info[:3]))) in SpecifierSet(requires_python):
-                        results.append(version)
-                except InvalidSpecifier:
-                    logging.warn(f"Invalid python_requires {requires_python!r} for package {package_name}=={version}")
+            files = releases.get(str(version), [])
+            compatible = False
+            for release_file in files:
+                if release_file.get("yanked", False):
                     continue
-            else:
+                requires_python = release_file.get("requires_python")
+                if not requires_python:
+                    compatible = True
+                    break
+                try:
+                    if current_python in SpecifierSet(requires_python):
+                        compatible = True
+                        break
+                except InvalidSpecifier:
+                    logging.warning(
+                        "Invalid python_requires %r for package %s==%s",
+                        requires_python,
+                        package_name,
+                        version,
+                    )
+                    continue
+            if compatible:
                 results.append(version)
         return results
 
     def get_ordered_versions(self, package_name, filter_by_compatibility=False) -> List[Version]:
         if self._backend == "azdo":
-            versions = self._azdo.get_ordered_versions(package_name)
             if filter_by_compatibility:
-                logging.warning(
-                    "filter_by_compatibility is not supported against Azure Artifacts; returning unfiltered versions"
-                )
-            return versions
+                return self._azdo.get_python_compatible_versions(package_name)
+            return self._azdo.get_ordered_versions(package_name)
 
         project = self.project(package_name)
         versions: List[Version] = []
@@ -123,7 +122,7 @@ class PyPIClient:
         versions.sort()
 
         if filter_by_compatibility:
-            return self.filter_packages_for_compatibility(package_name, versions)
+            return self.filter_packages_for_compatibility(package_name, versions, project)
 
         return versions
 
