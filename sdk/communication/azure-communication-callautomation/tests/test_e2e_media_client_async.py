@@ -72,9 +72,6 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
         await self.terminate_call(unique_id)
         # Do not return anything from this test method
 
-    @pytest.mark.skip(
-        reason="Known issues - Bug 3949487: [GA4] [Python] [SDK] [Async] Get Participant fails with authentication error HMAC-SHA256, Bug 4182867: [SDK] Hmac Validation with ':' (GetParticipant) mismatch"
-    )
     @recorded_by_proxy_async
     async def test_add_and_mute_participant_in_a_call(self):
         caller = await self.identity_client.create_user()
@@ -117,9 +114,6 @@ class TestMediaAutomatedLiveTestAsync(CallAutomationRecordedTestCaseAsync):
 
         await self.terminate_call(unique_id)
 
-    @pytest.mark.skip(
-        reason="Known issues - Bug 3949487: [GA4] [Python] [SDK] [Async] Get Participant fails with authentication error HMAC-SHA256, Bug 4182867: [SDK] Hmac Validation with ':' (GetParticipant) mismatch"
-    )
     @recorded_by_proxy_async
     async def test_add_and_hold_unhold_participant_in_a_call(self):
         caller = await self.identity_client.create_user()
