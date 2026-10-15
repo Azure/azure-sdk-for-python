@@ -202,6 +202,7 @@ def main() -> None:
 
                 conversation_id = _stream_reply(project_client, agent_name)
                 conversations = project_client.beta.voice_agents.conversations
+                conversation = None
                 for attempt in range(15):
                     try:
                         conversation = conversations.get(agent_name, conversation_id)
