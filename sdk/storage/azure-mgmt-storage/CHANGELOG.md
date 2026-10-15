@@ -1,6 +1,6 @@
 # Release History
 
-## 25.3.0 (2026-10-14)
+## 25.3.0 (2026-10-15)
 
 ### Features Added
 
@@ -59,7 +59,7 @@
   - Added enum `ResourceProvisioningState`
   - Added model `TurboTier`
   - Added enum `TurboTierStatus`
-  - Operation group `ContextCachesOperations` added method `check_name_availability`
+  - Model `ContextCachesOperations` added method `check_name_availability`
   - Added operation group `BlobAccessPointConfigurationsOperations`
   - Added operation group `BlobAccessPointConnectionTestsOperations`
 

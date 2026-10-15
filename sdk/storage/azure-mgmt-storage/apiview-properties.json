@@ -674,5 +674,5 @@
         "azure.mgmt.storage.operations.UsagesOperations.list_by_location": "Microsoft.Storage.UsagesOperationGroup.listByLocation",
         "azure.mgmt.storage.aio.operations.UsagesOperations.list_by_location": "Microsoft.Storage.UsagesOperationGroup.listByLocation"
     },
-    "CrossLanguageVersion": "69c5f8e6a019"
+    "CrossLanguageVersion": "a1d8513df2ec"
 }
