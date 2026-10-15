@@ -57,7 +57,6 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_agent_code_interpreter_structured_inputs.py",  # No issue to run. Just postpone recording.
                 "sample_agent_azure_function.py",  # In the list of additional sample tests above due to more parameters needed
                 "sample_agent_computer_use.py",  # 400 BadRequestError: Invalid URI (URI string too long)
-                "sample_agent_browser_automation.py",  # APITimeoutError: request timed out
                 "sample_agent_openapi.py",  # 400 2/28/2026 validation/tool_user_error; failing weather GET curl call in OpenAPI tool
                 "sample_agent_memory_search.py",  # Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema
                 "sample_agent_to_agent.py",  # Skipped not sample should work, but not able to obtain a project endpoint that work with a2a at this moment
