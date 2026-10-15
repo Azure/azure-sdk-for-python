@@ -78,200 +78,42 @@
   - Added model `TuningOptionsProperties`
   - Added model `UpgradeSequence`
   - Added model `VirtualEndpointResourceProperties`
-  - Model `ServersOperations` added method `begin_migrate_network_mode`
-  - Model `ServersOperations` added method `begin_start_major_version_upgrade_precheck`
+  - Operation group `ServersOperations` added method `begin_migrate_network_mode`
+  - Operation group `ServersOperations` added method `begin_start_major_version_upgrade_precheck`
   - Added operation group `MaintenanceEventsOperations`
   - Added operation group `MajorVersionUpgradePrecheckOperations`
 
 ### Breaking Changes
 
-  - Model `AdministratorMicrosoftEntra` deleted or renamed its instance variable `object_id`
-  - Model `AdministratorMicrosoftEntra` deleted or renamed its instance variable `principal_name`
-  - Model `AdministratorMicrosoftEntra` deleted or renamed its instance variable `principal_type`
-  - Model `AdministratorMicrosoftEntra` deleted or renamed its instance variable `tenant_id`
-  - Model `AdministratorMicrosoftEntraAdd` deleted or renamed its instance variable `principal_name`
-  - Model `AdministratorMicrosoftEntraAdd` deleted or renamed its instance variable `principal_type`
-  - Model `AdministratorMicrosoftEntraAdd` deleted or renamed its instance variable `tenant_id`
-  - Model `AdvancedThreatProtectionSettingsModel` deleted or renamed its instance variable `creation_time`
-  - Model `AdvancedThreatProtectionSettingsModel` deleted or renamed its instance variable `state`
-  - Model `BackupAutomaticAndOnDemand` deleted or renamed its instance variable `backup_type`
-  - Model `BackupAutomaticAndOnDemand` deleted or renamed its instance variable `completed_time`
-  - Model `BackupAutomaticAndOnDemand` deleted or renamed its instance variable `source`
-  - Model `BackupsLongTermRetentionOperation` deleted or renamed its instance variable `backup_metadata`
-  - Model `BackupsLongTermRetentionOperation` deleted or renamed its instance variable `backup_name`
-  - Model `BackupsLongTermRetentionOperation` deleted or renamed its instance variable `data_transferred_in_bytes`
-  - Model `BackupsLongTermRetentionOperation` deleted or renamed its instance variable `datasource_size_in_bytes`
-  - Model `BackupsLongTermRetentionOperation` deleted or renamed its instance variable `end_time`
-  - Model `BackupsLongTermRetentionOperation` deleted or renamed its instance variable `error_code`
-  - Model `BackupsLongTermRetentionOperation` deleted or renamed its instance variable `error_message`
-  - Model `BackupsLongTermRetentionOperation` deleted or renamed its instance variable `percent_complete`
-  - Model `BackupsLongTermRetentionOperation` deleted or renamed its instance variable `start_time`
-  - Model `BackupsLongTermRetentionOperation` deleted or renamed its instance variable `status`
-  - Model `BackupsLongTermRetentionResponse` deleted or renamed its instance variable `backup_metadata`
-  - Model `BackupsLongTermRetentionResponse` deleted or renamed its instance variable `backup_name`
-  - Model `BackupsLongTermRetentionResponse` deleted or renamed its instance variable `data_transferred_in_bytes`
-  - Model `BackupsLongTermRetentionResponse` deleted or renamed its instance variable `datasource_size_in_bytes`
-  - Model `BackupsLongTermRetentionResponse` deleted or renamed its instance variable `end_time`
-  - Model `BackupsLongTermRetentionResponse` deleted or renamed its instance variable `error_code`
-  - Model `BackupsLongTermRetentionResponse` deleted or renamed its instance variable `error_message`
-  - Model `BackupsLongTermRetentionResponse` deleted or renamed its instance variable `percent_complete`
-  - Model `BackupsLongTermRetentionResponse` deleted or renamed its instance variable `start_time`
-  - Model `BackupsLongTermRetentionResponse` deleted or renamed its instance variable `status`
-  - Model `CapturedLog` deleted or renamed its instance variable `created_time`
-  - Model `CapturedLog` deleted or renamed its instance variable `last_modified_time`
-  - Model `CapturedLog` deleted or renamed its instance variable `size_in_kb`
-  - Model `CapturedLog` deleted or renamed its instance variable `type_properties_type`
-  - Model `CapturedLog` deleted or renamed its instance variable `url`
-  - Model `Configuration` deleted or renamed its instance variable `allowed_values`
-  - Model `Configuration` deleted or renamed its instance variable `data_type`
-  - Model `Configuration` deleted or renamed its instance variable `default_value`
-  - Model `Configuration` deleted or renamed its instance variable `description`
-  - Model `Configuration` deleted or renamed its instance variable `documentation_link`
-  - Model `Configuration` deleted or renamed its instance variable `is_config_pending_restart`
-  - Model `Configuration` deleted or renamed its instance variable `is_dynamic_config`
-  - Model `Configuration` deleted or renamed its instance variable `is_read_only`
-  - Model `Configuration` deleted or renamed its instance variable `source`
-  - Model `Configuration` deleted or renamed its instance variable `unit`
-  - Model `Configuration` deleted or renamed its instance variable `value`
-  - Model `ConfigurationForUpdate` deleted or renamed its instance variable `allowed_values`
-  - Model `ConfigurationForUpdate` deleted or renamed its instance variable `data_type`
-  - Model `ConfigurationForUpdate` deleted or renamed its instance variable `default_value`
-  - Model `ConfigurationForUpdate` deleted or renamed its instance variable `description`
-  - Model `ConfigurationForUpdate` deleted or renamed its instance variable `documentation_link`
-  - Model `ConfigurationForUpdate` deleted or renamed its instance variable `is_config_pending_restart`
-  - Model `ConfigurationForUpdate` deleted or renamed its instance variable `is_dynamic_config`
-  - Model `ConfigurationForUpdate` deleted or renamed its instance variable `is_read_only`
-  - Model `ConfigurationForUpdate` deleted or renamed its instance variable `source`
-  - Model `ConfigurationForUpdate` deleted or renamed its instance variable `unit`
-  - Model `ConfigurationForUpdate` deleted or renamed its instance variable `value`
-  - Model `Database` deleted or renamed its instance variable `charset`
-  - Model `Database` deleted or renamed its instance variable `collation`
-  - Model `FirewallRule` deleted or renamed its instance variable `end_ip_address`
-  - Model `FirewallRule` deleted or renamed its instance variable `start_ip_address`
-  - Model `LtrPreBackupResponse` deleted or renamed its instance variable `number_of_containers`
-  - Model `Migration` deleted or renamed its instance variable `cancel`
-  - Model `Migration` deleted or renamed its instance variable `current_status`
-  - Model `Migration` deleted or renamed its instance variable `dbs_to_cancel_migration_on`
-  - Model `Migration` deleted or renamed its instance variable `dbs_to_migrate`
-  - Model `Migration` deleted or renamed its instance variable `dbs_to_trigger_cutover_on`
-  - Model `Migration` deleted or renamed its instance variable `migrate_roles`
-  - Model `Migration` deleted or renamed its instance variable `migration_id`
-  - Model `Migration` deleted or renamed its instance variable `migration_instance_resource_id`
-  - Model `Migration` deleted or renamed its instance variable `migration_mode`
-  - Model `Migration` deleted or renamed its instance variable `migration_option`
-  - Model `Migration` deleted or renamed its instance variable `migration_window_end_time_in_utc`
-  - Model `Migration` deleted or renamed its instance variable `migration_window_start_time_in_utc`
-  - Model `Migration` deleted or renamed its instance variable `overwrite_dbs_in_target`
-  - Model `Migration` deleted or renamed its instance variable `secret_parameters`
-  - Model `Migration` deleted or renamed its instance variable `setup_logical_replication_on_source_db_if_needed`
-  - Model `Migration` deleted or renamed its instance variable `source_db_server_fully_qualified_domain_name`
-  - Model `Migration` deleted or renamed its instance variable `source_db_server_metadata`
-  - Model `Migration` deleted or renamed its instance variable `source_db_server_resource_id`
-  - Model `Migration` deleted or renamed its instance variable `source_type`
-  - Model `Migration` deleted or renamed its instance variable `ssl_mode`
-  - Model `Migration` deleted or renamed its instance variable `start_data_migration`
-  - Model `Migration` deleted or renamed its instance variable `target_db_server_fully_qualified_domain_name`
-  - Model `Migration` deleted or renamed its instance variable `target_db_server_metadata`
-  - Model `Migration` deleted or renamed its instance variable `target_db_server_resource_id`
-  - Model `Migration` deleted or renamed its instance variable `trigger_cutover`
-  - Model `MigrationResourceForPatch` deleted or renamed its instance variable `cancel`
-  - Model `MigrationResourceForPatch` deleted or renamed its instance variable `dbs_to_cancel_migration_on`
-  - Model `MigrationResourceForPatch` deleted or renamed its instance variable `dbs_to_migrate`
-  - Model `MigrationResourceForPatch` deleted or renamed its instance variable `dbs_to_trigger_cutover_on`
-  - Model `MigrationResourceForPatch` deleted or renamed its instance variable `migrate_roles`
-  - Model `MigrationResourceForPatch` deleted or renamed its instance variable `migration_mode`
-  - Model `MigrationResourceForPatch` deleted or renamed its instance variable `migration_window_start_time_in_utc`
-  - Model `MigrationResourceForPatch` deleted or renamed its instance variable `overwrite_dbs_in_target`
-  - Model `MigrationResourceForPatch` deleted or renamed its instance variable `secret_parameters`
-  - Model `MigrationResourceForPatch` deleted or renamed its instance variable `setup_logical_replication_on_source_db_if_needed`
-  - Model `MigrationResourceForPatch` deleted or renamed its instance variable `source_db_server_fully_qualified_domain_name`
-  - Model `MigrationResourceForPatch` deleted or renamed its instance variable `source_db_server_resource_id`
-  - Model `MigrationResourceForPatch` deleted or renamed its instance variable `start_data_migration`
-  - Model `MigrationResourceForPatch` deleted or renamed its instance variable `target_db_server_fully_qualified_domain_name`
-  - Model `MigrationResourceForPatch` deleted or renamed its instance variable `trigger_cutover`
-  - Model `ObjectRecommendation` deleted or renamed its instance variable `analyzed_workload`
-  - Model `ObjectRecommendation` deleted or renamed its instance variable `current_state`
-  - Model `ObjectRecommendation` deleted or renamed its instance variable `details`
-  - Model `ObjectRecommendation` deleted or renamed its instance variable `estimated_impact`
-  - Model `ObjectRecommendation` deleted or renamed its instance variable `implementation_details`
-  - Model `ObjectRecommendation` deleted or renamed its instance variable `improved_query_ids`
-  - Model `ObjectRecommendation` deleted or renamed its instance variable `initial_recommended_time`
-  - Model `ObjectRecommendation` deleted or renamed its instance variable `last_recommended_time`
-  - Model `ObjectRecommendation` deleted or renamed its instance variable `recommendation_reason`
-  - Model `ObjectRecommendation` deleted or renamed its instance variable `recommendation_type`
-  - Model `ObjectRecommendation` deleted or renamed its instance variable `times_recommended`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `group_ids`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_endpoint`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_link_service_connection_state`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `provisioning_state`
-  - Model `PrivateLinkResource` deleted or renamed its instance variable `group_id`
-  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_members`
-  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_zone_names`
-  - Model `Server` deleted or renamed its instance variable `administrator_login`
-  - Model `Server` deleted or renamed its instance variable `administrator_login_password`
-  - Model `Server` deleted or renamed its instance variable `auth_config`
-  - Model `Server` deleted or renamed its instance variable `availability_zone`
-  - Model `Server` deleted or renamed its instance variable `backup`
-  - Model `Server` deleted or renamed its instance variable `cluster`
-  - Model `Server` deleted or renamed its instance variable `create_mode`
-  - Model `Server` deleted or renamed its instance variable `data_encryption`
-  - Model `Server` deleted or renamed its instance variable `fully_qualified_domain_name`
-  - Model `Server` deleted or renamed its instance variable `high_availability`
-  - Model `Server` deleted or renamed its instance variable `maintenance_window`
-  - Model `Server` deleted or renamed its instance variable `minor_version`
-  - Model `Server` deleted or renamed its instance variable `network`
-  - Model `Server` deleted or renamed its instance variable `point_in_time_utc`
-  - Model `Server` deleted or renamed its instance variable `private_endpoint_connections`
-  - Model `Server` deleted or renamed its instance variable `replica`
-  - Model `Server` deleted or renamed its instance variable `replica_capacity`
-  - Model `Server` deleted or renamed its instance variable `replication_role`
-  - Model `Server` deleted or renamed its instance variable `source_server_resource_id`
-  - Model `Server` deleted or renamed its instance variable `state`
-  - Model `Server` deleted or renamed its instance variable `storage`
-  - Model `Server` deleted or renamed its instance variable `version`
-  - Model `ServerForPatch` deleted or renamed its instance variable `administrator_login`
-  - Model `ServerForPatch` deleted or renamed its instance variable `administrator_login_password`
-  - Model `ServerForPatch` deleted or renamed its instance variable `auth_config`
-  - Model `ServerForPatch` deleted or renamed its instance variable `availability_zone`
-  - Model `ServerForPatch` deleted or renamed its instance variable `backup`
-  - Model `ServerForPatch` deleted or renamed its instance variable `cluster`
-  - Model `ServerForPatch` deleted or renamed its instance variable `create_mode`
-  - Model `ServerForPatch` deleted or renamed its instance variable `data_encryption`
-  - Model `ServerForPatch` deleted or renamed its instance variable `high_availability`
-  - Model `ServerForPatch` deleted or renamed its instance variable `maintenance_window`
-  - Model `ServerForPatch` deleted or renamed its instance variable `network`
-  - Model `ServerForPatch` deleted or renamed its instance variable `replica`
-  - Model `ServerForPatch` deleted or renamed its instance variable `replication_role`
-  - Model `ServerForPatch` deleted or renamed its instance variable `storage`
-  - Model `ServerForPatch` deleted or renamed its instance variable `version`
-  - Model `VirtualEndpoint` deleted or renamed its instance variable `endpoint_type`
-  - Model `VirtualEndpoint` deleted or renamed its instance variable `members`
-  - Model `VirtualEndpoint` deleted or renamed its instance variable `virtual_endpoints`
-  - Model `VirtualEndpointResourceForPatch` deleted or renamed its instance variable `endpoint_type`
-  - Model `VirtualEndpointResourceForPatch` deleted or renamed its instance variable `members`
-  - Model `VirtualEndpointResourceForPatch` deleted or renamed its instance variable `virtual_endpoints`
-  - Deleted or renamed model `AdministratorMicrosoftEntraList`
-  - Deleted or renamed model `AdvancedThreatProtectionSettingsList`
-  - Deleted or renamed model `BackupAutomaticAndOnDemandList`
-  - Deleted or renamed model `CapabilityList`
-  - Deleted or renamed model `CapturedLogList`
-  - Deleted or renamed model `ConfigurationList`
-  - Deleted or renamed model `DatabaseList`
-  - Deleted or renamed model `FirewallRuleList`
-  - Deleted or renamed model `LtrServerBackupOperationList`
-  - Deleted or renamed model `MigrationDetailsLevel`
-  - Deleted or renamed model `MigrationList`
-  - Deleted or renamed model `ObjectRecommendationList`
-  - Deleted or renamed model `OperationList`
-  - Deleted or renamed model `PostgresMajorVersion`
-  - Deleted or renamed model `PrivateEndpointConnectionList`
-  - Deleted or renamed model `PrivateLinkResourceList`
-  - Deleted or renamed model `QuotaUsageList`
-  - Deleted or renamed model `ServerList`
-  - Deleted or renamed model `TuningOptionsList`
-  - Deleted or renamed model `VirtualEndpointsList`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `AdministratorMicrosoftEntra` moved instance variable `object_id`, `principal_name`, `principal_type` and `tenant_id` under property `properties` whose type is `AdministratorMicrosoftEntraProperties`
+  - Model `AdministratorMicrosoftEntraAdd` moved instance variable `principal_type`, `principal_name` and `tenant_id` under property `properties`
+  - Model `AdvancedThreatProtectionSettingsModel` moved instance variable `creation_time` and `state` under property `properties` whose type is `AdvancedThreatProtectionSettingsProperties`
+  - Model `BackupAutomaticAndOnDemand` moved instance variable `backup_type`, `completed_time` and `source` under property `properties` whose type is `BackupAutomaticAndOnDemandProperties`
+  - Model `BackupsLongTermRetentionOperation` moved instance variable `backup_metadata`, `backup_name`, `data_transferred_in_bytes`, `datasource_size_in_bytes`, `end_time`, `error_code`, `error_message`, `percent_complete`, `start_time` and `status` under property `properties` whose type is `BackupsLongTermRetentionResponseProperties`
+  - Model `BackupsLongTermRetentionResponse` moved instance variable `datasource_size_in_bytes`, `data_transferred_in_bytes`, `backup_name`, `backup_metadata`, `status`, `start_time`, `end_time`, `percent_complete`, `error_code` and `error_message` under property `properties`
+  - Model `CapturedLog` moved instance variable `created_time`, `last_modified_time`, `size_in_kb`, `type_properties_type` and `url` under property `properties` whose type is `CapturedLogProperties`
+  - Model `Configuration` moved instance variable `allowed_values`, `data_type`, `default_value`, `description`, `documentation_link`, `is_config_pending_restart`, `is_dynamic_config`, `is_read_only`, `source`, `unit` and `value` under property `properties` whose type is `ConfigurationProperties`
+  - Model `ConfigurationForUpdate` moved instance variable `value`, `description`, `default_value`, `data_type`, `allowed_values`, `source`, `is_dynamic_config`, `is_read_only`, `is_config_pending_restart`, `unit` and `documentation_link` under property `properties`
+  - Model `Database` moved instance variable `charset` and `collation` under property `properties` whose type is `DatabaseProperties`
+  - Model `FirewallRule` moved instance variable `end_ip_address` and `start_ip_address` under property `properties` whose type is `FirewallRuleProperties`
+  - Model `LtrPreBackupResponse` moved instance variable `number_of_containers` under property `properties`
+  - Model `Migration` moved instance variable `cancel`, `current_status`, `dbs_to_cancel_migration_on`, `dbs_to_migrate`, `dbs_to_trigger_cutover_on`, `migrate_roles`, `migration_id`, `migration_instance_resource_id`, `migration_mode`, `migration_option`, `migration_window_end_time_in_utc`, `migration_window_start_time_in_utc`, `overwrite_dbs_in_target`, `secret_parameters`, `setup_logical_replication_on_source_db_if_needed`, `source_db_server_fully_qualified_domain_name`, `source_db_server_metadata`, `source_db_server_resource_id`, `source_type`, `ssl_mode`, `start_data_migration`, `target_db_server_fully_qualified_domain_name`, `target_db_server_metadata`, `target_db_server_resource_id` and `trigger_cutover` under property `properties` whose type is `MigrationProperties`
+  - Model `MigrationResourceForPatch` moved instance variable `cancel`, `dbs_to_cancel_migration_on`, `dbs_to_migrate`, `dbs_to_trigger_cutover_on`, `migrate_roles`, `migration_mode`, `migration_window_start_time_in_utc`, `overwrite_dbs_in_target`, `secret_parameters`, `setup_logical_replication_on_source_db_if_needed`, `source_db_server_fully_qualified_domain_name`, `source_db_server_resource_id`, `start_data_migration`, `target_db_server_fully_qualified_domain_name` and `trigger_cutover` under property `properties` whose type is `MigrationPropertiesForPatch`
+  - Model `ObjectRecommendation` moved instance variable `analyzed_workload`, `current_state`, `details`, `estimated_impact`, `implementation_details`, `improved_query_ids`, `initial_recommended_time`, `last_recommended_time`, `recommendation_reason`, `recommendation_type` and `times_recommended` under property `properties` whose type is `ObjectRecommendationProperties`
+  - Model `PrivateEndpointConnection` moved instance variable `group_ids`, `private_endpoint`, `private_link_service_connection_state` and `provisioning_state` under property `properties` whose type is `PrivateEndpointConnectionProperties`
+  - Model `PrivateLinkResource` moved instance variable `group_id`, `required_members` and `required_zone_names` under property `properties` whose type is `PrivateLinkResourceProperties`
+  - Model `Server` moved instance variable `administrator_login`, `administrator_login_password`, `auth_config`, `availability_zone`, `backup`, `cluster`, `create_mode`, `data_encryption`, `fully_qualified_domain_name`, `high_availability`, `maintenance_window`, `minor_version`, `network`, `point_in_time_utc`, `private_endpoint_connections`, `replica`, `replica_capacity`, `replication_role`, `source_server_resource_id`, `state`, `storage` and `version` under property `properties` whose type is `ServerProperties`
+  - Model `ServerForPatch` moved instance variable `administrator_login`, `administrator_login_password`, `auth_config`, `availability_zone`, `backup`, `cluster`, `create_mode`, `data_encryption`, `high_availability`, `maintenance_window`, `network`, `replica`, `replication_role`, `storage` and `version` under property `properties` whose type is `ServerPropertiesForPatch`
+  - Model `VirtualEndpoint` moved instance variable `endpoint_type`, `members` and `virtual_endpoints` under property `properties` whose type is `VirtualEndpointResourceProperties`
+  - Model `VirtualEndpointResourceForPatch` moved instance variable `endpoint_type`, `members` and `virtual_endpoints` under property `properties` whose type is `VirtualEndpointResourceProperties`
   - Method `MigrationsOperations.list_by_target_server` changed its parameter `migration_list_filter` from `positional_or_keyword` to `keyword_only`
   - Method `TuningOptionsOperations.list_recommendations` changed its parameter `recommendation_type` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted models `AdministratorMicrosoftEntraList`/`AdvancedThreatProtectionSettingsList`/`BackupAutomaticAndOnDemandList`/`CapabilityList`/`CapturedLogList`/`ConfigurationList`/`DatabaseList`/`FirewallRuleList`/`LtrServerBackupOperationList`/`MigrationList`/`MigrationDetailsLevel`/`ObjectRecommendationList`/`OperationList`/`PostgresMajorVersion`/`PrivateEndpointConnectionList`/`PrivateLinkResourceList`/`QuotaUsageList`/`ServerList`/`TuningOptionsList`/`VirtualEndpointsList` which actually were not used by SDK users
 
 ## 3.0.0b3 (2026-09-29)
 
