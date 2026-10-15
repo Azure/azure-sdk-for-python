@@ -1,5 +1,249 @@
 # Release History
 
+## 1.0.0b3 (2026-10-15)
+
+### Features Added
+
+  - Client `HorizonDBMgmtClient` added operation group `authentications`
+  - Client `HorizonDBMgmtClient` added operation group `capabilities`
+  - Client `HorizonDBMgmtClient` added operation group `change_data_capture_capabilities`
+  - Client `HorizonDBMgmtClient` added operation group `change_data_capture_configurations`
+  - Client `HorizonDBMgmtClient` added operation group `change_data_capture_destinations`
+  - Client `HorizonDBMgmtClient` added operation group `clusters`
+  - Client `HorizonDBMgmtClient` added operation group `default_parameter_groups`
+  - Client `HorizonDBMgmtClient` added operation group `endpoints`
+  - Client `HorizonDBMgmtClient` added operation group `firewall_rules`
+  - Client `HorizonDBMgmtClient` added operation group `identity_assignments`
+  - Client `HorizonDBMgmtClient` added operation group `log_capture_configurations`
+  - Client `HorizonDBMgmtClient` added operation group `log_files`
+  - Client `HorizonDBMgmtClient` added operation group `maintenance_events`
+  - Client `HorizonDBMgmtClient` added operation group `microsoft_entra_administrators`
+  - Client `HorizonDBMgmtClient` added operation group `microsoft_entra_authentications`
+  - Client `HorizonDBMgmtClient` added operation group `nodes`
+  - Client `HorizonDBMgmtClient` added operation group `parameter_groups`
+  - Client `HorizonDBMgmtClient` added operation group `password_authentications`
+  - Client `HorizonDBMgmtClient` added operation group `pools`
+  - Client `HorizonDBMgmtClient` added operation group `private_endpoint_connections`
+  - Client `HorizonDBMgmtClient` added operation group `private_link_resources`
+  - Model `ParameterProperties` added property `default_value`
+  - Model `ParameterProperties` added property `value_source`
+  - Added model `ActivateChangeDataCaptureIdentityRequest`
+  - Added model `ActivateChangeDataCaptureIdentityResult`
+  - Added enum `AiModelManagementStatus`
+  - Added model `Authentication`
+  - Added enum `AuthenticationName`
+  - Added model `AuthenticationProperties`
+  - Added model `BackupProperties`
+  - Added model `BackupPropertiesForPatchUpdate`
+  - Added model `Capability`
+  - Added model `CapabilityProperties`
+  - Added model `ChangeDataCaptureCapability`
+  - Added model `ChangeDataCaptureCapabilityForPatchUpdate`
+  - Added model `ChangeDataCaptureCapabilityProperties`
+  - Added model `ChangeDataCaptureCapabilityPropertiesForPatchUpdate`
+  - Added model `ChangeDataCaptureConfiguration`
+  - Added model `ChangeDataCaptureConfigurationForPatchUpdate`
+  - Added model `ChangeDataCaptureConfigurationProperties`
+  - Added model `ChangeDataCaptureConfigurationPropertiesForPatchUpdate`
+  - Added enum `ChangeDataCaptureDesiredState`
+  - Added model `ChangeDataCaptureDestination`
+  - Added model `ChangeDataCaptureDestinationDetails`
+  - Added enum `ChangeDataCaptureDestinationEffectiveState`
+  - Added model `ChangeDataCaptureDestinationForPatchUpdate`
+  - Added model `ChangeDataCaptureDestinationProperties`
+  - Added model `ChangeDataCaptureDestinationPropertiesForPatchUpdate`
+  - Added enum `ChangeDataCaptureDestinationType`
+  - Added enum `ChangeDataCaptureEffectiveState`
+  - Added enum `ChangeDataCaptureEngineConfigurationState`
+  - Added enum `ChangeDataCaptureExtensionState`
+  - Added model `ChangeDataCaptureExtensionStatus`
+  - Added enum `ChangeDataCaptureIdentityActivationState`
+  - Added model `ChangeDataCaptureIdentityAssignmentProperties`
+  - Added enum `ChangeDataCaptureIdentityAssignmentState`
+  - Added enum `ChangeDataCaptureIdentityValidationState`
+  - Added model `ChangeDataCapturePrerequisiteStatus`
+  - Added enum `ChangeDataCaptureProtocol`
+  - Added enum `ChangeDataCaptureReadWriteEndpointState`
+  - Added enum `ChangeDataCaptureReplicationArchitecture`
+  - Added enum `ChangeDataCaptureReplicationState`
+  - Added model `ChangeDataCaptureReplicationStatus`
+  - Added model `ChangeDataCaptureStatus`
+  - Added enum `ChangeDataCaptureTopologyBindingState`
+  - Added model `ChangeDataCaptureTopologyBindingStatus`
+  - Added enum `ChangeDataCaptureUsageProfile`
+  - Added model `Cluster`
+  - Added model `ClusterCapability`
+  - Added enum `ClusterCreateMode`
+  - Added model `ClusterFeatureCapability`
+  - Added model `ClusterForPatchUpdate`
+  - Added model `ClusterProperties`
+  - Added model `ClusterPropertiesForPatchUpdate`
+  - Added enum `ClusterState`
+  - Added model `ComputeGenerationCapability`
+  - Added model `ComputeModelCapability`
+  - Added model `ComputeProcessorCapability`
+  - Added enum `ComputeProcessorType`
+  - Added model `ComputeSizeCapability`
+  - Added model `DefaultParameterGroup`
+  - Added model `DefaultParameterGroupProperties`
+  - Added model `Endpoint`
+  - Added model `EndpointProperties`
+  - Added enum `EndpointRole`
+  - Added enum `EndpointScope`
+  - Added model `FabricDestinationDetails`
+  - Added model `FirewallRule`
+  - Added model `FirewallRuleProperties`
+  - Added enum `GeoRedundancyState`
+  - Added model `HorizonDbClusterDataEncryption`
+  - Added model `HorizonDbClusterDataEncryptionForPatchUpdate`
+  - Added enum `HorizonDbClusterDataEncryptionType`
+  - Added enum `HorizonDbClusterEncryptionKeyStatus`
+  - Added enum `HorizonDbClusterIdentityType`
+  - Added model `HorizonDbClusterManagedServiceIdentity`
+  - Added model `IdentityAssignment`
+  - Added model `IdentityValidationStatus`
+  - Added model `LogCaptureConfiguration`
+  - Added model `LogCaptureConfigurationForPatchUpdate`
+  - Added model `LogCaptureConfigurationProperties`
+  - Added model `LogCaptureConfigurationPropertiesForPatchUpdate`
+  - Added enum `LogCaptureState`
+  - Added model `LogFile`
+  - Added model `LogFileDownloadUrl`
+  - Added model `LogFileProperties`
+  - Added enum `LogFileType`
+  - Added model `MaintenanceEvent`
+  - Added model `MaintenanceEventActionResponse`
+  - Added model `MaintenanceEventProperties`
+  - Added model `MaintenanceEventRescheduleRequest`
+  - Added enum `MaintenanceEventStatus`
+  - Added enum `MaintenanceType`
+  - Added model `MicrosoftEntraAdministrator`
+  - Added model `MicrosoftEntraAdministratorAdd`
+  - Added model `MicrosoftEntraAdministratorProperties`
+  - Added model `MicrosoftEntraAdministratorPropertiesForAdd`
+  - Added model `MicrosoftEntraAuthentication`
+  - Added model `MicrosoftEntraAuthenticationForPatchUpdate`
+  - Added enum `MicrosoftEntraAuthenticationName`
+  - Added model `MicrosoftEntraAuthenticationProperties`
+  - Added model `MicrosoftEntraAuthenticationPropertiesForPatchUpdate`
+  - Added model `NetworkForPatchUpdate`
+  - Added model `Node`
+  - Added model `NodeProperties`
+  - Added enum `NodeRole`
+  - Added enum `ParameterApplyMethod`
+  - Added model `ParameterGroup`
+  - Added model `ParameterGroupConnectionProperties`
+  - Added model `ParameterGroupForPatchUpdate`
+  - Added model `ParameterGroupProperties`
+  - Added model `ParameterGroupPropertiesForPatchUpdate`
+  - Added enum `ParameterGroupSyncStatus`
+  - Added enum `ParameterValueSource`
+  - Added model `PasswordAuthentication`
+  - Added model `PasswordAuthenticationForPatchUpdate`
+  - Added enum `PasswordAuthenticationName`
+  - Added model `PasswordAuthenticationProperties`
+  - Added model `PasswordAuthenticationPropertiesForPatchUpdate`
+  - Added model `Pool`
+  - Added model `PoolCapability`
+  - Added model `PoolComputeModel`
+  - Added model `PoolComputeModelForPatchUpdate`
+  - Added enum `PoolComputeModelType`
+  - Added model `PoolFeatureCapability`
+  - Added model `PoolForPatchUpdate`
+  - Added model `PoolHighAvailability`
+  - Added enum `PoolHighAvailabilityMode`
+  - Added model `PoolHighAvailabilityPatch`
+  - Added model `PoolParameterGroupReference`
+  - Added model `PoolParameterGroupReferenceForPatchUpdate`
+  - Added model `PoolProperties`
+  - Added model `PoolPropertiesForPatchUpdate`
+  - Added enum `PoolState`
+  - Added enum `PostgreSqlCapabilityVersion`
+  - Added enum `PostgreSqlVersion`
+  - Added model `PostgreSqlVersionCapability`
+  - Added model `PrivateLinkResource`
+  - Added model `ProvisionedComputeModelCapability`
+  - Added model `ReadWritePoolProperties`
+  - Added enum `ScheduledMaintenanceManagementType`
+  - Added model `ScheduledMaintenanceProperties`
+  - Added model `ScheduledMaintenancePropertiesForPatchUpdate`
+  - Added model `SystemScheduledMaintenanceProperties`
+  - Added operation group `AuthenticationsOperations`
+  - Added operation group `CapabilitiesOperations`
+  - Added operation group `ChangeDataCaptureCapabilitiesOperations`
+  - Added operation group `ChangeDataCaptureConfigurationsOperations`
+  - Added operation group `ChangeDataCaptureDestinationsOperations`
+  - Added operation group `ClustersOperations`
+  - Added operation group `DefaultParameterGroupsOperations`
+  - Added operation group `EndpointsOperations`
+  - Added operation group `FirewallRulesOperations`
+  - Added operation group `IdentityAssignmentsOperations`
+  - Added operation group `LogCaptureConfigurationsOperations`
+  - Added operation group `LogFilesOperations`
+  - Added operation group `MaintenanceEventsOperations`
+  - Added operation group `MicrosoftEntraAdministratorsOperations`
+  - Added operation group `MicrosoftEntraAuthenticationsOperations`
+  - Added operation group `NodesOperations`
+  - Added operation group `ParameterGroupsOperations`
+  - Added operation group `PasswordAuthenticationsOperations`
+  - Added operation group `PoolsOperations`
+  - Added operation group `PrivateEndpointConnectionsOperations`
+  - Added operation group `PrivateLinkResourcesOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `HorizonDBMgmtClient.horizon_db_administrators`
+  - Deleted or renamed client operation group `HorizonDBMgmtClient.horizon_db_clusters`
+  - Deleted or renamed client operation group `HorizonDBMgmtClient.horizon_db_firewall_rules`
+  - Deleted or renamed client operation group `HorizonDBMgmtClient.horizon_db_parameter_groups`
+  - Deleted or renamed client operation group `HorizonDBMgmtClient.horizon_db_pools`
+  - Deleted or renamed client operation group `HorizonDBMgmtClient.horizon_db_private_endpoint_connections`
+  - Deleted or renamed client operation group `HorizonDBMgmtClient.horizon_db_private_link_resources`
+  - Deleted or renamed client operation group `HorizonDBMgmtClient.horizon_db_replicas`
+  - Model `Network` deleted or renamed its instance variable `public_network_access`
+  - Deleted or renamed model `CreateModeCluster`
+  - Deleted or renamed model `CreateModePool`
+  - Deleted or renamed model `HorizonDbAdministrator`
+  - Deleted or renamed model `HorizonDbAdministratorAdd`
+  - Deleted or renamed model `HorizonDbAdministratorProperties`
+  - Deleted or renamed model `HorizonDbAdministratorPropertiesForAdd`
+  - Deleted or renamed model `HorizonDbCluster`
+  - Deleted or renamed model `HorizonDbClusterAuthConfig`
+  - Deleted or renamed model `HorizonDbClusterForPatchUpdate`
+  - Deleted or renamed model `HorizonDbClusterMirroring`
+  - Deleted or renamed model `HorizonDbClusterParameterGroupConnectionProperties`
+  - Deleted or renamed model `HorizonDbClusterProperties`
+  - Deleted or renamed model `HorizonDbClusterPropertiesForPatchUpdate`
+  - Deleted or renamed model `HorizonDbComputeModel`
+  - Deleted or renamed model `HorizonDbComputeModelType`
+  - Deleted or renamed model `HorizonDbFirewallRule`
+  - Deleted or renamed model `HorizonDbFirewallRuleProperties`
+  - Deleted or renamed model `HorizonDbParameterGroup`
+  - Deleted or renamed model `HorizonDbParameterGroupConnectionProperties`
+  - Deleted or renamed model `HorizonDbParameterGroupForPatchUpdate`
+  - Deleted or renamed model `HorizonDbParameterGroupProperties`
+  - Deleted or renamed model `HorizonDbParameterGroupPropertiesForPatchUpdate`
+  - Deleted or renamed model `HorizonDbPool`
+  - Deleted or renamed model `HorizonDbPoolProperties`
+  - Deleted or renamed model `HorizonDbPrivateLinkResource`
+  - Deleted or renamed model `HorizonDbReplica`
+  - Deleted or renamed model `HorizonDbReplicaForPatchUpdate`
+  - Deleted or renamed model `HorizonDbReplicaProperties`
+  - Deleted or renamed model `HorizonDbReplicaPropertiesForPatchUpdate`
+  - Deleted or renamed model `ManagedServiceIdentity`
+  - Deleted or renamed model `ManagedServiceIdentityType`
+  - Deleted or renamed model `ReplicaRole`
+  - Deleted or renamed model `State`
+  - Deleted or renamed model `ZonePlacementPolicy`
+  - Deleted or renamed model `HorizonDbAdministratorsOperations`
+  - Deleted or renamed model `HorizonDbClustersOperations`
+  - Deleted or renamed model `HorizonDbFirewallRulesOperations`
+  - Deleted or renamed model `HorizonDbParameterGroupsOperations`
+  - Deleted or renamed model `HorizonDbPoolsOperations`
+  - Deleted or renamed model `HorizonDbPrivateEndpointConnectionsOperations`
+  - Deleted or renamed model `HorizonDbPrivateLinkResourcesOperations`
+  - Deleted or renamed model `HorizonDbReplicasOperations`
+
 ## 1.0.0b2 (2026-08-20)
 
 ### Features Added
