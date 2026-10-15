@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
 if TYPE_CHECKING:
@@ -3151,6 +3151,32 @@ class ExternalHealthPolicy(TypedDict, total=False):
     gracePeriod: str
     """Grace period for newly created VMs or when the External Health policy is first applied on VMSS.
      Uses the ISO 8601 format. Minimum: 5 minutes (PT5M), Maximum: 4 hours (PT4H)."""
+
+
+class FlexProfile(TypedDict, total=False):
+    """Specifies the FlexProfile for a virtual machine. When set, Azure may deploy a compatible
+    alternative VM size based on capacity and placement considerations, and the deployed size is
+    returned in hardwareProfile.vmSize. See the properties.flexProfile description for the full
+    usage rules, including how it interacts with hardwareProfile.vmSize.
+
+    :ivar preferredVMSize: Specifies the preferred VM size, for example Standard_D4s_v5. Azure may
+     deploy a compatible alternative size based on capacity and placement considerations. Supported
+     VM families for FlexProfile may vary by region. The recommended way to get the list of
+     available sizes is using these APIs: `List all available virtual machine sizes in a region
+     <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_, `List all available virtual
+     machine sizes for resizing
+     <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. Required.
+    :vartype preferredVMSize: str
+    """
+
+    preferredVMSize: Required[str]
+    """Specifies the preferred VM size, for example Standard_D4s_v5. Azure may deploy a compatible
+     alternative size based on capacity and placement considerations. Supported VM families for
+     FlexProfile may vary by region. The recommended way to get the list of available sizes is using
+     these APIs: `List all available virtual machine sizes in a region
+     <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_, `List all available virtual
+     machine sizes for resizing
+     <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. Required."""
 
 
 class Gallery(TrackedResource):
@@ -7282,14 +7308,20 @@ class RestorePointInstanceView(TypedDict, total=False):
 
     :ivar diskRestorePoints: The disk restore points information.
     :vartype diskRestorePoints: list["DiskRestorePointInstanceView"]
-    :ivar statuses: The resource status information.
+    :ivar statuses: The aggregate status information for the restore point. The list may include
+     separate aggregate entries for replication and, in supported API versions, Instant Access, as
+     applicable. For more information about Instant Access, see `Use virtual machine restore points
+     <https://learn.microsoft.com/azure/virtual-machines/virtual-machines-create-restore-points#instant-access>`_.
     :vartype statuses: list["InstanceViewStatus"]
     """
 
     diskRestorePoints: list["DiskRestorePointInstanceView"]
     """The disk restore points information."""
     statuses: list["InstanceViewStatus"]
-    """The resource status information."""
+    """The aggregate status information for the restore point. The list may include separate aggregate
+     entries for replication and, in supported API versions, Instant Access, as applicable. For more
+     information about Instant Access, see `Use virtual machine restore points
+     <https://learn.microsoft.com/azure/virtual-machines/virtual-machines-create-restore-points#instant-access>`_."""
 
 
 class RestorePointProperties(TypedDict, total=False):
@@ -9892,6 +9924,10 @@ class VirtualMachineNetworkInterfaceIPConfigurationProperties(TypedDict, total=F
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
      values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype privateIPAddressVersion: Union[str, "IPVersions"]
+    :ivar privateIPAddressPrefixLength: The private IP address prefix length. If specified and the
+     allocation method is dynamic, the service will allocate a CIDR block instead of a single IP
+     address.
+    :vartype privateIPAddressPrefixLength: int
     :ivar applicationSecurityGroups: Specifies an array of references to application security
      group.
     :vartype applicationSecurityGroups: list["SubResource"]
@@ -9918,6 +9954,9 @@ class VirtualMachineNetworkInterfaceIPConfigurationProperties(TypedDict, total=F
     """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
      ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
      'IPv6'. Known values are: \"IPv4\" and \"IPv6\"."""
+    privateIPAddressPrefixLength: int
+    """The private IP address prefix length. If specified and the allocation method is dynamic, the
+     service will allocate a CIDR block instead of a single IP address."""
     applicationSecurityGroups: list["SubResource"]
     """Specifies an array of references to application security group."""
     applicationGatewayBackendAddressPools: list["SubResource"]
@@ -9956,6 +9995,16 @@ class VirtualMachineProperties(TypedDict, total=False):
 
     :ivar hardwareProfile: Specifies the hardware settings for the virtual machine.
     :vartype hardwareProfile: "HardwareProfile"
+    :ivar flexProfile: [Preview Feature] Specifies a FlexProfile for VM size. Azure may deploy a
+     compatible alternative VM size based on capacity and placement considerations, and returns the
+     deployed size in hardwareProfile.vmSize. A request that adds flexProfile must omit
+     hardwareProfile.vmSize. For a virtual machine that uses FlexProfile, a hardwareProfile.vmSize
+     equal to the deployed size is ignored, so a GET response can be sent back unchanged. A PATCH
+     request that omits flexProfile keeps it. A PUT request that omits flexProfile and sets
+     hardwareProfile.vmSize clears it. This property cannot exist along with a non-null
+     properties.availabilitySet, properties.capacityReservation, properties.host,
+     properties.hostGroup, properties.proximityPlacementGroup or properties.virtualMachineScaleSet.
+    :vartype flexProfile: "FlexProfile"
     :ivar scheduledEventsPolicy: Specifies Redeploy, Reboot and
      ScheduledEventsAdditionalPublishingTargets Scheduled Event related configurations for the
      virtual machine.
@@ -10068,6 +10117,16 @@ class VirtualMachineProperties(TypedDict, total=False):
 
     hardwareProfile: "HardwareProfile"
     """Specifies the hardware settings for the virtual machine."""
+    flexProfile: "FlexProfile"
+    """[Preview Feature] Specifies a FlexProfile for VM size. Azure may deploy a compatible
+     alternative VM size based on capacity and placement considerations, and returns the deployed
+     size in hardwareProfile.vmSize. A request that adds flexProfile must omit
+     hardwareProfile.vmSize. For a virtual machine that uses FlexProfile, a hardwareProfile.vmSize
+     equal to the deployed size is ignored, so a GET response can be sent back unchanged. A PATCH
+     request that omits flexProfile keeps it. A PUT request that omits flexProfile and sets
+     hardwareProfile.vmSize clears it. This property cannot exist along with a non-null
+     properties.availabilitySet, properties.capacityReservation, properties.host,
+     properties.hostGroup, properties.proximityPlacementGroup or properties.virtualMachineScaleSet."""
     scheduledEventsPolicy: "ScheduledEventsPolicy"
     """Specifies Redeploy, Reboot and ScheduledEventsAdditionalPublishingTargets Scheduled Event
      related configurations for the virtual machine."""
@@ -10935,6 +10994,10 @@ class VirtualMachineScaleSetIPConfigurationProperties(TypedDict, total=False):  
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
      values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype privateIPAddressVersion: Union[str, "IPVersion"]
+    :ivar privateIPAddressPrefixLength: The private IP address prefix length. If specified and the
+     allocation method is dynamic, the service will allocate a CIDR block instead of a single IP
+     address.
+    :vartype privateIPAddressPrefixLength: int
     :ivar applicationGatewayBackendAddressPools: Specifies an array of references to backend
      address pools of application gateways. A scale set can reference backend address pools of
      multiple application gateways. Multiple scale sets cannot use the same application gateway.
@@ -10963,6 +11026,9 @@ class VirtualMachineScaleSetIPConfigurationProperties(TypedDict, total=False):  
     """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
      ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
      'IPv6'. Known values are: \"IPv4\" and \"IPv6\"."""
+    privateIPAddressPrefixLength: int
+    """The private IP address prefix length. If specified and the allocation method is dynamic, the
+     service will allocate a CIDR block instead of a single IP address."""
     applicationGatewayBackendAddressPools: list["SubResource"]
     """Specifies an array of references to backend address pools of application gateways. A scale set
      can reference backend address pools of multiple application gateways. Multiple scale sets
@@ -11785,6 +11851,10 @@ class VirtualMachineScaleSetUpdateIPConfigurationProperties(TypedDict, total=Fal
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
      values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype privateIPAddressVersion: Union[str, "IPVersion"]
+    :ivar privateIPAddressPrefixLength: The private IP address prefix length. If specified and the
+     allocation method is dynamic, the service will allocate a CIDR block instead of a single IP
+     address.
+    :vartype privateIPAddressPrefixLength: int
     :ivar applicationGatewayBackendAddressPools: The application gateway backend address pools.
     :vartype applicationGatewayBackendAddressPools: list["SubResource"]
     :ivar applicationSecurityGroups: Specifies an array of references to application security
@@ -11807,6 +11877,9 @@ class VirtualMachineScaleSetUpdateIPConfigurationProperties(TypedDict, total=Fal
     """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
      ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
      'IPv6'. Known values are: \"IPv4\" and \"IPv6\"."""
+    privateIPAddressPrefixLength: Optional[int]
+    """The private IP address prefix length. If specified and the allocation method is dynamic, the
+     service will allocate a CIDR block instead of a single IP address."""
     applicationGatewayBackendAddressPools: list["SubResource"]
     """The application gateway backend address pools."""
     applicationSecurityGroups: list["SubResource"]
