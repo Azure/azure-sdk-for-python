@@ -50,11 +50,15 @@ def proxy_ca_environment(request, tmp_path, monkeypatch):
         "CIBW_ENVIRONMENT": 'CFLAGS="-DSTORAGE_TEST"',
     }.items():
         monkeypatch.setenv(name, value)
+    real_temporary_directory = proxy_trust.TemporaryDirectory
+    monkeypatch.setattr(
+        proxy_trust, "TemporaryDirectory", lambda **kwargs: real_temporary_directory(dir=tmp_path, **kwargs)
+    )
     return baseline, proxy_ca, {roots[0], roots[1]}
 
 
 @pytest.mark.parametrize("explicit_baseline", [False, True])
-def test_proxy_bundle(proxy_ca_environment, explicit_baseline, monkeypatch):
+def test_proxy_bundle(proxy_ca_environment, explicit_baseline, tmp_path, monkeypatch):
     baseline, proxy_ca, expected_roots = proxy_ca_environment
     if not explicit_baseline:
         monkeypatch.delenv("SSL_CERT_FILE")
@@ -62,20 +66,18 @@ def test_proxy_bundle(proxy_ca_environment, explicit_baseline, monkeypatch):
         expected_roots = set(ssl.create_default_context(cafile=str(baseline)).get_ca_certs(binary_form=True))
     before = os.environ.copy()
 
-    with proxy_trust.proxy_environment() as environment:
-        bundle = Path(environment["SSL_CERT_FILE"])
-        assert bundle.read_bytes() == baseline.read_bytes() + b"\n" + proxy_ca.read_bytes() + b"\n"
-        context = ssl.create_default_context(cafile=str(bundle))
-        assert set(context.get_ca_certs(binary_form=True)) == expected_roots
-        assert context.verify_mode == ssl.CERT_REQUIRED
-        assert context.check_hostname
-        expected_environment = {**before, "SSL_CERT_FILE": str(bundle)}
-        if sys.platform == "linux":
-            expected_environment["CIBW_CONTAINER_ENGINE_LINUX"] = environment["CIBW_CONTAINER_ENGINE_LINUX"]
-        assert environment == expected_environment
-        assert os.environ == before
-
-    assert not bundle.parent.exists()
+    assert proxy_trust.proxy_trust_required()
+    bundle = tmp_path / "combined.pem"
+    environment = proxy_trust.create_proxy_environment(bundle)
+    assert bundle.read_bytes() == baseline.read_bytes() + b"\n" + proxy_ca.read_bytes() + b"\n"
+    context = ssl.create_default_context(cafile=str(bundle))
+    assert set(context.get_ca_certs(binary_form=True)) == expected_roots
+    assert context.verify_mode == ssl.CERT_REQUIRED
+    assert context.check_hostname
+    expected_environment = {**before, "SSL_CERT_FILE": str(bundle)}
+    if sys.platform == "linux":
+        expected_environment["CIBW_CONTAINER_ENGINE_LINUX"] = environment["CIBW_CONTAINER_ENGINE_LINUX"]
+    assert environment == expected_environment
     assert os.environ == before
 
 
@@ -91,7 +93,7 @@ def test_proxy_bundle(proxy_ca_environment, explicit_baseline, monkeypatch):
         (None, "HTTPS_PROXY", ""),
     ],
 )
-def test_proxy_bundle_inactive(proxy_ca_environment, platform, name, value, monkeypatch):
+def test_proxy_trust_inactive(proxy_ca_environment, platform, name, value, monkeypatch):
     if platform:
         monkeypatch.setattr(sys, "platform", platform)
     monkeypatch.setenv("NODE_EXTRA_CA_CERTS", "unreadable-and-not-trusted-outside-1es.pem")
@@ -101,8 +103,21 @@ def test_proxy_bundle_inactive(proxy_ca_environment, platform, name, value, monk
         else:
             monkeypatch.setenv(name, value)
     before = os.environ.copy()
-    with proxy_trust.proxy_environment() as environment:
-        assert environment is None
+    monkeypatch.setattr(sys, "argv", ["run_with_1es_proxy_trust.py", "sdk_build"])
+    monkeypatch.setattr(
+        proxy_trust,
+        "TemporaryDirectory",
+        lambda **kwargs: pytest.fail("Inactive trust must not create temporary files."),
+    )
+
+    def run(command, **kwargs):
+        assert command == ["sdk_build"]
+        assert kwargs == {"env": None, "check": False}
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(proxy_trust.subprocess, "run", run)
+    assert not proxy_trust.proxy_trust_required()
+    assert proxy_trust.main() == 0
     assert os.environ == before
 
 
@@ -118,7 +133,7 @@ def test_proxy_bundle_inactive(proxy_ca_environment, platform, name, value, monk
         },
     ],
 )
-def test_linux_container_proxy_trust(proxy_ca_environment, settings, monkeypatch):
+def test_linux_container_proxy_trust(proxy_ca_environment, settings, tmp_path, monkeypatch):
     for name, value in {
         **settings,
         "HTTP_PROXY": "http://proxy.example.invalid:18080",
@@ -135,31 +150,28 @@ def test_linux_container_proxy_trust(proxy_ca_environment, settings, monkeypatch
         before.get("CIBW_CONTAINER_ENGINE_LINUX", before.get("CIBW_CONTAINER_ENGINE", "docker"))
     )
 
-    with proxy_trust.proxy_environment() as environment:
-        bundle = Path(environment["SSL_CERT_FILE"])
-        engine = OCIContainerEngineConfig.from_config_string(environment["CIBW_CONTAINER_ENGINE_LINUX"])
-        assert engine.name == original_engine.name
-        assert engine.disable_host_mount == original_engine.disable_host_mount
-        assert engine.create_args == (
-            *original_engine.create_args,
-            f"--volume={bundle}:{bundle}:ro",
-            "--env=SSL_CERT_FILE",
-            "--env=HTTPS_PROXY",
-            "--env=HTTP_PROXY",
-            "--env=NO_PROXY",
-            "--env=https_proxy",
-            "--env=http_proxy",
-            "--env=no_proxy",
-        )
-        assert environment == {
-            **before,
-            "SSL_CERT_FILE": str(bundle),
-            "CIBW_CONTAINER_ENGINE_LINUX": environment["CIBW_CONTAINER_ENGINE_LINUX"],
-        }
-        assert "test-only-token" not in environment["CIBW_CONTAINER_ENGINE_LINUX"]
-        assert os.environ == before
-
-    assert not bundle.exists()
+    bundle = tmp_path / "CA bundle with spaces.pem"
+    environment = proxy_trust.create_proxy_environment(bundle)
+    engine = OCIContainerEngineConfig.from_config_string(environment["CIBW_CONTAINER_ENGINE_LINUX"])
+    assert engine.name == original_engine.name
+    assert engine.disable_host_mount == original_engine.disable_host_mount
+    assert engine.create_args == (
+        *original_engine.create_args,
+        f"--volume={bundle}:{bundle}:ro",
+        "--env=SSL_CERT_FILE",
+        "--env=HTTPS_PROXY",
+        "--env=HTTP_PROXY",
+        "--env=NO_PROXY",
+        "--env=https_proxy",
+        "--env=http_proxy",
+        "--env=no_proxy",
+    )
+    assert environment == {
+        **before,
+        "SSL_CERT_FILE": str(bundle),
+        "CIBW_CONTAINER_ENGINE_LINUX": environment["CIBW_CONTAINER_ENGINE_LINUX"],
+    }
+    assert "test-only-token" not in environment["CIBW_CONTAINER_ENGINE_LINUX"]
     assert os.environ == before
 
 
@@ -178,54 +190,62 @@ def test_linux_container_preserves_package_environment(proxy_ca_environment, tmp
     arguments.package_dir = tmp_path
     arguments.config_file = str(config)
 
-    with proxy_trust.proxy_environment() as environment:
-        options = Options(platform="linux", command_line_arguments=arguments, env=environment)
-        build_options = options.build_options("cp310-manylinux_x86_64")
-        container_environment = build_options.environment.as_dictionary(
-            prev_environment={"SSL_CERT_FILE": environment["SSL_CERT_FILE"]}
-        )
-        assert container_environment["SSL_CERT_FILE"] == environment["SSL_CERT_FILE"]
-        assert container_environment["CFLAGS"] == "-DSTORAGE_TEST"
-        assert container_environment["PIP_INDEX_URL"] == environment["PIP_INDEX_URL"]
-        assert container_environment["MSRUSTUP_ACCESS_TOKEN"] == "test-only-token"
-        assert "--env=SSL_CERT_FILE" in build_options.container_engine.create_args
+    environment = proxy_trust.create_proxy_environment(tmp_path / "combined.pem")
+    options = Options(platform="linux", command_line_arguments=arguments, env=environment)
+    build_options = options.build_options("cp310-manylinux_x86_64")
+    container_environment = build_options.environment.as_dictionary(
+        prev_environment={"SSL_CERT_FILE": environment["SSL_CERT_FILE"]}
+    )
+    assert container_environment["SSL_CERT_FILE"] == environment["SSL_CERT_FILE"]
+    assert container_environment["CFLAGS"] == "-DSTORAGE_TEST"
+    assert container_environment["PIP_INDEX_URL"] == environment["PIP_INDEX_URL"]
+    assert container_environment["MSRUSTUP_ACCESS_TOKEN"] == "test-only-token"
+    assert "--env=SSL_CERT_FILE" in build_options.container_engine.create_args
 
 
 @pytest.mark.parametrize("proxy_ca_environment", ["linux"], indirect=True)
-def test_linux_lowercase_proxy(proxy_ca_environment, monkeypatch):
+def test_linux_lowercase_proxy(proxy_ca_environment, tmp_path, monkeypatch):
     monkeypatch.delenv("HTTPS_PROXY")
     monkeypatch.setenv("https_proxy", "http://proxy.example.invalid:18080")
-    with proxy_trust.proxy_environment() as environment:
-        assert Path(environment["SSL_CERT_FILE"]).is_file()
-        engine = OCIContainerEngineConfig.from_config_string(environment["CIBW_CONTAINER_ENGINE_LINUX"])
-        assert "--env=https_proxy" in engine.create_args
-        assert "--env=HTTPS_PROXY" not in engine.create_args
+    assert proxy_trust.proxy_trust_required()
+    environment = proxy_trust.create_proxy_environment(tmp_path / "combined.pem")
+    assert Path(environment["SSL_CERT_FILE"]).is_file()
+    engine = OCIContainerEngineConfig.from_config_string(environment["CIBW_CONTAINER_ENGINE_LINUX"])
+    assert "--env=https_proxy" in engine.create_args
+    assert "--env=HTTPS_PROXY" not in engine.create_args
 
 
 @pytest.mark.parametrize("proxy_ca_environment", ["linux"], indirect=True)
 def test_invalid_linux_container_engine_cleans_up(proxy_ca_environment, tmp_path, monkeypatch):
     monkeypatch.setenv("CIBW_CONTAINER_ENGINE_LINUX", "not-a-container-engine")
-    real_temporary_directory = proxy_trust.TemporaryDirectory
+    monkeypatch.setattr(sys, "argv", ["run_with_1es_proxy_trust.py", "sdk_build"])
     monkeypatch.setattr(
-        proxy_trust, "TemporaryDirectory", lambda **kwargs: real_temporary_directory(dir=tmp_path, **kwargs)
+        proxy_trust.subprocess,
+        "run",
+        lambda *args, **kwargs: pytest.fail("Invalid configuration must not launch a child."),
     )
     before = os.environ.copy()
     with pytest.raises(ValueError, match="unknown container engine"):
-        with proxy_trust.proxy_environment():
-            pytest.fail("Invalid container configuration must fail the command.")
+        proxy_trust.main()
     assert not list(tmp_path.glob("pipeline-proxy-ca-*"))
     assert os.environ == before
 
 
 @pytest.mark.parametrize("value", [None, ""])
-def test_missing_proxy_ca_path(proxy_ca_environment, value, monkeypatch):
+def test_missing_proxy_ca_path(proxy_ca_environment, value, tmp_path, monkeypatch):
     if value is None:
         monkeypatch.delenv("NODE_EXTRA_CA_CERTS")
     else:
         monkeypatch.setenv("NODE_EXTRA_CA_CERTS", value)
+    monkeypatch.setattr(sys, "argv", ["run_with_1es_proxy_trust.py", "sdk_build"])
+    monkeypatch.setattr(
+        proxy_trust.subprocess, "run", lambda *args, **kwargs: pytest.fail("Missing proxy CA must not launch a child.")
+    )
+    before = os.environ.copy()
     with pytest.raises(RuntimeError, match="CA path supplied in NODE_EXTRA_CA_CERTS"):
-        with proxy_trust.proxy_environment():
-            pytest.fail("Missing infrastructure configuration must fail the command.")
+        proxy_trust.main()
+    assert not list(tmp_path.glob("pipeline-proxy-ca-*"))
+    assert os.environ == before
 
 
 @pytest.mark.parametrize("source", ["baseline", "proxy"])
@@ -239,14 +259,15 @@ def test_invalid_certificates(proxy_ca_environment, source, state, tmp_path, mon
     else:
         certificate.write_text("" if state == "empty" else "not a certificate", encoding="ascii")
         expected_error = ssl.SSLError
-    real_temporary_directory = proxy_trust.TemporaryDirectory
+    monkeypatch.setattr(sys, "argv", ["run_with_1es_proxy_trust.py", "sdk_build"])
     monkeypatch.setattr(
-        proxy_trust, "TemporaryDirectory", lambda **kwargs: real_temporary_directory(dir=tmp_path, **kwargs)
+        proxy_trust.subprocess,
+        "run",
+        lambda *args, **kwargs: pytest.fail("Invalid certificates must not launch a child."),
     )
     before = os.environ.copy()
     with pytest.raises(expected_error):
-        with proxy_trust.proxy_environment():
-            pytest.fail("Missing or invalid CA certificates must fail the command.")
+        proxy_trust.main()
     assert not list(tmp_path.glob("pipeline-proxy-ca-*"))
     assert os.environ == before
 
