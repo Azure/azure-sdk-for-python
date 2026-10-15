@@ -88,7 +88,7 @@ steps:
             $markArg = "${{ parameters.TestMarkArgument }}"
           }
 
-          python eng/scripts/run_with_1es_proxy_trust.py python eng/scripts/dispatch_checks.py
+          python eng/scripts/run_with_1es_proxy_trust.py (Get-Command python).Source eng/scripts/dispatch_checks.py
           "$(TargetingString)"
           ${{ parameters.AdditionalTestArgs }}
           ${{ parameters.CoverageArg }}
@@ -111,7 +111,7 @@ steps:
           $markArg = "${{ parameters.TestMarkArgument }}"
         }
 
-        python eng/scripts/run_with_1es_proxy_trust.py python eng/scripts/dispatch_checks.py "$(TargetingString)" `
+        python eng/scripts/run_with_1es_proxy_trust.py (Get-Command python).Source eng/scripts/dispatch_checks.py "$(TargetingString)" `
           ${{ parameters.AdditionalTestArgs }} `
           ${{ parameters.CoverageArg }} `
           --mark_arg="$markArg" `
@@ -163,7 +163,7 @@ steps:
 
           Write-Host (Get-Command python).Source;
 
-          python eng/scripts/run_with_1es_proxy_trust.py python eng/scripts/dispatch_checks.py "$(TargetingString)" `
+          python eng/scripts/run_with_1es_proxy_trust.py (Get-Command python).Source eng/scripts/dispatch_checks.py "$(TargetingString)" `
             --service="${{ parameters.ServiceDirectory }}" `
             --checks="samples";
 
@@ -172,7 +172,7 @@ steps:
   - ${{ else }}:
     - pwsh: |
         Write-Host (Get-Command python).Source
-        python eng/scripts/run_with_1es_proxy_trust.py python eng/scripts/dispatch_checks.py "$(TargetingString)" `
+        python eng/scripts/run_with_1es_proxy_trust.py (Get-Command python).Source eng/scripts/dispatch_checks.py "$(TargetingString)" `
           --service="${{ parameters.ServiceDirectory }}" `
           --checks="samples";
         exit $LASTEXITCODE;

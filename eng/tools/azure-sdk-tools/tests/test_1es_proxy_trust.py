@@ -1,6 +1,7 @@
 import os
 import ssl
 import sys
+import venv
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -200,6 +201,18 @@ def test_inactive_child_inherits_environment(monkeypatch):
     assert proxy_trust.main() == 0
 
 
+def test_absolute_python_command_preserves_virtualenv(tmp_path, monkeypatch, capfd):
+    environment = tmp_path / "venv with spaces"
+    venv.EnvBuilder(with_pip=False).create(environment)
+    python = environment / ("Scripts" if os.name == "nt" else "bin") / ("python.exe" if os.name == "nt" else "python")
+    script = "import sys; print(sys.prefix); raise SystemExit(7)"
+    monkeypatch.setenv("TF_BUILD", "False")
+    monkeypatch.setattr(sys, "argv", ["run_with_1es_proxy_trust.py", str(python), "-c", script])
+
+    assert proxy_trust.main() == 7
+    assert Path(capfd.readouterr().out.strip()) == environment
+
+
 def test_missing_command(monkeypatch):
     monkeypatch.setattr(sys, "argv", ["run_with_1es_proxy_trust.py"])
     with pytest.raises(SystemExit) as error:
@@ -229,4 +242,7 @@ def test_pipeline_commands_use_wrapper(federated):
                     commands.append(step["pwsh"])
     assert len(commands) == 2
     for command in commands:
-        assert "python eng/scripts/run_with_1es_proxy_trust.py python eng/scripts/dispatch_checks.py" in command
+        assert (
+            "python eng/scripts/run_with_1es_proxy_trust.py (Get-Command python).Source eng/scripts/dispatch_checks.py"
+            in command
+        )
