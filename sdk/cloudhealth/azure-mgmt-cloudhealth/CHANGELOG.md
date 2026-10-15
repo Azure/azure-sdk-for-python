@@ -2,10 +2,7 @@
 
 ## 1.0.0 (2026-10-15)
 
-### Other Changes
-
-- Stable release of the Cloud Health management SDK.
-- Changed the default service API version from `2026-10-01-preview` to `2026-11-01`.
+tool can't generate changelog for this release, please update manually.
 
 ## 1.0.0b5 (2026-09-25)
 
