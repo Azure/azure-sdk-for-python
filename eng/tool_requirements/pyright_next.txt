@@ -1,0 +1,2 @@
+# Pins for the azpysdk `next-pyright` check. Single source of truth (see README.md).
+pyright==1.1.411
