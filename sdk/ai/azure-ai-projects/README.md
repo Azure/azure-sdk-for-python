@@ -228,10 +228,13 @@ the peer connection, media, and SDP offer/answer exchange using `rtc.call.sdp.cr
 ## Client-side tracing
 
 See [Add client-side tracing to Foundry agents (preview)](https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side?tabs=python).
+The same global Foundry tracing configuration applies to Voice Agents REST and realtime tracing.
 
 **Important:** GenAI tracing instrumentation is an experimental preview feature. Spans, attributes, and events may be modified in future versions. 
 
 Samples can be found in the sub-folders `agents/telemetry` and `telemetry` in the [Samples][samples] folder.
+For Voice Agents tracing, see the [synchronous](samples/agents/telemetry/sample_voice_agent_with_tracing.py)
+and [asynchronous](samples/agents/telemetry/sample_voice_agent_with_tracing_async.py) samples.
 
 ## Troubleshooting
 

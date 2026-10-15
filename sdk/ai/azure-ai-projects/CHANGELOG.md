@@ -4,10 +4,12 @@
 
 ### Features Added
 
+* Added experimental Voice Agents REST and realtime tracing through `AIProjectInstrumentor`, including correlated session, connection and response spans, tool/lifecycle events, aggregate audio sizes and existing GenAI response metrics. Existing tracing and content-recording settings apply; message content is not captured by default.
 * Added an optional `transport` keyword on synchronous and asynchronous realtime `connect()` using `VoiceAgentTransport.WEBSOCKET` or `VoiceAgentTransport.WEBRTC`. The SDK constructs the transport wire query internally.
 
 ### Sample updates
 
+* Added `sample_voice_agent_with_tracing.py` and its async counterpart in `samples/agents/telemetry`, demonstrating Foundry console tracing for Voice Agent REST lifecycle and realtime text-to-audio, HTTP status/event output, measured audio sizes, and resource cleanup.
 * Fixed the realtime audio conversation sample to enable input transcription, count only successfully sent audio payloads, and finish pending capture sends before printing transfer totals.
 * Fixed the conversation deletion snippet to handle the API's no-content response.
 * Updated Voice Agent samples to use `FOUNDRY_VOICE_AGENT_MODEL` for model configuration, retaining `FOUNDRY_VOICE_MODEL` as a deprecated fallback in `sample_voice_agent_with_tools.py`.
