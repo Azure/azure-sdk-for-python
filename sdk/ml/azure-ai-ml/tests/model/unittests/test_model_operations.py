@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, Iterable, Optional
+from typing import Dict, Generator, Iterable, Optional, cast
 from unittest.mock import Mock, patch
 
 import pytest
@@ -7,11 +7,11 @@ import pytest
 from azure.ai.ml import load_model
 from azure.ai.ml._restclient.arm_ml_service.models import (
     ModelContainer as ModelContainerData,
-    ModelContainerProperties as ModelContainerDetails,
     ModelVersion as ModelVersionData,
     ModelVersionProperties as ModelVersionDetails,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
+from azure.ai.ml.constants import ListViewType
 from azure.ai.ml.entities._assets import Model
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
 from azure.ai.ml.exceptions import ErrorTarget, ValidationException
@@ -25,7 +25,7 @@ def mock_datastore_operation(
     mock_operation_config: OperationConfig,
     mock_aml_services_2024_01_01_preview: Mock,
     mock_aml_services_2024_10_01_preview: Mock,
-) -> DatastoreOperations:
+) -> Generator[DatastoreOperations, None, None]:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
@@ -40,7 +40,7 @@ def mock_model_operation(
     mock_operation_config: OperationConfig,
     mock_aml_services_2022_05_01: Mock,
     mock_datastore_operation: Mock,
-) -> ModelOperations:
+) -> Generator[ModelOperations, None, None]:
     yield ModelOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
@@ -55,7 +55,7 @@ def mock_model_operation_reg(
     mock_operation_config: OperationConfig,
     mock_aml_services_2021_10_01_dataplanepreview: Mock,
     mock_datastore_operation: Mock,
-) -> ModelOperations:
+) -> Generator[ModelOperations, None, None]:
     yield ModelOperations(
         operation_scope=mock_registry_scope,
         operation_config=mock_operation_config,
@@ -131,6 +131,7 @@ version: 3"""
             return_value=Model(),
         ):
             model = load_model(source=p)
+            assert model.path is not None
             path = Path(model._base_path, model.path).resolve()
             mock_model_operation.create_or_update(model)
             mock_upload.assert_called_once_with(
@@ -147,8 +148,9 @@ version: 3"""
                 ignore_file=None,
                 blob_uri=None,
             )
-        mock_model_operation._model_versions_operation.create_or_update.assert_called_once()
-        assert "version='3'" in str(mock_model_operation._model_versions_operation.create_or_update.call_args)
+        create_or_update = cast(Mock, mock_model_operation._model_versions_operation.create_or_update)
+        create_or_update.assert_called_once()
+        assert "version='3'" in str(create_or_update.call_args)
 
     def test_create_autoincrement(
         self,
@@ -182,7 +184,7 @@ path: ./model.pkl"""
             mock_model_operation.create_or_update(model)
             mock_nextver.assert_called_once()
 
-            mock_model_operation._model_versions_operation.create_or_update.assert_called_once_with(
+            cast(Mock, mock_model_operation._model_versions_operation.create_or_update).assert_called_once_with(
                 body=model._to_rest_object(),
                 name=model.name,
                 version=mock_nextver.return_value,
@@ -191,14 +193,14 @@ path: ./model.pkl"""
             )
 
     def test_get_name_and_version(self, mock_model_operation: ModelOperations) -> None:
-        mock_model_operation._model_container_operation.get.return_value = None
+        cast(Mock, mock_model_operation._model_container_operation.get).return_value = None
         with patch(
             "azure.ai.ml.operations._model_operations.Model._from_rest_object",
             return_value=None,
         ):
             mock_model_operation.get(name="random_string", version="1")
-        mock_model_operation._model_versions_operation.get.assert_called_once()
-        assert mock_model_operation._model_container_operation.get.call_count == 0
+        cast(Mock, mock_model_operation._model_versions_operation.get).assert_called_once()
+        assert cast(Mock, mock_model_operation._model_container_operation.get).call_count == 0
 
     def test_get_no_version(self, mock_model_operation: ModelOperations) -> None:
         name = "random_string"
@@ -255,26 +257,35 @@ path: ./model.pkl"""
             result = mock_model_operation.get(name="test-model", label="latest")
 
         assert result is resolved
-        assert mock_model_operation._model_versions_operation.get.call_count == 0
+        assert cast(Mock, mock_model_operation._model_versions_operation.get).call_count == 0
 
     @patch.object(Model, "_from_rest_object", new=Mock())
     @patch.object(Model, "_from_container_rest_object", new=Mock())
     def test_list(self, mock_model_operation: ModelOperations) -> None:
-        mock_model_operation._model_versions_operation.list.return_value = [Mock(Model) for _ in range(10)]
-        mock_model_operation._model_container_operation.list.return_value = [Mock(Model) for _ in range(10)]
+        cast(Mock, mock_model_operation._model_versions_operation.list).return_value = [Mock(Model) for _ in range(10)]
+        cast(Mock, mock_model_operation._model_container_operation.list).return_value = [Mock(Model) for _ in range(10)]
         result = mock_model_operation.list()
         assert isinstance(result, Iterable)
-        mock_model_operation._model_container_operation.list.assert_called_once()
+        cast(Mock, mock_model_operation._model_container_operation.list).assert_called_once()
         mock_model_operation.list(name="random_string")
-        mock_model_operation._model_versions_operation.list.assert_called_once()
+        cast(Mock, mock_model_operation._model_versions_operation.list).assert_called_once()
+
+    @patch("azure.ai.ml.operations._model_operations.list_registry_assets")
+    def test_list_registry_versions_forwards_list_view_type(
+        self, mock_list_registry_assets: Mock, mock_model_operation_reg: ModelOperations
+    ) -> None:
+        result = mock_model_operation_reg.list(name="model-name", list_view_type=ListViewType.ARCHIVED_ONLY)
+
+        assert result is mock_list_registry_assets.return_value
+        assert mock_list_registry_assets.call_args.kwargs["list_view_type"] == ListViewType.ARCHIVED_ONLY
 
     def test_archive_version(self, mock_model_operation: ModelOperations) -> None:
         name = "random_string"
         model_version = Mock(ModelVersionData(properties=Mock(ModelVersionDetails())))
         version = "1"
-        mock_model_operation._model_versions_operation.get.return_value = model_version
+        cast(Mock, mock_model_operation._model_versions_operation.get).return_value = model_version
         mock_model_operation.archive(name=name, version=version)
-        mock_model_operation._model_versions_operation.create_or_update.assert_called_once_with(
+        cast(Mock, mock_model_operation._model_versions_operation.create_or_update).assert_called_once_with(
             name=name,
             version=version,
             workspace_name=mock_model_operation._workspace_name,
@@ -284,10 +295,10 @@ path: ./model.pkl"""
 
     def test_archive_container(self, mock_model_operation: ModelOperations) -> None:
         name = "random_string"
-        model_container = Mock(ModelContainerData(properties=Mock(ModelContainerDetails())))
-        mock_model_operation._model_container_operation.get.return_value = model_container
+        model_container = Mock()
+        cast(Mock, mock_model_operation._model_container_operation.get).return_value = model_container
         mock_model_operation.archive(name=name)
-        mock_model_operation._model_container_operation.create_or_update.assert_called_once_with(
+        cast(Mock, mock_model_operation._model_container_operation.create_or_update).assert_called_once_with(
             name=name,
             workspace_name=mock_model_operation._workspace_name,
             body=model_container,
@@ -298,9 +309,9 @@ path: ./model.pkl"""
         name = "random_string"
         model = Mock(ModelVersionData(properties=Mock(ModelVersionDetails())))
         version = "1"
-        mock_model_operation._model_versions_operation.get.return_value = model
+        cast(Mock, mock_model_operation._model_versions_operation.get).return_value = model
         mock_model_operation.restore(name=name, version=version)
-        mock_model_operation._model_versions_operation.create_or_update.assert_called_with(
+        cast(Mock, mock_model_operation._model_versions_operation.create_or_update).assert_called_with(
             name=name,
             version=version,
             workspace_name=mock_model_operation._workspace_name,
@@ -310,10 +321,10 @@ path: ./model.pkl"""
 
     def test_restore_container(self, mock_model_operation: ModelOperations) -> None:
         name = "random_string"
-        model_container = Mock(ModelContainerData(properties=Mock(ModelContainerDetails())))
-        mock_model_operation._model_container_operation.get.return_value = model_container
+        model_container = Mock()
+        cast(Mock, mock_model_operation._model_container_operation.get).return_value = model_container
         mock_model_operation.restore(name=name)
-        mock_model_operation._model_container_operation.create_or_update.assert_called_once_with(
+        cast(Mock, mock_model_operation._model_container_operation.create_or_update).assert_called_once_with(
             name=name,
             workspace_name=mock_model_operation._workspace_name,
             body=model_container,
@@ -399,6 +410,7 @@ path: ./model.pkl"""
             return_value=Model(),
         ):
             model = load_model(p)
+            assert model.path is not None
             path = Path(model._base_path, model.path).resolve()
             mock_model_operation.create_or_update(model)
             mock_upload.assert_called_once_with(
@@ -459,6 +471,8 @@ path: ./model.pkl"""
     def test_model_entity_class_exist(self):
         try:
             from azure.ai.ml.entities import WorkspaceModelReference
+
+            assert WorkspaceModelReference is not None
         except ImportError:
             assert False, "WorkspaceModelReference class not found"
 
@@ -487,7 +501,7 @@ path: ./model.pkl"""
             operation_config=mock_operation_config,
             service_client=Mock(),
             datastore_operations=mock_datastore_operation,
-            **{ModelOperations._IS_EVALUATOR: True},
+            __is_evaluator=True,
         )
         """Test that new version is created if models are of the same type."""
         model_name = f"model_random_string"
@@ -518,6 +532,7 @@ version: 3"""
         ):
             model = load_model(source=p)
             model.properties = new_properties
+            assert model.path is not None
             path = Path(model._base_path, model.path).resolve()
             mock_model_operation.create_or_update(model)
             mock_upload.assert_called_once_with(
@@ -534,7 +549,7 @@ version: 3"""
                 ignore_file=None,
                 blob_uri=None,
             )
-        mock_model_operation._model_versions_operation.create_or_update.assert_called_once()
+        cast(Mock, mock_model_operation._model_versions_operation.create_or_update).assert_called_once()
 
     @pytest.mark.parametrize(
         "old_properties,new_properties,message",
@@ -559,7 +574,7 @@ version: 3"""
             operation_config=mock_operation_config,
             service_client=Mock(),
             datastore_operations=mock_datastore_operation,
-            **{ModelOperations._IS_EVALUATOR: True},
+            __is_evaluator=True,
         )
         model_name = f"model_random_string"
         p = tmp_path / "model_full.yml"
@@ -647,34 +662,34 @@ path: ./model.pkl"""
         name = "test_model"
         version = "1"
         mock_model_version = Mock(ModelVersionData(properties=Mock(ModelVersionDetails())))
-        mock_model_operation._model_versions_operation.get.return_value = mock_model_version
+        cast(Mock, mock_model_operation._model_versions_operation.get).return_value = mock_model_version
 
         result = mock_model_operation._get_with_workspace(name=name, version=version)
 
-        mock_model_operation._model_versions_operation.get.assert_called_once_with(
+        cast(Mock, mock_model_operation._model_versions_operation.get).assert_called_once_with(
             name=name,
             version=version,
             workspace_name=mock_model_operation._workspace_name,
             **mock_model_operation._scope_kwargs,
         )
         assert result == mock_model_version
-        assert mock_model_operation._model_container_operation.get.call_count == 0
+        assert cast(Mock, mock_model_operation._model_container_operation.get).call_count == 0
 
     def test_get_with_workspace_without_version(self, mock_model_operation: ModelOperations) -> None:
         """Test _get_with_workspace retrieves model container when no version specified."""
         name = "test_model"
-        mock_model_container = Mock(ModelContainerData(properties=Mock(ModelContainerDetails())))
-        mock_model_operation._model_container_operation.get.return_value = mock_model_container
+        mock_model_container = Mock()
+        cast(Mock, mock_model_operation._model_container_operation.get).return_value = mock_model_container
 
         result = mock_model_operation._get_with_workspace(name=name, version=None)
 
-        mock_model_operation._model_container_operation.get.assert_called_once_with(
+        cast(Mock, mock_model_operation._model_container_operation.get).assert_called_once_with(
             name=name,
             workspace_name=mock_model_operation._workspace_name,
             **mock_model_operation._scope_kwargs,
         )
         assert result == mock_model_container
-        assert mock_model_operation._model_versions_operation.get.call_count == 0
+        assert cast(Mock, mock_model_operation._model_versions_operation.get).call_count == 0
 
     def test_get_with_registry_with_version(self, mock_model_operation_reg: ModelOperations) -> None:
         """Test _get_with_registry retrieves model with specific version from registry."""
@@ -721,11 +736,11 @@ path: ./model.pkl"""
         name = "test_model"
         version = "1"
         mock_model_version = Mock(ModelVersionData(properties=Mock(ModelVersionDetails())))
-        mock_model_operation._model_versions_operation.get.return_value = mock_model_version
+        cast(Mock, mock_model_operation._model_versions_operation.get).return_value = mock_model_version
 
         result = mock_model_operation._get(name=name, version=version)
 
-        mock_model_operation._model_versions_operation.get.assert_called_once_with(
+        cast(Mock, mock_model_operation._model_versions_operation.get).assert_called_once_with(
             name=name,
             version=version,
             workspace_name=mock_model_operation._workspace_name,
