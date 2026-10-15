@@ -1,5 +1,17 @@
 # Release History
 
+## 1.3.0b1 (Unreleased)
+
+### Features Added
+
+- Added immutable `InputDataPart` and `ResponseOutputDataDone` for structured application data in Bridge protocol `1.0`. Existing callbacks and explicit `ResponseNone` silent completion remain application-owned.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.2.0 (2026-09-29)
 
 ### Other Changes

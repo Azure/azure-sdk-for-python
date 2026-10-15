@@ -14,16 +14,73 @@ from starlette.websockets import WebSocketDisconnect
 
 from azure.ai.agentserver.invocations.voice import _voice_host as voice_host_module
 from azure.ai.agentserver.invocations.voice import (
+    InputDataPart,
     ResponseCreated,
+    ResponseDone,
+    ResponseNone,
+    ResponseOutputDataDone,
+    Session,
     SessionEnd,
     SessionReady,
+    SessionStart,
     SessionTermination,
     UserSpeechStarted,
+    UserMessage,
     VoiceAgentServerHost,
 )
 from azure.ai.agentserver.invocations.voice._codec import MAX_FRAME_BYTES, encode_outbound_message
 
 from conftest import _records_with_ws_extras
+
+
+@pytest.mark.parametrize("silent", [False, True])
+def test_data_and_silent_completion_over_websocket(silent: bool) -> None:
+    app = VoiceAgentServerHost(configure_observability=None)
+
+    @app.on_session_start
+    async def start(session: Session, event: SessionStart) -> None:
+        assert event.protocol_version == "1.0"
+        await session.send(SessionReady())
+
+    @app.on_user_message
+    async def data(session: Session, event: UserMessage) -> None:
+        if silent:
+            await session.send(ResponseNone(in_reply_to=(event.item_id,), reason="acknowledged"))
+            return
+        await session.send(ResponseCreated(response_id="r_data", in_reply_to=(event.item_id,)))
+        part = event.content[0]
+        assert isinstance(part, InputDataPart)
+        await session.send(ResponseOutputDataDone(response_id="r_data", item_id="it_data", data=part.data))
+        await session.send(ResponseDone(response_id="r_data"))
+
+    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+        websocket.send_text(
+            _voice_frame(
+                "session.start",
+                "m_start",
+                protocol_version="1.0",
+                reconnect=False,
+                response_timeouts={"first_output_ms": 1000, "idle_ms": 1000, "max_duration_ms": 5000},
+            )["text"]
+        )
+        assert websocket.receive_json()["type"] == "session.ready"
+        payload = {"type": "hubagent.metadata", "data": [True, None, {"key": "value"}]}
+        websocket.send_text(
+            _voice_frame(
+                "user.message",
+                "m_data",
+                item_id="in_data",
+                content=[{"type": "input_data", "data": payload}],
+            )["text"]
+        )
+        first = websocket.receive_json()
+        if silent:
+            assert first["type"] == "response.none"
+            assert first["in_reply_to"] == ["in_data"]
+        else:
+            assert first["type"] == "response.created"
+            assert websocket.receive_json()["data"] == payload
+            assert websocket.receive_json()["type"] == "response.done"
 
 
 def _voice_frame(message_type, message_id, **fields):
