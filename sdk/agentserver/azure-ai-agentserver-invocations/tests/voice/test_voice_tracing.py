@@ -22,6 +22,7 @@ from opentelemetry.trace import SpanContext, TraceFlags, TraceState
 from starlette.testclient import TestClient
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
+from azure.ai.agentserver.core._tracing import _FoundryEnrichmentSpanProcessor
 from azure.ai.agentserver.invocations._constants import InvocationsWSConstants
 from azure.ai.agentserver.invocations.voice import (
     Session,
@@ -1305,8 +1306,12 @@ def test_voice_default_observability_failure_is_content_free_and_fail_open(monke
     assert "private-observability-sentinel" not in caplog.text
 
 
-def test_voice_diagnostics_are_content_free(monkeypatch, caplog, spans):
-    _, exporter = spans
+def test_voice_diagnostics_are_content_free(monkeypatch, caplog):
+    provider = TracerProvider()
+    exporter = InMemorySpanExporter()
+    provider.add_span_processor(_FoundryEnrichmentSpanProcessor())
+    provider.add_span_processor(SimpleSpanProcessor(exporter))
+    monkeypatch.setattr(tracing_module, "_TRACER", provider.get_tracer("test.voice.diagnostics"))
     monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "private session sentinel")
     app = VoiceAgentServerHost(configure_observability=None)
 
@@ -1314,21 +1319,25 @@ def test_voice_diagnostics_are_content_free(monkeypatch, caplog, spans):
     async def on_session_start(_session, _event):
         raise RuntimeError("private-exception-sentinel")
 
-    with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
-        with TestClient(app).websocket_connect("/invocations_ws") as websocket:
-            websocket.send_json(_session_start_frame())
-            assert websocket.receive()["type"] == "websocket.close"
+    try:
+        with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
+            with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+                websocket.send_json(_session_start_frame())
+                assert websocket.receive()["type"] == "websocket.close"
 
-    assert "private session sentinel" not in caplog.text
-    assert "private-exception-sentinel" not in caplog.text
-    voice_records = [record for record in caplog.records if str(record.msg).startswith("Voice ")]
-    assert voice_records
-    for record in voice_records:
-        assert record.args == ()
-        assert record.exc_info is None
-    connection = _span_by_name(exporter, "agentserver.connection")
-    assert "private session sentinel" not in repr(connection.attributes)
-    assert all("private session sentinel" not in repr(span.attributes) for span in exporter.get_finished_spans())
+        assert "private session sentinel" not in caplog.text
+        assert "private-exception-sentinel" not in caplog.text
+        voice_records = [record for record in caplog.records if str(record.msg).startswith("Voice ")]
+        assert voice_records
+        for record in voice_records:
+            assert record.args == ()
+            assert record.exc_info is None
+        callback = _span_by_name(exporter, "voice.callback")
+        assert "microsoft.session.id" not in callback.attributes
+        assert "private session sentinel" not in repr(callback.attributes)
+        assert all("private session sentinel" not in repr(span.attributes) for span in exporter.get_finished_spans())
+    finally:
+        provider.shutdown()
 
 
 def test_connection_span_carries_safe_session_and_protocol_attributes(monkeypatch, spans):
