@@ -148,7 +148,7 @@ class TestTaskStartFailureSurfacesPlatform:
 class TestNoTaskManagerStillRunsHandler:
     """No task subsystem (opt-out) → handler runs in-process (non-durable)."""
 
-    def test_no_manager_background_runs_handler_ok(self) -> None:
+    def test_no_manager_background_runs_handler_ok(self, _switch_off: Any) -> None:
         # Plain TestClient (no `with` → no lifespan → no TaskManager installed)
         # → the outer catch swallows TaskManagerNotInitialized and runs the
         # handler in-process. Legitimate opt-out path, NOT a failure.
@@ -220,3 +220,97 @@ class TestNoTaskManagerSwallowsAndRunsInProcess:
             # In-process fallback runs the handler to completion; no error surface.
             assert "error" not in types, f"must not surface an error on opt-out, got: {types}"
             assert "response.completed" in types, f"expected completion, got: {types}"
+
+
+class TestSnapshotTaskActivation:
+    """Task definitions stay process-side; requests follow session activation."""
+
+    @pytest.mark.parametrize("stream", [False, True])
+    def test_enabled_missing_runtime_does_not_fall_back(
+        self, _switch_off: Any, monkeypatch: pytest.MonkeyPatch, stream: bool
+    ) -> None:
+        monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "true")
+        set_resilient_tasks_enabled(True)
+        called: list[bool] = []
+
+        async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
+            called.append(True)
+            return await _noop_handler(request, context, cancellation_signal)
+
+        with _build_client(handler) as http:
+            with pytest.raises(TaskManagerNotInitialized):
+                get_task_manager()
+            response = http.post(
+                "/responses",
+                json={"model": "test", "input": "hi", "stream": stream, "store": True},
+            )
+            if stream:
+                types = [event["type"] for event in _collect_sse_events(response.text)]
+                assert "error" in types
+                assert "response.completed" not in types
+            else:
+                assert response.status_code == 500, response.text
+                assert response.headers.get(ERROR_SOURCE) == "platform"
+            assert not called
+
+    @pytest.mark.parametrize("value", [None, "false"])
+    @pytest.mark.parametrize("stream", [False, True])
+    def test_cold_start_missing_runtime_keeps_in_process_fallback(
+        self, _switch_off: Any, monkeypatch: pytest.MonkeyPatch, value: str | None, stream: bool
+    ) -> None:
+        if value is None:
+            monkeypatch.delenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", raising=False)
+        else:
+            monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", value)
+        set_resilient_tasks_enabled(True)
+        called: list[bool] = []
+
+        async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
+            called.append(True)
+            return await _noop_handler(request, context, cancellation_signal)
+
+        # Plain TestClient (no `with`): the lifespan never runs, so no manager exists.
+        response = _build_client(handler).post(
+            "/responses",
+            json={"model": "test", "input": "hi", "stream": stream, "store": True},
+        )
+        assert response.status_code == 200, response.text
+        assert ERROR_SOURCE not in response.headers
+        if stream:
+            types = [event["type"] for event in _collect_sse_events(response.text)]
+            assert "error" not in types
+            assert "response.completed" in types
+        assert called
+
+    def test_requests_after_restore_use_registered_task_runtime(
+        self, _switch_off: Any, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "true")
+        set_resilient_tasks_enabled(True)
+        with _build_client() as http:
+            with pytest.raises(TaskManagerNotInitialized):
+                get_task_manager()
+            restored = http.post(
+                "/_agent/after-restore",
+                json={
+                    "session_context": {
+                        "session_id": "restored-session",
+                        "restore_id": "restore-1",
+                        "session_env_overrides": {},
+                    }
+                },
+            )
+            assert restored.status_code == 200, restored.text
+            manager = get_task_manager()
+            assert manager._config.session_id == "restored-session"
+            assert {
+                "responses_resilient_one_shot",
+                "responses_resilient_multi_turn",
+            }.issubset(manager._resume_callbacks)
+            response = http.post(
+                "/responses",
+                json={"model": "test", "input": "hi", "stream": False, "store": True},
+            )
+            assert response.status_code == 200, response.text
+            assert response.json()["status"] == "completed"
+            assert ERROR_SOURCE not in response.headers
