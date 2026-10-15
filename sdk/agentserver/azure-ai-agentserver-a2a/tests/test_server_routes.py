@@ -7,6 +7,7 @@ from typing import cast
 from unittest.mock import patch
 
 import pytest
+from a2a.helpers import new_text_message
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events import EventQueue
 from a2a.server.request_handlers import DefaultRequestHandler, RequestHandler
@@ -21,14 +22,24 @@ from azure.ai.agentserver.a2a._version import VERSION
 from azure.ai.agentserver.core import get_request_context
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
-_RPC_PATH = "/invocations/a2a"
-_CARD_PATH = "/invocations/a2a/.well-known/agent-card.json"
+_RPC_PATH = "/a2a"
+_CARD_PATH = "/a2a/.well-known/agent-card.json"
 
 
 class _NoOpExecutor(AgentExecutor):
     async def execute(self, context: RequestContext, event_queue: EventQueue) -> None:
         del context, event_queue
         raise NotImplementedError
+
+    async def cancel(self, context: RequestContext, event_queue: EventQueue) -> None:
+        del context, event_queue
+        raise NotImplementedError
+
+
+class _StreamingExecutor(AgentExecutor):
+    async def execute(self, context: RequestContext, event_queue: EventQueue) -> None:
+        del context
+        await event_queue.enqueue_event(new_text_message("streamed"))
 
     async def cancel(self, context: RequestContext, event_queue: EventQueue) -> None:
         del context, event_queue
@@ -47,7 +58,7 @@ def _agent_card() -> AgentCard:
             AgentInterface(
                 protocol_binding="JSONRPC",
                 protocol_version="1.0",
-                url="http://localhost:8088/invocations/a2a",
+                url="http://localhost:8088/a2a",
             )
         ],
         skills=[],
@@ -79,7 +90,7 @@ def test_registers_only_canonical_a2a_routes():
 
     assert paths == [_RPC_PATH, _CARD_PATH, "/readiness"]
     assert "/.well-known/agent-card.json" not in paths
-    assert "/invocations/a2a/extendedAgentCard" not in paths
+    assert "/a2a/extendedAgentCard" not in paths
 
 
 @pytest.mark.asyncio
@@ -102,6 +113,43 @@ async def test_jsonrpc_route_does_not_redirect_trailing_slash(client_factory):
 
     assert response.status_code == 200
     assert response.headers.get("location") is None
+
+
+@pytest.mark.asyncio
+async def test_send_streaming_message_returns_sse(client_factory):
+    card = _agent_card()
+    card.capabilities.streaming = True
+    host = A2AAgentServerHost(
+        agent_card=card,
+        request_handler=DefaultRequestHandler(
+            agent_executor=_StreamingExecutor(),
+            task_store=InMemoryTaskStore(),
+            agent_card=card,
+        ),
+        configure_observability=None,
+    )
+
+    async with client_factory(host) as client:
+        response = await client.post(
+            _RPC_PATH,
+            headers={"A2A-Version": "1.0"},
+            json={
+                "jsonrpc": "2.0",
+                "id": "stream",
+                "method": "SendStreamingMessage",
+                "params": {
+                    "message": {
+                        "messageId": "m1",
+                        "role": "ROLE_USER",
+                        "parts": [{"text": "hello"}],
+                    }
+                },
+            },
+        )
+
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/event-stream")
+    assert "data:" in response.text
 
 
 @pytest.mark.asyncio
@@ -137,7 +185,7 @@ async def test_binds_and_resets_platform_request_context(client_factory):
     assert response.json() == {
         "call_id": "call-123",
         "user_id": "user-456",
-        "session_id": "session-789",
+        "session_id": None,
         "outbound_headers": {"x-agent-foundry-call-id": "call-123"},
     }
     assert get_request_context().call_id is None

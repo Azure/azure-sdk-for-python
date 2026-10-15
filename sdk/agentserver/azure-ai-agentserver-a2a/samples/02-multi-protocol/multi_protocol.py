@@ -56,7 +56,7 @@ card = AgentCard(
         AgentInterface(
             protocol_binding="JSONRPC",
             protocol_version="1.0",
-            url="http://localhost:8088/invocations/a2a",
+            url="http://localhost:8088/a2a",
         )
     ],
     skills=[],

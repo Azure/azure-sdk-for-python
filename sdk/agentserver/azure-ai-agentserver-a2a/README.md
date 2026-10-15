@@ -29,17 +29,17 @@ pip install azure-ai-agentserver-a2a
 
 `A2AAgentServerHost` is an `AgentServerHost` subclass that:
 
-- registers the native JSON-RPC handler at `POST /invocations/a2a`;
+- registers the native JSON-RPC handler at `POST /a2a`;
 - registers the native public agent card at
-  `GET /invocations/a2a/.well-known/agent-card.json`;
-- captures `x-agent-foundry-call-id`, `x-agent-user-id`, and
-  `x-agent-session-id` in the request-scoped Foundry context;
+  `GET /a2a/.well-known/agent-card.json`;
+- captures `x-agent-foundry-call-id` and `x-agent-user-id` in the
+  request-scoped Foundry context;
 - provides `/readiness`, port configuration, telemetry, and graceful shutdown
   through `azure-ai-agentserver-core`.
 
-The Foundry passthrough advertises only the JSON-RPC binding. Streaming, push
-notifications, the authenticated extended card, HTTP+JSON/REST, and gRPC are
-not exposed in the initial release.
+The Foundry passthrough advertises only the JSON-RPC binding, including
+`SendStreamingMessage` responses over SSE. Push notifications, the authenticated
+extended card, HTTP+JSON/REST, and gRPC are not exposed in the initial release.
 
 ## Examples
 

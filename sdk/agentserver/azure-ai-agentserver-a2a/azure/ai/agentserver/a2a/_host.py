@@ -5,17 +5,12 @@
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Awaitable, Callable
-from typing import Any, Optional
+from typing import Any, MutableMapping, Optional
 
-from a2a.server.request_handlers import RequestHandler
-from a2a.server.routes import (
-    ServerCallContextBuilder,
-    create_agent_card_routes,
-    create_jsonrpc_routes,
-)
-from a2a.types import AgentCard
 from starlette.datastructures import Headers
+from starlette.responses import JSONResponse
 from starlette.routing import Route
 from starlette.types import ASGIApp, Receive, Scope, Send
 
@@ -27,16 +22,32 @@ from azure.ai.agentserver.core import (
     set_request_context,
 )
 from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
+    ERROR_DETAIL,
+    ERROR_SOURCE,
     FOUNDRY_CALL_ID,
+    MAX_ERROR_DETAIL_LENGTH,
+    PLATFORM_ERROR_TAG,
     USER_ID,
 )
 
+from a2a.server.request_handlers import RequestHandler
+from a2a.server.routes import (
+    ServerCallContextBuilder,
+    create_agent_card_routes,
+    create_jsonrpc_routes,
+)
+from a2a.types import AgentCard
+
 from ._version import VERSION as _A2A_VERSION
 
-_A2A_RPC_PATH = "/invocations/a2a"
-_A2A_AGENT_CARD_PATH = "/invocations/a2a/.well-known/agent-card.json"
-_SESSION_ID_HEADER = "x-agent-session-id"
+_A2A_RPC_PATH = "/a2a"
+_A2A_AGENT_CARD_PATH = "/a2a/.well-known/agent-card.json"
 _A2A_PATHS = frozenset((_A2A_RPC_PATH, _A2A_AGENT_CARD_PATH))
+_ERROR_SOURCE_USER = "user"
+_ERROR_SOURCE_UPSTREAM = "upstream"
+_ERROR_SOURCE_PLATFORM = "platform"
+
+logger = logging.getLogger(__name__)
 
 
 class _A2APlatformContextMiddleware:
@@ -55,13 +66,64 @@ class _A2APlatformContextMiddleware:
             FoundryAgentRequestContext(
                 call_id=headers.get(FOUNDRY_CALL_ID),
                 user_id=headers.get(USER_ID),
-                session_id=headers.get(_SESSION_ID_HEADER),
             )
         )
         try:
             await self._app(scope, receive, send)
         finally:
             reset_request_context(token)
+
+
+class _A2ATransportErrorMiddleware:
+    """Classify transport-level A2A HTTP errors with platform error headers."""
+
+    def __init__(self, app: ASGIApp) -> None:
+        self._app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http" or scope.get("path") not in _A2A_PATHS:
+            await self._app(scope, receive, send)
+            return
+
+        response_started = False
+
+        async def send_with_error_source(message: MutableMapping[str, Any]) -> None:
+            nonlocal response_started
+            if message["type"] == "http.response.start":
+                response_started = True
+                status = int(message["status"])
+                if status >= 400:
+                    headers = list(message.get("headers", []))
+                    if not any(name.lower() == ERROR_SOURCE.encode() for name, _ in headers):
+                        source = _ERROR_SOURCE_USER if status < 500 else _ERROR_SOURCE_UPSTREAM
+                        headers.append((ERROR_SOURCE.encode(), source.encode()))
+                        message = {**message, "headers": headers}
+            await send(message)
+
+        try:
+            await self._app(scope, receive, send_with_error_source)
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            if response_started:
+                raise
+
+            source = _ERROR_SOURCE_UPSTREAM
+            headers = {ERROR_SOURCE: source}
+            if getattr(exc, PLATFORM_ERROR_TAG, False) is True:
+                source = _ERROR_SOURCE_PLATFORM
+                detail = f"{type(exc).__name__}: {exc}"
+                detail = "".join(character for character in detail if 32 <= ord(character) <= 126)
+                headers = {
+                    ERROR_SOURCE: source,
+                    ERROR_DETAIL: detail[:MAX_ERROR_DETAIL_LENGTH],
+                }
+
+            logger.exception("Unhandled A2A transport error")
+            response = JSONResponse(
+                {"detail": "Internal server error"},
+                status_code=500,
+                headers=headers,
+            )
+            await response(scope, receive, send)
 
 
 def _get_a2a_routes(
@@ -125,6 +187,7 @@ class A2AAgentServerHost(AgentServerHost):
 
         super().__init__(routes=existing_routes + a2a_routes, **kwargs)
         self.add_middleware(_A2APlatformContextMiddleware)
+        self.add_middleware(_A2ATransportErrorMiddleware)
         self.register_server_version(build_server_version("azure-ai-agentserver-a2a", _A2A_VERSION))
 
     @property
