@@ -2,7 +2,8 @@
 
 ## 1.0.0 (2026-10-15)
 
-tool can't generate changelog for this release, please update manually.
+### Other Changes
+- First stable release of the CloudHealth management client. This release uses API version `2026-11-01`
 
 ## 1.0.0b5 (2026-09-25)
 
