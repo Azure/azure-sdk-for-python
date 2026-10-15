@@ -35,8 +35,9 @@ python basic_voice_agent.py
 ```
 
 The server listens on `0.0.0.0` and uses the `PORT` environment variable when
-set; otherwise it listens on port `8088`. The hosted platform connects to the
-`/invocations_ws` route.
+set; otherwise it listens on port `8088`. Foundry selects the container route
+from the hosted agent's protocol declaration: `invocations_ws` forwards to
+`/invocations_ws`, while `conversation_engine` forwards to `/conversation_engine`.
 
 ## Deploy
 
