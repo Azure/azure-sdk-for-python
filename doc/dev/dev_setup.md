@@ -1,4 +1,4 @@
-# Run SDK tests
+# Developer Setup
 
 This document describes how to create a dev environment in order to run SDK tests
 or execute the various commands available in the toolbox.

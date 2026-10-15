@@ -96,9 +96,9 @@ with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
 if not version:
     raise RuntimeError('Cannot find version information')
 
-with open('README.rst', encoding='utf-8') as f:
+with open('README.md', encoding='utf-8') as f:
     readme = f.read()
-with open('HISTORY.rst', encoding='utf-8') as f:
+with open('CHANGELOG.md', encoding='utf-8') as f:
     history = f.read()
 
 setup(
@@ -106,6 +106,7 @@ setup(
     version=version,
     description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=readme + '\n\n' + history,
+    long_description_content_type="text/markdown",
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
@@ -118,6 +119,8 @@ setup(
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
+        'Programming Language :: Python :: 3.14',
         'License :: OSI Approved :: MIT License',
     ],
     python_requires=">=3.10",

@@ -195,17 +195,17 @@ You can file issues [here][issues] in our repo.
 
 <!-- LINKS -->
 
-[azure_core_docs]: https://docs.microsoft.com/python/api/overview/azure/core-readme?view=azure-python
-[azure_identity_docs]: https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python
-[http_response]: https://docs.microsoft.com/python/api/azure-core/azure.core.pipeline.transport.httpresponse?view=azure-python
+[azure_core_docs]: https://learn.microsoft.com/python/api/overview/azure/core-readme?view=azure-python
+[azure_identity_docs]: https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python
+[http_response]: https://learn.microsoft.com/python/api/azure-core/azure.core.pipeline.transport.httpresponse?view=azure-python
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
-[aad_authentication]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
+[aad_authentication]: https://learn.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
 [identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
-[default_azure_credential]: https://docs.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python
-[azure_key_credential]: https://docs.microsoft.com/python/api/azure-core/azure.core.credentials.azurekeycredential?view=azure-python
-[bearer_token_credential_policy]: https://docs.microsoft.com/python/api/azure-core/azure.core.pipeline.policies.bearertokencredentialpolicy?view=azure-python
-[azure_key_credential_policy]: https://docs.microsoft.com/python/api/azure-core/azure.core.pipeline.policies.azurekeycredentialpolicy?view=azure-python
-[azure_core_exceptions]: https://docs.microsoft.com/python/api/azure-core/azure.core.exceptions?view=azure-python
+[default_azure_credential]: https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python
+[azure_key_credential]: https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.azurekeycredential?view=azure-python
+[bearer_token_credential_policy]: https://learn.microsoft.com/python/api/azure-core/azure.core.pipeline.policies.bearertokencredentialpolicy?view=azure-python
+[azure_key_credential_policy]: https://learn.microsoft.com/python/api/azure-core/azure.core.pipeline.policies.azurekeycredentialpolicy?view=azure-python
+[azure_core_exceptions]: https://learn.microsoft.com/python/api/azure-core/azure.core.exceptions?view=azure-python
 [azure_core_http_request]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html#azure.core.rest.HttpRequest
 [azure_core_http_response]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html#azure.core.rest.HttpResponse
 [azure_core_async_http_response]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html#azure.core.rest.AsyncHttpResponse
