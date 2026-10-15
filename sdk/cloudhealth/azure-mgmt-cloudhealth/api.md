@@ -114,7 +114,7 @@ namespace azure.mgmt.cloudhealth.aio.operations
             ) -> AsyncLROPoller[AuthenticationSetting]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'authentication_setting_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'authentication_setting_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview', '2026-11-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -186,7 +186,7 @@ namespace azure.mgmt.cloudhealth.aio.operations
             ) -> AsyncLROPoller[DiscoveryRule]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'discovery_rule_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'discovery_rule_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview', '2026-11-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -296,7 +296,7 @@ namespace azure.mgmt.cloudhealth.aio.operations
             ) -> AsyncLROPoller[Entity]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'entity_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'entity_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview', '2026-11-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -423,7 +423,7 @@ namespace azure.mgmt.cloudhealth.aio.operations
             ) -> SignalHistoryResponse: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'entity_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'entity_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview', '2026-11-01'])
         async def get_signal_recommendations(
                 self, 
                 resource_group_name: str, 
@@ -637,7 +637,7 @@ namespace azure.mgmt.cloudhealth.aio.operations
             ) -> AsyncLROPoller[Relationship]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'relationship_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'relationship_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview', '2026-11-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -711,7 +711,7 @@ namespace azure.mgmt.cloudhealth.aio.operations
             ) -> AsyncLROPoller[SignalDefinition]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'signal_definition_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'signal_definition_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview', '2026-11-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2287,7 +2287,7 @@ namespace azure.mgmt.cloudhealth.operations
             ) -> LROPoller[AuthenticationSetting]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'authentication_setting_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'authentication_setting_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview', '2026-11-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2359,7 +2359,7 @@ namespace azure.mgmt.cloudhealth.operations
             ) -> LROPoller[DiscoveryRule]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'discovery_rule_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'discovery_rule_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview', '2026-11-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2469,7 +2469,7 @@ namespace azure.mgmt.cloudhealth.operations
             ) -> LROPoller[Entity]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'entity_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'entity_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview', '2026-11-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2596,7 +2596,7 @@ namespace azure.mgmt.cloudhealth.operations
             ) -> SignalHistoryResponse: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'entity_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'entity_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview', '2026-11-01'])
         def get_signal_recommendations(
                 self, 
                 resource_group_name: str, 
@@ -2810,7 +2810,7 @@ namespace azure.mgmt.cloudhealth.operations
             ) -> LROPoller[Relationship]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'relationship_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'relationship_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview', '2026-11-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2884,7 +2884,7 @@ namespace azure.mgmt.cloudhealth.operations
             ) -> LROPoller[SignalDefinition]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'signal_definition_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'health_model_name', 'signal_definition_name']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-09-01-preview', '2026-10-01-preview', '2026-11-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
