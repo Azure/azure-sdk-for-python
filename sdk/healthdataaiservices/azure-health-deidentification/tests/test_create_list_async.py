@@ -1,10 +1,17 @@
-from deid_base_test_case import *
+import pytest
+from deid_base_test_case import DeidBaseTestCase, BatchEnv
 from devtools_testutils.aio import (
     recorded_by_proxy_async,
 )
 
-from azure.health.deidentification.models import *
-import pytest
+from azure.health.deidentification.models import (
+    DeidentificationJob,
+    DeidentificationJobCustomizationOptions,
+    DeidentificationOperationType,
+    OperationStatus,
+    SourceStorageLocation,
+    TargetStorageLocation,
+)
 
 
 class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
@@ -40,12 +47,12 @@ class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
             if j.job_name == jobname:
                 job = j
                 break
-            elif jobsToLookThrough <= 0:
-                raise Exception("Job not found in list_jobs")
+            if jobsToLookThrough <= 0:
+                raise RuntimeError("Job not found in list_jobs")
 
         assert job is not None
         assert job.job_name == jobname
-        assert job.status == OperationStatus.NOT_STARTED or job.status == OperationStatus.RUNNING
+        assert job.status in (OperationStatus.NOT_STARTED, OperationStatus.RUNNING)
         assert job.operation_type == DeidentificationOperationType.REDACT
         assert job.error is None
         assert job.created_at is not None

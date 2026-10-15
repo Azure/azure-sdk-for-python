@@ -19,6 +19,7 @@ USAGE:
 
 
 import asyncio
+import os
 from azure.health.deidentification.aio import DeidentificationClient
 from azure.health.deidentification.models import (
     DeidentificationContent,
@@ -31,7 +32,6 @@ from azure.health.deidentification.models import (
     TextEncodingType,
 )
 from azure.identity.aio import DefaultAzureCredential
-import os
 
 
 async def deidentify_text_surrogate_only_async():
