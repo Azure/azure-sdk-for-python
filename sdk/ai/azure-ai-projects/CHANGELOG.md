@@ -9,7 +9,7 @@
 
 ### Sample updates
 
-* Added `sample_voice_agent_with_tracing.py` and its async counterpart in `samples/agents/telemetry`, demonstrating Foundry console tracing for Voice Agent REST lifecycle and realtime text-to-audio, HTTP status/event output, measured audio sizes, and resource cleanup.
+* Added `sample_log_from_voice_agent.py` in `samples/logs`, demonstrating Voice Agent realtime diagnostics through the `azure.ai.projects.realtime` logger without OpenTelemetry setup.
 * Fixed the realtime audio conversation sample to enable input transcription, count only successfully sent audio payloads, and finish pending capture sends before printing transfer totals.
 * Fixed the conversation deletion snippet to handle the API's no-content response.
 * Updated Voice Agent samples to use `FOUNDRY_VOICE_AGENT_MODEL` for model configuration, retaining `FOUNDRY_VOICE_MODEL` as a deprecated fallback in `sample_voice_agent_with_tools.py`.
