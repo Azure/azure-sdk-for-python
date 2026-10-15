@@ -629,6 +629,7 @@ class ModelOperations(_ScopeDependentOperations):
                         self._registry_name,
                         ArmModelVersion,
                         Model._from_rest_object,
+                        list_view_type=list_view_type,
                     )
                     if self._registry_name
                     else self._model_versions_operation.list(
