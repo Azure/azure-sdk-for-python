@@ -29,20 +29,17 @@ def test_configure_logging_various_levels(mock_basic_config, cli_args, level_env
 
 
 @pytest.mark.parametrize("stream", [False, True])
-@pytest.mark.parametrize("custom_environment", [False, True])
-def test_run_logged_child_environment(stream, custom_environment, tmp_path, monkeypatch, capfd):
+def test_run_logged_inherits_environment(stream, tmp_path, monkeypatch, capfd):
     monkeypatch.setenv("CI_TOOLS_LOGGED_ENV_TEST", "parent")
     before = os.environ.copy()
-    environment = {**before, "CI_TOOLS_LOGGED_ENV_TEST": "child"} if custom_environment else None
     result = run_logged(
         [sys.executable, "-c", "import os; print(os.environ['CI_TOOLS_LOGGED_ENV_TEST'])"],
         cwd=str(tmp_path),
         check=True,
         should_stream_to_console=stream,
-        env=environment,
     )
     output = capfd.readouterr().out if stream else result.stdout
-    assert output.strip() == ("child" if custom_environment else "parent")
+    assert output.strip() == "parent"
     assert os.environ == before
 
 

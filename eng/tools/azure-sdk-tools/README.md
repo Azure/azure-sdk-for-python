@@ -97,16 +97,25 @@ sdk_build azure* --service=core -d "<artifact_folder>"
 
 ### Windows network-isolation proxy
 
-For compiled-wheel builds on Windows Azure Pipelines agents with `1ESNI_CONFIG_PATH`
-and `HTTPS_PROXY` configured, `sdk_build` and `sdk_build_package` supply cibuildwheel
-with a temporary `SSL_CERT_FILE` bundle. It combines the existing `SSL_CERT_FILE`
-(or certifi's roots when unset) with the 1ES-generated
-`C:\NI\HttpProxyRootCa-<BUILD_BUILDID>.pem`. Missing or invalid certificates fail the
-build; arbitrary `NODE_EXTRA_CA_CERTS` paths are not used as trust sources.
+The artifact-build and build-test pipeline steps use
+[`run_with_1es_proxy_trust.py`](../../scripts/run_with_1es_proxy_trust.py) to configure
+TLS trust for their child commands. On Windows Azure Pipelines agents with
+`1ESNI_CONFIG_PATH` and `HTTPS_PROXY` configured, the wrapper combines the existing
+`SSL_CERT_FILE` (or certifi's roots when unset) with the CA file published by the
+1ES network-isolation task in `NODE_EXTRA_CA_CERTS`. It does not infer the CA's
+directory or filename. That variable is ignored outside this 1ES configuration;
+a missing path or missing/invalid certificate fails an active wrapped command.
 
-The bundle is removed after cibuildwheel exits, including on failure. Parent and
-machine-wide trust, package feeds, proxy enforcement, build frontends, and targets
-are unchanged. This handles proxy TLS trust, not archive download sourcing.
+The temporary bundle is supplied through `SSL_CERT_FILE` only to the wrapped
+command and its descendants, including cibuildwheel. It is removed when the
+command exits, including on failure. The SDK build helpers simply inherit the
+pipeline's environment; local invocations do not discover or add proxy CAs.
+Parent and machine-wide trust, package feeds, proxy enforcement, build frontends,
+and targets are unchanged. This handles proxy TLS trust, not archive download
+sourcing or approval.
+
+The 1ES variable handoff was verified in the
+[Windows network-isolation setup log for build 6953676](https://dev.azure.com/azure-sdk/public/_build/results?buildId=6953676&view=logs&j=1edf2b3a-8b18-5947-0689-e313fade6ada&t=be507b6e-8441-58bc-7ce6-1d469398a2b0).
 
 ## Using "versioning" modules
 
