@@ -1,5 +1,18 @@
 # Release History
 
+## 2.0.0 (2026-10-14)
+
+### Features Added
+
+  - Client `AzureSphereMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `AzureSphereMgmtClient` added method `send_request`
+
+### Breaking Changes
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+
+### Other Changes
+  - Deleted model `CatalogListResult`/`CertificateListResult`/`CountDeviceResponse`/`DeploymentListResult`/`DeviceGroupListResult`/`DeviceListResult`/`ImageListResult`/`OperationListResult`/`PagedDeviceInsight`/`ProductListResult` which actually were not used by SDK users
+
 ## 1.0.0 (2024-03-26)
 
 ### Features Added
