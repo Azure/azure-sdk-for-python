@@ -349,5 +349,10 @@ class DatastoreOperations(_ScopeDependentOperations):
                 time.sleep(5)
         else:
             rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess(
-                uri, mount_point, read_only, debug, credential=self._operation._config.credential
+                uri,
+                mount_point,
+                read_only,
+                debug,
+                credential=self._operation._config.credential,
+                **kwargs,
             )
