@@ -5,19 +5,18 @@
 # --------------------------------------------------------------------------
 import functools
 
-from azure.core.exceptions import HttpResponseError
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
-
-from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
-from azure.messaging.webpubsubchatservice.aio import (
-    WebPubSubChatServiceClient as AsyncWebPubSubChatServiceClient,
-)
-
 from chat_message_seed import (
     create_chat_message,
     create_chat_message_async,
     verify_chat_connection,
     verify_chat_connection_async,
+)
+
+from azure.core.exceptions import HttpResponseError
+from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
+from azure.messaging.webpubsubchatservice.aio import (
+    WebPubSubChatServiceClient as AsyncWebPubSubChatServiceClient,
 )
 
 

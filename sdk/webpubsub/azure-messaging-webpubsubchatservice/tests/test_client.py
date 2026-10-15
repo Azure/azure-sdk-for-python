@@ -54,7 +54,7 @@ def test_max_page_size_uses_original_wire_name(operation_name, arguments):
 
 
 class FakeTokenCredential:
-    def get_token(self, *scopes, **kwargs):
+    def get_token(self, *_scopes, **_kwargs):
         return AccessToken("entra-token", int(time.time()) + 3600)
 
 

@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
+from testcase import WebPubSubChatPreparer, WebPubSubChatTest
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
@@ -18,7 +19,6 @@ from azure.messaging.webpubsubchatservice.models import (
     HumanChatUser,
     HumanChatUserCreate,
 )
-from testcase import WebPubSubChatPreparer, WebPubSubChatTest
 
 
 async def _collect(paged):

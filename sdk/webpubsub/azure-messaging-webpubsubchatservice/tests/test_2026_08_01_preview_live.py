@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------
 from devtools_testutils import recorded_by_proxy
 import pytest
+from testcase import WebPubSubChatPreparer, WebPubSubChatTest
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
@@ -18,7 +19,6 @@ from azure.messaging.webpubsubchatservice.models import (
     HumanChatUser,
     HumanChatUserCreate,
 )
-from testcase import WebPubSubChatPreparer, WebPubSubChatTest
 
 
 def _assert_resumable_pages(paged):
@@ -52,7 +52,7 @@ class TestWebPubSubChatTopicsLive(WebPubSubChatTest):
                 conversation = client.get_conversation(topic.conversation_id)
                 assert conversation.id == topic.conversation_id
                 assert conversation.parent_room == room_id
-                assert list(client.list_messages(topic.conversation_id)) == []
+                assert not list(client.list_messages(topic.conversation_id))
 
             assert {topic.id for topic in client.list_topics(room_id, max_page_size=1)}.issuperset({"first", "second"})
             _assert_resumable_pages(client.list_topics(room_id, max_page_size=1))
@@ -96,7 +96,7 @@ class TestWebPubSubChatTopicsLive(WebPubSubChatTest):
             client.create_or_replace_role(room_role, ChatRoleCreate(permissions=[ChatPermission.ROOM_PUBLISH_MESSAGE]))
             for user_id in user_ids:
                 client.create_or_replace_user(user_id, HumanChatUserCreate(nickname=user_id, role_name=user_role))
-            assert list(client.list_rooms_for_user(user_ids[0])) == []
+            assert not list(client.list_rooms_for_user(user_ids[0]))
             for room_id in room_ids:
                 client.create_or_replace_room(room_id, ChatRoomCreate(title=room_id))
                 client.create_or_replace_room_member(room_id, user_ids[0], ChatRoomMemberCreate(role_name=room_role))
