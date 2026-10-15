@@ -48,14 +48,29 @@ Omitting the version selects the previously shipped non-Bridge integration.
 ### Standalone Conversation Engine
 
 With an SDK build that includes standalone CE support, keep the existing
-`app = VoiceAgentServerHost()` construction and register the hosted agent with
-this protocol declaration instead of the legacy manifest:
+`app = VoiceAgentServerHost()` construction and declare CE in the hosted agent
+definition. Use the field matching the agent's existing schema; enabling CE does
+not require a schema migration.
+
+For new-schema definitions using `container_configuration` or `code_configuration`:
 
 ```yaml
 protocol_versions:
   - protocol: conversation_engine
     version: "1.0.0"
 ```
+
+For legacy definitions using `image`:
+
+```yaml
+container_protocol_versions:
+  - protocol: conversation_engine
+    version: "1.0.0"
+```
+
+These are hosted agent definition fragments, not complete deployment manifests
+or replacements for `agent.manifest.yaml`. If the agent must also serve legacy
+Bridge calls, retain its existing `invocations_ws` declaration and Bridge metadata.
 
 The typed host exposes both `/conversation_engine` and `/invocations_ws`, but the
 Foundry protocol declaration determines which public endpoint can invoke it.
