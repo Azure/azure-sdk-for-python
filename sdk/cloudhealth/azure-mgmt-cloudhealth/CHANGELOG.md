@@ -1,5 +1,30 @@
 # Release History
 
+## 1.0.0b5 (2026-09-25)
+
+### Features Added
+
+  - Model `SignalConfiguration` added property `applicable_resource_types`
+  - Model `SignalConfiguration` added property `configuration`
+  - Model `SignalConfiguration` added property `data_unit`
+  - Model `SignalConfiguration` added property `description`
+  - Model `SignalConfiguration` added property `display_name`
+  - Model `SignalConfiguration` added property `refresh_interval`
+  - Added model `AzureResourceMetricRecommendationConfiguration`
+  - Added model `LogAnalyticsQueryRecommendationConfiguration`
+  - Added model `PrometheusMetricsRecommendationConfiguration`
+  - Added model `SignalRecommendationConfiguration`
+  - Added enum `SignalRecommendationKind`
+
+### Breaking Changes
+
+  - Model `SignalConfiguration` deleted or renamed its instance variable `aggregation_type`
+  - Model `SignalConfiguration` deleted or renamed its instance variable `dimension_filter`
+  - Model `SignalConfiguration` deleted or renamed its instance variable `metric_name`
+  - Model `SignalConfiguration` deleted or renamed its instance variable `metric_namespace`
+  - Model `SignalConfiguration` deleted or renamed its instance variable `time_grain`
+  - Model `SignalConfiguration` deleted or renamed its instance variable `unit`
+
 ## 1.0.0b4 (2026-08-25)
 
 ### Features Added
