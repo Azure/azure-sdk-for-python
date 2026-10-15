@@ -1,6 +1,6 @@
 # Release History
 
-## 2.3.0b1 (Unreleased)
+## 2.3.0b1 (2026-10-15)
 
 ### Features Added
 
@@ -61,6 +61,10 @@
 
 ### Other Changes
 
+- Removed the experimental marker (docstring note and one-time runtime warning)
+  from the resilient task public APIs (`TaskContext`, `TaskRun`, `@task`,
+  `@multi_turn_task`, `set_resilient_tasks_enabled`, task exceptions, and
+  retry policy).
 - Changed the default SSE keep-alive interval to 15 seconds. Set
   `SSE_KEEPALIVE_INTERVAL=0` to disable keep-alive comments.
 
