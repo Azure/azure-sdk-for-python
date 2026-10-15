@@ -17,7 +17,7 @@ Here's how to get started:
 >>> response
 <HttpResponse: 200 OK, Content-Type: text/plain>
 >>> response.raise_for_status()
->>> response.text
+>>> response.text()
 'Happy to see you!'
 ```
 

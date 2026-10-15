@@ -33,6 +33,12 @@ The following checks are available via the `azpysdk` entrypoint.
 |`optional`| Invokes 'optional' requirements for a given package. | `azpysdk optional .` |
 |`devtest`| Tests a package against dependencies installed from a dev index. | `azpysdk devtest .` |
 |`update_snippet`| Updates README code snippets from sample files. | `azpysdk update_snippet .` |
+|`whl`| Builds a wheel from the package, installs it into a clean environment, and runs the full test suite with `pytest`. | `azpysdk whl .` |
+|`whl_no_aio`| Runs the `whl` check but ensures `aiohttp` is absent before running pytest. | `azpysdk whl_no_aio .` |
+|`sdist`| Builds a source distribution, installs it into a clean environment, and runs the full test suite with `pytest`. | `azpysdk sdist .` |
+|`mindependency`| Installs the oldest published version of each declared Azure SDK dependency that satisfies the requirement range, then runs the test suite. | `azpysdk mindependency .` |
+|`latestdependency`| Installs the latest published version of each declared Azure SDK dependency, then runs the test suite. | `azpysdk latestdependency .` |
+|`changelog`| Manages changelogs with Chronus (`add`, `verify`, `create`, `status`). | `azpysdk changelog status` |
 
 ## Common arguments
 
