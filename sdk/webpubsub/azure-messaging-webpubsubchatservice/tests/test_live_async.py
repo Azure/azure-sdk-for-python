@@ -4,6 +4,11 @@
 # --------------------------------------------------------------------------
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
+from testcase import (
+    WebPubSubChatAccessPreparer,
+    WebPubSubChatPreparer,
+    WebPubSubChatTest,
+)
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
@@ -15,12 +20,6 @@ from azure.messaging.webpubsubchatservice.models import (
     ChatRoomMemberCreate,
     HumanChatUserCreate,
     MessageContent,
-)
-
-from testcase import (
-    WebPubSubChatAccessPreparer,
-    WebPubSubChatPreparer,
-    WebPubSubChatTest,
 )
 
 
@@ -66,7 +65,6 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
     @pytest.mark.asyncio
     async def test_async_list_roles_using_connection_string(
         self,
-        wps_chat_endpoint,
         wps_chat_connection_string,
         wps_chat_disable_local_auth,
     ):

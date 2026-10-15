@@ -4,6 +4,11 @@
 # --------------------------------------------------------------------------
 import pytest
 from devtools_testutils import recorded_by_proxy
+from testcase import (
+    WebPubSubChatAccessPreparer,
+    WebPubSubChatPreparer,
+    WebPubSubChatTest,
+)
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
@@ -15,12 +20,6 @@ from azure.messaging.webpubsubchatservice.models import (
     ChatRoomMemberCreate,
     HumanChatUserCreate,
     MessageContent,
-)
-
-from testcase import (
-    WebPubSubChatAccessPreparer,
-    WebPubSubChatPreparer,
-    WebPubSubChatTest,
 )
 
 
@@ -60,7 +59,6 @@ class TestWebPubSubChatLive(WebPubSubChatTest):
     @recorded_by_proxy
     def test_list_roles_using_connection_string(
         self,
-        wps_chat_endpoint,
         wps_chat_connection_string,
         wps_chat_disable_local_auth,
     ):
@@ -148,8 +146,8 @@ class TestWebPubSubChatLive(WebPubSubChatTest):
             conversation = client.get_conversation(room.default_conversation)
             assert conversation.id == room.default_conversation
             assert conversation.parent_room == room_id
-            assert list(client.list_messages(room.default_conversation)) == []
-            assert list(client.list_room_members(room_id)) == []
+            assert not list(client.list_messages(room.default_conversation))
+            assert not list(client.list_room_members(room_id))
         finally:
             self.cleanup(client.delete_room, room_id)
             client.close()

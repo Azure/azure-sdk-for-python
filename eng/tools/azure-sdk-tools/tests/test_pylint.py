@@ -1,6 +1,10 @@
 from pathlib import Path
 
-from azpysdk.pylint import SNIPPET_SAMPLE_IMPORT_DISABLES, get_snippet_aware_sample_pylint_commands
+from azpysdk.pylint import (
+    SNIPPET_SAMPLE_IMPORT_DISABLES,
+    get_snippet_aware_sample_pylint_commands,
+    get_test_pylint_command,
+)
 
 
 def test_get_snippet_aware_sample_pylint_commands_separates_snippet_files(tmp_path):
@@ -46,3 +50,27 @@ def test_get_snippet_aware_sample_pylint_commands_ignores_non_python_files(tmp_p
     Path(samples_dir / "README.md").write_text("# [START example]\n", encoding="utf-8")
 
     assert get_snippet_aware_sample_pylint_commands("python", "samples_pylintrc", str(samples_dir)) == []
+
+
+def test_get_test_pylint_command_supports_namespace_test_directories(tmp_path):
+    tests_dir = tmp_path / "tests"
+    nested_dir = tests_dir / "nested"
+    nested_dir.mkdir(parents=True)
+    test_file = tests_dir / "test_client.py"
+    helper = nested_dir / "helper.py"
+    for path in (test_file, helper):
+        path.write_text("pass\n", encoding="utf-8")
+    (tests_dir / "README.md").write_text("Test documentation\n", encoding="utf-8")
+
+    assert get_test_pylint_command("python", "test_pylintrc", str(tests_dir)) == [
+        "python",
+        "-m",
+        "pylint",
+        "--rcfile=test_pylintrc",
+        "--output-format=parseable",
+        *sorted([str(test_file), str(helper)]),
+    ]
+
+
+def test_get_test_pylint_command_ignores_empty_directories(tmp_path):
+    assert get_test_pylint_command("python", "test_pylintrc", str(tmp_path)) == []

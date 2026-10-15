@@ -95,7 +95,7 @@ def test_collection_paging_and_continuation(operation, args, path, model, fields
             resumed = getattr(client, operation)(*args, **options).by_page(pages.continuation_token)
             second = list(next(resumed))
             assert [item.id for item in first + second] == ["first", "second"]
-            assert list(resumed) == []
+            assert not list(resumed)
             _assert_page_requests(run, path)
 
 
