@@ -54,10 +54,9 @@ def get_snippet_aware_sample_pylint_commands(executable: str, rcfile: str, sampl
 
 
 def get_test_pylint_command(executable: str, rcfile: str, tests_dir: str) -> List[str]:
-    test_files = sorted(str(path) for path in Path(tests_dir).rglob("*.py"))
-    if not test_files:
+    if not any(Path(tests_dir).rglob("*.py")):
         return []
-    return [executable, "-m", "pylint", f"--rcfile={rcfile}", "--output-format=parseable", *test_files]
+    return [executable, "-m", "pylint", f"--rcfile={rcfile}", "--output-format=parseable", "--recursive=y", tests_dir]
 
 
 class pylint(Check):
