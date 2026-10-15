@@ -620,5 +620,5 @@
         "azure.mgmt.azurestackhci.operations.UpdateSummariesOperations.list": "Microsoft.AzureStackHCI.UpdateSummariesOperationGroup.list",
         "azure.mgmt.azurestackhci.aio.operations.UpdateSummariesOperations.list": "Microsoft.AzureStackHCI.UpdateSummariesOperationGroup.list"
     },
-    "CrossLanguageVersion": "33df17b2bdf9"
+    "CrossLanguageVersion": "9bb3e9ba3b67"
 }
