@@ -1,22 +1,22 @@
 # Release History
 
-## 1.18.9 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.18.10 (Unreleased)
 
 ### Bugs Fixed
 
+- Hardened local Prompty image resolution so only relative files within the Prompty directory are inlined, with opened-file validation to prevent path changes from redirecting reads and without exposing the local directory in fallback logs.
 - Fixed `TaskAdherenceEvaluator` silently dropping the `system_message` and `tool_calls` keyword arguments. Both are now accepted as optional inputs and passed to the evaluation prompt, so callers using plain-string `query`/`response` no longer get evaluated without their system instructions or tool calls.
 
-### Other Changes
+## 1.18.9 (2026-10-12)
+
+### Bugs Fixed
+
+- Hardened multimodal evaluation image handling. The output file name is now derived from a validated allow-list of known image types rather than the raw `data:image/<subtype>;` value, and decoded image bytes are confined to the intended `images/` folder.
+- Added Microsoft-scoped evaluation status and boolean pass/fail attributes to Application Insights result events.
 
 ## 1.18.8 (2026-10-08)
 
 ### Bugs Fixed
-
-- Added Microsoft-scoped evaluation status and boolean pass/fail attributes to Application Insights result events.
 
 - Fixed legacy safety annotation polling retrying terminal HTTP 400 errors until timeout. Both workspace and project polling paths now preserve the original service error immediately and log the operation ID, poll count, and elapsed time without response content or credentials; pending responses and other retry behavior are unchanged.
 - Fixed multi-turn evaluations failing during Azure OpenAI result conversion when per-turn token-count lists were routed into scalar token-usage fields. Per-turn breakdowns are now excluded from scalar result-field routing, preserving aggregate token counts and scores. ([#49242](https://github.com/Azure/azure-sdk-for-python/pull/49242))

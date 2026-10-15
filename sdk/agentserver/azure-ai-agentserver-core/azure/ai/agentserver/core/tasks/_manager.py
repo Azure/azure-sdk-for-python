@@ -428,6 +428,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             config.session_id or "local",
         )
         self._instance_id = generate_instance_id()
+        self._materialization_restore_id: str | None = None
         self._shutdown_event = shutdown_event or asyncio.Event()
         self._shutdown_grace_seconds = shutdown_grace_seconds
         self._active_generation_future: dict[str, asyncio.Future[Any]] = {}
@@ -451,6 +452,15 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # fresh one bound to the new turn's _turn_started_at. Cleared
         # on terminal exit.
         self._timeout_watchdogs: dict[str, asyncio.Task[None]] = {}
+
+    def _rehydrate_session_state(self, restore_id: str | None = None) -> None:
+        self._lease_owner = derive_lease_owner(
+            self._config.agent_name or "unknown-agent",
+            self._config.session_id or "local",
+        )
+        if restore_id is not None and restore_id != self._materialization_restore_id:
+            self._instance_id = generate_instance_id()
+            self._materialization_restore_id = restore_id
 
     @staticmethod
     def _build_source(fn_name: str) -> dict[str, str]:
@@ -586,7 +596,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         Uses server-side filtering (``agent_name``, ``session_id``,
         ``task_name`` tag, ``status``, ``source_type``) to return only
-        tasks created by this framework for the given function.
+        tasks created by this framework for the given function. Explicitly
+        requests complete enumeration, never a bounded first page.
 
         :keyword fn_name: The task function name (stable identity anchor).
         :paramtype fn_name: str
@@ -608,6 +619,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 status=status,
                 tag={_TAG_TASK_NAME: fn_name},
                 source_type=_SOURCE_TYPE,
+                limit=None,
             )
         except _HostedConflict as exc:
             translated = _translate_hosted_conflict(exc)
@@ -2953,6 +2965,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 status="in_progress",
                 lease_owner=self._lease_owner,
                 source_type=_SOURCE_TYPE,
+                limit=None,
             )
         except Exception:  # pylint: disable=broad-exception-caught
             logger.warning("Failed to query stale tasks for recovery", exc_info=True)
