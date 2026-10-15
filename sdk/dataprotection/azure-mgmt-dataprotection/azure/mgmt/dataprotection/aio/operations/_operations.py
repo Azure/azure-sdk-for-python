@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -38,10 +38,14 @@ from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deseria
 from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
 from ...operations._operations import (
+    build_backup_instance_from_dpp_cross_tenant_vault_get_request,
+    build_backup_instance_operation_result_from_dpp_cross_tenant_vault_get_request,
+    build_backup_instance_operation_status_from_dpp_cross_tenant_vault_get_request,
     build_backup_instances_adhoc_backup_request,
     build_backup_instances_create_or_update_request,
     build_backup_instances_delete_request,
     build_backup_instances_extension_routing_list_request,
+    build_backup_instances_from_dpp_cross_tenant_vault_list_request,
     build_backup_instances_get_backup_instance_operation_result_request,
     build_backup_instances_get_request,
     build_backup_instances_list_request,
@@ -57,6 +61,7 @@ from ...operations._operations import (
     build_backup_instances_validate_for_backup_request,
     build_backup_instances_validate_for_modify_backup_request,
     build_backup_instances_validate_for_restore_request,
+    build_backup_jobs_from_dpp_cross_tenant_vault_list_request,
     build_backup_policies_create_or_update_request,
     build_backup_policies_delete_request,
     build_backup_policies_get_request,
@@ -76,6 +81,11 @@ from ...operations._operations import (
     build_deleted_backup_instances_undelete_request,
     build_deleted_backup_vaults_get_request,
     build_deleted_backup_vaults_list_by_location_request,
+    build_dpp_cross_tenant_vault_mapping_status_check_request,
+    build_dpp_cross_tenant_vault_mappings_create_or_update_request,
+    build_dpp_cross_tenant_vault_mappings_get_request,
+    build_dpp_cross_tenant_vault_mappings_list_request,
+    build_dpp_cross_tenant_vault_mappings_remove_request,
     build_dpp_resource_guard_proxy_create_or_update_request,
     build_dpp_resource_guard_proxy_delete_request,
     build_dpp_resource_guard_proxy_get_request,
@@ -86,12 +96,15 @@ from ...operations._operations import (
     build_fetch_cross_region_restore_job_get_request,
     build_fetch_cross_region_restore_jobs_list_request,
     build_fetch_secondary_recovery_points_list_request,
+    build_job_from_dpp_cross_tenant_vault_get_request,
     build_jobs_get_request,
     build_jobs_list_request,
     build_operation_result_get_request,
     build_operation_status_backup_vault_context_get_request,
     build_operation_status_get_request,
     build_operation_status_resource_group_context_get_request,
+    build_recovery_point_from_dpp_cross_tenant_vault_get_request,
+    build_recovery_points_from_dpp_cross_tenant_vault_list_request,
     build_recovery_points_get_request,
     build_recovery_points_list_request,
     build_resource_guards_delete_request,
@@ -113,6 +126,9 @@ from ...operations._operations import (
     build_resource_guards_patch_request,
     build_resource_guards_put_request,
     build_restorable_time_ranges_find_request,
+    build_restorable_time_ranges_from_dpp_cross_tenant_vault_find_request,
+    build_restores_from_dpp_cross_tenant_vault_trigger_request,
+    build_validate_restore_from_dpp_cross_tenant_vault_trigger_request,
 )
 from .._configuration import DataProtectionMgmtClientConfiguration
 
@@ -2318,7 +2334,7 @@ class BackupInstancesOperations:  # pylint: disable=docstring-missing-param,too-
                 "backup_instance_name",
             ]
         },
-        api_versions_list=["2026-06-01", "2026-07-01"],
+        api_versions_list=["2026-06-01", "2026-07-01", "2026-08-31-preview"],
     )
     async def _resume_protection_initial(
         self, resource_group_name: str, vault_name: str, backup_instance_name: str, **kwargs: Any
@@ -2396,7 +2412,7 @@ class BackupInstancesOperations:  # pylint: disable=docstring-missing-param,too-
                 "backup_instance_name",
             ]
         },
-        api_versions_list=["2026-06-01", "2026-07-01"],
+        api_versions_list=["2026-06-01", "2026-07-01", "2026-08-31-preview"],
     )
     async def begin_resume_protection(
         self, resource_group_name: str, vault_name: str, backup_instance_name: str, **kwargs: Any
@@ -4107,7 +4123,14 @@ class DeletedBackupVaultsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2025-09-01",
         params_added_on={"2025-09-01": ["api_version", "subscription_id", "location", "deleted_vault_name", "accept"]},
-        api_versions_list=["2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01", "2026-07-01"],
+        api_versions_list=[
+            "2025-09-01",
+            "2026-03-01",
+            "2026-04-01-preview",
+            "2026-06-01",
+            "2026-07-01",
+            "2026-08-31-preview",
+        ],
     )
     async def get(self, location: str, deleted_vault_name: str, **kwargs: Any) -> _models.DeletedBackupVaultResource:
         """Gets a deleted backup vault.
@@ -4182,7 +4205,14 @@ class DeletedBackupVaultsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2025-09-01",
         params_added_on={"2025-09-01": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01", "2026-07-01"],
+        api_versions_list=[
+            "2025-09-01",
+            "2026-03-01",
+            "2026-04-01-preview",
+            "2026-06-01",
+            "2026-07-01",
+            "2026-08-31-preview",
+        ],
     )
     def list_by_location(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.DeletedBackupVaultResource"]:
         """Lists deleted backup vaults by location.
@@ -6048,6 +6078,2630 @@ class ResourceGuardsOperations:  # pylint: disable=docstring-missing-param
         return AsyncItemPaged(get_next, extract_data)
 
 
+class DppCrossTenantVaultMappingsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.dataprotection.aio.DataProtectionMgmtClient`'s
+        :attr:`dpp_cross_tenant_vault_mappings` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DataProtectionMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-31-preview",
+        params_added_on={
+            "2026-08-31-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "mapping_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-31-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, vault_name: str, mapping_name: str, **kwargs: Any
+    ) -> _models.CrossTenantVaultMapping:
+        """Gets a cross-tenant vault mapping by name from the target vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the backup vault. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the cross-tenant vault mapping. Required.
+        :type mapping_name: str
+        :return: CrossTenantVaultMapping. The CrossTenantVaultMapping is compatible with MutableMapping
+        :rtype: ~azure.mgmt.dataprotection.models.CrossTenantVaultMapping
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.CrossTenantVaultMapping] = kwargs.pop("cls", None)
+
+        _request = build_dpp_cross_tenant_vault_mappings_get_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            mapping_name=mapping_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.CrossTenantVaultMapping, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        resource: _models.CrossTenantVaultMapping,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.CrossTenantVaultMapping:
+        """Creates or updates a cross-tenant vault mapping under the target vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the backup vault. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the cross-tenant vault mapping. Required.
+        :type mapping_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.dataprotection.models.CrossTenantVaultMapping
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CrossTenantVaultMapping. The CrossTenantVaultMapping is compatible with MutableMapping
+        :rtype: ~azure.mgmt.dataprotection.models.CrossTenantVaultMapping
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        resource: _types.CrossTenantVaultMapping,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.CrossTenantVaultMapping:
+        """Creates or updates a cross-tenant vault mapping under the target vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the backup vault. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the cross-tenant vault mapping. Required.
+        :type mapping_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.dataprotection.types.CrossTenantVaultMapping
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CrossTenantVaultMapping. The CrossTenantVaultMapping is compatible with MutableMapping
+        :rtype: ~azure.mgmt.dataprotection.models.CrossTenantVaultMapping
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.CrossTenantVaultMapping:
+        """Creates or updates a cross-tenant vault mapping under the target vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the backup vault. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the cross-tenant vault mapping. Required.
+        :type mapping_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CrossTenantVaultMapping. The CrossTenantVaultMapping is compatible with MutableMapping
+        :rtype: ~azure.mgmt.dataprotection.models.CrossTenantVaultMapping
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-31-preview",
+        params_added_on={
+            "2026-08-31-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "mapping_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-31-preview"],
+    )
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        resource: Union[_models.CrossTenantVaultMapping, _types.CrossTenantVaultMapping, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.CrossTenantVaultMapping:
+        """Creates or updates a cross-tenant vault mapping under the target vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the backup vault. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the cross-tenant vault mapping. Required.
+        :type mapping_name: str
+        :param resource: Resource create parameters. Is either a CrossTenantVaultMapping type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.dataprotection.models.CrossTenantVaultMapping or
+         ~azure.mgmt.dataprotection.types.CrossTenantVaultMapping or IO[bytes]
+        :return: CrossTenantVaultMapping. The CrossTenantVaultMapping is compatible with MutableMapping
+        :rtype: ~azure.mgmt.dataprotection.models.CrossTenantVaultMapping
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.CrossTenantVaultMapping] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_dpp_cross_tenant_vault_mappings_create_or_update_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            mapping_name=mapping_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.CrossTenantVaultMapping, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-31-preview",
+        params_added_on={
+            "2026-08-31-preview": ["api_version", "subscription_id", "resource_group_name", "vault_name", "accept"]
+        },
+        api_versions_list=["2026-08-31-preview"],
+    )
+    def list(
+        self, resource_group_name: str, vault_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.CrossTenantVaultMapping"]:
+        """Lists the cross-tenant vault mappings under the target vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the backup vault. Required.
+        :type vault_name: str
+        :return: An iterator like instance of CrossTenantVaultMapping
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.dataprotection.models.CrossTenantVaultMapping]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.CrossTenantVaultMapping]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_dpp_cross_tenant_vault_mappings_list_request(
+                    resource_group_name=resource_group_name,
+                    vault_name=vault_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.CrossTenantVaultMapping],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @overload
+    async def remove(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        body: Optional[_models.CrossTenantVaultMappingRemoveRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Removes a cross-tenant vault mapping from the target vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the backup vault. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the cross-tenant vault mapping. Required.
+        :type mapping_name: str
+        :param body: The content of the action request. Default value is None.
+        :type body: ~azure.mgmt.dataprotection.models.CrossTenantVaultMappingRemoveRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def remove(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        body: Optional[_types.CrossTenantVaultMappingRemoveRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Removes a cross-tenant vault mapping from the target vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the backup vault. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the cross-tenant vault mapping. Required.
+        :type mapping_name: str
+        :param body: The content of the action request. Default value is None.
+        :type body: ~azure.mgmt.dataprotection.types.CrossTenantVaultMappingRemoveRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def remove(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        body: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Removes a cross-tenant vault mapping from the target vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the backup vault. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the cross-tenant vault mapping. Required.
+        :type mapping_name: str
+        :param body: The content of the action request. Default value is None.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-31-preview",
+        params_added_on={
+            "2026-08-31-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "mapping_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-08-31-preview"],
+    )
+    async def remove(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        body: Optional[
+            Union[_models.CrossTenantVaultMappingRemoveRequest, _types.CrossTenantVaultMappingRemoveRequest, IO[bytes]]
+        ] = None,
+        **kwargs: Any
+    ) -> None:
+        """Removes a cross-tenant vault mapping from the target vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the backup vault. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the cross-tenant vault mapping. Required.
+        :type mapping_name: str
+        :param body: The content of the action request. Is either a
+         CrossTenantVaultMappingRemoveRequest type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.dataprotection.models.CrossTenantVaultMappingRemoveRequest or
+         ~azure.mgmt.dataprotection.types.CrossTenantVaultMappingRemoveRequest or IO[bytes]
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json" if body else None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            if body is not None:
+                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
+
+        _request = build_dpp_cross_tenant_vault_mappings_remove_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            mapping_name=mapping_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+
+class DppCrossTenantVaultMappingStatusOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.dataprotection.aio.DataProtectionMgmtClient`'s
+        :attr:`dpp_cross_tenant_vault_mapping_status` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DataProtectionMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-31-preview",
+        params_added_on={
+            "2026-08-31-preview": ["api_version", "subscription_id", "resource_group_name", "vault_name", "accept"]
+        },
+        api_versions_list=["2026-08-31-preview"],
+    )
+    async def check(
+        self, resource_group_name: str, vault_name: str, **kwargs: Any
+    ) -> _models.CrossTenantVaultMappingStatusResponse:
+        """Gets the status (Active/Inactive) of a cross-tenant vault mapping from the source vault side.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the backup vault. Required.
+        :type vault_name: str
+        :return: CrossTenantVaultMappingStatusResponse. The CrossTenantVaultMappingStatusResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.dataprotection.models.CrossTenantVaultMappingStatusResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.CrossTenantVaultMappingStatusResponse] = kwargs.pop("cls", None)
+
+        _request = build_dpp_cross_tenant_vault_mapping_status_check_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.CrossTenantVaultMappingStatusResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class BackupInstancesFromDppCrossTenantVaultOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.dataprotection.aio.DataProtectionMgmtClient`'s
+        :attr:`backup_instances_from_dpp_cross_tenant_vault` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DataProtectionMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-31-preview",
+        params_added_on={
+            "2026-08-31-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "mapping_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-31-preview"],
+    )
+    def list(
+        self, resource_group_name: str, vault_name: str, mapping_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.CrossTenantBackupInstanceResource"]:
+        """Lists the backup instances of the mapped source vault in a different tenant.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the BackupVaultResource. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the CrossTenantVaultMapping. Required.
+        :type mapping_name: str
+        :return: An iterator like instance of CrossTenantBackupInstanceResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.dataprotection.models.CrossTenantBackupInstanceResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.CrossTenantBackupInstanceResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_backup_instances_from_dpp_cross_tenant_vault_list_request(
+                    resource_group_name=resource_group_name,
+                    vault_name=vault_name,
+                    mapping_name=mapping_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.CrossTenantBackupInstanceResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class BackupInstanceFromDppCrossTenantVaultOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.dataprotection.aio.DataProtectionMgmtClient`'s
+        :attr:`backup_instance_from_dpp_cross_tenant_vault` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DataProtectionMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-31-preview",
+        params_added_on={
+            "2026-08-31-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "mapping_name",
+                "backup_instance_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-31-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, vault_name: str, mapping_name: str, backup_instance_name: str, **kwargs: Any
+    ) -> _models.CrossTenantBackupInstanceResource:
+        """Gets a backup instance of the mapped source vault in a different tenant.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the BackupVaultResource. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the CrossTenantVaultMapping. Required.
+        :type mapping_name: str
+        :param backup_instance_name: The name of the BackupInstanceResource. Required.
+        :type backup_instance_name: str
+        :return: CrossTenantBackupInstanceResource. The CrossTenantBackupInstanceResource is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.dataprotection.models.CrossTenantBackupInstanceResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.CrossTenantBackupInstanceResource] = kwargs.pop("cls", None)
+
+        _request = build_backup_instance_from_dpp_cross_tenant_vault_get_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            mapping_name=mapping_name,
+            backup_instance_name=backup_instance_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.CrossTenantBackupInstanceResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class RestoresFromDppCrossTenantVaultOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.dataprotection.aio.DataProtectionMgmtClient`'s
+        :attr:`restores_from_dpp_cross_tenant_vault` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DataProtectionMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @api_version_validation(
+        method_added_on="2026-08-31-preview",
+        params_added_on={
+            "2026-08-31-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "mapping_name",
+                "backup_instance_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-31-preview"],
+    )
+    async def _trigger_initial(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        backup_instance_name: str,
+        body: Union[_models.AzureBackupRestoreRequest, _types.AzureBackupRestoreRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_restores_from_dpp_cross_tenant_vault_trigger_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            mapping_name=mapping_name,
+            backup_instance_name=backup_instance_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_trigger(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        backup_instance_name: str,
+        body: _models.AzureBackupRestoreRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
+        """Triggers restore for a backup instance of the mapped source vault in a different tenant.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the BackupVaultResource. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the CrossTenantVaultMapping. Required.
+        :type mapping_name: str
+        :param backup_instance_name: The name of the BackupInstanceResource. Required.
+        :type backup_instance_name: str
+        :param body: Request body for operation. Required.
+        :type body: ~azure.mgmt.dataprotection.models.AzureBackupRestoreRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns OperationJobExtendedInfo. The
+         OperationJobExtendedInfo is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.dataprotection.models.OperationJobExtendedInfo]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_trigger(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        backup_instance_name: str,
+        body: _types.AzureBackupRestoreRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
+        """Triggers restore for a backup instance of the mapped source vault in a different tenant.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the BackupVaultResource. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the CrossTenantVaultMapping. Required.
+        :type mapping_name: str
+        :param backup_instance_name: The name of the BackupInstanceResource. Required.
+        :type backup_instance_name: str
+        :param body: Request body for operation. Required.
+        :type body: ~azure.mgmt.dataprotection.types.AzureBackupRestoreRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns OperationJobExtendedInfo. The
+         OperationJobExtendedInfo is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.dataprotection.models.OperationJobExtendedInfo]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_trigger(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        backup_instance_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
+        """Triggers restore for a backup instance of the mapped source vault in a different tenant.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the BackupVaultResource. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the CrossTenantVaultMapping. Required.
+        :type mapping_name: str
+        :param backup_instance_name: The name of the BackupInstanceResource. Required.
+        :type backup_instance_name: str
+        :param body: Request body for operation. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns OperationJobExtendedInfo. The
+         OperationJobExtendedInfo is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.dataprotection.models.OperationJobExtendedInfo]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-31-preview",
+        params_added_on={
+            "2026-08-31-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "mapping_name",
+                "backup_instance_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-31-preview"],
+    )
+    async def begin_trigger(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        backup_instance_name: str,
+        body: Union[_models.AzureBackupRestoreRequest, _types.AzureBackupRestoreRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
+        """Triggers restore for a backup instance of the mapped source vault in a different tenant.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the BackupVaultResource. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the CrossTenantVaultMapping. Required.
+        :type mapping_name: str
+        :param backup_instance_name: The name of the BackupInstanceResource. Required.
+        :type backup_instance_name: str
+        :param body: Request body for operation. Is either a AzureBackupRestoreRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.dataprotection.models.AzureBackupRestoreRequest or
+         ~azure.mgmt.dataprotection.types.AzureBackupRestoreRequest or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns OperationJobExtendedInfo. The
+         OperationJobExtendedInfo is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.dataprotection.models.OperationJobExtendedInfo]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.OperationJobExtendedInfo] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._trigger_initial(
+                resource_group_name=resource_group_name,
+                vault_name=vault_name,
+                mapping_name=mapping_name,
+                backup_instance_name=backup_instance_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.OperationJobExtendedInfo, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.OperationJobExtendedInfo].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.OperationJobExtendedInfo](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+
+class ValidateRestoreFromDppCrossTenantVaultOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.dataprotection.aio.DataProtectionMgmtClient`'s
+        :attr:`validate_restore_from_dpp_cross_tenant_vault` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DataProtectionMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @api_version_validation(
+        method_added_on="2026-08-31-preview",
+        params_added_on={
+            "2026-08-31-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "mapping_name",
+                "backup_instance_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-31-preview"],
+    )
+    async def _trigger_initial(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        backup_instance_name: str,
+        body: Union[_models.ValidateRestoreRequestObject, _types.ValidateRestoreRequestObject, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_validate_restore_from_dpp_cross_tenant_vault_trigger_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            mapping_name=mapping_name,
+            backup_instance_name=backup_instance_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_trigger(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        backup_instance_name: str,
+        body: _models.ValidateRestoreRequestObject,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
+        """Validates whether restore can be triggered for a backup instance of the mapped source vault in
+        a different tenant.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the BackupVaultResource. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the CrossTenantVaultMapping. Required.
+        :type mapping_name: str
+        :param backup_instance_name: The name of the BackupInstanceResource. Required.
+        :type backup_instance_name: str
+        :param body: Request body for operation. Required.
+        :type body: ~azure.mgmt.dataprotection.models.ValidateRestoreRequestObject
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns OperationJobExtendedInfo. The
+         OperationJobExtendedInfo is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.dataprotection.models.OperationJobExtendedInfo]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_trigger(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        backup_instance_name: str,
+        body: _types.ValidateRestoreRequestObject,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
+        """Validates whether restore can be triggered for a backup instance of the mapped source vault in
+        a different tenant.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the BackupVaultResource. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the CrossTenantVaultMapping. Required.
+        :type mapping_name: str
+        :param backup_instance_name: The name of the BackupInstanceResource. Required.
+        :type backup_instance_name: str
+        :param body: Request body for operation. Required.
+        :type body: ~azure.mgmt.dataprotection.types.ValidateRestoreRequestObject
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns OperationJobExtendedInfo. The
+         OperationJobExtendedInfo is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.dataprotection.models.OperationJobExtendedInfo]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_trigger(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        backup_instance_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
+        """Validates whether restore can be triggered for a backup instance of the mapped source vault in
+        a different tenant.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the BackupVaultResource. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the CrossTenantVaultMapping. Required.
+        :type mapping_name: str
+        :param backup_instance_name: The name of the BackupInstanceResource. Required.
+        :type backup_instance_name: str
+        :param body: Request body for operation. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns OperationJobExtendedInfo. The
+         OperationJobExtendedInfo is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.dataprotection.models.OperationJobExtendedInfo]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-31-preview",
+        params_added_on={
+            "2026-08-31-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "mapping_name",
+                "backup_instance_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-31-preview"],
+    )
+    async def begin_trigger(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        backup_instance_name: str,
+        body: Union[_models.ValidateRestoreRequestObject, _types.ValidateRestoreRequestObject, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
+        """Validates whether restore can be triggered for a backup instance of the mapped source vault in
+        a different tenant.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the BackupVaultResource. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the CrossTenantVaultMapping. Required.
+        :type mapping_name: str
+        :param backup_instance_name: The name of the BackupInstanceResource. Required.
+        :type backup_instance_name: str
+        :param body: Request body for operation. Is either a ValidateRestoreRequestObject type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.dataprotection.models.ValidateRestoreRequestObject or
+         ~azure.mgmt.dataprotection.types.ValidateRestoreRequestObject or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns OperationJobExtendedInfo. The
+         OperationJobExtendedInfo is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.dataprotection.models.OperationJobExtendedInfo]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.OperationJobExtendedInfo] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._trigger_initial(
+                resource_group_name=resource_group_name,
+                vault_name=vault_name,
+                mapping_name=mapping_name,
+                backup_instance_name=backup_instance_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.OperationJobExtendedInfo, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.OperationJobExtendedInfo].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.OperationJobExtendedInfo](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+
+class RestorableTimeRangesFromDppCrossTenantVaultOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.dataprotection.aio.DataProtectionMgmtClient`'s
+        :attr:`restorable_time_ranges_from_dpp_cross_tenant_vault` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DataProtectionMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    async def find(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        backup_instance_name: str,
+        body: _models.AzureBackupFindRestorableTimeRangesRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AzureBackupFindRestorableTimeRangesResponseResource:
+        """Finds the restorable time ranges for a backup instance of the mapped source vault in a
+        different tenant.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the BackupVaultResource. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the CrossTenantVaultMapping. Required.
+        :type mapping_name: str
+        :param backup_instance_name: The name of the BackupInstanceResource. Required.
+        :type backup_instance_name: str
+        :param body: Request body for operation. Required.
+        :type body: ~azure.mgmt.dataprotection.models.AzureBackupFindRestorableTimeRangesRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AzureBackupFindRestorableTimeRangesResponseResource. The
+         AzureBackupFindRestorableTimeRangesResponseResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.dataprotection.models.AzureBackupFindRestorableTimeRangesResponseResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def find(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        backup_instance_name: str,
+        body: _types.AzureBackupFindRestorableTimeRangesRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AzureBackupFindRestorableTimeRangesResponseResource:
+        """Finds the restorable time ranges for a backup instance of the mapped source vault in a
+        different tenant.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the BackupVaultResource. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the CrossTenantVaultMapping. Required.
+        :type mapping_name: str
+        :param backup_instance_name: The name of the BackupInstanceResource. Required.
+        :type backup_instance_name: str
+        :param body: Request body for operation. Required.
+        :type body: ~azure.mgmt.dataprotection.types.AzureBackupFindRestorableTimeRangesRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AzureBackupFindRestorableTimeRangesResponseResource. The
+         AzureBackupFindRestorableTimeRangesResponseResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.dataprotection.models.AzureBackupFindRestorableTimeRangesResponseResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def find(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        backup_instance_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AzureBackupFindRestorableTimeRangesResponseResource:
+        """Finds the restorable time ranges for a backup instance of the mapped source vault in a
+        different tenant.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the BackupVaultResource. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the CrossTenantVaultMapping. Required.
+        :type mapping_name: str
+        :param backup_instance_name: The name of the BackupInstanceResource. Required.
+        :type backup_instance_name: str
+        :param body: Request body for operation. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AzureBackupFindRestorableTimeRangesResponseResource. The
+         AzureBackupFindRestorableTimeRangesResponseResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.dataprotection.models.AzureBackupFindRestorableTimeRangesResponseResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-31-preview",
+        params_added_on={
+            "2026-08-31-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "mapping_name",
+                "backup_instance_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-31-preview"],
+    )
+    async def find(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        backup_instance_name: str,
+        body: Union[
+            _models.AzureBackupFindRestorableTimeRangesRequest,
+            _types.AzureBackupFindRestorableTimeRangesRequest,
+            IO[bytes],
+        ],
+        **kwargs: Any
+    ) -> _models.AzureBackupFindRestorableTimeRangesResponseResource:
+        """Finds the restorable time ranges for a backup instance of the mapped source vault in a
+        different tenant.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the BackupVaultResource. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the CrossTenantVaultMapping. Required.
+        :type mapping_name: str
+        :param backup_instance_name: The name of the BackupInstanceResource. Required.
+        :type backup_instance_name: str
+        :param body: Request body for operation. Is either a AzureBackupFindRestorableTimeRangesRequest
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.dataprotection.models.AzureBackupFindRestorableTimeRangesRequest or
+         ~azure.mgmt.dataprotection.types.AzureBackupFindRestorableTimeRangesRequest or IO[bytes]
+        :return: AzureBackupFindRestorableTimeRangesResponseResource. The
+         AzureBackupFindRestorableTimeRangesResponseResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.dataprotection.models.AzureBackupFindRestorableTimeRangesResponseResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AzureBackupFindRestorableTimeRangesResponseResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_restorable_time_ranges_from_dpp_cross_tenant_vault_find_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            mapping_name=mapping_name,
+            backup_instance_name=backup_instance_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AzureBackupFindRestorableTimeRangesResponseResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class RecoveryPointsFromDppCrossTenantVaultOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.dataprotection.aio.DataProtectionMgmtClient`'s
+        :attr:`recovery_points_from_dpp_cross_tenant_vault` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DataProtectionMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-31-preview",
+        params_added_on={
+            "2026-08-31-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "mapping_name",
+                "backup_instance_name",
+                "filter",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-31-preview"],
+    )
+    def list(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        backup_instance_name: str,
+        *,
+        filter: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.AzureBackupRecoveryPointResource"]:
+        """Lists the vault-tier recovery points for a backup instance of the mapped source vault in a
+        different tenant.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the BackupVaultResource. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the CrossTenantVaultMapping. Required.
+        :type mapping_name: str
+        :param backup_instance_name: The name of the BackupInstanceResource. Required.
+        :type backup_instance_name: str
+        :keyword filter: OData filter options. Default value is None.
+        :paramtype filter: str
+        :return: An iterator like instance of AzureBackupRecoveryPointResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.dataprotection.models.AzureBackupRecoveryPointResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AzureBackupRecoveryPointResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_recovery_points_from_dpp_cross_tenant_vault_list_request(
+                    resource_group_name=resource_group_name,
+                    vault_name=vault_name,
+                    mapping_name=mapping_name,
+                    backup_instance_name=backup_instance_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AzureBackupRecoveryPointResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class RecoveryPointFromDppCrossTenantVaultOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.dataprotection.aio.DataProtectionMgmtClient`'s
+        :attr:`recovery_point_from_dpp_cross_tenant_vault` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DataProtectionMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-31-preview",
+        params_added_on={
+            "2026-08-31-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "mapping_name",
+                "backup_instance_name",
+                "recovery_point_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-31-preview"],
+    )
+    async def get(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        backup_instance_name: str,
+        recovery_point_id: str,
+        **kwargs: Any
+    ) -> _models.AzureBackupRecoveryPointResource:
+        """Gets a vault-tier recovery point for a backup instance of the mapped source vault in a
+        different tenant.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the BackupVaultResource. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the CrossTenantVaultMapping. Required.
+        :type mapping_name: str
+        :param backup_instance_name: The name of the BackupInstanceResource. Required.
+        :type backup_instance_name: str
+        :param recovery_point_id: The name of the AzureBackupRecoveryPointResource. Required.
+        :type recovery_point_id: str
+        :return: AzureBackupRecoveryPointResource. The AzureBackupRecoveryPointResource is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.dataprotection.models.AzureBackupRecoveryPointResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AzureBackupRecoveryPointResource] = kwargs.pop("cls", None)
+
+        _request = build_recovery_point_from_dpp_cross_tenant_vault_get_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            mapping_name=mapping_name,
+            backup_instance_name=backup_instance_name,
+            recovery_point_id=recovery_point_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AzureBackupRecoveryPointResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class BackupJobsFromDppCrossTenantVaultOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.dataprotection.aio.DataProtectionMgmtClient`'s
+        :attr:`backup_jobs_from_dpp_cross_tenant_vault` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DataProtectionMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-31-preview",
+        params_added_on={
+            "2026-08-31-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "mapping_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-31-preview"],
+    )
+    def list(
+        self, resource_group_name: str, vault_name: str, mapping_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.AzureBackupJobResource"]:
+        """Lists the jobs of the mapped source vault in a different tenant.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the BackupVaultResource. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the CrossTenantVaultMapping. Required.
+        :type mapping_name: str
+        :return: An iterator like instance of AzureBackupJobResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.dataprotection.models.AzureBackupJobResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AzureBackupJobResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_backup_jobs_from_dpp_cross_tenant_vault_list_request(
+                    resource_group_name=resource_group_name,
+                    vault_name=vault_name,
+                    mapping_name=mapping_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AzureBackupJobResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class JobFromDppCrossTenantVaultOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.dataprotection.aio.DataProtectionMgmtClient`'s
+        :attr:`job_from_dpp_cross_tenant_vault` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DataProtectionMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-31-preview",
+        params_added_on={
+            "2026-08-31-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "mapping_name",
+                "job_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-31-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, vault_name: str, mapping_name: str, job_id: str, **kwargs: Any
+    ) -> _models.AzureBackupJobResource:
+        """Gets a job of the mapped source vault in a different tenant.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the BackupVaultResource. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the CrossTenantVaultMapping. Required.
+        :type mapping_name: str
+        :param job_id: The name of the AzureBackupJobResource. Required.
+        :type job_id: str
+        :return: AzureBackupJobResource. The AzureBackupJobResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.dataprotection.models.AzureBackupJobResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AzureBackupJobResource] = kwargs.pop("cls", None)
+
+        _request = build_job_from_dpp_cross_tenant_vault_get_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            mapping_name=mapping_name,
+            job_id=job_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AzureBackupJobResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class BackupInstanceOperationStatusFromDppCrossTenantVaultOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.dataprotection.aio.DataProtectionMgmtClient`'s
+        :attr:`backup_instance_operation_status_from_dpp_cross_tenant_vault` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DataProtectionMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-31-preview",
+        params_added_on={
+            "2026-08-31-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "mapping_name",
+                "backup_instance_name",
+                "operation_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-31-preview"],
+    )
+    async def get(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        backup_instance_name: str,
+        operation_id: str,
+        **kwargs: Any
+    ) -> _models.OperationResource:
+        """Gets the status of a cross-tenant operation (e.g. a cross-tenant restore) for a backup instance
+        of the mapped source vault.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the BackupVaultResource. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the CrossTenantVaultMapping. Required.
+        :type mapping_name: str
+        :param backup_instance_name: The name of the BackupInstanceResource. Required.
+        :type backup_instance_name: str
+        :param operation_id: The name of the BackupInstanceResource. Required.
+        :type operation_id: str
+        :return: OperationResource. The OperationResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.dataprotection.models.OperationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.OperationResource] = kwargs.pop("cls", None)
+
+        _request = build_backup_instance_operation_status_from_dpp_cross_tenant_vault_get_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            mapping_name=mapping_name,
+            backup_instance_name=backup_instance_name,
+            operation_id=operation_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.OperationResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class BackupInstanceOperationResultFromDppCrossTenantVaultOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.dataprotection.aio.DataProtectionMgmtClient`'s
+        :attr:`backup_instance_operation_result_from_dpp_cross_tenant_vault` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DataProtectionMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-31-preview",
+        params_added_on={
+            "2026-08-31-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "vault_name",
+                "mapping_name",
+                "backup_instance_name",
+                "operation_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-31-preview"],
+    )
+    async def get(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        mapping_name: str,
+        backup_instance_name: str,
+        operation_id: str,
+        **kwargs: Any
+    ) -> Optional[_models.OperationJobExtendedInfo]:
+        """Fetches the result of a cross-tenant operation (e.g. a cross-tenant restore) for a backup
+        instance of the mapped source vault - the leg the restore's Location header points at. Returns
+        202 with Location/Retry-After while pending, and 200 with the operation result body when
+        complete.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the BackupVaultResource. Required.
+        :type vault_name: str
+        :param mapping_name: The name of the CrossTenantVaultMapping. Required.
+        :type mapping_name: str
+        :param backup_instance_name: The name of the BackupInstanceResource. Required.
+        :type backup_instance_name: str
+        :param operation_id: The name of the BackupInstanceResource. Required.
+        :type operation_id: str
+        :return: OperationJobExtendedInfo or None. The OperationJobExtendedInfo is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.dataprotection.models.OperationJobExtendedInfo or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Optional[_models.OperationJobExtendedInfo]] = kwargs.pop("cls", None)
+
+        _request = build_backup_instance_operation_result_from_dpp_cross_tenant_vault_get_request(
+            resource_group_name=resource_group_name,
+            vault_name=vault_name,
+            mapping_name=mapping_name,
+            backup_instance_name=backup_instance_name,
+            operation_id=operation_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 200:
+            if _stream:
+                deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+            else:
+                deserialized = _deserialize(_models.OperationJobExtendedInfo, response.json())
+
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+
 class BackupVaultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
@@ -6137,7 +8791,15 @@ class BackupVaultsOperations:  # pylint: disable=docstring-missing-param
 
     @api_version_validation(
         params_added_on={"2025-09-01": ["x_ms_deleted_vault_id"]},
-        api_versions_list=["2025-07-01", "2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01", "2026-07-01"],
+        api_versions_list=[
+            "2025-07-01",
+            "2025-09-01",
+            "2026-03-01",
+            "2026-04-01-preview",
+            "2026-06-01",
+            "2026-07-01",
+            "2026-08-31-preview",
+        ],
     )
     async def _create_or_update_initial(
         self,
@@ -6330,7 +8992,15 @@ class BackupVaultsOperations:  # pylint: disable=docstring-missing-param
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2025-09-01": ["x_ms_deleted_vault_id"]},
-        api_versions_list=["2025-07-01", "2025-09-01", "2026-03-01", "2026-04-01-preview", "2026-06-01", "2026-07-01"],
+        api_versions_list=[
+            "2025-07-01",
+            "2025-09-01",
+            "2026-03-01",
+            "2026-04-01-preview",
+            "2026-06-01",
+            "2026-07-01",
+            "2026-08-31-preview",
+        ],
     )
     async def begin_create_or_update(
         self,
