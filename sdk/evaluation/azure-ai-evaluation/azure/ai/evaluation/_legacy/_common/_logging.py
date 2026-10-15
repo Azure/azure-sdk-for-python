@@ -17,7 +17,6 @@ from dataclasses import dataclass
 from io import StringIO, TextIOBase
 from typing import Any, Dict, Final, Mapping, Optional, Set, TextIO, Tuple, Union
 
-
 valid_logging_level: Final[Set[str]] = {"CRITICAL", "FATAL", "ERROR", "WARN", "WARNING", "INFO", "DEBUG", "NOTSET"}
 
 
@@ -171,14 +170,23 @@ class NodeLogManager:
     """
 
     def __init__(self, record_datetime: bool = True):
-        if isinstance(sys.stdout, NodeLogWriter):
+        # A nested manager reuses the outer manager's writer, whose node context is shared.
+        # Snapshot it so __exit__ can restore the outer run context after set_node_context
+        # overwrites it for the inner run.
+        self._reuse_stdout_writer = isinstance(sys.stdout, NodeLogWriter)
+        if self._reuse_stdout_writer:
             self.stdout_logger = sys.stdout
+            self._saved_stdout_node_info = self.stdout_logger.get_node_info()
         else:
             self.stdout_logger = NodeLogWriter(sys.stdout, record_datetime)
-        if isinstance(sys.stderr, NodeLogWriter):
+            self._saved_stdout_node_info = None
+        self._reuse_stderr_writer = isinstance(sys.stderr, NodeLogWriter)
+        if self._reuse_stderr_writer:
             self.stderr_logger = sys.stderr
+            self._saved_stderr_node_info = self.stderr_logger.get_node_info()
         else:
             self.stderr_logger = NodeLogWriter(sys.stderr, record_datetime, is_stderr=True)
+            self._saved_stderr_node_info = None
 
     def __enter__(self) -> "NodeLogManager":
         """Replace sys.stdout and sys.stderr with NodeLogWriter."""
@@ -192,6 +200,10 @@ class NodeLogManager:
         """Restore sys.stdout and sys.stderr."""
         sys.stdout = self._prev_stdout
         sys.stderr = self._prev_stderr
+        if self._reuse_stdout_writer:
+            self.stdout_logger.restore_node_info(self._saved_stdout_node_info)
+        if self._reuse_stderr_writer:
+            self.stderr_logger.restore_node_info(self._saved_stderr_node_info)
 
     def set_node_context(self, run_id: str, node_name: str, line_number: int) -> None:
         """Set node context."""
@@ -231,6 +243,14 @@ class NodeLogWriter(TextIOBase):
         run_log_info = NodeInfo(run_id, node_name, line_number)
         self._context.set(run_log_info)
         self.run_id_to_stdout.update({run_id: StringIO()})
+
+    def get_node_info(self) -> Optional[NodeInfo]:
+        """Get the node info currently stored in the context variable."""
+        return self._context.get()
+
+    def restore_node_info(self, node_info: Optional[NodeInfo]) -> None:
+        """Restore node info previously captured with get_node_info into the context variable."""
+        self._context.set(node_info)
 
     def clear_node_info(self, run_id: str):
         """Clear context variable associated with run id."""
