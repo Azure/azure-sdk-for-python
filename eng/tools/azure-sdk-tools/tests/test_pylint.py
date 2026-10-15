@@ -68,9 +68,30 @@ def test_get_test_pylint_command_supports_namespace_test_directories(tmp_path):
         "pylint",
         "--rcfile=test_pylintrc",
         "--output-format=parseable",
-        *sorted([str(test_file), str(helper)]),
+        "--recursive=y",
+        str(tests_dir),
     ]
 
 
 def test_get_test_pylint_command_ignores_empty_directories(tmp_path):
     assert get_test_pylint_command("python", "test_pylintrc", str(tmp_path)) == []
+
+
+def test_get_test_pylint_command_keeps_large_directories_bounded(tmp_path):
+    tests_dir = tmp_path / "tests"
+    tests_dir.mkdir()
+    for index in range(620):
+        (tests_dir / f"test_client_with_a_long_file_name_{index:04}.py").write_text("pass\n", encoding="utf-8")
+
+    command = get_test_pylint_command("python", "test_pylintrc", str(tests_dir))
+
+    assert command == [
+        "python",
+        "-m",
+        "pylint",
+        "--rcfile=test_pylintrc",
+        "--output-format=parseable",
+        "--recursive=y",
+        str(tests_dir),
+    ]
+    assert len(" ".join(command)) < 32767
