@@ -1238,7 +1238,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         self,
         conversation_id: str,
         message_id: str,
-        resource: _models.ChatMessage,
+        resource: _models.ChatMessageUpdate,
         *,
         content_type: str = "application/merge-patch+json",
         etag: Optional[str] = None,
@@ -1254,7 +1254,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         :param message_id: Message identifier. Required.
         :type message_id: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatMessage
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatMessageUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -1273,7 +1273,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         self,
         conversation_id: str,
         message_id: str,
-        resource: _types.ChatMessage,
+        resource: _types.ChatMessageUpdate,
         *,
         content_type: str = "application/merge-patch+json",
         etag: Optional[str] = None,
@@ -1289,7 +1289,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         :param message_id: Message identifier. Required.
         :type message_id: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatMessage
+        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatMessageUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -1343,7 +1343,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         self,
         conversation_id: str,
         message_id: str,
-        resource: Union[_models.ChatMessage, _types.ChatMessage, IO[bytes]],
+        resource: Union[_models.ChatMessageUpdate, _types.ChatMessageUpdate, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1357,10 +1357,10 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         :type conversation_id: str
         :param message_id: Message identifier. Required.
         :type message_id: str
-        :param resource: The resource instance. Is either a ChatMessage type or a IO[bytes] type.
+        :param resource: The resource instance. Is either a ChatMessageUpdate type or a IO[bytes] type.
          Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatMessage or
-         ~azure.messaging.webpubsubchatservice.types.ChatMessage or IO[bytes]
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatMessageUpdate or
+         ~azure.messaging.webpubsubchatservice.types.ChatMessageUpdate or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -1612,7 +1612,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
     def create_or_replace_role(
         self,
         role_name: str,
-        resource: _models.ChatRole,
+        resource: _models.ChatRoleCreate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -1626,7 +1626,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         :param role_name: Role name. Must start with 'user.' or 'room.' prefix. Required.
         :type role_name: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRole
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRoleCreate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1644,7 +1644,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
     def create_or_replace_role(
         self,
         role_name: str,
-        resource: _types.ChatRole,
+        resource: _types.ChatRoleCreate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -1658,7 +1658,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         :param role_name: Role name. Must start with 'user.' or 'room.' prefix. Required.
         :type role_name: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatRole
+        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatRoleCreate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1708,7 +1708,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
     def create_or_replace_role(
         self,
         role_name: str,
-        resource: Union[_models.ChatRole, _types.ChatRole, IO[bytes]],
+        resource: Union[_models.ChatRoleCreate, _types.ChatRoleCreate, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1720,10 +1720,10 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
 
         :param role_name: Role name. Must start with 'user.' or 'room.' prefix. Required.
         :type role_name: str
-        :param resource: The resource instance. Is either a ChatRole type or a IO[bytes] type.
+        :param resource: The resource instance. Is either a ChatRoleCreate type or a IO[bytes] type.
          Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRole or
-         ~azure.messaging.webpubsubchatservice.types.ChatRole or IO[bytes]
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRoleCreate or
+         ~azure.messaging.webpubsubchatservice.types.ChatRoleCreate or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -1988,7 +1988,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
     def create_or_replace_room(
         self,
         room_id: str,
-        resource: _models.ChatRoom,
+        resource: _models.ChatRoomCreate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -2002,7 +2002,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         :param room_id: Room identifier. Required.
         :type room_id: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRoom
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRoomCreate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2020,7 +2020,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
     def create_or_replace_room(
         self,
         room_id: str,
-        resource: _types.ChatRoom,
+        resource: _types.ChatRoomCreate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -2034,7 +2034,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         :param room_id: Room identifier. Required.
         :type room_id: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatRoom
+        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatRoomCreate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2084,7 +2084,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
     def create_or_replace_room(
         self,
         room_id: str,
-        resource: Union[_models.ChatRoom, _types.ChatRoom, IO[bytes]],
+        resource: Union[_models.ChatRoomCreate, _types.ChatRoomCreate, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -2096,10 +2096,10 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
 
         :param room_id: Room identifier. Required.
         :type room_id: str
-        :param resource: The resource instance. Is either a ChatRoom type or a IO[bytes] type.
+        :param resource: The resource instance. Is either a ChatRoomCreate type or a IO[bytes] type.
          Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRoom or
-         ~azure.messaging.webpubsubchatservice.types.ChatRoom or IO[bytes]
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRoomCreate or
+         ~azure.messaging.webpubsubchatservice.types.ChatRoomCreate or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -2444,7 +2444,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         self,
         room_id: str,
         topic_id: str,
-        resource: _models.ChatTopic,
+        resource: _models.ChatTopicCreate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -2460,7 +2460,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         :param topic_id: Topic identifier unique within the room. Required.
         :type topic_id: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatTopicCreate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2479,7 +2479,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         self,
         room_id: str,
         topic_id: str,
-        resource: _types.ChatTopic,
+        resource: _types.ChatTopicCreate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -2495,7 +2495,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         :param topic_id: Topic identifier unique within the room. Required.
         :type topic_id: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatTopic
+        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatTopicCreate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2565,7 +2565,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         self,
         room_id: str,
         topic_id: str,
-        resource: Union[_models.ChatTopic, _types.ChatTopic, IO[bytes]],
+        resource: Union[_models.ChatTopicCreate, _types.ChatTopicCreate, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -2579,10 +2579,10 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         :type room_id: str
         :param topic_id: Topic identifier unique within the room. Required.
         :type topic_id: str
-        :param resource: The resource instance. Is either a ChatTopic type or a IO[bytes] type.
+        :param resource: The resource instance. Is either a ChatTopicCreate type or a IO[bytes] type.
          Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatTopic or
-         ~azure.messaging.webpubsubchatservice.types.ChatTopic or IO[bytes]
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatTopicCreate or
+         ~azure.messaging.webpubsubchatservice.types.ChatTopicCreate or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -2743,7 +2743,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         self,
         room_id: str,
         topic_id: str,
-        resource: _models.ChatTopic,
+        resource: _models.ChatTopicUpdate,
         *,
         content_type: str = "application/merge-patch+json",
         etag: Optional[str] = None,
@@ -2759,7 +2759,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         :param topic_id: Topic identifier unique within the room. Required.
         :type topic_id: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatTopicUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -2778,7 +2778,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         self,
         room_id: str,
         topic_id: str,
-        resource: _types.ChatTopic,
+        resource: _types.ChatTopicUpdate,
         *,
         content_type: str = "application/merge-patch+json",
         etag: Optional[str] = None,
@@ -2794,7 +2794,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         :param topic_id: Topic identifier unique within the room. Required.
         :type topic_id: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatTopic
+        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatTopicUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -2864,7 +2864,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         self,
         room_id: str,
         topic_id: str,
-        resource: Union[_models.ChatTopic, _types.ChatTopic, IO[bytes]],
+        resource: Union[_models.ChatTopicUpdate, _types.ChatTopicUpdate, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -2878,10 +2878,10 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         :type room_id: str
         :param topic_id: Topic identifier unique within the room. Required.
         :type topic_id: str
-        :param resource: The resource instance. Is either a ChatTopic type or a IO[bytes] type.
+        :param resource: The resource instance. Is either a ChatTopicUpdate type or a IO[bytes] type.
          Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatTopic or
-         ~azure.messaging.webpubsubchatservice.types.ChatTopic or IO[bytes]
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatTopicUpdate or
+         ~azure.messaging.webpubsubchatservice.types.ChatTopicUpdate or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -3161,7 +3161,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         self,
         room_id: str,
         user_id: str,
-        resource: _models.ChatRoomMember,
+        resource: _models.ChatRoomMemberCreate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -3177,7 +3177,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         :param user_id: User ID of the member. Required.
         :type user_id: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRoomMember
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRoomMemberCreate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3196,7 +3196,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         self,
         room_id: str,
         user_id: str,
-        resource: _types.ChatRoomMember,
+        resource: _types.ChatRoomMemberCreate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -3212,7 +3212,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         :param user_id: User ID of the member. Required.
         :type user_id: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatRoomMember
+        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatRoomMemberCreate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3266,7 +3266,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         self,
         room_id: str,
         user_id: str,
-        resource: Union[_models.ChatRoomMember, _types.ChatRoomMember, IO[bytes]],
+        resource: Union[_models.ChatRoomMemberCreate, _types.ChatRoomMemberCreate, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -3280,10 +3280,10 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         :type room_id: str
         :param user_id: User ID of the member. Required.
         :type user_id: str
-        :param resource: The resource instance. Is either a ChatRoomMember type or a IO[bytes] type.
-         Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRoomMember or
-         ~azure.messaging.webpubsubchatservice.types.ChatRoomMember or IO[bytes]
+        :param resource: The resource instance. Is either a ChatRoomMemberCreate type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRoomMemberCreate or
+         ~azure.messaging.webpubsubchatservice.types.ChatRoomMemberCreate or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -3618,7 +3618,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
     def create_or_replace_user(
         self,
         user_id: str,
-        resource: _models.ChatUser,
+        resource: _models.ChatUserCreate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -3633,7 +3633,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         :param user_id: User identifier. Required.
         :type user_id: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatUser
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatUserCreate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3651,7 +3651,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
     def create_or_replace_user(
         self,
         user_id: str,
-        resource: _types.ChatUser,
+        resource: _types.ChatUserCreate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -3666,7 +3666,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         :param user_id: User identifier. Required.
         :type user_id: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatUser
+        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatUserCreate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3717,7 +3717,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
     def create_or_replace_user(
         self,
         user_id: str,
-        resource: Union[_models.ChatUser, _types.ChatUser, IO[bytes]],
+        resource: Union[_models.ChatUserCreate, _types.ChatUserCreate, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -3730,10 +3730,10 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
 
         :param user_id: User identifier. Required.
         :type user_id: str
-        :param resource: The resource instance. Is either a ChatUser type or a IO[bytes] type.
+        :param resource: The resource instance. Is either a ChatUserCreate type or a IO[bytes] type.
          Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatUser or
-         ~azure.messaging.webpubsubchatservice.types.ChatUser or IO[bytes]
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatUserCreate or
+         ~azure.messaging.webpubsubchatservice.types.ChatUserCreate or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str

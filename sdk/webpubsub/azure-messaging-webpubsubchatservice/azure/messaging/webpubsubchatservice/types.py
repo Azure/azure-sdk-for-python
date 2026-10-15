@@ -15,159 +15,101 @@ if TYPE_CHECKING:
     from .models import ChatPermission, ChatTopicState
 
 
-class ChatMessage(TypedDict, total=False):
-    """Represents a chat message.
+class ChatMessageUpdate(TypedDict, total=False):
+    """Properties supplied when partially updating a message.
 
-    :ivar id: Message identifier. Required.
-    :vartype id: str
-    :ivar createdBy: User who created the message. Required.
+    :ivar createdBy: User who created the message.
     :vartype createdBy: str
-    :ivar content: Message content. Required.
+    :ivar content: Message content.
     :vartype content: "MessageContent"
-    :ivar createdAt: Timestamp when the message was created. Required.
-    :vartype createdAt: str
-    :ivar etag: The entity tag for this resource. Required.
-    :vartype etag: str
     """
 
-    id: Required[str]
-    """Message identifier. Required."""
-    createdBy: Required[str]
-    """User who created the message. Required."""
-    content: Required["MessageContent"]
-    """Message content. Required."""
-    createdAt: Required[str]
-    """Timestamp when the message was created. Required."""
-    etag: Required[str]
-    """The entity tag for this resource. Required."""
+    createdBy: str
+    """User who created the message."""
+    content: "MessageContent"
+    """Message content."""
 
 
-class ChatRole(TypedDict, total=False):
-    """Represents a chat role. A role name must start with 'user.' or 'room.' prefix. A role must
-    contain either user permissions or room permissions, but not both.
+class ChatRoleCreate(TypedDict, total=False):
+    """Properties supplied when creating a role.
 
-    :ivar name: Role name. Must start with 'user.' or 'room.' prefix. Required.
-    :vartype name: str
     :ivar permissions: Permissions associated with the role. Do not mix user permissions and room
      permissions in one role. Required.
     :vartype permissions: list[Union[str, "ChatPermission"]]
-    :ivar etag: The entity tag for this resource. Required.
-    :vartype etag: str
     """
 
-    name: Required[str]
-    """Role name. Must start with 'user.' or 'room.' prefix. Required."""
     permissions: Required[list[Union[str, "ChatPermission"]]]
     """Permissions associated with the role. Do not mix user permissions and room permissions in one
      role. Required."""
-    etag: Required[str]
-    """The entity tag for this resource. Required."""
 
 
-class ChatRoom(TypedDict, total=False):
-    """Represents a chat room.
+class ChatRoomCreate(TypedDict, total=False):
+    """Properties supplied when creating a room.
 
-    :ivar id: Room identifier. Required.
-    :vartype id: str
     :ivar title: Room title. Required.
     :vartype title: str
-    :ivar defaultConversation: Default conversation ID for this room. Required.
-    :vartype defaultConversation: str
-    :ivar etag: The entity tag for this resource. Required.
-    :vartype etag: str
     """
 
-    id: Required[str]
-    """Room identifier. Required."""
     title: Required[str]
     """Room title. Required."""
-    defaultConversation: Required[str]
-    """Default conversation ID for this room. Required."""
-    etag: Required[str]
-    """The entity tag for this resource. Required."""
 
 
-class ChatRoomMember(TypedDict, total=False):
-    """Represents a room member.
+class ChatRoomMemberCreate(TypedDict, total=False):
+    """Properties supplied when creating a room member.
 
-    :ivar userId: User ID of the member. Required.
-    :vartype userId: str
     :ivar roleName: Room role assigned to the user within this room. Required.
     :vartype roleName: str
-    :ivar etag: The entity tag for this resource. Required.
-    :vartype etag: str
     """
 
-    userId: Required[str]
-    """User ID of the member. Required."""
     roleName: Required[str]
     """Room role assigned to the user within this room. Required."""
-    etag: Required[str]
-    """The entity tag for this resource. Required."""
 
 
-class ChatTopic(TypedDict, total=False):
-    """Represents a chat topic in a room.
+class ChatTopicCreate(TypedDict, total=False):
+    """Properties supplied when creating a topic.
 
-    :ivar id: Topic identifier unique within the room. Required.
-    :vartype id: str
     :ivar title: Topic title. Required.
     :vartype title: str
-    :ivar createdAt: Timestamp when the topic was created. Required.
-    :vartype createdAt: str
-    :ivar createdBy: User who created the topic. Required.
-    :vartype createdBy: str
-    :ivar state: Current lifecycle state of the topic. Required. Known values are: "Normal",
-     "Archived", and "SoftDeleted".
-    :vartype state: Union[str, "ChatTopicState"]
-    :ivar conversationId: Conversation associated with this topic. Required.
-    :vartype conversationId: str
-    :ivar etag: The entity tag for this resource. Required.
-    :vartype etag: str
     """
 
-    id: Required[str]
-    """Topic identifier unique within the room. Required."""
     title: Required[str]
     """Topic title. Required."""
-    createdAt: Required[str]
-    """Timestamp when the topic was created. Required."""
-    createdBy: Required[str]
-    """User who created the topic. Required."""
-    state: Required[Union[str, "ChatTopicState"]]
-    """Current lifecycle state of the topic. Required. Known values are: \"Normal\", \"Archived\", and
+
+
+class ChatTopicUpdate(TypedDict, total=False):
+    """Properties supplied when partially updating a topic.
+
+    :ivar title: Topic title.
+    :vartype title: str
+    :ivar state: Current lifecycle state of the topic. Known values are: "Normal", "Archived", and
+     "SoftDeleted".
+    :vartype state: Union[str, "ChatTopicState"]
+    """
+
+    title: str
+    """Topic title."""
+    state: Union[str, "ChatTopicState"]
+    """Current lifecycle state of the topic. Known values are: \"Normal\", \"Archived\", and
      \"SoftDeleted\"."""
-    conversationId: Required[str]
-    """Conversation associated with this topic. Required."""
-    etag: Required[str]
-    """The entity tag for this resource. Required."""
 
 
-class HumanChatUser(TypedDict, total=False):
-    """A human end-user, identified by a user role.
+class HumanChatUserCreate(TypedDict, total=False):
+    """Properties supplied when creating a human user.
 
-    :ivar id: User identifier. Required.
-    :vartype id: str
-    :ivar nickname: User's display nickname. Required.
-    :vartype nickname: str
-    :ivar etag: The entity tag for this resource. Required.
-    :vartype etag: str
     :ivar kind: Required. A human end-user.
     :vartype kind: Literal[ChatUserKind.HUMAN]
     :ivar roleName: Global user role assigned to the user. Must start with ``user.``. Required.
     :vartype roleName: str
+    :ivar nickname: User's display nickname. Required.
+    :vartype nickname: str
     """
 
-    id: Required[str]
-    """User identifier. Required."""
-    nickname: Required[str]
-    """User's display nickname. Required."""
-    etag: Required[str]
-    """The entity tag for this resource. Required."""
     kind: Required[Literal[ChatUserKind.HUMAN]]
     """Required. A human end-user."""
     roleName: Required[str]
     """Global user role assigned to the user. Must start with ``user.``. Required."""
+    nickname: Required[str]
+    """User's display nickname. Required."""
 
 
 class MessageContent(TypedDict, total=False):
@@ -185,4 +127,4 @@ class MessageContent(TypedDict, total=False):
     """Binary content (base64 encoded)."""
 
 
-ChatUser = Union[HumanChatUser]
+ChatUserCreate = Union[HumanChatUserCreate]

@@ -3,13 +3,21 @@
     "CrossLanguageDefinitionId": {
         "azure.messaging.webpubsubchatservice.models.ChatConversation": "WebPubSubChat.ChatConversation",
         "azure.messaging.webpubsubchatservice.models.ChatMessage": "WebPubSubChat.ChatMessage",
+        "azure.messaging.webpubsubchatservice.models.ChatMessageUpdate": "WebPubSubChat.RequestModels.ChatMessageUpdate",
         "azure.messaging.webpubsubchatservice.models.ChatRole": "WebPubSubChat.ChatRole",
+        "azure.messaging.webpubsubchatservice.models.ChatRoleCreate": "WebPubSubChat.RequestModels.ChatRoleCreate",
         "azure.messaging.webpubsubchatservice.models.ChatRoom": "WebPubSubChat.ChatRoom",
+        "azure.messaging.webpubsubchatservice.models.ChatRoomCreate": "WebPubSubChat.RequestModels.ChatRoomCreate",
         "azure.messaging.webpubsubchatservice.models.ChatRoomMember": "WebPubSubChat.ChatRoomMember",
+        "azure.messaging.webpubsubchatservice.models.ChatRoomMemberCreate": "WebPubSubChat.RequestModels.ChatRoomMemberCreate",
         "azure.messaging.webpubsubchatservice.models.ChatTopic": "WebPubSubChat.ChatTopic",
+        "azure.messaging.webpubsubchatservice.models.ChatTopicCreate": "WebPubSubChat.RequestModels.ChatTopicCreate",
+        "azure.messaging.webpubsubchatservice.models.ChatTopicUpdate": "WebPubSubChat.RequestModels.ChatTopicUpdate",
         "azure.messaging.webpubsubchatservice.models.ChatUser": "WebPubSubChat.ChatUser",
+        "azure.messaging.webpubsubchatservice.models.ChatUserCreate": "WebPubSubChat.RequestModels.ChatUserCreate",
         "azure.messaging.webpubsubchatservice.models.ChatUserRoom": "WebPubSubChat.ChatUserRoom",
         "azure.messaging.webpubsubchatservice.models.HumanChatUser": "WebPubSubChat.HumanChatUser",
+        "azure.messaging.webpubsubchatservice.models.HumanChatUserCreate": "WebPubSubChat.RequestModels.HumanChatUserCreate",
         "azure.messaging.webpubsubchatservice.models.MessageContent": "WebPubSubChat.MessageContent",
         "azure.messaging.webpubsubchatservice.models.ChatPermission": "WebPubSubChat.ChatPermission",
         "azure.messaging.webpubsubchatservice.models.ChatTopicState": "WebPubSubChat.ChatTopicState",
@@ -65,5 +73,5 @@
         "azure.messaging.webpubsubchatservice.WebPubSubChatServiceClient.list_rooms_for_user": "WebPubSubChat.WebPubSubChatServiceClient.listRoomsForUser",
         "azure.messaging.webpubsubchatservice.aio.WebPubSubChatServiceClient.list_rooms_for_user": "WebPubSubChat.WebPubSubChatServiceClient.listRoomsForUser"
     },
-    "CrossLanguageVersion": "9db8b5aee1c7"
+    "CrossLanguageVersion": "37e519d01deb"
 }
