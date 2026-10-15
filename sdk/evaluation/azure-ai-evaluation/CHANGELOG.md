@@ -5,6 +5,7 @@
 ### Bugs Fixed
 
 - Hardened local Prompty image resolution so only relative files within the Prompty directory are inlined, with opened-file validation to prevent path changes from redirecting reads and without exposing the local directory in fallback logs.
+- Fixed `TaskAdherenceEvaluator` silently dropping the `system_message` and `tool_calls` keyword arguments. Both are now accepted as optional inputs and passed to the evaluation prompt, so callers using plain-string `query`/`response` no longer get evaluated without their system instructions or tool calls.
 
 ## 1.18.9 (2026-10-12)
 

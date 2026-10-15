@@ -790,7 +790,9 @@ namespace azure.ai.evaluation
                 *, 
                 query: Union[str, List[dict]], 
                 response: Union[str, List[dict]], 
-                tool_definitions: Optional[Union[dict, List[dict]]] = ...
+                tool_definitions: Optional[Union[dict, List[dict]]] = ..., 
+                system_message: Optional[str] = ..., 
+                tool_calls: Optional[Union[str, dict, List[dict]]] = ...
             ) -> Dict[str, Union[str, float]]: ...
 
         @override
