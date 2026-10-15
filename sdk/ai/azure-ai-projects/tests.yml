@@ -25,4 +25,5 @@ extends:
     EnvVars:
       AZURE_SKIP_LIVE_RECORDING: 'true'
       AZURE_TEST_RUN_LIVE: 'true'
+      PYTEST_ADDOPTS: '-p devtools_testutils.proxy_startup'
       RUN_FOUNDRY_SDK_HEALTH_TEST: 'true'
