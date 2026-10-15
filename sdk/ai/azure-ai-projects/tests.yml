@@ -1,0 +1,28 @@
+trigger: none
+pr: none
+
+extends:
+  template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+  parameters:
+    BuildTargetingString: azure-ai-projects
+    JobName: projects-live-samples
+    ServiceDirectory: ai
+    TestResourceDirectories:
+      - ai/azure-ai-projects
+    TestTimeoutInMinutes: 180
+    MaxParallel: 1
+    TestProxy: true
+    TestMarkArgument: foundry_sdk_health_live
+    MatrixConfigs:
+      - Name: Azure_AI_Projects_live_sample_matrix
+        Path: sdk/ai/azure-ai-projects/live-test-matrix.json
+        Selection: all
+        GenerateVMJobs: true
+    Clouds: Public
+    CloudConfig:
+      Public:
+        Location: eastus2
+    EnvVars:
+      AZURE_SKIP_LIVE_RECORDING: 'true'
+      AZURE_TEST_RUN_LIVE: 'true'
+      RUN_FOUNDRY_SDK_HEALTH_TEST: 'true'

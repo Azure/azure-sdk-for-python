@@ -76,6 +76,12 @@ verifytypes = false
 mypy_path = ["samples"]
 exclude = '(^|.*[\\/])samples[\\/]hosted_agents[\\/]assets[\\/].*main\.py$|(^|.*[\\/])samples[\\/].+[\\/]utils?\.py$'
 
+[tool.pytest.ini_options]
+markers = [
+    "foundry_sdk_health_live: external Foundry SDK health orchestration test",
+    "live_test_only: tests that require live service access and cannot use recordings",
+]
+
 [tool.azure-sdk-conda]
 in_bundle = false
 
