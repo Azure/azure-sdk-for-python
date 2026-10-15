@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.Carbon": "2026-05-01-preview"
   },
-  "commit": "326f672c19172d935ff0153844efd1e8f064938e",
+  "commit": "fd7acf72fc1d90922ef0536a06863c414328824f",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/carbon/resource-manager/Microsoft.Carbon/Carbon",
   "emitterVersion": "0.63.10",
