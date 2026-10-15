@@ -13,7 +13,6 @@ from . import AzureMgmtPreparer
 from .exceptions import AzureTestError
 from .sanitizers import add_general_string_sanitizer
 
-
 _logger = logging.getLogger(__name__)
 
 

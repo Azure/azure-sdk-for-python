@@ -13,7 +13,6 @@ from pathlib import Path
 from urllib3 import PoolManager, Retry
 from .config import TestConfig
 
-
 # we store recording IDs in a module-level variable so that sanitizers can access them
 # we map test IDs to recording IDs, rather than storing only the current test's recording ID, for parallelization
 this = sys.modules[__name__]

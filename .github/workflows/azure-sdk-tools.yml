@@ -50,7 +50,7 @@ jobs:
       - name: Install azure-sdk-tools
         run: |
           python -m pip install -e 'eng/tools/azure-sdk-tools[ghtools,conda]'
-          python -m pip install black==24.4.0
+          python -m pip install black==26.3.1
           python -m pip freeze
         shell: bash
 
