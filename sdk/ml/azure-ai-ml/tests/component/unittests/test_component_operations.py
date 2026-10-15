@@ -3,6 +3,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
+from azure.ai.ml import Input
 from azure.ai.ml._restclient.arm_ml_service.models import (
     ComponentContainer as ComponentContainerData,
     ComponentContainerProperties as ComponentContainerDetails,
@@ -11,6 +12,7 @@ from azure.ai.ml._restclient.arm_ml_service.models import (
     SystemData,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
+from azure.ai.ml.entities import PipelineComponent
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.operations import ComponentOperations
@@ -83,6 +85,84 @@ class TestComponentOperation:
             mock_thing.assert_not_called()
             mock_component_operation.create_or_update(component)
             mock_thing.assert_called_once()
+
+    def test_create_preserves_pipeline_asset_input_default(self, mock_component_operation: ComponentOperations) -> None:
+        component = PipelineComponent(
+            name="pipeline_component",
+            version="1",
+            inputs={"default_data": Input(type="uri_file", default="azureml:test_data:1")},
+            jobs={},
+        )
+        service_component = PipelineComponent(
+            name="pipeline_component",
+            version="1",
+            inputs={"default_data": Input(type="uri_file")},
+            jobs={},
+        )
+
+        with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies"), patch(
+            "azure.ai.ml.operations._component_operations.Component._from_rest_object",
+            return_value=service_component,
+        ):
+            created_component = mock_component_operation.create_or_update(component)
+
+        assert created_component.inputs["default_data"].default == "azureml:test_data:1"
+        node = created_component()
+        built_input = node._build_inputs()["default_data"]
+        assert built_input.type == "uri_file"
+        assert built_input.path == "azureml:test_data:1"
+        assert node._to_rest_inputs()["default_data"] == {
+            "uri": "azureml:test_data:1",
+            "job_input_type": "uri_file",
+        }
+        assert node._to_job()._to_rest_object().properties.inputs["default_data"].as_dict() == {
+            "uri": "azureml:test_data:1",
+            "jobInputType": "uri_file",
+        }
+
+        second_node = created_component()
+        assert node._build_inputs()["default_data"] is not second_node._build_inputs()["default_data"]
+        node._build_inputs()["default_data"].path = "azureml:mutated:1"
+        assert second_node._build_inputs()["default_data"].path == "azureml:test_data:1"
+
+    def test_create_preserves_pipeline_asset_input_default_after_get(
+        self, mock_component_operation: ComponentOperations
+    ) -> None:
+        component = PipelineComponent(
+            name="pipeline_component",
+            version="1",
+            inputs={"default_data": Input(type="uri_file", default="azureml:test_data:1")},
+            jobs={},
+        )
+        service_component = PipelineComponent(
+            name="pipeline_component",
+            version="1",
+            inputs={"default_data": Input(type="uri_file")},
+            jobs={},
+        )
+
+        with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies"), patch.object(
+            ComponentOperations, "_create_or_update_component_version", return_value=None
+        ), patch.object(ComponentOperations, "get", return_value=service_component):
+            created_component = mock_component_operation.create_or_update(component)
+
+        assert created_component.inputs["default_data"].default == "azureml:test_data:1"
+
+    def test_get_restores_pipeline_asset_input_default(self, mock_component_operation: ComponentOperations) -> None:
+        component = PipelineComponent(
+            name="pipeline_component",
+            version="1",
+            inputs={"default_data": Input(type="uri_file", default="azureml:test_data:1")},
+            jobs={},
+        )
+        rest_component = component._to_rest_object()
+        rest_component.properties.component_spec["inputs"]["default_data"].pop("default")
+        mock_component_operation._version_operation.get.return_value = rest_component
+
+        fetched_component = mock_component_operation.get(name="pipeline_component", version="1")
+
+        assert fetched_component.inputs["default_data"].default == "azureml:test_data:1"
+        assert fetched_component()._build_inputs()["default_data"].path == "azureml:test_data:1"
 
     def test_create_autoincrement(
         self, mock_component_operation: ComponentOperations, mock_component_from_rest
