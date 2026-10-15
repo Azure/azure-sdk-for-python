@@ -991,22 +991,54 @@ class TestBaseExporter(unittest.TestCase):
             self.assertEqual(self._base.client._config.host, prev_host)
 
     def test_transmit_http_error_redirect_refuses_non_https(self):
-        """A redirect to the same registered domain over http:// must be refused
-        so a server (or man-in-the-middle) cannot downgrade telemetry transmission
-        to plaintext by issuing a redirect."""
+        """A redirect to the same registered domain over a non-HTTPS scheme must
+        be refused so a server (or man-in-the-middle) cannot downgrade telemetry
+        transmission to plaintext by issuing a redirect. Covered for every
+        redirect status code the exporter follows and more than one bad scheme."""
+        # Same registered domain as the default ingestion host, but a non-https
+        # scheme. The host check alone would permit these.
+        for status_code in (307, 308):
+            for location in (
+                "http://westus.services.visualstudio.com",
+                "ftp://westus.services.visualstudio.com",
+            ):
+                with self.subTest(status_code=status_code, location=location):
+                    self._base._consecutive_redirects = 0
+                    response = HttpResponse(None, None)
+                    response.status_code = status_code
+                    response.headers = {"location": location}
+                    prev_host = self._base.client._config.host
+                    error = HttpResponseError(response=response)
+                    with mock.patch.object(AzureMonitorClient, "track") as post:
+                        post.side_effect = error
+                        result = self._base._transmit(self._envelopes_to_export)
+                        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+                        self.assertEqual(post.call_count, 1)
+                        self.assertEqual(self._base.client._config.host, prev_host)
+
+    def test_transmit_http_error_redirect_follows_https(self):
+        """An allowed HTTPS redirect to the same registered domain is followed and
+        the retransmission succeeds: the host is updated to the new HTTPS endpoint
+        and the second request returns a successful TrackResponse."""
+        self._base._consecutive_redirects = 0
         response = HttpResponse(None, None)
         response.status_code = 307
-        # Same registered domain as the default ingestion host, but http:// instead
-        # of https://. The host check alone would permit this.
-        response.headers = {"location": "http://westus.services.visualstudio.com"}
+        response.headers = {"location": "https://westus.services.visualstudio.com"}
         prev_host = self._base.client._config.host
         error = HttpResponseError(response=response)
         with mock.patch.object(AzureMonitorClient, "track") as post:
-            post.side_effect = error
+            post.side_effect = [
+                error,
+                TrackResponse(items_received=1, items_accepted=1, errors=[]),
+            ]
             result = self._base._transmit(self._envelopes_to_export)
-            self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
-            self.assertEqual(post.call_count, 1)
-            self.assertEqual(self._base.client._config.host, prev_host)
+            self.assertEqual(result, ExportResult.SUCCESS)
+            self.assertEqual(post.call_count, 2)
+            self.assertEqual(
+                self._base.client._config.host,
+                "https://westus.services.visualstudio.com",
+            )
+        self._base.client._config.host = prev_host
 
     def test_is_same_registered_domain(self):
         same = self._base._is_same_registered_domain
