@@ -8,6 +8,7 @@
 import json
 import os
 import time
+from base64 import urlsafe_b64decode
 from typing import Any, Callable
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
@@ -18,11 +19,17 @@ from azure.core.credentials import TokenCredential
 from azure.identity import DefaultAzureCredential
 
 _BASE_URL = "https://ca-foundry-sdk-health-backend.jollycoast-bec92a3a.westus.azurecontainerapps.io"
-_TOKEN_SCOPE = "api://cfd08140-8ff7-4141-a412-0dc78cda7d7b/.default"
+_TOKEN_SCOPE = "https://management.azure.com/.default"
 _REGION = "westus2"
 _BRANCH = "main"
 _POLL_INTERVAL_SECONDS = 10 * 60
 _REPORT_URL = "https://aka.ms/fhd"
+
+
+def _token_identity(token: str) -> dict[str, Any]:
+    payload = token.split(".")[1]
+    claims = json.loads(urlsafe_b64decode(payload + "=" * (-len(payload) % 4)))
+    return {name: claims.get(name) for name in ("tid", "appid", "azp", "oid", "aud")}
 
 
 def _request_json(credential: TokenCredential, method: str, url: str) -> dict[str, Any]:
@@ -97,6 +104,10 @@ def _run_health_test_plans(
 def test_foundry_sdk_health_main_westus2() -> None:
     """Queue and await the main-branch Foundry SDK health plans in westus2."""
     with DefaultAzureCredential() as credential:
+        token = credential.get_token(_TOKEN_SCOPE).token
+        print(
+            f"Foundry SDK health caller identity: {json.dumps(_token_identity(token), sort_keys=True)}"
+        )
         _run_health_test_plans(credential)
 
 
@@ -124,3 +135,17 @@ def test_run_health_test_plans_polls_until_complete(capsys) -> None:
     assert requests[1][2].endswith("/tests/plans/run/active?region=westus2")
     assert sleeps == [_POLL_INTERVAL_SECONDS]
     assert f"Check the test report at {_REPORT_URL}" in capsys.readouterr().out
+
+
+def test_token_identity_returns_only_allowlist_claims() -> None:
+    """Token diagnostics expose identity claims without exposing the JWT."""
+    payload = "eyJ0aWQiOiAidGVuYW50IiwgImFwcGlkIjogImFwcCIsICJvaWQiOiAib2JqZWN0IiwgImF1ZCI6ICJhdWQifQ"
+    token = f"header.{payload}.signature"
+
+    assert _token_identity(token) == {
+        "tid": "tenant",
+        "appid": "app",
+        "azp": None,
+        "oid": "object",
+        "aud": "aud",
+    }
