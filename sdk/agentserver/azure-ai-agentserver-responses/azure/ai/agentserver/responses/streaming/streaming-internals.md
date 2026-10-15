@@ -16,7 +16,7 @@ knowing how the wiring works.
 from azure.ai.agentserver.core.streaming import streams
 
 # Inside the host:
-streams.use_file_backed_replay(           # if the core switch is enabled
+streams.use_file_backed_replay(           # if resilient_background=True
     storage_dir=stream_dir,
     cursor_fn=lambda event: int(event["sequence_number"]),
     ttl_seconds=_REPLAY_EVENT_TTL_SECONDS,  # hardcoded 600.0
@@ -24,7 +24,7 @@ streams.use_file_backed_replay(           # if the core switch is enabled
     deserializer=_deserialize_event_payload,
 )
 # OR
-streams.use_in_memory_replay(             # if the core switch is disabled
+streams.use_in_memory_replay(             # if resilient_background=False
     cursor_fn=lambda event: int(event["sequence_number"]),
     ttl_seconds=_REPLAY_EVENT_TTL_SECONDS,  # hardcoded 600.0
 )
@@ -40,7 +40,7 @@ Why these choices:
 
 ## Persistence file layout
 
-When `set_resilient_tasks_enabled(True)` is called before host construction, the
+When the host is configured with `resilient_background=True`, the
 file-backed backing writes one JSONL file per response under the
 configured `storage_dir`:
 

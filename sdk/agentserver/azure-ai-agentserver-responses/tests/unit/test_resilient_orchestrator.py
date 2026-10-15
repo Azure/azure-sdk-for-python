@@ -723,7 +723,7 @@ class TestPersistCrashFailedRecovery:
         )
 
         params = {
-            # Persisted isolation keys (what _start_resilient_response stamps).
+            # Persisted isolation keys (what _start_resilient_background stamps).
             "user_id_key": "user-123",
             # No "_context_ref": it is stripped from the resilient input, so the
             # old code's isolation derivation always yielded None here.

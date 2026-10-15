@@ -44,7 +44,7 @@ def _switch_off() -> Any:
 
     Both the enable switch and the ``TaskManager`` singleton are process-global
     and other tests in a shared pytest process may have flipped the switch on or
-    installed a manager (e.g. by constructing a ``resilient_tasks_enabled=True``
+    installed a manager (e.g. by constructing a ``resilient_background=True``
     host). Snapshot, reset both to the switch-off / no-manager state so the
     production opt-out path is genuinely exercised, then restore afterwards.
     """

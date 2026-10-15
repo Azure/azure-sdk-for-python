@@ -3,7 +3,7 @@
 """Row 11 × Path A — developer checkpoint write, handler completes within grace.
 
 Row 11 is the **developer-checkpoint-write** contract: an extension of
-Row 1 (``store=true, background=true, resilient_tasks_enabled=True``) covering
+Row 1 (``store=true, background=true, resilient_background=True``) covering
 ``yield stream.checkpoint()`` in the one-OutputItem-per-phase pattern.
 
 Path A: the handler runs all phases and reaches a natural terminal within

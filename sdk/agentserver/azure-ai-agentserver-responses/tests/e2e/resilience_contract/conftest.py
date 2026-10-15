@@ -12,7 +12,7 @@ Fixtures:
 
 - ``conformance_handler_module`` — the importable path to ``_test_handler``.
 - ``make_harness`` — factory for constructing ``CrashHarness`` with the
-  per-row configuration (resilient_tasks_enabled, handler
+  per-row configuration (resilient_background, handler
   sleep, grace).
 - ``LONG_TIME_SECS`` / ``SHORT_GRACE_S`` constants — exposed as module
   attributes so cell tests can reference them directly.
@@ -97,8 +97,8 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
 
     Returns a callable that takes:
 
-    - ``resilient_tasks_enabled`` (bool, default True) — process-global switch
-      value applied before host construction.
+    - ``resilient_background`` (bool, default True) — server option.
+    - ```` (bool, default False) — server option.
     - ``handler_sleep_ms`` (int, default 50) — handler sleep before
       emitting completion.
     - ``shutdown_grace_seconds`` (int, default LONG_GRACE_S) — server's
@@ -113,7 +113,7 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
 
     def _factory(
         *,
-        resilient_tasks_enabled: bool = True,
+        resilient_background: bool = True,
         handler_sleep_ms: int = 50,
         pre_sleep_deltas: int = 0,
         explicit_exit_for_recovery: bool = False,
@@ -122,7 +122,7 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
         readiness_timeout: float = 15.0,
     ) -> CrashHarness:
         env = {
-            "CONFORMANCE_RESILIENT_TASKS_ENABLED": "true" if resilient_tasks_enabled else "false",
+            "CONFORMANCE_RESILIENT_BACKGROUND": "true" if resilient_background else "false",
             "CONFORMANCE_HANDLER_SLEEP_MS": str(handler_sleep_ms),
             "CONFORMANCE_PRE_SLEEP_DELTAS": str(pre_sleep_deltas),
             "CONFORMANCE_EXPLICIT_EXIT_FOR_RECOVERY": ("true" if explicit_exit_for_recovery else "false"),
@@ -172,7 +172,7 @@ def make_checkpoint_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
     - ``shutdown_grace_seconds`` (int, default LONG_GRACE_S).
     - ``readiness_timeout`` (float, default 15.0).
 
-    Returns an unstarted ``CrashHarness`` (resilient_tasks_enabled is always True
+    Returns an unstarted ``CrashHarness`` (resilient_background is always True
     for Row 11 — it is a Row 1 extension).
     """
 

@@ -23,6 +23,7 @@ class ResponsesServerOptions:
         sse_keep_alive_interval_seconds: int | None = None,
         shutdown_grace_period_seconds: int = 10,
         create_span_hook: "CreateSpanHook | None" = None,
+        resilient_background: bool = False,
         steerable_conversations: bool = False,
     ) -> None:
         if additional_server_version is not None:
@@ -56,6 +57,15 @@ class ResponsesServerOptions:
         # not expose a cap). ``replay_event_ttl_seconds`` is similarly
         # framework-internal — the stream registry hardcodes a sensible
         # default (10 minutes).
+        # (Spec 024 Phase 4 — Proposal #9) Composition guard relaxed:
+        # steerable_conversations and resilient_background are independent
+        # options. Pre-Phase-4 the framework rejected
+        # `steerable=True + resilient_bg=False`, assuming steering required
+        # resilience for background responses. That assumption was wrong:
+        # the chain extends across turns regardless of resilience, and
+        # the lock/queue semantics are independent of the recovery
+        # disposition. The guard is deleted.
+        self.resilient_background = resilient_background
         self.steerable_conversations = steerable_conversations
 
     @classmethod

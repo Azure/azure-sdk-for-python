@@ -10,7 +10,7 @@ Without steering, the framework serializes turns via a conversation lock.
 If turn A is executing when turn B arrives, turn B waits (not cancels).
 
 Key concepts:
-- ``resilient_tasks_enabled=True``, ``steerable_conversations=False``
+- ``resilient_background=True``, ``steerable_conversations=False``
 - Conversation history via ``context.get_history()`` (framework-managed)
 - Conversation-isolated Foundry State Store for bounded execution state
 - Crash recovery: handler re-invoked, same input + history → same output
@@ -47,11 +47,17 @@ from azure.ai.agentserver.responses import (
     TextResponse,
 )
 
-set_resilient_tasks_enabled(True)
 options = ResponsesServerOptions(
+    resilient_background=True,
     steerable_conversations=False,
 )
 app = ResponsesAgentServerHost(options=options)
+
+# Explicitly opt into resilient-task startup recovery, for parity with the
+# invocations resilient samples. The Responses framework already registers its
+# internal durable tasks at host construction (so recovery runs regardless);
+# this call just makes the opt-in intent explicit.
+set_resilient_tasks_enabled(True)
 
 
 @app.response_handler

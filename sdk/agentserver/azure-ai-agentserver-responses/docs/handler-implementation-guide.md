@@ -956,7 +956,7 @@ cause-flag boolean:
 - `incomplete` is NEVER set by the framework — it's exclusively developer-controlled.
 - `context.exit_for_recovery()` is the single, uniform graceful-shutdown recovery primitive — **it works in every handler shape** (coroutine, async generator, sync). Call it as a bare statement: `await context.exit_for_recovery()`. It raises internally (never returns), so there is no `return <value>` form to trip the async-generator `SyntaxError`. (A bare `return` without a terminal while `context.shutdown` is set still works as an implicit fallback, but the explicit primitive is the recommended idiom.)
 
-> **On shutdown for resilient handlers**: leaving the response `in_progress` makes the framework re-invoke your handler on restart (when resilient tasks are enabled). Every handler shape uses the same line — `await context.exit_for_recovery()`. See [Resilience](#resilience) for the recovery contract — what the recovered handler must do, what the library guarantees on re-entry, and how clients reconcile the multi-attempt stream.
+> **On shutdown for resilient handlers**: leaving the response `in_progress` makes the framework re-invoke your handler on restart (when `resilient_background=True`). Every handler shape uses the same line — `await context.exit_for_recovery()`. See [Resilience](#resilience) for the recovery contract — what the recovered handler must do, what the library guarantees on re-entry, and how clients reconcile the multi-attempt stream.
 
 ### Default Pattern (handles cancel + shutdown)
 
@@ -1057,7 +1057,7 @@ BEFORE closing builders. If shutdown interrupted mid-stream, call
 `await context.exit_for_recovery()` — the response stays `in_progress`
 and the handler is re-entered on the next process lifetime to produce the
 full output (requires
-the resilient-tasks switch enabled).
+`resilient_background=True`).
 
 For all other cases (steering, client cancel, normal completion), close
 builders and emit `completed`:
@@ -1360,7 +1360,7 @@ to disable nginx buffering.
 ## Resilience
 
 The framework re-invokes your handler when the server crashes mid-response
-(if the resilient-tasks switch is enabled and the request had `store=true, background=true`).
+(if `resilient_background=True` and the request had `store=true, background=true`).
 What that re-invocation gives you, what you have to do to take advantage of it,
 and how clients reconcile a multi-attempt stream is the **recovery contract**.
 
@@ -1421,14 +1421,7 @@ is the naive fallback (see below).
 - Treats any `response.in_progress` event after the first one as a snapshot reset.
 - Replays persisted events to reconnecting clients on `starting_after=`. The reset `in_progress` is part of the replay; clients use it as the reconciliation signal.
 - **Surfaces graceful-shutdown recovery via one uniform signal in every handler shape.** The framework leaves the response `in_progress` so the next process lifetime re-invokes your handler with `context.is_recovery=True` when, on `context.shutdown`, the handler calls `await context.exit_for_recovery()`. This single idiom works identically in coroutine/`TextResponse` and streaming async-generator handlers — it raises internally (never returns), so there is no `return <value>` form to trip the async-generator `SyntaxError`. (An implicit fallback also applies: a streaming handler that simply `return`s without a terminal **while `context.shutdown` is set** still recovers — but `await context.exit_for_recovery()` is the recommended explicit idiom. A bare `return` during normal execution still yields the default terminal.)
-- **Graceful shutdown:** a stored background response is left recoverable when
-  the switch is enabled; with the switch disabled, unfinished stored responses
-  (background or foreground) are marked `failed` in-process after grace
-  expires.
-- **Hard crash:** with the switch disabled there is no recovery scanner, so the
-  last stored status may remain `in_progress`. With the switch enabled, stored
-  background responses are re-invoked and stored foreground responses follow
-  their persisted `mark-failed` disposition.
+- For `background=false` responses (or `resilient_background=False` background responses): marks the response `failed` on crash and does NOT re-invoke the handler.
 - For `store=false` responses: best-effort `failed` marker during shutdown grace period; no recovery.
 
 ### What the Handler Does
@@ -1492,7 +1485,7 @@ Semantics (the full normative list is in
   write completes — "I checkpointed" means "it is resilient now". The handler
   cannot race ahead while a slow write is in flight.
 - **No-op unless resilient background.** The write happens ONLY when the
-  deployment has resilient tasks enabled and the request is `background=true`
+  deployment has `resilient_background=True` and the request is `background=true`
   (which implies `store=true`). In every other configuration the checkpoint
   event is dropped (no provider write), so you may yield it unconditionally.
 - **Idempotent.** A snapshot byte-identical to the last persisted one is
@@ -1633,7 +1626,7 @@ async def handler(request: CreateResponse, context: ResponseContext, cancellatio
 
     # On graceful shutdown mid-work, defer to next-lifetime recovery —
     # the framework leaves the response `in_progress` and re-invokes on
-    # the next process restart (requires resilient tasks to be enabled).
+    # the next process restart (requires resilient_background=True).
     if context.shutdown.is_set():
         await context.exit_for_recovery()
 
@@ -1917,11 +1910,11 @@ with recovery cleanly:
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| `set_resilient_tasks_enabled(True)` | Disabled | Opt into crash-recoverable background responses before constructing the host |
-| `steerable_conversations` | `False` | Multi-turn conversation steering; task-backed queuing and anti-fork semantics require resilient tasks to be enabled (see [Cancellation](#cancellation)) |
+| `resilient_background` | `False` | Opt INTO crash-recoverable background responses |
+| `steerable_conversations` | `False` | Multi-turn conversation steering (see [Cancellation](#cancellation)) |
 
 See the [Resilient Responses Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/resilient-responses-developer-guide.md)
-for the configuration matrix (`store` × `background` × resilient-tasks switch),
+for the configuration matrix (`store` × `background` × `resilient_background`),
 the flat `ResponseContext` recovery + steering surface, and client-side
 reconciliation rules.
 
@@ -1929,13 +1922,10 @@ reconciliation rules.
 
 ## Steering API
 
-With resilient tasks enabled, steering (`steerable_conversations=True`) lets a
-new turn arrive on an already-active conversation: the framework cancels the
-in-progress turn via `cancellation_signal` (see [Cancellation](#cancellation)),
-then re-invokes the handler to drain the queued input. If the switch is
-disabled, requests use independent asyncio fallbacks and do not receive
-task-backed queuing, cancellation, locking, or anti-fork guarantees. The
-handler-facing surface when task-backed steering is active:
+Steering (`steerable_conversations=True`) lets a new turn arrive on an
+already-active conversation: the framework cancels the in-progress turn via
+`cancellation_signal` (see [Cancellation](#cancellation)), then re-invokes the
+handler to drain the queued input. The handler-facing surface:
 
 - **`context.is_steered_turn: bool`** — `True` on the drain re-entry that
   follows a steering input (not on the turn that was superseded).

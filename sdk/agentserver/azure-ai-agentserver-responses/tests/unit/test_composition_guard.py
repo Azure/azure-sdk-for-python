@@ -2,7 +2,7 @@
 # Licensed under the MIT license.
 """Composition guard for the responses host startup.
 
-When ``resilient_tasks_enabled=True`` AND the caller EXPLICITLY supplied a
+When ``resilient_background=True`` AND the caller EXPLICITLY supplied a
 ``store=`` argument that does not persist across crashes,
 ``ResponsesAgentServerHost`` construction MUST raise an explicit,
 descriptive error naming the offending store — NOT start up and silently
@@ -11,7 +11,7 @@ degrade.
 The guard intentionally does NOT fire for the default-only path
 (``store=None`` → ``FileResponseStore`` under
 ``${AGENTSERVER_STATE_ROOT}/responses/`` per spec 024 Phase 3a). That
-path is persistent and safe for ``resilient_tasks_enabled=True``. Streaming
+path is persistent and safe for ``resilient_background=True``. Streaming
 resilience is provided independently by the process-wide streams
 registry, configured by the host at startup against the same root.
 """
@@ -23,7 +23,6 @@ from typing import Iterator
 
 import pytest
 
-from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
     ResponsesServerOptions,
@@ -54,36 +53,37 @@ def _clear_env_overrides() -> Iterator[None]:
                 os.environ[key] = value
 
 
-def test_resilient_tasks_explicit_inmemory_store_raises_at_startup() -> None:
-    """An explicit in-memory store with the core switch enabled MUST raise.
-
-    The operator deliberately chose a non-persistent store while opting into
-    crash recovery, which is contradictory and cannot silently degrade.
+def test_resilient_background_explicit_inmemory_store_raises_at_startup() -> None:
+    """Composition guard: explicit ``store=InMemoryResponseProvider()`` with
+    ``resilient_background=True`` MUST raise — operator deliberately chose
+    a non-persistent store while opting into crash recovery, which is
+    contradictory and the framework refuses to silently degrade.
     """
     from azure.ai.agentserver.responses.store._memory import (
         InMemoryResponseProvider,
     )
 
-    set_resilient_tasks_enabled(True)
-    options = ResponsesServerOptions()
+    options = ResponsesServerOptions(resilient_background=True)
     with pytest.raises(ValueError) as excinfo:
         ResponsesAgentServerHost(
             options=options,
             store=InMemoryResponseProvider(),
         )
     msg = str(excinfo.value)
-    assert "resilient tasks" in msg
+    assert "resilient_background" in msg
     assert (
         "InMemoryResponseProvider" in msg or "not persist" in msg
     ), f"Error must name the missing/non-resilient store; got: {msg}"
 
 
-def test_resilient_tasks_with_custom_inmemory_subclass_raises_at_startup() -> None:
-    """An explicit in-memory subclass with the core switch enabled MUST raise.
-
-    The guard uses ``isinstance`` so custom subclasses cannot silently weaken
-    crash recovery. Streaming resilience is configured separately by the
-    process-wide streams registry.
+def test_resilient_background_with_custom_nonresilient_store_raises_at_startup() -> None:
+    """Composition guard: explicit ``store=`` with ``resilient_background=True``
+    that does not persist across crashes MUST raise — the operator
+    deliberately chose a non-persistent store while opting into crash
+    recovery, which is contradictory and the framework refuses to silently
+    degrade. The guard only inspects the response store; streaming
+    resilience is owned by the streams registry configured at startup,
+    so any explicit non-persistent store fails the same way.
     """
     from azure.ai.agentserver.responses.store._memory import (
         InMemoryResponseProvider,
@@ -92,41 +92,36 @@ def test_resilient_tasks_with_custom_inmemory_subclass_raises_at_startup() -> No
     class _NonResilientStore(InMemoryResponseProvider):
         """Subclass of the non-persistent in-memory store."""
 
-    set_resilient_tasks_enabled(True)
-    options = ResponsesServerOptions()
+    options = ResponsesServerOptions(resilient_background=True)
     with pytest.raises(ValueError) as excinfo:
         ResponsesAgentServerHost(options=options, store=_NonResilientStore())
     msg = str(excinfo.value)
-    assert "resilient tasks" in msg
+    assert "resilient_background" in msg
     assert "_NonResilientStore" in msg or "not persist" in msg, msg
 
 
-def test_resilient_tasks_disabled_with_default_file_store_does_not_raise() -> None:
-    """With the switch disabled, the default file-backed store constructs cleanly.
-
-    Omitting ``store=`` resolves to ``FileResponseStore``; this verifies the
-    ordinary default composition path, not an in-memory provider.
+def test_resilient_background_false_with_inmemory_does_not_raise() -> None:
+    """Composition guard is gated on ``resilient_background=True``. With it
+    disabled, the default in-memory provider is permitted.
     """
-    set_resilient_tasks_enabled(False)
-    options = ResponsesServerOptions()
+    options = ResponsesServerOptions(resilient_background=False)
     host = ResponsesAgentServerHost(options=options)
     assert host is not None
 
 
-def test_resilient_tasks_enabled_with_default_file_store_does_not_raise() -> None:
-    """The default ``FileResponseStore`` satisfies the enabled composition guard.
-
-    Omitting ``store=`` resolves to persistent file-backed storage, so host
-    construction must succeed without treating the default as an explicit
-    non-persistent provider.
+def test_resilient_background_true_with_default_inmemory_does_not_raise() -> None:
+    """The DEFAULT path (no explicit ``store=``) is not considered an
+    operator misconfiguration — it satisfies in-process tests and local
+    development. The guard only fires when the operator EXPLICITLY
+    supplied a non-resilient store. Backward-compat regression guard so
+    the existing test/dev workflows continue to work.
     """
-    set_resilient_tasks_enabled(True)
-    options = ResponsesServerOptions()
+    options = ResponsesServerOptions(resilient_background=True)
     host = ResponsesAgentServerHost(options=options)
     assert host is not None
 
 
-def test_resilient_tasks_enabled_with_env_store_paths_does_not_raise(
+def test_resilient_background_true_with_env_store_paths_does_not_raise(
     tmp_path: object,
 ) -> None:
     """The ``AGENTSERVER_STATE_ROOT`` operator override satisfies the
@@ -137,8 +132,7 @@ def test_resilient_tasks_enabled_with_env_store_paths_does_not_raise(
     """
     os.environ["AGENTSERVER_STATE_ROOT"] = str(tmp_path)
     try:
-        set_resilient_tasks_enabled(True)
-        options = ResponsesServerOptions()
+        options = ResponsesServerOptions(resilient_background=True)
         host = ResponsesAgentServerHost(options=options)
         assert host is not None
     finally:

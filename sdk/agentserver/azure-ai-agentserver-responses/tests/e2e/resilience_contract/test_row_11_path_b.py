@@ -2,7 +2,7 @@
 # Licensed under the MIT license.
 """Row 11 × Path B — developer checkpoint write, graceful shutdown at a cutpoint.
 
-Row 11 extends Row 1 (``store=true, background=true, resilient_tasks_enabled=True``)
+Row 11 extends Row 1 (``store=true, background=true, resilient_background=True``)
 with the ``yield stream.checkpoint()`` write point. Path B drives a real
 SIGTERM with a deliberately-short grace period while the handler is parked at
 a checkpoint cutpoint. The handler observes ``context.shutdown``, calls

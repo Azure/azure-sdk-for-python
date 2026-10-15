@@ -12,12 +12,12 @@ validator would still be caught.
 
 from __future__ import annotations
 
+import asyncio
 import os
 from typing import Iterator
 
 import pytest
 
-from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
     ResponsesServerOptions,
@@ -52,14 +52,14 @@ def _clear_env_overrides() -> Iterator[None]:
 
 
 @pytest.mark.asyncio
-async def test_resilient_tasks_enabled_explicit_inmemory_store_fails_construction() -> None:
+async def test_resilient_background_explicit_inmemory_store_fails_construction() -> None:
     """Spec 014 FR-006 integration: the host MUST refuse to construct
     (and therefore MUST NOT start serving traffic) when an operator
-    enables the core switch with an explicit in-memory store. End-to-end
-    check that no path bypasses the guard.
+    deliberately configures ``resilient_background=True`` with an
+    explicit in-memory store. End-to-end check that no path bypasses
+    the guard.
     """
-    set_resilient_tasks_enabled(True)
-    options = ResponsesServerOptions()
+    options = ResponsesServerOptions(resilient_background=True)
     with pytest.raises(ValueError) as excinfo:
         # Even if the operator's startup sequence is to construct in an
         # async context (e.g. inside an existing event loop), the
@@ -69,14 +69,13 @@ async def test_resilient_tasks_enabled_explicit_inmemory_store_fails_constructio
             options=options,
             store=InMemoryResponseProvider(),
         )
-    assert "resilient tasks" in str(excinfo.value)
+    assert "resilient_background" in str(excinfo.value)
 
 
-def test_resilient_tasks_enabled_default_construction_works() -> None:
-    """The enabled guard accepts the default persistent ``FileResponseStore``.
-
-    The root fixture restores the process-global switch after this test.
+def test_resilient_background_default_construction_works() -> None:
+    """Backward-compat regression: ``ResponsesAgentServerHost()`` with
+    all defaults continues to construct successfully — the guard does
+    NOT fire on the default path (in-process tests / local dev).
     """
-    set_resilient_tasks_enabled(True)
     app = ResponsesAgentServerHost()
     assert app is not None

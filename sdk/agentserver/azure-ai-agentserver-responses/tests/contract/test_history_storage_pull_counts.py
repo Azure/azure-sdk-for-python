@@ -23,9 +23,6 @@ from azure.ai.agentserver.responses.streaming import ResponseEventStream
 def test_all_modes_share_history_ids_and_keep_materialization_scoped(
     monkeypatch, tmp_path, streaming, background, resilient, empty, read_history
 ):
-    from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
-
-    set_resilient_tasks_enabled(resilient)
     provider = FileResponseStore(tmp_path / "responses")
     history = AsyncMock(return_value=[] if empty else ["history"])
     items = AsyncMock(return_value=[])
@@ -42,7 +39,7 @@ def test_all_modes_share_history_ids_and_keep_materialization_scoped(
 
     monkeypatch.setattr(provider, "update_response", terminal_update)
     app = ResponsesAgentServerHost(
-        options=ResponsesServerOptions(),
+        options=ResponsesServerOptions(resilient_background=resilient),
         store=provider,
     )
 

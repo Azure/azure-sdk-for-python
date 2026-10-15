@@ -202,11 +202,17 @@ async def _get_graph() -> Any:
 
 # ─── Server ───────────────────────────────────────────────────────────────
 
-set_resilient_tasks_enabled(True)
 options = ResponsesServerOptions(
+    resilient_background=True,
     steerable_conversations=True,
 )
 app = ResponsesAgentServerHost(options=options)
+
+# Explicitly opt into resilient-task startup recovery, for parity with the
+# invocations resilient samples. The Responses framework already registers its
+# internal durable tasks at host construction (so recovery runs regardless);
+# this call just makes the opt-in intent explicit.
+set_resilient_tasks_enabled(True)
 
 # Metadata key: the LangGraph checkpoint id whose completed work matches the
 # response items persisted so far. Recorded in ``internal_metadata`` (persisted

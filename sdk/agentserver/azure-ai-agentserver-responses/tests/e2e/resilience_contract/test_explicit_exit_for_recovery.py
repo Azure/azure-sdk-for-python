@@ -40,7 +40,7 @@ from tests.e2e.resilience_contract.conftest import (
 async def test_explicit_exit_for_recovery_recovers(make_harness: Callable[..., CrashHarness], stream: bool) -> None:
     """Explicit ``await context.exit_for_recovery()`` → next-lifetime recovery."""
     harness = make_harness(
-        resilient_tasks_enabled=True,
+        resilient_background=True,
         handler_sleep_ms=int(LONG_TIME_SECS * 1000),
         shutdown_grace_seconds=SHORT_GRACE_S,
         explicit_exit_for_recovery=True,

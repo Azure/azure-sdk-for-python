@@ -14,7 +14,7 @@ storage directory; restarts find the files exactly as they were left.
 and history-item indexes. Streaming concerns are handled by the
 process-wide ``azure.ai.agentserver.core.streaming.streams`` registry,
 configured by the responses hosting layer with a file-backed or
-in-memory replay backing depending on the core resilient-tasks switch.
+in-memory replay backing depending on ``resilient_background``.
 Cancellation / execution-record state is not part of any protocol; it
 lives in the in-process ``_RuntimeState`` (for live execution) and in
 the resilient task layer's ``_steering`` payload (for crash recovery) —

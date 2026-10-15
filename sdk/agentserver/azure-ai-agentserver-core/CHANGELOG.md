@@ -23,8 +23,6 @@
 
 ### Other Changes
 
-- Updated the resilient-task opt-in error guidance to recommend calling
-  `set_resilient_tasks_enabled(True)` before constructing the host.
 - Removed the experimental marker (docstring note and one-time runtime warning)
   from the resilient task public APIs (`TaskContext`, `TaskRun`, `@task`,
   `@multi_turn_task`, `set_resilient_tasks_enabled`, task exceptions, and

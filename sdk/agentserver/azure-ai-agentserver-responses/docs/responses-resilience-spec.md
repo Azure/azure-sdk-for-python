@@ -46,8 +46,8 @@ The responses resilience layer sits between (a) the OpenAI-compatible
 Responses HTTP/SSE protocol that end-users call, and (b) the resilient
 task primitive that gives the host process crash-recovery. The layer's
 job is to translate the per-request HTTP shape — `(store, background,
-stream, conversation_id, previous_response_id)`, the process-global
-resilient-tasks switch, and the `steerable_conversations` server option — into one of a small
+stream, conversation_id, previous_response_id)` plus server options
+`(resilient_background, steerable_conversations)` — into one of a small
 set of resilience behaviors, and to give recovered handlers the
 context they need to produce a coherent response after a process
 restart.
@@ -85,7 +85,7 @@ implements).
 | **Reset event** | The second-or-later `response.in_progress` event in a stream — clients MUST treat it as a snapshot reset of the local response view. |
 | **Response store** | The persistent store of `ResponseObject` envelopes; written at `response.created` and at terminal events. |
 | **Stream event store** | The persistent ordered log of SSE events emitted during a response's execution; used for `starting_after=` reconnection. |
-| **Termination path A / B / C** | (A) handler completes within grace window; (B) grace exhausted, in-process marker fires; (C) crash or Path-B failure; next-lifetime recovery runs only when resilient tasks are enabled. |
+| **Termination path A / B / C** | (A) handler completes within grace window; (B) grace exhausted, in-process marker fires; (C) crash or Path-B failure, next-lifetime recovery scanner fires. |
 | **Row 1 / 2 / 3 / 4** | The four behaviour rows of the matrix (§3). |
 
 ---
@@ -97,12 +97,14 @@ three flags:
 
 - `store` — request-controlled, defaults to `true`.
 - `background` — request-controlled, defaults to `false`.
-- resilient-tasks switch — developer-controlled and disabled by default.
-  Developers opt into durable execution and crash-recovery re-invocation by
-  calling `set_resilient_tasks_enabled(True)` before constructing the host.
-The end-user (HTTP caller) sets `store`, `background`, and `stream`.
-The developer controls the resilient-tasks switch through the core tasks API
-and `steerable_conversations` through `ResponsesServerOptions`. End-users CANNOT override developer
+- `resilient_background` — developer-controlled server option, defaults
+  to `false`. Developers opt INTO crash-recovery re-invocation by
+  setting it to `true`; the default lands the response in
+  "crash-failed" mode (Row 2 disposition), where a crash mid-handler
+  surfaces as a `failed` terminal in the next lifetime rather than
+  re-invoking the handler.The end-user (HTTP caller) sets `store`, `background`, and `stream`.
+The developer sets `resilient_background` and `steerable_conversations`
+on `ResponsesServerOptions`. End-users CANNOT override developer
 decisions; developers CANNOT override end-user request flags. This
 separation is normative.
 
@@ -110,20 +112,18 @@ separation is normative.
 > matrix in [`resilience-contract.md` § The matrix](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/resilience-contract.md). The
 > table below is a readability summary; the contract is authoritative.
 
-| # | `store` | `background` | resilient-tasks switch | Behaviour |
+| # | `store` | `background` | `resilient_background` | Behaviour |
 |---|---|---|---|---|
 | 1 | true | true  | true  | **Full resilience.** Handler runs inside the resilient task body. Recovery re-invokes the handler. |
-| 2 | true | true  | false | **Stored, non-durable execution.** No task manager exists, so the handler runs in-process. Graceful shutdown can mark it failed; a hard crash can leave it `in_progress`. |
-| 3 | true | false | true | **Durable foreground execution.** The task input records `mark-failed`; recovery settles the response without re-invoking the handler. |
-| 3 | true | false | false | **Stored, non-durable foreground execution.** No task manager or recovery scanner exists. |
+| 2 | true | true  | false | **Crash-failed resilience.** Handler runs inside the resilient task body; disposition is `mark-failed`. If the process dies before terminal, recovery marks the response `failed` (no re-invoke). |
+| 3 | true | false | (any) | **Crash-failed resilience.** Same shape as Row 2: handler runs inside the resilient task body (HTTP request awaits via `TaskRun.result()`); recovery marks the response `failed` on crash. |
 | 4 | false | (any) | (any) | **No resilience.** Best-effort failed marker during graceful shutdown. No persistence. No recovery. |
 
 `stream` is orthogonal: it collapses out of the row keys. Each row × `stream`
 combination is its own conformance cell.
 
-`steerable_conversations` can be configured independently, but its queuing,
-cancellation, and anti-fork guarantees require both `store=true` and the
-resilient-tasks switch enabled — see §11.
+`steerable_conversations` is orthogonal to the row but composes only with
+`store=true` (Rows 1, 2, 3) — see §11.
 
 `starting_after=` reconnection is supported only for `store=true` requests
 (any row 1/2/3). For Row 4 there is no persisted event log; reconnection is
@@ -134,15 +134,17 @@ not meaningful.
 Each row × stream cell has three termination paths the framework MUST
 deliver per the table below:
 
-| Path | Trigger | Switch on + `store=true, background=true` | Switch on + `store=true, background=false` | Switch off + `store=true` | `store=false` |
-|---|---|---|---|---|---|
-| **A** | Handler returns within grace | Persist terminal; task body returns | Persist terminal; task body returns | Persist terminal in-process | Persist terminal (best-effort) |
-| **B** | Grace exhausted (graceful shutdown) | Leave task/response `in_progress` for recovery | Mark response `failed` in-process | Mark response `failed` in-process | Best-effort in-process `failed` marker |
-| **C** | SIGKILL or Path-B failure | Recovery scanner re-fires task → handler re-invoked with `context.is_recovery=True` | Recovery scanner follows persisted `mark-failed` disposition | No recovery scanner; last stored status may remain `in_progress` | No recovery applies (no persistence) |
+| Path | Trigger | Row 1 (`resilient_bg`) | Rows 2/3 (`store`, no `resilient_bg`) | Row 4 (no store) |
+|---|---|---|---|---|
+| **A** | Handler returns within grace | Persist terminal; task body returns | Persist terminal; task body returns | Persist terminal (best-effort) |
+| **B** | Grace exhausted (graceful shutdown) | Task left `in_progress`; handler stops; **next lifetime re-invokes** | Task body persists `failed` (server_error, shutdown_reason=grace_exhausted) | Best-effort in-process `failed` marker |
+| **C** | SIGKILL or Path-B failure | Next-lifetime recovery scanner re-fires task → handler re-invoked with `context.is_recovery=True` | Next-lifetime recovery scanner re-fires task → marks response `failed` (`server_error`) | No recovery applies (no persistence) |
 
-Path C is a fallback for Path B only when the resilient-tasks switch is
-enabled and a durable task record exists. With the switch disabled, the
-graceful-shutdown marker has no next-lifetime fallback.
+The framework MUST implement Path B and Path C as independent fallbacks
+for each other (Path C is a complete fallback for Path B). A Path-B
+in-process marker that does not persist before the process
+exits MUST be backed by a Path-C next-lifetime marker; the row 2/3
+recovery scanner closes that window.
 
 ### §3.2 — `stream` × row interaction
 
@@ -164,10 +166,11 @@ body so the recovered handler's events flow to both the live subject
 and the persisted event log; recovered events appear in the same
 stream after `starting_after=` reconnect.
 
-For Row 2 × `stream=true`, replay is in-memory and there is no crash recovery
-while the switch remains disabled. For Row 3 with the switch enabled, the
-handler runs inside the task body and a recovered `mark-failed` disposition
-persists the failed response envelope without re-invoking the handler.
+For Rows 2/3 × `stream=true`, the handler runs inside the task body;
+on crash, the task body's `mark-failed` recovery branch persists the
+`failed` marker as the only post-crash artifact. Clients reading the
+persisted stream see whatever events landed before the crash plus
+no further events.
 
 ---
 
@@ -291,7 +294,7 @@ longer creates one.
 |---|---|---|
 | `response_id` | `ResilientResponseInput.response_id` | Logs / operator triage |
 | `background` | `bool(request.background)` — re-derived from the persisted `request` (§5.3) | Recovery dispatch (foreground → mark failed) |
-| `disposition` | `ResilientResponseInput.disposition` (`"re-invoke"` for switch-enabled stored background / `"mark-failed"` for switch-enabled stored foreground and legacy persisted tasks) | Recovery dispatch (§7) |
+| `disposition` | `ResilientResponseInput.disposition` (`"re-invoke"` Row 1 / `"mark-failed"` Rows 2, 3) | Recovery dispatch (§7) |
 
 > **Note — no `last_sequence_number` key.** Earlier drafts reserved a
 > `last_sequence_number` metadata watermark for streaming reconnection
@@ -306,7 +309,7 @@ longer creates one.
 `disposition` MUST be durable before the task body performs any await that could
 be interrupted by a crash — otherwise a recovered task with no disposition would
 default to `re-invoke` and skip the `mark-failed` branch (losing recovery-marker
-semantics for durable foreground or legacy tasks). The **task input satisfies this by construction**: it is
+semantics for Rows 2/3). The **task input satisfies this by construction**: it is
 persisted atomically at task `.start()`, i.e. *before the handler body runs at
 all* — strictly earlier than any first-entry write could be. The same holds for
 any future control value that affects recovery dispatch: carry it on the input.
@@ -349,14 +352,13 @@ rather than re-invoking the handler with partial state.
 
 ## §6 — The perpetual conversation-scoped task
 
-When the resilient-tasks switch is enabled, every `store=true` request engages
-a resilient task. The task is **perpetual**: it represents the conversation
-chain's execution loop, not a single response. With the switch disabled,
-stored requests use the in-process asyncio fallback described in §6.2.
+For every `store=true` request, the framework engages a resilient
+task. The task is **perpetual**: it represents the conversation
+chain's execution loop, not a single response.
 
 **One architecture — unified handler-in-task-body.** The handler
-always runs inside the resilient task body for switch-enabled `store=true`
-rows. The "bookkeeping pattern" (where the handler ran
+ALWAYS runs inside the resilient task body, for every `store=true`
+row. The"bookkeeping pattern" (where the handler ran
 outside the body for Rows 2/3 and a separate task waited for a
 completion signal) has been deleted. Recovery behaviour is selected
 by the `disposition` carried on the durable task **input** (§5):
@@ -375,7 +377,7 @@ to handlers (the flat recovery + steering surface — `is_recovery`,
 — looks the same regardless) and to clients (the HTTP/SSE contract is
 identical). The full table is in §6.4.
 
-### §6.1 — Lifecycle (Row 1 — `resilient-tasks switch enabled`, bg+store)
+### §6.1 — Lifecycle (Row 1 — `resilient_background=true`, bg+store)
 
 For Row 1 with `steerable_conversations=true`:
 
@@ -397,18 +399,23 @@ forked or sequential) maps to a distinct `task_id` (the `fork:` /
 `resp:` partition disambiguates), so no suspend-and-resume loop is
 needed; each task is one-shot.
 
-### §6.2 — Lifecycle (switch-disabled stored work and durable foreground work)
+### §6.2 — Lifecycle (Rows 2/3 — `resilient_background=false` and foreground+store)
 
-Execution depends on the process-global switch:
+Same shape as §6.1: the handler runs inside the resilient task body.
+The only differences are:
 
-1. **Switch disabled (Row 2)** — no task manager exists, so execution falls
-   back in-process. Graceful shutdown marks the response failed after the grace
-   period; a hard crash has no next-lifetime scanner.
-2. **Foreground + switch enabled (Row 3)** — the handler runs in the task body
-   and the HTTP request awaits `TaskRun.result()`. A recovered entry follows
-   the persisted `mark-failed` disposition and never invokes the handler.
-3. **Persisted compatibility** — any recovered task whose input already records
-   `mark-failed` continues to use §7.2, regardless of how that task was created.
+1. **Disposition is `mark-failed`** — carried on the durable task
+   **input** (persisted at `.start()`), so recovery does NOT re-invoke the handler.
+2. **HTTP request coupling** — for Row 3 (foreground), the HTTP
+   request awaits the task body's terminal via the framework's
+   `TaskRun.result()` API. For Row 2 (background, non-resilient
+   recovery), the HTTP request returns immediately after the
+   `response.created` event is observed.
+3. **Crash mid-handler** — task stays `in_progress`. The recovery
+   scanner re-fires it; the recovered entry takes the `mark-failed`
+   branch and persists `failed` (`server_error`) idempotently. (The idempotency
+   check skips the overwrite if the response is already terminal —
+   see §7.2.) The handler is NOT re-invoked.
 
 ### §6.3 — Lifecycle (Row 4 — `store=false`)
 
@@ -420,11 +427,9 @@ best-effort only and not resilient. On SIGKILL there is no recovery.
 
 ### §6.4 — Primitive selection (per-request dispatch matrix)
 
-When resilient tasks are enabled, the responses layer dispatches each
-`store=true` request to one of two underlying resilient-task primitives, based
-on the request shape and the deployment's `steerable_conversations` option.
-With the switch disabled, this table does not apply: task startup falls back
-to independent asyncio execution. This is a refinement of
+The responses layer dispatches each `store=true` request to one of two
+underlying resilient-task primitives, based on the request shape and the
+deployment's `steerable_conversations` option. This is a refinement of
 the top-level 4-row matrix in §3 — Rows 1, 2, and 3 (all `store=true`
 rows) split into sub-rows here according to whether the request
 identifies a multi-turn chain.
@@ -500,7 +505,7 @@ The handler reloads application watermarks from an explicit
 `FoundryStateStore`. Those writes are independent from task lifecycle
 transitions and lease renewal.
 
-### §7.2 — `disposition == "mark-failed"` (durable foreground and legacy tasks)
+### §7.2 — `disposition == "mark-failed"` (Rows 2, 3)
 
 On recovery, the task body:
 
@@ -720,7 +725,7 @@ Properties:
   lockstep, the provider write completes before control returns from the
   `yield`. "I checkpointed" means "it is resilient now".
 - **Resilient-background-gated** — the write happens ONLY for a
-  `resilient-tasks switch enabled`, `background=true` (hence `store=true`) request —
+  `resilient_background=True`, `background=true` (hence `store=true`) request —
   the only configuration with a crash-recovery re-invocation path. In every
   other case the event is dropped (no write), so a handler MAY yield it
   unconditionally.
@@ -940,7 +945,7 @@ It **raises** `ResponseExitForRecovery` internally (it never returns), so
 the same line works in every handler shape — coroutine, async generator,
 or sync. The framework catches the signal at the resilient task boundary and
 leaves the response `in_progress` so the next-lifetime recovery scanner can
-resume it. For `resilient-tasks switch enabled` responses (Row 1) the handler is
+resume it. For `resilient_background=True` responses (Row 1) the handler is
 re-invoked on the next process startup. For `store=false` / non-resilient
 requests there is no task to defer, so the call raises `RuntimeError`
 (surfacing as a `failed` response — the documented non-resilient shutdown
@@ -994,9 +999,8 @@ recovery AND cancelled".
 
 ## §11 — Steering
 
-`steerable_conversations=True` enables task-backed multi-turn steering only
-when resilient tasks are also enabled and `store=true`. With both controls
-enabled:
+`steerable_conversations=True` enables multi-turn steering on top of
+Rows 1, 2, or 3 (i.e. any `store=true` row). With steering enabled:
 
 - Every turn in a conversation chain shares the same resilient `task_id`
   (the chain partitioning rule in §4.2 collapses them).
@@ -1180,7 +1184,7 @@ extend a non-steerable chain).
 
 ## §13 — The recovery flow (worked sequence)
 
-### §13.1 — Row 1 (`resilient-tasks switch enabled`) × `stream=True`, crash before terminal
+### §13.1 — Row 1 (`resilient_background=True`) × `stream=True`, crash before terminal
 
 ```
        (turn 1, fresh)
@@ -1228,13 +1232,14 @@ HTTP   ──► GET /v1/responses/resp_1?stream=true&starting_after=4 ───
                                                                           ─┘
 ```
 
-### §13.2 — Row 2 (`resilient-tasks switch disabled`, bg+store), crash before terminal
+### §13.2 — Row 2 (`resilient_background=False`, bg+store), crash before terminal
 
 ```
        (turn 1, fresh)
 HTTP   ──► POST /v1/responses { stream: false, store, background } ───────┐
                                                                           │
-       framework: no task manager; invoke handler in-process               │
+       framework: start resilient task with disposition="mark-failed"        │
+       framework: task body invokes handler (handler runs INSIDE the body) │
        handler:   emit response.created                                    │
        framework: persist response envelope                                │
                                                                           │
@@ -1242,13 +1247,20 @@ HTTP   ──► POST /v1/responses { stream: false, store, background } ──�
        
        ════════════ SIGKILL ════════════
        
-       (next lifetime — switch remains disabled)
-       framework: no task manager and no recovery scan
-       response store retains the last persisted in_progress envelope
+       (next lifetime — recovery scanner re-fires the task)
+       primitive: task lease expired → re-fire task body
+       framework: task body entered with context.is_recovery=True
+       framework: read input.disposition → "mark-failed"
+       framework: lookup response in store: status="in_progress"
+       framework: persist failed terminal:
+                  { status: "failed",
+                    error: { code: "server_error",
+                             message: "Server interrupted before completing this response" }}
+       framework: task body returns → task → completed
        
        (client polls)
 HTTP   ──► GET /v1/responses/resp_1 ──────────────────────────────────────┐
-       framework: return persisted in_progress envelope                   │
+       framework: return persisted failed envelope                        │
                                                                           ─┘
 ```
 
@@ -1269,7 +1281,7 @@ specs.
 ### C-MATRIX — Dispatch matrix
 
 For every `POST /v1/responses`, the implementation MUST select exactly
-one of the four rows in §3 based on `(store, background, resilient-tasks switch)`,
+one of the four rows in §3 based on `(store, background, resilient_background)`,
 and MUST deliver each of Termination Paths A, B, C as documented in
 §3.1.
 
@@ -1295,10 +1307,10 @@ await), satisfying the ordering rule by construction.
 For Row 1 with `steerable_conversations=true`, the resilient task body
 MUST signal implicit-suspend (in this implementation: `return None`
 from a `@multi_turn_task`-decorated body) after the handler's terminal,
-keeping the task alive for subsequent turns per §6.1. For switch-enabled
-stored foreground work, the task body invokes the handler directly; on
-graceful shutdown it persists the `shutdown_reason=grace_exhausted` failed
-terminal before returning. Switch-disabled work has no task body.
+keeping the task alive for subsequent turns per §6.1. For Rows 2/3,
+the task body invokes the handler directly; on graceful shutdown
+without explicit `exit_for_recovery`, the body persists the
+`shutdown_reason=grace_exhausted` failed terminal before returning.
 
 ### C-DISPOSITION — Recovery dispatch
 
@@ -1384,9 +1396,6 @@ lifetime.
 
 ### C-LOCK — Conversation lock
 
-The requirements in C-LOCK, C-FORK-REJECT, C-ACCEPT, and
-C-STEER-DELIVERY apply only when the resilient-tasks switch is enabled.
-
 For `store=true` with `steerable_conversations=false`, a new turn
 arriving while a prior turn for the same chain is in progress MUST
 return HTTP 409 `conversation_locked` per §11.1.
@@ -1416,19 +1425,18 @@ order, with no concurrent handler executions for the same chain
 
 ### C-COMPOSE — Composition guards
 
-The resilient-tasks switch requires `store=true` to engage row 1; if
+`resilient_background=true` requires `store=true` to engage row 1; if
 `store=false`, the request falls through to row 4 regardless of
-the switch state. `steerable_conversations=true` requires both
-`store=true` and the resilient-tasks switch enabled for the steering queue,
-locking, anti-fork checks, and acceptance hook to function. With the switch
-disabled, stored requests use independent asyncio fallback executions and none
-of C-LOCK, C-FORK-REJECT, C-ACCEPT, or C-STEER-DELIVERY applies.
+`resilient_background`. `steerable_conversations=true` requires
+`store=true` for the steering queue and acceptance hook to function;
+implementations MUST reject the combination at startup or fall
+through to non-store behaviour per their stability policy.
 
 ---
 
 ## §15 — Worked storage timeline (worked example)
 
-A hosted `(store=true, background=true, resilient-tasks switch enabled, stream=true,
+A hosted `(store=true, background=true, resilient_background=true, stream=true,
 steerable_conversations=true)` chain with a session-incarnation GUID, two turns,
 and a crash between them. Numbers are illustrative.
 
@@ -1637,34 +1645,35 @@ event's `sequence_number` for the same `response_id`.
 
 ## §17 — Composition constraints
 
-### §17.1 — The resilient-tasks switch requires `store=true`
+### §17.1 — `resilient_background=true` requires `store=true`
 
 If `store=false`, the request falls through to Row 4 regardless of
-the switch state. There is no persistent record to recover from;
+`resilient_background`. There is no persistent record to recover from;
 the resilient orchestrator is bypassed. The implementation MUST NOT
 silently fail; the row-4 best-effort marker fires per §6.3.
 
-### §17.2 — Task-backed steering requires `store=true` and resilient tasks enabled
+### §17.2 — `steerable_conversations=true` requires `store=true`
 
 The steering queue, the conversation lock, and the acceptance hook
-ALL depend on the resilient task primitive. With `store=false` or the switch
-disabled, no task-backed execution is created; there is no queue to enqueue
-into and the acceptance hook is not invoked.
+ALL depend on the resilient task primitive. With `store=false`, no
+resilient task is created; there is no queue to enqueue into; the
+acceptance hook is not invoked. Implementations MUST either reject the
+combination at startup or document the no-op fall-through clearly.
 
-### §17.3 — `steerable_conversations=true` × resilient tasks disabled
+### §17.3 — `steerable_conversations=true` × `resilient_background=false`
 
-This combination is accepted, but no `MultiTurnTask` exists. Stored requests
-fall back to independent asyncio executions: sequential chain linkage still
-works, while overlapping turns are neither queued nor protected by task-backed
-cancellation, locking, or anti-fork checks. Applications that need those
-steering semantics MUST enable resilient tasks before constructing the host.
+This combination is supported (composition guard relaxed in). The Row 2 task still provides the conversation lock and the
+acceptance hook; the handler runs inside the task body just like
+Row 1. The only difference from Row 1 is the recovery disposition —
+`mark-failed` instead of `re-invoke`. The crash-recovery branch
+persists `failed` per §7.2 instead of re-invoking the handler.
 
 ### §17.4 — `background=false` + steerable
 
-This is Row 3. With resilient tasks enabled, the handler runs inside the task
-body and the HTTP request awaits `TaskRun.result()`; a new turn arriving
-mid-handler goes through the queue / lock / acceptance hook per §11. With the
-switch disabled, it uses the independent asyncio fallback instead. (Note:
+This is Row 3. The handler runs inside the resilient task body; the
+HTTP request awaits the task body's terminal via the framework's
+`TaskRun.result()` API. A new turn arriving mid-handler still goes
+through the queue / lock / acceptance hook per §11. (Note:
 `background=false` + steering means the original HTTP caller's
 connection is open while the handler runs to completion; a steered
 turn arriving from a different client connection gets queued.)

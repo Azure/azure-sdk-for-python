@@ -404,8 +404,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         It **raises** :class:`ResponseExitForRecovery` internally — it NEVER
         returns. The framework catches the signal at the resilient task boundary
         and leaves the response ``in_progress`` so the handler is re-invoked on
-        the next process start (for stored background responses when resilient
-        tasks are enabled).
+        the next process start (for ``resilient_background=True`` responses).
 
         (Streaming handlers that simply ``return`` without emitting a terminal
         while ``context.shutdown`` is set also recover via the implicit

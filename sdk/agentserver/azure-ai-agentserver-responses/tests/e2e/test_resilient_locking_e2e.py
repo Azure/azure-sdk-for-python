@@ -5,7 +5,7 @@
 Tests the HTTP-level behavior:
 - Steerable: parallel POSTs to same conversation → first 200, second 409
 - Non-steerable: parallel forks → all succeed (distinct task IDs)
-- resilient_tasks_enabled=False opt-out: no task wrapping, plain asyncio
+- resilient_background=False opt-out: no task wrapping, plain asyncio
 """
 
 from __future__ import annotations
@@ -31,10 +31,8 @@ from azure.ai.agentserver.responses import (
 
 def _make_app(handler, *, resilient: bool = True, steerable: bool = False) -> TestClient:
     """Create a TestClient with configurable resilience options."""
-    from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
-
-    set_resilient_tasks_enabled(resilient)
     options = ResponsesServerOptions(
+        resilient_background=resilient,
         steerable_conversations=steerable,
     )
     app = ResponsesAgentServerHost(options=options)
@@ -105,15 +103,15 @@ class TestNonSteerableParallelForks:
 
 
 # ---------------------------------------------------------------------------
-# resilient_tasks_enabled=False opt-out
+# resilient_background=False opt-out
 # ---------------------------------------------------------------------------
 
 
 class TestResilientOptOut:
-    """resilient_tasks_enabled=False: plain asyncio, no task wrapping."""
+    """resilient_background=False: plain asyncio, no task wrapping."""
 
     def test_non_resilient_still_completes(self) -> None:
-        """With resilient_tasks_enabled=False, responses still complete normally."""
+        """With resilient_background=False, responses still complete normally."""
 
         async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
             return TextResponse(context, request, text="Non-resilient result")
@@ -125,7 +123,7 @@ class TestResilientOptOut:
         assert data["status"] in ("in_progress", "completed")
 
     def test_non_resilient_has_transient_resilience_context(self) -> None:
-        """With resilient_tasks_enabled=False, recovery + steering fields are
+        """With resilient_background=False, recovery + steering fields are
         flat-defaulted on the context (spec 024 Phase 5 Proposal #10)."""
         captured: dict[str, Any] = {}
 

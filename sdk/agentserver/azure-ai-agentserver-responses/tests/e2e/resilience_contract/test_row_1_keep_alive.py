@@ -14,7 +14,7 @@ reclaim. The default-off keep-alive in the rest of the conformance suite hid
 the bug.
 
 This module pins the contract: Row 1 (``store=true, bg=true,
-resilient-tasks switch enabled``) MUST create a resilient task and recover after a crash
+resilient_bg=True``) MUST create a resilient task and recover after a crash
 (Path C) **regardless of keep-alive**. It mirrors ``test_row_1_path_c`` but
 runs with keep-alive on.
 
@@ -65,7 +65,7 @@ async def test_row_1_keep_alive_path_c(make_harness: Callable[..., CrashHarness]
     under keep-alive (Principle XI depth).
     """
     harness = make_harness(
-        resilient_tasks_enabled=True,
+        resilient_background=True,
         handler_sleep_ms=int(LONG_TIME_SECS * 1000),
         shutdown_grace_seconds=LONG_GRACE_S,
         keep_alive_seconds=1,  # <-- the hosted condition the suite otherwise never exercises

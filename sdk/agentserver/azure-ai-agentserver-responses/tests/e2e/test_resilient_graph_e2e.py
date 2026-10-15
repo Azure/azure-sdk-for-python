@@ -28,7 +28,7 @@ GRAPH_NODES = ["fetch_data", "transform_data", "generate_output"]
 
 
 def _make_graph_app() -> TestClient:
-    options = ResponsesServerOptions()
+    options = ResponsesServerOptions(resilient_background=True)
     app = ResponsesAgentServerHost(options=options)
     completed_by_chain: dict[str, list[str]] = {}
 
@@ -110,9 +110,3 @@ class TestResilientGraphE2E:
         )
         assert resp.status_code == 200
         assert resp.json()["status"] in ("in_progress", "completed")
-
-@pytest.fixture(autouse=True)
-def _enable_resilient_tasks_for_module() -> None:
-    from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
-
-    set_resilient_tasks_enabled(True)

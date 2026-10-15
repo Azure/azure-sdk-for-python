@@ -64,7 +64,7 @@ def _collect_sse(response) -> list[dict[str, Any]]:
 
 def _make_claude_style_app() -> TestClient:
     """A resilient Claude-style upstream-wrap pattern with a simulated upstream (no real Claude SDK)."""
-    options = ResponsesServerOptions(steerable_conversations=True)
+    options = ResponsesServerOptions(resilient_background=True, steerable_conversations=True)
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
@@ -139,7 +139,7 @@ class TestResilientClaudeStylePattern:
 
 def _make_sample18_app() -> TestClient:
     """Reproduces the upstream-owned resilient recovery pattern with a simulated upstream."""
-    options = ResponsesServerOptions(steerable_conversations=True)
+    options = ResponsesServerOptions(resilient_background=True, steerable_conversations=True)
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
@@ -211,7 +211,7 @@ class TestSample18ResilientCopilot:
 
 
 def _make_sample19_app() -> TestClient:
-    options = ResponsesServerOptions()
+    options = ResponsesServerOptions(resilient_background=True)
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
@@ -280,7 +280,7 @@ class TestSample19ResilientStreaming:
 
 
 def _make_sample20_app() -> TestClient:
-    options = ResponsesServerOptions(steerable_conversations=True)
+    options = ResponsesServerOptions(resilient_background=True, steerable_conversations=True)
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
@@ -365,7 +365,7 @@ class TestSample20ResilientSteering:
         """
         shutdown_detected = {"fired": False}
 
-        options = ResponsesServerOptions(steerable_conversations=True)
+        options = ResponsesServerOptions(resilient_background=True, steerable_conversations=True)
         app_local = ResponsesAgentServerHost(options=options)
 
         @app_local.response_handler
@@ -432,7 +432,7 @@ class TestSample20ResilientSteering:
 
 
 def _make_sample22_app() -> TestClient:
-    options = ResponsesServerOptions(steerable_conversations=False)
+    options = ResponsesServerOptions(resilient_background=True, steerable_conversations=False)
     app = ResponsesAgentServerHost(options=options)
     turn_count_by_chain: dict[str, int] = {}
 
@@ -504,9 +504,3 @@ class TestSample22ResilientMultiturn:
         deltas = [e for e in events if e["type"] == "response.output_text.delta"]
         full_text = "".join(e["data"].get("delta", "") for e in deltas)
         assert "done" in full_text.lower()
-
-@pytest.fixture(autouse=True)
-def _enable_resilient_tasks_for_module() -> None:
-    from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
-
-    set_resilient_tasks_enabled(True)

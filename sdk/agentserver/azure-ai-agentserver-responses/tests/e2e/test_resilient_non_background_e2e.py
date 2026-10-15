@@ -28,7 +28,7 @@ from azure.ai.agentserver.responses import (
 
 
 def _make_foreground_app() -> TestClient:
-    options = ResponsesServerOptions()
+    options = ResponsesServerOptions(resilient_background=True)
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
@@ -87,7 +87,7 @@ class TestResilientNonBackgroundE2E:
 
     def test_foreground_non_streaming(self) -> None:
         """Foreground non-streaming returns completed JSON."""
-        options = ResponsesServerOptions()
+        options = ResponsesServerOptions(resilient_background=True)
         app = ResponsesAgentServerHost(options=options)
 
         @app.response_handler
@@ -111,9 +111,3 @@ class TestResilientNonBackgroundE2E:
         get_resp = client.get(f"/responses/{response_id}")
         assert get_resp.status_code == 200
         assert get_resp.json()["id"] == response_id
-
-@pytest.fixture(autouse=True)
-def _enable_resilient_tasks_for_module() -> None:
-    from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
-
-    set_resilient_tasks_enabled(True)

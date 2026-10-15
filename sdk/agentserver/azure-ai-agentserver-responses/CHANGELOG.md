@@ -10,24 +10,6 @@
 
 ### Breaking Changes
 
-- Removed `ResponsesServerOptions.resilient_background`. Responses resilience
-  is now controlled exclusively by
-  `azure.ai.agentserver.core.tasks.set_resilient_tasks_enabled`. Call
-  `set_resilient_tasks_enabled(True)` before constructing
-  `ResponsesAgentServerHost`; this also selects file-backed SSE replay and
-  enables the persistent-store composition guard. With the switch enabled,
-  stored background requests are re-invoked after recovery, while stored
-  foreground requests use the persisted `mark-failed` disposition. With the
-  switch disabled, execution is non-durable: graceful shutdown marks unfinished
-  stored responses failed in-process, but a hard crash can leave the last stored
-  status `in_progress`.
-
-  **Migration:** a host that previously combined
-  `set_resilient_tasks_enabled(True)` with
-  `ResponsesServerOptions(resilient_background=False)` received `mark-failed`
-  recovery for stored background requests. The same host now re-invokes those
-  handlers. Make handlers resume-safe before enabling the switch, or leave the
-  switch disabled if durable recovery is not required.
 - `FileResponseStore` now persists data under user-scoped
   `partitions-v1/{anonymous|user-hash}` directories. Existing files in the
   previous shared layout remain unchanged but are not read or migrated

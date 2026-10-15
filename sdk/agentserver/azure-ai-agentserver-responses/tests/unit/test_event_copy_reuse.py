@@ -230,7 +230,7 @@ def test_materialization_and_remaining_copy_boundaries_are_unchanged():
 
 def _pipeline():
     orchestrator = object.__new__(_orchestrator._ResponseOrchestrator)
-    orchestrator._runtime_options = ResponsesServerOptions()
+    orchestrator._runtime_options = ResponsesServerOptions(resilient_background=False)
     orchestrator._shutdown_event = None
     ctx = _ExecutionContext(
         response_id="resp_copy_reuse",
@@ -363,7 +363,7 @@ async def test_recovered_output_count_and_sequence_baseline_are_preserved():
 async def test_foreground_echo_asgi_uses_nine_coercions(store):
     raw_events = []
     host = ResponsesAgentServerHost(
-        options=ResponsesServerOptions(),
+        options=ResponsesServerOptions(resilient_background=False),
         store=InMemoryResponseProvider(),
         configure_observability=None,
     )

@@ -90,7 +90,7 @@ async def test_real_body_and_ended_span_precede_flush_and_final_send(
 
     monkeypatch.setattr(provider, "create_response", create)
     app = ResponsesAgentServerHost(
-        options=ResponsesServerOptions(create_span_hook=Hook()),
+        options=ResponsesServerOptions(resilient_background=False, create_span_hook=Hook()),
         store=provider,
     )
     app.response_handler(handler)
@@ -148,7 +148,7 @@ async def test_sync_success_and_handler_error_still_flush_before_sending(
         yield stream.emit_completed()
 
     app = ResponsesAgentServerHost(
-        options=ResponsesServerOptions(), store=InMemoryResponseProvider()
+        options=ResponsesServerOptions(resilient_background=False), store=InMemoryResponseProvider()
     )
     app.response_handler(handler)
     receive = AsyncMock(
@@ -309,7 +309,7 @@ async def test_real_pipeline_awaits_handler_cleanup_before_flush(
             cleanup_complete.set()
 
     app = ResponsesAgentServerHost(
-        options=ResponsesServerOptions(sse_keep_alive_interval_seconds=interval),
+        options=ResponsesServerOptions(resilient_background=False, sse_keep_alive_interval_seconds=interval),
         store=InMemoryResponseProvider(),
     )
 
@@ -419,13 +419,13 @@ async def test_stored_producer_remains_independent_of_request_cleanup(
     initial_persisted = asyncio.Event()
     records: list[Any] = []
     monkeypatch.setattr(_tracing, "flush_spans", lambda timeout_millis: events.append("flush"))
-    original_start = orchestration._ResponseOrchestrator._start_resilient_response
+    original_start = orchestration._ResponseOrchestrator._start_resilient_background
 
     async def start(self: Any, ctx: Any, record: Any, fallback: Any, **kwargs: Any) -> None:
         await original_start(self, ctx, record, fallback, **kwargs)
         records.append(record)
 
-    monkeypatch.setattr(orchestration._ResponseOrchestrator, "_start_resilient_response", start)
+    monkeypatch.setattr(orchestration._ResponseOrchestrator, "_start_resilient_background", start)
     provider = InMemoryResponseProvider()
     original_create = provider.create_response
 
@@ -447,7 +447,7 @@ async def test_stored_producer_remains_independent_of_request_cleanup(
             cleanup_complete.set()
 
     app = ResponsesAgentServerHost(
-        options=ResponsesServerOptions(sse_keep_alive_interval_seconds=interval),
+        options=ResponsesServerOptions(resilient_background=False, sse_keep_alive_interval_seconds=interval),
         store=provider,
     )
     app.response_handler(handler)

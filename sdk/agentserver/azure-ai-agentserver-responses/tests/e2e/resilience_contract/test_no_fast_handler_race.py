@@ -13,14 +13,14 @@ Under spec 024 Phase 2 the bookkeeping pattern is gone — the handler
 runs inside the resilient task body, so the race is architecturally
 impossible.
 
-This test fires many fast Row 2 (``resilient_tasks_enabled=False``,
+This test fires many fast Row 2 (``resilient_background=False``,
 ``background=True``, ``store=true``) handlers in parallel and asserts
 that EVERY response reaches a terminal status within a bounded time.
 A regression that re-introduces the race would manifest as some
 responses stuck in ``in_progress`` forever.
 
 Note: today this test is GREEN-by-mitigation (the pre-registration in
-``_start_resilient_response`` runs before the handler can call
+``_start_resilient_background`` runs before the handler can call
 ``complete_bookkeeping_task``). Post-Phase-2 the test is GREEN by
 construction. The value is preventing regressions in either direction.
 
@@ -64,7 +64,7 @@ async def test_no_fast_handler_race_row_2(
 ) -> None:
     """Fire FAN_OUT parallel Row 2 fast handlers; none stuck in_progress."""
     harness = make_harness(
-        resilient_tasks_enabled=False,
+        resilient_background=False,
         handler_sleep_ms=HANDLER_SLEEP_MS,
         shutdown_grace_seconds=LONG_GRACE_S,
     )
@@ -112,7 +112,7 @@ async def test_no_fast_handler_race_row_3(
 ) -> None:
     """Same shape for Row 3 (foreground): FAN_OUT parallel POSTs all reach terminal."""
     harness = make_harness(
-        resilient_tasks_enabled=True,  # row 3 is resilient_tasks_enabled-agnostic
+        resilient_background=True,  # row 3 is resilient_background-agnostic
         handler_sleep_ms=HANDLER_SLEEP_MS,
         shutdown_grace_seconds=LONG_GRACE_S,
     )

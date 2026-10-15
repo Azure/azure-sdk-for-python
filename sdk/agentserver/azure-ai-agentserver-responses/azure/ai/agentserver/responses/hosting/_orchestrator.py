@@ -32,7 +32,6 @@ from azure.ai.agentserver.core.tasks import (
     LastInputIdPreconditionFailed,
     TaskConflictError,
     TaskManagerNotInitialized,
-    resilient_tasks_enabled,
 )
 
 from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-error,no-name-in-module
@@ -290,24 +289,31 @@ def _validate_handler_event(
     return None
 
 
-def _is_recoverable_background(*, store: bool, background: bool) -> bool:
+def _is_resilient_background(
+    runtime_options: "ResponsesServerOptions | None", *, store: bool, background: bool
+) -> bool:
     """Return True for a resilient background response (the only checkpoint consumer).
 
+    :param runtime_options: Server runtime options.
+    :type runtime_options: ResponsesServerOptions | None
     :keyword store: Whether the response is stored.
     :paramtype store: bool
     :keyword background: Whether the response is background.
     :paramtype background: bool
-    :returns: True iff resilient tasks are enabled and the response is stored and
-        background.
+    :returns: True iff ``resilient_background`` is enabled and the response is a
+        stored background response.
     :rtype: bool
     """
-    return resilient_tasks_enabled() and store and background
+    return bool(
+        runtime_options is not None and getattr(runtime_options, "resilient_background", False) and store and background
+    )
 
 
 async def _do_checkpoint_persist(
     event: ResponseCheckpointEvent,
     *,
     provider: "ResponseProviderProtocol | None",
+    runtime_options: "ResponsesServerOptions | None",
     store: bool,
     background: bool,
     context: Any,
@@ -325,6 +331,8 @@ async def _do_checkpoint_persist(
     :type event: ResponseCheckpointEvent
     :keyword provider: The storage provider (``None`` ⇒ no-op).
     :paramtype provider: ResponseProviderProtocol | None
+    :keyword runtime_options: Server runtime options.
+    :paramtype runtime_options: ResponsesServerOptions | None
     :keyword store: Whether the response is stored.
     :paramtype store: bool
     :keyword background: Whether the response is background.
@@ -340,7 +348,7 @@ async def _do_checkpoint_persist(
     :returns: The new ``last_snapshot`` bytes (unchanged when nothing persisted).
     :rtype: bytes | None
     """
-    if not _is_recoverable_background(store=store, background=background):
+    if not _is_resilient_background(runtime_options, store=store, background=background):
         logger.debug("checkpoint() no-op (not a resilient background response) for %s", response_id)
         return last_snapshot
     if terminal_seen:
@@ -722,6 +730,7 @@ def _bg_resolve_cancelled(
     cancellation_signal: asyncio.Event,
     context: "ResponseContext | None",
     first_event_processed: bool,
+    runtime_options: "ResponsesServerOptions | None",
     response_id: str,
     agent_reference: "generated_models.AgentReference | dict[str, Any]",
     model: str | None,
@@ -741,6 +750,8 @@ def _bg_resolve_cancelled(
     :paramtype context: ResponseContext | None
     :keyword first_event_processed: Whether any handler event was processed.
     :paramtype first_event_processed: bool
+    :keyword runtime_options: Server runtime options.
+    :paramtype runtime_options: ResponsesServerOptions | None
     :keyword response_id: The response id.
     :paramtype response_id: str
     :keyword agent_reference: The normalized agent reference.
@@ -758,11 +769,13 @@ def _bg_resolve_cancelled(
                 record.transition_to("cancelled")
             elif _shutdown:
                 # Resilient+bg: leave in_progress for re-entry. Non-resilient: fail.
-                _recoverable_background = _is_recoverable_background(
-                    store=record.mode_flags.store,
-                    background=record.mode_flags.background,
+                _is_resilient_bg = (
+                    runtime_options is not None
+                    and runtime_options.resilient_background
+                    and record.mode_flags.store
+                    and record.mode_flags.background
                 )
-                if not _recoverable_background:
+                if not _is_resilient_bg:
                     record.transition_to("failed")
             else:
                 # Steering or unknown — mark failed.
@@ -950,6 +963,7 @@ async def _bg_drain_handler_events(
     agent_session_id: str | None,
     conversation_id: str | None,
     history_limit: int,
+    runtime_options: "ResponsesServerOptions | None",
 ) -> bool:
     """Drive the handler event loop for a bg non-stream run (Spec 033 §3.2).
 
@@ -988,6 +1002,8 @@ async def _bg_drain_handler_events(
     :paramtype conversation_id: str | None
     :keyword history_limit: History fetch limit.
     :paramtype history_limit: int
+    :keyword runtime_options: Server runtime options.
+    :paramtype runtime_options: ResponsesServerOptions | None
     :returns: True if the caller should ``return`` immediately.
     :rtype: bool
     """
@@ -1006,6 +1022,7 @@ async def _bg_drain_handler_events(
                 st.checkpoint_snapshot = await _do_checkpoint_persist(
                     handler_event,
                     provider=provider,
+                    runtime_options=runtime_options,
                     store=store,
                     background=record.mode_flags.background,
                     context=context.platform_context if context else None,
@@ -1055,6 +1072,7 @@ async def _bg_drain_handler_events(
             cancellation_signal=cancellation_signal,
             context=context,
             first_event_processed=st.first_event_processed,
+            runtime_options=runtime_options,
             response_id=response_id,
             agent_reference=agent_reference,
             model=model,
@@ -1104,6 +1122,7 @@ async def _run_background_non_stream(
     conversation_id: str | None = None,
     history_limit: int = -1,
     runtime_state: _RuntimeState | None = None,
+    runtime_options: ResponsesServerOptions | None = None,
 ) -> None:
     """Execute a non-stream handler in the background and update the execution record.
 
@@ -1139,6 +1158,8 @@ async def _run_background_non_stream(
     :keyword type history_limit: int
     :keyword runtime_state: Runtime state tracker for eager eviction after persist.
     :keyword type runtime_state: _RuntimeState | None
+    :keyword runtime_options: Runtime options controlling response execution behavior.
+    :keyword type runtime_options: ResponsesServerOptions | None
     :return: None
     :rtype: None
     """
@@ -1161,6 +1182,7 @@ async def _run_background_non_stream(
                 agent_session_id=agent_session_id,
                 conversation_id=conversation_id,
                 history_limit=history_limit,
+                runtime_options=runtime_options,
             ):
                 return
         except ResponseExitForRecovery:
@@ -1348,7 +1370,7 @@ class _PipelineState:  # pylint: disable=too-many-instance-attributes
         # 0 and the first event lands at seq=0.
         self.next_seq: int = 0
         # Set by the exception handler when SHUTTING_DOWN is detected
-        # for a recoverable stored background response. Signals the resilient
+        # for a resilient_background+store response. Signals the resilient
         # stream body's ``finally`` to SKIP the finalize+close step so
         # the wire stream stays in OPEN state. The next lifetime's
         # recovered handler re-opens the same registry entry (file-
@@ -1417,7 +1439,7 @@ class _ResponseOrchestrator:
         # triggered by SIGTERM propagating through the server's process
         # group: without this signal, the orchestrator would treat them
         # as plain handler exceptions and bake a "failed" terminal,
-        # contradicting the resilience contract (recoverable background
+        # contradicting the resilience contract (resilient_background
         # responses must remain in_progress for next-lifetime recovery).
         self._shutdown_event: "asyncio.Event | None" = None
 
@@ -1425,8 +1447,8 @@ class _ResponseOrchestrator:
         # is registered in _REGISTERED_DESCRIPTORS before TaskManager.startup()
         # runs recovery. Without this, stale tasks from a previous crash would
         # not be recovered until the first HTTP request triggers lazy creation.
-        # Eager creation is unconditional: switch-enabled foreground and legacy
-        # persisted mark-failed tasks also need recovery dispatch — they use the same
+        # Eager creation is unconditional: Rows 2/3 also need recovery
+        # dispatch even when ``resilient_background=False`` — they use the same
         # @task function with a ``disposition="mark-failed"`` payload that
         # the recovery body honours.
         from ._resilient_orchestrator import (
@@ -2295,6 +2317,7 @@ class _ResponseOrchestrator:
         state.last_persisted_snapshot = await _do_checkpoint_persist(
             event,
             provider=self._provider,
+            runtime_options=self._runtime_options,
             store=ctx.store,
             background=ctx.background,
             context=ctx.context.platform_context if ctx.context is not None else None,
@@ -2723,7 +2746,7 @@ class _ResponseOrchestrator:
             #
             # - SHUTTING_DOWN + resilient+background: leave in_progress
             #   so the next-lifetime recovery scanner re-invokes the
-            #   handler. Per user-facing contract, recoverable background
+            #   handler. Per user-facing contract: resilient_background
             #   responses survive a server restart (orphaning the
             #   response or failing queued steers is unacceptable when
             #   the upstream task could still complete on retry).
@@ -2736,7 +2759,7 @@ class _ResponseOrchestrator:
             if ctx.cancellation_signal.is_set():
                 _shutdown = bool(ctx.context.shutdown.is_set()) if ctx.context else False
                 if _shutdown:
-                    if _is_recoverable_background(store=ctx.store, background=ctx.background):
+                    if ctx.background and ctx.store and self._runtime_options.resilient_background:
                         return
                     if not self._has_terminal_event(state.handler_events):
                         state.pending_terminal = await self._make_failed_event(ctx, state)
@@ -2782,7 +2805,7 @@ class _ResponseOrchestrator:
                 (_shutdown or _server_shutting_down)
                 and ctx.background
                 and ctx.store
-                and resilient_tasks_enabled()
+                and self._runtime_options.resilient_background
             ):
                 # Stamp the shutdown cause so the resilient body's
                 # FR-005a check (which also looks at ctx.shutdown)
@@ -2850,7 +2873,7 @@ class _ResponseOrchestrator:
             if _shutdown:
                 # For resilient+background, leave response in_progress for
                 # re-entry. Don't emit terminal — just return.
-                if _is_recoverable_background(store=ctx.store, background=ctx.background):
+                if ctx.background and ctx.store and self._runtime_options.resilient_background:
                     return
                 state.pending_terminal = await self._make_failed_event(ctx, state)
             elif _client_cancelled:
@@ -3150,19 +3173,19 @@ class _ResponseOrchestrator:
 
         # (Spec 024 Phase 2) Bookkeeping pattern removed. The stream-path
         # unification follows the same shape as the existing Row 1
-        # (switch enabled + bg + store + stream=T) branch below — handler runs inside
-        # the resilient task body via _start_resilient_response; the live wire
+        # (resilient_bg+bg+store+stream=T) branch below — handler runs inside
+        # the resilient task body via _start_resilient_background; the live wire
         # iterator subscribes to the per-response stream. The pre-existing
         # bookkeeping_record + bookkeeping_active + _complete_bookkeeping_task
         # mechanics are deleted. Disposition is selected per row:
-        #   - switch enabled + bg + store  → re-invoke   (Row 1 stream=T)
-        #   - switch enabled + fg + store  → mark-failed (Row 3 stream=T)
-        #   - switch disabled + store      → in-process fallback (non-durable)
+        #   - resilient_bg=True + bg + store    → re-invoke   (Row 1 stream=T)
+        #   - resilient_bg=False + bg + store   → mark-failed (Row 2 stream=T)
+        #   - fg + store                      → mark-failed (Row 3 stream=T)
         # The downstream branches read ``_unified_disposition`` instead of
         # deriving the disposition independently.
         _unified_disposition = decide_disposition(
             background=ctx.background,
-            resilient_tasks_enabled=resilient_tasks_enabled(),
+            resilient_background=self._runtime_options.resilient_background,
             store=ctx.store,
         )
 
@@ -3173,11 +3196,13 @@ class _ResponseOrchestrator:
         # stays recoverable.
         #
         # (Spec 024 Phase 2) Unified stream-path for ALL ``store=True`` streams:
-        # Row 1 (switch enabled + bg + store), Row 2 (switch disabled + bg + store), and
-        # Row 3 (fg+store) all attempt the unified resilient-task path and
-        # subscribe the wire iterator to the per-response stream. When the core
-        # switch is disabled there is no TaskManager, so the same pipeline runs
-        # through ``_resilient_stream_fallback`` in-process.
+        # Row 1 (resilient_bg+bg+store), Row 2 (non-resilient_bg+bg+store) and
+        # Row 3 (fg+store) all run the handler inside the resilient task body and
+        # subscribe the wire iterator to the per-response stream via the
+        # registry. Disposition is selected per row (re-invoke for Row 1,
+        # mark-failed for Row 2/3). ``_resilient_stream_fallback`` is the
+        # in-process fallback if the resilient start cannot proceed (e.g. a test
+        # client without a TaskManager).
         if ctx.store:
             # Bind the per-response stream up front. The registry returns the
             # same instance for the same id, so the resilient body's
@@ -3186,7 +3211,7 @@ class _ResponseOrchestrator:
             wire_stream = await streams.get_or_create(ctx.response_id)
 
             async def _resilient_stream_fallback() -> None:
-                # In-process fallback if ``_start_resilient_response`` cannot
+                # In-process fallback if ``_start_resilient_background`` cannot
                 # start a resilient task. Runs the same ``_process_handler_events``
                 # pipeline as the resilient body so events still reach the
                 # per-response wire stream this connection subscribes to.
@@ -3240,7 +3265,7 @@ class _ResponseOrchestrator:
                     finally:
                         await self._runtime_state.discard_pending(ctx.response_id)
 
-            # Minimal record only for ``_start_resilient_response``'s parameter
+            # Minimal record only for ``_start_resilient_background``'s parameter
             # shape. The fallback tracks it as unpublished shutdown work until
             # the handler publishes a canonical response record.
             start_record = ResponseExecution(
@@ -3270,7 +3295,7 @@ class _ResponseOrchestrator:
                 return
 
             try:
-                await self._start_resilient_response(
+                await self._start_resilient_background(
                     ctx,
                     start_record,
                     _resilient_stream_fallback,
@@ -3291,7 +3316,7 @@ class _ResponseOrchestrator:
                 # a standalone ``error`` SSE event (the same B8 pre-creation
                 # contract used for every other streaming creation failure) —
                 # then close the wire stream. The platform error is already
-                # logged + tagged by ``_start_resilient_response``.
+                # logged + tagged by ``_start_resilient_background``.
                 yield encode_sse_any_event(await self._emit_standalone_error(ctx, code="server_error"))
                 await self._safe_close(wire_stream)
                 return
@@ -3602,10 +3627,10 @@ class _ResponseOrchestrator:
             return await self._run_sync_inner(ctx, state)
 
         # (Spec 024 Phase 2 — bookkeeping unification) Row 3 unified path:
-        # with resilient tasks enabled, the handler runs inside the task body
-        # and the HTTP request awaits ``task_run.result()``. Crash recovery uses
-        # the persisted mark-failed disposition. With the switch disabled,
-        # _start_resilient_response uses the non-durable in-process fallback.
+        # handler runs inside the resilient task body, HTTP request awaits the
+        # task's terminal via ``await task_run.result()``. Crash recovery
+        # uses the same mark-failed disposition as before — the next-lifetime
+        # recovery scanner reclaims tasks that crashed mid-execution.
         record = ResponseExecution(
             response_id=ctx.response_id,
             mode_flags=ResponseModeFlags(stream=False, store=True, background=False),
@@ -3623,7 +3648,7 @@ class _ResponseOrchestrator:
         await self._runtime_state.add(record)
 
         async def _runner() -> None:
-            """Fallback runner if _start_resilient_response's resilient start fails.
+            """Fallback runner if _start_resilient_background's resilient start fails.
 
             Runs the same handler-execution pipeline as the resilient body so
             in-test or test-client environments without a TaskManager still
@@ -3644,15 +3669,16 @@ class _ResponseOrchestrator:
                 conversation_id=ctx.conversation_id,
                 history_limit=self._runtime_options.default_fetch_history_count,
                 runtime_state=self._runtime_state,
+                runtime_options=self._runtime_options,
             )
 
-        await self._start_resilient_response(
+        await self._start_resilient_background(
             ctx,
             record,
             _runner,
             disposition=decide_disposition(
                 background=ctx.background,
-                resilient_tasks_enabled=resilient_tasks_enabled(),
+                resilient_background=self._runtime_options.resilient_background,
                 store=ctx.store,
             ),
         )
@@ -3896,8 +3922,8 @@ class _ResponseOrchestrator:
         The POST blocks until the handler's first event is processed
         (the ``ResponseCreatedSignal`` pattern).
 
-        When resilient tasks are enabled, execution is wrapped in the resilient
-        task primitive for crash recovery.
+        When ``resilient_background=True`` in server options, execution is
+        wrapped in the resilient task primitive for crash recovery.
 
         :param ctx: Current execution context.
         :type ctx: _ExecutionContext
@@ -3948,28 +3974,28 @@ class _ResponseOrchestrator:
                         conversation_id=ctx.conversation_id,
                         history_limit=self._runtime_options.default_fetch_history_count,
                         runtime_state=self._runtime_state,
+                        runtime_options=self._runtime_options,
                     )
             except asyncio.CancelledError:
                 pass  # event-loop teardown; background work already done
 
         if ctx.store:
             # (Spec 024 Phase 2) Unified path for Row 1 + Row 2 (bg+store):
-            # the handler attempts the resilient task body. With the core switch
-            # disabled, ``_start_resilient_response`` uses the in-process fallback.
-            # The disposition determines recovery behaviour for durable records:
-            #   - switch enabled + background → re-invoke the handler.
-            #   - switch enabled + foreground → mark the response failed.
-            # With the switch disabled there is no durable record or recovery
-            # scanner, so the fallback does not apply the disposition.
+            # the handler ALWAYS runs inside the resilient task body. The
+            # disposition determines recovery behaviour only:
+            #   - resilient_background=True  → re-invoke (Row 1: handler
+            #     re-runs on next-lifetime recovery).
+            #   - resilient_background=False → mark-failed (Row 2: response
+            #     is marked failed on next-lifetime recovery).
             # The legacy ``asyncio.create_task(_shielded_runner)`` path
             # for Row 2 + the separate bookkeeping task are deleted —
             # one resilient task per response covers both rows.
             disposition = decide_disposition(
                 background=ctx.background,
-                resilient_tasks_enabled=resilient_tasks_enabled(),
+                resilient_background=self._runtime_options.resilient_background,
                 store=ctx.store,
             )
-            await self._start_resilient_response(ctx, record, _shielded_runner, disposition=disposition)
+            await self._start_resilient_background(ctx, record, _shielded_runner, disposition=disposition)
         else:
             # Row 4 — no store, no resilient task. Plain asyncio.
             record.execution_task = asyncio.create_task(_shielded_runner())
@@ -4181,7 +4207,7 @@ class _ResponseOrchestrator:
         finally:
             # Detect "leave in_progress for next-lifetime recovery" — set
             # by the exception handler in _process_handler_events when
-            # SHUTTING_DOWN is detected for a recoverable stored background
+            # SHUTTING_DOWN is detected for a resilient_background+store
             # response. In that case we MUST NOT close the wire stream:
             # closing flushes a terminal marker, which puts the stream
             # in CLOSED state. The recovered handler on the next
@@ -4217,7 +4243,7 @@ class _ResponseOrchestrator:
     # task body for Rows 1/2/3 and the task completes when the handler
     # returns. No external completion signal is needed.
 
-    async def _start_resilient_response(
+    async def _start_resilient_background(
         self,
         ctx: _ExecutionContext,
         record: ResponseExecution,
@@ -4255,12 +4281,12 @@ class _ResponseOrchestrator:
         :param fallback_runner: The shielded runner coroutine function to run
             in-process when resilient tasks are disabled.
         :type fallback_runner: Any
-        :keyword disposition: One of ``"re-invoke"`` (switch-enabled stored
-            background work) or ``"mark-failed"`` (switch-enabled stored
-            foreground work, plus legacy persisted records). Stamped into task
-            input so recovery can route without re-deriving the request gates.
-            When the switch is disabled, no task starts and the value is unused
-            by the in-process fallback.
+        :keyword disposition: One of ``"re-invoke"`` (Row 1: resilient_bg+bg+store
+            — task body re-runs handler on recovery) or ``"mark-failed"``
+            (Rows 2/3: bg+store with resilient_bg=False, or fg+store — task body
+            is bookkeeping-only on fresh entry and marks the response failed on
+            recovery). Stamped into task framework metadata so recovery dispatch
+            can route without re-deriving the gate from request params.
         :paramtype disposition: str
         :raises Exception: If the task subsystem is present and the resilient
             start fails (e.g. the task-store write is rejected). The exception is
@@ -4329,7 +4355,7 @@ class _ResponseOrchestrator:
             logger.info(
                 "Resilient task subsystem not enabled for response %s; running handler "
                 "in-process (non-durable). Enable via set_resilient_tasks_enabled(True) "
-                "before constructing the host for crash recovery.",
+                "(or resilient_background) for crash recovery.",
                 ctx.response_id,
             )
             record.execution_task = asyncio.create_task(fallback_runner())

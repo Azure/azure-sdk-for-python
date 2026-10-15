@@ -299,8 +299,9 @@ def get_task_manager() -> TaskManager:
         raise TaskManagerNotInitialized(
             "TaskManager not initialized: the resilient task subsystem is not enabled. "
             "Durable tasks and crash recovery are opt-in - call "
-            "set_resilient_tasks_enabled(True) before constructing the host "
-            "(e.g. at import time)."
+            "set_resilient_tasks_enabled(True) before host startup (e.g. at import time), "
+            "or, for the responses protocol, construct the host with "
+            "ResponsesServerOptions(resilient_background=True)."  # pylint: disable=implicit-str-concat
         )
     return _manager
 

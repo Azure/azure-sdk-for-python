@@ -854,6 +854,7 @@ namespace azure.ai.agentserver.responses
                 create_span_hook: CreateSpanHook | None = ..., 
                 default_fetch_history_count: int = -1, 
                 default_model: str | None = ..., 
+                resilient_background: bool = False, 
                 shutdown_grace_period_seconds: int = 10, 
                 sse_keep_alive_interval_seconds: int | None = ..., 
                 steerable_conversations: bool = False

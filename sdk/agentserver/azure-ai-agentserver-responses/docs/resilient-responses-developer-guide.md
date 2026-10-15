@@ -6,8 +6,7 @@ automatically, what developers need to implement, and best practices.
 
 ## Overview
 
-When `set_resilient_tasks_enabled(True)` is called (opt-in; disabled by
-default), the
+When `resilient_background=True` (opt-in — the default is `False`), the
 framework automatically wraps your response handler in a **resilient
 task**. If the server crashes mid-response:
 
@@ -15,7 +14,7 @@ task**. If the server crashes mid-response:
 - Stream events are preserved for client reconnection
 - Conversation state is maintained across crashes
 
-**Opting in with `set_resilient_tasks_enabled(True)` gets you the framework half for
+**Opting in (`resilient_background=True`) gets you the framework half for
 free**: re-invocation on restart, event replay for reconnecting clients, and
 conversation continuity — with no handler changes. A naive handler re-invoked
 this way still produces a correct response (it just re-runs the whole turn).
@@ -23,20 +22,21 @@ The *handler* half — making the recovered attempt resume *where it left off*
 and not repeat non-idempotent side effects — is optional work you take on when
 you want it; see [Choosing a resume strategy](#choosing-a-resume-strategy).
 
-> **Default**: the process-global resilient-tasks switch is off. Without the
-> opt-in, no task manager or recovery scan runs; a hard crash may leave the
-> last stored response status `in_progress`. Call
-> `set_resilient_tasks_enabled(True)` before
-> constructing `ResponsesAgentServerHost` to engage the re-invoke recovery path.
+> **Default**: `resilient_background` defaults to `False`. Without the
+> opt-in, a crash mid-handler leaves the response in the
+> "crash-failed" state: the next-lifetime recovery scanner marks it
+> `failed` (`error.code="server_error"`) instead
+> of re-invoking the handler. Set `resilient_background=True` on
+> `ResponsesServerOptions` to engage the re-invoke recovery path.
 
 ## What the Framework Provides (Zero Code)
 
 | Feature | Behavior |
 |---------|----------|
-| Crash recovery | Handler re-invoked on server restart (requires `set_resilient_tasks_enabled(True)`) |
+| Crash recovery | Handler re-invoked on server restart (requires `resilient_background=True`) |
 | Stream replay | Events persisted incrementally; clients reconnect seamlessly |
-| Conversation lock | Prevents conflicting concurrent writes when resilient tasks are enabled |
-| Non-bg cleanup | Switch-enabled foreground responses recover with `mark-failed`; switch-disabled hard crashes have no scanner |
+| Conversation lock | Prevents conflicting concurrent writes |
+| Non-bg cleanup | Foreground responses marked `failed` on crash (no ghost re-invocation) |
 | TTL-based cleanup | Stream events auto-expire after 10 minutes (framework-internal) |
 
 ## Decision Tree
@@ -86,16 +86,11 @@ renewal.
 Enable steerable conversations for agents that maintain context across turns:
 
 ```python
-from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
-
-set_resilient_tasks_enabled(True)
 options = ResponsesServerOptions(
+    resilient_background=True,
     steerable_conversations=True,
 )
 ```
-
-The core switch is required for the `MultiTurnTask` that provides overlap
-queuing, cooperative cancellation, conversation locking, and anti-fork checks.
 
 With steering enabled:
 - Each turn shares the same resilient task (conversation continuity)
@@ -103,9 +98,6 @@ With steering enabled:
 - The `pending_input_count` field tells you how many turns are queued
 
 ### Do you need a custom acceptance hook?
-
-The acceptance hook is part of task-backed steering and therefore requires the
-resilient-tasks switch to be enabled.
 
 When a new turn is queued onto an **already-active steerable conversation**
 (steering pressure — never the first turn of a conversation), the framework
@@ -136,52 +128,51 @@ mechanics.
 
 ## Configuration
 
-| Control | Default | Description |
-|---------|---------|-------------|
-| `set_resilient_tasks_enabled(True)` | Disabled | Opt into durable tasks and crash-recoverable background responses; call before host construction |
-| `steerable_conversations` | `False` | Enable multi-turn steering with cooperative cancel; task-backed queuing and anti-fork semantics require resilient tasks to be enabled |
+| Option | Default | Description |
+|--------|---------|-------------|
+| `resilient_background` | `False` | Opt INTO crash-recoverable background responses |
+| `steerable_conversations` | `False` | Enable multi-turn steering with cooperative cancel |
 
 ## Configuration Matrix
 
-Recovery semantics depend on three request flags and the process-global switch. The
+Recovery semantics depend on three request flags and one server option. The
 table below is a quick orientation. For the **normative** specification — the
 exact behaviour you can rely on per row, per termination path, and per
 stream/poll mode — see
 [`responses-resilience-spec.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/responses-resilience-spec.md). That document
 is the source of truth; this section summarises it for developer ergonomics.
 
-| `store` | `background` | resilient-tasks switch | Summary |
+| `store` | `background` | `resilient_background` | Summary |
 |---|---|---|---|
 | `true` | `true` | `True` | **Full recovery.** Handler is re-invoked with `context.is_recovery == True`. Persisted events replay to reconnecting clients. See [Crash Recovery](#crash-recovery). |
-| `true` | `true` | `False` (default) | **Stored, non-durable.** Graceful shutdown marks the response failed after grace expires; a hard crash has no recovery scan. |
-| `true` | `false` (foreground) | any | **Never re-invoked.** With the switch enabled, recovery uses a `mark-failed` disposition; otherwise execution is in-process only. |
+| `true` | `true` | `False` (default) | **Failed marker.** Response is marked `failed` on restart. Handler is NOT re-invoked. Pre-crash persisted events remain replayable until TTL expires. |
+| `true` | `false` (foreground) | any | **Failed marker.** Response is marked `failed` with `code=server_error`. Handler is NOT re-invoked (the client's HTTP connection is already dead). Persisted events remain queryable. |
 | `false` | any | any | **Best-effort failed marker** during shutdown grace period only. No persistence. Recovery does not apply. |
 
 Each row × termination-path cell — Path A (handler completes within grace),
 Path B (grace exhausted, in-process marker fires), Path C (crash or Path-B
-failure; next-lifetime recovery runs only when resilient tasks are enabled) —
-is covered by a dedicated
+failure, next-lifetime recovery fires) — is covered by a dedicated
 conformance test in `tests/e2e/resilience_contract/`. If something behaves
 differently from what the spec says, that's a bug in either the implementation
 or the spec — open an issue.
 
-`steerable_conversations=True` is accepted with either switch state, but its
-queuing, cancellation, and anti-fork guarantees require resilient tasks to be
-enabled. With the switch disabled, sequential chain linkage still works while
-overlapping turns run independently through the asyncio fallback.
+`steerable_conversations=True` composes orthogonally: it enables multi-turn
+steering on top of any row above. Recovery composes with steering — see the
+[handler guide's Recovery × Cancellation Composition](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md#recovery--cancellation-composition).
 
 > **`conversation_id` chains**: when a request supplies
 > `conversation_id`, sequential turns extend the chain even when
 > `steerable_conversations=False`. Only **concurrent overlap** (a new
 > turn arriving while a prior turn's handler is still in progress)
-> uses task-backed queuing or locking only when resilient tasks are enabled.
-> With the switch disabled, overlapping turns are not serialized.
+> returns 409 `conversation_locked`. This is independent of the
+> `steerable_conversations` option — that option only controls whether
+> mid-turn inputs are queued (steerable) or rejected (non-steerable).
 
 ### Steerable conversations: no forking
 
-When resilient tasks are enabled and `steerable_conversations=True`, each turn
-after the first must reference the previous turn's `response_id` via
-`previous_response_id`. The framework rejects forks with HTTP 409:
+When `steerable_conversations=True`, each turn after the first must reference
+the previous turn's `response_id` via `previous_response_id`. The framework
+rejects forks with HTTP 409:
 
 ```json
 {
@@ -231,7 +222,7 @@ specific scenarios.
   different directory in local development, pass
   `store=FileResponseStore(storage_dir=…)` to `ResponsesAgentServerHost`.
 - **Stream event store**: configured automatically — file-backed when
-  the resilient-tasks switch is enabled, in-memory otherwise. Files land under
+  `resilient_background=True`, in-memory otherwise. Files land under
   `${AGENTSERVER_STATE_ROOT:-~/.agentserver}/streams/`. No per-store env
   var to set; the unified `AGENTSERVER_STATE_ROOT` covers all three
   local subdirs (`tasks/`, `streams/`, `responses/`).
@@ -245,7 +236,7 @@ owns the equivalent migration for its task store).
 
 ## Recovery + steering surface on `ResponseContext`
 
-When resilient tasks are enabled, the framework populates flat fields
+When `resilient_background=True`, the framework populates flat fields
 on the response context for every handler invocation. The fields
 mirror the underlying task primitive's classifiers and are safe to
 read regardless of `is_recovery`:
@@ -538,7 +529,7 @@ response.completed
 
 The post-recovery part of this guarantee is normative per
 [`responses-resilience-spec.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/responses-resilience-spec.md): for
-`(store=true, background=true, resilient-tasks switch enabled, stream=true)` —
+`(store=true, background=true, resilient_background=True, stream=true)` —
 the row that supports handler re-invoke — a client reconnecting AFTER a
 crash receives the events the recovered handler emits, framed by the
 reset-on-`in_progress` rule below. The conformance suite covers this
@@ -579,13 +570,9 @@ final response but may render intermediate states incorrectly.
 When `background=false` (foreground streaming):
 
 - Response is tied to the HTTP connection lifetime.
-- Graceful shutdown marks an unfinished stored response `failed` in-process.
-- After a hard crash, the switch-enabled recovery scanner follows the
-  `mark-failed` disposition; with the switch disabled there is no scanner and
-  the stored status may remain `in_progress`.
+- If the server crashes: response is marked `failed` with `code=server_error`.
 - The handler is NOT re-invoked (client is already disconnected).
-- Task-backed conversation locking applies only when resilient tasks are
-  enabled.
+- Conversation lock still applies (prevents concurrent modifications).
 
 ## Layered Concerns
 
@@ -674,4 +661,4 @@ See the `samples/` directory for canonical resilient handler shapes:
   the point matching the persisted items — no dual-store divergence window. See
   [Composing an External Durable Engine](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md#composing-an-external-durable-engine-eg-langgraph).
 - `sample_22_resilient_multiturn.py` — Multi-turn conversation with
-  the resilient-tasks switch enabled and `steerable_conversations=False`.
+  `resilient_background=True, steerable_conversations=False`.

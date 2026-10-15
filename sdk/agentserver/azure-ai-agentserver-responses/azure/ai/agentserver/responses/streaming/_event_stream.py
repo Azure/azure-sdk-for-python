@@ -275,8 +275,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         - **Backpressure** — because the orchestrator fully processes the event
           (awaiting the provider write) before requesting the next event, the
           handler is suspended at the yield until the persist completes.
-        - **Resilient background only** — persists only when resilient tasks are
-          enabled and the request is ``background=True``
+        - **Resilient background only** — persists only when the deployment has
+          ``resilient_background=True`` and the request is ``background=True``
           (⇒ ``store=True``); a no-op otherwise.
         - **Idempotent** — a snapshot byte-identical to the last persisted one
           is skipped.

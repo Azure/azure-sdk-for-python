@@ -36,7 +36,6 @@ from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-
 from azure.ai.agentserver.core.tasks import (
     LastInputIdPreconditionFailed,
     TaskConflictError,
-    resilient_tasks_enabled,
 )
 from azure.ai.agentserver.core.platform_headers import (
     CLIENT_HEADER_PREFIX,
@@ -1937,8 +1936,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         Shutdown behaviour depends on the response mode:
 
-        - **resilient=True, background=True** (``store=True`` with resilient
-          tasks enabled): The response is left in
+        - **resilient=True, background=True** (``store=True`` with
+          ``resilient_background=True`` server option): The response is left in
           whatever state the handler left it.  On restart the resilient task
           framework will re-enter the handler to resume work.
         - **resilient=True, background=False** (``store=True`` but foreground):
@@ -1955,7 +1954,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         self._is_draining = True
         self._shutdown_requested.set()
 
-        is_resilient_server = resilient_tasks_enabled()
+        is_resilient_server = self._runtime_options.resilient_background
 
         records = await self._runtime_state.begin_draining()
         for record in records:
@@ -1989,8 +1988,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         for record in await self._runtime_state.list_records():
             if record.status not in {"queued", "in_progress"}:
                 continue
-            leave_recoverable = is_resilient_server and record.mode_flags.store and record.mode_flags.background
-            if leave_recoverable:
+            is_resilient_background = is_resilient_server and record.mode_flags.store and record.mode_flags.background
+            if is_resilient_background:
                 # Leave in current state — will be re-entered on restart.
                 continue
             # Non-resilient or foreground: best-effort mark failed.

@@ -345,7 +345,7 @@ class TestAsyncTerminalPersist:
 
         monkeypatch.setattr(
             app._endpoint._orchestrator,  # pylint: disable=protected-access
-            "_start_resilient_response",
+            "_start_resilient_background",
             _blocked_start,
         )
         post_task = asyncio.create_task(

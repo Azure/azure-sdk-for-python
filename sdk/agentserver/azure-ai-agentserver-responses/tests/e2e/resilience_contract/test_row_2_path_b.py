@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Row 2 × Path B — ``(store=true, bg=true, resilient-tasks switch disabled)`` × ``stream=F/T``.
+"""Row 2 × Path B — ``(store=true, bg=true, resilient_bg=False)`` × ``stream=F/T``.
 
 Path B: SIGTERM with short grace; handler still running at grace
 expiry. The in-process shutdown loop at
@@ -35,7 +35,7 @@ from tests.e2e.resilience_contract.conftest import (
 async def test_row_2_path_b(make_harness: Callable[..., CrashHarness], stream: bool) -> None:
     """Row 2 Path B: graceful shutdown, grace exhausted, in-process marker fires."""
     harness = make_harness(
-        resilient_tasks_enabled=False,
+        resilient_background=False,
         handler_sleep_ms=int(LONG_TIME_SECS * 1000),
         shutdown_grace_seconds=SHORT_GRACE_S,
     )

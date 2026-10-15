@@ -34,7 +34,7 @@ class ContractRow:
     row_number: int
     store: str  # "true" | "false"
     background: str  # "true" | "false" | "any"
-    switch_state: str  # "True" | "False" | "any"
+    resilient_background: str  # "True" | "False" | "any"
     path_a_text: str
     path_b_text: str
     path_c_text: str
@@ -93,7 +93,7 @@ def _parse_matrix_table(section: str) -> list[ContractRow]:
 
     Expected column layout (per contract doc):
 
-        | Row | store | background | resilient-tasks switch | Path A | Path B | Path C |
+        | Row | store | background | resilient_background | Path A | Path B | Path C |
     """
     rows: list[ContractRow] = []
     in_table = False
@@ -132,7 +132,7 @@ def _parse_matrix_table(section: str) -> list[ContractRow]:
                 row_number=row_num,
                 store=cells[1].strip("` "),
                 background=cells[2].strip("` "),
-                switch_state=cells[3].strip("` "),
+                resilient_background=cells[3].strip("` "),
                 path_a_text=cells[4],
                 path_b_text=cells[5],
                 path_c_text=cells[6],

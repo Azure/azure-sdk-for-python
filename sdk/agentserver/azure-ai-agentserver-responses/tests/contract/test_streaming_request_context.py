@@ -34,10 +34,6 @@ def _build_capturing_client(
     resilient: bool = False,
     storage_dir: Path | None = None,
 ) -> TestClient:
-    from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
-
-    set_resilient_tasks_enabled(resilient)
-
     async def _capturing_handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
         # An async-generator handler: its body does not execute until Starlette
         # iterates the streaming response, AFTER handle_create returned and reset
@@ -53,7 +49,7 @@ def _build_capturing_client(
         yield stream.emit_completed()
 
     app = ResponsesAgentServerHost(
-        options=ResponsesServerOptions(),
+        options=ResponsesServerOptions(resilient_background=resilient),
         store=FileResponseStore(storage_dir) if storage_dir is not None else InMemoryResponseProvider(),
     )
     app.response_handler(_capturing_handler)

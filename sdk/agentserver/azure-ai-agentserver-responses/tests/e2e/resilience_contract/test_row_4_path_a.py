@@ -43,7 +43,7 @@ async def test_row_4_path_a(
     Row 4 is therefore exercised with ``background=False`` only.
     """
     harness = make_harness(
-        resilient_tasks_enabled=False,
+        resilient_background=False,
         handler_sleep_ms=50,
         shutdown_grace_seconds=LONG_GRACE_S,
     )

@@ -348,19 +348,20 @@ def test_is_steered_turn_set_on_drain_reentry_via_orchestrator() -> None:
 
 def test_proposal_9_steerable_resilient_off_does_not_raise() -> None:
     """spec 024 Proposal #9: ``steerable_conversations=True`` AND
-    ``resilient_tasks_enabled=False`` is a VALID composition (pre-spec-024
+    ``resilient_background=False`` is a VALID composition (pre-spec-024
     raised ValueError). This is the negative-equivalent of the
     pre-Phase-4 composition guard."""
     from azure.ai.agentserver.responses import ResponsesServerOptions
 
     # No exception MUST be raised — the composition guard is deleted.
-    opts = ResponsesServerOptions(steerable_conversations=True)
+    opts = ResponsesServerOptions(steerable_conversations=True, resilient_background=False)
     assert opts.steerable_conversations is True
+    assert opts.resilient_background is False
 
 
 def test_proposal_9_steerable_resilient_off_host_constructs_cleanly(tmp_path, monkeypatch) -> None:
     """``ResponsesAgentServerHost`` MUST construct successfully with
-    ``steerable_conversations=True`` + ``resilient_tasks_enabled=False`` —
+    ``steerable_conversations=True`` + ``resilient_background=False`` —
     the composition guard is gone, so the host wires up both the
     steering primitive and the non-resilient disposition together."""
     from azure.ai.agentserver.responses import ResponsesServerOptions
@@ -370,6 +371,7 @@ def test_proposal_9_steerable_resilient_off_host_constructs_cleanly(tmp_path, mo
     app = ResponsesAgentServerHost(
         options=ResponsesServerOptions(
             steerable_conversations=True,
+            resilient_background=False,
         ),
     )
     # Construction must not raise; the orchestrator + endpoint are wired.

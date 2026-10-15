@@ -131,10 +131,8 @@ class _AsyncAsgiClient:
 
 def _build_client(handler, *, steerable: bool = False, resilient: bool = False) -> _AsyncAsgiClient:
     """Build an async ASGI test client with the given handler and options."""
-    from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
-
-    set_resilient_tasks_enabled(resilient)
     options = ResponsesServerOptions(
+        resilient_background=resilient,
         steerable_conversations=steerable,
     )
     app = ResponsesAgentServerHost(options=options)
@@ -292,7 +290,7 @@ class TestShutdownNeverCancelled:
     """Shutdown NEVER produces 'cancelled' status — always 'failed' or stays in_progress."""
 
     @pytest.mark.asyncio
-    async def test_shutdown_resilience_disabled_produces_failed_not_cancelled(self) -> None:
+    async def test_shutdown_non_resilient_bg_produces_failed_not_cancelled(self) -> None:
         """Rule 2: Non-resilient bg shutdown → failed (never cancelled)."""
         started = asyncio.Event()
 

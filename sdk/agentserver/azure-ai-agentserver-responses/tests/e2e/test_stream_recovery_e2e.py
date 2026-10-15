@@ -44,6 +44,7 @@ def _make_stream_app(
 ) -> TestClient:
     """Create a TestClient with resilient streaming support."""
     options = ResponsesServerOptions(
+        resilient_background=True,
     )
     app = ResponsesAgentServerHost(options=options, **kwargs)
     app.response_handler(handler)
@@ -252,9 +253,3 @@ class TestFileBackedStreamsRegistry:
             streams._slots.clear()  # type: ignore[attr-defined]
             streams._slots.update(saved_slots)  # type: ignore[attr-defined]
             streams._factory = saved_factory  # type: ignore[attr-defined]
-
-@pytest.fixture(autouse=True)
-def _enable_resilient_tasks_for_module() -> None:
-    from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
-
-    set_resilient_tasks_enabled(True)

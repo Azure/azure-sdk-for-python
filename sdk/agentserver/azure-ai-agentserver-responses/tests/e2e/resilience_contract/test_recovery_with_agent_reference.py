@@ -7,7 +7,7 @@
 The hosted gateway injects an ``agent_reference`` onto every request, which the
 library normalizes into an :class:`AgentReference` *model* (a Mapping, but NOT
 ``json.dumps``-serializable). That model flows into the resilient-task input
-(``_start_resilient_response`` -> ``start_resilient`` -> ``_split_runtime_refs``).
+(``_start_resilient_background`` -> ``start_resilient`` -> ``_split_runtime_refs``).
 If it is persisted un-normalized, the core resilient ``create_and_start`` ->
 ``_resolve_input_storage`` size check raises
 ``TypeError: Object of type AgentReference is not JSON serializable`` and the
@@ -66,7 +66,7 @@ async def test_row_1_path_c_recovers_with_agent_reference(
     non-resilient ``asyncio.create_task`` (no crash recovery).
     """
     harness = make_harness(
-        resilient_tasks_enabled=True,
+        resilient_background=True,
         handler_sleep_ms=int(LONG_TIME_SECS * 1000),
         shutdown_grace_seconds=LONG_GRACE_S,
     )

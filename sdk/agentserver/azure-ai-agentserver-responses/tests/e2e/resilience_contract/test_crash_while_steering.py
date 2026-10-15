@@ -41,17 +41,13 @@ _STEERING_HANDLER_MODULE = "tests.e2e.resilience_contract._steering_handler"
 _STEER_SLEEP_MS = 5000
 
 
-def _make_steering_harness(
-    tmp_path,
-    *,
-    resilient_tasks_enabled: bool = True,
-) -> CrashHarness:
+def _make_steering_harness(tmp_path, *, resilient_background: bool = True) -> CrashHarness:
     return CrashHarness(
         sample_module=_STEERING_HANDLER_MODULE,
         tmp_path=tmp_path,
         readiness_timeout_seconds=15.0,
         env_extras={
-            "CONFORMANCE_RESILIENT_TASKS_ENABLED": "true" if resilient_tasks_enabled else "false",
+            "CONFORMANCE_RESILIENT_BACKGROUND": "true" if resilient_background else "false",
             "CONFORMANCE_STEER_SLEEP_MS": str(_STEER_SLEEP_MS),
             "AGENTSERVER_SHUTDOWN_GRACE_SECONDS": str(LONG_GRACE_S),
             "AGENTSERVER_GRACEFUL_SHUTDOWN_TIMEOUT_SECONDS": str(LONG_GRACE_S),
@@ -163,41 +159,5 @@ async def test_crash_while_steering_recovers_steered_turn(tmp_path) -> None:
             "input=actually explain topic two" in texts_b
         ), f"recovered steered turn B output does not reflect the steered input: {texts_b!r}"
         assert "_L1_" in texts_b, f"steered turn B did not go through crash recovery (no L1 lifetime tag): {texts_b!r}"
-    finally:
-        await harness.close()
-
-
-@pytest.mark.asyncio
-async def test_steering_harness_respects_disabled_resilient_tasks_switch(tmp_path) -> None:
-    """The harness leaves a hard-crashed stored response in progress when disabled."""
-    harness = _make_steering_harness(
-        tmp_path,
-        resilient_tasks_enabled=False,
-    )
-    await harness.start()
-    try:
-        response_id = await _post_until_first_delta(
-            harness.client,
-            {
-                "model": "conformance-test",
-                "input": "switch disabled",
-                "store": True,
-                "background": True,
-                "stream": True,
-            },
-        )
-        assert response_id
-
-        await harness.kill()
-        await harness.restart()
-        # The handler sleeps for the same 5-second cutpoint used by the sibling
-        # crash test. Waiting past that duration distinguishes a disabled switch
-        # (no recovery, still in_progress) from an accidentally enabled switch
-        # (recovered handler would have completed).
-        await asyncio.sleep((_STEER_SLEEP_MS / 1000) + 1.0)
-
-        response = await harness.client.get(f"/responses/{response_id}")
-        assert response.status_code == 200, response.text
-        assert response.json()["status"] == "in_progress", response.json()
     finally:
         await harness.close()

@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Row 1 × Path C — ``(store=true, bg=true, resilient-tasks switch enabled)`` × ``stream=F/T``.
+"""Row 1 × Path C — ``(store=true, bg=true, resilient_bg=True)`` × ``stream=F/T``.
 
 Path C: SIGKILL mid-handler — no in-process action runs. On the next
 process lifetime, the resilient-task primitive's recovery re-invokes the
@@ -45,7 +45,7 @@ from tests.e2e.resilience_contract.conftest import (
 async def test_row_1_path_c(make_harness: Callable[..., CrashHarness], stream: bool) -> None:
     """Row 1 Path C: SIGKILL mid-handler, restart, handler re-invoked, terminal reached."""
     harness = make_harness(
-        resilient_tasks_enabled=True,
+        resilient_background=True,
         handler_sleep_ms=int(LONG_TIME_SECS * 1000),
         # Long grace just to make clear the SIGKILL is what ends things,
         # not grace exhaustion.

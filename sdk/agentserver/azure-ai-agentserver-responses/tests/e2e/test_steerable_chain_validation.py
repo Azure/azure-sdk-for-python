@@ -37,6 +37,7 @@ from azure.ai.agentserver.responses._id_generator import IdGenerator
 
 def _make_steerable_app(handler) -> TestClient:
     options = ResponsesServerOptions(
+        resilient_background=True,
         steerable_conversations=True,
     )
     app = ResponsesAgentServerHost(options=options)
@@ -113,9 +114,3 @@ class TestSteerableChainValidationWireFormat:
         # The message communicates that forks are not supported.
         msg = err["message"].lower()
         assert "fork" in msg or "not support" in msg or "most recent" in msg
-
-@pytest.fixture(autouse=True)
-def _enable_resilient_tasks_for_module() -> None:
-    from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
-
-    set_resilient_tasks_enabled(True)
