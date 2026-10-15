@@ -592,7 +592,7 @@ Check out your observability vendor documentation on how to configure OpenTeleme
 Make sure to install OpenTelemetry and the Azure SDK tracing plugin via
 
 ```bash
-pip install opentelemetry
+pip install opentelemetry-sdk
 pip install azure-core-tracing-opentelemetry
 ```
 
