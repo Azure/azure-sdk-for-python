@@ -1,7 +1,11 @@
 {
   "apiVersion": "2024-06-01-preview",
-  "commit": "6a9ac1728fd1b59dcf80b8f7e27b1d5f8ccdfb8e",
+  "apiVersions": {
+    "Microsoft.AgriculturePlatform": "2024-06-01-preview"
+  },
+  "commit": "bbe60ce6aa8b8332df55cae6c7ee8183ab48539e",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/agricultureplatform/AgriculturePlatform.Management",
-  "emitterVersion": "0.60.0"
+  "emitterVersion": "0.63.10",
+  "httpClientPythonVersion": "0.39.0"
 }

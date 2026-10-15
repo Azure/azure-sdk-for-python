@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -50,11 +50,10 @@ from .._configuration import AgriculturePlatformMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -121,7 +120,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -134,7 +136,10 @@ class Operations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -161,7 +166,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AgriServiceOperations:
+class AgriServiceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -221,6 +226,7 @@ class AgriServiceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -242,7 +248,7 @@ class AgriServiceOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AgriServiceResource, response.json())
 
@@ -255,7 +261,7 @@ class AgriServiceOperations:
         self,
         resource_group_name: str,
         agri_service_resource_name: str,
-        resource: Union[_models.AgriServiceResource, JSON, IO[bytes]],
+        resource: Union[_models.AgriServiceResource, _types.AgriServiceResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -294,6 +300,7 @@ class AgriServiceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -320,7 +327,7 @@ class AgriServiceOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -361,7 +368,7 @@ class AgriServiceOperations:
         self,
         resource_group_name: str,
         agri_service_resource_name: str,
-        resource: JSON,
+        resource: _types.AgriServiceResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -374,7 +381,7 @@ class AgriServiceOperations:
         :param agri_service_resource_name: The name of the AgriService resource. Required.
         :type agri_service_resource_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.agricultureplatform.types.AgriServiceResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -419,7 +426,7 @@ class AgriServiceOperations:
         self,
         resource_group_name: str,
         agri_service_resource_name: str,
-        resource: Union[_models.AgriServiceResource, JSON, IO[bytes]],
+        resource: Union[_models.AgriServiceResource, _types.AgriServiceResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AgriServiceResource]:
         """Create a AgriServiceResource.
@@ -429,9 +436,10 @@ class AgriServiceOperations:
         :type resource_group_name: str
         :param agri_service_resource_name: The name of the AgriService resource. Required.
         :type agri_service_resource_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         AgriServiceResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.agricultureplatform.models.AgriServiceResource or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a AgriServiceResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.agricultureplatform.models.AgriServiceResource or
+         ~azure.mgmt.agricultureplatform.types.AgriServiceResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AgriServiceResource. The
          AgriServiceResource is compatible with MutableMapping
         :rtype:
@@ -494,7 +502,7 @@ class AgriServiceOperations:
         self,
         resource_group_name: str,
         agri_service_resource_name: str,
-        properties: Union[_models.AgriServiceResourceUpdate, JSON, IO[bytes]],
+        properties: Union[_models.AgriServiceResourceUpdate, _types.AgriServiceResourceUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -533,6 +541,7 @@ class AgriServiceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -557,7 +566,7 @@ class AgriServiceOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -598,7 +607,7 @@ class AgriServiceOperations:
         self,
         resource_group_name: str,
         agri_service_resource_name: str,
-        properties: JSON,
+        properties: _types.AgriServiceResourceUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -611,7 +620,7 @@ class AgriServiceOperations:
         :param agri_service_resource_name: The name of the AgriService resource. Required.
         :type agri_service_resource_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.agricultureplatform.types.AgriServiceResourceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -656,7 +665,7 @@ class AgriServiceOperations:
         self,
         resource_group_name: str,
         agri_service_resource_name: str,
-        properties: Union[_models.AgriServiceResourceUpdate, JSON, IO[bytes]],
+        properties: Union[_models.AgriServiceResourceUpdate, _types.AgriServiceResourceUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AgriServiceResource]:
         """Update a AgriServiceResource.
@@ -666,10 +675,10 @@ class AgriServiceOperations:
         :type resource_group_name: str
         :param agri_service_resource_name: The name of the AgriService resource. Required.
         :type agri_service_resource_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         AgriServiceResourceUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.agricultureplatform.models.AgriServiceResourceUpdate or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a AgriServiceResourceUpdate
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.agricultureplatform.models.AgriServiceResourceUpdate or
+         ~azure.mgmt.agricultureplatform.types.AgriServiceResourceUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns AgriServiceResource. The
          AgriServiceResource is compatible with MutableMapping
         :rtype:
@@ -757,6 +766,7 @@ class AgriServiceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -781,7 +791,7 @@ class AgriServiceOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -902,7 +912,10 @@ class AgriServiceOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -915,7 +928,10 @@ class AgriServiceOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AgriServiceResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.AgriServiceResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -990,7 +1006,10 @@ class AgriServiceOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1003,7 +1022,10 @@ class AgriServiceOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AgriServiceResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.AgriServiceResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1071,6 +1093,7 @@ class AgriServiceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1092,7 +1115,7 @@ class AgriServiceOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AvailableAgriSolutionListResult, response.json())
 

@@ -49,5 +49,6 @@
         "azure.mgmt.agricultureplatform.aio.operations.AgriServiceOperations.list_by_subscription": "Microsoft.AgriculturePlatform.AgriService.listBySubscription",
         "azure.mgmt.agricultureplatform.operations.AgriServiceOperations.list_available_solutions": "Microsoft.AgriculturePlatform.AgriService.listAvailableSolutions",
         "azure.mgmt.agricultureplatform.aio.operations.AgriServiceOperations.list_available_solutions": "Microsoft.AgriculturePlatform.AgriService.listAvailableSolutions"
-    }
+    },
+    "CrossLanguageVersion": "3c49e03a81ea"
 }

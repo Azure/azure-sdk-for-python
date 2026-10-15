@@ -80,7 +80,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -124,7 +124,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class AgriServiceResource(TrackedResource):
+class AgriServiceResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schema of the AgriService resource from Microsoft.AgriculturePlatform resource provider.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -183,7 +183,7 @@ class AgriServiceResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class AgriServiceResourceProperties(_Model):
+class AgriServiceResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the Agriculture AgriDataManager.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -241,7 +241,7 @@ class AgriServiceResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgriServiceResourceUpdate(_Model):
+class AgriServiceResourceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the AgriServiceResource.
 
     :ivar identity: The managed service identities assigned to this resource.
@@ -288,7 +288,7 @@ class AgriServiceResourceUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgriServiceResourceUpdateProperties(_Model):
+class AgriServiceResourceUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the AgriServiceResource.
 
     :ivar config: Config of the AgriService instance.
@@ -331,7 +331,7 @@ class AgriServiceResourceUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AvailableAgriSolutionListResult(_Model):
+class AvailableAgriSolutionListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of available agri solutions.
 
     :ivar solutions: Agri solutions list. Required.
@@ -362,7 +362,7 @@ class AvailableAgriSolutionListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataConnectorCredentialMap(_Model):
+class DataConnectorCredentialMap(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Mapping of data connector credentials.
 
     :ivar key: The key representing the credential. Required.
@@ -395,7 +395,7 @@ class DataConnectorCredentialMap(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataConnectorCredentials(_Model):
+class DataConnectorCredentials(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties related to an AgriService data connector.
 
     :ivar kind: Type of credential. Known values are: "OAuthClientCredentials" and
@@ -445,7 +445,7 @@ class DataConnectorCredentials(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataManagerForAgricultureSolution(_Model):
+class DataManagerForAgricultureSolution(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data Manager for Agriculture solution.
 
     :ivar partner_id: Partner Id. Required.
@@ -576,7 +576,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -604,7 +604,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstalledSolutionMap(_Model):
+class InstalledSolutionMap(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Mapping of installed solutions.
 
     :ivar key: The key representing the installed solution. Required.
@@ -650,7 +650,7 @@ class ManagedOnBehalfOfConfiguration(_Model):
     """Associated MoboBrokerResources. Required."""
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -702,7 +702,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MarketPlaceOfferDetails(_Model):
+class MarketPlaceOfferDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Marketplace offer details of Agri solution.
 
     :ivar saas_offer_id: Saas offer Id. Required.
@@ -750,7 +750,7 @@ class MoboBrokerResource(_Model):
      Required."""
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -838,7 +838,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource model definition representing SKU.
 
     :ivar name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
@@ -898,7 +898,7 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Solution(_Model):
+class Solution(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Installed data manager for Agriculture solution detail.
 
     :ivar application_name: Application name of the solution.
@@ -955,7 +955,7 @@ class Solution(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
