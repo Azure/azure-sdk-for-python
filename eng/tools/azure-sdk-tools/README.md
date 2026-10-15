@@ -110,9 +110,9 @@ The temporary bundle is supplied through `SSL_CERT_FILE` only to the wrapped
 command and its descendants, including cibuildwheel. It is removed when the
 command exits, including on failure. The SDK build helpers simply inherit the
 pipeline's environment; local invocations do not discover or add proxy CAs.
-Python child commands use the absolute interpreter path resolved by PowerShell
-to preserve the activated virtual environment and its installed tools. Passing
-a bare `python` to a Windows subprocess can select a different interpreter.
+The wrapper resolves bare `python` and `python.exe` child commands to its own
+`sys.executable`, preserving the activated virtual environment and its installed
+tools. Explicit interpreter paths and other commands are passed through unchanged.
 Parent and machine-wide trust, package feeds, proxy enforcement, build frontends,
 and targets are unchanged. This handles proxy TLS trust, not archive download
 sourcing or approval.

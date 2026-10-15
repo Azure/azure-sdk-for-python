@@ -1,5 +1,6 @@
 import os
 import ssl
+import subprocess
 import sys
 import venv
 from pathlib import Path
@@ -178,7 +179,7 @@ def test_child_process_uses_bundle(proxy_ca_environment, monkeypatch, capfd):
         "assert len(context.get_ca_certs()) == 2; "
         "print(bundle); raise SystemExit(7)"
     )
-    monkeypatch.setattr(sys, "argv", ["run_with_1es_proxy_trust.py", sys.executable, "-c", script])
+    monkeypatch.setattr(sys, "argv", ["run_with_1es_proxy_trust.py", "python", "-c", script])
     assert proxy_trust.main() == 7
     bundle = Path(capfd.readouterr().out.strip().splitlines()[-1])
     assert not bundle.parent.exists()
@@ -201,16 +202,68 @@ def test_inactive_child_inherits_environment(monkeypatch):
     assert proxy_trust.main() == 0
 
 
-def test_absolute_python_command_preserves_virtualenv(tmp_path, monkeypatch, capfd):
+@pytest.mark.parametrize("command", ["python", "python.exe"])
+@pytest.mark.parametrize("active", [False, True])
+def test_python_alias_uses_wrapper_interpreter(proxy_ca_environment, command, active, tmp_path, monkeypatch):
+    if not active:
+        monkeypatch.setenv("TF_BUILD", "False")
+    executable = str(tmp_path / "venv with spaces" / "python.exe")
+    arguments = ["script with spaces.py", "--service=storage"]
+    monkeypatch.setattr(sys, "executable", executable)
+    monkeypatch.setattr(sys, "argv", ["run_with_1es_proxy_trust.py", command, *arguments])
+
+    def run(command_args, **kwargs):
+        assert command_args == [executable, *arguments]
+        assert kwargs["check"] is False
+        if active:
+            assert Path(kwargs["env"]["SSL_CERT_FILE"]).is_file()
+        else:
+            assert kwargs["env"] is None
+        return SimpleNamespace(returncode=7)
+
+    monkeypatch.setattr(proxy_trust.subprocess, "run", run)
+    assert proxy_trust.main() == 7
+
+
+def test_bare_python_command_preserves_virtualenv(tmp_path, monkeypatch):
     environment = tmp_path / "venv with spaces"
     venv.EnvBuilder(with_pip=False).create(environment)
     python = environment / ("Scripts" if os.name == "nt" else "bin") / ("python.exe" if os.name == "nt" else "python")
-    script = "import sys; print(sys.prefix); raise SystemExit(7)"
+    site_packages = next(environment.rglob("site-packages"))
+    # Let the wrapper import the already-installed certifi without downloading packages.
+    (site_packages / "test-certifi.pth").write_text(
+        str(Path(certifi.__file__).resolve().parent.parent) + "\n", encoding="utf-8"
+    )
+    (site_packages / "venv_only_dependency.py").write_text("VALUE = 123\n", encoding="ascii")
+    script = (
+        "import sys, venv_only_dependency; "
+        "assert venv_only_dependency.VALUE == 123; "
+        "print(sys.prefix); raise SystemExit(7)"
+    )
     monkeypatch.setenv("TF_BUILD", "False")
-    monkeypatch.setattr(sys, "argv", ["run_with_1es_proxy_trust.py", str(python), "-c", script])
+    monkeypatch.setenv("PATH", str(python.parent) + os.pathsep + os.environ["PATH"])
 
-    assert proxy_trust.main() == 7
-    assert Path(capfd.readouterr().out.strip()) == environment
+    result = subprocess.run(
+        [str(python), str(Path(proxy_trust.__file__).resolve()), "python", "-c", script],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 7, result.stderr
+    assert Path(result.stdout.strip()) == environment
+
+
+@pytest.mark.parametrize("command", ["python3", "sdk_build", sys.executable, os.path.join("custom", "python.exe")])
+def test_other_commands_are_not_rewritten(command, monkeypatch):
+    monkeypatch.setenv("TF_BUILD", "False")
+    monkeypatch.setattr(sys, "argv", ["run_with_1es_proxy_trust.py", command, "--version"])
+
+    def run(command_args, **kwargs):
+        assert command_args == [command, "--version"]
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(proxy_trust.subprocess, "run", run)
+    assert proxy_trust.main() == 0
 
 
 def test_missing_command(monkeypatch):
@@ -242,7 +295,4 @@ def test_pipeline_commands_use_wrapper(federated):
                     commands.append(step["pwsh"])
     assert len(commands) == 2
     for command in commands:
-        assert (
-            "python eng/scripts/run_with_1es_proxy_trust.py (Get-Command python).Source eng/scripts/dispatch_checks.py"
-            in command
-        )
+        assert "python eng/scripts/run_with_1es_proxy_trust.py python eng/scripts/dispatch_checks.py" in command

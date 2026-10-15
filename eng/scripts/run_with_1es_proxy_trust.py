@@ -55,6 +55,10 @@ def main() -> int:
     if not args.command:
         parser.error("a command is required")
 
+    # Bare Python lookup can bypass a Windows launcher-based virtual environment.
+    if args.command[0] in ("python", "python.exe"):
+        args.command[0] = sys.executable
+
     with proxy_environment() as environment:
         return subprocess.run(args.command, env=environment, check=False).returncode
 
