@@ -1,6 +1,12 @@
 # Release History
 
-## 2.3.0b1 (Unreleased)
+## 2.3.0b2 (Unreleased)
+
+### Bugs Fixed
+
+- Extended W3C trace context and baggage propagation to WebSocket connections so spans created by `invocations_ws` handlers inherit caller context and A365 correlation data.
+
+## 2.3.0b1 (2026-10-15)
 
 ### Features Added
 
@@ -23,7 +29,6 @@
 
 ### Bugs Fixed
 
-- Extended W3C trace context and baggage propagation to WebSocket connections so spans created by `invocations_ws` handlers inherit caller context and A365 correlation data.
 - Preserve an observed final terminal marker before recovery-time TTL
   compaction, keeping closed replay logs closed across subsequent restarts.
 - Retain replay backing ownership through deletion: keep POSIX inode locks
@@ -62,6 +67,10 @@
 
 ### Other Changes
 
+- Removed the experimental marker (docstring note and one-time runtime warning)
+  from the resilient task public APIs (`TaskContext`, `TaskRun`, `@task`,
+  `@multi_turn_task`, `set_resilient_tasks_enabled`, task exceptions, and
+  retry policy).
 - Changed the default SSE keep-alive interval to 15 seconds. Set
   `SSE_KEEPALIVE_INTERVAL=0` to disable keep-alive comments.
 

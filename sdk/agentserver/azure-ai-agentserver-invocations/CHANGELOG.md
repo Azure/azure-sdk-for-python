@@ -8,7 +8,7 @@
 
 ### Other Changes
 
-- Updated the minimum `azure-ai-agentserver-core` dependency to `>=2.3.0b1`.
+- Updated the minimum `azure-ai-agentserver-core` dependency to `>=2.3.0b2`.
 
 ## 1.2.0 (2026-09-29)
 
