@@ -384,33 +384,30 @@ def _round_down_to_nearest(sampling_percentage: float) -> float:
 def parent_context_sampling(
     parent_context: Optional[Context], attributes: Attributes = None
 ) -> Optional["SamplingResult"]:
-    if parent_context is not None:
-        parent_span = get_current_span(parent_context)
-        parent_span_context = parent_span.get_span_context()
-        if parent_span_context.is_valid and not parent_span_context.is_remote:
-            if not parent_span.is_recording():
-                # Parent was dropped, drop this child too
-                new_attributes = {} if attributes is None else dict(attributes)
-                new_attributes[_SAMPLE_RATE_KEY] = 0.0
+    parent_span = get_current_span(parent_context)
+    parent_span_context = parent_span.get_span_context()
+    if parent_span_context.is_valid and not parent_span_context.is_remote:
+        new_attributes = {} if attributes is None else dict(attributes)
+        if not parent_span_context.trace_flags.sampled:
+            # Parent was dropped, drop this child too.
+            new_attributes[_SAMPLE_RATE_KEY] = 0.0
+            return SamplingResult(
+                Decision.DROP,
+                new_attributes,
+                _get_parent_trace_state(parent_context),
+            )
 
-                return SamplingResult(
-                    Decision.DROP,
-                    new_attributes,
-                    _get_parent_trace_state(parent_context),
-                )
+        parent_attributes = getattr(parent_span, "attributes", {}) or {}
+        parent_sample_rate = parent_attributes.get(_SAMPLE_RATE_KEY)
+        if parent_sample_rate is not None:
+            # Honor the parent's sampling rate when it was rate limited.
+            new_attributes[_SAMPLE_RATE_KEY] = parent_sample_rate
 
-            parent_attributes = getattr(parent_span, "attributes", {})
-            parent_sample_rate = parent_attributes.get(_SAMPLE_RATE_KEY)
-
-            if parent_sample_rate is not None:
-                # Honor parent's sampling rate
-                new_attributes = {} if attributes is None else dict(attributes)
-                new_attributes[_SAMPLE_RATE_KEY] = parent_sample_rate
-
-                return SamplingResult(
-                    Decision.RECORD_AND_SAMPLE,
-                    new_attributes,
-                    _get_parent_trace_state(parent_context),
-                )
-        return None
+        # A missing rate attribute represents a parent sampled at 100%.
+        # In either case, do not rate limit a child of a sampled local parent.
+        return SamplingResult(
+            Decision.RECORD_AND_SAMPLE,
+            new_attributes,
+            _get_parent_trace_state(parent_context),
+        )
     return None
