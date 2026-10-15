@@ -1,6 +1,6 @@
 # Release History
 
-## Unreleased
+## 1.18.10 (Unreleased)
 
 ### Features Added
 
@@ -11,6 +11,7 @@
 
 ### Bugs Fixed
 
+- Hardened local Prompty image resolution so only relative files within the Prompty directory are inlined, with opened-file validation to prevent path changes from redirecting reads and without exposing the local directory in fallback logs.
 - Output Quality and Tool Use Quality asset evaluators retain their aggregate and member metrics when used with `evaluate` without catalog metadata.
 
 ### Other Changes
