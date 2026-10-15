@@ -78,6 +78,7 @@ package_nspkg = "azure-mgmt-nspkg"
 package_pprint_name = "Carbonoptimization Management"
 package_doc_id = ""
 is_stable = false
+no_sub = true
 is_arm = true
 need_msrestazure = false
 need_azuremgmtcore = true
