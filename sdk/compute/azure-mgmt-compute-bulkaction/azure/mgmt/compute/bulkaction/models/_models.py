@@ -291,6 +291,46 @@ class ApplicationProfile(_Model):  # pylint: disable=docstring-keyword-should-ma
         super().__init__(*args, **kwargs)
 
 
+class BillingProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Specifies the billing related details of the Azure Spot virtual machines.
+
+    :ivar max_price: Specifies the maximum price, in US Dollars, you are willing to pay per hour
+     for each Azure Spot virtual machine. This price is compared with the current Azure Spot price
+     for the virtual machine size at create time, and the operation only succeeds if maxPrice is
+     greater than the current Azure Spot price. It is also used to evict a virtual machine if the
+     current Azure Spot price rises above it after creation. Possible values are any decimal value
+     greater than zero, or -1 to indicate the default price is up-to on-demand and the virtual
+     machine should not be evicted for price reasons. The default is -1 when not provided.
+    :vartype max_price: float
+    """
+
+    max_price: Optional[float] = rest_field(name="maxPrice", visibility=["read", "create", "update", "delete", "query"])
+    """Specifies the maximum price, in US Dollars, you are willing to pay per hour for each Azure Spot
+     virtual machine. This price is compared with the current Azure Spot price for the virtual
+     machine size at create time, and the operation only succeeds if maxPrice is greater than the
+     current Azure Spot price. It is also used to evict a virtual machine if the current Azure Spot
+     price rises above it after creation. Possible values are any decimal value greater than zero,
+     or -1 to indicate the default price is up-to on-demand and the virtual machine should not be
+     evicted for price reasons. The default is -1 when not provided."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_price: Optional[float] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class BootDiagnostics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Boot Diagnostics is a debugging feature which allows you to view Console Output and Screenshot
     to diagnose VM status. You can easily view the output of your console log. Azure also enables
@@ -528,6 +568,18 @@ class BulkactionVMProperties(_Model):  # pylint: disable=docstring-keyword-shoul
     :vartype application_profile: ~azure.mgmt.compute.bulkaction.models.ApplicationProfile
     :ivar vm_extensions: Virtual Machine Extensions Array to be applied to the Virtual Machines.
     :vartype vm_extensions: list[~azure.mgmt.compute.bulkaction.models.BulkactionVMExtension]
+    :ivar priority: Specifies the priority for the virtual machines. Mirrors the priority property
+     on Microsoft.Compute/virtualMachines. Known values are: "Regular" and "Spot".
+    :vartype priority: str or ~azure.mgmt.compute.bulkaction.models.PriorityType
+    :ivar billing_profile: Specifies the billing related details of the Azure Spot virtual
+     machines. Mirrors the billingProfile property on Microsoft.Compute/virtualMachines. Only
+     applies when priority is Spot.
+    :vartype billing_profile: ~azure.mgmt.compute.bulkaction.models.BillingProfile
+    :ivar eviction_policy: Specifies the eviction policy for the Azure Spot virtual machines. Both
+     Deallocate and Delete are supported. Mirrors the evictionPolicy property on
+     Microsoft.Compute/virtualMachines. Only applies when priority is Spot. Known values are:
+     "Delete" and "Deallocate".
+    :vartype eviction_policy: str or ~azure.mgmt.compute.bulkaction.models.EvictionPolicy
     """
 
     scheduled_events_policy: Optional["_models.ScheduledEventsPolicy"] = rest_field(
@@ -602,6 +654,23 @@ class BulkactionVMProperties(_Model):  # pylint: disable=docstring-keyword-shoul
         name="vmExtensions", visibility=["read", "create", "update", "delete", "query"]
     )
     """Virtual Machine Extensions Array to be applied to the Virtual Machines."""
+    priority: Optional[Union[str, "_models.PriorityType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the priority for the virtual machines. Mirrors the priority property on
+     Microsoft.Compute/virtualMachines. Known values are: \"Regular\" and \"Spot\"."""
+    billing_profile: Optional["_models.BillingProfile"] = rest_field(
+        name="billingProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the billing related details of the Azure Spot virtual machines. Mirrors the
+     billingProfile property on Microsoft.Compute/virtualMachines. Only applies when priority is
+     Spot."""
+    eviction_policy: Optional[Union[str, "_models.EvictionPolicy"]] = rest_field(
+        name="evictionPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the eviction policy for the Azure Spot virtual machines. Both Deallocate and Delete
+     are supported. Mirrors the evictionPolicy property on Microsoft.Compute/virtualMachines. Only
+     applies when priority is Spot. Known values are: \"Delete\" and \"Deallocate\"."""
 
     @overload
     def __init__(
@@ -622,6 +691,9 @@ class BulkactionVMProperties(_Model):  # pylint: disable=docstring-keyword-shoul
         capacity_reservation: Optional["_models.CapacityReservationProfile"] = None,
         application_profile: Optional["_models.ApplicationProfile"] = None,
         vm_extensions: Optional[list["_models.BulkactionVMExtension"]] = None,
+        priority: Optional[Union[str, "_models.PriorityType"]] = None,
+        billing_profile: Optional["_models.BillingProfile"] = None,
+        eviction_policy: Optional[Union[str, "_models.EvictionPolicy"]] = None,
     ) -> None: ...
 
     @overload
@@ -641,6 +713,17 @@ class BulkCreateCustomOverride(_Model):  # pylint: disable=docstring-keyword-sho
     :ivar virtual_machine_name: ARM VM name for this VM. Optional; when omitted the name is
      generated from the prefix as {prefix}_{index}.
     :vartype virtual_machine_name: str
+    :ivar zone: The availability zone this VM is created in. Overrides the operation-level zones
+     for this VM only. A null value does not override, so the VM is placed using the operation-level
+     zones; an empty value does override and deploys this VM as a regional (non-zonal) VM.
+    :vartype zone: str
+    :ivar extended_location: The extended location this VM is created in. Overrides the
+     operation-level extendedLocation for this VM only; when omitted the VM inherits the
+     operation-level extendedLocation.
+    :vartype extended_location: ~azure.mgmt.compute.bulkaction.models.ExtendedLocation
+    :ivar placement: The placement constraints applied to this VM. Overrides the operation-level
+     placement for this VM only; when omitted the VM inherits the operation-level placement.
+    :vartype placement: ~azure.mgmt.compute.bulkaction.models.Placement
     :ivar virtual_machine_profile: VM profile, the same shape as operation-level
      ComputeProfile.virtualMachineProfile. Overrides the operation-level VM profile.
     :vartype virtual_machine_profile: ~azure.mgmt.compute.bulkaction.models.BulkactionVMProperties
@@ -660,6 +743,18 @@ class BulkCreateCustomOverride(_Model):  # pylint: disable=docstring-keyword-sho
     )
     """ARM VM name for this VM. Optional; when omitted the name is generated from the prefix as
      {prefix}_{index}."""
+    zone: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The availability zone this VM is created in. Overrides the operation-level zones for this VM
+     only. A null value does not override, so the VM is placed using the operation-level zones; an
+     empty value does override and deploys this VM as a regional (non-zonal) VM."""
+    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
+        name="extendedLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The extended location this VM is created in. Overrides the operation-level extendedLocation for
+     this VM only; when omitted the VM inherits the operation-level extendedLocation."""
+    placement: Optional["_models.Placement"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The placement constraints applied to this VM. Overrides the operation-level placement for this
+     VM only; when omitted the VM inherits the operation-level placement."""
     virtual_machine_profile: Optional["_models.BulkactionVMProperties"] = rest_field(
         name="virtualMachineProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -684,6 +779,9 @@ class BulkCreateCustomOverride(_Model):  # pylint: disable=docstring-keyword-sho
         self,
         *,
         virtual_machine_name: Optional[str] = None,
+        zone: Optional[str] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        placement: Optional["_models.Placement"] = None,
         virtual_machine_profile: Optional["_models.BulkactionVMProperties"] = None,
         tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.VirtualMachineIdentity"] = None,
@@ -746,52 +844,6 @@ class BulkCreateCustomOverridesProfile(_Model):  # pylint: disable=docstring-key
         super().__init__(*args, **kwargs)
 
 
-class BulkCreateCustomPriorityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Configuration options for Regular or Spot instances in BulkCreateCustom.
-
-    :ivar type: The priority type for VM allocation. Known values are: "Regular" and "Spot".
-    :vartype type: str or ~azure.mgmt.compute.bulkaction.models.PriorityType
-    :ivar max_price_per_vm: Price per hour of each Spot VM will never exceed this.
-    :vartype max_price_per_vm: float
-    :ivar eviction_policy: Eviction Policy to follow when evicting Spot VMs. Known values are:
-     "Delete" and "Deallocate".
-    :vartype eviction_policy: str or ~azure.mgmt.compute.bulkaction.models.EvictionPolicy
-    """
-
-    type: Optional[Union[str, "_models.PriorityType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The priority type for VM allocation. Known values are: \"Regular\" and \"Spot\"."""
-    max_price_per_vm: Optional[float] = rest_field(
-        name="maxPricePerVM", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Price per hour of each Spot VM will never exceed this."""
-    eviction_policy: Optional[Union[str, "_models.EvictionPolicy"]] = rest_field(
-        name="evictionPolicy", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Eviction Policy to follow when evicting Spot VMs. Known values are: \"Delete\" and
-     \"Deallocate\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "_models.PriorityType"]] = None,
-        max_price_per_vm: Optional[float] = None,
-        eviction_policy: Optional[Union[str, "_models.EvictionPolicy"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class BulkCreateCustomProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the BulkCreateCustom.
 
@@ -805,25 +857,8 @@ class BulkCreateCustomProperties(_Model):  # pylint: disable=docstring-keyword-s
     :ivar capacity_type: Specifies capacity type for launching instances. It can be in terms of VMs
      or vCPUs. Known values are: "VM" and "VCpu".
     :vartype capacity_type: str or ~azure.mgmt.compute.bulkaction.models.CapacityType
-    :ivar min_capacity: The minimum capacity, expressed in units specified by capacityType, that
-     Azure must be able to allocate for the request to proceed. If Azure cannot allocate at least
-     this capacity with high confidence, the request is rejected with 409 Conflict
-     (InsufficientCapacity) and no VMs are created. Otherwise, Azure allocates as much capacity as
-     possible, up to the requested capacity. Must be greater than 0, less than capacity, and
-     requires partialFulfillmentPolicy.mode to be Enabled.
-    :vartype min_capacity: int
-    :ivar partial_fulfillment_policy: Controls how partial fulfillment is handled for a
-     BulkCreateCustom request. When enabled, Azure creates only the VMs or vCPUs it has high
-     confidence can be successfully allocated, instead of attempting the entire request and
-     potentially returning allocation failures.
-    :vartype partial_fulfillment_policy:
-     ~azure.mgmt.compute.bulkaction.models.PartialFulfillmentPolicy
     :ivar resources: The virtual machine resources resolved for the operation.
     :vartype resources: list[~azure.mgmt.compute.bulkaction.models.BulkCreateCustomResource]
-    :ivar priority_profile: Configuration Options for Regular or Spot instances in
-     BulkCreateCustom. Required.
-    :vartype priority_profile:
-     ~azure.mgmt.compute.bulkaction.models.BulkCreateCustomPriorityProfile
     :ivar compute_profile: Compute Profile to configure the Virtual Machines. Required.
     :vartype compute_profile: ~azure.mgmt.compute.bulkaction.models.ComputeProfile
     :ivar overrides_profile: Per-VM overrides and the shared name prefix, specified when the
@@ -849,27 +884,8 @@ class BulkCreateCustomProperties(_Model):  # pylint: disable=docstring-keyword-s
     )
     """Specifies capacity type for launching instances. It can be in terms of VMs or vCPUs. Known
      values are: \"VM\" and \"VCpu\"."""
-    min_capacity: Optional[int] = rest_field(
-        name="minCapacity", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The minimum capacity, expressed in units specified by capacityType, that Azure must be able to
-     allocate for the request to proceed. If Azure cannot allocate at least this capacity with high
-     confidence, the request is rejected with 409 Conflict (InsufficientCapacity) and no VMs are
-     created. Otherwise, Azure allocates as much capacity as possible, up to the requested capacity.
-     Must be greater than 0, less than capacity, and requires partialFulfillmentPolicy.mode to be
-     Enabled."""
-    partial_fulfillment_policy: Optional["_models.PartialFulfillmentPolicy"] = rest_field(
-        name="partialFulfillmentPolicy", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Controls how partial fulfillment is handled for a BulkCreateCustom request. When enabled, Azure
-     creates only the VMs or vCPUs it has high confidence can be successfully allocated, instead of
-     attempting the entire request and potentially returning allocation failures."""
     resources: Optional[list["_models.BulkCreateCustomResource"]] = rest_field(visibility=["read"])
     """The virtual machine resources resolved for the operation."""
-    priority_profile: "_models.BulkCreateCustomPriorityProfile" = rest_field(
-        name="priorityProfile", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Configuration Options for Regular or Spot instances in BulkCreateCustom. Required."""
     compute_profile: "_models.ComputeProfile" = rest_field(
         name="computeProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -888,11 +904,8 @@ class BulkCreateCustomProperties(_Model):  # pylint: disable=docstring-keyword-s
         self,
         *,
         capacity: int,
-        priority_profile: "_models.BulkCreateCustomPriorityProfile",
         compute_profile: "_models.ComputeProfile",
         capacity_type: Optional[Union[str, "_models.CapacityType"]] = None,
-        min_capacity: Optional[int] = None,
-        partial_fulfillment_policy: Optional["_models.PartialFulfillmentPolicy"] = None,
         overrides_profile: Optional["_models.BulkCreateCustomOverridesProfile"] = None,
         execution_parameters: Optional["_models.ExecutionParameters"] = None,
     ) -> None: ...
@@ -991,22 +1004,6 @@ class BulkCreateProperties(_Model):  # pylint: disable=docstring-keyword-should-
     :ivar capacity_type: Specifies capacity type for launching instances. It can be in terms of VMs
      or vCPUs. Known values are: "VM" and "VCpu".
     :vartype capacity_type: str or ~azure.mgmt.compute.bulkaction.models.CapacityType
-    :ivar min_capacity: The minimum capacity, expressed in units specified by capacityType, that
-     Azure must be able to allocate for the request to proceed. If Azure cannot allocate at least
-     this capacity with high confidence, the request is rejected with 409 Conflict
-     (InsufficientCapacity) and no VMs are created. Otherwise, Azure allocates as much capacity as
-     possible, up to the requested capacity. Must be greater than 0, less than capacity, and
-     requires partialFulfillmentPolicy.mode to be Enabled.
-    :vartype min_capacity: int
-    :ivar partial_fulfillment_policy: Controls how partial fulfillment is handled for a BulkCreate
-     request. When enabled, Azure creates only the VMs or vCPUs it has high confidence can be
-     successfully allocated, instead of attempting the entire request and potentially returning
-     allocation failures.
-    :vartype partial_fulfillment_policy:
-     ~azure.mgmt.compute.bulkaction.models.PartialFulfillmentPolicy
-    :ivar priority_profile: Configuration Options for Regular or Spot instances in BulkCreate.
-     Required.
-    :vartype priority_profile: ~azure.mgmt.compute.bulkaction.models.PriorityProfile
     :ivar compute_profile: Compute Profile to configure the Virtual Machines. Applied uniformly to
      every virtual machine created by the operation. Required.
     :vartype compute_profile: ~azure.mgmt.compute.bulkaction.models.ComputeProfile
@@ -1029,25 +1026,6 @@ class BulkCreateProperties(_Model):  # pylint: disable=docstring-keyword-should-
     )
     """Specifies capacity type for launching instances. It can be in terms of VMs or vCPUs. Known
      values are: \"VM\" and \"VCpu\"."""
-    min_capacity: Optional[int] = rest_field(
-        name="minCapacity", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The minimum capacity, expressed in units specified by capacityType, that Azure must be able to
-     allocate for the request to proceed. If Azure cannot allocate at least this capacity with high
-     confidence, the request is rejected with 409 Conflict (InsufficientCapacity) and no VMs are
-     created. Otherwise, Azure allocates as much capacity as possible, up to the requested capacity.
-     Must be greater than 0, less than capacity, and requires partialFulfillmentPolicy.mode to be
-     Enabled."""
-    partial_fulfillment_policy: Optional["_models.PartialFulfillmentPolicy"] = rest_field(
-        name="partialFulfillmentPolicy", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Controls how partial fulfillment is handled for a BulkCreate request. When enabled, Azure
-     creates only the VMs or vCPUs it has high confidence can be successfully allocated, instead of
-     attempting the entire request and potentially returning allocation failures."""
-    priority_profile: "_models.PriorityProfile" = rest_field(
-        name="priorityProfile", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Configuration Options for Regular or Spot instances in BulkCreate. Required."""
     compute_profile: "_models.ComputeProfile" = rest_field(
         name="computeProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1063,11 +1041,8 @@ class BulkCreateProperties(_Model):  # pylint: disable=docstring-keyword-should-
         self,
         *,
         capacity: int,
-        priority_profile: "_models.PriorityProfile",
         compute_profile: "_models.ComputeProfile",
         capacity_type: Optional[Union[str, "_models.CapacityType"]] = None,
-        min_capacity: Optional[int] = None,
-        partial_fulfillment_policy: Optional["_models.PartialFulfillmentPolicy"] = None,
         execution_parameters: Optional["_models.ExecutionParameters"] = None,
     ) -> None: ...
 
@@ -1083,7 +1058,7 @@ class BulkCreateProperties(_Model):  # pylint: disable=docstring-keyword-should-
 
 
 class CancelOccurrenceRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for canceling a scheduled action occurrence.
+    """Request body for canceling a recurring bulk action occurrence.
 
     :ivar resource_ids: The resources for which operations should be canceled. An empty array
      cancels all operations for all resources for the occurrence. Required.
@@ -1690,7 +1665,7 @@ class DeallocateResourceOperationResponse(_Model):  # pylint: disable=docstring-
 
 
 class DelayRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for delaying a scheduled action occurrence.
+    """Request body for delaying a recurring bulk action occurrence.
 
     :ivar delay: The new date and time for the occurrence, including the UTC offset. Required.
     :vartype delay: ~datetime.datetime
@@ -2386,6 +2361,43 @@ class ExecutionParameters(_Model):  # pylint: disable=docstring-keyword-should-m
         super().__init__(*args, **kwargs)
 
 
+class ExtendedLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The complex type of the extended location.
+
+    :ivar name: The name of the extended location. Required.
+    :vartype name: str
+    :ivar type: The type of the extended location. Required. Known values are: "EdgeZone" and
+     "CustomLocation".
+    :vartype type: str or ~azure.mgmt.compute.bulkaction.models.ExtendedLocationType
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the extended location. Required."""
+    type: Union[str, "_models.ExtendedLocationType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of the extended location. Required. Known values are: \"EdgeZone\" and
+     \"CustomLocation\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        type: Union[str, "_models.ExtendedLocationType"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Resource(_Model):
     """Resource.
 
@@ -3055,6 +3067,12 @@ class LocationBasedBulkCreate(ProxyResource):  # pylint: disable=docstring-keywo
     :vartype properties: ~azure.mgmt.compute.bulkaction.models.BulkCreateProperties
     :ivar zones: Zones in which the BulkCreate is available.
     :vartype zones: list[str]
+    :ivar extended_location: The extended location of the virtual machines created by the
+     BulkCreate operation.
+    :vartype extended_location: ~azure.mgmt.compute.bulkaction.models.ExtendedLocation
+    :ivar placement: The availability zone placement constraints applied to the virtual machines
+     created by the BulkCreate operation.
+    :vartype placement: ~azure.mgmt.compute.bulkaction.models.Placement
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar identity: The managed service identities assigned to this resource.
@@ -3069,6 +3087,13 @@ class LocationBasedBulkCreate(ProxyResource):  # pylint: disable=docstring-keywo
     """The resource-specific properties for this resource."""
     zones: Optional[list[str]] = rest_field(visibility=["read", "create"])
     """Zones in which the BulkCreate is available."""
+    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
+        name="extendedLocation", visibility=["read", "create"]
+    )
+    """The extended location of the virtual machines created by the BulkCreate operation."""
+    placement: Optional["_models.Placement"] = rest_field(visibility=["read", "create"])
+    """The availability zone placement constraints applied to the virtual machines created by the
+     BulkCreate operation."""
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
@@ -3084,6 +3109,8 @@ class LocationBasedBulkCreate(ProxyResource):  # pylint: disable=docstring-keywo
         *,
         properties: Optional["_models.BulkCreateProperties"] = None,
         zones: Optional[list[str]] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        placement: Optional["_models.Placement"] = None,
         tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         plan: Optional["_models.Plan"] = None,
@@ -3118,6 +3145,12 @@ class LocationBasedBulkCreateCustom(ProxyResource):  # pylint: disable=docstring
     :vartype properties: ~azure.mgmt.compute.bulkaction.models.BulkCreateCustomProperties
     :ivar zones: Zones in which the BulkCreateCustom is available.
     :vartype zones: list[str]
+    :ivar extended_location: The extended location of the virtual machines created by the
+     BulkCreateCustom operation.
+    :vartype extended_location: ~azure.mgmt.compute.bulkaction.models.ExtendedLocation
+    :ivar placement: The availability zone placement constraints applied to the virtual machines
+     created by the BulkCreateCustom operation.
+    :vartype placement: ~azure.mgmt.compute.bulkaction.models.Placement
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar identity: The managed service identities assigned to this resource.
@@ -3132,6 +3165,13 @@ class LocationBasedBulkCreateCustom(ProxyResource):  # pylint: disable=docstring
     """The resource-specific properties for this resource."""
     zones: Optional[list[str]] = rest_field(visibility=["read", "create"])
     """Zones in which the BulkCreateCustom is available."""
+    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
+        name="extendedLocation", visibility=["read", "create"]
+    )
+    """The extended location of the virtual machines created by the BulkCreateCustom operation."""
+    placement: Optional["_models.Placement"] = rest_field(visibility=["read", "create"])
+    """The availability zone placement constraints applied to the virtual machines created by the
+     BulkCreateCustom operation."""
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
@@ -3147,6 +3187,8 @@ class LocationBasedBulkCreateCustom(ProxyResource):  # pylint: disable=docstring
         *,
         properties: Optional["_models.BulkCreateCustomProperties"] = None,
         zones: Optional[list[str]] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        placement: Optional["_models.Placement"] = None,
         tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         plan: Optional["_models.Plan"] = None,
@@ -3396,7 +3438,7 @@ class NetworkProfile(_Model):  # pylint: disable=docstring-keyword-should-match-
 
 
 class NotificationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Settings for notifications about upcoming scheduled action operations.
+    """Settings for notifications about upcoming recurring bulk action operations.
 
     :ivar destination: The notification destination. For email notifications, specify a valid email
      address. Required.
@@ -3442,7 +3484,7 @@ class NotificationProperties(_Model):  # pylint: disable=docstring-keyword-shoul
 
 
 class Occurrence(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """One scheduled execution of a scheduled action.
+    """One scheduled execution of a recurring bulk action.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -3500,7 +3542,7 @@ class OccurrenceExtensionProperties(_Model):  # pylint: disable=docstring-keywor
      ~azure.mgmt.compute.bulkaction.models.OccurrenceResourceProvisioningState
     :ivar error_details: Read-only. Error details when the operation fails for this resource.
     :vartype error_details: ~azure.core.ODataV4Format
-    :ivar scheduled_action_id: The Azure resource ID of the scheduled action that owns the
+    :ivar scheduled_action_id: The Azure resource ID of the recurring bulk action that owns the
      occurrence. Required.
     :vartype scheduled_action_id: str
     """
@@ -3524,7 +3566,7 @@ class OccurrenceExtensionProperties(_Model):  # pylint: disable=docstring-keywor
     scheduled_action_id: str = rest_field(
         name="scheduledActionId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The Azure resource ID of the scheduled action that owns the occurrence. Required."""
+    """The Azure resource ID of the recurring bulk action that owns the occurrence. Required."""
 
     @overload
     def __init__(
@@ -3547,7 +3589,7 @@ class OccurrenceExtensionProperties(_Model):  # pylint: disable=docstring-keywor
 
 
 class OccurrenceExtensionResource(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A scheduled action occurrence associated with a specific compute resource.
+    """A recurring bulk action occurrence associated with a specific compute resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -3588,7 +3630,7 @@ class OccurrenceExtensionResource(ExtensionResource):  # pylint: disable=docstri
 
 
 class OccurrenceProperties(_Model):
-    """Properties of a scheduled action occurrence.
+    """Properties of a recurring bulk action occurrence.
 
     :ivar scheduled_time: Read-only. The UTC date and time when the occurrence is scheduled to run.
      Required.
@@ -3613,7 +3655,7 @@ class OccurrenceProperties(_Model):
 
 
 class OccurrenceResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Scheduling and status details for a resource included in a scheduled action occurrence.
+    """Scheduling and status details for a resource included in a recurring bulk action occurrence.
 
     :ivar name: Read-only. The name of the association resource. Required.
     :vartype name: str
@@ -3681,7 +3723,7 @@ class OccurrenceResource(_Model):  # pylint: disable=docstring-keyword-should-ma
 
 
 class OccurrenceResultSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Summary of results for a scheduled action occurrence.
+    """Summary of results for a recurring bulk action occurrence.
 
     :ivar total: The number of resources targeted by the occurrence. Required.
     :vartype total: int
@@ -4272,62 +4314,6 @@ class OSProfileProvisioningData(_Model):  # pylint: disable=docstring-keyword-sh
         super().__init__(*args, **kwargs)
 
 
-class PartialFulfillmentPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Controls how partial fulfillment is handled for a BulkCreateCustom request. When enabled, Azure
-    creates only the VMs or vCPUs it has high confidence can be successfully allocated, instead of
-    attempting the entire request and potentially returning allocation failures.
-
-    :ivar fulfilled_capacity: The amount of capacity that was actually attempted, expressed in the
-     units specified by capacityType. When partial fulfillment is enabled, this value can be less
-     than the requested capacity.
-    :vartype fulfilled_capacity: int
-    :ivar mode: Specifies whether partial fulfillment is allowed. When Enabled, Azure creates as
-     many VMs as it has high confidence can be successfully allocated. When Disabled, Azure attempts
-     to create all requested VMs, which may result into allocation failures. Known values are:
-     "Enabled" and "Disabled".
-    :vartype mode: str or ~azure.mgmt.compute.bulkaction.models.PartialFulfillmentMode
-    :ivar reason: Indicates why the fulfilled capacity is less than the requested capacity.
-     Possible values include InsufficientCapacity and InsufficientQuota. Returned only in the create
-     response when partial fulfillment is enabled and the request cannot be fully satisfied. Known
-     values are: "InsufficientCapacity", "InsufficientQuota", and "None".
-    :vartype reason: str or ~azure.mgmt.compute.bulkaction.models.PartialFulfillmentReason
-    """
-
-    fulfilled_capacity: Optional[int] = rest_field(name="fulfilledCapacity", visibility=["read"])
-    """The amount of capacity that was actually attempted, expressed in the units specified by
-     capacityType. When partial fulfillment is enabled, this value can be less than the requested
-     capacity."""
-    mode: Optional[Union[str, "_models.PartialFulfillmentMode"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Specifies whether partial fulfillment is allowed. When Enabled, Azure creates as many VMs as it
-     has high confidence can be successfully allocated. When Disabled, Azure attempts to create all
-     requested VMs, which may result into allocation failures. Known values are: \"Enabled\" and
-     \"Disabled\"."""
-    reason: Optional[Union[str, "_models.PartialFulfillmentReason"]] = rest_field(visibility=["read"])
-    """Indicates why the fulfilled capacity is less than the requested capacity. Possible values
-     include InsufficientCapacity and InsufficientQuota. Returned only in the create response when
-     partial fulfillment is enabled and the request cannot be fully satisfied. Known values are:
-     \"InsufficientCapacity\", \"InsufficientQuota\", and \"None\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        mode: Optional[Union[str, "_models.PartialFulfillmentMode"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class PatchSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies settings related to VM Guest Patching on Windows.
 
@@ -4413,6 +4399,54 @@ class PatchSettings(_Model):  # pylint: disable=docstring-keyword-should-match-k
         super().__init__(*args, **kwargs)
 
 
+class Placement(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The customer-defined constraints for virtual machine placement.
+
+    :ivar zone_placement_policy: The policy used to select an availability zone. Known values are:
+     "Any" and "Auto".
+    :vartype zone_placement_policy: str or
+     ~azure.mgmt.compute.bulkaction.models.ZonePlacementPolicyType
+    :ivar include_zones: The availability zones that Bulk Actions can select. When omitted, Bulk
+     Actions can consider any supported zone in the region.
+    :vartype include_zones: list[str]
+    :ivar exclude_zones: The availability zones that Bulk Actions must not select.
+    :vartype exclude_zones: list[str]
+    """
+
+    zone_placement_policy: Optional[Union[str, "_models.ZonePlacementPolicyType"]] = rest_field(
+        name="zonePlacementPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The policy used to select an availability zone. Known values are: \"Any\" and \"Auto\"."""
+    include_zones: Optional[list[str]] = rest_field(
+        name="includeZones", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The availability zones that Bulk Actions can select. When omitted, Bulk Actions can consider
+     any supported zone in the region."""
+    exclude_zones: Optional[list[str]] = rest_field(
+        name="excludeZones", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The availability zones that Bulk Actions must not select."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        zone_placement_policy: Optional[Union[str, "_models.ZonePlacementPolicyType"]] = None,
+        include_zones: Optional[list[str]] = None,
+        exclude_zones: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Plan(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Plan for the resource.
 
@@ -4455,53 +4489,6 @@ class Plan(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
         product: str,
         promotion_code: Optional[str] = None,
         version: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PriorityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The priority and allocation preferences for virtual machines.
-
-    :ivar type: The priority type for virtual machine allocation. Known values are: "Regular" and
-     "Spot".
-    :vartype type: str or ~azure.mgmt.compute.bulkaction.models.PriorityType
-    :ivar max_price_per_vm: The maximum hourly price, in US dollars, for each Spot virtual machine.
-    :vartype max_price_per_vm: float
-    :ivar eviction_policy: The action applied to a Spot virtual machine when Azure evicts it. Known
-     values are: "Delete" and "Deallocate".
-    :vartype eviction_policy: str or ~azure.mgmt.compute.bulkaction.models.EvictionPolicy
-    """
-
-    type: Optional[Union[str, "_models.PriorityType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The priority type for virtual machine allocation. Known values are: \"Regular\" and \"Spot\"."""
-    max_price_per_vm: Optional[float] = rest_field(
-        name="maxPricePerVM", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The maximum hourly price, in US dollars, for each Spot virtual machine."""
-    eviction_policy: Optional[Union[str, "_models.EvictionPolicy"]] = rest_field(
-        name="evictionPolicy", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The action applied to a Spot virtual machine when Azure evicts it. Known values are: \"Delete\"
-     and \"Deallocate\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "_models.PriorityType"]] = None,
-        max_price_per_vm: Optional[float] = None,
-        eviction_policy: Optional[Union[str, "_models.EvictionPolicy"]] = None,
     ) -> None: ...
 
     @overload
@@ -4750,16 +4737,16 @@ class ReimageResourceOverride(_Model):  # pylint: disable=docstring-keyword-shou
 
 
 class ResourceAttachRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Resources to attach to a scheduled action.
+    """Resources to attach to a recurring bulk action.
 
-    :ivar resources: The list of resources to attach to the scheduled action. Required.
+    :ivar resources: The list of resources to attach to the recurring bulk action. Required.
     :vartype resources: list[~azure.mgmt.compute.bulkaction.models.ScheduledActionResourceInput]
     """
 
     resources: list["_models.ScheduledActionResourceInput"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The list of resources to attach to the scheduled action. Required."""
+    """The list of resources to attach to the recurring bulk action. Required."""
 
     @overload
     def __init__(
@@ -4780,7 +4767,7 @@ class ResourceAttachRequest(_Model):  # pylint: disable=docstring-keyword-should
 
 
 class ResourceDetachRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Resources to remove from a scheduled action.
+    """Resources to remove from a recurring bulk action.
 
     :ivar resources: The Azure resource IDs of the resources to remove. Required.
     :vartype resources: list[str]
@@ -5058,7 +5045,7 @@ class ResourceOperationError(_Model):  # pylint: disable=docstring-keyword-shoul
 
 
 class ResourceOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Results of a scheduled action operation for targeted resources.
+    """Results of a recurring bulk action operation for targeted resources.
 
     :ivar total_resources: The number of resources included in the operation. Required.
     :vartype total_resources: int
@@ -5093,7 +5080,7 @@ class ResourceOperationResponse(_Model):  # pylint: disable=docstring-keyword-sh
 
 
 class ResourcePatchRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Resource-specific settings to update in a scheduled action.
+    """Resource-specific settings to update in a recurring bulk action.
 
     :ivar resources: The resources and notification settings to update. Required.
     :vartype resources: list[~azure.mgmt.compute.bulkaction.models.ScheduledActionResourceInput]
@@ -5194,7 +5181,7 @@ class Resources(_Model):  # pylint: disable=docstring-keyword-should-match-keywo
 
 
 class ResourceStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Current status for a targeted resource in a scheduled action occurrence.
+    """Current status for a targeted resource in a recurring bulk action occurrence.
 
     :ivar resource_id: The Azure resource ID of the targeted resource. Required.
     :vartype resource_id: str
@@ -5392,7 +5379,7 @@ class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-mat
 
 
 class ScheduledAction(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A recurring action that operates on specified compute resources.
+    """A recurring bulk action that operates on specified compute resources.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -5439,7 +5426,7 @@ class ScheduledAction(TrackedResource):  # pylint: disable=docstring-keyword-sho
 
 
 class ScheduledActionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Configuration and status of a scheduled action.
+    """Configuration and status of a recurring bulk action.
 
     :ivar resource_type: The type of compute resource targeted by the action. Required. Known
      values are: "VirtualMachine" and "VirtualMachineScaleSet".
@@ -5455,13 +5442,13 @@ class ScheduledActionProperties(_Model):  # pylint: disable=docstring-keyword-sh
     :vartype end_time: ~datetime.datetime
     :ivar schedule: The recurring schedule. Required.
     :vartype schedule: ~azure.mgmt.compute.bulkaction.models.ScheduledActionsSchedule
-    :ivar notification_settings: Notification settings that apply to the scheduled action.
+    :ivar notification_settings: Notification settings that apply to the recurring bulk action.
      Required.
     :vartype notification_settings:
      list[~azure.mgmt.compute.bulkaction.models.NotificationProperties]
     :ivar disabled: Indicates whether new occurrences are disabled.
     :vartype disabled: bool
-    :ivar provisioning_state: Read-only. The provisioning state of the scheduled action. Known
+    :ivar provisioning_state: Read-only. The provisioning state of the recurring bulk action. Known
      values are: "Succeeded", "Failed", "Canceled", "Deleting", and "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.bulkaction.models.ScheduledActionsProvisioningState
@@ -5492,14 +5479,14 @@ class ScheduledActionProperties(_Model):  # pylint: disable=docstring-keyword-sh
     notification_settings: list["_models.NotificationProperties"] = rest_field(
         name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Notification settings that apply to the scheduled action. Required."""
+    """Notification settings that apply to the recurring bulk action. Required."""
     disabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Indicates whether new occurrences are disabled."""
     provisioning_state: Optional[Union[str, "_models.ScheduledActionsProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """Read-only. The provisioning state of the scheduled action. Known values are: \"Succeeded\",
-     \"Failed\", \"Canceled\", \"Deleting\", and \"Updating\"."""
+    """Read-only. The provisioning state of the recurring bulk action. Known values are:
+     \"Succeeded\", \"Failed\", \"Canceled\", \"Deleting\", and \"Updating\"."""
 
     @overload
     def __init__(
@@ -5526,7 +5513,7 @@ class ScheduledActionProperties(_Model):  # pylint: disable=docstring-keyword-sh
 
 
 class ScheduledActionResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A compute resource associated with a scheduled action.
+    """A compute resource associated with a recurring bulk action.
 
     :ivar name: Read-only. The name of the association resource. Required.
     :vartype name: str
@@ -5574,7 +5561,7 @@ class ScheduledActionResource(_Model):  # pylint: disable=docstring-keyword-shou
 
 
 class ScheduledActionResourceInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A compute resource to add to or update in a scheduled action.
+    """A compute resource to add to or update in a recurring bulk action.
 
     :ivar resource_id: The Azure resource ID of the targeted virtual machine. Required.
     :vartype resource_id: str
@@ -5610,7 +5597,7 @@ class ScheduledActionResourceInput(_Model):  # pylint: disable=docstring-keyword
 
 
 class ScheduledActionResources(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A scheduled action associated with a specific compute resource.
+    """A recurring bulk action associated with a specific compute resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -5651,7 +5638,7 @@ class ScheduledActionResources(ExtensionResource):  # pylint: disable=docstring-
 
 
 class ScheduledActionsExecutionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Settings that control how the scheduled action operation is executed.
+    """Settings that control how the recurring bulk action operation is executed.
 
     :ivar retry_policy: The retry settings for failed resource operations.
     :vartype retry_policy: ~azure.mgmt.compute.bulkaction.models.ScheduledActionsRetryPolicy
@@ -5681,7 +5668,7 @@ class ScheduledActionsExecutionParameters(_Model):  # pylint: disable=docstring-
 
 
 class ScheduledActionsExtensionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A scheduled action associated with a specific compute resource.
+    """A recurring bulk action associated with a specific compute resource.
 
     :ivar resource_type: The type of compute resource targeted by the action. Required. Known
      values are: "VirtualMachine" and "VirtualMachineScaleSet".
@@ -5697,13 +5684,13 @@ class ScheduledActionsExtensionProperties(_Model):  # pylint: disable=docstring-
     :vartype end_time: ~datetime.datetime
     :ivar schedule: The recurring schedule. Required.
     :vartype schedule: ~azure.mgmt.compute.bulkaction.models.ScheduledActionsSchedule
-    :ivar notification_settings: Notification settings that apply to the scheduled action.
+    :ivar notification_settings: Notification settings that apply to the recurring bulk action.
      Required.
     :vartype notification_settings:
      list[~azure.mgmt.compute.bulkaction.models.NotificationProperties]
     :ivar disabled: Indicates whether new occurrences are disabled.
     :vartype disabled: bool
-    :ivar provisioning_state: Read-only. The provisioning state of the scheduled action. Known
+    :ivar provisioning_state: Read-only. The provisioning state of the recurring bulk action. Known
      values are: "Succeeded", "Failed", "Canceled", "Deleting", and "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.compute.bulkaction.models.ScheduledActionsProvisioningState
@@ -5738,14 +5725,14 @@ class ScheduledActionsExtensionProperties(_Model):  # pylint: disable=docstring-
     notification_settings: list["_models.NotificationProperties"] = rest_field(
         name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Notification settings that apply to the scheduled action. Required."""
+    """Notification settings that apply to the recurring bulk action. Required."""
     disabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Indicates whether new occurrences are disabled."""
     provisioning_state: Optional[Union[str, "_models.ScheduledActionsProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """Read-only. The provisioning state of the scheduled action. Known values are: \"Succeeded\",
-     \"Failed\", \"Canceled\", \"Deleting\", and \"Updating\"."""
+    """Read-only. The provisioning state of the recurring bulk action. Known values are:
+     \"Succeeded\", \"Failed\", \"Canceled\", \"Deleting\", and \"Updating\"."""
     resource_notification_settings: Optional[list["_models.NotificationProperties"]] = rest_field(
         name="resourceNotificationSettings", visibility=["read"]
     )
@@ -5776,7 +5763,7 @@ class ScheduledActionsExtensionProperties(_Model):  # pylint: disable=docstring-
 
 
 class ScheduledActionsRetryPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Retry settings for a scheduled action operation.
+    """Retry settings for a recurring bulk action operation.
 
     :ivar retry_count: The maximum number of retry attempts.
     :vartype retry_count: int
@@ -5823,9 +5810,9 @@ class ScheduledActionsRetryPolicy(_Model):  # pylint: disable=docstring-keyword-
 
 
 class ScheduledActionsSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The recurring schedule for a scheduled action.
+    """The recurring schedule for a recurring bulk action.
 
-    :ivar scheduled_time: The local time of day when the scheduled action runs. Required.
+    :ivar scheduled_time: The local time of day when the recurring bulk action runs. Required.
     :vartype scheduled_time: ~datetime.time
     :ivar time_zone: The time zone used to interpret the scheduled time. Required.
     :vartype time_zone: str
@@ -5849,7 +5836,7 @@ class ScheduledActionsSchedule(_Model):  # pylint: disable=docstring-keyword-sho
     scheduled_time: datetime.time = rest_field(
         name="scheduledTime", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The local time of day when the scheduled action runs. Required."""
+    """The local time of day when the recurring bulk action runs. Required."""
     time_zone: str = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
     """The time zone used to interpret the scheduled time. Required."""
     requested_week_days: Optional[list[Union[str, "_models.WeekDay"]]] = rest_field(
@@ -5899,9 +5886,9 @@ class ScheduledActionsSchedule(_Model):  # pylint: disable=docstring-keyword-sho
 
 
 class ScheduledActionsScheduleUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Schedule changes for a scheduled action. Omitted properties keep their current values.
+    """Schedule changes for a recurring bulk action. Omitted properties keep their current values.
 
-    :ivar scheduled_time: The local time of day when the scheduled action runs.
+    :ivar scheduled_time: The local time of day when the recurring bulk action runs.
     :vartype scheduled_time: ~datetime.time
     :ivar time_zone: The time zone used to interpret the scheduled time.
     :vartype time_zone: str
@@ -5925,7 +5912,7 @@ class ScheduledActionsScheduleUpdate(_Model):  # pylint: disable=docstring-keywo
     scheduled_time: Optional[datetime.time] = rest_field(
         name="scheduledTime", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The local time of day when the scheduled action runs."""
+    """The local time of day when the recurring bulk action runs."""
     time_zone: Optional[str] = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
     """The time zone used to interpret the scheduled time."""
     requested_week_days: Optional[list[Union[str, "_models.WeekDay"]]] = rest_field(
@@ -6025,7 +6012,7 @@ class ScheduledActionUpdateProperties(_Model):  # pylint: disable=docstring-keyw
     :vartype end_time: ~datetime.datetime
     :ivar schedule: Changes to the recurring schedule.
     :vartype schedule: ~azure.mgmt.compute.bulkaction.models.ScheduledActionsScheduleUpdate
-    :ivar notification_settings: Notification settings that apply to the scheduled action.
+    :ivar notification_settings: Notification settings that apply to the recurring bulk action.
     :vartype notification_settings:
      list[~azure.mgmt.compute.bulkaction.models.NotificationProperties]
     :ivar disabled: Indicates whether new occurrences are disabled.
@@ -6057,7 +6044,7 @@ class ScheduledActionUpdateProperties(_Model):  # pylint: disable=docstring-keyw
     notification_settings: Optional[list["_models.NotificationProperties"]] = rest_field(
         name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Notification settings that apply to the scheduled action."""
+    """Notification settings that apply to the recurring bulk action."""
     disabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Indicates whether new occurrences are disabled."""
 
