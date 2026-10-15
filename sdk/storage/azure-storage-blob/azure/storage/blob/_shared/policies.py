@@ -16,7 +16,9 @@ from urllib.parse import (
     parse_qsl,
     urlencode,
     urlparse,
+    urlsplit,
     urlunparse,
+    urlunsplit,
 )
 from wsgiref.handlers import format_date_time
 
@@ -69,25 +71,19 @@ _LOG_REDACTED_HEADERS = frozenset(
         "x-ms-copy-source-authorization",
         "x-ms-encryption-key",
         "x-ms-source-encryption-key",
-        "x-ms-rename-source",
     }
 )
 
 
 def _remove_sas_from_url(value: str) -> str:
-    scheme, netloc, path, params, query, fragment = urlparse(value)
+    scheme, netloc, path, query, fragment = urlsplit(value)
     pairs = parse_qsl(query, keep_blank_values=True)
-    if not any(k.lower() == "sig" for k, _ in pairs):
-        return _LOG_REDACTED
     query = urlencode([(k, _LOG_REDACTED if k.lower() == "sig" else v) for k, v in pairs])
-    return urlunparse((scheme, netloc, path, params, query, fragment))
+    return urlunsplit((scheme, netloc, path, query, fragment))
 
 
 def _redact_header_for_log(name: str, value: Any) -> Any:
-    lowered = name.lower()
-    if lowered in _LOG_REDACTED_HEADERS or lowered.endswith("-authorization"):
-        return _LOG_REDACTED
-    if "encryption-key" in lowered and not lowered.endswith("-sha256"):
+    if name.lower() in _LOG_REDACTED_HEADERS:
         return _LOG_REDACTED
     if "sig=" in str(value).lower():
         return _remove_sas_from_url(str(value))

@@ -416,14 +416,13 @@ class TestStorageLogging(StorageRecordedTestCase):
             "x-ms-encryption-key",
             "x-ms-source-encryption-key",
             "x-ms-copy-source-authorization",
-            "x-ms-rename-source",
         ):
             log_as_str = self._log_request({header: "value"})
             assert header in log_as_str
             assert "value" not in log_as_str
 
     def test_source_url_sas_is_scrubbed(self):
-        for header in ("x-ms-copy-source", "x-ms-file-rename-source"):
+        for header in ("x-ms-copy-source", "x-ms-file-rename-source", "x-ms-rename-source"):
             log_as_str = self._log_request({header: "https://src.blob.core.windows.net/c/b?sv=2025-01-05&sig=value"})
             assert "value" not in log_as_str
             assert "src.blob.core.windows.net" in log_as_str
