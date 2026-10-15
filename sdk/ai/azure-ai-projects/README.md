@@ -233,8 +233,8 @@ The same global Foundry tracing configuration applies to Voice Agents REST and r
 **Important:** GenAI tracing instrumentation is an experimental preview feature. Spans, attributes, and events may be modified in future versions. 
 
 Samples can be found in the sub-folders `agents/telemetry` and `telemetry` in the [Samples][samples] folder.
-For Voice Agents tracing, see the [synchronous](samples/agents/telemetry/sample_voice_agent_with_tracing.py)
-and [asynchronous](samples/agents/telemetry/sample_voice_agent_with_tracing_async.py) samples.
+For Voice Agents tracing, see `sample_voice_agent_with_tracing.py` and its async counterpart
+in `agents/telemetry` in the [Samples][samples] folder.
 
 ## Troubleshooting
 
