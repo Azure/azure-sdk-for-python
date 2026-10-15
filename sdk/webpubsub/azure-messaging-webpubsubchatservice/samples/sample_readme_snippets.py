@@ -16,11 +16,11 @@ def list_roles(client: WebPubSubChatServiceClient) -> None:
 
 def create_user(client: WebPubSubChatServiceClient) -> None:
     # [START create_user]
-    from azure.messaging.webpubsubchatservice.models import HumanChatUser
+    from azure.messaging.webpubsubchatservice.models import HumanChatUserCreate
 
     user = client.create_or_replace_user(
         "alice",
-        HumanChatUser(nickname="Alice", role_name="user.room_creator"),
+        HumanChatUserCreate(nickname="Alice", role_name="user.room_creator"),
     )
     print(user.id, user.nickname)
     # [END create_user]
@@ -28,21 +28,21 @@ def create_user(client: WebPubSubChatServiceClient) -> None:
 
 def create_room(client: WebPubSubChatServiceClient) -> None:
     # [START create_room]
-    from azure.messaging.webpubsubchatservice.models import ChatRoom
+    from azure.messaging.webpubsubchatservice.models import ChatRoomCreate
 
-    room = client.create_or_replace_room("general", ChatRoom(title="General"))
+    room = client.create_or_replace_room("general", ChatRoomCreate(title="General"))
     print(room.id, room.default_conversation)
     # [END create_room]
 
 
 def add_room_member(client: WebPubSubChatServiceClient) -> None:
     # [START add_room_member]
-    from azure.messaging.webpubsubchatservice.models import ChatRoomMember
+    from azure.messaging.webpubsubchatservice.models import ChatRoomMemberCreate
 
     member = client.create_or_replace_room_member(
         "general",
         "alice",
-        ChatRoomMember(role_name="room.contributor"),
+        ChatRoomMemberCreate(role_name="room.contributor"),
     )
     print(member.user_id, member.role_name)
     # [END add_room_member]
@@ -60,12 +60,12 @@ def list_messages(client: WebPubSubChatServiceClient) -> None:
 def create_topic(client: WebPubSubChatServiceClient) -> None:
     # [START create_topic]
     import os
-    from azure.messaging.webpubsubchatservice.models import ChatTopic
+    from azure.messaging.webpubsubchatservice.models import ChatTopicCreate
 
     topic = client.create_or_replace_topic(
         os.environ["WPS_CHAT_ROOM_ID"],
         os.environ["WPS_CHAT_TOPIC_ID"],
-        ChatTopic({"title": "Announcements"}),
+        ChatTopicCreate(title="Announcements"),
     )
     print(topic.id, topic.etag)
     # [END create_topic]
@@ -93,12 +93,12 @@ def archive_topic(client: WebPubSubChatServiceClient) -> None:
     # [START archive_topic]
     import os
     from azure.core import MatchConditions
-    from azure.messaging.webpubsubchatservice.models import ChatTopic, ChatTopicState
+    from azure.messaging.webpubsubchatservice.models import ChatTopicUpdate, ChatTopicState
 
     topic = client.update_topic(
         os.environ["WPS_CHAT_ROOM_ID"],
         os.environ["WPS_CHAT_TOPIC_ID"],
-        ChatTopic(title="Announcements", state=ChatTopicState.ARCHIVED),
+        ChatTopicUpdate(state=ChatTopicState.ARCHIVED),
         etag=os.environ["WPS_CHAT_TOPIC_ETAG"],
         match_condition=MatchConditions.IfNotModified,
     )

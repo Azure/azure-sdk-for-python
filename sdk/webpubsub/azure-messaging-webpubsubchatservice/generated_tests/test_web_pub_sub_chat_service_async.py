@@ -54,13 +54,7 @@ class TestWebPubSubChatServiceAsync(WebPubSubChatServiceClientTestBaseAsync):
         response = await client.update_message(
             conversation_id="str",
             message_id="str",
-            resource={
-                "content": {"binary": bytes("bytes", encoding="utf-8"), "text": "str"},
-                "createdAt": "2020-02-20 00:00:00",
-                "createdBy": "str",
-                "etag": "str",
-                "id": "str",
-            },
+            resource={"content": {"binary": bytes("bytes", encoding="utf-8"), "text": "str"}, "createdBy": "str"},
         )
 
         # please add some check logic here by yourself
@@ -92,7 +86,7 @@ class TestWebPubSubChatServiceAsync(WebPubSubChatServiceClientTestBaseAsync):
         client = self.create_async_client(endpoint=webpubsubchatservice_endpoint)
         response = await client.create_or_replace_role(
             role_name="str",
-            resource={"etag": "str", "name": "str", "permissions": ["str"]},
+            resource={"permissions": ["str"]},
         )
 
         # please add some check logic here by yourself
@@ -124,7 +118,7 @@ class TestWebPubSubChatServiceAsync(WebPubSubChatServiceClientTestBaseAsync):
         client = self.create_async_client(endpoint=webpubsubchatservice_endpoint)
         response = await client.create_or_replace_room(
             room_id="str",
-            resource={"defaultConversation": "str", "etag": "str", "id": "str", "title": "str"},
+            resource={"title": "str"},
         )
 
         # please add some check logic here by yourself
@@ -170,15 +164,7 @@ class TestWebPubSubChatServiceAsync(WebPubSubChatServiceClientTestBaseAsync):
         response = await client.create_or_replace_topic(
             room_id="str",
             topic_id="str",
-            resource={
-                "conversationId": "str",
-                "createdAt": "2020-02-20 00:00:00",
-                "createdBy": "str",
-                "etag": "str",
-                "id": "str",
-                "state": "str",
-                "title": "str",
-            },
+            resource={"title": "str"},
         )
 
         # please add some check logic here by yourself
@@ -203,15 +189,7 @@ class TestWebPubSubChatServiceAsync(WebPubSubChatServiceClientTestBaseAsync):
         response = await client.update_topic(
             room_id="str",
             topic_id="str",
-            resource={
-                "conversationId": "str",
-                "createdAt": "2020-02-20 00:00:00",
-                "createdBy": "str",
-                "etag": "str",
-                "id": "str",
-                "state": "str",
-                "title": "str",
-            },
+            resource={"state": "str", "title": "str"},
         )
 
         # please add some check logic here by yourself
@@ -247,7 +225,7 @@ class TestWebPubSubChatServiceAsync(WebPubSubChatServiceClientTestBaseAsync):
         response = await client.create_or_replace_room_member(
             room_id="str",
             user_id="str",
-            resource={"etag": "str", "roleName": "str", "userId": "str"},
+            resource={"roleName": "str"},
         )
 
         # please add some check logic here by yourself
@@ -291,7 +269,7 @@ class TestWebPubSubChatServiceAsync(WebPubSubChatServiceClientTestBaseAsync):
         client = self.create_async_client(endpoint=webpubsubchatservice_endpoint)
         response = await client.create_or_replace_user(
             user_id="str",
-            resource={"etag": "str", "id": "str", "kind": "Human", "nickname": "str", "roleName": "str"},
+            resource={"kind": "Human", "nickname": "str", "roleName": "str"},
         )
 
         # please add some check logic here by yourself

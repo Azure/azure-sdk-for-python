@@ -182,17 +182,23 @@ The returned URL contains an access token. Send it only to the intended client, 
 
 ### Create a role
 
-Use the `ChatRole` model and `ChatPermission` enum instead of a dictionary with
+Create operations use dedicated request models such as `ChatRoleCreate` and
+`ChatRoomCreate`. PATCH operations use `ChatTopicUpdate` and `ChatMessageUpdate`,
+whose fields can be omitted to leave existing values unchanged. The operations
+return resource models such as `ChatRole`, `ChatRoom`, and `ChatTopic`, which
+include service-assigned identifiers and ETags.
+
+Use the `ChatRoleCreate` model and `ChatPermission` enum instead of a dictionary with
 permission string literals. This example assumes `os` is imported.
 
 <!-- SNIPPET:sample_roles_and_permissions.create_role -->
 
 ```python
-from azure.messaging.webpubsubchatservice.models import ChatPermission, ChatRole
+from azure.messaging.webpubsubchatservice.models import ChatPermission, ChatRoleCreate
 
 role = client.create_or_replace_role(
     os.environ.get("WPS_CHAT_ROLE_NAME", "user.python_sample"),
-    ChatRole(permissions=[ChatPermission.USER_CREATE_ROOM]),
+    ChatRoleCreate(permissions=[ChatPermission.USER_CREATE_ROOM]),
 )
 print(role.name, role.permissions)
 ```
@@ -222,11 +228,11 @@ The user role `user.room_creator` must already exist.
 <!-- SNIPPET:sample_readme_snippets.create_user -->
 
 ```python
-from azure.messaging.webpubsubchatservice.models import HumanChatUser
+from azure.messaging.webpubsubchatservice.models import HumanChatUserCreate
 
 user = client.create_or_replace_user(
     "alice",
-    HumanChatUser(nickname="Alice", role_name="user.room_creator"),
+    HumanChatUserCreate(nickname="Alice", role_name="user.room_creator"),
 )
 print(user.id, user.nickname)
 ```
@@ -238,9 +244,9 @@ print(user.id, user.nickname)
 <!-- SNIPPET:sample_readme_snippets.create_room -->
 
 ```python
-from azure.messaging.webpubsubchatservice.models import ChatRoom
+from azure.messaging.webpubsubchatservice.models import ChatRoomCreate
 
-room = client.create_or_replace_room("general", ChatRoom(title="General"))
+room = client.create_or_replace_room("general", ChatRoomCreate(title="General"))
 print(room.id, room.default_conversation)
 ```
 
@@ -253,12 +259,12 @@ The room `general`, user `alice`, and room role `room.contributor` must already 
 <!-- SNIPPET:sample_readme_snippets.add_room_member -->
 
 ```python
-from azure.messaging.webpubsubchatservice.models import ChatRoomMember
+from azure.messaging.webpubsubchatservice.models import ChatRoomMemberCreate
 
 member = client.create_or_replace_room_member(
     "general",
     "alice",
-    ChatRoomMember(role_name="room.contributor"),
+    ChatRoomMemberCreate(role_name="room.contributor"),
 )
 print(member.user_id, member.role_name)
 ```
@@ -291,12 +297,12 @@ topic ID specified by `WPS_CHAT_TOPIC_ID`.
 
 ```python
 import os
-from azure.messaging.webpubsubchatservice.models import ChatTopic
+from azure.messaging.webpubsubchatservice.models import ChatTopicCreate
 
 topic = client.create_or_replace_topic(
     os.environ["WPS_CHAT_ROOM_ID"],
     os.environ["WPS_CHAT_TOPIC_ID"],
-    ChatTopic({"title": "Announcements"}),
+    ChatTopicCreate(title="Announcements"),
 )
 print(topic.id, topic.etag)
 ```
@@ -339,12 +345,12 @@ operation.
 ```python
 import os
 from azure.core import MatchConditions
-from azure.messaging.webpubsubchatservice.models import ChatTopic, ChatTopicState
+from azure.messaging.webpubsubchatservice.models import ChatTopicUpdate, ChatTopicState
 
 topic = client.update_topic(
     os.environ["WPS_CHAT_ROOM_ID"],
     os.environ["WPS_CHAT_TOPIC_ID"],
-    ChatTopic(title="Announcements", state=ChatTopicState.ARCHIVED),
+    ChatTopicUpdate(state=ChatTopicState.ARCHIVED),
     etag=os.environ["WPS_CHAT_TOPIC_ETAG"],
     match_condition=MatchConditions.IfNotModified,
 )

@@ -9,12 +9,14 @@ from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
 from azure.messaging.webpubsubchatservice.models import (
     ChatPermission,
-    ChatRole,
-    ChatRoom,
-    ChatRoomMember,
-    ChatTopic,
+    ChatRoleCreate,
+    ChatRoomCreate,
+    ChatRoomMemberCreate,
+    ChatTopicCreate,
+    ChatTopicUpdate,
     ChatTopicState,
     HumanChatUser,
+    HumanChatUserCreate,
 )
 from testcase import WebPubSubChatPreparer, WebPubSubChatTest
 
@@ -37,10 +39,10 @@ class TestWebPubSubChatTopicsLive(WebPubSubChatTest):
         client = self.create_client(wps_chat_endpoint)
         room_id = "python-e2e-topics"
         try:
-            room = client.create_or_replace_room(room_id, ChatRoom(title="Topic E2E"))
+            room = client.create_or_replace_room(room_id, ChatRoomCreate(title="Topic E2E"))
             assert all(topic.conversation_id == room.default_conversation for topic in client.list_topics(room_id))
             for topic_id in ("first", "second"):
-                topic = client.create_or_replace_topic(room_id, topic_id, ChatTopic({"title": topic_id}))
+                topic = client.create_or_replace_topic(room_id, topic_id, ChatTopicCreate(title=topic_id))
                 assert topic.id == topic_id
                 assert topic.title == topic_id
                 assert topic.state == ChatTopicState.NORMAL
@@ -58,7 +60,7 @@ class TestWebPubSubChatTopicsLive(WebPubSubChatTest):
             archived = client.update_topic(
                 room_id,
                 "first",
-                ChatTopic(title="Archived topic", state=ChatTopicState.ARCHIVED),
+                ChatTopicUpdate(title="Archived topic", state=ChatTopicState.ARCHIVED),
                 etag=fetched.etag,
                 match_condition=MatchConditions.IfNotModified,
             )
@@ -71,7 +73,7 @@ class TestWebPubSubChatTopicsLive(WebPubSubChatTest):
                 client.update_topic(
                     room_id,
                     "first",
-                    ChatTopic(title="Stale update", state=ChatTopicState.NORMAL),
+                    ChatTopicUpdate(title="Stale update", state=ChatTopicState.NORMAL),
                     etag=fetched.etag,
                     match_condition=MatchConditions.IfNotModified,
                 )
@@ -90,14 +92,14 @@ class TestWebPubSubChatTopicsLive(WebPubSubChatTest):
         user_role = "user.python_e2e_collections"
         room_role = "room.python_e2e_collections"
         try:
-            client.create_or_replace_role(user_role, ChatRole(permissions=[ChatPermission.USER_CREATE_ROOM]))
-            client.create_or_replace_role(room_role, ChatRole(permissions=[ChatPermission.ROOM_PUBLISH_MESSAGE]))
+            client.create_or_replace_role(user_role, ChatRoleCreate(permissions=[ChatPermission.USER_CREATE_ROOM]))
+            client.create_or_replace_role(room_role, ChatRoleCreate(permissions=[ChatPermission.ROOM_PUBLISH_MESSAGE]))
             for user_id in user_ids:
-                client.create_or_replace_user(user_id, HumanChatUser(nickname=user_id, role_name=user_role))
+                client.create_or_replace_user(user_id, HumanChatUserCreate(nickname=user_id, role_name=user_role))
             assert list(client.list_rooms_for_user(user_ids[0])) == []
             for room_id in room_ids:
-                client.create_or_replace_room(room_id, ChatRoom(title=room_id))
-                client.create_or_replace_room_member(room_id, user_ids[0], ChatRoomMember(role_name=room_role))
+                client.create_or_replace_room(room_id, ChatRoomCreate(title=room_id))
+                client.create_or_replace_room_member(room_id, user_ids[0], ChatRoomMemberCreate(role_name=room_role))
             assert {room.id for room in client.list_rooms(max_page_size=1)}.issuperset(room_ids)
             users = list(client.list_users(max_page_size=1))
             assert {user.id for user in users}.issuperset(user_ids)
