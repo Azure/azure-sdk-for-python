@@ -6,6 +6,11 @@
     Copy this file to Set-LiveTestEnvironment.ps1 and replace placeholders with
     local values. Do not commit Set-LiveTestEnvironment.ps1 because it may
     contain secrets.
+
+    Use a dedicated, disposable Search service. Before each live test, the
+    preparer deletes all indexes, aliases, knowledge bases, knowledge sources,
+    indexers, data sources, and skillsets on that service. Never target a
+    shared or production service, and do not run these tests in parallel.
 #>
 
 $env:SEARCH_SERVICE_ENDPOINT = "https://<search-service-name>.search.windows.net"
@@ -18,6 +23,7 @@ $env:SEARCH_AZURE_OPENAI_EMBEDDING_MODEL = "<embedding-model>"
 
 # Uncomment when recording live tests.
 # $env:AZURE_TEST_RUN_LIVE = "true"
+# $env:AZURE_SKIP_LIVE_RECORDING = "false"
 
 # Option 1: authenticate with Azure CLI and uncomment the auth selector.
 # az login --tenant "<tenant-id>"

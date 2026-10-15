@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+import json
+from types import SimpleNamespace
 from unittest import mock
 
 import pytest
@@ -53,6 +55,20 @@ def create_indexing_result(document_key=DOCUMENT_KEY, *, succeeded=True, status_
 
 
 class TestSearchIndexingBufferedSenderConstructorAsync:
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("explicit_scopes", [False, True])
+    async def test_constructor_forwards_audience_and_explicit_scope_precedence(self, explicit_scopes):
+        kwargs = {"audience": "https://search.azure.us"}
+        expected = ["https://search.azure.us/.default"]
+        if explicit_scopes:
+            kwargs["credential_scopes"] = ["https://custom.example/.default"]
+            expected = kwargs["credential_scopes"]
+        sender = create_sender(**kwargs)
+        try:
+            assert sender._client._config.credential_scopes == expected
+        finally:
+            await sender.close()
+
     @pytest.mark.asyncio
     async def test_constructor_uses_default_buffering_settings(self):
         sender = SearchIndexingBufferedSender(SEARCH_ENDPOINT, INDEX_NAME, CREDENTIAL, window=100)
@@ -194,6 +210,104 @@ class TestSearchIndexingBufferedSenderQueueingAsync:
 
 class TestSearchIndexingBufferedSenderProcessingAsync:
     @pytest.mark.asyncio
+    @pytest.mark.parametrize("shared_transport", [False, True])
+    async def test_process_forwards_schema_client_options_without_closing_shared_transport(self, shared_transport):
+        policy = mock.Mock()
+        transport = mock.AsyncMock() if shared_transport else None
+        options = {
+            "api_version": API_VERSION,
+            "audience": "https://search.azure.us",
+            "credential_scopes": ["https://explicit.example/.default"],
+            "per_call_policies": [policy],
+            "transport": transport,
+        }
+        sender = create_sender(**options)
+        await sender.upload_documents([create_hotel_document()])
+        field = mock.Mock(key=True)
+        field.name = "HotelId"
+        try:
+            with mock.patch("azure.search.documents.aio._patch.SearchIndexClient") as factory, mock.patch.object(
+                sender, "_index_documents_actions", new=mock.AsyncMock(return_value=[create_indexing_result()])
+            ):
+                factory.return_value.get_index = mock.AsyncMock(return_value=mock.Mock(fields=[field]))
+                factory.return_value.close = mock.AsyncMock()
+                assert await sender.flush() is False
+            factory.assert_called_once_with(SEARCH_ENDPOINT, CREDENTIAL, **options)
+            if shared_transport:
+                factory.return_value.close.assert_not_awaited()
+                transport.close.assert_not_awaited()
+            else:
+                factory.return_value.close.assert_awaited_once()
+        finally:
+            await sender.close()
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("raise_error", [False, True])
+    async def test_process_requeues_every_action_after_request_failure(self, raise_error):
+        on_progress = mock.AsyncMock()
+        sender = create_sender(on_progress=on_progress)
+        sender._index_key = "HotelId"
+        keys = [DOCUMENT_KEY, REPLACEMENT_DOCUMENT_KEY, "3"]
+        await sender.upload_documents([create_hotel_document(key) for key in keys])
+
+        try:
+            with mock.patch.object(
+                sender,
+                "_index_documents_actions",
+                new=mock.AsyncMock(side_effect=HttpResponseError("indexing request failed")),
+            ):
+                if raise_error:
+                    with pytest.raises(HttpResponseError, match="indexing request failed"):
+                        await sender._process(raise_error=True)
+                else:
+                    assert await sender._process(raise_error=False) is True
+
+            assert [action["HotelId"] for action in sender.actions] == keys
+            assert sender._retry_counter == {key: 1 for key in keys}
+            assert [action["HotelId"] for action in sender._index_documents_batch.as_dict()["value"]] == keys
+            with mock.patch.object(
+                sender,
+                "_index_documents_actions",
+                new=mock.AsyncMock(return_value=[create_indexing_result(key) for key in keys]),
+            ):
+                assert await sender.flush() is False
+            assert sender.actions == []
+            assert [call.args[0]["HotelId"] for call in on_progress.call_args_list] == keys
+        finally:
+            await sender.close()
+
+    @pytest.mark.asyncio
+    async def test_auto_flush_completes_generated_http_request_without_self_cancellation(self):
+        finished = asyncio.Event()
+        on_progress = mock.Mock(side_effect=lambda _action: finished.set())
+        sender = create_sender(auto_flush=True, auto_flush_interval=0.01, on_progress=on_progress)
+        sender._index_key = "HotelId"
+        bodies = []
+
+        response = mock.Mock(status_code=200)
+        response.json.return_value = {"value": [{"key": DOCUMENT_KEY, "status": True, "statusCode": 200}]}
+
+        async def run(request, **_kwargs):
+            bodies.append(json.loads(request.content))
+            await asyncio.sleep(0)
+            return SimpleNamespace(http_response=response)
+
+        try:
+            with mock.patch.object(sender._client._client._pipeline, "run", new=run):
+                await sender.upload_documents([create_hotel_document(DOCUMENT_KEY)])
+                await asyncio.wait_for(finished.wait(), timeout=2)
+
+            assert bodies == [{"value": [{"@search.action": "upload", **create_hotel_document(DOCUMENT_KEY)}]}]
+            assert sender.actions == []
+            on_progress.assert_called_once()
+        finally:
+            pending = sender._auto_flush_task
+            await sender.close()
+            if pending is not None:
+                with contextlib.suppress(asyncio.CancelledError):
+                    await pending
+
+    @pytest.mark.asyncio
     async def test_flush_detects_key_field_and_reports_success_callbacks(self):
         on_progress = mock.AsyncMock()
         on_remove = mock.AsyncMock()
@@ -292,6 +406,19 @@ class TestSearchIndexingBufferedSenderProcessingAsync:
 
 
 class TestSearchIndexingBufferedSenderIndexingAsync:
+    @pytest.mark.asyncio
+    async def test_index_documents_accepts_mapping_actions(self):
+        sender = create_sender()
+        body = {"value": [{"@search.action": "upload", **create_hotel_document()}]}
+        try:
+            with mock.patch.object(
+                sender._client, "index_documents", new=mock.AsyncMock(return_value=[create_indexing_result()])
+            ) as send:
+                assert (await sender.index_documents(body))[0].key == DOCUMENT_KEY
+            assert send.call_args.kwargs["batch"].as_dict() == body
+        finally:
+            await sender.close()
+
     @pytest.mark.asyncio
     async def test_context_manager_enters_client_and_closes_on_exit(self):
         sender = create_sender()

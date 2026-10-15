@@ -35,8 +35,6 @@ _RETRIEVAL_CAPABILITIES = (
 )
 _STREAM_CAPABILITIES = (
     "azure.search.documents.knowledgebases.aio.KnowledgeBaseRetrievalClient.retrieve_stream",
-    "KnowledgeBaseRetrievalEvent",
-    "AsyncKnowledgeBaseRetrievalStream",
     "azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStartedEvent",
     "azure.search.documents.knowledgebases.models.KnowledgeBaseResponseCompletedEvent",
 )
@@ -66,6 +64,8 @@ class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
             retrieval_request = KnowledgeBaseRetrievalRequest(
                 intents=[KnowledgeRetrievalSemanticIntent(search=RETRIEVAL_QUERY)],
                 retrieval_reasoning_effort=KnowledgeRetrievalMinimalReasoningEffort(),
+                include_activity=True,
+                output_mode="extractiveData",
             )
 
             async with KnowledgeBaseRetrievalClient(
@@ -76,8 +76,8 @@ class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
                 result = await client.retrieve(retrieval_request)
 
             assert isinstance(result, KnowledgeBaseRetrievalResponse)
-            assert hasattr(result, "response")
-            assert hasattr(result, "references")
+            assert result.references
+            assert result.activity
 
     @live_test()
     async def test_retrieve_stream_returns_typed_lifecycle_events(self, endpoint: str) -> None:
@@ -92,6 +92,7 @@ class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
             KnowledgeBaseRetrievalRequest,
             KnowledgeBaseRetrievalResponse,
             KnowledgeBaseRetrievalStartedEvent,
+            KnowledgeBaseStreamErrorEvent,
             KnowledgeRetrievalMinimalReasoningEffort,
             KnowledgeRetrievalSemanticIntent,
         )
@@ -107,6 +108,8 @@ class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
             retrieval_request = KnowledgeBaseRetrievalRequest(
                 intents=[KnowledgeRetrievalSemanticIntent(search=RETRIEVAL_QUERY)],
                 retrieval_reasoning_effort=KnowledgeRetrievalMinimalReasoningEffort(),
+                include_activity=True,
+                output_mode="extractiveData",
             )
 
             async with KnowledgeBaseRetrievalClient(
@@ -118,9 +121,18 @@ class TestKnowledgeBaseRetrievalClientAsync(AzureRecordedTestCase):
                 async with stream:
                     events = [event async for event in stream]
 
-            assert events[0].event_type == "retrieval.started"
-            assert isinstance(events[0].data, KnowledgeBaseRetrievalStartedEvent)
-            assert events[-1].event_type == "response.completed"
-            assert isinstance(events[-1].data, KnowledgeBaseResponseCompletedEvent)
-            assert isinstance(events[-1].data.response, KnowledgeBaseRetrievalResponse)
-            assert sum(event.event_type in ("response.completed", "error") for event in events) == 1
+            assert isinstance(events[0], KnowledgeBaseRetrievalStartedEvent)
+            assert events[0].knowledge_base_name == context.knowledge_base_name
+            assert events[0].output_mode == "extractiveData"
+            assert isinstance(events[-1], KnowledgeBaseResponseCompletedEvent)
+            assert isinstance(events[-1].response, KnowledgeBaseRetrievalResponse)
+            assert events[-1].response.references
+            assert events[-1].response.activity
+            assert events[-1].status_code in (200, 206)
+            assert (
+                sum(
+                    isinstance(event, (KnowledgeBaseResponseCompletedEvent, KnowledgeBaseStreamErrorEvent))
+                    for event in events
+                )
+                == 1
+            )

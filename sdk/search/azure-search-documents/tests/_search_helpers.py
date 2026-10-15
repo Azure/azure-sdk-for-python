@@ -39,6 +39,10 @@ if TYPE_CHECKING:
 
 KNOWLEDGE_BASE_DESCRIPTION = "Search knowledge base description"
 KNOWLEDGE_SOURCE_DESCRIPTION = "Search knowledge source description"
+KNOWLEDGE_BASE_DOCUMENTS = [
+    {"id": "hotel-1", "content": "Historic Harbor Hotel offers complimentary wireless internet and free parking."},
+    {"id": "hotel-2", "content": "Harbor Hotel Annex offers meeting rooms and complimentary wireless internet."},
+]
 SEARCH_RESOURCE_PREFIX = "search"
 SEMANTIC_CONFIGURATION_NAME = "default"
 
@@ -641,6 +645,10 @@ def knowledge_base_resources(
     try:
         index_create_attempted = True
         index_client.create_index(build_index(index_name, semantic=True))
+        if wait_for_active:
+            with make_search_client(endpoint, index_name, credential=credential) as search_client:
+                upload_documents(search_client, deepcopy(KNOWLEDGE_BASE_DOCUMENTS))
+                wait_for_document_count(test, search_client, len(KNOWLEDGE_BASE_DOCUMENTS))
         source_create_attempted = True
         created_source = index_client.create_knowledge_source(
             build_knowledge_source(index_name, knowledge_source_name, description=source_description)
@@ -654,6 +662,7 @@ def knowledge_base_resources(
             poll_until(
                 lambda: index_client.get_knowledge_source_status(knowledge_source_name),
                 predicate=lambda s: s.synchronization_status == "active",
+                interval=5.0 if test.is_live else 0,
             )
 
         ctx = SearchLiveContext(

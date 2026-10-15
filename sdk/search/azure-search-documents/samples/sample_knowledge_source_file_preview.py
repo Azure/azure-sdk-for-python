@@ -177,11 +177,14 @@ def main():  # pylint: disable=too-many-locals
         print("Deleted both uploaded files")
         # [END sample_knowledge_source_file_preview]
     finally:
-        cleanup_resources(
-            index_client,
-            knowledge_base_name=knowledge_base_name,
-            knowledge_source_name=knowledge_source_name,
-        )
+        try:
+            cleanup_resources(
+                index_client,
+                knowledge_base_name=knowledge_base_name,
+                knowledge_source_name=knowledge_source_name,
+            )
+        finally:
+            index_client.close()
 
 
 if __name__ == "__main__":

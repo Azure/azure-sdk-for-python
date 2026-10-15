@@ -2,15 +2,18 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Async unit tests for ``KnowledgeBaseRetrievalClient`` patched public behavior."""
+"""Async tests for the public knowledge base client and generated streaming integration."""
 
 import asyncio
+import datetime
 import json
 from types import SimpleNamespace
 from unittest import mock
 
 import pytest
+import pytest_asyncio
 from azure.core.credentials import AzureKeyCredential
+from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient
 
 from _capabilities import require_capability
 
@@ -21,256 +24,257 @@ AUDIENCE = "https://search.azure.com/"
 
 
 class _AsyncResponse:
-    def __init__(self):
+    status_code = 200
+    headers = {"Content-Type": "text/event-stream"}
+
+    def __init__(self, chunks, error=None):
+        self._chunks = chunks
+        self._error = error
         self.closed = False
+
+    async def iter_bytes(self):
+        if self._error is not None:
+            raise self._error
+        for chunk in self._chunks:
+            yield chunk
 
     async def close(self):
         self.closed = True
 
 
-class _AsyncRawStream:
-    def __init__(self, chunks, error=None):
-        self._chunks = iter(chunks)
-        self._error = error
-        self.closed = False
-
-    def __aiter__(self):
-        return self
-
-    async def __anext__(self):
-        if self._error is not None:
-            error = self._error
-            self._error = None
-            raise error
-        try:
-            return next(self._chunks)
-        except StopIteration as exc:
-            raise StopAsyncIteration from exc
-
-    async def aclose(self):
-        self.closed = True
-
-
 def _frame(event_type, payload):
-    return f"event: {event_type}\ndata: {json.dumps(payload)}\n\n".encode()
+    return f"event: {event_type}\ndata: {json.dumps(payload, ensure_ascii=False)}\n\n".encode()
+
+
+@pytest_asyncio.fixture
+async def client():
+    require_capability("azure.search.documents.knowledgebases.aio.KnowledgeBaseRetrievalClient.retrieve_stream")
+    async with KnowledgeBaseRetrievalClient(
+        ENDPOINT, AzureKeyCredential(KEY), knowledge_base_name=KNOWLEDGE_BASE_NAME
+    ) as retrieval_client:
+        yield retrieval_client
+
+
+async def _retrieve_stream(client, response, **kwargs):
+    from azure.search.documents.knowledgebases.models import KnowledgeBaseRetrievalRequest
+
+    with mock.patch.object(
+        client._client._pipeline, "run", new=mock.AsyncMock(return_value=SimpleNamespace(http_response=response))
+    ) as run:
+        stream = await client.retrieve_stream(KnowledgeBaseRetrievalRequest(), **kwargs)
+    return stream, run
 
 
 @pytest.mark.asyncio
 class TestKnowledgeBaseRetrievalClientConstructorAsync:
     async def test_constructor_translates_audience_to_credential_scope(self):
         require_capability("KnowledgeBaseRetrievalClient.aio")
-        from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient
-
-        client = KnowledgeBaseRetrievalClient(
+        async with KnowledgeBaseRetrievalClient(
             ENDPOINT,
             AzureKeyCredential(KEY),
             knowledge_base_name=KNOWLEDGE_BASE_NAME,
             audience=AUDIENCE,
-        )
-
-        assert client._config.endpoint == ENDPOINT
-        assert client._config.knowledge_base_name == KNOWLEDGE_BASE_NAME
-        assert client._config.credential_scopes == ["https://search.azure.com/.default"]
-        await client.close()
+        ) as client:
+            assert client._config.endpoint == ENDPOINT
+            assert client._config.knowledge_base_name == KNOWLEDGE_BASE_NAME
+            assert client._config.credential_scopes == ["https://search.azure.com/.default"]
 
 
 @pytest.mark.asyncio
-class TestKnowledgeBaseRetrievalStreamAsync:
-    async def test_retrieve_stream_rejects_work_iq_authorization_before_sending(self):
-        from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient
-        from azure.search.documents.knowledgebases.models import KnowledgeBaseRetrievalRequest
+class TestKnowledgeBaseRetrievalResourcesAsync:
+    @pytest.mark.parametrize("wait_for_active", [False, True])
+    async def test_retrieve_resources_seed_documents_only_when_requested(self, wait_for_active):
+        import _search_helpers_async as helpers
 
-        async with KnowledgeBaseRetrievalClient(
-            ENDPOINT, AzureKeyCredential(KEY), knowledge_base_name=KNOWLEDGE_BASE_NAME
-        ) as client:
-            with mock.patch(
-                "azure.search.documents.knowledgebases.aio._patch._KnowledgeBaseRetrievalClient.retrieve_stream"
-            ) as generated_retrieve_stream:
-                with pytest.raises(TypeError, match="query_work_iq_source_authorization"):
-                    await client.retrieve_stream(
-                        KnowledgeBaseRetrievalRequest(), query_work_iq_source_authorization="work-iq-token"
-                    )
+        test = SimpleNamespace(is_live=False, get_resource_name=lambda name: name)
+        index_client = mock.AsyncMock()
+        index_client.get_knowledge_source_status.return_value = SimpleNamespace(synchronization_status="active")
+        search_client = mock.AsyncMock()
+        search_client.__aenter__.return_value = search_client
+        search_client.index_documents.return_value = [SimpleNamespace(succeeded=True)]
+        search_client.get_document_count.return_value = len(helpers.KNOWLEDGE_BASE_DOCUMENTS)
 
-        generated_retrieve_stream.assert_not_awaited()
+        with mock.patch.object(helpers, "get_credential"), mock.patch.object(
+            helpers, "make_index_client", return_value=index_client
+        ), mock.patch.object(helpers, "make_search_client", return_value=search_client) as create_search:
+            async with helpers.knowledge_base_resources(test, ENDPOINT, wait_for_active=wait_for_active) as resources:
+                assert resources.index_name == "search-index"
+                if wait_for_active:
+                    batch = search_client.index_documents.call_args.args[0]
+                    assert [action["id"] for action in batch.actions] == ["hotel-1", "hotel-2"]
+                    assert all("wireless internet" in action["content"] for action in batch.actions)
+                    search_client.get_document_count.assert_awaited_once()
+                    index_client.get_knowledge_source_status.assert_awaited_once()
+                else:
+                    create_search.assert_not_called()
+                    index_client.get_knowledge_source_status.assert_not_awaited()
 
-    async def test_retrieve_stream_forwards_work_iq_authorization_when_available(self):
-        require_capability(
-            "azure.search.documents.knowledgebases.aio.KnowledgeBaseRetrievalClient.retrieve_stream."
-            "query_work_iq_source_authorization"
+        index_client.delete_knowledge_base.assert_awaited_once_with("search-base")
+        index_client.delete_knowledge_source.assert_awaited_once_with("search-source")
+        index_client.delete_index.assert_awaited_once_with("search-index")
+        index_client.close.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+class TestKnowledgeBaseRetrievalClientStreamingAsync:
+    async def test_retrieve_stream_inherits_generated_operation(self, client):
+        from azure.search.documents.knowledgebases.aio._operations._operations import (
+            _KnowledgeBaseRetrievalClientOperationsMixin,
         )
-        from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient
-        from azure.search.documents.knowledgebases.models import KnowledgeBaseRetrievalRequest
 
-        async with KnowledgeBaseRetrievalClient(
-            ENDPOINT, AzureKeyCredential(KEY), knowledge_base_name=KNOWLEDGE_BASE_NAME
-        ) as client:
-            with mock.patch(
-                "azure.search.documents.knowledgebases.aio._patch._KnowledgeBaseRetrievalClient.retrieve_stream",
-                return_value=mock.sentinel.stream,
-            ) as generated_retrieve_stream:
-                stream = await client.retrieve_stream(
-                    KnowledgeBaseRetrievalRequest(), query_work_iq_source_authorization="work-iq-token"
-                )
+        assert "retrieve_stream" not in KnowledgeBaseRetrievalClient.__dict__
+        assert client.retrieve_stream.__func__ is _KnowledgeBaseRetrievalClientOperationsMixin.retrieve_stream
 
-        assert stream is mock.sentinel.stream
-        assert generated_retrieve_stream.call_args.kwargs["query_work_iq_source_authorization"] == "work-iq-token"
-
-    async def test_stream_deserializes_all_known_event_types(self):
-        require_capability("AsyncKnowledgeBaseRetrievalStream", "KnowledgeBaseRetrievalEvent")
-        from azure.search.documents.knowledgebases.aio import AsyncKnowledgeBaseRetrievalStream
+    @pytest.mark.parametrize("status_code", [200, 206, "error"])
+    async def test_retrieve_stream_deserializes_lifecycle_payloads(self, client, status_code):
         from azure.search.documents.knowledgebases.models import (
             KnowledgeBaseActivityStartedEvent,
             KnowledgeBaseAnswerCompletedEvent,
+            KnowledgeBaseResponseCompletedEvent,
+            KnowledgeBaseRetrievalResponse,
             KnowledgeBaseRetrievalStartedEvent,
             KnowledgeBaseSearchIndexActivityRecord,
             KnowledgeBaseSearchIndexReference,
             KnowledgeBaseStreamErrorEvent,
         )
 
-        raw_stream = _AsyncRawStream(
-            [
+        chunks = [
+            _frame(
+                "retrieval.started",
+                {
+                    "requestId": "request-id",
+                    "knowledgeBaseName": KNOWLEDGE_BASE_NAME,
+                    "outputMode": "extractiveData",
+                    "reasoningEffort": {"kind": "minimal"},
+                },
+            ),
+            _frame("activity.started", {"id": 1, "type": "searchIndex", "startedAt": "2026-10-01T00:00:00Z"}),
+            _frame("activity.completed", {"id": 1, "type": "searchIndex", "elapsedMs": 12}),
+            _frame(
+                "answer.completed",
+                {"messageIndex": 0, "message": {"role": "assistant", "content": [{"type": "text", "text": "answer"}]}},
+            ),
+            _frame("references.completed", [{"type": "searchIndex", "id": "doc-1", "activitySource": 1}]),
+        ]
+        if status_code == "error":
+            chunks.append(
                 _frame(
-                    "retrieval.started",
+                    "error",
                     {
-                        "requestId": "request-id",
-                        "knowledgeBaseName": KNOWLEDGE_BASE_NAME,
-                        "outputMode": "extractiveData",
-                        "reasoningEffort": {"kind": "minimal"},
+                        "error": {"code": "Failed", "message": "retrieval failed"},
+                        "activity": [{"id": 1, "type": "searchIndex"}],
                     },
-                ),
-                _frame("activity.started", {"id": 1, "type": "searchIndex", "startedAt": "2026-08-10T00:00:00Z"}),
-                _frame("activity.completed", {"id": 1, "type": "searchIndex"}),
-                _frame("answer.completed", {"messageIndex": 0, "message": {"role": "assistant", "content": []}}),
-                _frame("references.completed", [{"type": "searchIndex", "id": "doc-1", "activitySource": 1}]),
-                _frame("error", {"error": {"code": "Failed", "message": "retrieval failed"}}),
-            ]
-        )
-        stream = AsyncKnowledgeBaseRetrievalStream(response=_AsyncResponse(), raw_stream=raw_stream)
-        events = [event async for event in stream]
-
-        assert isinstance(events[0].data, KnowledgeBaseRetrievalStartedEvent)
-        assert isinstance(events[1].data, KnowledgeBaseActivityStartedEvent)
-        assert isinstance(events[2].data, KnowledgeBaseSearchIndexActivityRecord)
-        assert isinstance(events[3].data, KnowledgeBaseAnswerCompletedEvent)
-        assert isinstance(events[4].data[0], KnowledgeBaseSearchIndexReference)
-        assert isinstance(events[5].data, KnowledgeBaseStreamErrorEvent)
-        assert AsyncKnowledgeBaseRetrievalStream.__module__ == "azure.search.documents.knowledgebases.aio"
-
-    async def test_stream_handles_fragmented_events_and_terminal_cleanup(self):
-        require_capability("AsyncKnowledgeBaseRetrievalStream", "KnowledgeBaseRetrievalEvent")
-        from azure.search.documents.knowledgebases.aio import AsyncKnowledgeBaseRetrievalStream
-        from azure.search.documents.knowledgebases.models import KnowledgeBaseResponseCompletedEvent
-
-        payload = (
-            b": keep-alive\r\n"
-            b"event: response.completed\r\n"
-            b'data: {"statusCode":200,"response":{}}\r\n\r\nignored'
-        )
-        raw_stream = _AsyncRawStream([payload[index : index + 2] for index in range(0, len(payload), 2)])
-        response = _AsyncResponse()
-        stream = AsyncKnowledgeBaseRetrievalStream(response=response, raw_stream=raw_stream)
-
-        event = await stream.__anext__()
-
-        assert event.event_type == "response.completed"
-        assert isinstance(event.data, KnowledgeBaseResponseCompletedEvent)
-        assert response.closed
-        assert raw_stream.closed
-        with pytest.raises(StopAsyncIteration):
-            await stream.__anext__()
-
-    async def test_stream_closes_on_cancellation_malformed_json_and_context_exit(self):
-        from azure.search.documents.knowledgebases.aio import AsyncKnowledgeBaseRetrievalStream
-
-        response = _AsyncResponse()
-        raw_stream = _AsyncRawStream([], error=asyncio.CancelledError())
-        stream = AsyncKnowledgeBaseRetrievalStream(response=response, raw_stream=raw_stream)
-        with pytest.raises(asyncio.CancelledError):
-            await stream.__anext__()
-        assert response.closed
-        assert raw_stream.closed
-
-        response = _AsyncResponse()
-        raw_stream = _AsyncRawStream([b"event: error\ndata: {invalid}\n\n"])
-        stream = AsyncKnowledgeBaseRetrievalStream(response=response, raw_stream=raw_stream)
-        with pytest.raises(json.JSONDecodeError):
-            await stream.__anext__()
-        assert response.closed
-        assert raw_stream.closed
-
-        response = _AsyncResponse()
-        raw_stream = _AsyncRawStream([])
-        async with AsyncKnowledgeBaseRetrievalStream(response=response, raw_stream=raw_stream):
-            pass
-        assert response.closed
-        assert raw_stream.closed
-
-    async def test_client_wraps_generated_stream_and_composes_cls(self):
-        require_capability(
-            "azure.search.documents.knowledgebases.aio.KnowledgeBaseRetrievalClient.retrieve_stream",
-            "AsyncKnowledgeBaseRetrievalStream",
-        )
-        from azure.search.documents.knowledgebases.aio import (
-            AsyncKnowledgeBaseRetrievalStream,
-            KnowledgeBaseRetrievalClient,
-        )
-        from azure.search.documents.knowledgebases.models import KnowledgeBaseRetrievalRequest
-
-        response = _AsyncResponse()
-        raw_stream = _AsyncRawStream([_frame("response.completed", {"statusCode": 200, "response": {}})])
-        pipeline_response = SimpleNamespace(http_response=response)
-        generated_kwargs = {}
-
-        async def generated_retrieve_stream(_self, _request, **kwargs):
-            generated_kwargs.update(kwargs)
-            return kwargs["cls"](pipeline_response, raw_stream, {"content-type": "text/event-stream"})
-
-        client = KnowledgeBaseRetrievalClient(
-            ENDPOINT, AzureKeyCredential(KEY), knowledge_base_name=KNOWLEDGE_BASE_NAME
-        )
-        with mock.patch(
-            "azure.search.documents.knowledgebases.aio._patch._KnowledgeBaseRetrievalClient.retrieve_stream",
-            new=generated_retrieve_stream,
-        ):
-            stream = await client.retrieve_stream(
-                KnowledgeBaseRetrievalRequest(),
-                query_source_authorization="query-token",
+                )
             )
-        assert isinstance(stream, AsyncKnowledgeBaseRetrievalStream)
-        assert generated_kwargs["query_source_authorization"] == "query-token"
-        await stream.close()
+        else:
+            chunks.append(_frame("response.completed", {"statusCode": status_code, "response": {"references": []}}))
+        chunks.append(b"event: unexpected\ndata: {invalid}\n\n")
+        response = _AsyncResponse(chunks)
+        stream, _ = await _retrieve_stream(client, response)
 
+        async with stream:
+            events = [event async for event in stream]
+
+        assert len(events) == 6
+        assert isinstance(events[0], KnowledgeBaseRetrievalStartedEvent)
+        assert events[0].request_id == "request-id"
+        assert events[0].knowledge_base_name == KNOWLEDGE_BASE_NAME
+        assert events[0].output_mode == "extractiveData"
+        assert events[0].reasoning_effort.kind == "minimal"
+        assert isinstance(events[1], KnowledgeBaseActivityStartedEvent)
+        assert events[1].started_at == datetime.datetime(2026, 10, 1, tzinfo=datetime.timezone.utc)
+        assert isinstance(events[2], KnowledgeBaseSearchIndexActivityRecord)
+        assert events[2].elapsed_ms == 12
+        assert isinstance(events[3], KnowledgeBaseAnswerCompletedEvent)
+        assert events[3].message_index == 0
+        assert events[3].message.content[0].text == "answer"
+        assert isinstance(events[4][0], KnowledgeBaseSearchIndexReference)
+        assert events[4][0].id == "doc-1"
+        if status_code == "error":
+            assert isinstance(events[5], KnowledgeBaseStreamErrorEvent)
+            assert events[5].error.code == "Failed"
+            assert isinstance(events[5].activity[0], KnowledgeBaseSearchIndexActivityRecord)
+        else:
+            assert isinstance(events[5], KnowledgeBaseResponseCompletedEvent)
+            assert events[5].status_code == status_code
+            assert isinstance(events[5].response, KnowledgeBaseRetrievalResponse)
+        assert response.closed
+
+    @pytest.mark.parametrize("chunk_size", [1, 2, 5, 512])
+    async def test_retrieve_stream_handles_fragmented_utf8_and_sse_framing(self, client, chunk_size):
+        payload = (
+            b"\xef\xbb\xbf: keep-alive\r\n"
+            b"event: answer.completed\r"
+            b'data: {"messageIndex":0,\r\n'
+            b'data: "message":{"role":"assistant","content":[{"type":"text","text":"caf\xc3\xa9"}]}}\r\n\r\n'
+            + _frame("response.completed", {"statusCode": 200, "response": {}})
+        )
+        response = _AsyncResponse([payload[index : index + chunk_size] for index in range(0, len(payload), chunk_size)])
+        stream, _ = await _retrieve_stream(client, response)
+        async with stream:
+            events = [event async for event in stream]
+        assert events[0].message.content[0].text == "caf\u00e9"
+        assert len(events) == 2
+        assert response.closed
+
+    @pytest.mark.parametrize(
+        "payload,exception",
+        [
+            (b"event: retrieval.started\ndata: {invalid}\n\n", json.JSONDecodeError),
+            (_frame("future.event", {"message": "value"}), ValueError),
+        ],
+    )
+    async def test_retrieve_stream_closes_on_invalid_events(self, client, payload, exception):
+        response = _AsyncResponse([payload])
+        stream, _ = await _retrieve_stream(client, response)
+        with pytest.raises(exception):
+            await anext(stream)
+        assert response.closed
+
+    async def test_retrieve_stream_closes_on_cancellation(self, client):
+        response = _AsyncResponse([], error=asyncio.CancelledError())
+        stream, _ = await _retrieve_stream(client, response)
+        with pytest.raises(asyncio.CancelledError):
+            await anext(stream)
+        assert response.closed
+
+    @pytest.mark.parametrize("consume", [False, True])
+    async def test_retrieve_stream_closes_on_explicit_close_and_context_exit(self, client, consume):
+        response = _AsyncResponse([_frame("answer.completed", {"messageIndex": 0, "message": {"content": []}})])
+        stream, _ = await _retrieve_stream(client, response)
+        async with stream:
+            if consume:
+                await anext(stream)
+        await stream.close()
+        assert response.closed
+
+    async def test_retrieve_stream_forwards_request_options(self, client):
+        response = _AsyncResponse([])
+        stream, run = await _retrieve_stream(
+            client, response, query_source_authorization="query-token", headers={"x-custom": "value"}
+        )
+        await stream.close()
+        request = run.call_args.args[0]
+        assert request.method == "POST"
+        assert "/knowledgebases('hotel-kb')/retrieve" in request.url
+        assert "api-version=2026-10-01" in request.url
+        assert request.headers["Accept"] == "text/event-stream"
+        assert request.headers["x-ms-query-source-authorization"] == "query-token"
+        assert request.headers["x-custom"] == "value"
+        assert run.call_args.kwargs["stream"] is True
+
+    async def test_retrieve_stream_passes_native_stream_to_cls(self, client):
+        response = _AsyncResponse([_frame("response.completed", {"statusCode": 206, "response": {}})])
         observed = {}
 
-        def custom_cls(received_pipeline_response, typed_stream, headers):
-            observed.update(pipeline_response=received_pipeline_response, stream=typed_stream, headers=headers)
-            return "custom-result"
+        def custom_cls(pipeline_response, stream, headers):
+            observed.update(pipeline_response=pipeline_response, stream=stream, headers=headers)
+            return mock.sentinel.result
 
-        response = _AsyncResponse()
-        raw_stream = _AsyncRawStream([])
-        pipeline_response = SimpleNamespace(http_response=response)
-        with mock.patch(
-            "azure.search.documents.knowledgebases.aio._patch._KnowledgeBaseRetrievalClient.retrieve_stream",
-            new=generated_retrieve_stream,
-        ):
-            result = await client.retrieve_stream(KnowledgeBaseRetrievalRequest(), cls=custom_cls)
-        assert result == "custom-result"
-        assert isinstance(observed["stream"], AsyncKnowledgeBaseRetrievalStream)
-        await observed["stream"].close()
-
-        response = _AsyncResponse()
-        raw_stream = _AsyncRawStream([])
-        pipeline_response = SimpleNamespace(http_response=response)
-
-        def raising_cls(_pipeline_response, _typed_stream, _headers):
-            raise RuntimeError("custom callback failed")
-
-        with mock.patch(
-            "azure.search.documents.knowledgebases.aio._patch._KnowledgeBaseRetrievalClient.retrieve_stream",
-            new=generated_retrieve_stream,
-        ):
-            with pytest.raises(RuntimeError, match="custom callback failed"):
-                await client.retrieve_stream(KnowledgeBaseRetrievalRequest(), cls=raising_cls)
+        result, _ = await _retrieve_stream(client, response, cls=custom_cls)
+        assert result is mock.sentinel.result
+        assert observed["pipeline_response"].http_response is response
+        async with observed["stream"] as stream:
+            payloads = [event async for event in stream]
+        assert payloads[0].status_code == 206
         assert response.closed
-        assert raw_stream.closed
-        await client.close()

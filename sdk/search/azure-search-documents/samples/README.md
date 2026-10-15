@@ -10,6 +10,8 @@ products:
 # Azure AI Search Client Library Samples for Python
 
 These samples demonstrate common scenarios and operations using the Azure AI Search client library.
+They use the client's default `2026-10-01` GA API version, including custom HTTP requests.
+Published filenames containing `_preview` are retained for compatibility; their scenarios use the GA surface.
 
 ## Prerequisites
 
@@ -69,9 +71,33 @@ pip install azure-search-documents
 
 These samples target the `2026-10-01` GA API. Preview-only scenarios are not included in this branch.
 
+The agentic retrieval pair demonstrates both `retrieve` and native `retrieve_stream`.
+Streams yield typed payload models (or lists of reference models), not event-name/data wrappers.
+The client and stream are closed using context managers, including when a streamed error occurs.
+The semantic search pair uses GA fuzzy Lucene matching instead of the preview-only query speller;
+existing snippet tags are retained.
+
 * Knowledge base CRUD and cursor pagination: [sample_knowledge_base_crud.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_base_crud.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_base_crud_async.py))
 * Knowledge source CRUD, private Blob ingestion, analyzer verification, and cursor pagination: [sample_knowledge_source_crud.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_crud.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_crud_async.py))
 * File knowledge source lifecycle with relative-path metadata, multipart update, prefix paging, deletion, and service-selected modes: [sample_knowledge_source_file_preview.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_file_preview.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_file_preview_async.py))
+
+## Running samples and preparing recordings
+
+Samples make live calls and may create, update, or delete resources. Use a dedicated test service
+and the prerequisites listed in each sample. The legacy indexer-workflow sample also requires
+hotel JSON-array blobs in `hotels-sample-container` and a region supporting its enrichment skills.
+Knowledge retrieval requires a populated index with a semantic configuration. File ingestion
+additionally requires the embedding deployment and service permissions described in that sample.
+Optional private-Blob ingestion requires its additional identity, network, storage, and AI Services
+configuration; its returned ingestion settings are verified through the public `as_dict()` wire
+representation rather than relying on cross-namespace model materialization.
+
+Running a sample does **not** create test-proxy recordings. Use the corresponding recorded tests
+and the [package recording guide](../.github/skills/azure-search-documents/references/testing.md).
+That guide describes the environment template, serial recording/playback steps, and asset updates.
+The test preparer deletes all Search resources on the configured service before each live test:
+never point it at a shared or production service. Indexer permission-resync recording remains
+blocked until a permission-ingestion data-source scenario is available.
 
 ## Next steps
 

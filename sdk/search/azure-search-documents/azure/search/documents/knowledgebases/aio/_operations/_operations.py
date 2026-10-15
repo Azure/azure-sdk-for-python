@@ -30,7 +30,7 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models2, types as _types_models2
 from .... import models as _models3
 from ...._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
-from ...._utils.streaming_base import AsyncStream, _read_sse_response_async, _update_sse_request_headers
+from ...._utils.streaming_base import AsyncStream
 from ...._utils.utils import ClientMixinABC
 from ...._validation import api_version_validation
 from ..._operations._operations import (
@@ -405,7 +405,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         },
         api_versions_list=["2026-08-01-preview", "2026-10-01"],
     )
-    async def retrieve_stream(
+    async def retrieve_stream(  # pylint: disable=too-many-statements
         self,
         retrieval_request: Union[
             _models2.KnowledgeBaseRetrievalRequest, _types_models2.KnowledgeBaseRetrievalRequest, IO[bytes]
@@ -483,7 +483,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
             ]
         ] = kwargs.pop("cls", None)
 
-        _last_event_id = kwargs.pop("last_event_id", None)
         content_type = content_type or "application/json"
         _content = None
         if isinstance(retrieval_request, (IOBase, bytes)):
@@ -504,9 +503,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        if _last_event_id is not None:
-            _request.headers["Last-Event-ID"] = _last_event_id
 
         _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", True)
@@ -555,24 +551,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
                 raise ValueError(f"Unknown SSE event type: {_event.event!r}")
             return deserialized
 
-        async def _reconnect(_last_event_id, _reconnect_delay):
-            _transport: Any = pipeline_response.context.transport
-            await _transport.sleep(_reconnect_delay)
-            _update_sse_request_headers(_request, _last_event_id)
-            _reconnect_response = await self._client.send_request(_request, stream=True, **kwargs)
-            if _reconnect_response.status_code not in [200, 204]:
-                await _read_sse_response_async(_reconnect_response)
-                map_error(
-                    status_code=_reconnect_response.status_code, response=_reconnect_response, error_map=error_map
-                )
-                error = _failsafe_deserialize(
-                    _models3.ErrorResponse,
-                    _reconnect_response,
-                )
-                raise HttpResponseError(response=_reconnect_response, model=error)
-            return _reconnect_response
-
-        deserialized: AsyncStream[Union[_models2.KnowledgeBaseRetrievalStartedEvent, _models2.KnowledgeBaseActivityStartedEvent, _models2.KnowledgeBaseActivityRecord, _models2.KnowledgeBaseAnswerCompletedEvent, list[_models2.KnowledgeBaseReference], _models2.KnowledgeBaseStreamErrorEvent, _models2.KnowledgeBaseResponseCompletedEvent]] = AsyncStream(response=response, deserialization_callback=_callback, terminal_event_names=["error", "response.completed"], last_event_id=_last_event_id, reconnect_callback=_reconnect)  # type: ignore
+        deserialized: AsyncStream[Union[_models2.KnowledgeBaseRetrievalStartedEvent, _models2.KnowledgeBaseActivityStartedEvent, _models2.KnowledgeBaseActivityRecord, _models2.KnowledgeBaseAnswerCompletedEvent, list[_models2.KnowledgeBaseReference], _models2.KnowledgeBaseStreamErrorEvent, _models2.KnowledgeBaseResponseCompletedEvent]] = AsyncStream(response=response, deserialization_callback=_callback, terminal_event_names=["error", "response.completed"])  # type: ignore
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
         return deserialized

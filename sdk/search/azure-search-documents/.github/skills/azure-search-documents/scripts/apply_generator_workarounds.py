@@ -4,9 +4,10 @@
 from __future__ import annotations
 
 import argparse
+import ast
 from dataclasses import dataclass
 from pathlib import Path
-
+import textwrap
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[4]
 
@@ -173,6 +174,45 @@ REPLACEMENTS = (
 )
 
 
+def build_sphinx_type_section(namespace: str, source: str) -> str:
+    """Document TypedDict wire keys as variables rather than invalid Python attributes."""
+    wire_types: dict[str, list[str]] = {}
+    for node in ast.parse(source).body:
+        if (
+            isinstance(node, ast.Assign)
+            and len(node.targets) == 1
+            and isinstance(node.targets[0], ast.Name)
+            and isinstance(node.value, ast.Call)
+            and isinstance(node.value.func, ast.Name)
+            and node.value.func.id == "TypedDict"
+            and len(node.value.args) >= 2
+            and isinstance(node.value.args[1], ast.Dict)
+        ):
+            keys = [
+                key.value
+                for key in node.value.args[1].keys
+                if isinstance(key, ast.Constant) and isinstance(key.value, str) and not key.value.isidentifier()
+            ]
+            if keys:
+                wire_types[node.targets[0].id] = sorted(keys)
+
+    options = "   :inherited-members:\n   :members:\n   :show-inheritance:\n   :undoc-members:\n"
+    section = f".. automodule:: {namespace}\n{options}"
+    if wire_types:
+        section += (
+            textwrap.fill(
+                ", ".join(sorted(wire_types)),
+                width=120,
+                initial_indent="   :exclude-members: ",
+                subsequent_indent="      ",
+            )
+            + "\n"
+        )
+    for name, keys in sorted(wire_types.items()):
+        section += f"\n.. autoclass:: {namespace}.{name}\n{options}   :exclude-members: {', '.join(keys)}\n"
+    return section
+
+
 def update_sources(*, check: bool) -> int:
     sources: dict[Path, str] = {}
     pending: list[str] = []
@@ -195,6 +235,19 @@ def update_sources(*, check: bool) -> int:
                 f"Unexpected emitter output in {replacement.path} while attempting to "
                 f"{replacement.description}; expected exactly one generated or patched snippet"
             )
+
+    for namespace in ("azure.search.documents", "azure.search.documents.indexes"):
+        path = PACKAGE_ROOT / "doc" / f"{namespace}.rst"
+        source = path.read_text(encoding="utf-8")
+        marker = f".. automodule:: {namespace}.types\n"
+        if source.count(marker) != 1:
+            raise RuntimeError(f"Expected exactly one input-type documentation section in {path}")
+        prefix, _ = source.split(marker, 1)
+        type_path = PACKAGE_ROOT.joinpath(*namespace.split("."), "types.py")
+        updated = prefix + build_sphinx_type_section(f"{namespace}.types", type_path.read_text(encoding="utf-8"))
+        if updated != source:
+            sources[path] = updated
+            pending.append(f"refresh package-local TypedDict documentation for {namespace}.types")
 
     if check:
         if pending:

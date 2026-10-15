@@ -146,6 +146,8 @@ def upload_documents():
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
     documents = load_documents()
     result = search_client.upload_documents(documents=documents)
+    if not all(item.succeeded for item in result):
+        raise RuntimeError("Some vector documents could not be uploaded.")
     print(f"Uploaded: {len(result)} documents to index '{index_name}'")
 
     # Wait for indexing to complete so the first query returns hits.
@@ -155,6 +157,8 @@ def upload_documents():
         if search_client.get_document_count() >= expected:
             break
         time.sleep(2)
+    else:
+        raise TimeoutError("Vector documents were not queryable within 60 seconds.")
     print(f"Indexed: {search_client.get_document_count()} documents are queryable")
 
 

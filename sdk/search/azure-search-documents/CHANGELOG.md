@@ -91,9 +91,41 @@
 - Preview-only MCP server, Fabric, Work IQ, and remote SharePoint knowledge sources are not included.
   Knowledge base tags, persisted retrieval defaults, and query hints are also not included.
 - Removed `ApiVersion.V2026_08_01_PREVIEW` from this GA build.
+- Knowledge base `retrieve_stream` now uses the emitter-generated `Stream` and `AsyncStream`
+  implementations. Iteration yields typed payload models (or a list of references) directly,
+  instead of `KnowledgeBaseRetrievalEvent` wrappers with `event_type` and `data`.
+  The handwritten `KnowledgeBaseRetrievalEvent`, `KnowledgeBaseRetrievalEventData`,
+  `KnowledgeBaseRetrievalStream`, and `AsyncKnowledgeBaseRetrievalStream` exports are removed.
+  Unknown SSE event names now raise `ValueError` rather than yielding an untyped payload.
 
 ### Bugs Fixed
 
+- Search metadata accessors now preserve continuation tokens, reuse a prefetched first page,
+  and retain first-page metadata after iteration.
+- Semantic answer and caption options now serialize enum wire values correctly, including
+  threshold-only answer options.
+- Buffered senders now preserve audience, credential scopes, API version, transport, and policy
+  options for document requests and schema lookup without closing a shared transport prematurely.
+- Document indexing now accepts wire-shaped batches on the 413 splitting path and merges caller
+  error mappings without losing them during retries.
+- Public query, resource operation, and customized model signatures now include supported generated
+  input types without removing existing model or mapping forms.
+- Resource listing wrappers omit unset filtering and paging options so older API versions do not
+  reject options the caller did not request.
+- Restored generated `AzureOpenAIModelName` members `GPT54`, `GPT55`, `GPT56_SOL`, `GPT56_TERRA`,
+  and `GPT56_LUNA` while preserving the existing names, aliases, and values.
+- Fixed strict Sphinx documentation builds for TypedDict wire keys such as `@odata.type`,
+  `@odata.etag`, and `@search.action` without changing their input schemas.
+- Document batch action replacement, dequeue, and enqueue now remain consistent with the serialized
+  document actions.
+- Buffered senders now requeue every action after a request failure, including when the error is
+  re-raised. Asynchronous auto-flush no longer cancels its own indexing request.
+- Resource deletes by name now preserve the requested match condition and caller-supplied ETag,
+  matching model-based deletes in both synchronous and asynchronous clients.
+- Field builders now forward additional supported field properties while preserving their existing
+  defaults, selected field types, and `hidden` behavior.
+- Removed obsolete SSE overrides that attempted to decode already-deserialized streaming models
+  as bytes, causing both synchronous and asynchronous retrieval streams to fail.
 - Search continuation tokens now use the client's configured API version rather than a hardcoded
   preview version.
 - Index list projections preserve SharePoint connector app registration settings.
@@ -102,7 +134,8 @@
 
 ### Other Changes
 
-- Updated `tsp-location.yaml` to spec commit `198fc02e732431e0fb35832cb9f004c79da0f59e`.
+- Regenerated with Python emitter `0.63.10` and spec commit
+  `f08ada2d877f01348250c78e4eaafe67af9b7c4b`.
 - Dropped Python 3.9 support. Python 3.10 or later is now required.
 - Added Python 3.14 support.
 - Removed unsupported preview sample scenarios from this GA branch.

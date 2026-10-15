@@ -9424,15 +9424,35 @@ namespace azure.search.documents.knowledgebases
                 **kwargs: Any
             ) -> KnowledgeBaseRetrievalResponse: ...
 
-        @distributed_trace
+        @overload
         def retrieve_stream(
                 self, 
-                retrieval_request: Union[KnowledgeBaseRetrievalRequest, dict[str, Any], IO[bytes]], 
+                retrieval_request: KnowledgeBaseRetrievalRequest, 
                 *, 
                 content_type: str = "application/json", 
                 query_source_authorization: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> KnowledgeBaseRetrievalStream: ...
+            ) -> Stream[Union[KnowledgeBaseRetrievalStartedEvent, KnowledgeBaseActivityStartedEvent, KnowledgeBaseActivityRecord, KnowledgeBaseAnswerCompletedEvent, list[KnowledgeBaseReference], KnowledgeBaseStreamErrorEvent, KnowledgeBaseResponseCompletedEvent]]: ...
+
+        @overload
+        def retrieve_stream(
+                self, 
+                retrieval_request: KnowledgeBaseRetrievalRequest, 
+                *, 
+                content_type: str = "application/json", 
+                query_source_authorization: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> Stream[Union[KnowledgeBaseRetrievalStartedEvent, KnowledgeBaseActivityStartedEvent, KnowledgeBaseActivityRecord, KnowledgeBaseAnswerCompletedEvent, list[KnowledgeBaseReference], KnowledgeBaseStreamErrorEvent, KnowledgeBaseResponseCompletedEvent]]: ...
+
+        @overload
+        def retrieve_stream(
+                self, 
+                retrieval_request: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                query_source_authorization: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> Stream[Union[KnowledgeBaseRetrievalStartedEvent, KnowledgeBaseActivityStartedEvent, KnowledgeBaseActivityRecord, KnowledgeBaseAnswerCompletedEvent, list[KnowledgeBaseReference], KnowledgeBaseStreamErrorEvent, KnowledgeBaseResponseCompletedEvent]]: ...
 
         def send_request(
                 self, 
@@ -9443,44 +9463,7 @@ namespace azure.search.documents.knowledgebases
             ) -> HttpResponse: ...
 
 
-    class azure.search.documents.knowledgebases.KnowledgeBaseRetrievalEvent:
-        data: Optional[Union[KnowledgeBaseRetrievalStartedEvent, KnowledgeBaseActivityStartedEvent, KnowledgeBaseActivityRecord, KnowledgeBaseAnswerCompletedEvent, list[KnowledgeBaseReference], KnowledgeBaseStreamErrorEvent, KnowledgeBaseResponseCompletedEvent, dict[str, Any], list[Any], str, int, float, bool]]
-        event_type: str
-
-        def __init__(
-                self, 
-                event_type: str, 
-                data: KnowledgeBaseRetrievalEventData
-            ) -> None: ...
-
-        def __repr__(self) -> str: ...
-
-
-    class azure.search.documents.knowledgebases.KnowledgeBaseRetrievalStream(Iterator[KnowledgeBaseRetrievalEvent]): implements ContextManager , Iterator 
-
-        def __init__(
-                self, 
-                *, 
-                raw_stream: Iterator[bytes], 
-                response: Any
-            ) -> None: ...
-
-        def close(self) -> None: ...
-
-
 namespace azure.search.documents.knowledgebases.aio
-
-    class azure.search.documents.knowledgebases.aio.AsyncKnowledgeBaseRetrievalStream(AsyncIterator[KnowledgeBaseRetrievalEvent]): implements AsyncContextManager , AsyncIterable , AsyncIterator 
-
-        def __init__(
-                self, 
-                *, 
-                raw_stream: AsyncIterator[bytes], 
-                response: Any
-            ) -> None: ...
-
-        async def close(self) -> None: ...
-
 
     class azure.search.documents.knowledgebases.aio.KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClient): implements AsyncContextManager 
 
@@ -9526,15 +9509,35 @@ namespace azure.search.documents.knowledgebases.aio
                 **kwargs: Any
             ) -> KnowledgeBaseRetrievalResponse: ...
 
-        @distributed_trace_async
+        @overload
         async def retrieve_stream(
                 self, 
-                retrieval_request: Union[KnowledgeBaseRetrievalRequest, dict[str, Any], IO[bytes]], 
+                retrieval_request: KnowledgeBaseRetrievalRequest, 
                 *, 
                 content_type: str = "application/json", 
                 query_source_authorization: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncKnowledgeBaseRetrievalStream: ...
+            ) -> AsyncStream[Union[KnowledgeBaseRetrievalStartedEvent, KnowledgeBaseActivityStartedEvent, KnowledgeBaseActivityRecord, KnowledgeBaseAnswerCompletedEvent, list[KnowledgeBaseReference], KnowledgeBaseStreamErrorEvent, KnowledgeBaseResponseCompletedEvent]]: ...
+
+        @overload
+        async def retrieve_stream(
+                self, 
+                retrieval_request: KnowledgeBaseRetrievalRequest, 
+                *, 
+                content_type: str = "application/json", 
+                query_source_authorization: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncStream[Union[KnowledgeBaseRetrievalStartedEvent, KnowledgeBaseActivityStartedEvent, KnowledgeBaseActivityRecord, KnowledgeBaseAnswerCompletedEvent, list[KnowledgeBaseReference], KnowledgeBaseStreamErrorEvent, KnowledgeBaseResponseCompletedEvent]]: ...
+
+        @overload
+        async def retrieve_stream(
+                self, 
+                retrieval_request: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                query_source_authorization: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncStream[Union[KnowledgeBaseRetrievalStartedEvent, KnowledgeBaseActivityStartedEvent, KnowledgeBaseActivityRecord, KnowledgeBaseAnswerCompletedEvent, list[KnowledgeBaseReference], KnowledgeBaseStreamErrorEvent, KnowledgeBaseResponseCompletedEvent]]: ...
 
         def send_request(
                 self, 
@@ -9543,19 +9546,6 @@ namespace azure.search.documents.knowledgebases.aio
                 stream: bool = False, 
                 **kwargs: Any
             ) -> Awaitable[AsyncHttpResponse]: ...
-
-
-    class azure.search.documents.knowledgebases.aio.KnowledgeBaseRetrievalEvent:
-        data: Optional[Union[KnowledgeBaseRetrievalStartedEvent, KnowledgeBaseActivityStartedEvent, KnowledgeBaseActivityRecord, KnowledgeBaseAnswerCompletedEvent, list[KnowledgeBaseReference], KnowledgeBaseStreamErrorEvent, KnowledgeBaseResponseCompletedEvent, dict[str, Any], list[Any], str, int, float, bool]]
-        event_type: str
-
-        def __init__(
-                self, 
-                event_type: str, 
-                data: KnowledgeBaseRetrievalEventData
-            ) -> None: ...
-
-        def __repr__(self) -> str: ...
 
 
 namespace azure.search.documents.knowledgebases.models

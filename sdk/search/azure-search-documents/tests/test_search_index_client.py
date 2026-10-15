@@ -10,6 +10,7 @@ from unittest import mock
 
 import pytest
 
+from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
 from azure.core.paging import ItemPaged
 
@@ -20,6 +21,53 @@ from _capabilities import require_capability
 
 ENDPOINT = "https://my-search-service.search.windows.net"
 KEY = "fake-api-key"
+
+_DELETE_RESOURCES = [
+    ("delete_index", "SearchIndex"),
+    ("delete_synonym_map", "SynonymMap"),
+    ("delete_alias", "SearchAlias"),
+    ("delete_knowledge_base", "KnowledgeBase"),
+    ("delete_knowledge_source", "SearchIndexKnowledgeSource"),
+]
+_DELETE_CONDITIONS = [
+    (MatchConditions.Unconditionally, None, None),
+    (MatchConditions.IfNotModified, "If-Match", '"etag"'),
+    (MatchConditions.IfModified, "If-None-Match", '"etag"'),
+    (MatchConditions.IfPresent, "If-Match", "*"),
+    (MatchConditions.IfMissing, "If-None-Match", "*"),
+]
+
+
+class TestSearchIndexClientDeletes:
+    @pytest.mark.parametrize("method_name,model_name", _DELETE_RESOURCES)
+    @pytest.mark.parametrize("condition,header,value", _DELETE_CONDITIONS)
+    @pytest.mark.parametrize("as_model", [False, True])
+    def test_delete_preserves_conditions_in_generated_headers(
+        self, method_name, model_name, condition, header, value, as_model
+    ):
+        from types import SimpleNamespace
+        from azure.search.documents.indexes import models
+
+        resource = (
+            getattr(models, model_name)({"name": "resource", "@odata.etag": '"etag"'}) if as_model else "resource"
+        )
+        kwargs = {} if as_model else {"etag": '"etag"'}
+        response = mock.Mock(status_code=204)
+
+        with _client() as client, mock.patch.object(
+            client._client._pipeline, "run", return_value=SimpleNamespace(http_response=response)
+        ) as run:
+            getattr(client, method_name)(resource, match_condition=condition, headers={"x-custom": "value"}, **kwargs)
+
+        request = run.call_args.args[0]
+        assert request.method == "DELETE"
+        assert "resource" in request.url
+        assert request.headers["x-custom"] == "value"
+        if header is None:
+            assert "If-Match" not in request.headers
+            assert "If-None-Match" not in request.headers
+        else:
+            assert request.headers[header] == value
 
 
 def _client() -> SearchIndexClient:

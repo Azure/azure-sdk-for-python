@@ -164,6 +164,7 @@ def create_private_blob_knowledge_source():  # pylint: disable=too-many-locals
     from azure.search.documents.indexes.models import (
         AzureBlobKnowledgeSource,
         AzureBlobKnowledgeSourceParameters,
+        LexicalAnalyzerName,
         SearchIndexerDataUserAssignedIdentity,
     )
     from azure.search.documents.knowledgebases.models import AIServices, KnowledgeSourceIngestionParameters
@@ -193,7 +194,7 @@ def create_private_blob_knowledge_source():  # pylint: disable=too-many-locals
         created = index_client.create_or_update_knowledge_source(private_source)
         assert isinstance(created, AzureBlobKnowledgeSource)
         assert created.azure_blob_parameters.ingestion_parameters is not None
-        assert created.azure_blob_parameters.ingestion_parameters.network_access_mode == "private"
+        assert created.as_dict()["azureBlobParameters"]["ingestionParameters"]["networkAccessMode"] == "private"
         resources = created.azure_blob_parameters.created_resources
         assert resources is not None
         data_source_name = resources.get("datasource")
@@ -204,7 +205,11 @@ def create_private_blob_knowledge_source():  # pylint: disable=too-many-locals
         assert indexer_client.get_data_source_connection(data_source_name).name == data_source_name
         assert indexer_client.get_indexer_status(indexer_name).status is not None
         generated_index = index_client.get_index(generated_index_name)
-        analyzers = {str(field.analyzer_name) for field in generated_index.fields if field.analyzer_name is not None}
+        analyzers = {
+            field.analyzer_name.value if isinstance(field.analyzer_name, LexicalAnalyzerName) else field.analyzer_name
+            for field in generated_index.fields
+            if field.analyzer_name is not None
+        }
         assert os.environ["AZURE_SEARCH_EXPECTED_ANALYZER"] in analyzers
         assert os.environ["AZURE_SEARCH_EXPECTED_FALLBACK_ANALYZER"] in analyzers
         print(f"Verified generated resources and analyzers: {sorted(analyzers)}")

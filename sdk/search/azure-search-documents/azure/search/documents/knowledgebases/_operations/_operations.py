@@ -31,7 +31,7 @@ from .. import models as _models1, types as _types_models1
 from ... import models as _models2
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Serializer
-from ..._utils.streaming_base import Stream, _read_sse_response, _update_sse_request_headers
+from ..._utils.streaming_base import Stream
 from ..._utils.utils import ClientMixinABC
 from ..._validation import api_version_validation
 from .._configuration import KnowledgeBaseRetrievalClientConfiguration
@@ -472,7 +472,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         },
         api_versions_list=["2026-08-01-preview", "2026-10-01"],
     )
-    def retrieve_stream(
+    def retrieve_stream(  # pylint: disable=too-many-statements
         self,
         retrieval_request: Union[
             _models1.KnowledgeBaseRetrievalRequest, _types_models1.KnowledgeBaseRetrievalRequest, IO[bytes]
@@ -550,7 +550,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
             ]
         ] = kwargs.pop("cls", None)
 
-        _last_event_id = kwargs.pop("last_event_id", None)
         content_type = content_type or "application/json"
         _content = None
         if isinstance(retrieval_request, (IOBase, bytes)):
@@ -571,9 +570,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        if _last_event_id is not None:
-            _request.headers["Last-Event-ID"] = _last_event_id
 
         _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", True)
@@ -622,24 +618,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
                 raise ValueError(f"Unknown SSE event type: {_event.event!r}")
             return deserialized
 
-        def _reconnect(_last_event_id, _reconnect_delay):
-            _transport: Any = pipeline_response.context.transport
-            _transport.sleep(_reconnect_delay)
-            _update_sse_request_headers(_request, _last_event_id)
-            _reconnect_response = self._client.send_request(_request, stream=True, **kwargs)
-            if _reconnect_response.status_code not in [200, 204]:
-                _read_sse_response(_reconnect_response)
-                map_error(
-                    status_code=_reconnect_response.status_code, response=_reconnect_response, error_map=error_map
-                )
-                error = _failsafe_deserialize(
-                    _models2.ErrorResponse,
-                    _reconnect_response,
-                )
-                raise HttpResponseError(response=_reconnect_response, model=error)
-            return _reconnect_response
-
-        deserialized: Stream[Union[_models1.KnowledgeBaseRetrievalStartedEvent, _models1.KnowledgeBaseActivityStartedEvent, _models1.KnowledgeBaseActivityRecord, _models1.KnowledgeBaseAnswerCompletedEvent, list[_models1.KnowledgeBaseReference], _models1.KnowledgeBaseStreamErrorEvent, _models1.KnowledgeBaseResponseCompletedEvent]] = Stream(response=response, deserialization_callback=_callback, terminal_event_names=["error", "response.completed"], last_event_id=_last_event_id, reconnect_callback=_reconnect)  # type: ignore
+        deserialized: Stream[Union[_models1.KnowledgeBaseRetrievalStartedEvent, _models1.KnowledgeBaseActivityStartedEvent, _models1.KnowledgeBaseActivityRecord, _models1.KnowledgeBaseAnswerCompletedEvent, list[_models1.KnowledgeBaseReference], _models1.KnowledgeBaseStreamErrorEvent, _models1.KnowledgeBaseResponseCompletedEvent]] = Stream(response=response, deserialization_callback=_callback, terminal_event_names=["error", "response.completed"])  # type: ignore
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
         return deserialized

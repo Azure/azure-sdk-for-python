@@ -140,6 +140,82 @@ def print_retrieval_summary(result):
     print(f"Response messages: {len(result.response or [])}")
 
 
+def wait_for_knowledge_source_active(index_client, knowledge_source_name):
+    import time
+
+    for attempt in range(36):
+        status = index_client.get_knowledge_source_status(knowledge_source_name)
+        if status.synchronization_status == "active":
+            return
+        if attempt < 35:
+            time.sleep(5)
+    raise RuntimeError(f"Knowledge source did not become active: {status.synchronization_status}")
+
+
+async def wait_for_knowledge_source_active_async(index_client, knowledge_source_name):
+    import asyncio
+
+    for attempt in range(36):
+        status = await index_client.get_knowledge_source_status(knowledge_source_name)
+        if status.synchronization_status == "active":
+            return
+        if attempt < 35:
+            await asyncio.sleep(5)
+    raise RuntimeError(f"Knowledge source did not become active: {status.synchronization_status}")
+
+
+def setup_search_index_knowledge_source(knowledge_source_name, index_name, service_endpoint, key):
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.indexes import SearchIndexClient
+    from azure.search.documents.indexes.models import SearchIndexKnowledgeSource, SearchIndexKnowledgeSourceParameters
+
+    with SearchIndexClient(service_endpoint, AzureKeyCredential(key)) as index_client:
+        index_client.create_or_update_knowledge_source(
+            SearchIndexKnowledgeSource(
+                name=knowledge_source_name,
+                search_index_parameters=SearchIndexKnowledgeSourceParameters(search_index_name=index_name),
+            )
+        )
+
+
+async def setup_search_index_knowledge_source_async(knowledge_source_name, index_name, service_endpoint, key):
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.indexes.aio import SearchIndexClient
+    from azure.search.documents.indexes.models import SearchIndexKnowledgeSource, SearchIndexKnowledgeSourceParameters
+
+    async with SearchIndexClient(service_endpoint, AzureKeyCredential(key)) as index_client:
+        await index_client.create_or_update_knowledge_source(
+            SearchIndexKnowledgeSource(
+                name=knowledge_source_name,
+                search_index_parameters=SearchIndexKnowledgeSourceParameters(search_index_name=index_name),
+            )
+        )
+
+
+def cleanup_knowledge_resources(service_endpoint, key, *, knowledge_base_name, knowledge_source_name):
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.indexes import SearchIndexClient
+
+    with SearchIndexClient(service_endpoint, AzureKeyCredential(key)) as index_client:
+        cleanup_resources(
+            index_client,
+            knowledge_base_name=knowledge_base_name,
+            knowledge_source_name=knowledge_source_name,
+        )
+
+
+async def cleanup_knowledge_resources_async(service_endpoint, key, *, knowledge_base_name, knowledge_source_name):
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.indexes.aio import SearchIndexClient
+
+    async with SearchIndexClient(service_endpoint, AzureKeyCredential(key)) as index_client:
+        await cleanup_resources_async(
+            index_client,
+            knowledge_base_name=knowledge_base_name,
+            knowledge_source_name=knowledge_source_name,
+        )
+
+
 def cleanup_resources(index_client, *, knowledge_base_name=None, knowledge_source_name=None, index_name=None):
     from azure.core.exceptions import ResourceNotFoundError
 

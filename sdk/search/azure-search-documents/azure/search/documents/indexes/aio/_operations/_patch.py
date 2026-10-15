@@ -65,13 +65,14 @@ class _SearchIndexClientOperationsMixin(
             name = synonym_map  # type: ignore
             return await self._delete_synonym_map(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
     @distributed_trace_async
     async def create_or_update_synonym_map(
         self,
-        synonym_map: Union[_models.SynonymMap, JSON],
+        synonym_map: Union[_models.SynonymMap, _types.SynonymMap, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -79,7 +80,8 @@ class _SearchIndexClientOperationsMixin(
         """Creates a new synonym map or updates a synonym map if it already exists.
 
         :param synonym_map: The SynonymMap object to create or update. Required.
-        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap or JSON
+        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap or
+         ~azure.search.documents.indexes.types.SynonymMap or JSON
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: SynonymMap
@@ -127,13 +129,14 @@ class _SearchIndexClientOperationsMixin(
             name = index  # type: ignore
             return await self._delete_index(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
     @distributed_trace_async
     async def create_or_update_index(
         self,
-        index: Union[_models.SearchIndex, JSON],
+        index: Union[_models.SearchIndex, _types.SearchIndex, JSON],
         allow_index_downtime: Optional[bool] = None,
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
@@ -142,7 +145,8 @@ class _SearchIndexClientOperationsMixin(
         """Creates a new search index or updates an index if it already exists.
 
         :param index: The SearchIndex object to create or update. Required.
-        :type index: ~azure.search.documents.indexes.models.SearchIndex or JSON
+        :type index: ~azure.search.documents.indexes.models.SearchIndex or
+         ~azure.search.documents.indexes.types.SearchIndex or JSON
         :param allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
          to be added to an index by taking the index offline for at least a few seconds. This
          temporarily causes indexing and query requests to fail. Performance and write availability of
@@ -170,7 +174,7 @@ class _SearchIndexClientOperationsMixin(
     @distributed_trace_async
     async def create_or_update_alias(
         self,
-        alias: Union[_models.SearchAlias, JSON],
+        alias: Union[_models.SearchAlias, _types.SearchAlias, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -178,7 +182,8 @@ class _SearchIndexClientOperationsMixin(
         """Creates a new search alias or updates an alias if it already exists.
 
         :param alias: The SearchAlias object to create or update. Required.
-        :type alias: ~azure.search.documents.indexes.models.SearchAlias or JSON
+        :type alias: ~azure.search.documents.indexes.models.SearchAlias or
+         ~azure.search.documents.indexes.types.SearchAlias or JSON
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: SearchAlias
@@ -226,6 +231,7 @@ class _SearchIndexClientOperationsMixin(
             name = alias  # type: ignore
             return await self._delete_alias(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
@@ -259,13 +265,14 @@ class _SearchIndexClientOperationsMixin(
             name = knowledge_base  # type: ignore
             return await self._delete_knowledge_base(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
     @distributed_trace_async
     async def create_or_update_knowledge_base(
         self,
-        knowledge_base: Union[_models.KnowledgeBase, JSON],
+        knowledge_base: Union[_models.KnowledgeBase, _types.KnowledgeBase, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -273,7 +280,8 @@ class _SearchIndexClientOperationsMixin(
         """Creates a new knowledge base or updates a knowledge base if it already exists.
 
         :param knowledge_base: The KnowledgeBase object to create or update. Required.
-        :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase or JSON
+        :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase or
+         ~azure.search.documents.indexes.types.KnowledgeBase or JSON
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: KnowledgeBase
@@ -294,7 +302,7 @@ class _SearchIndexClientOperationsMixin(
     @distributed_trace_async
     async def create_or_update_knowledge_source(
         self,
-        knowledge_source: Union[_models.KnowledgeSource, JSON],
+        knowledge_source: Union[_models.KnowledgeSource, _types.KnowledgeSource, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -302,7 +310,8 @@ class _SearchIndexClientOperationsMixin(
         """Creates a new knowledge source or updates a knowledge source if it already exists.
 
         :param knowledge_source: The KnowledgeSource object to create or update. Required.
-        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource or JSON
+        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource or
+         ~azure.search.documents.indexes.types.KnowledgeSource or JSON
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: KnowledgeSource
@@ -350,6 +359,7 @@ class _SearchIndexClientOperationsMixin(
             name = knowledge_source  # type: ignore
             return await self._delete_knowledge_source(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
@@ -423,21 +433,24 @@ class _SearchIndexClientOperationsMixin(
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchIndex]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        if search is not None:
+            kwargs["search"] = search
+        if page_size is not None:
+            kwargs["page_size"] = page_size
+        if search_type is not None:
+            kwargs["search_type"] = search_type
         if select is not None:
             return cast(
                 AsyncItemPaged[_models.SearchIndex],
                 self._list_indexes_with_selected_properties(
                     select=select,
-                    search=search,
-                    page_size=page_size,
-                    search_type=search_type,
                     cls=lambda objs: [_convert_index_response(x) for x in objs],
                     **kwargs,
                 ),
             )
         return cast(
             AsyncItemPaged[_models.SearchIndex],
-            self._list_indexes(search=search, page_size=page_size, search_type=search_type, **kwargs),
+            self._list_indexes(**kwargs),
         )
 
     @distributed_trace
@@ -462,10 +475,13 @@ class _SearchIndexClientOperationsMixin(
         :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        if search is not None:
+            kwargs["search"] = search
+        if page_size is not None:
+            kwargs["page_size"] = page_size
+        if search_type is not None:
+            kwargs["search_type"] = search_type
         names = self._list_indexes(
-            search=search,
-            page_size=page_size,
-            search_type=search_type,
             cls=lambda objs: [x.name for x in objs],
             **kwargs,
         )
@@ -498,13 +514,13 @@ class _SearchIndexClientOperationsMixin(
         :rtype: list[~azure.search.documents.indexes.models.SynonymMap]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = self._get_synonym_maps(
-            select=select,
-            search=search,
-            page_size=page_size,
-            search_type=search_type,
-            **kwargs,
-        )
+        if search is not None:
+            kwargs["search"] = search
+        if page_size is not None:
+            kwargs["page_size"] = page_size
+        if search_type is not None:
+            kwargs["search_type"] = search_type
+        result = self._get_synonym_maps(select=select, **kwargs)
         return [item async for item in result]
 
     @distributed_trace_async
@@ -526,6 +542,9 @@ class _SearchIndexClientOperationsMixin(
         :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
+        for name in ("search", "page_size", "search_type"):
+            if kwargs.get(name) is None:
+                kwargs.pop(name, None)
         names = self.list_aliases(cls=lambda objs: [x.name for x in objs], **kwargs)
         return cast(AsyncItemPaged[str], names)
 
@@ -533,7 +552,7 @@ class _SearchIndexClientOperationsMixin(
     async def analyze_text(
         self,
         index_name: str,
-        analyze_request: _models.AnalyzeTextOptions,
+        analyze_request: Union[_models.AnalyzeTextOptions, _types.AnalyzeTextOptions, IO[bytes]],
         **kwargs: Any,
     ) -> _models.AnalyzeResult:
         """Shows how an analyzer breaks text into tokens.
@@ -541,7 +560,8 @@ class _SearchIndexClientOperationsMixin(
         :param index_name: The name of the index to test an analyzer on. Required.
         :type index_name: str
         :param analyze_request: The text and analyzer or analysis components to test. Required.
-        :type analyze_request: ~azure.search.documents.indexes.models.AnalyzeTextOptions
+        :type analyze_request: ~azure.search.documents.indexes.models.AnalyzeTextOptions or
+         ~azure.search.documents.indexes.types.AnalyzeTextOptions or IO[bytes]
         :return: AnalyzeResult
         :rtype: ~azure.search.documents.indexes.models.AnalyzeResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -623,13 +643,16 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             name = data_source_connection  # type: ignore
             return await self._delete_data_source_connection(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
     @distributed_trace_async
     async def create_or_update_data_source_connection(
         self,
-        data_source_connection: Union[_models.SearchIndexerDataSourceConnection, JSON],
+        data_source_connection: Union[
+            _models.SearchIndexerDataSourceConnection, _types.SearchIndexerDataSourceConnection, JSON
+        ],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -637,7 +660,8 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         """Creates a new data source connection or updates a data source connection if it already exists.
 
         :param data_source_connection: The SearchIndexerDataSourceConnection object to create or update. Required.
-        :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection or JSON
+        :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection or
+         ~azure.search.documents.indexes.types.SearchIndexerDataSourceConnection or JSON
 
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
@@ -691,13 +715,14 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             name = indexer  # type: ignore
             return await self._delete_indexer(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
     @distributed_trace_async
     async def create_or_update_indexer(
         self,
-        indexer: Union[_models.SearchIndexer, JSON],
+        indexer: Union[_models.SearchIndexer, _types.SearchIndexer, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -705,7 +730,8 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         """Creates a new indexer or updates an indexer if it already exists.
 
         :param indexer: The SearchIndexer object to create or update. Required.
-        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer or JSON
+        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer or
+         ~azure.search.documents.indexes.types.SearchIndexer or JSON
 
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
@@ -731,7 +757,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
     async def resync(
         self,
         name: str,
-        indexer_resync: Union[_models.IndexerResyncBody, JSON, IO[bytes]],
+        indexer_resync: Union[_models.IndexerResyncBody, _types.IndexerResyncBody, JSON, IO[bytes]],
         **kwargs: Any,
     ) -> None:
         """Resync selective options from the datasource to be re-ingested by the indexer.
@@ -739,7 +765,8 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :param name: The name of the indexer. Required.
         :type name: str
         :param indexer_resync: The definition of the indexer resync options. Required.
-        :type indexer_resync: ~azure.search.documents.indexes.models.IndexerResyncBody or JSON or IO[bytes]
+        :type indexer_resync: ~azure.search.documents.indexes.models.IndexerResyncBody or
+         ~azure.search.documents.indexes.types.IndexerResyncBody or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -779,13 +806,14 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             name = skillset  # type: ignore
             return await self._delete_skillset(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
     @distributed_trace_async
     async def create_or_update_skillset(
         self,
-        skillset: Union[_models.SearchIndexerSkillset, JSON],
+        skillset: Union[_models.SearchIndexerSkillset, _types.SearchIndexerSkillset, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -793,7 +821,8 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         """Creates a new skillset in a search service or updates the skillset if it already exists.
 
         :param skillset: The SearchIndexerSkillset object to create or update. Required.
-        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset or JSON
+        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset or
+         ~azure.search.documents.indexes.types.SearchIndexerSkillset or JSON
 
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
@@ -842,13 +871,13 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = self._get_skillsets(
-            select=select,
-            search=search,
-            page_size=page_size,
-            search_type=search_type,
-            **kwargs,
-        )
+        if search is not None:
+            kwargs["search"] = search
+        if page_size is not None:
+            kwargs["page_size"] = page_size
+        if search_type is not None:
+            kwargs["search_type"] = search_type
+        result = self._get_skillsets(select=select, **kwargs)
         return [item async for item in result]
 
     @distributed_trace_async
@@ -878,13 +907,13 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexer]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = self._get_indexers(
-            select=select,
-            search=search,
-            page_size=page_size,
-            search_type=search_type,
-            **kwargs,
-        )
+        if search is not None:
+            kwargs["search"] = search
+        if page_size is not None:
+            kwargs["page_size"] = page_size
+        if search_type is not None:
+            kwargs["search_type"] = search_type
+        result = self._get_indexers(select=select, **kwargs)
         return [item async for item in result]
 
     @distributed_trace_async
@@ -924,13 +953,13 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = self._get_data_source_connections(
-            select=select,
-            search=search,
-            page_size=page_size,
-            search_type=search_type,
-            **kwargs,
-        )
+        if search is not None:
+            kwargs["search"] = search
+        if page_size is not None:
+            kwargs["page_size"] = page_size
+        if search_type is not None:
+            kwargs["search_type"] = search_type
+        result = self._get_data_source_connections(select=select, **kwargs)
         return [item async for item in result]
 
     @distributed_trace_async

@@ -50,19 +50,52 @@ venv python -m pytest tests/ -k "live"
 
 New live tests require new [Test Proxy](https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy) recordings. Pushing recordings updates the `Tag` in `assets.json`, which points to this package's recordings in `Azure/azure-sdk-assets`.
 
+Use a **dedicated, disposable Search service** with the `2026-10-01` API enabled.
+The live preparer deletes every index, alias, knowledge base, knowledge source, indexer,
+data source, and skillset on the configured service before each test. Do not target a shared
+or production service. Run these scenarios serially; parallel tests can delete one another's
+resources. Do not configure pytest-xdist workers for the recording run.
+
+The configured identity must be able to manage search resources and read/write documents.
+Knowledge retrieval needs semantic search and knowledge-base support in the target region.
+Indexer tests need the configured Blob container and a usable storage connection string.
+File knowledge-source tests additionally need the configured Azure OpenAI embedding deployment
+and the service identities/roles needed to use it. The environment template lists variable
+names and placeholders only; never commit actual resource credentials.
+
 1. Copy `scripts\Set-LiveTestEnvironment.sample.ps1` to `scripts\Set-LiveTestEnvironment.ps1`, fill in local values, and dot-source it:
    ```powershell
    . .\.github\skills\azure-search-documents\scripts\Set-LiveTestEnvironment.ps1
    ```
-2. Run live tests:
+2. Ensure recording is enabled and run the supported live scenarios:
    ```powershell
+   $env:AZURE_TEST_RUN_LIVE = "true"
+   $env:AZURE_SKIP_LIVE_RECORDING = "false"
    venv python -m pytest tests/ -k "live"
    ```
-3. Push recordings:
+   Samples run directly against the service; they do not produce test-proxy recordings.
+   The corresponding recorded tests are the source of playback assets. The existing assets
+   tag targets the prior preview and must be replaced with recordings of the GA requests.
+   Start with index CRUD/statistics, then document queries/indexing, knowledge retrieval
+   (including native typed streaming), and finally storage/OpenAI-dependent scenarios.
+   Index-statistics summary paging and name-based conditional deletes have dedicated
+   sync/async recording scenarios. Retrieval fixtures seed hotel documents before querying;
+   retrieval tests require nonempty references and activity rather than accepting an empty index.
+   Indexer `resync` live recording is blocked until a permission-ingestion data-source scenario
+   is supplied. Its existing SDK-owned routing is covered by unit tests; the basic Blob fixture
+   does not establish that the service accepts permission resync.
+3. Review new recording diffs for credentials, authorization tokens, endpoints, and storage
+   connection strings. Confirm the requests target `2026-10-01`; do not normalize the
+   API-version difference away. Replay the newly recorded scenarios before pushing:
+   ```powershell
+   $env:AZURE_TEST_RUN_LIVE = "false"
+   venv python -m pytest tests/ -k "live"
+   ```
+4. Push recordings:
    ```powershell
    test-proxy push -a assets.json
    ```
-4. Keep the updated `assets.json` with your changes.
+5. Keep the updated `assets.json` with your changes.
 
 ## Adding new tests
 

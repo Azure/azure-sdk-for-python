@@ -36,8 +36,7 @@ from typing import (
 
 from typing_extensions import Self
 
-from azure.core.exceptions import StreamClosedError, StreamConsumedError
-from azure.core.rest import AsyncHttpResponse, HttpRequest, HttpResponse
+from azure.core.rest import AsyncHttpResponse, HttpResponse
 
 DecodedType = TypeVar("DecodedType")
 ReturnType_co = TypeVar("ReturnType_co", covariant=True)
@@ -439,52 +438,11 @@ async def _aiter_sse_lines(iter_bytes: AsyncIterator[bytes]) -> AsyncGenerator[s
         yield line
 
 
-def _read_sse_response(response: HttpResponse) -> None:
-    """Read an SSE response body, ignoring responses that are already consumed or closed.
-
-    :param response: The response to read.
-    :type response: HttpResponse
-    """
-    try:
-        response.read()
-    except (StreamConsumedError, StreamClosedError):
-        pass
-
-
-async def _read_sse_response_async(response: AsyncHttpResponse) -> None:
-    """Read an SSE response body, ignoring responses that are already consumed or closed.
-
-    :param response: The response to read.
-    :type response: AsyncHttpResponse
-    """
-    try:
-        await response.read()
-    except (StreamConsumedError, StreamClosedError):
-        pass
-
-
-def _update_sse_request_headers(request: HttpRequest, last_event_id: Optional[str]) -> None:
-    """Update the last event ID header for an SSE reconnection request.
-
-    :param request: The reconnection request to update.
-    :type request: HttpRequest
-    :param last_event_id: The current value of the SSE last event ID buffer.
-    :type last_event_id: str or None
-    """
-    if last_event_id:
-        request.headers["Last-Event-ID"] = last_event_id
-    else:
-        request.headers.pop("Last-Event-ID", None)
-
-
 class _SSEEventBuilder:
-    """Accumulates SSE field lines and builds :class:`ServerSentEvent` instances.
+    """Accumulates SSE field lines and builds :class:`ServerSentEvent` instances."""
 
-    :param last_event_id: The initial value of the SSE last event ID buffer.
-    :type last_event_id: str
-    """
-
-    def __init__(self, last_event_id: str = "") -> None:
+    def __init__(self) -> None:
+        last_event_id = ""
         self._data: List[str] = []
         self._event_type = ""
         self._last_id = last_event_id
@@ -568,12 +526,10 @@ class SSEDecoder:
 
     https://html.spec.whatwg.org/multipage/server-sent-events.html
 
-    :keyword last_event_id: The initial value of the SSE last event ID buffer.
-    :paramtype last_event_id: str or None
     """
 
-    def __init__(self, *, last_event_id: Optional[str] = None) -> None:
-        self._builder = _SSEEventBuilder(last_event_id or "")
+    def __init__(self) -> None:
+        self._builder = _SSEEventBuilder()
 
     @property
     def last_event_id(self) -> str:
@@ -612,12 +568,10 @@ class AsyncSSEDecoder:
 
     https://html.spec.whatwg.org/multipage/server-sent-events.html
 
-    :keyword last_event_id: The initial value of the SSE last event ID buffer.
-    :paramtype last_event_id: str or None
     """
 
-    def __init__(self, *, last_event_id: Optional[str] = None) -> None:
-        self._builder = _SSEEventBuilder(last_event_id or "")
+    def __init__(self) -> None:
+        self._builder = _SSEEventBuilder()
 
     @property
     def last_event_id(self) -> str:
@@ -675,14 +629,6 @@ class Stream(Iterator[ReturnType_co]):
     :keyword terminal_event_predicate: Optional predicate that identifies a payload-bearing
         terminal event. The event is yielded before iteration stops.
     :paramtype terminal_event_predicate: Callable[[Any], bool] or None
-    :keyword last_event_id: Optional event ID from which this stream is resuming.
-    :paramtype last_event_id: str or None
-    :keyword reconnect_callback: Optional callback used to re-establish the underlying response
-        when the stream disconnects before a terminal event is seen. Reconnection uses a
-        three-second delay unless the server provides an SSE ``retry`` value. The callback is
-        called with the last-seen SSE event ID (or ``None``) and the reconnect delay in seconds,
-        and must return a new response.
-    :paramtype reconnect_callback: Callable[[str or None, float], ~azure.core.rest.HttpResponse] or None
     """
 
     def __init__(
@@ -694,22 +640,19 @@ class Stream(Iterator[ReturnType_co]):
         terminal_event: Optional[str] = None,
         terminal_event_names: Optional[Sequence[str]] = None,
         terminal_event_predicate: Optional[Callable[[DecodedType], bool]] = None,
-        last_event_id: Optional[str] = None,
-        reconnect_callback: Optional[Callable[[Optional[str], float], HttpResponse]] = None,
     ) -> None:
         self._response = response
         content_type = response.headers.get("Content-Type", "").split(";", 1)[0].strip().lower()
         self._decoder: StreamDecoder[Any] = (
             decoder
             if decoder is not None
-            else (SSEDecoder(last_event_id=last_event_id) if content_type == "text/event-stream" else JSONLDecoder())
+            else (SSEDecoder() if content_type == "text/event-stream" else JSONLDecoder())
         )
         self._deserialization_callback = deserialization_callback
         self._terminal_event = terminal_event
         self._terminal_event_names = frozenset(terminal_event_names or ())
         self._terminal_event_predicate = terminal_event_predicate
-        self._reconnect_callback = reconnect_callback
-        self._last_event_id = last_event_id
+        self._last_event_id: Optional[str] = None
         self._retry: Optional[int] = None
         self._iterator = self._iter_results()
 
@@ -730,7 +673,6 @@ class Stream(Iterator[ReturnType_co]):
         return self
 
     def _iter_results(self) -> Generator[ReturnType_co, None, None]:
-        terminal = False
         try:
             while True:
                 if getattr(self._response, "status_code", None) == 204:
@@ -743,29 +685,18 @@ class Stream(Iterator[ReturnType_co]):
                     if event_retry is not None:
                         self._retry = event_retry
                     if self._terminal_event is not None and getattr(event, "data", None) == self._terminal_event:
-                        terminal = True
                         break
                     result = self._deserialization_callback(self._response, cast(Any, event))
                     yield result
                     if (self._terminal_event_names and getattr(event, "event", None) in self._terminal_event_names) or (
                         self._terminal_event_predicate is not None and self._terminal_event_predicate(cast(Any, event))
                     ):
-                        terminal = True
                         break
-                if terminal or self._reconnect_callback is None:
-                    break
                 if isinstance(self._decoder, SSEDecoder):
                     self._last_event_id = self._decoder.last_event_id
                     if self._decoder.retry is not None:
                         self._retry = self._decoder.retry
-                self._response.close()
-                reconnect_delay = (self._retry if self._retry is not None else 3000) / 1000
-                self._response = self._reconnect_callback(self._last_event_id, reconnect_delay)
-                self._decoder = (
-                    SSEDecoder(last_event_id=self._last_event_id)
-                    if isinstance(self._decoder, SSEDecoder)
-                    else type(self._decoder)()
-                )
+                break
         finally:
             self._response.close()
 
@@ -809,14 +740,6 @@ class AsyncStream(AsyncIterator[ReturnType_co]):
     :keyword terminal_event_predicate: Optional predicate that identifies a payload-bearing
         terminal event. The event is yielded before iteration stops.
     :paramtype terminal_event_predicate: Callable[[Any], bool] or None
-    :keyword last_event_id: Optional event ID from which this stream is resuming.
-    :paramtype last_event_id: str or None
-    :keyword reconnect_callback: Optional callback used to re-establish the underlying response
-        when the stream disconnects before a terminal event is seen. Reconnection uses a
-        three-second delay unless the server provides an SSE ``retry`` value. The callback is
-        called with the last-seen SSE event ID (or ``None``) and the reconnect delay in seconds,
-        and must resolve to a new response.
-    :paramtype reconnect_callback: Callable[[str or None, float], Any] or None
     """
 
     def __init__(
@@ -828,26 +751,19 @@ class AsyncStream(AsyncIterator[ReturnType_co]):
         terminal_event: Optional[str] = None,
         terminal_event_names: Optional[Sequence[str]] = None,
         terminal_event_predicate: Optional[Callable[[DecodedType], bool]] = None,
-        last_event_id: Optional[str] = None,
-        reconnect_callback: Optional[Callable[[Optional[str], float], Any]] = None,
     ) -> None:
         self._response = response
         content_type = response.headers.get("Content-Type", "").split(";", 1)[0].strip().lower()
         self._decoder: AsyncStreamDecoder[Any] = (
             decoder
             if decoder is not None
-            else (
-                AsyncSSEDecoder(last_event_id=last_event_id)
-                if content_type == "text/event-stream"
-                else AsyncJSONLDecoder()
-            )
+            else (AsyncSSEDecoder() if content_type == "text/event-stream" else AsyncJSONLDecoder())
         )
         self._deserialization_callback = deserialization_callback
         self._terminal_event = terminal_event
         self._terminal_event_names = frozenset(terminal_event_names or ())
         self._terminal_event_predicate = terminal_event_predicate
-        self._reconnect_callback = reconnect_callback
-        self._last_event_id = last_event_id
+        self._last_event_id: Optional[str] = None
         self._retry: Optional[int] = None
         self._iterator = self._iter_results()
 
@@ -868,7 +784,6 @@ class AsyncStream(AsyncIterator[ReturnType_co]):
         return self
 
     async def _iter_results(self) -> AsyncGenerator[ReturnType_co, None]:
-        terminal = False
         try:
             while True:
                 if getattr(self._response, "status_code", None) == 204:
@@ -883,7 +798,6 @@ class AsyncStream(AsyncIterator[ReturnType_co]):
                         if event_retry is not None:
                             self._retry = event_retry
                         if self._terminal_event is not None and getattr(event, "data", None) == self._terminal_event:
-                            terminal = True
                             break
                         result = self._deserialization_callback(self._response, cast(Any, event))
                         yield result
@@ -893,26 +807,16 @@ class AsyncStream(AsyncIterator[ReturnType_co]):
                             self._terminal_event_predicate is not None
                             and self._terminal_event_predicate(cast(Any, event))
                         ):
-                            terminal = True
                             break
                 finally:
                     aclose = getattr(events, "aclose", None)
                     if aclose is not None:
                         await aclose()
-                if terminal or self._reconnect_callback is None:
-                    break
                 if isinstance(self._decoder, AsyncSSEDecoder):
                     self._last_event_id = self._decoder.last_event_id
                     if self._decoder.retry is not None:
                         self._retry = self._decoder.retry
-                await self._response.close()
-                reconnect_delay = (self._retry if self._retry is not None else 3000) / 1000
-                self._response = await self._reconnect_callback(self._last_event_id, reconnect_delay)
-                self._decoder = (
-                    AsyncSSEDecoder(last_event_id=self._last_event_id)
-                    if isinstance(self._decoder, AsyncSSEDecoder)
-                    else type(self._decoder)()
-                )
+                break
         finally:
             await self._response.close()
 

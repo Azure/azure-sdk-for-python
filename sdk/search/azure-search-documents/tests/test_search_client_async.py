@@ -18,6 +18,7 @@ from azure.search.documents._operations._patch import _build_search_request
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.aio._operations._patch import AsyncSearchItemPaged, AsyncSearchPageIterator
 from azure.search.documents.models import FacetResult, IndexingResult, SearchResult
+from azure.search.documents.models import QueryAnswerType, QueryCaptionType
 
 from _capabilities import require_capability
 
@@ -109,6 +110,79 @@ class TestSearchClientConstructorAsync:
 
 
 class TestSearchRequestBuildingAsync:
+    @pytest.mark.asyncio
+    @mock.patch("azure.search.documents.aio._operations._operations._SearchClientOperationsMixin._search_post")
+    async def test_search_accepts_wire_shaped_vector_queries(self, send):
+        from azure.search.documents.models import VectorQueryKind, VectorizedQuery
+        from azure.search.documents.types import VectorizedQuery as VectorizedQueryInput
+
+        query: VectorizedQueryInput = {
+            "kind": VectorQueryKind.VECTOR,
+            "vector": [0.1, 0.2],
+            "k": 2,
+            "fields": "embedding",
+        }
+        send.return_value = create_search_documents_result()
+        async with create_search_client() as client:
+            results = await client.search(vector_queries=[query])
+            _ = [document async for document in results]
+        request = send.call_args.kwargs["body"]
+        assert isinstance(request.vector_queries[0], VectorizedQuery)
+        assert request.as_dict()["vectorQueries"] == [query]
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("as_enum", [False, True])
+    @pytest.mark.parametrize("count", [None, 3])
+    async def test_search_semantic_options_use_wire_values_and_separators(self, as_enum, count):
+        request = _build_search_request(
+            query_answer=QueryAnswerType.EXTRACTIVE if as_enum else "extractive",
+            query_caption=QueryCaptionType.EXTRACTIVE if as_enum else "extractive",
+            query_answer_count=count,
+            query_answer_threshold=0.8,
+            query_caption_highlight_enabled=False,
+        )
+
+        expected = "extractive|threshold-0.8" if count is None else "extractive|count-3,threshold-0.8"
+        assert request.as_dict()["answers"] == expected
+        assert request.as_dict()["captions"] == "extractive|highlight-false"
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("when", ["before", "during", "after"])
+    @mock.patch("azure.search.documents.aio._operations._operations._SearchClientOperationsMixin._search_post")
+    async def test_search_metadata_preserves_all_pages_without_repeated_requests(self, send, when):
+        first = create_search_documents_result({"HotelId": "1"}, {"HotelId": "2"})
+        first.count = 3
+        first.coverage = 95.0
+        first.answers = [mock.Mock(key="answer")]
+        first.facets = {"Category": [FacetResult({"count": 3})]}
+        first.next_link = SEARCH_ENDPOINT
+        first.next_page_parameters = _build_search_request(skip=2)
+        second = create_search_documents_result({"HotelId": "3"})
+        send.side_effect = [first, second]
+
+        async def metadata(result):
+            assert await result.get_count() == 3
+            assert await result.get_coverage() == 95.0
+            assert await result.get_answers() == first.answers
+            assert await result.get_facets() == {"Category": [{"count": 3}]}
+
+        async with create_search_client() as client:
+            results = await client.search(include_total_count=True)
+            if when == "before":
+                await metadata(results)
+                documents = [document async for document in results]
+            elif when == "during":
+                documents = [await anext(results)]
+                await metadata(results)
+                documents.extend([document async for document in results])
+            else:
+                documents = [document async for document in results]
+                await metadata(results)
+
+        assert [document["HotelId"] for document in documents] == ["1", "2", "3"]
+        assert send.await_count == 2
+        assert send.call_args.kwargs["body"].skip == 2
+
     @pytest.mark.asyncio
     @mock.patch("azure.search.documents.aio._operations._operations._SearchClientOperationsMixin._search_post")
     async def test_search_serializes_more_like_this_in_request_body(self, mock_search_post):
@@ -319,7 +393,7 @@ class TestSearchRequestBuildingAsync:
 
     @pytest.mark.asyncio
     @mock.patch("azure.search.documents.aio._operations._operations._SearchClientOperationsMixin._search_post")
-    async def test_search_metadata_accessors_fetch_first_page_once_and_clear_continuation(self, mock_search_post):
+    async def test_search_metadata_accessors_fetch_first_page_once_and_preserve_continuation(self, mock_search_post):
         search_result = create_search_documents_result()
         search_result.count = 12
         search_result.coverage = 98.5
@@ -337,7 +411,7 @@ class TestSearchRequestBuildingAsync:
             assert await result.get_answers() == search_result.answers
             assert await result.get_facets() == {"Category": [{"count": 4}]}
 
-        assert result._first_page_iterator_instance.continuation_token is None
+        assert result._first_page_iterator_instance.continuation_token == CONTINUATION_TOKEN
         mock_search_post.assert_awaited_once()
 
     @pytest.mark.asyncio
@@ -457,6 +531,29 @@ class TestSearchSuggestionRequestsAsync:
 
 
 class TestSearchDocumentIndexingAsync:
+    @pytest.mark.asyncio
+    @mock.patch("azure.search.documents.aio._operations._operations._SearchClientOperationsMixin._index")
+    async def test_index_documents_normalizes_mapping_and_preserves_error_map_on_split(self, send):
+        from azure.core.exceptions import ResourceNotFoundError
+
+        body = {"value": [{"@search.action": "upload", "HotelId": "1"}, {"@search.action": "upload", "HotelId": "2"}]}
+        first = create_indexing_result("1")
+        second = create_indexing_result("2")
+        send.side_effect = [
+            RequestEntityTooLargeError("too large"),
+            mock.Mock(results=[first]),
+            mock.Mock(results=[second]),
+        ]
+        error_map = {404: ResourceNotFoundError}
+        async with create_search_client() as client:
+            assert await client.index_documents(body, error_map=error_map) == [first, second]
+        assert [len(call.kwargs["batch"].actions) for call in send.call_args_list] == [2, 1, 1]
+        assert error_map == {404: ResourceNotFoundError}
+        for call in send.call_args_list:
+            assert call.kwargs["error_map"][404] is ResourceNotFoundError
+            assert call.kwargs["error_map"][413] is RequestEntityTooLargeError
+            assert all(action["HotelId"] in ("1", "2") for action in call.kwargs["batch"].actions)
+
     @pytest.mark.asyncio
     @pytest.mark.parametrize("method_name", DOCUMENT_METHODS)
     async def test_document_action_helpers_create_batch_and_forward_options(self, method_name):

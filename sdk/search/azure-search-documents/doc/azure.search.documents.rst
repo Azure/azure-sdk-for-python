@@ -2,6 +2,7 @@ azure.search.documents package
 ==============================
 
 .. automodule:: azure.search.documents
+   :inherited-members:
    :members:
    :show-inheritance:
    :undoc-members:
@@ -23,10 +24,18 @@ Submodules
 azure.search.documents.types module
 -----------------------------------
 
-.. Wire keys are documented by :ivar: fields, not Python attribute directives.
-   Keep these exclusions until Sphinx autodoc supports non-identifier keys.
+.. Wire keys remain documented by :ivar: fields. Explicit TypedDict directives
+   below exclude only non-identifier Python attribute names.
 .. automodule:: azure.search.documents.types
+   :inherited-members:
    :members:
-   :exclude-members: @odata.count,@odata.nextLink,@search.action,@search.answers,@search.captions,@search.coverage,@search.debug,@search.documentDebugInfo,@search.facets,@search.highlights,@search.nextPageParameters,@search.rerankerBoostedScore,@search.rerankerScore,@search.score,@search.semanticPartialResponseReason,@search.semanticPartialResponseType,@search.semanticQueryRewritesResultType,@search.text
    :show-inheritance:
    :undoc-members:
+   :exclude-members: IndexAction
+
+.. autoclass:: azure.search.documents.types.IndexAction
+   :inherited-members:
+   :members:
+   :show-inheritance:
+   :undoc-members:
+   :exclude-members: @search.action

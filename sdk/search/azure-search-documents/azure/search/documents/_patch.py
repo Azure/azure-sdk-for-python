@@ -9,7 +9,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Union, List, Dict, Optional, cast
+from typing import Any, Union, List, Dict, Mapping, Optional, cast
 from enum import Enum
 import time
 import threading
@@ -20,7 +20,8 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import ServiceResponseTimeoutError
 
 from ._client import SearchClient as _SearchClient
-from ._operations._patch import SearchItemPaged
+from ._operations._patch import SearchItemPaged, _normalize_index_documents_batch
+from . import types as _types
 from .models._patch import RequestEntityTooLargeError, IndexDocumentsBatch
 from .models import IndexAction, IndexingResult
 from .indexes import SearchIndexClient
@@ -133,16 +134,17 @@ class SearchIndexingBufferedSender:
         self._retry_counter: Dict[str, int] = {}
 
         self._index_documents_batch = IndexDocumentsBatch()
+        self._client_kwargs = dict(kwargs)
 
         # Create the search client based on credential type
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
-            self._client = _SearchClient(
+            self._client = SearchClient(
                 endpoint=endpoint, index_name=index_name, credential=credential, api_version=self._api_version, **kwargs
             )
         else:
             self._aad = True
-            self._client = _SearchClient(
+            self._client = SearchClient(
                 endpoint=endpoint, index_name=index_name, credential=credential, api_version=self._api_version, **kwargs
             )
         self._reset_timer()
@@ -212,13 +214,20 @@ class SearchIndexingBufferedSender:
         if not self._index_key:
             try:
                 credential = cast(Union[AzureKeyCredential, TokenCredential], self._credential)
-                client = SearchIndexClient(self._endpoint, credential)
-                index_result = client.get_index(self._index_name)
-                if index_result:
-                    for field in index_result.fields:
-                        if field.key:
-                            self._index_key = field.name
-                            break
+                client = SearchIndexClient(
+                    self._endpoint, credential, api_version=self._api_version, **self._client_kwargs
+                )
+                try:
+                    index_result = client.get_index(self._index_name)
+                    if index_result:
+                        for field in index_result.fields:
+                            if field.key:
+                                self._index_key = field.name
+                                break
+                finally:
+                    # User-supplied transports and pipelines remain owned by the sender.
+                    if self._client_kwargs.get("transport") is None and self._client_kwargs.get("pipeline") is None:
+                        client.close()
             except Exception:  # pylint: disable=broad-except
                 pass
 
@@ -244,9 +253,9 @@ class SearchIndexingBufferedSender:
         except Exception:  # pylint: disable=broad-except
             for action in actions:
                 self._retry_action(action)
-                if raise_error:
-                    raise
-                return True
+            if raise_error:
+                raise
+            return True
         return has_error
 
     def _process_if_needed(self) -> bool:
@@ -322,16 +331,21 @@ class SearchIndexingBufferedSender:
         self._process_if_needed()
 
     @distributed_trace
-    def index_documents(self, batch: IndexDocumentsBatch, **kwargs) -> List[IndexingResult]:
+    def index_documents(
+        self,
+        batch: Union[IndexDocumentsBatch, _types.IndexDocumentsBatch, Mapping[str, Any]],
+        **kwargs,
+    ) -> List[IndexingResult]:
         """Specify a document operations to perform as a batch.
 
         :param batch: A batch of document operations to perform.
-        :type batch: IndexDocumentsBatch
+        :type batch: ~azure.search.documents.IndexDocumentsBatch or
+         ~azure.search.documents.types.IndexDocumentsBatch or mapping
         :return: Indexing result of each action in the batch.
         :rtype: list[~azure.search.documents.types.IndexingResult]
         :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
         """
-        return self._index_documents_actions(actions=batch.actions if batch.actions else [], **kwargs)
+        return self._index_documents_actions(actions=_normalize_index_documents_batch(batch).actions, **kwargs)
 
     def _index_documents_actions(self, actions: List[IndexAction], **kwargs) -> List[IndexingResult]:
         timeout = kwargs.pop("timeout", 86400)
