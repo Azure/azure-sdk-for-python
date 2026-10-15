@@ -1,5 +1,18 @@
 # Release History
 
+## 1.18.10 (Unreleased)
+
+### Bugs Fixed
+
+- Hardened local Prompty image resolution so only relative files within the Prompty directory are inlined, with opened-file validation to prevent path changes from redirecting reads and without exposing the local directory in fallback logs.
+
+## 1.18.9 (2026-10-12)
+
+### Bugs Fixed
+
+- Hardened multimodal evaluation image handling. The output file name is now derived from a validated allow-list of known image types rather than the raw `data:image/<subtype>;` value, and decoded image bytes are confined to the intended `images/` folder.
+- Added Microsoft-scoped evaluation status and boolean pass/fail attributes to Application Insights result events.
+
 ## 1.18.8 (2026-10-08)
 
 ### Bugs Fixed
