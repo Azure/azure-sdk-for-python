@@ -1,5 +1,47 @@
 # Release History
 
+## 1.2.0b1 (2026-10-15)
+
+### Features Added
+
+  - Client `DurableTaskMgmtClient` added operation group `detectors`
+  - Client `DurableTaskMgmtClient` added operation group `failover_instances`
+  - Client `DurableTaskMgmtClient` added operation group `task_queues`
+  - Client `DurableTaskMgmtClient` added operation group `transparent_data_encryptions`
+  - Model `Scheduler` added property `identity`
+  - Model `SchedulerUpdate` added property `identity`
+  - Model `TaskHubProperties` added property `capabilities`
+  - Added model `Detector`
+  - Added model `DetectorDataset`
+  - Added model `DetectorMetadata`
+  - Added model `DetectorProperties`
+  - Added model `DetectorRenderingProperties`
+  - Added enum `DetectorRenderingType`
+  - Added model `DetectorStatus`
+  - Added enum `DetectorStatusId`
+  - Added model `DetectorTable`
+  - Added model `DetectorTableColumn`
+  - Added enum `DetectorType`
+  - Added model `FailoverInstance`
+  - Added model `FailoverInstanceProperties`
+  - Added enum `FailoverState`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added enum `ReplicationRole`
+  - Added model `TaskQueue`
+  - Added model `TaskQueueProperties`
+  - Added model `TaskQueueThroughput`
+  - Added model `TaskQueueUpdate`
+  - Added model `TransparentDataEncryption`
+  - Added enum `TransparentDataEncryptionKeySource`
+  - Added model `TransparentDataEncryptionProperties`
+  - Added model `UserAssignedIdentity`
+  - Operation group `SchedulersOperations` added method `restart`
+  - Added operation group `DetectorsOperations`
+  - Added operation group `FailoverInstancesOperations`
+  - Added operation group `TaskQueuesOperations`
+  - Added operation group `TransparentDataEncryptionsOperations`
+
 ## 1.1.0 (2026-03-09)
 
 ### Features Added

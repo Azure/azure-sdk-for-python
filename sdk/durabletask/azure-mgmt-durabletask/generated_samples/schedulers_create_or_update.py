@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -34,6 +35,12 @@ def main():
         resource_group_name="rgopenapi",
         scheduler_name="testscheduler",
         resource={
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/EE9BD735-67CE-4A90-89C4-439D3F6A4C93/resourceGroups/rgopenapi/providers/Microsoft.ManagedIdentity/userAssignedIdentities/testidentity": {}
+                },
+            },
             "location": "northcentralus",
             "properties": {"ipAllowlist": ["10.0.0.0/8"], "sku": {"name": "Dedicated"}},
             "tags": {"department": "research", "development": "true"},
@@ -42,6 +49,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-01/Schedulers_CreateOrUpdate.json
+# x-ms-original-file: 2026-07-01-preview/Schedulers_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
