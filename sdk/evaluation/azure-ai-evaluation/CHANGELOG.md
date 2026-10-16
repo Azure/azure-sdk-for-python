@@ -4,22 +4,19 @@
 
 ### Features Added
 
-- Added shared model runners and evaluation strategies for asset evaluators using decision models in Microsoft Foundry.
-- Decision evaluator results expose known final-response token usage and model fields in standard evaluation rows, including skipped evaluations, while retaining known metadata on failures. Usage does not include earlier retry attempts.
+- Added shared model runners and evaluation strategies for asset evaluators using Decision models in Microsoft Foundry, including Output Quality and Tool Use Quality aggregate and member metrics.
+- Decision authentication uses an explicit `api_key` or caller-owned credential with a callable `get_token`. Reuse a synchronous `azure.identity.DefaultAzureCredential` for synchronous or batch calls and close it afterward; async credentials require the same caller-managed event loop. API keys take precedence; Prompty authentication is unchanged.
+- Decision score probabilities must sum to one within an absolute `1e-6` tolerance; invalid distributions raise a system-classified `EvaluationException`.
+- Decision results expose known final-response usage, model, and provenance on completed, skipped, and failed evaluations, counting shared requests once and summing split-turn usage. Usage excludes earlier retry attempts.
+- Decision native async HTTP supports overall deadlines and cancellation during response body reads. TLS uses Python/OpenSSL trust settings such as `SSL_CERT_FILE`, not `REQUESTS_CA_BUNDLE`; shared Prompty transport behavior is unchanged.
 
 ### Breaking Changes
 
-- Decision evaluators now require an explicit `api_key` or a credential with a callable `get_token`; implicit default authentication is no longer selected. For Entra authentication, create and reuse a synchronous `azure.identity.DefaultAzureCredential`, pass it as `credential=`, and close it after all synchronous or batch evaluations finish. Async credentials must remain on the same caller-managed event loop. API-key precedence and Prompty authentication are unchanged.
-
 ### Bugs Fixed
 
-- Decision score answers now reject probability distributions whose sum differs from one by more than `1e-6`, reporting a system error instead of selecting a score from an invalid distribution.
 - Hardened local Prompty image resolution so only relative files within the Prompty directory are inlined, with opened-file validation to prevent path changes from redirecting reads and without exposing the local directory in fallback logs.
-- Output Quality and Tool Use Quality asset evaluators retain their aggregate and member metrics when used with `evaluate` without catalog metadata.
 
 ### Other Changes
-
-- Decision requests use native async HTTP so overall timeout and cancellation stop response body reads. This path uses Python/OpenSSL TLS trust settings (for example, `SSL_CERT_FILE`), not the Requests-specific `REQUESTS_CA_BUNDLE`. Shared Prompty transport behavior is unchanged.
 
 ## 1.18.9 (2026-10-12)
 
