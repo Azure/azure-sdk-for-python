@@ -400,6 +400,72 @@ class TestDecisionModelRunnerRequests:
         assert str(status) in str(raised.value)
         assert "test-key-value" not in str(raised.value) and "secret detail" not in str(raised.value)
 
+    @pytest.mark.parametrize("status", [404, 500])
+    @pytest.mark.parametrize("response_limit", [1, 1024])
+    def test_verified_http_error_code_preserves_classification_and_accepted_metadata(
+        self, client, status, response_limit
+    ):
+        payload = decision_payload()
+        payload["error"] = {
+            "code": "DeploymentNotFound",
+            "message": "test-key-value and private-message",
+            "details": "private-details",
+        }
+        client.response = FakeResponse(status, json.dumps(payload).encode())
+        with pytest.raises(EvaluationException) as raised:
+            run(DecisionModelRunner(DECISION_CONFIG, max_retries=0, max_response_bytes=response_limit))
+        diagnostic = " (DeploymentNotFound)" if response_limit == 1024 else ""
+        prefix = "UserError" if status == 404 else "InternalError"
+        assert str(raised.value) == f"({prefix}) The decision model returned HTTP {status}{diagnostic}."
+        assert raised.value.blame == (ErrorBlame.USER_ERROR if status == 404 else ErrorBlame.SYSTEM_ERROR)
+        assert raised.value.category == ErrorCategory.FAILED_EXECUTION
+        assert raised.value.target == ErrorTarget.EVALUATE
+        assert raised.value.properties == (
+            {
+                "decision_model": {"deployment": "Decision-1"},
+                "prompt_tokens": 120,
+                "completion_tokens": 3,
+                "total_tokens": 123,
+                "model": "microsoft-decision-1",
+            }
+            if response_limit == 1024
+            else {"decision_model": {"deployment": "Decision-1"}}
+        )
+
+    @pytest.mark.parametrize(
+        "payload",
+        [
+            {"error": {"code": "secret_like_identifier_123"}},
+            {"error": {"code": "UnknownProviderCode"}},
+            {"error": {"code": "deploymentnotfound"}},
+            {"error": {"code": "DeploymentNotFound "}},
+            {"error": {"code": None}},
+            {"error": {"code": 404}},
+            {"error": {"code": True}},
+            {"error": {"code": ["DeploymentNotFound"]}},
+            {"error": {"code": {"value": "DeploymentNotFound"}}},
+            {"error": {"message": "private-message", "details": "private-details"}},
+            {"error": "DeploymentNotFound"},
+            {"error": ["DeploymentNotFound"]},
+            {"error": None},
+            {"code": "DeploymentNotFound"},
+            ["DeploymentNotFound"],
+            None,
+        ],
+    )
+    def test_unverified_or_malformed_http_error_codes_are_not_exposed(self, client, payload):
+        client.response = FakeResponse(404, json.dumps(payload).encode())
+        with pytest.raises(EvaluationException) as raised:
+            run(DecisionModelRunner(DECISION_CONFIG))
+        assert str(raised.value) == "(UserError) The decision model returned HTTP 404."
+        assert raised.value.blame == ErrorBlame.USER_ERROR
+
+    def test_non_json_http_error_cannot_surface_verified_code_text(self, client):
+        client.response = FakeResponse(404, b"DeploymentNotFound private-message test-key-value")
+        with pytest.raises(EvaluationException) as raised:
+            run(DecisionModelRunner(DECISION_CONFIG))
+        assert str(raised.value) == "(UserError) The decision model returned HTTP 404."
+
     def test_transport_failure_is_sanitized(self, monkeypatch):
         class Broken(FakeClient):
             async def post(self, *_, **__):

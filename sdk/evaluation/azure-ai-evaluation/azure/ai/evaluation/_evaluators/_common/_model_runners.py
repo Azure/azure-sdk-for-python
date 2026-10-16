@@ -44,6 +44,7 @@ DECISION_MODEL_TYPE = "decision"
 _DECISION_PATH = "/providers/microsoft/v1/systemone"
 _DECISION_TOKEN_SCOPE = "https://cognitiveservices.azure.com/.default"
 _DECISION_RETRY_STATUS_CODES = [408, 429, 500, 502, 503, 504, 529]
+_DECISION_SAFE_ERROR_CODES = {"DeploymentNotFound"}
 _DECISION_CONFIG_KEYS = {
     "type",
     "azure_endpoint",
@@ -471,7 +472,10 @@ class DecisionModelRunner:
                 payload = None
         if status != 200:
             blame = ErrorBlame.USER_ERROR if status in (400, 401, 403, 404, 422) else ErrorBlame.SYSTEM_ERROR
-            error = _failed(f"The decision model returned HTTP {status}.", blame)
+            provider_error = payload.get("error") if isinstance(payload, dict) else None
+            code = provider_error.get("code") if isinstance(provider_error, dict) else None
+            diagnostic = f" ({code})" if isinstance(code, str) and code in _DECISION_SAFE_ERROR_CODES else ""
+            error = _failed(f"The decision model returned HTTP {status}{diagnostic}.", blame)
             error.properties = self._response_properties(payload)
             raise error
         return payload
