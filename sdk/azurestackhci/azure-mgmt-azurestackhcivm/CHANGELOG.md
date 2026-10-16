@@ -100,7 +100,7 @@
   - Added model `VirtualNetworkSubnetUpdateProperties`
   - Added model `VirtualNetworkSubnetUpdateRequest`
   - Added model `VirtualNetworkTagsUpdate`
-  - Model `VirtualMachineInstancesOperations` added method `begin_power_off`
+  - Operation group `VirtualMachineInstancesOperations` added method `begin_power_off`
   - Added operation group `InboundRulesOperations`
   - Added operation group `LoadBalancersOperations`
   - Added operation group `NatGatewaysOperations`
