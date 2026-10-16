@@ -184,7 +184,7 @@ class TestSearchResourceEncryptionKeyOverloads:
                 access_credentials=AzureActiveDirectoryApplicationCredentials(
                     application_id=APPLICATION_ID, application_secret=APPLICATION_SECRET
                 ),
-                identity=SearchIndexerDataUserAssignedIdentity(user_assigned_identity=USER_ASSIGNED_IDENTITY),
+                identity=SearchIndexerDataUserAssignedIdentity(resource_id=USER_ASSIGNED_IDENTITY),
             )
         elif input_form == "typed_dict":
             encryption_key = SearchResourceEncryptionKey(
@@ -214,9 +214,7 @@ class TestSearchResourceEncryptionKeyOverloads:
         assert SearchResourceEncryptionKey(key_name=None, vault_uri=None).as_dict() == {}
         assert SearchResourceEncryptionKey(
             application_id=APPLICATION_ID, application_secret=APPLICATION_SECRET
-        ).as_dict() == {
-            "accessCredentials": {"applicationId": APPLICATION_ID, "applicationSecret": APPLICATION_SECRET}
-        }
+        ).as_dict() == {"accessCredentials": {"applicationId": APPLICATION_ID, "applicationSecret": APPLICATION_SECRET}}
 
     def test_search_resource_encryption_key_allows_service_level_key_without_vault_details(self):
         require_capability("azure.search.documents.indexes.models.SearchResourceEncryptionKey.is_service_level_key")

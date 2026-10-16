@@ -404,6 +404,8 @@
         "azure.search.documents.aio.SearchClient.get_document": "Customizations.SearchClient.get",
         "azure.search.documents.SearchIndexClient.get_synonym_map": "Customizations.SearchIndexClient.getSynonymMap",
         "azure.search.documents.aio.SearchIndexClient.get_synonym_map": "Customizations.SearchIndexClient.getSynonymMap",
+        "azure.search.documents.SearchIndexClient.list_synonym_maps": "Customizations.SearchIndexClient.listSynonymMaps",
+        "azure.search.documents.aio.SearchIndexClient.list_synonym_maps": "Customizations.SearchIndexClient.listSynonymMaps",
         "azure.search.documents.SearchIndexClient.create_synonym_map": "Customizations.SearchIndexClient.createSynonymMap",
         "azure.search.documents.aio.SearchIndexClient.create_synonym_map": "Customizations.SearchIndexClient.createSynonymMap",
         "azure.search.documents.SearchIndexClient.get_index": "Customizations.SearchIndexClient.getIndex",
@@ -442,6 +444,8 @@
         "azure.search.documents.aio.SearchIndexClient.list_index_stats_summary": "Customizations.SearchIndexClient.getIndexStatsSummary",
         "azure.search.documents.SearchIndexerClient.get_data_source_connection": "Customizations.SearchIndexerClient.getDataSource",
         "azure.search.documents.aio.SearchIndexerClient.get_data_source_connection": "Customizations.SearchIndexerClient.getDataSource",
+        "azure.search.documents.SearchIndexerClient.list_data_source_connections": "Customizations.SearchIndexerClient.listDataSources",
+        "azure.search.documents.aio.SearchIndexerClient.list_data_source_connections": "Customizations.SearchIndexerClient.listDataSources",
         "azure.search.documents.SearchIndexerClient.create_data_source_connection": "Customizations.SearchIndexerClient.createDataSource",
         "azure.search.documents.aio.SearchIndexerClient.create_data_source_connection": "Customizations.SearchIndexerClient.createDataSource",
         "azure.search.documents.SearchIndexerClient.reset_indexer": "Customizations.SearchIndexerClient.resetIndexer",
@@ -450,12 +454,16 @@
         "azure.search.documents.aio.SearchIndexerClient.run_indexer": "Customizations.SearchIndexerClient.runIndexer",
         "azure.search.documents.SearchIndexerClient.get_indexer": "Customizations.SearchIndexerClient.getIndexer",
         "azure.search.documents.aio.SearchIndexerClient.get_indexer": "Customizations.SearchIndexerClient.getIndexer",
+        "azure.search.documents.SearchIndexerClient.list_indexers": "Customizations.SearchIndexerClient.listIndexers",
+        "azure.search.documents.aio.SearchIndexerClient.list_indexers": "Customizations.SearchIndexerClient.listIndexers",
         "azure.search.documents.SearchIndexerClient.create_indexer": "Customizations.SearchIndexerClient.createIndexer",
         "azure.search.documents.aio.SearchIndexerClient.create_indexer": "Customizations.SearchIndexerClient.createIndexer",
         "azure.search.documents.SearchIndexerClient.get_indexer_status": "Customizations.SearchIndexerClient.getIndexerStatus",
         "azure.search.documents.aio.SearchIndexerClient.get_indexer_status": "Customizations.SearchIndexerClient.getIndexerStatus",
         "azure.search.documents.SearchIndexerClient.get_skillset": "Customizations.SearchIndexerClient.getSkillset",
         "azure.search.documents.aio.SearchIndexerClient.get_skillset": "Customizations.SearchIndexerClient.getSkillset",
+        "azure.search.documents.SearchIndexerClient.list_skillsets": "Customizations.SearchIndexerClient.listSkillsets",
+        "azure.search.documents.aio.SearchIndexerClient.list_skillsets": "Customizations.SearchIndexerClient.listSkillsets",
         "azure.search.documents.SearchIndexerClient.create_skillset": "Customizations.SearchIndexerClient.createSkillset",
         "azure.search.documents.aio.SearchIndexerClient.create_skillset": "Customizations.SearchIndexerClient.createSkillset",
         "azure.search.documents.KnowledgeBaseRetrievalClient.retrieve": "Customizations.KnowledgeBaseRetrievalClient.retrieve",
@@ -463,5 +471,5 @@
         "azure.search.documents.KnowledgeBaseRetrievalClient.retrieve_stream": "Customizations.KnowledgeBaseRetrievalClient.retrieveStream",
         "azure.search.documents.aio.KnowledgeBaseRetrievalClient.retrieve_stream": "Customizations.KnowledgeBaseRetrievalClient.retrieveStream"
     },
-    "CrossLanguageVersion": "696a85bbcadf"
+    "CrossLanguageVersion": "5482911d6e2b"
 }

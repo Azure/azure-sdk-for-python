@@ -144,7 +144,7 @@ def build_search_index_get_synonym_map_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_index_get_synonym_maps_request(  # pylint: disable=name-too-long
+def build_search_index_list_synonym_maps_request(  # pylint: disable=name-too-long
     *,
     select: Optional[list[str]] = None,
     search: Optional[str] = None,
@@ -1206,7 +1206,7 @@ def build_search_indexer_get_data_source_connection_request(  # pylint: disable=
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_indexer_get_data_source_connections_request(  # pylint: disable=name-too-long
+def build_search_indexer_list_data_source_connections_request(  # pylint: disable=name-too-long
     *,
     select: Optional[list[str]] = None,
     search: Optional[str] = None,
@@ -1442,7 +1442,7 @@ def build_search_indexer_get_indexer_request(name: str, **kwargs: Any) -> HttpRe
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_indexer_get_indexers_request(  # pylint: disable=name-too-long
+def build_search_indexer_list_indexers_request(  # pylint: disable=name-too-long
     *,
     select: Optional[list[str]] = None,
     search: Optional[str] = None,
@@ -1623,7 +1623,7 @@ def build_search_indexer_get_skillset_request(name: str, **kwargs: Any) -> HttpR
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_indexer_get_skillsets_request(  # pylint: disable=name-too-long
+def build_search_indexer_list_skillsets_request(  # pylint: disable=name-too-long
     *,
     select: Optional[list[str]] = None,
     search: Optional[str] = None,
@@ -1964,7 +1964,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             "2026-10-01",
         ],
     )
-    def _get_synonym_maps(
+    def list_synonym_maps(
         self,
         *,
         select: Optional[list[str]] = None,
@@ -2009,7 +2009,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_search_index_get_synonym_maps_request(
+                _request = build_search_index_list_synonym_maps_request(
                     select=select,
                     search=search,
                     page_size=page_size,
@@ -2713,7 +2713,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                list[_models1._models.SearchIndexResponse],  # pylint: disable=protected-access
+                list[_models1._models.SearchIndexResponse],
                 deserialized.get("value", []),
             )
             if cls:
@@ -5564,7 +5564,7 @@ class _SearchIndexerClientOperationsMixin(
             "2026-10-01",
         ],
     )
-    def _get_data_source_connections(
+    def list_data_source_connections(
         self,
         *,
         select: Optional[list[str]] = None,
@@ -5610,7 +5610,7 @@ class _SearchIndexerClientOperationsMixin(
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_search_indexer_get_data_source_connections_request(
+                _request = build_search_indexer_list_data_source_connections_request(
                     select=select,
                     search=search,
                     page_size=page_size,
@@ -6309,7 +6309,7 @@ class _SearchIndexerClientOperationsMixin(
             "2026-10-01",
         ],
     )
-    def _get_indexers(
+    def list_indexers(
         self,
         *,
         select: Optional[list[str]] = None,
@@ -6354,7 +6354,7 @@ class _SearchIndexerClientOperationsMixin(
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_search_indexer_get_indexers_request(
+                _request = build_search_indexer_list_indexers_request(
                     select=select,
                     search=search,
                     page_size=page_size,
@@ -6896,7 +6896,7 @@ class _SearchIndexerClientOperationsMixin(
             "2026-10-01",
         ],
     )
-    def _get_skillsets(
+    def list_skillsets(
         self,
         *,
         select: Optional[list[str]] = None,
@@ -6942,7 +6942,7 @@ class _SearchIndexerClientOperationsMixin(
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_search_indexer_get_skillsets_request(
+                _request = build_search_indexer_list_skillsets_request(
                     select=select,
                     search=search,
                     page_size=page_size,
