@@ -18,7 +18,7 @@ from common._parity_helpers import (
 @pytest.mark.cosmosEmulator
 @skip_unless_emulator()
 @skip_unless_rust_binding()
-class TestQueryBite5:
+class TestQueryTopAndPageSize:
     def test_top_limit_and_page_size(self):
         backend = os.environ.get("COSMOS_BACKEND", "rust")
         database_id = "query_bite5_" + uuid.uuid4().hex

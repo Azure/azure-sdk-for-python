@@ -26,7 +26,6 @@ from ._retry_utility import ConnectionRetryPolicy
 from .container import ContainerProxy
 from .cosmos_client import CosmosClient
 from .database import DatabaseProxy
-from .scripts import ScriptsProxy
 from .offer import Offer
 from .offer import ThroughputProperties
 from .documents import (
@@ -34,8 +33,6 @@ from .documents import (
     DataType,
     IndexKind,
     IndexingMode,
-    TriggerOperation,
-    TriggerType,
     DatabaseAccount,
 )
 from .partition_key import PartitionKey
@@ -48,15 +45,12 @@ __all__ = (
     "DatabaseProxy",
     "ContainerProxy",
     "PartitionKey",
-    "ScriptsProxy",
     "Offer",
     "DatabaseAccount",
     "ConsistencyLevel",
     "DataType",
     "IndexKind",
     "IndexingMode",
-    "TriggerOperation",
-    "TriggerType",
     "ConnectionRetryPolicy",
     "ThroughputProperties",
     "CosmosDict",

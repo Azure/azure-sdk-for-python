@@ -253,6 +253,48 @@ def test_advice_copy_retains_original_skip_with_environment_category(surface, fi
     assert ast.dump(copied[0]) == ast.dump(original[0])
 
 
+@pytest.mark.parametrize("failure_stage", [None, "container", "udf", "item"])
+def test_deployed_udf_fixture_uses_core_setup_and_always_cleans_database(monkeypatch, failure_stage):
+    from query_items import _udf_fixture
+
+    monkeypatch.setenv("ACCOUNT_HOST", "https://example.invalid")
+    monkeypatch.setenv("ACCOUNT_KEY", "unit-test-key")
+    client = MagicMock()
+    client.__enter__.return_value = client
+    client.client_connection._backend.name = "core-python"
+    client.client_connection.Create.return_value = {"id": "reviewBand"}
+    database = client.create_database.return_value
+    container = database.create_container.return_value
+    factory = MagicMock(return_value=client)
+    monkeypatch.setattr(_udf_fixture, "CosmosClient", factory)
+    calls = {
+        "container": database.create_container,
+        "udf": client.client_connection.Create,
+        "item": container.create_item,
+    }
+    if failure_stage is not None:
+        calls[failure_stage].side_effect = RuntimeError("setup failed")
+        with pytest.raises(RuntimeError, match="setup failed"):
+            with _udf_fixture.deployed_review_band():
+                pytest.fail("failed setup must not yield a fixture")
+    else:
+        with _udf_fixture.deployed_review_band() as database_id:
+            assert database_id == client.create_database.call_args.args[0]
+            client.delete_database.assert_not_called()
+            parent = f"dbs/{database_id}/colls/orders"
+            client.client_connection.Create.assert_called_once_with(
+                {"id": "reviewBand", "body": _udf_fixture.REVIEW_BAND},
+                "/" + parent + "/udfs/",
+                "udfs",
+                parent,
+                None,
+            )
+            assert container.create_item.call_count == 3
+    assert factory.call_args.kwargs["_backend"] == "core-python"
+    client.delete_database.assert_called_once_with(client.create_database.call_args.args[0])
+    client.__exit__.assert_called_once()
+
+
 def test_async_fixture_cleans_database_when_container_setup_fails(monkeypatch):
     module = load_module(
         "_offset_async_copy_cleanup",

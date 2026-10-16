@@ -136,7 +136,7 @@ are no longer public classes. Adding either field, or
 `DisableSSLVerification`, to a `ConnectionPolicy` is rejected too.
 Selecting the legacy backend does not restore these features; no parity
 implementation is required. Runtime-controlled environment proxy use is
-separate and unchanged. See [the networking exclusion](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-22).
+separate and unchanged.
 
 **Regional routing switches are excluded on Rust-backed clients.** Alpha Bank
 configures the account's regions and multi-write capability. Rust discovers
@@ -155,7 +155,7 @@ Omit these switches and leave those policy fields unset. An untouched policy
 can still group supported settings. Preferred and excluded regions remain
 supported, but are not replacements for the excluded switches. The retained
 `core-python` comparison backend continues to honor them; its code is not
-retired by this decision. See [the routing exclusion](V5/api-review/RUST_PARITY_PUSHBACKS.md#client-init-routing).
+retired by this decision.
 
 <a id="1---connection-string-client-creation"></a>
 <a id="connection-string-client-creation"></a>
@@ -377,9 +377,6 @@ already started. A later close waits for that same completion, and the
 client's Python routing-cache share is released in `finally`. This does not
 make every cleanup step cancellation-proof. Backend cleanup failures are
 logged; Python HTTP cleanup errors can still propagate.
-
-See the [migration review](V5/api-review/RUST_MIGRATION_STATUS.md#cosmosclientclose)
-for the driver ownership and runtime-lifetime explanation.
 
 ## Account and database operations
 
@@ -2259,21 +2256,39 @@ async def read(
 
 ### `ContainerProxy.scripts`
 
-**Excluded from both synchronous and asynchronous Rust-backed clients.** Script management and stored-procedure execution are outside this release's scope.
+**Removed from the synchronous and asynchronous public surface, including
+the legacy comparison backend.** This is an intentional release exclusion,
+not unfinished Rust integration.
+
+For example, `container.scripts` now raises `AttributeError` without reading
+container metadata. There is no `ScriptsProxy` to construct directly: its
+exports, modules, legacy connection operations, dedicated tests and scripting
+sample paths have been removed. `TriggerType` and `TriggerOperation` are
+removed too.
+
+Calling an already-deployed UDF remains a different operation:
+`container.query_items("SELECT VALUE udf.reviewBand(c.total) FROM c")`
+uses the ordinary query path. Removing script management does not delete
+saved service definitions or provide a replacement for stored-procedure
+execution. No scripting parity work is required for this release.
 
 <a id="36---excluding-the-public-system-key-property"></a>
 <a id="containerproxyis_system_key"></a>
 
 ### `ContainerProxy.is_system_key`
 
-**Review disposition:** Exclude the public property from the Rust-backed
-release. Code removal is pending.
+**Review disposition:** Removed from synchronous and asynchronous clients,
+including the legacy comparison backend. No implementation or parity work
+is required for this excluded property.
 
 **Why are we excluding it?**
 
 The property tells a customer whether a container uses a legacy
 system-defined partition key. Legacy partitionless/system-key container
 compatibility is outside this release's scope.
+The driver requests in [gap 1](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-1)
+and [gap 2](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-2) are closed with no
+implementation planned.
 
 For customer operations within the supported scope, this property provides
 no necessary capability. An administration tool could use it to identify
@@ -2281,14 +2296,21 @@ an unsupported container, but that possible diagnostic use is not an
 established customer requirement for retaining a public API.
 
 Internal checks needed to recognize unsupported containers or preserve
-supported partition-key behavior do not require a public property. Removing
-the public API must not remove those checks merely because they currently
-share its implementation.
+supported partition-key behavior do not require a public property. The
+remaining private partition-key normalizer reads metadata directly; it no
+longer calls this public API. Shared metadata and null/missing-key handling
+remain for their other callers.
+
+Both property implementations and the dedicated property/cache parity suite
+have been removed, together with the API snapshot declarations. There are
+no dedicated sample callers to retain. Removal checks cover both clients
+and backends; they do not claim support for legacy system-key containers.
 
 **What changes for the customer?**
 
-Customer code that accesses `container.is_system_key`, or awaits the
-asynchronous property, must remove or revise that compatibility check for
+Accessing `container.is_system_key` now raises `AttributeError` before any
+metadata request, including when attempting to await it on the asynchronous
+client. Customer code must remove or revise that compatibility check for
 the new release. This decision does not migrate existing data, enable
 operations on excluded containers, or introduce an automatic legacy fallback.
 
@@ -3799,6 +3821,12 @@ record and recover safely if it stops between those separate operations.
 
 ## Stored procedures
 
+**Implementation: removed.** All seven methods below and their legacy
+connection implementations are gone from both sync and async clients.
+The entries retain the exclusion decision; they are not available APIs or
+pending Rust work. Dedicated execution, CRUD, logging and parity tests and
+the stored-procedure-based multi-master sample path have been removed.
+
 <a id="scriptsproxylist_stored_procedures"></a>
 
 ### `ScriptsProxy.list_stored_procedures`
@@ -3845,6 +3873,11 @@ record and recover safely if it stops between those separate operations.
 
 ## Triggers
 
+**Implementation: removed.** The six definition-management methods below,
+their legacy connection implementations, and dedicated CRUD/execution tests
+and parity fixtures have been removed. `TriggerType` and `TriggerOperation`
+are no longer exported or defined in `azure.cosmos.documents`.
+
 Trigger invocation is excluded on item operations as well: `pre_trigger_include`, `post_trigger_include`, their request-option aliases, and trigger header overrides are unsupported.
 
 <a id="scriptsproxylist_triggers"></a>
@@ -3886,6 +3919,10 @@ Trigger invocation is excluded on item operations as well: `pre_trigger_include`
 <a id="24---reviewing-udf-management-separately-from-query-use"></a>
 
 ## User-defined functions
+
+**Implementation: definition management removed.** The six methods below,
+their legacy connection implementations and dedicated definition tests have
+been removed. They are intentionally excluded, not a Rust integration backlog.
 
 Calling deployed UDFs in `query_items` SQL remains supported; only definition management is excluded.
 
@@ -3971,11 +4008,9 @@ Constructor and per-operation inputs, including nested option dictionaries
 and explicit `None`, raise `TypeError` on sync/async legacy and Rust paths.
 The raw-hook policy and query forwarding are removed. Execution/parity tests
 for these callbacks are retired; unsupported-input regression coverage
-remains. Gaps 26 and 27 are closed, not blocked on a new Rust extension or
+remains. These exclusions are not blocked on a new Rust extension or
 equivalent callback delivery. Separate observability integration still needs
 its own evidence.
-See [entry 26](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-26) and
-[entry 27](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-27).
 
 <a id="unsupported-settings-no-longer-silently-change-the-selected-backend"></a>
 

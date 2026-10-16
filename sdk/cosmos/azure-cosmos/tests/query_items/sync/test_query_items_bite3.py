@@ -22,7 +22,7 @@ from common._parity_helpers import (
 @pytest.mark.cosmosEmulator
 @skip_unless_emulator()
 @skip_unless_rust_binding()
-class TestQueryBite3:
+class TestQueryAmountParameters:
     """Change the numeric parameter without changing SQL or partition scope."""
 
     def test_query_with_changing_minimum_amount(self):

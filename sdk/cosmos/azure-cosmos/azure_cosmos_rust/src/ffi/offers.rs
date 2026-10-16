@@ -13,14 +13,25 @@ use super::*;
 /// offer operation does not use them. Return a binding response tuple with an
 /// `{"Offers":[...]}` body. The execution helper supplies query headers when absent.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn read_offer<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "read_offer")?;
     let (_container_link, _partition_key, modifiers, body_bytes) = extract_body_inputs(prepared)?;
-    run_read_offer_operation(py, driver_handle, modifiers, body_bytes, "read_offer")
+    run_read_offer_operation(
+        py,
+        driver_handle,
+        modifiers,
+        body_bytes,
+        "read_offer",
+        timeout_seconds,
+        include_attempts,
+    )
 }
 
 /// Replace the offer named by the resource id in PreparedRequest.item_id.
@@ -46,14 +57,25 @@ pub(crate) fn replace_offer<'py>(
 }
 /// Async twin of `read_offer`.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn read_offer_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "read_offer")?;
     let (_container_link, _partition_key, modifiers, body_bytes) = extract_body_inputs(prepared)?;
-    run_read_offer_operation_async(py, driver_handle, modifiers, body_bytes, "read_offer")
+    run_read_offer_operation_async(
+        py,
+        driver_handle,
+        modifiers,
+        body_bytes,
+        "read_offer",
+        timeout_seconds,
+        include_attempts,
+    )
 }
 
 /// Async twin of `replace_offer`.

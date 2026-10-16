@@ -29,11 +29,8 @@ class TestEncoding(unittest.TestCase):
     masterKey = test_config.TestConfig.masterKey
     connectionPolicy = test_config.TestConfig.connectionPolicy
     client: cosmos_client.CosmosClient = None
-    key_client: cosmos_client.CosmosClient = None
     created_db: DatabaseProxy = None
-    key_db: DatabaseProxy = None
     created_container: ContainerProxy = None
-    key_container: ContainerProxy = None
 
     @staticmethod
     def _large_cjk_document(id_prefix):
@@ -51,12 +48,6 @@ class TestEncoding(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-
-        # Key-auth client for control-plane operations (e.g. stored procedures)
-        cls.key_client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.key_db = cls.key_client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
-        cls.key_container = cls.key_db.get_container_client(
-            test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
         # AAD (or key, depending on env var) client for data-plane operations
         cls.client = test_config.TestConfig.create_data_client()
@@ -79,25 +70,6 @@ class TestEncoding(unittest.TestCase):
 
         read_doc = self.created_container.read_item(item=created_doc['id'], partition_key='pk')
         self.assertEqual(read_doc['unicode_content'], test_string)
-
-    @pytest.mark.skipif(
-        test_config.TestConfig.data_auth_mode == 'aad',
-        reason="Stored-procedure creation is a control-plane operation that needs key auth; "
-               "the account under test may have local auth disabled.",
-    )
-    def test_create_stored_procedure_with_line_separator_para_seperator_next_line_unicodes(self):
-        # scripts.create_stored_procedure and scripts.get_stored_procedure are control-plane.
-        # operations that will return 403 under AAD Data Contributor role. This test uses key_container
-        # (key-auth) for these operations.
-        test_string = 'Line Separator (\u2028) & Paragraph Separator (\u2029) & Next Line (\x85) & نیم\u200cفاصله'  # cspell:disable-line
-
-        test_string_unicode = u'Line Separator (\u2028) & Paragraph Separator (\u2029) & Next Line (\x85) & نیم\u200cفاصله'  # cspell:disable-line
-
-        stored_proc_definition = {'id': 'myid' + str(uuid.uuid4()), 'body': test_string}
-        created_sp = self.key_container.scripts.create_stored_procedure(body=stored_proc_definition)
-
-        read_sp = self.key_container.scripts.get_stored_procedure(created_sp['id'])
-        self.assertEqual(read_sp['body'], test_string_unicode)
 
     # Round-trip tests for documents that contain 4-byte UTF-8
     # characters (emoji). These exercise both writing and reading

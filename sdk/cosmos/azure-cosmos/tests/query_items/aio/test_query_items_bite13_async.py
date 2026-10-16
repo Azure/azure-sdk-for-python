@@ -16,7 +16,7 @@ from common._parity_helpers import run_target_operation_async, skip_unless_emula
 @pytest.mark.asyncio
 @skip_unless_emulator()
 @skip_unless_rust_binding()
-class TestQueryBite13Async:
+class TestQueryCustomerOrderMinimumAsync:
     async def test_query_minimum_customer_order_amount_async(self):
         backend = os.environ.get("COSMOS_BACKEND", "rust")
         database_id = "query_bite13_async_" + uuid.uuid4().hex

@@ -12,12 +12,13 @@
 
 #### Breaking Changes
 
+* Removed `ContainerProxy.is_system_key` from synchronous and asynchronous clients on both backends. Legacy system-key containers are outside the release scope; the public compatibility property is no longer available.
 * Removed `raw_request_hook` and `raw_response_hook` from both legacy and Rust-backed clients, including constructor and per-operation inputs. Supplying either option, including `None`, raises `TypeError`. Use supported results, response headers, tracing, and diagnostics; the ordinary `response_hook` is unchanged.
 * Rust-backed clients reject `enable_endpoint_discovery`, `multiple_write_locations`, and explicit assignments to their `ConnectionPolicy` fields; Rust manages discovery and multi-write routing from account settings. The legacy comparison backend retains these controls.
 * Removed client-level proxy, custom CA, client-certificate, TLS-verification override, and transport options from both backends, including `ProxyConfiguration`, `SSLConfiguration`, and their policy fields; removed inputs raise `TypeError`, while runtime-controlled environment proxy use is unchanged.
 * Rust-backed clients require connection/proxy settings on `CosmosRuntime` and reject overall timeout budgets below one second.
 * Removed `read_timeout` and `ConnectionPolicy.ReadTimeout`, `RecoveryReadTimeout`, and `DBAReadTimeout` from both legacy and Rust execution; supplying the removed options now raises `TypeError`.
-* For the Rust-backed release, reject trigger options and headers and exclude stored-procedure, trigger, and UDF definition APIs, including stored-procedure execution; SQL invocation of deployed UDFs remains supported.
+* Removed `ContainerProxy.scripts`, synchronous and asynchronous `ScriptsProxy` classes/modules, `TriggerType`, `TriggerOperation`, and dedicated legacy scripting connection operations on both backends. Stored-procedure execution and stored-procedure/trigger/UDF definition management are intentionally excluded, not pending Rust integration. Rust-backed item operations continue rejecting trigger options and headers; SQL invocation of deployed UDFs remains supported.
 * Removed Cosmos database-user and resource-permission APIs from synchronous and asynchronous clients on both backends, including `UserProxy`, `Permission`, `PermissionMode`, and the `resource_token_expiry_seconds` option.
 * Removed resource-token and permission-feed authentication from both backends. Synchronous and asynchronous clients now reject these credentials during construction; account-key strings, `masterKey` dictionaries, and Microsoft Entra credentials remain supported.
 * Rust-backed client and per-operation hedging configuration now rejects `threshold_steps_ms`; use `threshold_ms` for one alternate attempt.

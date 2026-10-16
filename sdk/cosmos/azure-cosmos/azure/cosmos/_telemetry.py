@@ -36,9 +36,24 @@ _LOGGER = logging.getLogger(__name__)
 _P = ParamSpec("_P")
 _T = TypeVar("_T")
 _Outcome = Literal["success", "error", "cancelled"]
-_BindingOperation = str | tuple[str, ...]
 _REPORTING_FAILURES = 0
 _REPORT_LOCK = Lock()
+
+
+@dataclass(frozen=True)
+class BindingAlternatives:
+    """Bounded sequences selected by the first binding call, without phantom steps."""
+
+    paths: tuple[tuple[str, ...], ...]
+
+    def __post_init__(self) -> None:
+        if not self.paths or any(not path for path in self.paths):
+            raise ValueError("Binding alternatives require nonempty paths")
+        if len({path[0] for path in self.paths}) != len(self.paths):
+            raise ValueError("Binding alternatives require distinct first operations")
+
+
+_BindingOperation = str | tuple[str, ...] | BindingAlternatives
 
 
 def _report(message: str, level: int = logging.WARNING) -> None:
@@ -141,7 +156,9 @@ class _DiagnosticCollector:
                         tail = self.retained_limit - head
                         attempts = attempts[:head] + (attempts[-tail:] if tail else ())
                     self.diagnostics = _Diagnostics(
-                        (previous.request_count if previous else 0) + diagnostics.request_count, attempts
+                        (previous.request_count if previous else 0) + diagnostics.request_count,
+                        attempts,
+                        complete=diagnostics.complete and (previous is None or previous.complete),
                     )
         if rejected:
             _report("Rust telemetry rejected a duplicate or late diagnostic contribution, or a different owner")
@@ -173,7 +190,9 @@ class _Operation:  # pylint: disable=too-many-instance-attributes
     delegated_tasks: set[object] = field(default_factory=set, repr=False)
 
     def __post_init__(self) -> None:
-        if isinstance(self.binding_operation, tuple):
+        if isinstance(self.binding_operation, BindingAlternatives):
+            self.collector.contribution_limit = max(len(path) for path in self.binding_operation.paths)
+        elif isinstance(self.binding_operation, tuple):
             # A composed call retains each step's native-bounded detail, at most once per step.
             self.collector.contribution_limit = len(self.binding_operation)
 
@@ -230,7 +249,10 @@ class _Contribution:
         if payload is not None:
             try:
                 total, _, attempts = _decode_payload(payload)
-                diagnostics = _Diagnostics(total, tuple(attempts))
+                complete = payload.get("complete", True) if isinstance(payload, dict) else True
+                if not isinstance(complete, bool):
+                    raise ValueError("Invalid diagnostic completeness")
+                diagnostics = _Diagnostics(total, tuple(attempts), complete=complete)
             except Exception:  # pylint: disable=broad-except
                 _report("Rust telemetry rejected an invalid diagnostics payload; operation result is unchanged")
         self.owner.accept(self, diagnostics)
@@ -306,7 +328,7 @@ def delegate_operation(owner: object, operation: str) -> Iterator[None]:
         state is not None
         and not state.closed
         and state.owns_execution()
-        and isinstance(state.binding_operation, tuple)
+        and isinstance(state.binding_operation, (tuple, BindingAlternatives))
         and state.backend is getattr(getattr(owner, "_item_context", None), "adapter", None)
     ):
         call = _DelegatedCall(state, owner, operation, _current_task())
@@ -387,13 +409,13 @@ def _new_operation(
     options = kwargs.get("tracing_options", {})
     enabled = options.get("enabled") if isinstance(options, Mapping) else False
     tracing = enabled is not False and (enabled is not None or settings.tracing_enabled())
-    if not tracing and not handlers:
+    if not tracing and not handlers and not isinstance(binding_operation, (tuple, BindingAlternatives)):
         return None
     backend = getattr(context, "adapter", None)
     if backend is None or not is_rust_backend(backend):
         return None
     state = None
-    if handlers:
+    if handlers or not tracing:
         state = _Operation(
             operation, backend, None, _current_task(), get_ident(), binding_operation or operation, handlers=handlers
         )
@@ -459,7 +481,8 @@ def trace_operation(*, binding_operation: _BindingOperation) -> Callable[[Callab
 
     :keyword binding_operation: One binding operation, or the ordered steps of a bounded
         composed call. A tuple allows a prefix of that sequence, not arbitrary repeated calls.
-    :paramtype binding_operation: str or tuple[str, ...]
+        BindingAlternatives selects a path by its first actual binding call.
+    :paramtype binding_operation: str or tuple[str, ...] or BindingAlternatives
     :return: A decorator with operation-scoped diagnostic collection.
     :rtype: callable
     """
@@ -492,7 +515,8 @@ def trace_operation_async(
 
     :keyword binding_operation: One binding operation, or the ordered steps of a bounded
         composed call. A tuple allows a prefix of that sequence, not arbitrary repeated calls.
-    :paramtype binding_operation: str or tuple[str, ...]
+        BindingAlternatives selects a path by its first actual binding call.
+    :paramtype binding_operation: str or tuple[str, ...] or BindingAlternatives
     :return: A decorator with operation-scoped diagnostic collection.
     :rtype: callable
     """
@@ -536,6 +560,11 @@ def get_operation(backend: object, operation: str) -> Optional[_Operation]:
     if state.backend is not backend or not state.owns_execution():
         return None
     expected = state.binding_operation
+    if isinstance(expected, BindingAlternatives):
+        selected = next((path for path in expected.paths if path[0] == operation), None)
+        if selected is not None:
+            state.binding_operation = expected = selected
+            state.collector.contribution_limit = len(selected)
     if isinstance(expected, tuple):
         index = state.collector.contributions
         if index >= len(expected) or expected[index] != operation:

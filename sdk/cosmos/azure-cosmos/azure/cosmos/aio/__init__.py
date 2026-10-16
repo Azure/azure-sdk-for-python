@@ -22,11 +22,9 @@
 from ._container import ContainerProxy
 from ._cosmos_client import CosmosClient
 from ._database import DatabaseProxy
-from ._scripts import ScriptsProxy
 
 __all__ = (
     "CosmosClient",
     "DatabaseProxy",
     "ContainerProxy",
-    "ScriptsProxy"
 )

@@ -23,7 +23,7 @@ from common._parity_helpers import (
 @pytest.mark.cosmosEmulator
 @skip_unless_emulator()
 @skip_unless_rust_binding()
-class TestQueryBite1:
+class TestQueryPartitionScope:
     """Keep class-based node IDs compatible with the legacy parity reporter."""
 
     def test_query_one_customers_order_ids(self):

@@ -25,6 +25,7 @@ import pytest
 import azure.cosmos.aio._cosmos_client as async_cosmos_client_module
 import azure.cosmos.cosmos_client as sync_cosmos_client_module
 import azure.cosmos.aio._backend.binding_adapter as async_rust_module
+import azure.cosmos._backend.binding_adapter as sync_rust_module
 from azure.cosmos._backend.constants import BACKEND_ENV_VAR, BACKEND_NAME_RUST
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
@@ -765,6 +766,47 @@ async def test_async_close_preserves_stateless_legacy_backend(monkeypatch):
     assert await client.close() is None
     assert await client.close() is None
     assert client.client_connection.pipeline_client.__aexit__.await_count == 2
+
+
+@pytest.mark.parametrize("has_handle", [False, True], ids=["unused", "acquired"])
+@pytest.mark.parametrize("public_close", [False, True], ids=["adapter", "client"])
+def test_sync_cleanup_still_releases_driver_if_credential_lookup_raises(
+    monkeypatch, caplog, has_handle, public_close
+):
+    """A cleanup lookup failure must not strand a detached handle or be suppressed."""
+    client = _make_sync_client(monkeypatch)
+    binding = MagicMock()
+    monkeypatch.setattr(sync_rust_module, "_rust_module", binding)
+    error = RuntimeError("credential cleanup attribute failed")
+
+    class BrokenCleanupCredential:
+        @property
+        def _close_cosmos_async_bridge(self):
+            raise error
+
+    adapter = client._adapter
+    adapter._token_credential = BrokenCleanupCredential()
+    adapter._driver_handle = "close-test-driver" if has_handle else None
+    close = client.close if public_close else adapter.close
+
+    with caplog.at_level(logging.DEBUG):
+        if public_close:
+            assert close() is None
+            assert "Failed closing client backend" in caplog.text
+            assert str(error) in caplog.text
+        else:
+            with pytest.raises(RuntimeError) as raised:
+                close()
+            assert raised.value is error
+
+    assert adapter._closing
+    assert adapter._driver_handle is None
+    assert adapter._token_credential is None
+    assert close() is None
+    if has_handle:
+        binding.release_driver_handle.assert_called_once_with("close-test-driver")
+    else:
+        binding.release_driver_handle.assert_not_called()
 
 
 @pytest.mark.asyncio

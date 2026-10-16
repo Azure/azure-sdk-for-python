@@ -5,8 +5,10 @@ use pyo3::exceptions::{PyAttributeError, PyRuntimeError, PyRuntimeWarning, PyTim
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyDict, PyTuple};
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 
 use azure_data_cosmos_driver::{
+    diagnostics::DiagnosticsContext,
     error::{status_codes, CosmosError, CosmosStatus},
     models::{CosmosResponse, ResponseBody},
 };
@@ -60,10 +62,31 @@ pub(super) fn tuple_from_result_with_attempts<'py>(
         Ok(response) => Some(response.diagnostics()),
         Err(error) => error.diagnostics(),
     };
-    let response = tuple_from_result(py, response_result);
+    with_attempt_diagnostics(
+        py,
+        tuple_from_result(py, response_result),
+        diagnostics,
+        true,
+    )
+}
+
+/// Keep response conversion independent from optional, possibly incomplete diagnostics.
+pub(super) fn with_attempt_diagnostics<'py>(
+    py: Python<'py>,
+    response: PyResult<Bound<'py, PyTuple>>,
+    diagnostics: Option<Arc<DiagnosticsContext>>,
+    complete: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
     let payload = match diagnostics {
         Some(diagnostics) => {
-            attempt_payload_or_error(py, super::diagnostics::attempt_payload(py, &diagnostics))
+            let payload =
+                super::diagnostics::attempt_payload(py, &diagnostics).and_then(|payload| {
+                    if !complete {
+                        payload.set_item("complete", false)?;
+                    }
+                    Ok(payload)
+                });
+            attempt_payload_or_error(py, payload)
         }
         None => py.None(),
     };

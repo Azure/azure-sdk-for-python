@@ -52,7 +52,7 @@ For public `create_item`, `read_item`, `delete_item`, `upsert_item`, `replace_it
 `patch_item`, `ContainerProxy.read`, `DatabaseProxy.delete_container`,
 `DatabaseProxy.create_container`, `DatabaseProxy.replace_container`,
 `DatabaseProxy.create_container_if_not_exists`,
-`DatabaseProxy.read`, `CosmosClient.create_database`,
+`DatabaseProxy.read`, `DatabaseProxy.get_throughput`, `CosmosClient.create_database`,
 `CosmosClient.delete_database` and `CosmosClient.create_database_if_not_exists`, the Python
 wrapper requests structured request diagnostics when it owns a recording
 operation span or an SDK-internal
@@ -133,15 +133,35 @@ deadline wrapper covers scheduling and native execution using the remaining
 budget after Python driver setup. The composed call retains separate read
 and create budgets; this is not a new overall workflow timeout.
 
+Public `DatabaseProxy.get_throughput` selects one of two bounded sequences:
+`read_database`, `read_offer`, or just `read_offer` when properties are cached.
+Its internal public database read joins the outer operation through scoped
+delegation. Completion includes offer validation, throughput deserialization
+and the isolated response hook. An empty successful offer query still raises
+the public not-found error; recording neither repeats the read nor changes
+throughput settings.
+
+Both offer-read entry points accept internal `timeout_seconds=None` and
+`include_attempts=False`. The shared deadline covers scheduling and all offer
+pages. The attempt envelope aggregates returned page diagnostics with the
+driver's bounded helper, including completed pages before a returned later
+failure. It preserves the ordinary merged body, final response headers,
+exception mapping and diagnostic-counter behavior. A final failure without
+diagnostics marks available detail `complete=False`; interruption before a
+returned result does not recover diagnostic detail from the cancelled future.
+The public timeout still applies to the offer query separately from a needed
+database-properties read's normal defaults. This does not instrument public
+container throughput reads or throughput replacement.
+
 Each binding invocation contributes through a single-use token. The Python
 collector rejects duplicate or late delivery and records operation totals once.
 Single-operation paths accept one binding result. Database get-or-create
 accepts at most three ordered results, and container get-or-create at most two,
-retaining the native-bounded detail
+as does database throughput read, retaining the native-bounded detail
 from each. Other multi-result paths must explicitly bound collection rather
 than joining an operation merely through inherited context. Driver retries
 already included in one result are not additional Python contributions.
-If a contribution has no usable diagnostics, known attempts are preserved
+If a contribution has no usable or only incomplete diagnostics, known attempts are preserved
 without publishing partial counts as complete operation totals.
 
 The shared Python deadline helper explicitly authorizes its own async task

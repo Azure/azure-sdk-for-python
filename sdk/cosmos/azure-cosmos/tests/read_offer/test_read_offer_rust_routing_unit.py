@@ -6,6 +6,7 @@
 """Offer routing, direct request preparation and payload contracts; no network."""
 
 from __future__ import annotations
+import inspect
 from common.typed_requests import legacy_partition_key_from_request
 from common.typed_requests import wire_headers, settings_options, legacy_settings
 
@@ -31,6 +32,36 @@ _OFFER_QUERY = {
     "query": "SELECT * FROM root r WHERE r.resource=@link",
     "parameters": [{"name": "@link", "value": "dbs/db/colls/coll/"}],
 }
+
+
+@pytest.mark.parametrize("suffix", ["", "_async"])
+@pytest.mark.parametrize("remaining", [None, 0.25, 2])
+@pytest.mark.parametrize("include_attempts", [False, True])
+def test_offer_native_accepts_remaining_timeout(suffix, remaining, include_attempts):
+    """Native offer reads accept remaining budgets without changing default diagnostics."""
+    from azure.cosmos import _rust
+
+    prepared = build_read_offer_request(
+        resource_link="dbs/db", offer_query=_OFFER_QUERY, request_options={}, default_headers={}
+    )
+    native = getattr(_rust, "read_offer" + suffix)
+    assert inspect.signature(native).parameters["timeout_seconds"].default is None
+    assert inspect.signature(native).parameters["include_attempts"].default is False
+    with pytest.raises(RuntimeError, match="(?i)driver"):
+        native("unregistered-offer-test", prepared, timeout_seconds=remaining, include_attempts=include_attempts)
+
+
+@pytest.mark.parametrize("suffix", ["", "_async"])
+@pytest.mark.parametrize("remaining", [0, -1, float("inf"), float("nan")])
+def test_offer_native_rejects_invalid_remaining_timeout(suffix, remaining):
+    """Reject invalid durations before looking up a driver or dispatching a request."""
+    from azure.cosmos import _rust
+
+    prepared = build_read_offer_request(
+        resource_link="dbs/db", offer_query=_OFFER_QUERY, request_options={}, default_headers={}
+    )
+    with pytest.raises(ValueError, match="timeout_seconds"):
+        getattr(_rust, "read_offer" + suffix)("unregistered-offer-test", prepared, timeout_seconds=remaining)
 
 
 @pytest.mark.parametrize(

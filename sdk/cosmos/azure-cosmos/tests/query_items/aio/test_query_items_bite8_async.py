@@ -16,7 +16,7 @@ from common._parity_helpers import run_target_operation_async, skip_unless_emula
 @pytest.mark.asyncio
 @skip_unless_emulator()
 @skip_unless_rust_binding()
-class TestQueryBite8Async:
+class TestQueryDistinctStatusValuesAsync:
     async def test_query_distinct_status_values_async(self):
         backend = os.environ.get("COSMOS_BACKEND", "rust")
         database_id = "query_bite8_async_" + uuid.uuid4().hex

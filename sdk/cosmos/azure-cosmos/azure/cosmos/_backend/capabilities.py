@@ -24,19 +24,6 @@ GET_DATABASE_THROUGHPUT = "get_database_throughput"
 GET_CONTAINER_THROUGHPUT = "get_container_throughput"
 
 
-def require_legacy_api(connection: Any, api_name: str, *, item_context: Any = None) -> None:
-    """Retain comparison-only APIs without executing them on a Rust client."""
-    if item_context is not None:
-        backend = item_context.adapter
-    else:
-        attributes = getattr(connection, "__dict__", {})
-        backend = attributes.get("_backend")
-    if backend is None or backend.name != "core-python":
-        raise NotImplementedError(
-            f"{api_name} is excluded from the Rust-backed APIs; no legacy fallback."
-        )
-
-
 def reject_removed_options(kwargs: Mapping[str, Any]) -> None:
     """Reject removed settings on both execution paths, including nested options."""
     for options in (kwargs, kwargs.get("request_options"), kwargs.get("feed_options"), kwargs.get("options")):

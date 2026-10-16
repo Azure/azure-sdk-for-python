@@ -5,7 +5,7 @@ import asyncio
 import importlib
 import inspect
 from types import SimpleNamespace
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
@@ -15,8 +15,6 @@ from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos.database import DatabaseProxy
 from azure.cosmos.aio._database import DatabaseProxy as AsyncDatabaseProxy
-from azure.cosmos.scripts import ScriptsProxy
-from azure.cosmos.aio._scripts import ScriptsProxy as AsyncScriptsProxy
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos._backend.client_config import build_client_config
@@ -24,6 +22,7 @@ from azure.cosmos._backend.request_settings import ItemSettings, ResourceSetting
 from azure.cosmos._availability_strategy_config import CrossRegionHedgingStrategy
 from azure.cosmos._helpers._item_context import ItemClientContext
 from azure.cosmos._helpers._request_settings import build_request_headers_and_settings
+from azure.cosmos.partition_key import NonePartitionKeyValue, NullPartitionKeyValue, _Undefined
 from common.test_connection_free_items_unit import Backend, AsyncBackend
 
 
@@ -31,8 +30,8 @@ def finish(result):
     return asyncio.run(result) if inspect.isawaitable(result) else result
 
 
-@pytest.fixture(params=[False, True], ids=["sync", "async"])
-def api(request):
+@pytest.fixture(name="api", params=[False, True], ids=["sync", "async"])
+def api_case(request):
     asynchronous = request.param
     backend = AsyncBackend() if asynchronous else Backend()
     connection = MagicMock()
@@ -184,16 +183,103 @@ def test_client_headers_cannot_reintroduce_triggers(header):
         build_client_config(headers={header: "validateOrder"})
 
 
-def test_scripts_navigation_and_direct_construction_are_excluded(api):
-    with pytest.raises(NotImplementedError, match="ContainerProxy.scripts"):
-        _ = api.container.scripts
-    with pytest.raises(NotImplementedError, match="ScriptsProxy"):
-        if api.asynchronous:
-            AsyncScriptsProxy(api.container, api.connection, api.container.container_link)
-        else:
-            ScriptsProxy(api.connection, api.container.container_link, False)
+@pytest.mark.parametrize("legacy", [False, True])
+@pytest.mark.parametrize("name", ["scripts", "is_system_key"])
+def test_removed_container_properties_are_absent_on_both_backends(api, legacy, name):
+    if legacy:
+        backend = ASYNC_LEGACY_BACKEND if api.asynchronous else LEGACY_BACKEND
+        api.connection._backend = backend
+        api.container._item_context = ItemClientContext(backend)
+    assert not hasattr(type(api.container), name)
+    assert not hasattr(api.container, "_scripts")
+    with pytest.raises(AttributeError, match=name):
+        getattr(api.container, name)
     assert api.backend.events == []
     assert api.connection.mock_calls == []
+
+
+@pytest.mark.parametrize("definition", [
+    {"paths": ["/customerId"], "kind": "Hash"},
+    {"paths": ["/customerId"], "kind": "Hash", "systemKey": False},
+])
+def test_private_missing_key_resolution_uses_metadata(api, monkeypatch, definition):
+    metadata = (AsyncMock if api.asynchronous else MagicMock)(
+        return_value={"partitionKey": definition},
+    )
+    monkeypatch.setattr(api.container, "_get_properties", metadata)
+    assert isinstance(
+        finish(api.container._set_partition_key(NonePartitionKeyValue)), _Undefined,
+    )
+    if api.asynchronous:
+        metadata.assert_awaited_once_with()
+    else:
+        metadata.assert_called_once_with()
+    assert api.backend.events == []
+    assert api.connection.mock_calls == []
+
+
+def test_private_missing_key_resolution_propagates_metadata_failure(api, monkeypatch):
+    error = RuntimeError("container metadata unavailable")
+    metadata = (AsyncMock if api.asynchronous else MagicMock)(side_effect=error)
+    monkeypatch.setattr(api.container, "_get_properties", metadata)
+    with pytest.raises(RuntimeError) as raised:
+        finish(api.container._set_partition_key(NonePartitionKeyValue))
+    assert raised.value is error
+    assert api.backend.events == []
+    assert api.connection.mock_calls == []
+
+
+@pytest.mark.parametrize("value,expected", [
+    (NullPartitionKeyValue, None),
+    ("customer-17", "customer-17"),
+    (["customer-17", "west"], ["customer-17", "west"]),
+])
+def test_private_explicit_keys_do_not_read_metadata(api, monkeypatch, value, expected):
+    metadata = (AsyncMock if api.asynchronous else MagicMock)()
+    monkeypatch.setattr(api.container, "_get_properties", metadata)
+    assert finish(api.container._set_partition_key(value)) == expected
+    metadata.assert_not_called()
+    assert api.backend.events == []
+    assert api.connection.mock_calls == []
+
+
+@pytest.mark.parametrize("module,names", [
+    ("azure.cosmos", ("ScriptsProxy", "TriggerType", "TriggerOperation")),
+    ("azure.cosmos.aio", ("ScriptsProxy",)),
+    ("azure.cosmos.container", ("ScriptsProxy",)),
+    ("azure.cosmos.aio._container", ("ScriptsProxy",)),
+    ("azure.cosmos.documents", ("TriggerType", "TriggerOperation")),
+])
+def test_scripting_types_are_not_exported(module, names):
+    public_module = importlib.import_module(module)
+    for name in names:
+        assert not hasattr(public_module, name)
+        assert name not in getattr(public_module, "__all__", ())
+
+
+@pytest.mark.parametrize("module", [
+    "azure.cosmos.scripts", "azure.cosmos.aio._scripts",
+])
+def test_scripting_modules_are_removed(module):
+    with pytest.raises(ModuleNotFoundError) as error:
+        importlib.import_module(module)
+    assert error.value.name == module
+
+
+@pytest.mark.parametrize("module", [
+    "azure.cosmos._cosmos_client_connection",
+    "azure.cosmos.aio._cosmos_client_connection_async",
+])
+def test_legacy_scripting_operations_are_removed(module):
+    connection = importlib.import_module(module).CosmosClientConnection
+    for resource in ("StoredProcedure", "Trigger", "UserDefinedFunction"):
+        for operation in ("Create", "Upsert", "Read", "Replace", "Delete", "Execute"):
+            assert not hasattr(connection, operation + resource)
+        for operation in ("Read", "Query"):
+            assert not hasattr(connection, operation + resource + "s")
+    for suffix in ("Sproc", "Trigger", "UDF"):
+        assert not hasattr(connection, "_GetContainerIdWithPathFor" + suffix)
+    assert callable(connection.QueryItems)
 
 
 @pytest.mark.parametrize("method", [
@@ -270,13 +356,7 @@ def test_permission_token_expiry_is_not_a_rust_request_option(option):
         build_request_headers_and_settings({option: 60})
 
 
-def test_legacy_scripts_and_trigger_arguments_are_preserved(api):
-    legacy = ASYNC_LEGACY_BACKEND if api.asynchronous else LEGACY_BACKEND
-    api.connection._backend = legacy
-    api.container._item_context = ItemClientContext(legacy)
-    api.database._item_context = ItemClientContext(legacy)
-    api.container._get_properties = MagicMock(return_value={"partitionKey": {}})
-    assert api.container.scripts is not None
+def test_legacy_hedging_strategy_can_represent_threshold_steps():
     strategy = CrossRegionHedgingStrategy({"threshold_ms": 100, "threshold_steps_ms": 50})
     assert strategy.threshold_steps_ms == 50
 

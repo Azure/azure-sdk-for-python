@@ -45,7 +45,7 @@ from typing import TYPE_CHECKING, Any, Union, Optional, Mapping, Callable, overl
 
 import warnings
 from azure.core.tracing.decorator import distributed_trace
-from ._telemetry import delegate_operation, trace_operation
+from ._telemetry import BindingAlternatives, delegate_operation, trace_operation
 from azure.core.paging import ItemPaged
 from azure.cosmos.partition_key import PartitionKey
 
@@ -1263,7 +1263,7 @@ class DatabaseProxy(object):
             self.database_link, container_properties["id"],
             properties=container_properties, _item_context=self._item_context), container_properties
 
-    @distributed_trace
+    @trace_operation(binding_operation=BindingAlternatives((("read_database", "read_offer"), ("read_offer",))))
     def get_throughput(
             self,
             *,
@@ -1281,10 +1281,15 @@ class DatabaseProxy(object):
         :rtype: ~azure.cosmos.ThroughputProperties
         """
         prepare_operation_kwargs(self, kwargs, inherit_timeout=False)
+
+        def get_properties() -> dict[str, Any]:
+            with delegate_operation(self, "read"):
+                return self._get_properties()
+
         return get_database_throughput(
             client_connection=self.client_connection,
             database_link=self.database_link,
-            get_properties=self._get_properties,
+            get_properties=get_properties,
             not_found_message="Could not find ThroughputProperties for database " + self.database_link,
             response_hook=response_hook,
             kwargs=kwargs,

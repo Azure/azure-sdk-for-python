@@ -126,38 +126,6 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         cid = container_id_or_container if isinstance(container_id_or_container, str) else container_id_or_container.id
         await self.key_database_for_test.delete_container(cid)
 
-    @_skip_under_aad
-    async def test_partitioned_collection_execute_stored_procedure_async(self):
-        key_collection = self.key_database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        created_collection = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        document_id = str(uuid.uuid4())
-
-        sproc = {
-            'id': 'storedProcedure' + str(uuid.uuid4()),
-            'body': (
-                    'function () {' +
-                    '   var client = getContext().getCollection();' +
-                    '   client.createDocument(client.getSelfLink(), { id: "' + document_id + '", pk : 2}, ' +
-                    '   {}, function(err, docCreated, options) { ' +
-                    '   if(err) throw new Error(\'Error while creating document: \' + err.message);' +
-                    '   else {' +
-                    '   getContext().getResponse().setBody(1);' +
-                    '        }' +
-                    '   });}')
-        }
-
-        created_sproc = await key_collection.scripts.create_stored_procedure(body=sproc)
-
-        # Partiton Key value same as what is specified in the stored procedure body
-        result = await created_collection.scripts.execute_stored_procedure(sproc=created_sproc['id'], partition_key=2)
-        assert result == 1
-
-        # Partiton Key value different than what is specified in the stored procedure body will cause a bad request(400) error
-        await self.__assert_http_failure_with_status(
-            StatusCodes.BAD_REQUEST,
-            created_collection.scripts.execute_stored_procedure,
-            created_sproc['id'])
-
     async def test_partitioned_collection_partition_key_value_types_async(self):
 
         created_db = self.database_for_test
@@ -535,57 +503,6 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         with self.assertRaises(ValueError):
             CosmosClient(TestCRUDOperationsAsync.host, {})
 
-    @_skip_under_aad
-    async def test_script_logging_execute_stored_procedure_async(self):
-
-        created_collection = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-
-        sproc = {
-            'id': 'storedProcedure' + str(uuid.uuid4()),
-            'body': (
-                    'function () {' +
-                    '   var mytext = \'x\';' +
-                    '   var myval = 1;' +
-                    '   try {' +
-                    '       console.log(\'The value of %s is %s.\', mytext, myval);' +
-                    '       getContext().getResponse().setBody(\'Success!\');' +
-                    '   }' +
-                    '   catch (err) {' +
-                    '       getContext().getResponse().setBody(\'inline err: [\' + err.number + \'] \' + err);' +
-                    '   }'
-                    '}')
-        }
-
-        created_sproc = await created_collection.scripts.create_stored_procedure(body=sproc)
-
-        result = await created_collection.scripts.execute_stored_procedure(
-            sproc=created_sproc['id'],
-            partition_key=1
-        )
-
-        assert result == 'Success!'
-        assert HttpHeaders.ScriptLogResults not in created_collection.scripts.client_connection.last_response_headers
-
-        result = await created_collection.scripts.execute_stored_procedure(
-            sproc=created_sproc['id'],
-            enable_script_logging=True,
-            partition_key=1
-        )
-
-        assert result == 'Success!'
-        assert urllib.quote('The value of x is 1.') == created_collection.scripts.client_connection. \
-            last_response_headers.get(HttpHeaders.ScriptLogResults)
-
-        result = await created_collection.scripts.execute_stored_procedure(
-            sproc=created_sproc['id'],
-            enable_script_logging=False,
-            partition_key=1
-        )
-
-        assert result == 'Success!'
-        assert HttpHeaders.ScriptLogResults not in created_collection.scripts.client_connection.last_response_headers
-
-
     async def test_database_account_connection_timeout_async(self):
         connection_policy = documents.ConnectionPolicy()
         connection_policy.DBAConnectionTimeout = 0.000000000001
@@ -932,65 +849,9 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
         await self._delete_container_for_test(collection.id)
 
-    @_skip_under_aad
-    async def test_stored_procedure_functionality_async(self):
-
-        # create collection
-        collection = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-
-        sproc1 = {
-            'id': 'storedProcedure1' + str(uuid.uuid4()),
-            'body': (
-                    'function () {' +
-                    '  for (var i = 0; i < 1000; i++) {' +
-                    '    var item = getContext().getResponse().getBody();' +
-                    '    if (i > 0 && item != i - 1) throw \'body mismatch\';' +
-                    '    getContext().getResponse().setBody(i);' +
-                    '  }' +
-                    '}')
-        }
-
-        retrieved_sproc = await collection.scripts.create_stored_procedure(body=sproc1)
-        result = await collection.scripts.execute_stored_procedure(
-            sproc=retrieved_sproc['id'],
-            partition_key=1
-        )
-        assert result == 999
-        sproc2 = {
-            'id': 'storedProcedure2' + str(uuid.uuid4()),
-            'body': (
-                    'function () {' +
-                    '  for (var i = 0; i < 10; i++) {' +
-                    '    getContext().getResponse().appendValue(\'Body\', i);' +
-                    '  }' +
-                    '}')
-        }
-        retrieved_sproc2 = await collection.scripts.create_stored_procedure(body=sproc2)
-        result = await collection.scripts.execute_stored_procedure(
-            sproc=retrieved_sproc2['id'],
-            partition_key=1
-        )
-        assert int(result) == 123456789
-        sproc3 = {
-            'id': 'storedProcedure3' + str(uuid.uuid4()),
-            'body': (
-                    'function (input) {' +
-                    '  getContext().getResponse().setBody(' +
-                    '      \'a\' + input.temp);' +
-                    '}')
-        }
-        retrieved_sproc3 = await collection.scripts.create_stored_procedure(body=sproc3)
-        result = await collection.scripts.execute_stored_procedure(
-            sproc=retrieved_sproc3['id'],
-            parameters={'temp': 'so'},
-            partition_key=1
-        )
-        assert result == 'aso'
-
     async def test_get_resource_with_dictionary_and_object_async(self):
 
         created_db = self.database_for_test
-        key_db = self.key_database_for_test
 
         # read database with id
         read_db = self.client.get_database_client(created_db.id)
@@ -1005,7 +866,6 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         assert read_db.id == created_db.id
 
         created_container = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        key_container = self.key_database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         # read container with id
         read_container = created_db.get_container_client(created_container.id)
@@ -1030,48 +890,6 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # read item with properties
         read_item = await created_container.read_item(item=created_item, partition_key=created_item['pk'])
         assert read_item['id'] == created_item['id']
-
-        # Sproc/trigger/UDF operations are control-plane; route through setup container.
-        created_sproc = await key_container.scripts.create_stored_procedure({
-            'id': 'storedProcedure' + str(uuid.uuid4()),
-            'body': 'function () { }'
-        })
-
-        # read sproc with id
-        read_sproc = await key_container.scripts.get_stored_procedure(created_sproc['id'])
-        assert read_sproc['id'] == created_sproc['id']
-
-        # read sproc with properties
-        read_sproc = await key_container.scripts.get_stored_procedure(created_sproc)
-        assert read_sproc['id'] == created_sproc['id']
-
-        created_trigger = await key_container.scripts.create_trigger({
-            'id': 'sample trigger' + str(uuid.uuid4()),
-            'serverScript': 'function() {var x = 10;}',
-            'triggerType': documents.TriggerType.Pre,
-            'triggerOperation': documents.TriggerOperation.All
-        })
-
-        # read trigger with id
-        read_trigger = await key_container.scripts.get_trigger(created_trigger['id'])
-        assert read_trigger['id'] == created_trigger['id']
-
-        # read trigger with properties
-        read_trigger = await key_container.scripts.get_trigger(created_trigger)
-        assert read_trigger['id'] == created_trigger['id']
-
-        created_udf = await key_container.scripts.create_user_defined_function({
-            'id': 'sample udf' + str(uuid.uuid4()),
-            'body': 'function() {var x = 10;}'
-        })
-
-        # read udf with id
-        read_udf = await key_container.scripts.get_user_defined_function(created_udf['id'])
-        assert created_udf['id'] == read_udf['id']
-
-        # read udf with properties
-        read_udf = await key_container.scripts.get_user_defined_function(created_udf)
-        assert created_udf['id'] == read_udf['id']
 
 
     async def test_delete_all_items_by_partition_key_async(self):

@@ -6,7 +6,7 @@
 """Live patch comparisons using explicitly selected backends and owned resources.
 
 Body suppression, service-issued session tokens and invalid-path errors run
-without historical skips. Numeric, SQL predicate, trigger and tracking-property
+without historical skips. Numeric, SQL predicate and tracking-property
 differences remain visible failures rather than being hidden by relaxed checks.
 The copied-original runner adds strict stored-state and resource-address checks.
 """
@@ -43,48 +43,13 @@ def container_for():
                 id="orders", partition_key=PartitionKey(path="/pk"),
             )
             yield SimpleNamespace(
-                id=container.id, database_id=database.id, scripts=container.scripts,
+                id=container.id, database_id=database.id,
             )
         finally:
             client.delete_database(database.id)
             with pytest.raises(CosmosResourceNotFoundError) as error:
                 database.read()
             assert error.value.status_code == 404
-
-
-@pytest.fixture
-def container_with_trigger(container_for):
-    """Add observable pre-trigger and post-trigger functions.
-
-    Trigger tests are only meaningful against a trigger that actually exists.
-    Naming a non-existent trigger merely proves both backends can produce *an*
-    error, which passes even when the feature is entirely broken. This trigger
-    writes a field onto the item the service is about to write, so its
-    effect is visible in the stored item and the test can prove the trigger
-    ran rather than that it was merely accepted.
-    """
-    container_for.scripts.create_trigger({
-        "id": "stampTrigger",
-        "triggerType": "Pre",
-        "triggerOperation": "All",
-        "body": """function stamp() {
-            var ctx = getContext();
-            var req = ctx.getRequest();
-            var doc = req.getBody();
-            doc['stampedBy'] = 'pre-trigger';
-            req.setBody(doc);
-        }""",
-    })
-    container_for.scripts.create_trigger({
-        "id": "auditOrder", "triggerType": "Post", "triggerOperation": "All",
-        "body": """function audit() {
-            var response = getContext().getResponse();
-            var body = response.getBody();
-            body.stampedBy = 'post-trigger';
-            response.setBody(body);
-        }""",
-    })
-    return container_for
 
 
 # ---------------------------------------------------------------------------
@@ -252,40 +217,6 @@ async def test_async_multiple_operations_applied_in_order(container_for):
 # ---------------------------------------------------------------------------
 # Header-bearing kwargs, exactly one per test
 # ---------------------------------------------------------------------------
-
-@pytest.mark.asyncio
-async def test_async_pre_trigger_include(container_with_trigger):
-    """Baseline call plus ``pre_trigger_include`` naming a trigger that exists.
-
-    Asserts more than header forwarding: the trigger writes a field onto the
-    item, so a passing run proves the trigger actually executed rather than
-    that the request was merely accepted.
-    """
-    cmp = await _run_patch(container_with_trigger, [{"op": "incr", "path": "/n", "value": 1}],
-                           summary="baseline + pre_trigger_include (real trigger)",
-                           pre_trigger_include="stampTrigger")
-    cmp.assert_functional_parity()
-    if cmp.core_python.succeeded:
-        assert cmp.core_python.return_value.get("stampedBy") == "pre-trigger", (
-            "the pre-trigger must actually run, not just be accepted")
-
-    assert cmp.core_python.succeeded and cmp.rust.succeeded
-    for outcome in (cmp.core_python, cmp.rust):
-        assert outcome.return_value["stampedBy"] == "pre-trigger"
-
-
-@pytest.mark.asyncio
-async def test_async_post_trigger_include(container_with_trigger):
-    """Baseline call plus ``post_trigger_include`` -- forwarded as a request header."""
-    cmp = await _run_patch(container_with_trigger, [{"op": "incr", "path": "/n", "value": 1}],
-                           summary="baseline + post_trigger_include",
-                           post_trigger_include="auditOrder")
-    cmp.assert_functional_parity()
-
-    assert cmp.core_python.succeeded and cmp.rust.succeeded
-    for outcome in (cmp.core_python, cmp.rust):
-        assert outcome.return_value["stampedBy"] == "post-trigger"
-
 
 @pytest.mark.asyncio
 async def test_async_session_token(container_for):

@@ -35,7 +35,6 @@ from azure.core.utils import CaseInsensitiveDict
 
 from . import _utils as utils
 from ._availability_strategy_config import _validate_request_hedging_strategy
-from ._backend.capabilities import require_legacy_api
 from ._base import (_build_properties_cache, build_options,
                     GenerateGuidId, validate_cache_staleness_value)
 from ._constants import _Constants as Constants, TimeoutScope
@@ -75,7 +74,6 @@ from .offer import ThroughputProperties
 from .partition_key import (_build_partition_key_from_properties, PartitionKeyType,
                             _return_undefined_or_empty_partition_key, _SequentialPartitionKeyType,
                             NonePartitionKeyValue, NullPartitionKeyValue, PartitionKey)
-from .scripts import ScriptsProxy
 from ._backend.capabilities import prepare_operation_kwargs
 
 if TYPE_CHECKING:
@@ -126,7 +124,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self._item_context = _item_context
         self._item_helper_cache: "Optional[tuple[ItemClientContext[CosmosBackend], ItemHelper]]" = None
         self.container_cache_lock = threading.Lock()
-        self._scripts: Optional[ScriptsProxy] = None
         if properties and client_connection is not None:
             self.client_connection._set_container_properties_cache(self.container_link,
                                                                    _build_properties_cache(properties,
@@ -185,31 +182,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                     self.read(**kwargs)
         return self.__get_client_container_caches()[self.container_link]
 
-    @property
-    def is_system_key(self) -> bool:
-        """Whether the container uses a legacy system-defined partition key.
-
-        Primarily used for SDK compatibility handling; administration tools can
-        also use it to identify legacy system-key containers. This does not
-        choose a partition key or migrate data.
-
-        Reads container metadata if it is not cached. Otherwise this is local,
-        including after a metadata refresh through :meth:`read`.
-
-        :returns: The current cached ``systemKey`` flag, or ``False`` if absent.
-        :rtype: bool
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If required metadata cannot be read.
-        """
-        properties = self._get_properties()
-        return properties["partitionKey"].get("systemKey", False)
-
-    @property
-    def scripts(self) -> ScriptsProxy:
-        require_legacy_api(self.client_connection, "ContainerProxy.scripts", item_context=self._item_context)
-        if self._scripts is None:
-            self._scripts = ScriptsProxy(self.client_connection, self.container_link, self.is_system_key)
-        return self._scripts
-
     def _get_conflict_link(self, conflict_or_link: Union[str, Mapping[str, Any]]) -> str:
         if isinstance(conflict_or_link, str):
             return "{}/conflicts/{}".format(self.container_link, conflict_or_link)
@@ -220,7 +192,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         partition_key: PartitionKeyType
     ) -> PartitionKeyType:
         if partition_key == NonePartitionKeyValue:
-            return _return_undefined_or_empty_partition_key(self.is_system_key)
+            properties = self._get_properties()
+            return _return_undefined_or_empty_partition_key(properties["partitionKey"].get("systemKey", False))
         if partition_key == NullPartitionKeyValue:
             return None
         return cast(Union[str, int, float, bool, list[Union[str, int, float, bool]]], partition_key)

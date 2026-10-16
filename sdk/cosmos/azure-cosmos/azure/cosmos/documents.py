@@ -216,28 +216,6 @@ class ConnectionMode:
     """
 
 
-class TriggerType:
-    """Specifies the type of trigger."""
-    Pre: Literal["pre"] = "pre"
-    """Trigger should be executed before the associated operation(s)."""
-    Post: Literal["post"] = "post"
-    """Trigger should be executed after the associated operation(s)."""
-
-
-class TriggerOperation:
-    """Specifies the operations on which a trigger should be executed."""
-    All: Literal["all"] = "all"
-    """All operations."""
-    Create: Literal["create"] = "create"
-    """Create operations only."""
-    Update: Literal["update"] = "update"
-    """Update operations only."""
-    Delete: Literal["delete"] = "delete"
-    """Delete operations only."""
-    Replace: Literal["replace"] = "replace"
-    """Replace operations only."""
-
-
 class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
     """Represents the Connection policy associated with a CosmosClientConnection.
 

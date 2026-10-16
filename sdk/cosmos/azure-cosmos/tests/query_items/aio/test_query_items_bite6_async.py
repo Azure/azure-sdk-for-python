@@ -20,7 +20,7 @@ from common._parity_helpers import (
 @pytest.mark.asyncio
 @skip_unless_emulator()
 @skip_unless_rust_binding()
-class TestQueryBite6Async:
+class TestQueryOffsetLimitAsync:
     async def test_query_second_largest_order_async(self):
         backend = os.environ.get("COSMOS_BACKEND", "rust")
         database_id = "query_bite6_async_" + uuid.uuid4().hex

@@ -3,7 +3,7 @@
 """Compare copied original patch tests and strict probes on owned live resources.
 
 Set ACCOUNT_HOST and ACCOUNT_KEY, and optionally PATCH_REVIEW_OUTPUT to a new
-evidence directory. PATCH_REVIEW_SUPPLEMENTAL=1 selects numeric/trigger probes.
+evidence directory. PATCH_REVIEW_SUPPLEMENTAL=1 selects the fractional increment probe.
 PATCH_REVIEW_NONE_OPTIONS=1 selects only the synchronous original None-options
 method on both backends. The default run also includes this method and both
 integer-starting-value and fractional-starting-value integer increment probes.
@@ -162,8 +162,6 @@ async def scenario(container, name):
             "Unexpected starting customer fields"
         )
         expected_fields = dict(initial_fields, n=expected_n)
-    elif name in ("pre_trigger", "post_trigger"):
-        options[name + "_include"] = "auditPre" if name == "pre_trigger" else "auditPost"
     elif no_response:
         options["no_response"] = True
         state_before = await invoke(container.read_item, key, partition_key=key)
@@ -352,10 +350,6 @@ async def scenario(container, name):
     if name == "response_hook":
         assert len(hook_calls) == 1, "Expected exactly one response-hook call"
         assert observation["hook_fields"] == [expected_fields], "Unexpected response-hook customer fields"
-    if name == "pre_trigger":
-        assert stored.get("auditStamp") == "pre"
-    if name == "post_trigger":
-        assert result.get("auditStamp") == "post"
 
 
 async def record(name, function):
@@ -387,7 +381,7 @@ async def run_backend(backend, asynchronous, database_id):
         case.configs = SimpleNamespace(TEST_MULTI_PARTITION_CONTAINER_ID="orders")
         for method in ([] if os.environ.get("PATCH_REVIEW_SUPPLEMENTAL") else ASYNC if asynchronous else SYNC):
             await record(method.__name__, lambda method=method: method(case))
-        names = ("integer_increment_on_fraction", "pre_trigger", "post_trigger") if os.environ.get(
+        names = ("integer_increment_on_fraction",) if os.environ.get(
             "PATCH_REVIEW_SUPPLEMENTAL"
         ) else ("no_response", "no_response_rejection", "session_token", "etag_current", "etag_stale",
                      "invalid_path", "atomic_patch_control", "atomic_patch_rejection",
@@ -411,18 +405,7 @@ async def main():
             with CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="core-python") as owner:
                 database = owner.create_database("patch_review_" + uuid.uuid4().hex)
                 try:
-                    container = database.create_container("orders", partition_key=PartitionKey(path="/pk"))
-                    if os.environ.get("PATCH_REVIEW_SUPPLEMENTAL"):
-                        for name, kind, object_name, stamp in (
-                            ("auditPre", "Pre", "getRequest", "pre"),
-                            ("auditPost", "Post", "getResponse", "post"),
-                        ):
-                            container.scripts.create_trigger({
-                                "id": name, "triggerType": kind, "triggerOperation": "All",
-                                "body": "function audit() { var r = getContext()." + object_name
-                                + "(); var b = r.getBody(); b.auditStamp = '" + stamp
-                                + "'; r.setBody(b); }",
-                            })
+                    database.create_container("orders", partition_key=PartitionKey(path="/pk"))
                     await run_backend(backend, asynchronous, database.id)
                 finally:
                     owner.delete_database(database.id)

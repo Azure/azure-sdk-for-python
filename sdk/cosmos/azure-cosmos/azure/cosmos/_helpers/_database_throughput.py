@@ -60,7 +60,14 @@ def _read_routing(
 ) -> OperationRouting:
     return read_routing(
         backend, options,
-        supported=can_use_rust_backend_for_read_offer(backend=backend, options=options, kwargs=kwargs),
+        supported=can_use_rust_backend_for_read_offer(
+            backend=backend,
+            options=options,
+            kwargs={
+                key: value for key, value in kwargs.items()
+                if key not in ("tracing_options", "tracing_attributes")
+            },
+        ),
         capability=GET_DATABASE_THROUGHPUT,
     )
 

@@ -209,154 +209,6 @@ class TestCRUDOperations(unittest.TestCase):
         self.assertEqual(1, len(documentlist))
         self._delete_container_for_test(created_collection.id)
 
-    @_skip_under_aad
-    def test_partitioned_collection_execute_stored_procedure(self):
-        key_collection = self.key_databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        created_collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        document_id = str(uuid.uuid4())
-
-        sproc = {
-            'id': 'storedProcedure' + str(uuid.uuid4()),
-            'body': (
-                    'function () {' +
-                    '   var client = getContext().getCollection();' +
-                    '   client.createDocument(client.getSelfLink(), { id: "' + document_id + '", pk : 2}, ' +
-                    '   {}, function(err, docCreated, options) { ' +
-                    '   if(err) throw new Error(\'Error while creating document: \' + err.message);' +
-                    '   else {' +
-                    '   getContext().getResponse().setBody(1);' +
-                    '        }' +
-                    '   });}')
-        }
-
-        created_sproc = key_collection.scripts.create_stored_procedure(sproc)
-
-        # Partition Key value same as what is specified in the stored procedure body
-        result = created_collection.scripts.execute_stored_procedure(sproc=created_sproc['id'], partition_key=2)
-        self.assertEqual(result, 1)
-
-        # Partition Key value different than what is specified in the stored procedure body will cause a bad request(400) error
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.BAD_REQUEST,
-            created_collection.scripts.execute_stored_procedure,
-            created_sproc['id'],
-            3)
-
-    @_skip_under_aad
-    def test_script_logging_execute_stored_procedure(self):
-        key_collection = self.key_databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        created_collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        stored_proc_id = 'storedProcedure-1-' + str(uuid.uuid4())
-
-        sproc = {
-            'id': stored_proc_id,
-            'body': (
-                    'function () {' +
-                    '   var mytext = \'x\';' +
-                    '   var myval = 1;' +
-                    '   try {' +
-                    '       console.log(\'The value of %s is %s.\', mytext, myval);' +
-                    '       getContext().getResponse().setBody(\'Success!\');' +
-                    '   }' +
-                    '   catch (err) {' +
-                    '       getContext().getResponse().setBody(\'inline err: [\' + err.number + \'] \' + err);' +
-                    '   }'
-                    '}')
-        }
-
-        created_sproc = key_collection.scripts.create_stored_procedure(sproc)
-
-        result = created_collection.scripts.execute_stored_procedure(
-            sproc=created_sproc['id'],
-            partition_key=1
-        )
-
-        self.assertEqual(result, 'Success!')
-        self.assertFalse(
-            HttpHeaders.ScriptLogResults in created_collection.scripts.client_connection.last_response_headers)
-
-        result = created_collection.scripts.execute_stored_procedure(
-            sproc=created_sproc['id'],
-            enable_script_logging=True,
-            partition_key=1
-        )
-
-        self.assertEqual(result, 'Success!')
-        self.assertEqual(urllib.quote('The value of x is 1.'),
-                         created_collection.scripts.client_connection.last_response_headers.get(
-                             HttpHeaders.ScriptLogResults))
-
-        result = created_collection.scripts.execute_stored_procedure(
-            sproc=created_sproc['id'],
-            enable_script_logging=False,
-            partition_key=1
-        )
-
-        self.assertEqual(result, 'Success!')
-        self.assertFalse(
-            HttpHeaders.ScriptLogResults in created_collection.scripts.client_connection.last_response_headers)
-
-    @_skip_under_aad
-    def test_stored_procedure_functionality(self):
-        # create database
-        db = self.databaseForTest
-        # create collection
-        collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        key_collection = self.key_databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-
-        stored_proc_id = 'storedProcedure-1-' + str(uuid.uuid4())
-
-        sproc1 = {
-            'id': stored_proc_id,
-            'body': (
-                    'function () {' +
-                    '  for (var i = 0; i < 1000; i++) {' +
-                    '    var item = getContext().getResponse().getBody();' +
-                    '    if (i > 0 && item != i - 1) throw \'body mismatch\';' +
-                    '    getContext().getResponse().setBody(i);' +
-                    '  }' +
-                    '}')
-        }
-
-        retrieved_sproc = key_collection.scripts.create_stored_procedure(sproc1)
-        result = collection.scripts.execute_stored_procedure(
-            sproc=retrieved_sproc['id'],
-            partition_key=1
-        )
-        self.assertEqual(result, 999)
-        stored_proc_id_2 = 'storedProcedure-2-' + str(uuid.uuid4())
-        sproc2 = {
-            'id': stored_proc_id_2,
-            'body': (
-                    'function () {' +
-                    '  for (var i = 0; i < 10; i++) {' +
-                    '    getContext().getResponse().appendValue(\'Body\', i);' +
-                    '  }' +
-                    '}')
-        }
-        retrieved_sproc2 = key_collection.scripts.create_stored_procedure(sproc2)
-        result = collection.scripts.execute_stored_procedure(
-            sproc=retrieved_sproc2['id'],
-            partition_key=1
-        )
-        self.assertEqual(int(result), 123456789)
-        stored_proc_id_3 = 'storedProcedure-3-' + str(uuid.uuid4())
-        sproc3 = {
-            'id': stored_proc_id_3,
-            'body': (
-                    'function (input) {' +
-                    '  getContext().getResponse().setBody(' +
-                    '      \'a\' + input.temp);' +
-                    '}')
-        }
-        retrieved_sproc3 = key_collection.scripts.create_stored_procedure(sproc3)
-        result = collection.scripts.execute_stored_procedure(
-            sproc=retrieved_sproc3['id'],
-            params={'temp': 'so'},
-            partition_key=1
-        )
-        self.assertEqual(result, 'aso')
-
     def test_partitioned_collection_partition_key_value_types(self):
         created_db = self.databaseForTest
 
@@ -1116,7 +968,6 @@ class TestCRUDOperations(unittest.TestCase):
 
     def test_get_resource_with_dictionary_and_object(self):
         created_db = self.databaseForTest
-        key_db = self.key_databaseForTest
 
         # read database with id
         read_db = self.client.get_database_client(created_db.id)
@@ -1131,7 +982,6 @@ class TestCRUDOperations(unittest.TestCase):
         self.assertEqual(read_db.id, created_db.id)
 
         created_container = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        key_container = self.key_databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         # read container with id
         read_container = created_db.get_container_client(created_container.id)
@@ -1155,48 +1005,6 @@ class TestCRUDOperations(unittest.TestCase):
         # read item with properties
         read_item = created_container.read_item(item=created_item, partition_key=created_item['pk'])
         self.assertEqual(read_item['id'], created_item['id'])
-
-        # Sproc/trigger/UDF creation is control-plane  -  route through key_container
-        created_sproc = key_container.scripts.create_stored_procedure({
-            'id': 'storedProcedure' + str(uuid.uuid4()),
-            'body': 'function () { }'
-        })
-
-        # read sproc with id
-        read_sproc = key_container.scripts.get_stored_procedure(created_sproc['id'])
-        self.assertEqual(read_sproc['id'], created_sproc['id'])
-
-        # read sproc with properties
-        read_sproc = key_container.scripts.get_stored_procedure(created_sproc)
-        self.assertEqual(read_sproc['id'], created_sproc['id'])
-
-        created_trigger = key_container.scripts.create_trigger({
-            'id': 'sample trigger' + str(uuid.uuid4()),
-            'serverScript': 'function() {var x = 10;}',
-            'triggerType': documents.TriggerType.Pre,
-            'triggerOperation': documents.TriggerOperation.All
-        })
-
-        # read trigger with id
-        read_trigger = key_container.scripts.get_trigger(created_trigger['id'])
-        self.assertEqual(read_trigger['id'], created_trigger['id'])
-
-        # read trigger with properties
-        read_trigger = key_container.scripts.get_trigger(created_trigger)
-        self.assertEqual(read_trigger['id'], created_trigger['id'])
-
-        created_udf = key_container.scripts.create_user_defined_function({
-            'id': 'sample udf' + str(uuid.uuid4()),
-            'body': 'function() {var x = 10;}'
-        })
-
-        # read udf with id
-        read_udf = key_container.scripts.get_user_defined_function(created_udf['id'])
-        self.assertEqual(created_udf['id'], read_udf['id'])
-
-        # read udf with properties
-        read_udf = key_container.scripts.get_user_defined_function(created_udf)
-        self.assertEqual(created_udf['id'], read_udf['id'])
 
     def test_delete_all_items_by_partition_key(self):
         # create container via setup client (control-plane)

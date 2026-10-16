@@ -37,10 +37,8 @@ from .._telemetry import trace_operation_async
 from azure.core.utils import CaseInsensitiveDict
 
 from ._cosmos_client_connection_async import CosmosClientConnection
-from ._scripts import ScriptsProxy
 from .. import _utils as utils
 from .._availability_strategy_config import _validate_request_hedging_strategy
-from .._backend.capabilities import require_legacy_api
 from .._base import (_build_properties_cache,
                      build_options as _build_options, GenerateGuidId, validate_cache_staleness_value)
 
@@ -126,7 +124,6 @@ class ContainerProxy:
         self.id = id
         self.database_link = database_link
         self.container_link = "{}/colls/{}".format(database_link, self.id)
-        self._scripts: Optional[ScriptsProxy] = None
         if properties and client_connection is not None:
             self.client_connection._set_container_properties_cache(self.container_link,
                                                                    _build_properties_cache(properties,
@@ -186,34 +183,8 @@ class ContainerProxy:
                     await self.read(**kwargs)
         return self.client_connection._container_properties_cache[self.container_link]
 
-    @property
-    async def is_system_key(self) -> bool:
-        """Whether the container uses a legacy system-defined partition key.
-
-        Primarily used for SDK compatibility handling; administration tools can
-        also use it to identify legacy system-key containers. This does not
-        choose a partition key or migrate data.
-
-        Await this property to read container metadata if it is not cached.
-        Otherwise this is local, including after a metadata refresh through
-        :meth:`read`.
-
-        :returns: The current cached ``systemKey`` flag, or ``False`` if absent.
-        :rtype: bool
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If required metadata cannot be read.
-        """
-        properties = await self._get_properties()
-        return properties["partitionKey"].get("systemKey", False)
-
     def __get_client_container_caches(self) -> dict[str, dict[str, Any]]:
         return self.client_connection._container_properties_cache
-
-    @property
-    def scripts(self) -> ScriptsProxy:
-        require_legacy_api(self.client_connection, "ContainerProxy.scripts", item_context=self._item_context)
-        if self._scripts is None:
-            self._scripts = ScriptsProxy(self, self.client_connection, self.container_link)
-        return self._scripts
 
     def _get_conflict_link(self, conflict_or_link: Union[str, Mapping[str, Any]]) -> str:
         if isinstance(conflict_or_link, str):
@@ -225,7 +196,8 @@ class ContainerProxy:
         partition_key: PartitionKeyType
     ) -> PartitionKeyType:
         if partition_key == NonePartitionKeyValue:
-            return _return_undefined_or_empty_partition_key(await self.is_system_key)
+            properties = await self._get_properties()
+            return _return_undefined_or_empty_partition_key(properties["partitionKey"].get("systemKey", False))
         if partition_key == NullPartitionKeyValue:
             return None
         return cast(Union[str, int, float, bool, list[Union[str, int, float, bool]]], partition_key)

@@ -224,24 +224,25 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
 
         Mark this BindingAdapter closed and remove its handle before cleanup. Release
         its SDK-owned async credential bridge, if present, but not the customer's
-        credential. An operation already in progress can also retain the driver.
+        credential. Driver release is still attempted if credential cleanup raises.
+        An operation already in progress can also retain the driver.
         """
         with self._driver_handle_lock:
             self._closing = True
             driver_handle = self._driver_handle
             self._driver_handle = None
             self._runtime = None
-        self._close_token_credential_bridge()
-        if driver_handle is None or _rust_module is None:
-            return
-        release_driver_handle = getattr(_rust_module, "release_driver_handle", None)
-        if release_driver_handle is None:
-            return
         try:
-            release_driver_handle(driver_handle)
-        except Exception:  # pylint: disable=broad-except
-            # The exception can also contain the handle; do not log its text or traceback.
-            _LOGGER.debug("BindingAdapter.close failed while releasing the driver handle")
+            self._close_token_credential_bridge()
+        finally:
+            if driver_handle is not None and _rust_module is not None:
+                release_driver_handle = getattr(_rust_module, "release_driver_handle", None)
+                if release_driver_handle is not None:
+                    try:
+                        release_driver_handle(driver_handle)
+                    except Exception:  # pylint: disable=broad-except
+                        # The exception can also contain the handle; do not log its text or traceback.
+                        _LOGGER.debug("BindingAdapter.close failed while releasing the driver handle")
 
     def __del__(self) -> None:
         """Hand abandoned resources to the cleanup helper without raising.

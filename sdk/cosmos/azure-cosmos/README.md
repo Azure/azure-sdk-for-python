@@ -30,9 +30,16 @@ You need three things on your machine:
 
 The Rust-backed APIs exclude Cosmos user and permission management, stored
 procedure definition/execution APIs, trigger definition/invocation APIs, and
-UDF definition management. These calls fail explicitly rather than running
-through legacy Python. Trigger options and headers are rejected before an
-item operation is sent; silently omitting a trigger would change the write.
+UDF definition management. `ContainerProxy.scripts`, both `ScriptsProxy`
+classes and their modules, and `TriggerType`/`TriggerOperation` have been
+removed from both synchronous and asynchronous clients, including the legacy
+comparison backend. The dedicated legacy connection operations are removed
+too; selecting that backend does not restore scripting. Accessing
+`container.scripts` now raises `AttributeError`, rather than returning a proxy
+or raising a Rust-only `NotImplementedError`.
+
+Rust-backed item operations still reject trigger options and headers before a
+request is sent; silently omitting a trigger would change the write.
 
 Ordinary item queries calling a deployed UDF, such as
 `SELECT VALUE udf.reviewBand(c.total) FROM c`, remain supported. Deploying the

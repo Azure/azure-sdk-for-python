@@ -22,7 +22,7 @@ from common._parity_helpers import (
 @pytest.mark.cosmosEmulator
 @skip_unless_emulator()
 @skip_unless_rust_binding()
-class TestQueryBite4:
+class TestQueryDescendingOrder:
     """Require the returned sequence, not merely the same set of order IDs."""
 
     def test_query_order_ids_by_amount_descending(self):

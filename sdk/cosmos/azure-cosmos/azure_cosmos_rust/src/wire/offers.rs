@@ -10,21 +10,23 @@
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 
-use pyo3::exceptions::PyRuntimeError;
+use pyo3::exceptions::{PyRuntimeError, PyTimeoutError};
 use pyo3::prelude::*;
 use pyo3::types::PyTuple;
 
 use azure_core::http::headers::{HeaderName, HeaderValue};
 use azure_data_cosmos_driver::{
+    diagnostics::DiagnosticsContext,
     driver::CosmosDriver,
     error::CosmosError,
     models::{ActivityId, CosmosOperation, CosmosResponse, SessionToken},
     options::{ContentResponseOnWrite, PlanOptions},
 };
 
+use super::deadline::{parse_remaining_timeout, with_timeout};
 use super::diagnostics::BINDING_OP_COUNT;
 use super::request::{build_operation_options, RequestHeadersAndOptions};
-use super::response::{tuple_from_offer_feed_result, tuple_from_result};
+use super::response::{tuple_from_offer_feed_result, tuple_from_result, with_attempt_diagnostics};
 use super::{lookup_driver, AbortOnDrop};
 use crate::runtime::require_runtime_context;
 
@@ -36,18 +38,22 @@ pub(crate) fn run_read_offer_operation<'py>(
     modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     op_name: &str,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
     let driver = lookup_driver(driver_handle)?;
     let runtime_ctx = require_runtime_context(op_name)?;
 
-    let response_result = py.allow_threads(|| {
-        runtime_ctx
-            .tokio_rt
-            .block_on(run_read_offer_future(driver, modifiers, body_bytes))
-    });
-
-    tuple_from_offer_feed_result(py, response_result)
+    let timed = with_timeout(
+        timeout,
+        run_read_offer_future(driver, modifiers, body_bytes),
+    );
+    let response_result = py
+        .allow_threads(|| runtime_ctx.tokio_rt.block_on(timed))
+        .map_err(|error| PyTimeoutError::new_err(format!("Offer read timed out: {error}")))?;
+    offer_read_tuple(py, response_result, include_attempts)
 }
 
 /// Async sibling of `run_read_offer_operation`.
@@ -57,27 +63,40 @@ pub(crate) fn run_read_offer_operation_async<'py>(
     modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
     op_name: &str,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
     let driver = lookup_driver(driver_handle)?;
     let runtime_ctx = require_runtime_context(op_name)?;
 
-    let join = runtime_ctx
-        .tokio_rt
-        .spawn(run_read_offer_future(driver, modifiers, body_bytes));
+    let timed = with_timeout(
+        timeout,
+        run_read_offer_future(driver, modifiers, body_bytes),
+    );
+    let join = runtime_ctx.tokio_rt.spawn(timed);
     let abort_guard = AbortOnDrop(join.abort_handle());
 
     pyo3_async_runtimes::tokio::future_into_py(py, async move {
         let _abort_guard = abort_guard;
-        let response_result = join.await.map_err(|join_error| {
-            if join_error.is_cancelled() {
-                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
-            } else {
-                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
-            }
-        })?;
+        let response_result = join
+            .await
+            .map_err(|join_error| {
+                if join_error.is_cancelled() {
+                    PyRuntimeError::new_err(
+                        "cosmos async operation was cancelled before it completed",
+                    )
+                } else {
+                    PyRuntimeError::new_err(format!(
+                        "cosmos async operation task failed: {join_error}"
+                    ))
+                }
+            })?
+            .map_err(|error| PyTimeoutError::new_err(format!("Offer read timed out: {error}")))?;
         Python::with_gil(|py| {
-            tuple_from_offer_feed_result(py, response_result).map(|tuple| tuple.into_any().unbind())
+            offer_read_tuple(py, response_result, include_attempts)
+                .map(|tuple| tuple.into_any().unbind())
         })
     })
 }
@@ -137,6 +156,49 @@ pub(crate) fn run_replace_offer_operation_async<'py>(
         })
     })
 }
+struct OfferReadResult {
+    responses: Vec<CosmosResponse>,
+    error: Option<CosmosError>,
+}
+
+impl OfferReadResult {
+    fn into_result(self) -> Result<Vec<CosmosResponse>, CosmosError> {
+        match self.error {
+            Some(error) => Err(error),
+            None => Ok(self.responses),
+        }
+    }
+}
+
+fn offer_read_tuple<'py>(
+    py: Python<'py>,
+    result: OfferReadResult,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    if !include_attempts {
+        return tuple_from_offer_feed_result(py, result.into_result());
+    }
+    let mut sources: Vec<_> = result
+        .responses
+        .iter()
+        .map(CosmosResponse::diagnostics)
+        .collect();
+    let mut complete = true;
+    if let Some(error) = &result.error {
+        match error.diagnostics() {
+            Some(diagnostics) => sources.push(diagnostics),
+            None => complete = false,
+        }
+    }
+    let diagnostics = DiagnosticsContext::aggregate_sub_operations(&sources).map(Arc::new);
+    with_attempt_diagnostics(
+        py,
+        tuple_from_offer_feed_result(py, result.into_result()),
+        diagnostics,
+        complete,
+    )
+}
+
 /// Build query_offers against the account using the prepared query body.
 /// Add default query `Content-Type` and `x-ms-documentdb-isquery` markers only if
 /// absent from custom headers. The prepared container-recreate guard header is
@@ -145,7 +207,7 @@ async fn run_read_offer_future(
     driver: Arc<CosmosDriver>,
     modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
-) -> Result<Vec<CosmosResponse>, CosmosError> {
+) -> OfferReadResult {
     let account = driver.account().clone();
     let mut op = CosmosOperation::query_offers(account).with_body(body_bytes);
 
@@ -171,17 +233,24 @@ async fn run_read_offer_future(
         modifiers.availability_strategy,
         custom_headers,
     );
-    let mut plan = driver
-        .plan_operation(op, &options, None, &PlanOptions::default())
-        .await?;
     let mut responses = Vec::new();
-    while let Some(response) = driver
-        .execute_plan(&mut plan, None, options.clone())
-        .await?
-    {
-        responses.push(response);
+    let result: Result<(), CosmosError> = async {
+        let mut plan = driver
+            .plan_operation(op, &options, None, &PlanOptions::default())
+            .await?;
+        while let Some(response) = driver
+            .execute_plan(&mut plan, None, options.clone())
+            .await?
+        {
+            responses.push(response);
+        }
+        Ok(())
     }
-    Ok(responses)
+    .await;
+    OfferReadResult {
+        responses,
+        error: result.err(),
+    }
 }
 
 /// Build replace_offer using the offer resource id and prepared replacement body.
@@ -324,7 +393,7 @@ mod tests {
         .await;
         assert!(rules.iter().all(|rule| rule.hit_count() == 1));
         Python::with_gil(|py| {
-            let response = tuple_from_offer_feed_result(py, result).unwrap();
+            let response = offer_read_tuple(py, result, false).unwrap();
             let bytes = response.get_item(3).unwrap();
             let body: serde_json::Value =
                 serde_json::from_slice(bytes.downcast::<PyBytes>().unwrap().as_bytes()).unwrap();
@@ -377,10 +446,10 @@ mod tests {
             br#"{"query":"SELECT * FROM c"}"#.to_vec(),
         )
         .await;
-        assert!(result.is_err());
+        assert!(result.error.is_some());
         assert!(rules.iter().all(|rule| rule.hit_count() == 1));
         Python::with_gil(|py| {
-            let response = tuple_from_offer_feed_result(py, result).unwrap();
+            let response = offer_read_tuple(py, result, false).unwrap();
             assert_eq!(response.get_item(0).unwrap().extract::<u16>().unwrap(), 403);
             assert_eq!(
                 response
@@ -407,7 +476,7 @@ mod tests {
         .await;
         assert_eq!(rules[0].hit_count(), 1);
         Python::with_gil(|py| {
-            let response = tuple_from_offer_feed_result(py, result).unwrap();
+            let response = offer_read_tuple(py, result, false).unwrap();
             let bytes = response.get_item(3).unwrap();
             let body: serde_json::Value =
                 serde_json::from_slice(bytes.downcast::<PyBytes>().unwrap().as_bytes()).unwrap();
@@ -433,9 +502,131 @@ mod tests {
             br#"{"query":"SELECT * FROM c"}"#.to_vec(),
         )
         .await;
-        Python::with_gil(|py| match result {
+        Python::with_gil(|py| match result.into_result() {
             Err(_) => {}
             Ok(responses) => assert!(tuple_from_offer_feed_result(py, Ok(responses)).is_err()),
+        });
+    }
+
+    #[tokio::test]
+    async fn offer_attempts_include_completed_pages_before_success_or_failure() {
+        for final_status in [StatusCode::Ok, StatusCode::Forbidden] {
+            let (driver, rules) = setup(vec![
+                page(StatusCode::Ok, r#"{"Offers":[]}"#, Some("second"), "1"),
+                page(
+                    final_status,
+                    if final_status == StatusCode::Ok {
+                        r#"{"Offers":[{"id":"a"}]}"#
+                    } else {
+                        r#"{"code":"Forbidden","message":"denied"}"#
+                    },
+                    None,
+                    "2",
+                ),
+            ])
+            .await;
+            let result = run_read_offer_future(
+                driver,
+                modifiers(),
+                br#"{"query":"SELECT * FROM c"}"#.to_vec(),
+            )
+            .await;
+            assert!(rules.iter().all(|rule| rule.hit_count() == 1));
+            let sources: Vec<_> = result
+                .responses
+                .iter()
+                .map(CosmosResponse::diagnostics)
+                .chain(result.error.iter().filter_map(CosmosError::diagnostics))
+                .collect();
+            let total: usize = sources.iter().map(|source| source.request_count()).sum();
+            assert!(total >= 2);
+            Python::with_gil(|py| {
+                let envelope = offer_read_tuple(py, result, true).unwrap();
+                let response = envelope.get_item(0).unwrap();
+                assert_eq!(
+                    response.get_item(0).unwrap().extract::<u16>().unwrap(),
+                    u16::from(final_status)
+                );
+                assert_eq!(
+                    response
+                        .get_item(2)
+                        .unwrap()
+                        .get_item("etag")
+                        .unwrap()
+                        .extract::<String>()
+                        .unwrap(),
+                    "page-2"
+                );
+                assert_eq!(
+                    response
+                        .get_item(2)
+                        .unwrap()
+                        .get_item("x-ms-request-charge")
+                        .unwrap()
+                        .extract::<String>()
+                        .unwrap(),
+                    "2"
+                );
+                let payload = envelope.get_item(1).unwrap();
+                assert_eq!(
+                    payload
+                        .get_item("request_count")
+                        .unwrap()
+                        .extract::<usize>()
+                        .unwrap(),
+                    total
+                );
+                let attempts = payload.get_item("attempts").unwrap();
+                assert_eq!(attempts.len().unwrap(), total);
+                assert_eq!(
+                    attempts
+                        .get_item(total - 1)
+                        .unwrap()
+                        .get_item("driver_status_code")
+                        .unwrap()
+                        .extract::<u16>()
+                        .unwrap(),
+                    u16::from(final_status)
+                );
+            });
+        }
+    }
+
+    #[tokio::test]
+    async fn offer_error_without_final_diagnostics_retains_partial_attempts() {
+        let (driver, _) = setup(vec![page(StatusCode::Ok, r#"{"Offers":[]}"#, None, "1")]).await;
+        let mut result = run_read_offer_future(
+            driver,
+            modifiers(),
+            br#"{"query":"SELECT * FROM c"}"#.to_vec(),
+        )
+        .await;
+        assert!(!result.responses.is_empty());
+        result.error = Some(
+            CosmosError::builder()
+                .with_message("missing final diagnostics")
+                .build(),
+        );
+        Python::with_gil(|py| {
+            let error = offer_read_tuple(py, result, true).unwrap_err();
+            assert!(error.is_instance_of::<super::super::errors::_DriverTransportError>(py));
+            let payload = error
+                .value_bound(py)
+                .getattr("_cosmos_attempt_payload")
+                .unwrap();
+            assert!(!payload
+                .get_item("complete")
+                .unwrap()
+                .extract::<bool>()
+                .unwrap());
+            assert!(
+                payload
+                    .get_item("request_count")
+                    .unwrap()
+                    .extract::<usize>()
+                    .unwrap()
+                    > 0
+            );
         });
     }
 }

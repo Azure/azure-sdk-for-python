@@ -14,7 +14,7 @@ from common._parity_helpers import run_target_operation, skip_unless_emulator, s
 @pytest.mark.cosmosEmulator
 @skip_unless_emulator()
 @skip_unless_rust_binding()
-class TestQueryBite12:
+class TestQueryCustomerOrderMaximum:
     def test_query_maximum_customer_order_amount(self):
         backend = os.environ.get("COSMOS_BACKEND", "rust")
         database_id = "query_bite12_" + uuid.uuid4().hex

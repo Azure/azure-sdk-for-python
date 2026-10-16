@@ -47,7 +47,7 @@
 //! docs/V5/use-cases/01-cosmos-client-creation.md for the ownership walkthrough.
 
 use std::collections::{BTreeMap, HashMap};
-use std::sync::{Arc, OnceLock};
+use std::sync::{Arc, OnceLock, Weak};
 use std::time::Duration;
 
 use azure_core::http::headers::{HeaderName, HeaderValue};
@@ -71,6 +71,7 @@ use azure_data_cosmos_driver::{
     },
 };
 use tokio::runtime::Runtime as TokioRuntime;
+use tokio::sync::Mutex;
 use url::Url;
 
 use crate::credential::PyTokenCredential;
@@ -271,12 +272,83 @@ fn validate_auth_inputs(
 
 static RUNTIME_CONTEXT: OnceLock<RuntimeContext> = OnceLock::new();
 static DRIVERS: OnceLock<RwLock<HashMap<String, DriverEntry>>> = OnceLock::new();
+static DRIVER_CREATIONS: OnceLock<RwLock<HashMap<String, Weak<DriverCreation>>>> = OnceLock::new();
 
 /// Return the driver cache, creating the empty table if needed.
 /// Each driver identity maps to a CosmosDriver object and its acquisition count.
 /// Creating this table alone does not create CosmosDriverRuntime or a driver.
 pub(crate) fn drivers() -> &'static RwLock<HashMap<String, DriverEntry>> {
     DRIVERS.get_or_init(|| RwLock::new(HashMap::new()))
+}
+
+/// Held by creators and waiting acquisitions, independently of cached-driver ownership.
+struct DriverCreation {
+    key: String,
+    lock: Mutex<()>,
+}
+
+fn driver_creations() -> &'static RwLock<HashMap<String, Weak<DriverCreation>>> {
+    DRIVER_CREATIONS.get_or_init(|| RwLock::new(HashMap::new()))
+}
+
+fn driver_creation(key: &str) -> Arc<DriverCreation> {
+    let mut creations = driver_creations().write();
+    if let Some(creation) = creations.get(key).and_then(Weak::upgrade) {
+        return creation;
+    }
+    let creation = Arc::new(DriverCreation {
+        key: key.to_owned(),
+        lock: Mutex::new(()),
+    });
+    creations.insert(key.to_owned(), Arc::downgrade(&creation));
+    creation
+}
+
+impl Drop for DriverCreation {
+    fn drop(&mut self) {
+        let mut creations = driver_creations().write();
+        // A new caller can replace our expired weak entry before this destructor runs.
+        // Remove only our own entry, never that caller's new coordination object.
+        if creations
+            .get(&self.key)
+            .is_some_and(|entry| std::ptr::eq(entry.as_ptr(), self))
+        {
+            creations.remove(&self.key);
+        }
+    }
+}
+
+fn acquire_cached_driver(handle: &str) -> bool {
+    let mut cache = drivers().write();
+    if let Some(entry) = cache.get_mut(handle) {
+        entry.refcount += 1;
+        return true;
+    }
+    false
+}
+
+fn acquire_driver_handle_with(
+    py: Python<'_>,
+    handle: String,
+    create: impl FnOnce() -> PyResult<DriverEntry>,
+) -> PyResult<String> {
+    if acquire_cached_driver(&handle) {
+        return Ok(handle);
+    }
+
+    let creation = driver_creation(&handle);
+    // Release the GIL while waiting: the current creator may need Python callbacks.
+    // The borrowed guard drops before `creation`, keeping its registry entry alive.
+    let _guard = py.allow_threads(|| runtime_context().tokio_rt.block_on(creation.lock.lock()));
+    if acquire_cached_driver(&handle) {
+        return Ok(handle);
+    }
+
+    // Failure leaves no cache entry or acquisition count. Unlocking lets a waiter retry.
+    // Only this key is locked during creation; unrelated keys and releases can proceed.
+    let entry = create()?;
+    drivers().write().insert(handle.clone(), entry);
+    Ok(handle)
 }
 
 pub(crate) fn runtime_context() -> &'static RuntimeContext {
@@ -333,8 +405,8 @@ pub(crate) fn runtime_configuration() -> Option<(f64, f64, f64)> {
 /// operation needing a driver handle. This function does not enforce one
 /// acquisition per Python client.
 ///
-/// A cache hit increments its count. On a miss, build outside the cache lock,
-/// then cache the CosmosDriver or use the entry another caller inserted meanwhile.
+/// A cache hit increments its count. On a miss, serialize creation for this key,
+/// recheck the cache, and build outside the global cache lock only if still absent.
 /// CosmosDriverRuntime is selected explicitly or from the default singleton;
 /// preferred regions and driver operation defaults belong in DriverOptions.
 ///
@@ -369,109 +441,78 @@ pub(crate) fn acquire_driver_handle(
         selected_runtime.id
     );
 
-    // Fast path: reuse the matching cache entry and add one acquisition.
-    // This changes the count, so it requires a write lock.
-    {
-        let mut cache = drivers().write();
-        if let Some(entry) = cache.get_mut(&driver_handle) {
-            entry.refcount += 1;
-            return Ok(driver_handle);
-        }
-    }
+    acquire_driver_handle_with(py, driver_handle, || {
+        // Python clients default to no hedging, even when no config was prepared.
+        let operation_options = operation_options_from_config(config)?;
+        let (preferred_regions, user_agent_suffix, fault_rules) = match config {
+            Some(client_config) => (
+                preferred_regions_from_config(client_config)?,
+                user_agent_suffix_from_config(client_config)?,
+                fault_rules_from_config(client_config)?,
+            ),
+            None => (Vec::new(), None, Vec::new()),
+        };
 
-    // Python clients default to no hedging, even when no config was prepared.
-    let operation_options = operation_options_from_config(config)?;
-    let (preferred_regions, user_agent_suffix, fault_rules) = match config {
-        Some(client_config) => (
-            preferred_regions_from_config(client_config)?,
-            user_agent_suffix_from_config(client_config)?,
-            fault_rules_from_config(client_config)?,
-        ),
-        None => (Vec::new(), None, Vec::new()),
-    };
-
-    // No matching CosmosDriver was cached. Prepare the account without holding the
-    // cache lock; token authentication uses PyTokenCredential to call Python.
-    let account = match credential {
-        Some(token_credential) => {
-            let py_credential: Py<PyAny> = token_credential.clone().unbind();
-            AccountReference::with_credential(
-                endpoint_url,
-                Arc::new(PyTokenCredential::new(py_credential)),
-            )
-        }
-        None => {
-            let key = master_key.ok_or_else(|| PyValueError::new_err(AUTH_REQUIRED_ERROR))?;
-            AccountReference::with_account_key(endpoint_url, key.to_string())
-        }
-    };
-
-    // Combine the account address, credential, and applicable client settings
-    // into the options used to create a CosmosDriver. Preferred regions are
-    // one example of those settings; connection settings are applied separately
-    // to CosmosDriverRuntime.
-    let driver_options = {
-        let mut builder = DriverOptions::builder(account)
-            .with_operation_options(operation_options)
-            .with_partition_failover_options(partition_failover_options()?);
-        if !preferred_regions.is_empty() {
-            builder = builder.with_preferred_regions(preferred_regions);
-        }
-        if let Some(user_agent_suffix) = user_agent_suffix {
-            builder = builder.with_user_agent_suffix(user_agent_suffix);
-        }
-        if !fault_rules.is_empty() {
-            builder = builder
-                .with_fault_injection_rules(fault_rules.clone())
-                .map_err(|e| PyValueError::new_err(format!("invalid fault rules: {e}")))?;
-        }
-        builder.build()
-    };
-
-    // Build the CosmosDriver on the Tokio runtime, then wait on the task's
-    // handle with the GIL released. Concurrent acquisitions can submit separate
-    // build tasks. Join failures are mapped to Python errors below.
-    let driver_runtime = Arc::clone(&selected_runtime.driver_runtime);
-    let build_task = runtime_ctx
-        .tokio_rt
-        .spawn(async move { driver_runtime.create_driver(driver_options).await });
-    let driver = py
-        .allow_threads(|| runtime_ctx.tokio_rt.block_on(build_task))
-        .map_err(|join_error| {
-            PyRuntimeError::new_err(format!("driver init task failed: {join_error}"))
-        })?
-        .map_err(|e| PyRuntimeError::new_err(format!("driver init failed: {e}")))?;
-
-    // If another acquisition already cached a matching CosmosDriver, reuse it.
-    // Drop our surplus object after releasing the lock so its cleanup cannot
-    // run while the driver cache is locked.
-    let mut surplus_driver: Option<Arc<CosmosDriver>> = None;
-    {
-        let mut cache = drivers().write();
-        match cache.get_mut(&driver_handle) {
-            Some(entry) => {
-                entry.refcount += 1;
-                surplus_driver = Some(driver);
+        // No matching CosmosDriver was cached. Prepare the account without holding the
+        // cache lock; token authentication uses PyTokenCredential to call Python.
+        let account = match credential {
+            Some(token_credential) => {
+                let py_credential: Py<PyAny> = token_credential.clone().unbind();
+                AccountReference::with_credential(
+                    endpoint_url,
+                    Arc::new(PyTokenCredential::new(py_credential)),
+                )
             }
             None => {
-                cache.insert(
-                    driver_handle.clone(),
-                    DriverEntry {
-                        driver,
-                        fault_rules: fault_rules
-                            .into_iter()
-                            .map(|rule| (rule.id().to_string(), rule))
-                            .collect(),
-                        refcount: 1,
-                    },
-                );
+                let key = master_key.ok_or_else(|| PyValueError::new_err(AUTH_REQUIRED_ERROR))?;
+                AccountReference::with_account_key(endpoint_url, key.to_string())
             }
-        }
-    }
-    // Drop any surplus CosmosDriver after releasing the cache lock.
-    drop(surplus_driver);
+        };
 
-    Ok(driver_handle)
+        // Combine the account address, credential, and applicable client settings
+        // into the options used to create a CosmosDriver. Preferred regions are
+        // one example of those settings; connection settings are applied separately
+        // to CosmosDriverRuntime.
+        let driver_options = {
+            let mut builder = DriverOptions::builder(account)
+                .with_operation_options(operation_options)
+                .with_partition_failover_options(partition_failover_options()?);
+            if !preferred_regions.is_empty() {
+                builder = builder.with_preferred_regions(preferred_regions);
+            }
+            if let Some(user_agent_suffix) = user_agent_suffix {
+                builder = builder.with_user_agent_suffix(user_agent_suffix);
+            }
+            if !fault_rules.is_empty() {
+                builder = builder
+                    .with_fault_injection_rules(fault_rules.clone())
+                    .map_err(|e| PyValueError::new_err(format!("invalid fault rules: {e}")))?;
+            }
+            builder.build()
+        };
+
+        // Build on Tokio with the GIL released. Different keys can build concurrently;
+        // matching acquisitions wait for this attempt and then recheck the cache.
+        let driver_runtime = Arc::clone(&selected_runtime.driver_runtime);
+        let build_task = runtime_ctx
+            .tokio_rt
+            .spawn(async move { driver_runtime.create_driver(driver_options).await });
+        let driver = py
+            .allow_threads(|| runtime_ctx.tokio_rt.block_on(build_task))
+            .map_err(|join_error| {
+                PyRuntimeError::new_err(format!("driver init task failed: {join_error}"))
+            })?
+            .map_err(|e| PyRuntimeError::new_err(format!("driver init failed: {e}")))?;
+
+        Ok(DriverEntry {
+            driver,
+            fault_rules: fault_rules
+                .into_iter()
+                .map(|rule| (rule.id().to_string(), rule))
+                .collect(),
+            refcount: 1,
+        })
+    })
 }
 
 pub(crate) fn partition_failover_options() -> PyResult<PartitionFailoverOptions> {
@@ -1825,6 +1866,279 @@ class Config:
                 pyo3_async_runtimes::tokio::get_runtime()
             ));
         });
+    }
+
+    mod driver_creation_tests {
+        use super::super::{
+            acquire_driver_handle_with, driver_creation, driver_creations, drivers,
+            release_driver_handle, runtime_context, DriverCreation, DriverEntry,
+        };
+        use azure_data_cosmos_driver::{
+            in_memory_emulator::{InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion},
+            models::AccountReference,
+            options::DriverOptions,
+        };
+        use pyo3::{exceptions::PyRuntimeError, prelude::*};
+        use std::{
+            collections::HashMap,
+            sync::{
+                atomic::{AtomicUsize, Ordering},
+                mpsc::{self, Receiver},
+                Arc,
+            },
+            thread::{self, JoinHandle},
+            time::{Duration, Instant},
+        };
+        use tokio::sync::Mutex;
+        use url::Url;
+
+        const WAIT: Duration = Duration::from_secs(10);
+
+        fn entry() -> DriverEntry {
+            pyo3::prepare_freethreaded_python();
+            let endpoint = Url::parse("https://driver-creation.emulator.local").unwrap();
+            let config =
+                VirtualAccountConfig::new(vec![VirtualRegion::new("East US", endpoint.clone())])
+                    .unwrap();
+            let emulator = Arc::new(InMemoryEmulatorHttpClient::new(config));
+            let driver = runtime_context().tokio_rt.block_on(async {
+                let runtime = emulator.runtime_builder().build().await.unwrap();
+                runtime
+                    .create_driver(
+                        DriverOptions::builder(AccountReference::with_account_key(
+                            endpoint,
+                            "ZW11bGF0b3Ita2V5",
+                        ))
+                        .build(),
+                    )
+                    .await
+                    .unwrap()
+            });
+            DriverEntry {
+                driver,
+                fault_rules: HashMap::new(),
+                refcount: 1,
+            }
+        }
+
+        fn spawn_acquisition(
+            task: impl FnOnce(Python<'_>) -> PyResult<String> + Send + 'static,
+        ) -> (JoinHandle<PyResult<String>>, Receiver<()>) {
+            let (done, finished) = mpsc::channel();
+            let worker = thread::spawn(move || {
+                let result = Python::with_gil(task);
+                done.send(()).unwrap();
+                result
+            });
+            (worker, finished)
+        }
+
+        fn finish(worker: (JoinHandle<PyResult<String>>, Receiver<()>)) -> PyResult<String> {
+            worker
+                .1
+                .recv_timeout(WAIT)
+                .expect("acquisition did not finish");
+            worker.0.join().unwrap()
+        }
+
+        fn wait_for_second_miss(key: &str) {
+            let deadline = Instant::now() + WAIT;
+            loop {
+                // Only acquisitions that missed the cache retain this object.
+                // Observing two owners proves B missed while A's factory is held.
+                if driver_creations()
+                    .read()
+                    .get(key)
+                    .is_some_and(|creation| creation.strong_count() == 2)
+                {
+                    return;
+                }
+                assert!(
+                    Instant::now() < deadline,
+                    "second acquisition did not register"
+                );
+                thread::yield_now();
+            }
+        }
+
+        #[derive(Clone, Copy)]
+        enum FirstAcquisition {
+            Retain,
+            Fail,
+            Release,
+        }
+
+        fn concurrent_acquisitions(first_action: FirstAcquisition) {
+            let key = match first_action {
+                FirstAcquisition::Retain => "concurrent-driver-reuse",
+                FirstAcquisition::Fail => "concurrent-driver-retry",
+                FirstAcquisition::Release => "concurrent-driver-late-close",
+            };
+            // Supply a real driver to the cache, but control and count factory calls
+            // rather than depending on the driver's internal initialization requests.
+            let first_entry = entry();
+            let weak_driver = Arc::downgrade(&first_entry.driver);
+            let second_entry = DriverEntry {
+                driver: Arc::clone(&first_entry.driver),
+                fault_rules: HashMap::new(),
+                refcount: 1,
+            };
+            let calls = Arc::new(AtomicUsize::new(0));
+            let first_calls = Arc::clone(&calls);
+            let (started, first_started) = mpsc::channel();
+            let (resume, first_resume) = mpsc::channel();
+            let first = spawn_acquisition(move |py| {
+                let result = acquire_driver_handle_with(py, key.to_owned(), || {
+                    first_calls.fetch_add(1, Ordering::SeqCst);
+                    started.send(()).unwrap();
+                    py.allow_threads(move || first_resume.recv_timeout(WAIT))
+                        .unwrap();
+                    if matches!(first_action, FirstAcquisition::Fail) {
+                        return Err(PyRuntimeError::new_err("injected driver init failure"));
+                    }
+                    Ok(first_entry)
+                });
+                if matches!(first_action, FirstAcquisition::Release) {
+                    // Keep the GIL until release, so B cannot claim the cached entry.
+                    // This models an async worker releasing a late handle after close.
+                    release_driver_handle(result.as_ref().unwrap()).unwrap();
+                }
+                result
+            });
+            first_started.recv_timeout(WAIT).unwrap();
+            let second_calls = Arc::clone(&calls);
+            let second = spawn_acquisition(move |py| {
+                acquire_driver_handle_with(py, key.to_owned(), || {
+                    second_calls.fetch_add(1, Ordering::SeqCst);
+                    Ok(second_entry)
+                })
+            });
+            wait_for_second_miss(key);
+            assert_eq!(calls.load(Ordering::SeqCst), 1);
+
+            if matches!(first_action, FirstAcquisition::Retain) {
+                let other_entry = entry();
+                let other = spawn_acquisition(move |py| {
+                    acquire_driver_handle_with(py, "independent-driver-key".to_owned(), || {
+                        Ok(other_entry)
+                    })
+                });
+                let other_handle = finish(other).unwrap();
+                release_driver_handle(&other_handle).unwrap();
+                assert!(!driver_creations().read().contains_key(&other_handle));
+            }
+
+            resume.send(()).unwrap();
+            let first_result = finish(first);
+            let second_handle = finish(second).unwrap();
+            assert_eq!(second_handle, key);
+            if matches!(first_action, FirstAcquisition::Fail) {
+                assert_eq!(
+                    first_result.unwrap_err().to_string(),
+                    "RuntimeError: injected driver init failure"
+                );
+            } else {
+                assert_eq!(first_result.unwrap(), key);
+            }
+            let retained_first = matches!(first_action, FirstAcquisition::Retain);
+            assert_eq!(
+                calls.load(Ordering::SeqCst),
+                if retained_first { 1 } else { 2 }
+            );
+            assert_eq!(
+                drivers().read().get(key).unwrap().refcount,
+                if retained_first { 2 } else { 1 }
+            );
+            assert!(!driver_creations().read().contains_key(key));
+
+            Python::with_gil(|py| {
+                let reused = acquire_driver_handle_with(py, key.to_owned(), || {
+                    panic!("a cache hit must not invoke the factory")
+                })
+                .unwrap();
+                assert_eq!(reused, key);
+                release_driver_handle(&reused).unwrap();
+            });
+            if retained_first {
+                release_driver_handle(key).unwrap();
+            }
+            let operation_driver = Arc::clone(&drivers().read().get(key).unwrap().driver);
+            assert_eq!(drivers().read().get(key).unwrap().refcount, 1);
+            release_driver_handle(&second_handle).unwrap();
+            assert!(!drivers().read().contains_key(key));
+            assert!(weak_driver.upgrade().is_some());
+            drop(operation_driver);
+            assert!(weak_driver.upgrade().is_none());
+        }
+
+        #[test]
+        fn same_key_builds_once_while_different_keys_progress() {
+            concurrent_acquisitions(FirstAcquisition::Retain);
+        }
+
+        #[test]
+        fn failed_creator_leaves_waiter_free_to_retry() {
+            concurrent_acquisitions(FirstAcquisition::Fail);
+        }
+
+        #[test]
+        fn release_before_waiter_claims_handle_allows_recreation() {
+            concurrent_acquisitions(FirstAcquisition::Release);
+        }
+
+        #[test]
+        fn failure_and_unwind_remove_pending_state_and_allow_later_retry() {
+            let next_entry = entry();
+            let key = "driver-creation-failure-cleanup";
+            Python::with_gil(|py| {
+                let error = acquire_driver_handle_with(py, key.to_owned(), || {
+                    Err(PyRuntimeError::new_err("injected failure"))
+                })
+                .unwrap_err();
+                assert!(error.is_instance_of::<PyRuntimeError>(py));
+            });
+            assert!(!drivers().read().contains_key(key));
+            assert!(!driver_creations().read().contains_key(key));
+            let panicked = std::panic::catch_unwind(|| {
+                Python::with_gil(|py| {
+                    acquire_driver_handle_with(py, key.to_owned(), || panic!("injected panic"))
+                })
+            });
+            assert!(panicked.is_err());
+            assert!(!drivers().read().contains_key(key));
+            assert!(!driver_creations().read().contains_key(key));
+            Python::with_gil(|py| {
+                let handle =
+                    acquire_driver_handle_with(py, key.to_owned(), || Ok(next_entry)).unwrap();
+                assert_eq!(drivers().read().get(key).unwrap().refcount, 1);
+                release_driver_handle(&handle).unwrap();
+            });
+            assert!(!drivers().read().contains_key(key));
+            assert!(!driver_creations().read().contains_key(key));
+        }
+
+        #[test]
+        fn last_owner_removes_only_its_own_coordination_entry() {
+            let key = "driver-creation-registry-cleanup";
+            let first = driver_creation(key);
+            let second = driver_creation(key);
+            assert!(Arc::ptr_eq(&first, &second));
+            drop(second);
+            assert!(driver_creations().read().contains_key(key));
+            let replacement = Arc::new(DriverCreation {
+                key: key.to_owned(),
+                lock: Mutex::new(()),
+            });
+            // Reproduce replacement of an expired weak entry before its destructor
+            // obtains the registry lock, without relying on thread scheduling.
+            driver_creations()
+                .write()
+                .insert(key.to_owned(), Arc::downgrade(&replacement));
+            drop(first);
+            assert!(Arc::ptr_eq(&driver_creation(key), &replacement));
+            drop(replacement);
+            assert!(!driver_creations().read().contains_key(key));
+        }
     }
 
     #[test]
