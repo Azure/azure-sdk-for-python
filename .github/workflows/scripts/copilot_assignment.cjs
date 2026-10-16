@@ -1,4 +1,4 @@
-const { positiveInteger, ineligibleReason } = require("./issue_workflow_support.cjs");
+const { positiveInteger, isSameRepository, ineligibleReason } = require("./issue_workflow_support.cjs");
 
 async function prepareAssignment({ github, context, issueNumber, appliedItems, agentOutput }) {
   const number = positiveInteger(issueNumber, "Issue number");
@@ -19,9 +19,18 @@ async function prepareAssignment({ github, context, issueNumber, appliedItems, a
     throw new Error("Expected at most one assign_to_agent request");
   }
   const request = assignRequests[0];
-  const target = String(request.target ?? request.issue_number ?? "").trim();
-  if (target !== String(number) && target !== `#${number}`) {
+  const repository = `${context.repo.owner}/${context.repo.repo}`.toLowerCase();
+  if (!isSameRepository(request.repo, repository)) {
+    throw new Error("The assignment request targets another repository");
+  }
+  const target = request.issue_number ?? request.target ?? number;
+  if (positiveInteger(typeof target === "string" ? target.trim().replace(/^#/, "") : target, "Assignment issue number") !== number) {
     throw new Error("The assign_to_agent request does not target the investigated issue");
+  }
+  for (const field of ["issue_number", "item_number", "pull_number"]) {
+    if (request[field] !== undefined && positiveInteger(typeof request[field] === "string" ? request[field].trim().replace(/^#/, "") : request[field], field) !== number) {
+      throw new Error("The assign_to_agent request does not target the investigated issue");
+    }
   }
 
   const { data: issue } = await github.rest.issues.get({

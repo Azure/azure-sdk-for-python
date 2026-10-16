@@ -1,4 +1,4 @@
-const { positiveInteger, ineligibleReason } = require("./issue_workflow_support.cjs");
+const { positiveInteger, isSameRepository, ineligibleReason } = require("./issue_workflow_support.cjs");
 
 async function prepareHandoff({
   github, context, issueNumber, appliedItems, agentOutput, ownerNotification, normalizeAssignment,
@@ -31,7 +31,12 @@ async function prepareHandoff({
     if (assignRequests.length !== 1) {
       throw new Error("Expected exactly one assignment request for single-owner routing");
     }
-    const normalized = normalizeAssignment(assignRequests[0]);
+    const request = assignRequests[0];
+    const repository = `${context.repo.owner}/${context.repo.repo}`.toLowerCase();
+    if (!isSameRepository(request.repo, repository)) {
+      throw new Error("The assignment request targets another repository");
+    }
+    const normalized = normalizeAssignment(request);
     if (!normalized.success || normalized.issueNumber !== number ||
         !Array.isArray(normalized.assignees) || normalized.assignees.length !== 1) {
       throw new Error("The assignment request is not a single valid assignment for this issue");

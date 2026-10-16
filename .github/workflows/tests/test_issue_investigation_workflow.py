@@ -137,7 +137,7 @@ class InvestigationWorkflowTests(unittest.TestCase):
 
 class WorkflowIntegrationTests(unittest.TestCase):
     def test_bootstrap_matches_compiler_and_uses_mounted_copilot(self):
-        for name in ("issue-investigation", "issue-triage"):
+        for name in ("issue-investigation",):
             with self.subTest(workflow=name):
                 lock = read_workflow(name, ".lock.yml")
                 compiled = metadata(lock, "metadata")
@@ -159,7 +159,7 @@ class WorkflowIntegrationTests(unittest.TestCase):
                 self.assertIn("GH_AW_RUNTIME:", ci)
 
     def test_inference_is_read_only_with_native_authentication(self):
-        for name in ("issue-investigation", "issue-triage"):
+        for name in ("issue-investigation",):
             with self.subTest(workflow=name):
                 lock = read_workflow(name, ".lock.yml")
                 agent = job(lock, "agent")
@@ -236,6 +236,30 @@ class WorkflowIntegrationTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         self.assertIn("Copilot assignment cases passed", result.stdout)
 
+    def test_gate_corner_case_matrix(self):
+        result = subprocess.run(
+            ["node", str(WORKFLOWS / "tests" / "issue_workflow_corner_cases.cjs")],
+            text=True, capture_output=True, check=False,
+        )
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertIn("Issue workflow corner cases passed", result.stdout)
+
+    def test_actual_relay_script_with_native_dispatcher(self):
+        if not os.environ.get("GH_AW_RUNTIME"):
+            self.skipTest("Set GH_AW_RUNTIME to run pinned native handler contracts")
+        source = read_workflow("issue-investigation-handoff", ".yml")
+        step = source.split("- name: Validate completed triage and dispatch investigation\n", 1)[1]
+        script = textwrap.dedent(step.split("script: |\n", 1)[1].split("\n      - name:", 1)[0])
+        step = source.split("- name: Confirm investigation dispatch succeeded\n", 1)[1]
+        condition = textwrap.dedent(step.split("if: >-\n", 1)[1].split("\n        uses:", 1)[0]).strip()
+        result = subprocess.run(
+            ["node", str(WORKFLOWS / "tests" / "issue_relay_integration.cjs")],
+            input=json.dumps({"script": script, "condition": condition}),
+            text=True, capture_output=True, check=False,
+        )
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertIn("Relay integration cases passed", result.stdout)
+
     def test_pinned_workflow_runtime_contracts(self):
         source = read_workflow("issue-investigation")
         step = source.split("- name: Confirm Copilot assignment succeeded\n", 1)[1]
@@ -266,7 +290,7 @@ class WorkflowIntegrationTests(unittest.TestCase):
         condition = textwrap.dedent(relay.split("    if: >-\n", 1)[1].split("\n    runs-on:", 1)[0]).strip()
         result = subprocess.run(
             ["node", str(WORKFLOWS / "tests" / "completed_triage_handoff.cjs")],
-            input=json.dumps({"source": read_workflow("issue-triage"), "relayCondition": condition}),
+            input=json.dumps({"relayCondition": condition}),
             text=True, capture_output=True, check=False,
         )
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
@@ -291,10 +315,14 @@ class WorkflowIntegrationTests(unittest.TestCase):
         lint = (WORKFLOWS / "actionlint.yml").read_text(encoding="utf-8")
         self.assertEqual(baseline["actionlint_source_hash"], hashlib.sha256(lint.encode()).hexdigest())
         self.assertNotIn("workflow-contract-runtime", lint)
+        for filename, expected in baseline["existing_file_hashes"].items():
+            with self.subTest(existing_file=filename):
+                content = (WORKFLOWS / filename).read_text(encoding="utf-8")
+                self.assertEqual(expected, hashlib.sha256(content.encode()).hexdigest())
         self.assertIn("paths:", (WORKFLOWS / "issue-workflow-contracts.yml").read_text(encoding="utf-8"))
 
     def test_concurrency_is_partitioned_by_issue(self):
-        for name in ("issue-investigation", "issue-triage"):
+        for name in ("issue-investigation",):
             with self.subTest(workflow=name):
                 lock = read_workflow(name, ".lock.yml")
                 groups = re.findall(r"^\s+group: (.+)$", lock, re.MULTILINE)

@@ -6,10 +6,6 @@ description: |
   analysis notes including debugging strategies and resource links
   Implements the initial issue triage rules for the Azure SDK repository
 
-engine:
-  id: copilot
-  version: "1.0.80"
-
 on:
   issues:
     types: [opened]
@@ -21,11 +17,6 @@ on:
         type: string
   roles: all
   reaction: eyes
-
-concurrency:
-  group: "gh-aw-${{ github.workflow }}-${{ github.event.issue.number || github.event.inputs.issue_number }}"
-  queue: max
-  job-discriminator: ${{ github.event.issue.number || github.event.inputs.issue_number || github.run_id }}
 
 permissions:
   copilot-requests: write
@@ -244,7 +235,7 @@ Note the issue number — you must include it in every safe-output tool call:
 - For `add-labels`, `remove-labels`, and `add-comment`: pass it as `item_number`
 - For `assign-to-user`: pass it as `issue_number`
 
-Retrieve the issue using `issue_read` (method `get`)
+Retrieve the issue using the `get_issue` tool
 
 **Precondition checks** — exit without further action if any are true:
 - The issue already has labels
@@ -268,7 +259,7 @@ If the author matches the bot allowlist, do NOT add "customer-reported" or "ques
 
 ### Author Association Check
 
-If the author is not on the bot allowlist, use the `author_association` field from the issue data returned by `issue_read` to classify the author
+If the author is not on the bot allowlist, use the `author_association` field from the issue data returned by `get_issue` to classify the author
 
 The `author_association` field indicates the author's relationship to the repository:
 - `OWNER`, `MEMBER`, `COLLABORATOR` → team member (Azure org member or direct repo collaborator)

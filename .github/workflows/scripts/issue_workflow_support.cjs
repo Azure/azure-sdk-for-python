@@ -7,11 +7,23 @@ const BLOCKING_LABELS = new Set([
 ]);
 
 function positiveInteger(value, name) {
+  if (typeof value !== "string" && typeof value !== "number") {
+    throw new Error(`${name} must be a positive integer`);
+  }
   const text = String(value).trim();
   if (!/^\+?\d+$/.test(text) || !Number.isSafeInteger(Number(text)) || Number(text) <= 0) {
     throw new Error(`${name} must be a positive integer`);
   }
   return Number(text);
+}
+
+function isSameRepository(value, repository) {
+  if (value === undefined || value === null) return true;
+  if (typeof value !== "string") return false;
+  const name = value.trim();
+  if (name === "") return true;
+  const qualified = name.includes("/") ? name : `${repository.split("/")[0]}/${name}`;
+  return qualified.toLowerCase() === repository.toLowerCase();
 }
 
 function ineligibleReason(issue, issueNumber) {
@@ -69,15 +81,15 @@ function validateInvestigationOutputs(output, issueNumber, repository) {
   }
   const number = positiveInteger(issueNumber, "Issue number");
   const scoped = output.items.map(item => {
-    if (item.repo && item.repo.toLowerCase() !== repository.toLowerCase()) {
+    if (!isSameRepository(item.repo, repository)) {
       throw new Error("Investigation output cannot target another repository");
     }
     for (const field of ["issue_number", "item_number", "pull_number"]) {
-      if (item[field] !== undefined && positiveInteger(String(item[field]).replace(/^#/, ""), field) !== number) {
+      if (item[field] !== undefined && positiveInteger(typeof item[field] === "string" ? item[field].trim().replace(/^#/, "") : item[field], field) !== number) {
         throw new Error("Investigation output does not target the dispatched issue");
       }
     }
-    return { ...item, issue_number: number, ...(item.type === "add_comment" ? { item_number: number } : {}) };
+    return { ...item, repo: repository, issue_number: number, ...(item.type === "add_comment" ? { item_number: number } : {}) };
   });
   const comments = scoped.filter(item => item.type === "add_comment");
   const closures = scoped.filter(item => item.type === "close_issue");
@@ -95,4 +107,4 @@ function validateInvestigationOutputs(output, issueNumber, repository) {
   return { ...output, items: scoped };
 }
 
-module.exports = { positiveInteger, ineligibleReason, validateAgentOutput, validateInvestigationOutputs };
+module.exports = { positiveInteger, isSameRepository, ineligibleReason, validateAgentOutput, validateInvestigationOutputs };
