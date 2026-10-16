@@ -65,7 +65,6 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                         "defaultApiVersion": "str",
                         "disallowedActionVerbs": ["str"],
                         "disallowedEndUserOperations": ["str"],
-                        "dstsConfiguration": {"serviceName": "str", "serviceDnsName": "str"},
                         "enableAsyncOperation": bool,
                         "enableThirdPartyS2S": bool,
                         "endpoints": [
@@ -73,7 +72,6 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                                 "apiVersion": "str",
                                 "apiVersions": ["str"],
                                 "dataBoundary": "str",
-                                "dstsConfiguration": {"serviceName": "str", "serviceDnsName": "str"},
                                 "enabled": bool,
                                 "endpointType": "str",
                                 "endpointUri": "str",
@@ -167,7 +165,6 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                             "resourceAccessPolicy": "str",
                             "resourceAccessRoles": [{"actions": ["str"], "allowedGroupClaims": ["str"]}],
                             "schemaOwners": ["str"],
-                            "serviceTreeInfos": [{"componentId": "str", "readiness": "str", "serviceId": "str"}],
                         },
                         "manifestLink": "str",
                         "marketplaceOptions": {"addOnPlanConversionAllowed": bool},
@@ -238,7 +235,6 @@ class TestProviderHubMgmtResourceTypeRegistrationsOperationsAsync(AzureMgmtRecor
                         "resourceValidation": "str",
                         "routingRule": {"hostResourceType": "str"},
                         "routingType": "str",
-                        "serviceTreeInfos": [{"componentId": "str", "readiness": "str", "serviceId": "str"}],
                         "skuLink": "str",
                         "subscriptionLifecycleNotificationSpecifications": {
                             "softDeleteTTL": "1 day, 0:00:00",

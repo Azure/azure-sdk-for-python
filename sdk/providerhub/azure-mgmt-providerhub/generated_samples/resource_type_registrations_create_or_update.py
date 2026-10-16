@@ -49,15 +49,8 @@ def main():
                     "incidentContactEmail": "helpme@contoso.com",
                     "incidentRoutingService": "",
                     "incidentRoutingTeam": "",
-                    "manifestOwners": ["SPARTA-PlatformServiceAdministrator"],
+                    "manifestOwners": ["Contoso-PlatformServiceAdministrator"],
                     "resourceAccessPolicy": "NotSpecified",
-                    "serviceTreeInfos": [
-                        {
-                            "componentId": "d1b7d8ba-05e2-48e6-90d6-d781b99c6e69",
-                            "readiness": "InDevelopment",
-                            "serviceId": "d1b7d8ba-05e2-48e6-90d6-d781b99c6e69",
-                        }
-                    ],
                 },
                 "marketplaceType": "ProviderHub",
                 "metadata": {},

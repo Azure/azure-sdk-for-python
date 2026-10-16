@@ -6,7 +6,6 @@ namespace azure.mgmt.providerhub
         custom_rollouts: CustomRolloutsOperations
         default_rollouts: DefaultRolloutsOperations
         manifests: ManifestsOperations
-        new_region_frontload_release: NewRegionFrontloadReleaseOperations
         notification_registrations: NotificationRegistrationsOperations
         operations: Operations
         provider_monitor_settings: ProviderMonitorSettingsOperations
@@ -82,7 +81,6 @@ namespace azure.mgmt.providerhub.aio
         custom_rollouts: CustomRolloutsOperations
         default_rollouts: DefaultRolloutsOperations
         manifests: ManifestsOperations
-        new_region_frontload_release: NewRegionFrontloadReleaseOperations
         notification_registrations: NotificationRegistrationsOperations
         operations: Operations
         provider_monitor_settings: ProviderMonitorSettingsOperations
@@ -413,94 +411,6 @@ namespace azure.mgmt.providerhub.aio.operations
                 environment: str, 
                 **kwargs: Any
             ) -> ManifestInfo: ...
-
-
-    class azure.mgmt.providerhub.aio.operations.NewRegionFrontloadReleaseOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def create_or_update(
-                self, 
-                provider_namespace: str, 
-                release_name: str, 
-                properties: FrontloadPayload, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DefaultRollout: ...
-
-        @overload
-        async def create_or_update(
-                self, 
-                provider_namespace: str, 
-                release_name: str, 
-                properties: FrontloadPayload, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DefaultRollout: ...
-
-        @overload
-        async def create_or_update(
-                self, 
-                provider_namespace: str, 
-                release_name: str, 
-                properties: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DefaultRollout: ...
-
-        @overload
-        async def generate_manifest(
-                self, 
-                provider_namespace: str, 
-                properties: FrontloadPayload, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ResourceProviderManifest: ...
-
-        @overload
-        async def generate_manifest(
-                self, 
-                provider_namespace: str, 
-                properties: FrontloadPayload, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ResourceProviderManifest: ...
-
-        @overload
-        async def generate_manifest(
-                self, 
-                provider_namespace: str, 
-                properties: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ResourceProviderManifest: ...
-
-        @distributed_trace_async
-        async def get(
-                self, 
-                provider_namespace: str, 
-                release_name: str, 
-                **kwargs: Any
-            ) -> DefaultRollout: ...
-
-        @distributed_trace_async
-        async def stop(
-                self, 
-                provider_namespace: str, 
-                release_name: str, 
-                **kwargs: Any
-            ) -> None: ...
 
 
     class azure.mgmt.providerhub.aio.operations.NotificationRegistrationsOperations:
@@ -1408,15 +1318,6 @@ namespace azure.mgmt.providerhub.models
         SINGLE_ZONED = "SingleZoned"
 
 
-    class azure.mgmt.providerhub.models.AvailableCheckInManifestEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        ALL = "All"
-        CANARY = "Canary"
-        FAIRFAX = "Fairfax"
-        MOONCAKE = "Mooncake"
-        NOT_SPECIFIED = "NotSpecified"
-        PROD = "Prod"
-
-
     class azure.mgmt.providerhub.models.BlockActionVerb(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ACTION = "Action"
         DELETE = "Delete"
@@ -2063,22 +1964,6 @@ namespace azure.mgmt.providerhub.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.providerhub.models.DstsConfiguration(_Model):
-        service_dns_name: Optional[str]
-        service_name: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                service_dns_name: Optional[str] = ..., 
-                service_name: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.providerhub.models.EndpointInformation(_Model):
         endpoint: Optional[str]
         endpoint_type: Optional[Union[str, NotificationEndpointType]]
@@ -2248,7 +2133,6 @@ namespace azure.mgmt.providerhub.models
 
     class azure.mgmt.providerhub.models.FanoutLinkedNotificationRule(_Model):
         actions: Optional[list[str]]
-        dsts_configuration: Optional[FanoutLinkedNotificationRuleDstsConfiguration]
         endpoints: Optional[list[ResourceProviderEndpoint]]
         token_auth_configuration: Optional[TokenAuthConfiguration]
 
@@ -2257,25 +2141,8 @@ namespace azure.mgmt.providerhub.models
                 self, 
                 *, 
                 actions: Optional[list[str]] = ..., 
-                dsts_configuration: Optional[FanoutLinkedNotificationRuleDstsConfiguration] = ..., 
                 endpoints: Optional[list[ResourceProviderEndpoint]] = ..., 
                 token_auth_configuration: Optional[TokenAuthConfiguration] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.providerhub.models.FanoutLinkedNotificationRuleDstsConfiguration(DstsConfiguration):
-        service_dns_name: str
-        service_name: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                service_dns_name: Optional[str] = ..., 
-                service_name: str
             ) -> None: ...
 
         @overload
@@ -2325,104 +2192,6 @@ namespace azure.mgmt.providerhub.models
     class azure.mgmt.providerhub.models.FrontdoorRequestMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         NOT_SPECIFIED = "NotSpecified"
         USE_MANIFEST = "UseManifest"
-
-
-    class azure.mgmt.providerhub.models.FrontloadPayload(_Model):
-        properties: FrontloadPayloadProperties
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                properties: FrontloadPayloadProperties
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.providerhub.models.FrontloadPayloadProperties(_Model):
-        copy_from_location: str
-        environment_type: Union[str, AvailableCheckInManifestEnvironment]
-        exclude_resource_types: list[str]
-        frontload_location: str
-        ignore_fields: list[str]
-        include_resource_types: list[str]
-        operation_type: str
-        override_endpoint_level_fields: FrontloadPayloadPropertiesOverrideEndpointLevelFields
-        override_manifest_level_fields: FrontloadPayloadPropertiesOverrideManifestLevelFields
-        provider_namespace: str
-        service_feature_flag: Union[str, ServiceFeatureFlagAction]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                copy_from_location: str, 
-                environment_type: Union[str, AvailableCheckInManifestEnvironment], 
-                exclude_resource_types: list[str], 
-                frontload_location: str, 
-                ignore_fields: list[str], 
-                include_resource_types: list[str], 
-                operation_type: str, 
-                override_endpoint_level_fields: FrontloadPayloadPropertiesOverrideEndpointLevelFields, 
-                override_manifest_level_fields: FrontloadPayloadPropertiesOverrideManifestLevelFields, 
-                provider_namespace: str, 
-                service_feature_flag: Union[str, ServiceFeatureFlagAction]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.providerhub.models.FrontloadPayloadPropertiesOverrideEndpointLevelFields(ResourceTypeEndpointBase):
-        api_version: str
-        api_versions: list[str]
-        dsts_configuration: ResourceTypeEndpointBaseDstsConfiguration
-        enabled: bool
-        endpoint_type: Union[str, EndpointType]
-        endpoint_uri: str
-        features_rule: ResourceTypeEndpointBaseFeaturesRule
-        locations: list[str]
-        required_features: list[str]
-        sku_link: str
-        timeout: timedelta
-        zones: list[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                api_version: str, 
-                api_versions: list[str], 
-                dsts_configuration: ResourceTypeEndpointBaseDstsConfiguration, 
-                enabled: bool, 
-                endpoint_type: Union[str, EndpointType], 
-                endpoint_uri: str, 
-                features_rule: ResourceTypeEndpointBaseFeaturesRule, 
-                locations: list[str], 
-                required_features: list[str], 
-                sku_link: str, 
-                timeout: timedelta, 
-                zones: list[str]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.providerhub.models.FrontloadPayloadPropertiesOverrideManifestLevelFields(ManifestLevelPropertyBag):
-        resource_hydration_accounts: list[ResourceHydrationAccount]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                resource_hydration_accounts: Optional[list[ResourceHydrationAccount]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.providerhub.models.GroupConnectivityInformation(_Model):
@@ -3277,20 +3046,6 @@ namespace azure.mgmt.providerhub.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.providerhub.models.ManifestLevelPropertyBag(_Model):
-        resource_hydration_accounts: Optional[list[ResourceHydrationAccount]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                resource_hydration_accounts: Optional[list[ResourceHydrationAccount]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.providerhub.models.MarketplaceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ADD_ON = "AddOn"
         BYPASS = "Bypass"
@@ -3724,7 +3479,6 @@ namespace azure.mgmt.providerhub.models
         capabilities: list[ResourceProviderCapabilities]
         cross_tenant_token_validation: Union[str, CrossTenantTokenValidation]
         custom_manifest_version: str
-        dsts_configuration: ResourceProviderManifestPropertiesDstsConfiguration
         enable_preset_resource_types: Optional[bool]
         enable_tenant_linked_notification: bool
         features_rule: ResourceProviderManifestPropertiesFeaturesRule
@@ -3767,7 +3521,6 @@ namespace azure.mgmt.providerhub.models
                 capabilities: Optional[list[ResourceProviderCapabilities]] = ..., 
                 cross_tenant_token_validation: Optional[Union[str, CrossTenantTokenValidation]] = ..., 
                 custom_manifest_version: Optional[str] = ..., 
-                dsts_configuration: Optional[ResourceProviderManifestPropertiesDstsConfiguration] = ..., 
                 enable_preset_resource_types: Optional[bool] = ..., 
                 enable_tenant_linked_notification: Optional[bool] = ..., 
                 features_rule: Optional[ResourceProviderManifestPropertiesFeaturesRule] = ..., 
@@ -3932,18 +3685,6 @@ namespace azure.mgmt.providerhub.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.providerhub.models.Readiness(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CLOSING_DOWN = "ClosingDown"
-        DEPRECATED = "Deprecated"
-        GA = "GA"
-        INTERNAL_ONLY = "InternalOnly"
-        IN_DEVELOPMENT = "InDevelopment"
-        PRIVATE_PREVIEW = "PrivatePreview"
-        PUBLIC_PREVIEW = "PublicPreview"
-        REMOVED_FROM_ARM = "RemovedFromARM"
-        RETIRED = "Retired"
-
-
     class azure.mgmt.providerhub.models.Regionality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         GLOBAL = "Global"
         NOT_SPECIFIED = "NotSpecified"
@@ -3974,8 +3715,6 @@ namespace azure.mgmt.providerhub.models
 
 
     class azure.mgmt.providerhub.models.ResourceAccessPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        ACIS_ACTION_ALLOWED = "AcisActionAllowed"
-        ACIS_READ_ALLOWED = "AcisReadAllowed"
         NOT_SPECIFIED = "NotSpecified"
 
 
@@ -4289,7 +4028,6 @@ namespace azure.mgmt.providerhub.models
         resource_access_policy: Optional[Union[str, ResourceAccessPolicy]]
         resource_access_roles: Optional[list[ResourceAccessRole]]
         schema_owners: Optional[list[str]]
-        service_tree_infos: Optional[list[ServiceTreeInfo]]
 
         @overload
         def __init__(
@@ -4309,8 +4047,7 @@ namespace azure.mgmt.providerhub.models
                 profit_center_program_id: Optional[str] = ..., 
                 resource_access_policy: Optional[Union[str, ResourceAccessPolicy]] = ..., 
                 resource_access_roles: Optional[list[ResourceAccessRole]] = ..., 
-                schema_owners: Optional[list[str]] = ..., 
-                service_tree_infos: Optional[list[ServiceTreeInfo]] = ...
+                schema_owners: Optional[list[str]] = ...
             ) -> None: ...
 
         @overload
@@ -4433,7 +4170,6 @@ namespace azure.mgmt.providerhub.models
         resource_access_policy: Union[str, ResourceAccessPolicy]
         resource_access_roles: list[ResourceAccessRole]
         schema_owners: list[str]
-        service_tree_infos: list[ServiceTreeInfo]
 
         @overload
         def __init__(
@@ -4453,8 +4189,7 @@ namespace azure.mgmt.providerhub.models
                 profit_center_program_id: Optional[str] = ..., 
                 resource_access_policy: Optional[Union[str, ResourceAccessPolicy]] = ..., 
                 resource_access_roles: Optional[list[ResourceAccessRole]] = ..., 
-                schema_owners: Optional[list[str]] = ..., 
-                service_tree_infos: Optional[list[ServiceTreeInfo]] = ...
+                schema_owners: Optional[list[str]] = ...
             ) -> None: ...
 
         @overload
@@ -4465,7 +4200,6 @@ namespace azure.mgmt.providerhub.models
         capabilities: Optional[list[ResourceProviderCapabilities]]
         cross_tenant_token_validation: Optional[Union[str, CrossTenantTokenValidation]]
         custom_manifest_version: Optional[str]
-        dsts_configuration: Optional[ResourceProviderManifestPropertiesDstsConfiguration]
         enable_tenant_linked_notification: Optional[bool]
         features_rule: Optional[ResourceProviderManifestPropertiesFeaturesRule]
         global_notification_endpoints: Optional[list[ResourceProviderEndpoint]]
@@ -4501,7 +4235,6 @@ namespace azure.mgmt.providerhub.models
                 capabilities: Optional[list[ResourceProviderCapabilities]] = ..., 
                 cross_tenant_token_validation: Optional[Union[str, CrossTenantTokenValidation]] = ..., 
                 custom_manifest_version: Optional[str] = ..., 
-                dsts_configuration: Optional[ResourceProviderManifestPropertiesDstsConfiguration] = ..., 
                 enable_tenant_linked_notification: Optional[bool] = ..., 
                 features_rule: Optional[ResourceProviderManifestPropertiesFeaturesRule] = ..., 
                 global_notification_endpoints: Optional[list[ResourceProviderEndpoint]] = ..., 
@@ -4529,22 +4262,6 @@ namespace azure.mgmt.providerhub.models
                 service_name: Optional[str] = ..., 
                 services: Optional[list[ResourceProviderService]] = ..., 
                 template_deployment_options: Optional[ResourceProviderManifestPropertiesTemplateDeploymentOptions] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.providerhub.models.ResourceProviderManifestPropertiesDstsConfiguration(DstsConfiguration):
-        service_dns_name: str
-        service_name: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                service_dns_name: Optional[str] = ..., 
-                service_name: str
             ) -> None: ...
 
         @overload
@@ -4581,7 +4298,6 @@ namespace azure.mgmt.providerhub.models
         resource_access_policy: Union[str, ResourceAccessPolicy]
         resource_access_roles: list[ResourceAccessRole]
         schema_owners: list[str]
-        service_tree_infos: list[ServiceTreeInfo]
 
         @overload
         def __init__(
@@ -4601,8 +4317,7 @@ namespace azure.mgmt.providerhub.models
                 profit_center_program_id: Optional[str] = ..., 
                 resource_access_policy: Optional[Union[str, ResourceAccessPolicy]] = ..., 
                 resource_access_roles: Optional[list[ResourceAccessRole]] = ..., 
-                schema_owners: Optional[list[str]] = ..., 
-                service_tree_infos: Optional[list[ServiceTreeInfo]] = ...
+                schema_owners: Optional[list[str]] = ...
             ) -> None: ...
 
         @overload
@@ -4804,7 +4519,6 @@ namespace azure.mgmt.providerhub.models
         resource_provider_authorization_rules: Optional[ResourceProviderAuthorizationRules]
         resource_validation: Optional[Union[str, ResourceValidation]]
         routing_type: Optional[Union[str, RoutingType]]
-        service_tree_infos: Optional[list[ServiceTreeInfo]]
         sku_link: Optional[str]
         subscription_state_rules: Optional[list[SubscriptionStateRule]]
         template_deployment_policy: Optional[ResourceTypeTemplateDeploymentPolicy]
@@ -4841,7 +4555,6 @@ namespace azure.mgmt.providerhub.models
                 resource_provider_authorization_rules: Optional[ResourceProviderAuthorizationRules] = ..., 
                 resource_validation: Optional[Union[str, ResourceValidation]] = ..., 
                 routing_type: Optional[Union[str, RoutingType]] = ..., 
-                service_tree_infos: Optional[list[ServiceTreeInfo]] = ..., 
                 sku_link: Optional[str] = ..., 
                 subscription_state_rules: Optional[list[SubscriptionStateRule]] = ..., 
                 template_deployment_policy: Optional[ResourceTypeTemplateDeploymentPolicy] = ..., 
@@ -4863,7 +4576,6 @@ namespace azure.mgmt.providerhub.models
         api_version: Optional[str]
         api_versions: Optional[list[str]]
         data_boundary: Optional[Union[str, DataBoundary]]
-        dsts_configuration: Optional[ResourceTypeEndpointDstsConfiguration]
         enabled: Optional[bool]
         endpoint_type: Optional[Union[str, EndpointTypeResourceType]]
         endpoint_uri: Optional[str]
@@ -4884,7 +4596,6 @@ namespace azure.mgmt.providerhub.models
                 api_version: Optional[str] = ..., 
                 api_versions: Optional[list[str]] = ..., 
                 data_boundary: Optional[Union[str, DataBoundary]] = ..., 
-                dsts_configuration: Optional[ResourceTypeEndpointDstsConfiguration] = ..., 
                 enabled: Optional[bool] = ..., 
                 endpoint_type: Optional[Union[str, EndpointTypeResourceType]] = ..., 
                 endpoint_uri: Optional[str] = ..., 
@@ -4897,88 +4608,6 @@ namespace azure.mgmt.providerhub.models
                 timeout: Optional[timedelta] = ..., 
                 token_auth_configuration: Optional[TokenAuthConfiguration] = ..., 
                 zones: Optional[list[str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.providerhub.models.ResourceTypeEndpointBase(_Model):
-        api_version: str
-        api_versions: list[str]
-        dsts_configuration: ResourceTypeEndpointBaseDstsConfiguration
-        enabled: bool
-        endpoint_type: Union[str, EndpointType]
-        endpoint_uri: str
-        features_rule: ResourceTypeEndpointBaseFeaturesRule
-        locations: list[str]
-        required_features: list[str]
-        sku_link: str
-        timeout: timedelta
-        zones: list[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                api_version: str, 
-                api_versions: list[str], 
-                dsts_configuration: ResourceTypeEndpointBaseDstsConfiguration, 
-                enabled: bool, 
-                endpoint_type: Union[str, EndpointType], 
-                endpoint_uri: str, 
-                features_rule: ResourceTypeEndpointBaseFeaturesRule, 
-                locations: list[str], 
-                required_features: list[str], 
-                sku_link: str, 
-                timeout: timedelta, 
-                zones: list[str]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.providerhub.models.ResourceTypeEndpointBaseDstsConfiguration(DstsConfiguration):
-        service_dns_name: str
-        service_name: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                service_dns_name: Optional[str] = ..., 
-                service_name: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.providerhub.models.ResourceTypeEndpointBaseFeaturesRule(FeaturesRule):
-        required_features_policy: Union[str, FeaturesPolicy]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                required_features_policy: Union[str, FeaturesPolicy]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.providerhub.models.ResourceTypeEndpointDstsConfiguration(DstsConfiguration):
-        service_dns_name: str
-        service_name: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                service_dns_name: Optional[str] = ..., 
-                service_name: str
             ) -> None: ...
 
         @overload
@@ -5168,7 +4797,6 @@ namespace azure.mgmt.providerhub.models
         default_api_version: Optional[str]
         disallowed_action_verbs: Optional[list[str]]
         disallowed_end_user_operations: Optional[list[str]]
-        dsts_configuration: Optional[ResourceTypeRegistrationPropertiesDstsConfiguration]
         enable_async_operation: Optional[bool]
         enable_third_party_s2_s: Optional[bool]
         endpoints: Optional[list[ResourceTypeEndpoint]]
@@ -5216,7 +4844,6 @@ namespace azure.mgmt.providerhub.models
         resource_validation: Optional[Union[str, ResourceValidation]]
         routing_rule: Optional[ResourceTypeRegistrationPropertiesRoutingRule]
         routing_type: Optional[Union[str, RoutingType]]
-        service_tree_infos: Optional[list[ServiceTreeInfo]]
         sku_link: Optional[str]
         subscription_lifecycle_notification_specifications: Optional[ResourceTypeRegistrationPropertiesSubscriptionLifecycleNotificationSpecifications]
         subscription_state_rules: Optional[list[SubscriptionStateRule]]
@@ -5253,7 +4880,6 @@ namespace azure.mgmt.providerhub.models
                 default_api_version: Optional[str] = ..., 
                 disallowed_action_verbs: Optional[list[str]] = ..., 
                 disallowed_end_user_operations: Optional[list[str]] = ..., 
-                dsts_configuration: Optional[ResourceTypeRegistrationPropertiesDstsConfiguration] = ..., 
                 enable_async_operation: Optional[bool] = ..., 
                 enable_third_party_s2_s: Optional[bool] = ..., 
                 endpoints: Optional[list[ResourceTypeEndpoint]] = ..., 
@@ -5300,7 +4926,6 @@ namespace azure.mgmt.providerhub.models
                 resource_validation: Optional[Union[str, ResourceValidation]] = ..., 
                 routing_rule: Optional[ResourceTypeRegistrationPropertiesRoutingRule] = ..., 
                 routing_type: Optional[Union[str, RoutingType]] = ..., 
-                service_tree_infos: Optional[list[ServiceTreeInfo]] = ..., 
                 sku_link: Optional[str] = ..., 
                 subscription_lifecycle_notification_specifications: Optional[ResourceTypeRegistrationPropertiesSubscriptionLifecycleNotificationSpecifications] = ..., 
                 subscription_state_rules: Optional[list[SubscriptionStateRule]] = ..., 
@@ -5358,22 +4983,6 @@ namespace azure.mgmt.providerhub.models
                 *, 
                 enable_default_validation: Optional[bool] = ..., 
                 resource_types_with_custom_validation: Optional[list[str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.providerhub.models.ResourceTypeRegistrationPropertiesDstsConfiguration(DstsConfiguration):
-        service_dns_name: str
-        service_name: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                service_dns_name: Optional[str] = ..., 
-                service_name: str
             ) -> None: ...
 
         @overload
@@ -5460,7 +5069,6 @@ namespace azure.mgmt.providerhub.models
         resource_access_policy: Union[str, ResourceAccessPolicy]
         resource_access_roles: list[ResourceAccessRole]
         schema_owners: list[str]
-        service_tree_infos: list[ServiceTreeInfo]
 
         @overload
         def __init__(
@@ -5480,8 +5088,7 @@ namespace azure.mgmt.providerhub.models
                 profit_center_program_id: Optional[str] = ..., 
                 resource_access_policy: Optional[Union[str, ResourceAccessPolicy]] = ..., 
                 resource_access_roles: Optional[list[ResourceAccessRole]] = ..., 
-                schema_owners: Optional[list[str]] = ..., 
-                service_tree_infos: Optional[list[ServiceTreeInfo]] = ...
+                schema_owners: Optional[list[str]] = ...
             ) -> None: ...
 
         @overload
@@ -5819,32 +5426,9 @@ namespace azure.mgmt.providerhub.models
         NOT_SPECIFIED = "NotSpecified"
 
 
-    class azure.mgmt.providerhub.models.ServiceFeatureFlagAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CREATE = "Create"
-        DO_NOT_CREATE = "DoNotCreate"
-
-
     class azure.mgmt.providerhub.models.ServiceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ACTIVE = "Active"
         INACTIVE = "Inactive"
-
-
-    class azure.mgmt.providerhub.models.ServiceTreeInfo(_Model):
-        component_id: Optional[str]
-        readiness: Optional[Union[str, Readiness]]
-        service_id: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                component_id: Optional[str] = ..., 
-                readiness: Optional[Union[str, Readiness]] = ..., 
-                service_id: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.providerhub.models.SignedRequestScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -6697,94 +6281,6 @@ namespace azure.mgmt.providerhub.operations
                 environment: str, 
                 **kwargs: Any
             ) -> ManifestInfo: ...
-
-
-    class azure.mgmt.providerhub.operations.NewRegionFrontloadReleaseOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def create_or_update(
-                self, 
-                provider_namespace: str, 
-                release_name: str, 
-                properties: FrontloadPayload, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DefaultRollout: ...
-
-        @overload
-        def create_or_update(
-                self, 
-                provider_namespace: str, 
-                release_name: str, 
-                properties: FrontloadPayload, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DefaultRollout: ...
-
-        @overload
-        def create_or_update(
-                self, 
-                provider_namespace: str, 
-                release_name: str, 
-                properties: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> DefaultRollout: ...
-
-        @overload
-        def generate_manifest(
-                self, 
-                provider_namespace: str, 
-                properties: FrontloadPayload, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ResourceProviderManifest: ...
-
-        @overload
-        def generate_manifest(
-                self, 
-                provider_namespace: str, 
-                properties: FrontloadPayload, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ResourceProviderManifest: ...
-
-        @overload
-        def generate_manifest(
-                self, 
-                provider_namespace: str, 
-                properties: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ResourceProviderManifest: ...
-
-        @distributed_trace
-        def get(
-                self, 
-                provider_namespace: str, 
-                release_name: str, 
-                **kwargs: Any
-            ) -> DefaultRollout: ...
-
-        @distributed_trace
-        def stop(
-                self, 
-                provider_namespace: str, 
-                release_name: str, 
-                **kwargs: Any
-            ) -> None: ...
 
 
     class azure.mgmt.providerhub.operations.NotificationRegistrationsOperations:
@@ -7870,13 +7366,6 @@ namespace azure.mgmt.providerhub.types
         requiredFeatures: list[str]
 
 
-    class azure.mgmt.providerhub.types.DstsConfiguration(TypedDict, total=False):
-        key "serviceDnsName": str
-        key "serviceName": Required[str]
-        serviceDnsName: str
-        serviceName: str
-
-
     class azure.mgmt.providerhub.types.EndpointInformation(TypedDict, total=False):
         key "endpoint": str
         key "endpointType": Union[str, NotificationEndpointType]
@@ -7915,19 +7404,10 @@ namespace azure.mgmt.providerhub.types
 
 
     class azure.mgmt.providerhub.types.FanoutLinkedNotificationRule(TypedDict, total=False):
-        key "dstsConfiguration": ForwardRef('FanoutLinkedNotificationRuleDstsConfiguration', module='types')
         key "tokenAuthConfiguration": ForwardRef('TokenAuthConfiguration', module='types')
         actions: list[str]
-        dstsConfiguration: FanoutLinkedNotificationRuleDstsConfiguration
         endpoints: list[ResourceProviderEndpoint]
         tokenAuthConfiguration: TokenAuthConfiguration
-
-
-    class azure.mgmt.providerhub.types.FanoutLinkedNotificationRuleDstsConfiguration(DstsConfiguration):
-        key "serviceDnsName": str
-        key "serviceName": Required[str]
-        serviceDnsName: str
-        serviceName: str
 
 
     class azure.mgmt.providerhub.types.FeaturesRule(TypedDict, total=False):
@@ -7939,67 +7419,6 @@ namespace azure.mgmt.providerhub.types
         key "filterQuery": str
         endpointInformation: list[EndpointInformation]
         filterQuery: str
-
-
-    class azure.mgmt.providerhub.types.FrontloadPayload(TypedDict, total=False):
-        key "properties": Required[FrontloadPayloadProperties]
-        properties: FrontloadPayloadProperties
-
-
-    class azure.mgmt.providerhub.types.FrontloadPayloadProperties(TypedDict, total=False):
-        key "copyFromLocation": Required[str]
-        key "environmentType": Required[Union[str, AvailableCheckInManifestEnvironment]]
-        key "excludeResourceTypes": Required[list[str]]
-        key "frontloadLocation": Required[str]
-        key "ignoreFields": Required[list[str]]
-        key "includeResourceTypes": Required[list[str]]
-        key "operationType": Required[str]
-        key "overrideEndpointLevelFields": Required[FrontloadPayloadPropertiesOverrideEndpointLevelFields]
-        key "overrideManifestLevelFields": Required[FrontloadPayloadPropertiesOverrideManifestLevelFields]
-        key "providerNamespace": Required[str]
-        key "serviceFeatureFlag": Required[Union[str, ServiceFeatureFlagAction]]
-        copyFromLocation: str
-        environmentType: Union[str, AvailableCheckInManifestEnvironment]
-        excludeResourceTypes: list[str]
-        frontloadLocation: str
-        ignoreFields: list[str]
-        includeResourceTypes: list[str]
-        operationType: str
-        overrideEndpointLevelFields: FrontloadPayloadPropertiesOverrideEndpointLevelFields
-        overrideManifestLevelFields: FrontloadPayloadPropertiesOverrideManifestLevelFields
-        providerNamespace: str
-        serviceFeatureFlag: Union[str, ServiceFeatureFlagAction]
-
-
-    class azure.mgmt.providerhub.types.FrontloadPayloadPropertiesOverrideEndpointLevelFields(ResourceTypeEndpointBase):
-        key "apiVersion": Required[str]
-        key "apiVersions": Required[list[str]]
-        key "dstsConfiguration": Required[ResourceTypeEndpointBaseDstsConfiguration]
-        key "enabled": Required[bool]
-        key "endpointType": Required[Union[str, EndpointType]]
-        key "endpointUri": Required[str]
-        key "featuresRule": Required[ResourceTypeEndpointBaseFeaturesRule]
-        key "locations": Required[list[str]]
-        key "requiredFeatures": Required[list[str]]
-        key "skuLink": Required[str]
-        key "timeout": Required[str]
-        key "zones": Required[list[str]]
-        apiVersion: str
-        apiVersions: list[str]
-        dstsConfiguration: ResourceTypeEndpointBaseDstsConfiguration
-        enabled: bool
-        endpointType: Union[str, EndpointType]
-        endpointUri: str
-        featuresRule: ResourceTypeEndpointBaseFeaturesRule
-        locations: list[str]
-        requiredFeatures: list[str]
-        skuLink: str
-        timeout: str
-        zones: list[str]
-
-
-    class azure.mgmt.providerhub.types.FrontloadPayloadPropertiesOverrideManifestLevelFields(ManifestLevelPropertyBag):
-        resourceHydrationAccounts: list[ResourceHydrationAccount]
 
 
     class azure.mgmt.providerhub.types.GroupConnectivityInformation(TypedDict, total=False):
@@ -8438,10 +7857,6 @@ namespace azure.mgmt.providerhub.types
         manifestUri: str
 
 
-    class azure.mgmt.providerhub.types.ManifestLevelPropertyBag(TypedDict, total=False):
-        resourceHydrationAccounts: list[ResourceHydrationAccount]
-
-
     class azure.mgmt.providerhub.types.Notification(TypedDict, total=False):
         key "notificationType": Union[str, NotificationType]
         key "skipNotifications": Union[str, SkipNotifications]
@@ -8596,7 +8011,6 @@ namespace azure.mgmt.providerhub.types
     class azure.mgmt.providerhub.types.ProviderRegistrationProperties(ResourceProviderManifestProperties):
         key "crossTenantTokenValidation": Union[str, CrossTenantTokenValidation]
         key "customManifestVersion": str
-        key "dstsConfiguration": ForwardRef('ResourceProviderManifestPropertiesDstsConfiguration', module='types')
         key "enablePresetResourceTypes": bool
         key "enableTenantLinkedNotification": Optional[bool]
         key "featuresRule": ForwardRef('ResourceProviderManifestPropertiesFeaturesRule', module='types')
@@ -8624,7 +8038,6 @@ namespace azure.mgmt.providerhub.types
         capabilities: list[ResourceProviderCapabilities]
         crossTenantTokenValidation: Union[str, CrossTenantTokenValidation]
         customManifestVersion: str
-        dstsConfiguration: ResourceProviderManifestPropertiesDstsConfiguration
         enablePresetResourceTypes: bool
         enableTenantLinkedNotification: bool
         featuresRule: ResourceProviderManifestPropertiesFeaturesRule
@@ -8874,7 +8287,6 @@ namespace azure.mgmt.providerhub.types
         resourceAccessPolicy: Union[str, ResourceAccessPolicy]
         resourceAccessRoles: list[ResourceAccessRole]
         schemaOwners: list[str]
-        serviceTreeInfos: list[ServiceTreeInfo]
 
 
     class azure.mgmt.providerhub.types.ResourceProviderManagementErrorResponseMessageOptions(TypedDict, total=False):
@@ -8892,7 +8304,6 @@ namespace azure.mgmt.providerhub.types
     class azure.mgmt.providerhub.types.ResourceProviderManifestProperties(TypedDict, total=False):
         key "crossTenantTokenValidation": Union[str, CrossTenantTokenValidation]
         key "customManifestVersion": str
-        key "dstsConfiguration": ForwardRef('ResourceProviderManifestPropertiesDstsConfiguration', module='types')
         key "enableTenantLinkedNotification": Optional[bool]
         key "featuresRule": ForwardRef('ResourceProviderManifestPropertiesFeaturesRule', module='types')
         key "legacyNamespace": str
@@ -8913,7 +8324,6 @@ namespace azure.mgmt.providerhub.types
         capabilities: list[ResourceProviderCapabilities]
         crossTenantTokenValidation: Union[str, CrossTenantTokenValidation]
         customManifestVersion: str
-        dstsConfiguration: ResourceProviderManifestPropertiesDstsConfiguration
         enableTenantLinkedNotification: bool
         featuresRule: ResourceProviderManifestPropertiesFeaturesRule
         globalNotificationEndpoints: list[ResourceProviderEndpoint]
@@ -8941,13 +8351,6 @@ namespace azure.mgmt.providerhub.types
         serviceName: str
         services: list[ResourceProviderService]
         templateDeploymentOptions: ResourceProviderManifestPropertiesTemplateDeploymentOptions
-
-
-    class azure.mgmt.providerhub.types.ResourceProviderManifestPropertiesDstsConfiguration(DstsConfiguration):
-        key "serviceDnsName": str
-        key "serviceName": Required[str]
-        serviceDnsName: str
-        serviceName: str
 
 
     class azure.mgmt.providerhub.types.ResourceProviderManifestPropertiesFeaturesRule(FeaturesRule):
@@ -8979,7 +8382,6 @@ namespace azure.mgmt.providerhub.types
         resourceAccessPolicy: Union[str, ResourceAccessPolicy]
         resourceAccessRoles: list[ResourceAccessRole]
         schemaOwners: list[str]
-        serviceTreeInfos: list[ServiceTreeInfo]
 
 
     class azure.mgmt.providerhub.types.ResourceProviderManifestPropertiesNotificationSettings(TypedDict, total=False):
@@ -9024,7 +8426,6 @@ namespace azure.mgmt.providerhub.types
     class azure.mgmt.providerhub.types.ResourceTypeEndpoint(TypedDict, total=False):
         key "apiVersion": str
         key "dataBoundary": Union[str, DataBoundary]
-        key "dstsConfiguration": ForwardRef('ResourceTypeEndpointDstsConfiguration', module='types')
         key "enabled": bool
         key "endpointType": Union[str, EndpointTypeResourceType]
         key "endpointUri": str
@@ -9036,7 +8437,6 @@ namespace azure.mgmt.providerhub.types
         apiVersion: str
         apiVersions: list[str]
         dataBoundary: Union[str, DataBoundary]
-        dstsConfiguration: ResourceTypeEndpointDstsConfiguration
         enabled: bool
         endpointType: Union[str, EndpointTypeResourceType]
         endpointUri: str
@@ -9049,52 +8449,6 @@ namespace azure.mgmt.providerhub.types
         timeout: str
         tokenAuthConfiguration: TokenAuthConfiguration
         zones: list[str]
-
-
-    class azure.mgmt.providerhub.types.ResourceTypeEndpointBase(TypedDict, total=False):
-        key "apiVersion": Required[str]
-        key "apiVersions": Required[list[str]]
-        key "dstsConfiguration": Required[ResourceTypeEndpointBaseDstsConfiguration]
-        key "enabled": Required[bool]
-        key "endpointType": Required[Union[str, EndpointType]]
-        key "endpointUri": Required[str]
-        key "featuresRule": Required[ResourceTypeEndpointBaseFeaturesRule]
-        key "locations": Required[list[str]]
-        key "requiredFeatures": Required[list[str]]
-        key "skuLink": Required[str]
-        key "timeout": Required[str]
-        key "zones": Required[list[str]]
-        apiVersion: str
-        apiVersions: list[str]
-        dstsConfiguration: ResourceTypeEndpointBaseDstsConfiguration
-        enabled: bool
-        endpointType: Union[str, EndpointType]
-        endpointUri: str
-        featuresRule: ResourceTypeEndpointBaseFeaturesRule
-        locations: list[str]
-        requiredFeatures: list[str]
-        skuLink: str
-        timeout: str
-        zones: list[str]
-
-
-    class azure.mgmt.providerhub.types.ResourceTypeEndpointBaseDstsConfiguration(DstsConfiguration):
-        key "serviceDnsName": str
-        key "serviceName": Required[str]
-        serviceDnsName: str
-        serviceName: str
-
-
-    class azure.mgmt.providerhub.types.ResourceTypeEndpointBaseFeaturesRule(FeaturesRule):
-        key "requiredFeaturesPolicy": Required[Union[str, FeaturesPolicy]]
-        requiredFeaturesPolicy: Union[str, FeaturesPolicy]
-
-
-    class azure.mgmt.providerhub.types.ResourceTypeEndpointDstsConfiguration(DstsConfiguration):
-        key "serviceDnsName": str
-        key "serviceName": Required[str]
-        serviceDnsName: str
-        serviceName: str
 
 
     class azure.mgmt.providerhub.types.ResourceTypeEndpointFeaturesRule(FeaturesRule):
@@ -9163,7 +8517,6 @@ namespace azure.mgmt.providerhub.types
         key "checkNameAvailabilitySpecifications": ForwardRef('ResourceTypeRegistrationPropertiesCheckNameAvailabilitySpecifications', module='types')
         key "crossTenantTokenValidation": Union[str, CrossTenantTokenValidation]
         key "defaultApiVersion": str
-        key "dstsConfiguration": ForwardRef('ResourceTypeRegistrationPropertiesDstsConfiguration', module='types')
         key "enableAsyncOperation": bool
         key "enableThirdPartyS2S": bool
         key "extensionOptions": ForwardRef('ResourceTypeRegistrationPropertiesExtensionOptions', module='types')
@@ -9227,7 +8580,6 @@ namespace azure.mgmt.providerhub.types
         defaultApiVersion: str
         disallowedActionVerbs: list[str]
         disallowedEndUserOperations: list[str]
-        dstsConfiguration: ResourceTypeRegistrationPropertiesDstsConfiguration
         enableAsyncOperation: bool
         enableThirdPartyS2S: bool
         endpoints: list[ResourceTypeEndpoint]
@@ -9275,7 +8627,6 @@ namespace azure.mgmt.providerhub.types
         resourceValidation: Union[str, ResourceValidation]
         routingRule: ResourceTypeRegistrationPropertiesRoutingRule
         routingType: Union[str, RoutingType]
-        serviceTreeInfos: list[ServiceTreeInfo]
         skuLink: str
         subscriptionLifecycleNotificationSpecifications: ResourceTypeRegistrationPropertiesSubscriptionLifecycleNotificationSpecifications
         subscriptionStateRules: list[SubscriptionStateRule]
@@ -9305,13 +8656,6 @@ namespace azure.mgmt.providerhub.types
         key "enableDefaultValidation": bool
         enableDefaultValidation: bool
         resourceTypesWithCustomValidation: list[str]
-
-
-    class azure.mgmt.providerhub.types.ResourceTypeRegistrationPropertiesDstsConfiguration(DstsConfiguration):
-        key "serviceDnsName": str
-        key "serviceName": Required[str]
-        serviceDnsName: str
-        serviceName: str
 
 
     class azure.mgmt.providerhub.types.ResourceTypeRegistrationPropertiesExtensionOptions(ResourceTypeExtensionOptions):
@@ -9362,7 +8706,6 @@ namespace azure.mgmt.providerhub.types
         resourceAccessPolicy: Union[str, ResourceAccessPolicy]
         resourceAccessRoles: list[ResourceAccessRole]
         schemaOwners: list[str]
-        serviceTreeInfos: list[ServiceTreeInfo]
 
 
     class azure.mgmt.providerhub.types.ResourceTypeRegistrationPropertiesMarketplaceOptions(TypedDict, total=False):
@@ -9472,15 +8815,6 @@ namespace azure.mgmt.providerhub.types
     class azure.mgmt.providerhub.types.RolloutStatusBase(TypedDict, total=False):
         completedRegions: list[str]
         failedOrSkippedRegions: dict[str, ExtendedErrorInfo]
-
-
-    class azure.mgmt.providerhub.types.ServiceTreeInfo(TypedDict, total=False):
-        key "componentId": str
-        key "readiness": Union[str, Readiness]
-        key "serviceId": str
-        componentId: str
-        readiness: Union[str, Readiness]
-        serviceId: str
 
 
     class azure.mgmt.providerhub.types.SkuCapability(TypedDict, total=False):

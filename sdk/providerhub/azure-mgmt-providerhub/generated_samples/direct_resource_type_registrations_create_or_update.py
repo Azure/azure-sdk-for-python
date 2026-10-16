@@ -49,7 +49,6 @@ def main():
                 "availabilityZoneRule": {"availabilityZonePolicy": "MultiZoned"},
                 "capacityRule": {"capacityPolicy": "Restricted", "skuAlias": "incorrectAlias"},
                 "commonApiVersions": ["2021-01-01"],
-                "dstsConfiguration": {"serviceDnsName": "prds.sparta.azure.com", "serviceName": "prds-shim"},
                 "endpoints": [
                     {
                         "apiVersions": ["2020-06-01-preview"],
@@ -78,15 +77,8 @@ def main():
                     "incidentContactEmail": "helpme@contoso.com",
                     "incidentRoutingService": "",
                     "incidentRoutingTeam": "",
-                    "manifestOwners": ["SPARTA-PlatformServiceAdministrator"],
+                    "manifestOwners": ["Contoso-PlatformServiceAdministrator"],
                     "resourceAccessPolicy": "NotSpecified",
-                    "serviceTreeInfos": [
-                        {
-                            "componentId": "d1b7d8ba-05e2-48e6-90d6-d781b99c6e69",
-                            "readiness": "InDevelopment",
-                            "serviceId": "d1b7d8ba-05e2-48e6-90d6-d781b99c6e69",
-                        }
-                    ],
                 },
                 "manifestLink": "https://azure.com",
                 "marketplaceOptions": {"addOnPlanConversionAllowed": True},
