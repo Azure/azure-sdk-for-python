@@ -1,5 +1,17 @@
 # Release History
 
+## 5.0.0b3 (2026-10-08)
+
+### Features Added
+
+  - Model `ApplicationInsightsComponentProperties` added property `azure_monitor_workspace_ingestion_mode`
+  - Model `ApplicationInsightsComponentProperties` added property `azure_monitor_workspace_resource_id`
+  - Model `ApplicationInsightsComponentProperties` added property `data_collection_rule_resource_id`
+  - Model `ApplicationInsightsComponentProperties` added property `otlp_logs_endpoint`
+  - Model `ApplicationInsightsComponentProperties` added property `otlp_metrics_endpoint`
+  - Model `ApplicationInsightsComponentProperties` added property `otlp_traces_endpoint`
+  - Added enum `AzureMonitorWorkspaceIngestionMode`
+
 ## 5.0.0b2 (2026-05-27)
 
 ### Features Added
