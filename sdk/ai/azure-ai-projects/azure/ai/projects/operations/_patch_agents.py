@@ -13,7 +13,6 @@ from io import IOBase
 from typing import Union, Optional, Any, IO, cast, overload
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling import NoPolling, PollingMethod
-from azure.core.polling.base_polling import LROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from ._operations import (
@@ -24,6 +23,7 @@ from ._operations import (
 )
 from .. import models as _models
 from .._utils.model_base import _deserialize
+from .._utils.polling import AIProjectsLROBasePolling
 from ..models import AgentOptimizationLROPoller
 from ..models._patch import (
     _FOUNDRY_FEATURES_HEADER_NAME,
@@ -450,7 +450,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         if polling is True:
             polling_method: PollingMethod = cast(
                 PollingMethod,
-                LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+                AIProjectsLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())

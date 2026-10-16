@@ -9,13 +9,13 @@ from collections.abc import MutableMapping
 from typing import Any, IO, Optional, Union, cast, overload
 
 from azure.core.polling import AsyncNoPolling, AsyncPollingMethod
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ._operations import EvaluatorsOperations as EvaluatorsOperationsGenerated
 from ... import models as _models
 from ..._utils.model_base import _deserialize
+from ..._utils.polling import AsyncAIProjectsLROBasePolling
 from ...models import AsyncEvaluatorGenerationLROPoller
 
 JSON = MutableMapping[str, Any]
@@ -115,7 +115,7 @@ class EvaluatorsOperations(EvaluatorsOperationsGenerated):
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+                AsyncAIProjectsLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
             )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())

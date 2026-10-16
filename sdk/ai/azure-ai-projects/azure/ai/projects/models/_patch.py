@@ -12,12 +12,11 @@ from collections.abc import MutableMapping
 from typing import Final, FrozenSet, List, Dict, Mapping, Optional, Any, Tuple
 from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
 from azure.core.polling.base_polling import (
-    LROBasePolling,
     OperationFailed,
     _raise_if_bad_http_status_and_method,
 )
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.utils import case_insensitive_dict
+from .._utils.polling import AIProjectsLROBasePolling, AsyncAIProjectsLROBasePolling
 from ._patch_evaluation_typeddicts import (
     AzureAIAgentTargetParam,
     AzureAIBenchmarkPreviewEvalRunDataSource,
@@ -178,7 +177,7 @@ _FINISHED: Final[FrozenSet[str]] = frozenset(["completed", "superseded", "failed
 _FAILED: Final[FrozenSet[str]] = frozenset(["failed"])
 
 
-class _UpdateMemoriesLROPollingMethod(LROBasePolling):
+class _UpdateMemoriesLROPollingMethod(AIProjectsLROBasePolling):
     """A custom polling method implementation for Memory Store updates."""
 
     @property
@@ -249,7 +248,7 @@ class _UpdateMemoriesLROPollingMethod(LROBasePolling):
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 
 
-class _AsyncUpdateMemoriesLROPollingMethod(AsyncLROBasePolling):
+class _AsyncUpdateMemoriesLROPollingMethod(AsyncAIProjectsLROBasePolling):
     """A custom polling method implementation for Memory Store updates."""
 
     @property

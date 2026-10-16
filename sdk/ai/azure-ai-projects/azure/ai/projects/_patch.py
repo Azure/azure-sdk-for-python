@@ -18,7 +18,6 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import TokenCredential
 from azure.identity import get_bearer_token_provider
 from ._client import AIProjectClient as AIProjectClientGenerated
-from ._utils.polling import patch_azure_core_polling_status
 from .operations import TelemetryOperations
 from .models._patch import _BETA_OPERATION_FEATURE_HEADERS, _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 
@@ -512,4 +511,4 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
-    patch_azure_core_polling_status()
+    pass
