@@ -8,6 +8,7 @@
 
 import unittest
 from datetime import datetime, timezone
+from io import BytesIO
 from types import ModuleType
 from unittest.mock import MagicMock, patch
 
@@ -18,6 +19,7 @@ from azure.storage.blob._transfer_native import (
     _can_use_native_download,
     _can_use_native_upload,
     _is_native_available,
+    NativeStorageStreamDownloader,
     try_native_download_eager,
     try_native_upload,
 )
@@ -663,6 +665,18 @@ class _FakeNativeStream:
         return next(self._windows)
 
 
+class _FailingNativeStream(_FakeNativeStream):
+    def __init__(self, failure):
+        super().__init__([b"first"], size=10)
+        self.failure = failure
+
+    def __next__(self):
+        window = next(self._windows, None)
+        if window is None:
+            raise self.failure
+        return window
+
+
 class TestNativeStorageStreamDownloader(unittest.TestCase):
     """Tests for the lightweight NativeStorageStreamDownloader wrapper."""
 
@@ -739,6 +753,34 @@ class TestNativeStorageStreamDownloader(unittest.TestCase):
     def test_iter(self):
         chunks = list(self.downloader)
         self.assertEqual(chunks, [self.data])
+
+    def test_consumption_methods_propagate_stream_failures(self):
+        for method in ("readall", "read", "chunks", "readinto"):
+            for buffered in (False, True):
+                with self.subTest(method=method, buffered=buffered):
+                    failure = ValueError("incomplete native download")
+
+                    downloader = NativeStorageStreamDownloader(
+                        stream=_FailingNativeStream(failure),
+                        name="myblob.txt",
+                        container="mycontainer",
+                    )
+                    if buffered:
+                        self.assertEqual(downloader.read(2), b"fi")
+                    destination = BytesIO()
+                    with self.assertRaises(ValueError) as caught:
+                        if method == "chunks":
+                            list(downloader.chunks())
+                        elif method == "readinto":
+                            downloader.readinto(destination)
+                        else:
+                            getattr(downloader, method)()
+                    self.assertIs(caught.exception, failure)
+                    if method == "readinto":
+                        self.assertEqual(destination.getvalue(), b"rst" if buffered else b"first")
+                    with self.assertRaises(ValueError) as repeated:
+                        downloader.read(1)
+                    self.assertIs(repeated.exception, failure)
 
 
 if __name__ == "__main__":

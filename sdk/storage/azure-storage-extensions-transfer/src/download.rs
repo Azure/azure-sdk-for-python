@@ -7,14 +7,15 @@
 use std::num::NonZero;
 use std::str::FromStr;
 
-use azure_core::http::headers::HeaderName;
+use azure_core::error::ErrorKind;
+use azure_core::http::headers::{HeaderName, Headers};
 use azure_storage_blob::models::{BlobClientDownloadOptions, EncryptionAlgorithmType, HttpRange};
 use azure_storage_blob::BlobClient;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use pyo3::types::PyBytes;
 
-use crate::{build_blob_client, transfer_sizes, AzureError, RUNTIME};
+use crate::{build_blob_client, get_runtime, transfer_sizes, AzureError};
 
 /// The `Content-Range` response header (`bytes start-end/total`).
 const CONTENT_RANGE: HeaderName = HeaderName::from_static("content-range");
@@ -23,11 +24,52 @@ const CONTENT_RANGE: HeaderName = HeaderName::from_static("content-range");
 ///
 /// Returns `None` if the header is malformed or the total is `*` (unknown length).
 fn parse_content_range_total(value: &str) -> Option<u64> {
-    let total = value.rsplit('/').next()?.trim();
-    if total == "*" {
-        return None;
+    let (range, total) = value.strip_prefix("bytes ")?.split_once('/')?;
+    let total = total.parse::<u64>().ok()?;
+    let (start, end) = range.split_once('-')?;
+    let start = start.parse::<u64>().ok()?;
+    let end = end.parse::<u64>().ok()?;
+    (start <= end && end < total).then_some(total)
+}
+
+fn total_blob_size(
+    headers: &Headers,
+    content_length: Option<u64>,
+    start: u64,
+) -> azure_core::Result<u64> {
+    match headers.get_optional_str(&CONTENT_RANGE) {
+        Some(value) => parse_content_range_total(value).ok_or_else(|| {
+            azure_core::Error::with_message(
+                ErrorKind::DataConversion,
+                "Missing or invalid total blob size in Content-Range.",
+            )
+        }),
+        None if start == 0 && content_length == Some(0) => Ok(0),
+        None => Err(azure_core::Error::with_message(
+            ErrorKind::DataConversion,
+            "Missing Content-Range; cannot determine the total blob size from a ranged response.",
+        )),
     }
-    total.parse::<u64>().ok()
+}
+
+fn validate_download_length(offset: u64, expected: u64, actual: u64) -> azure_core::Result<()> {
+    if actual == expected {
+        return Ok(());
+    }
+    let kind = if actual < expected {
+        std::io::ErrorKind::UnexpectedEof
+    } else {
+        std::io::ErrorKind::InvalidData
+    };
+    Err(azure_core::Error::new(
+        ErrorKind::Io,
+        std::io::Error::new(
+            kind,
+            format!(
+                "Incomplete blob download: expected {expected} bytes at offset {offset}, but received {actual} bytes."
+            ),
+        ),
+    ))
 }
 
 /// A lazy, windowed blob download exposed to Python as an iterator of `bytes` chunks.
@@ -52,9 +94,83 @@ pub(crate) struct NativeDownloadStream {
     /// First window, downloaded eagerly during construction so `size` is known immediately
     /// and the first chunk is ready without another round trip.
     pending: Option<Py<PyBytes>>,
+    failure: Option<PyErr>,
 }
 
 impl NativeDownloadStream {
+    fn new(
+        py: Python<'_>,
+        client: BlobClient,
+        download_options: BlobClientDownloadOptions<'static>,
+        window_size: u64,
+        start: u64,
+        length: Option<u64>,
+    ) -> PyResult<Self> {
+        let requested_end = length
+            .map(|length| {
+                start.checked_add(length).ok_or_else(|| {
+                    PyValueError::new_err(
+                        "offset plus length exceeds the supported download range.",
+                    )
+                })
+            })
+            .transpose()?;
+        let mut stream = Self {
+            client,
+            download_options,
+            window_size,
+            next_offset: start,
+            end_offset: start,
+            size: 0,
+            pending: None,
+            failure: None,
+        };
+        if length == Some(0) {
+            return Ok(stream);
+        }
+
+        let first_len = length.unwrap_or(window_size).min(window_size);
+        start.checked_add(first_len).ok_or_else(|| {
+            PyValueError::new_err("offset plus window size exceeds the supported download range.")
+        })?;
+        let buffer_len = usize::try_from(first_len)
+            .map_err(|e| PyValueError::new_err(format!("Invalid download window size: {e}")))?;
+        let mut first_options = stream.download_options.clone();
+        first_options.range = Some(HttpRange::new(start, first_len));
+
+        let runtime = get_runtime()?;
+        let (buffer, written, total_size) = py.detach(|| {
+            runtime.block_on(async {
+                let mut buffer = vec![0u8; buffer_len];
+                let result = stream
+                    .client
+                    .download_into(&mut buffer, Some(first_options))
+                    .await
+                    .map_err(AzureError::from)?;
+                buffer.truncate(result.len);
+                let total_size =
+                    total_blob_size(&result.headers, result.properties.content_length, start)
+                        .map_err(AzureError::from)?;
+                Ok::<_, PyErr>((buffer, result.len as u64, total_size))
+            })
+        })?;
+
+        stream.end_offset = requested_end.unwrap_or(total_size).min(total_size);
+        stream.size = stream.end_offset.checked_sub(start).ok_or_else(|| {
+            AzureError(azure_core::Error::with_message(
+                ErrorKind::DataConversion,
+                "The response blob size is smaller than the requested offset.",
+            ))
+        })?;
+        validate_download_length(start, first_len.min(stream.size), written)
+            .map_err(AzureError::from)?;
+        stream.next_offset = start + written;
+        if written != 0 {
+            stream.pending = Some(PyBytes::new(py, &buffer).unbind());
+        }
+        Ok(stream)
+    }
+
     /// Download a single window `[offset, offset + len)` into a fresh buffer and return it as
     /// Python `bytes` along with the number of bytes actually written. Releases the GIL during
     /// the network/IO operation.
@@ -65,15 +181,20 @@ impl NativeDownloadStream {
         offset: u64,
         len: u64,
     ) -> PyResult<(Bound<'py, PyBytes>, u64)> {
+        let buffer_len = usize::try_from(len)
+            .map_err(|e| PyValueError::new_err(format!("Invalid download window size: {e}")))?;
         let mut options = download_options.clone();
         options.range = Some(HttpRange::new(offset, len));
 
+        let runtime = get_runtime()?;
         let (buffer, written) = py.detach(move || {
-            RUNTIME.block_on(async {
-                let mut buffer = vec![0u8; len as usize];
+            runtime.block_on(async {
+                let mut buffer = vec![0u8; buffer_len];
                 let result = client
                     .download_into(&mut buffer, Some(options))
                     .await
+                    .map_err(AzureError::from)?;
+                validate_download_length(offset, len, result.len as u64)
                     .map_err(AzureError::from)?;
                 buffer.truncate(result.len);
                 Ok::<(Vec<u8>, u64), PyErr>((buffer, result.len as u64))
@@ -98,6 +219,9 @@ impl NativeDownloadStream {
 
     /// Return the next window as `bytes`, or `None` (StopIteration) when the blob is exhausted.
     fn __next__(&mut self, py: Python<'_>) -> PyResult<Option<Py<PyBytes>>> {
+        if let Some(error) = &self.failure {
+            return Err(error.clone_ref(py));
+        }
         if let Some(chunk) = self.pending.take() {
             return Ok(Some(chunk));
         }
@@ -106,17 +230,19 @@ impl NativeDownloadStream {
         }
         let remaining = self.end_offset - self.next_offset;
         let len = remaining.min(self.window_size);
-        let (chunk, written) = NativeDownloadStream::fetch_window(
+        let (chunk, written) = match NativeDownloadStream::fetch_window(
             &self.client,
             &self.download_options,
             py,
             self.next_offset,
             len,
-        )?;
-        // Guard against a zero-length read so a truncated/short response can't loop forever.
-        if written == 0 {
-            return Ok(None);
-        }
+        ) {
+            Ok(result) => result,
+            Err(error) => {
+                self.failure = Some(error.clone_ref(py));
+                return Err(error);
+            }
+        };
         self.next_offset += written;
         Ok(Some(chunk.unbind()))
     }
@@ -184,13 +310,6 @@ pub(crate) fn download_blob(
             )
         })?;
     let start = offset.unwrap_or(0);
-    // First window is bounded by the window size and, if the caller requested a range, by the
-    // requested length.
-    let first_len = match length {
-        Some(l) => l.min(window_size),
-        None => window_size,
-    };
-
     let mut download_options = BlobClientDownloadOptions::default();
     download_options.lease_id = lease_id.map(str::to_string);
     download_options.encryption_key = encryption_key.map(str::to_string);
@@ -220,55 +339,12 @@ pub(crate) fn download_blob(
         );
     }
 
-    let mut first_options = download_options.clone();
-    first_options.range = Some(HttpRange::new(start, first_len));
-
-    // Fetch the first window and, from its response, learn the total blob size.
-    // The closure borrows `blob_client` (only `&self` is needed by `download_into`) so we retain
-    // ownership afterwards for the returned stream.
-    let (buffer, written, content_range_total, content_length) = py.detach(|| {
-        RUNTIME.block_on(async {
-            let mut buffer = vec![0u8; first_len as usize];
-            let result = blob_client
-                .download_into(&mut buffer, Some(first_options))
-                .await
-                .map_err(AzureError::from)?;
-            buffer.truncate(result.len);
-            let content_range_total = result
-                .headers
-                .get_optional_str(&CONTENT_RANGE)
-                .and_then(parse_content_range_total);
-            let content_length = result.properties.content_length;
-            Ok::<_, PyErr>((
-                buffer,
-                result.len as u64,
-                content_range_total,
-                content_length,
-            ))
-        })
-    })?;
-
-    // The total addressable size of the blob. Prefer the `Content-Range` total; fall back to
-    // the response `Content-Length`, then to what we actually read.
-    let total_blob_size = content_range_total
-        .or(content_length)
-        .unwrap_or(start + written);
-
-    let end_offset = match length {
-        Some(l) => (start + l).min(total_blob_size),
-        None => total_blob_size,
-    };
-    let size = end_offset.saturating_sub(start);
-
-    let pending = Some(PyBytes::new(py, &buffer).unbind());
-
-    Ok(NativeDownloadStream {
-        client: blob_client,
+    NativeDownloadStream::new(
+        py,
+        blob_client,
         download_options,
         window_size,
-        next_offset: start + written,
-        end_offset,
-        size,
-        pending,
-    })
+        start,
+        length,
+    )
 }
