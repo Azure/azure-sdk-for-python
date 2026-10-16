@@ -14,9 +14,14 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    BillingAccountItemDetailsReportQueryFilter,
+    BillingAccountMonthlySummaryReportQueryFilter,
+    BillingAccountOverallSummaryReportQueryFilter,
+    BillingAccountQueryFilter,
+    BillingAccountTopItemsMonthlySummaryReportQueryFilter,
+    BillingAccountTopItemsSummaryReportQueryFilter,
     CarbonEmissionData,
     CarbonEmissionDataAvailableDateRange,
-    CarbonEmissionDataListResult,
     CarbonEmissionItemDetailData,
     CarbonEmissionMonthlySummaryData,
     CarbonEmissionOverallSummaryData,
@@ -46,6 +51,8 @@ from ._models import (  # type: ignore
 from ._enums import (  # type: ignore
     AccessDecisionEnum,
     ActionType,
+    BillingAccountCategoryTypeEnum,
+    BillingAccountOrderByColumnEnum,
     CategoryTypeEnum,
     EmissionScopeEnum,
     OrderByColumnEnum,
@@ -59,9 +66,14 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "BillingAccountItemDetailsReportQueryFilter",
+    "BillingAccountMonthlySummaryReportQueryFilter",
+    "BillingAccountOverallSummaryReportQueryFilter",
+    "BillingAccountQueryFilter",
+    "BillingAccountTopItemsMonthlySummaryReportQueryFilter",
+    "BillingAccountTopItemsSummaryReportQueryFilter",
     "CarbonEmissionData",
     "CarbonEmissionDataAvailableDateRange",
-    "CarbonEmissionDataListResult",
     "CarbonEmissionItemDetailData",
     "CarbonEmissionMonthlySummaryData",
     "CarbonEmissionOverallSummaryData",
@@ -88,6 +100,8 @@ __all__ = [
     "TopItemsSummaryReportQueryFilter",
     "AccessDecisionEnum",
     "ActionType",
+    "BillingAccountCategoryTypeEnum",
+    "BillingAccountOrderByColumnEnum",
     "CategoryTypeEnum",
     "EmissionScopeEnum",
     "OrderByColumnEnum",

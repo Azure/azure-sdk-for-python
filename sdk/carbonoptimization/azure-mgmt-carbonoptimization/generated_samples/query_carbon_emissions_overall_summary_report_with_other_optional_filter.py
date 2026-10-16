@@ -40,9 +40,10 @@ def main():
             "subscriptionList": ["00000000-0000-0000-0000-000000000000"],
         },
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2025-04-01/queryCarbonEmissionsOverallSummaryReportWithOtherOptionalFilter.json
+# x-ms-original-file: 2026-05-01-preview/queryCarbonEmissionsOverallSummaryReportWithOtherOptionalFilter.json
 if __name__ == "__main__":
     main()

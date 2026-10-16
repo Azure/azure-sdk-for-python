@@ -22,7 +22,7 @@ class TestCarbonOptimizationMgmtCarbonServiceOperationsAsync(AzureMgmtRecordedTe
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_carbon_service_query_carbon_emission_reports(self, resource_group):
-        response = await self.client.carbon_service.query_carbon_emission_reports(
+        response = self.client.carbon_service.query_carbon_emission_reports(
             query_parameters={
                 "carbonScopeList": ["str"],
                 "categoryType": "str",
@@ -38,7 +38,7 @@ class TestCarbonOptimizationMgmtCarbonServiceOperationsAsync(AzureMgmtRecordedTe
                 "skipToken": "str",
             },
         )
-
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -47,5 +47,28 @@ class TestCarbonOptimizationMgmtCarbonServiceOperationsAsync(AzureMgmtRecordedTe
     async def test_carbon_service_query_carbon_emission_data_available_date_range(self, resource_group):
         response = await self.client.carbon_service.query_carbon_emission_data_available_date_range()
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_carbon_service_query_carbon_emission_reports_by_billing_account(self, resource_group):
+        response = self.client.carbon_service.query_carbon_emission_reports_by_billing_account(
+            scope="str",
+            query_parameters={
+                "carbonScopeList": ["str"],
+                "categoryType": "str",
+                "dateRange": {"end": "2020-02-20", "start": "2020-02-20"},
+                "pageSize": 0,
+                "reportType": "ItemDetailsReport",
+                "locationList": ["str"],
+                "orderBy": "str",
+                "resourceTypeList": ["str"],
+                "skipToken": "str",
+                "sortDirection": "str",
+                "subscriptionList": ["str"],
+            },
+        )
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
