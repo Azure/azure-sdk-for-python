@@ -66,6 +66,45 @@ class TestAdvisorManagementRecommendationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_recommendations_list_by_service_group(self, resource_group):
+        response = self.client.recommendations.list_by_service_group(
+            service_group_name="str",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_recommendations_get_by_service_group(self, resource_group):
+        response = self.client.recommendations.get_by_service_group(
+            service_group_name="str",
+            recommendation_id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_recommendations_update_by_service_group(self, resource_group):
+        response = self.client.recommendations.update_by_service_group(
+            service_group_name="str",
+            recommendation_id="str",
+            properties={
+                "properties": {
+                    "postponedUntilDateTime": "2020-02-20 00:00:00",
+                    "recommendationDismissReason": "str",
+                    "recommendationStatus": "str",
+                }
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_recommendations_generate(self, resource_group):
         response = self.client.recommendations.generate()
 

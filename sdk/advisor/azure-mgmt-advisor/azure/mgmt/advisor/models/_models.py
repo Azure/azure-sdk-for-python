@@ -62,7 +62,7 @@ class ProxyResource(Resource):
     """
 
 
-class AdvisorScoreEntity(ProxyResource):
+class AdvisorScoreEntity(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The details of Advisor score for a single category.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -123,7 +123,7 @@ class AdvisorScoreEntity(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AdvisorScoreEntityProperties(_Model):
+class AdvisorScoreEntityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Advisor score data.
 
     :ivar last_refreshed_score: The details of latest available score.
@@ -160,7 +160,7 @@ class AdvisorScoreEntityProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ArmErrorResponse(_Model):
+class ArmErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ArmErrorResponse.
 
     :ivar error: ARM error response body.
@@ -190,7 +190,7 @@ class ArmErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ARMErrorResponseBody(_Model):
+class ARMErrorResponseBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ARM error response body.
 
     :ivar message: Gets or sets the string that describes the error in detail and provides
@@ -224,7 +224,7 @@ class ARMErrorResponseBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AssessmentResult(ProxyResource):
+class AssessmentResult(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Advisor assessment result data structure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -296,7 +296,7 @@ class AssessmentResult(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AssessmentResultProperties(_Model):
+class AssessmentResultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Assessment result properties.
 
     :ivar workload_id: Workload Id.
@@ -364,7 +364,7 @@ class AssessmentResultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AssessmentTypeResult(_Model):
+class AssessmentTypeResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Advisor assessment type result data structure.
 
     :ivar id: Assessment Type Id.
@@ -412,7 +412,7 @@ class AssessmentTypeResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConfigData(Resource):
+class ConfigData(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Advisor configuration data structure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -473,7 +473,7 @@ class ConfigData(Resource):
             super().__setattr__(key, value)
 
 
-class ConfigDataProperties(_Model):
+class ConfigDataProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration data properties.
 
     :ivar exclude: Exclude the resource from Advisor evaluations. Valid values: False (default) or
@@ -531,7 +531,7 @@ class ConfigDataProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DigestConfig(_Model):
+class DigestConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Advisor Digest configuration entity.
 
     :ivar name: Name of digest configuration. Value is case-insensitive and must be unique within a
@@ -643,7 +643,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -688,7 +688,7 @@ class ExtensionResource(Resource):
     """
 
 
-class MetadataEntity(ProxyResource):
+class MetadataEntity(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The metadata entity contract.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -749,7 +749,7 @@ class MetadataEntity(ProxyResource):
             super().__setattr__(key, value)
 
 
-class MetadataEntityProperties(_Model):
+class MetadataEntityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The metadata entity properties.
 
     :ivar display_name: The display name.
@@ -800,7 +800,7 @@ class MetadataEntityProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetadataSupportedValueDetail(_Model):
+class MetadataSupportedValueDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The metadata supported value detail.
 
     :ivar id: The id.
@@ -835,7 +835,7 @@ class MetadataSupportedValueDetail(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplayInfo(_Model):
+class OperationDisplayInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The operation supported by Advisor.
 
     :ivar description: The description of the operation.
@@ -878,7 +878,7 @@ class OperationDisplayInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationEntity(_Model):
+class OperationEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The operation supported by Advisor.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -913,7 +913,7 @@ class OperationEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PredictionRequest(_Model):
+class PredictionRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for predict recommendation.
 
     :ivar properties: Request properties for prediction recommendation.
@@ -963,7 +963,7 @@ class PredictionRequest(_Model):
             super().__setattr__(key, value)
 
 
-class PredictionRequestProperties(_Model):
+class PredictionRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties given for the predictor.
 
     :ivar prediction_type: Type of the prediction. "PredictiveRightsizing"
@@ -1000,7 +1000,7 @@ class PredictionRequestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PredictionResponse(_Model):
+class PredictionResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response used by predictions.
 
     :ivar properties: The properties of the prediction.
@@ -1058,7 +1058,7 @@ class PredictionResponse(_Model):
             super().__setattr__(key, value)
 
 
-class PredictionResponseProperties(_Model):
+class PredictionResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the prediction.
 
     :ivar extended_properties: Extended properties.
@@ -1134,7 +1134,7 @@ class PredictionResponseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecommendationPatchPayload(_Model):
+class RecommendationPatchPayload(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The recommendation patch payload.
 
     :ivar properties: The properties for recommendation patch payload.
@@ -1164,7 +1164,7 @@ class RecommendationPatchPayload(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecommendationProperties(_Model):
+class RecommendationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the recommendation.
 
     :ivar category: The category of the recommendation. Known values are: "HighAvailability",
@@ -1181,6 +1181,16 @@ class RecommendationProperties(_Model):
     :vartype impacted_field: str
     :ivar impacted_value: The resource identified by Advisor.
     :vartype impacted_value: str
+    :ivar criticality_score: The criticality score assigned to the recommendation.
+    :vartype criticality_score: str
+    :ivar criticality: The criticality assigned to the recommendation.
+    :vartype criticality: str
+    :ivar score_changed_at: The time when the recommendation's criticality score last changed.
+    :vartype score_changed_at: str
+    :ivar service_group_id: The service group ID associated with the recommendation.
+    :vartype service_group_id: str
+    :ivar savings: The estimated savings associated with the recommendation.
+    :vartype savings: ~azure.mgmt.advisor.models.ResourceRecommendationSavings
     :ivar recommendation_status: The state of the Recommendation. Known values are: "New",
      "Postponed", "Dismissed", and "Completed".
     :vartype recommendation_status: str or ~azure.mgmt.advisor.models.RecommendationStatus
@@ -1269,6 +1279,16 @@ class RecommendationProperties(_Model):
         name="impactedValue", visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource identified by Advisor."""
+    criticality_score: Optional[str] = rest_field(name="criticalityScore", visibility=["read"])
+    """The criticality score assigned to the recommendation."""
+    criticality: Optional[str] = rest_field(visibility=["read"])
+    """The criticality assigned to the recommendation."""
+    score_changed_at: Optional[str] = rest_field(name="scoreChangedAt", visibility=["read"])
+    """The time when the recommendation's criticality score last changed."""
+    service_group_id: Optional[str] = rest_field(name="serviceGroupId", visibility=["read"])
+    """The service group ID associated with the recommendation."""
+    savings: Optional["_models.ResourceRecommendationSavings"] = rest_field(visibility=["read"])
+    """The estimated savings associated with the recommendation."""
     recommendation_status: Optional[Union[str, "_models.RecommendationStatus"]] = rest_field(
         name="recommendationStatus", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1413,7 +1433,7 @@ class RecommendationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecommendationPropertiesResourceWorkload(_Model):
+class RecommendationPropertiesResourceWorkload(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Workload that this Resource belongs to.
 
     :ivar id: The Id of the Workload.
@@ -1446,7 +1466,7 @@ class RecommendationPropertiesResourceWorkload(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecommendationPropertiesReview(_Model):
+class RecommendationPropertiesReview(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Review that this Recommendation belongs to.
 
     :ivar id: The ARM Resource Id of the Review.
@@ -1479,7 +1499,7 @@ class RecommendationPropertiesReview(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecommendationStatePropertiesPayload(_Model):
+class RecommendationStatePropertiesPayload(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for recommendation state patch payload.
 
     :ivar recommendation_status: The state of the recommendation. Known values are: "New",
@@ -1532,7 +1552,7 @@ class RecommendationStatePropertiesPayload(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResiliencyReview(ProxyResource):
+class ResiliencyReview(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Advisor resiliency review data structure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1631,7 +1651,7 @@ class ResiliencyReviewProperties(_Model):
     """Review last updated timestamp."""
 
 
-class ResourceMetadata(_Model):
+class ResourceMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recommendation resource metadata.
 
     :ivar resource_id: Azure resource Id of the assessed resource.
@@ -1681,7 +1701,7 @@ class ResourceMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceRecommendationBase(ExtensionResource):
+class ResourceRecommendationBase(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Advisor Recommendation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1710,6 +1730,11 @@ class ResourceRecommendationBase(ExtensionResource):
         "impact",
         "impacted_field",
         "impacted_value",
+        "criticality_score",
+        "criticality",
+        "score_changed_at",
+        "service_group_id",
+        "savings",
         "recommendation_status",
         "completion_type",
         "recommendation_dismiss_reason",
@@ -1774,7 +1799,137 @@ class ResourceRecommendationBase(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class ScoreEntity(_Model):
+class ResourceRecommendationSavings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The estimated savings associated with a resource recommendation.
+
+    :ivar provider_currency: The currency used by the recommendation provider.
+    :vartype provider_currency: str
+    :ivar billing_currency: The currency used for billing.
+    :vartype billing_currency: str
+    :ivar is_direct_channel: Indicates whether the recommendation is for a direct billing channel.
+    :vartype is_direct_channel: bool
+    :ivar resource_deleted_on: The time when the recommended resource was deleted.
+    :vartype resource_deleted_on: ~datetime.datetime
+    :ivar retail: The savings calculated using retail pricing.
+    :vartype retail: ~azure.mgmt.advisor.models.ResourceRecommendationSavingsDetails
+    :ivar contracted: The savings calculated using contracted pricing.
+    :vartype contracted: ~azure.mgmt.advisor.models.ResourceRecommendationSavingsDetails
+    """
+
+    provider_currency: Optional[str] = rest_field(
+        name="providerCurrency", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The currency used by the recommendation provider."""
+    billing_currency: Optional[str] = rest_field(
+        name="billingCurrency", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The currency used for billing."""
+    is_direct_channel: Optional[bool] = rest_field(
+        name="isDirectChannel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether the recommendation is for a direct billing channel."""
+    resource_deleted_on: Optional[datetime.datetime] = rest_field(
+        name="resourceDeletedOn", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time when the recommended resource was deleted."""
+    retail: Optional["_models.ResourceRecommendationSavingsDetails"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The savings calculated using retail pricing."""
+    contracted: Optional["_models.ResourceRecommendationSavingsDetails"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The savings calculated using contracted pricing."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        provider_currency: Optional[str] = None,
+        billing_currency: Optional[str] = None,
+        is_direct_channel: Optional[bool] = None,
+        resource_deleted_on: Optional[datetime.datetime] = None,
+        retail: Optional["_models.ResourceRecommendationSavingsDetails"] = None,
+        contracted: Optional["_models.ResourceRecommendationSavingsDetails"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResourceRecommendationSavingsDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The detailed savings amounts for a resource recommendation.
+
+    :ivar potential_savings: The potential savings in the provider currency.
+    :vartype potential_savings: float
+    :ivar potential_savings_in_billing_currency: The potential savings in the billing currency.
+    :vartype potential_savings_in_billing_currency: float
+    :ivar wasted_till_date: The amount wasted to date in the provider currency.
+    :vartype wasted_till_date: float
+    :ivar wasted_till_date_in_billing_currency: The amount wasted to date in the billing currency.
+    :vartype wasted_till_date_in_billing_currency: float
+    :ivar realized_savings: The realized savings in the provider currency.
+    :vartype realized_savings: float
+    :ivar realized_savings_in_billing_currency: The realized savings in the billing currency.
+    :vartype realized_savings_in_billing_currency: float
+    """
+
+    potential_savings: Optional[float] = rest_field(
+        name="potentialSavings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The potential savings in the provider currency."""
+    potential_savings_in_billing_currency: Optional[float] = rest_field(
+        name="potentialSavingsInBillingCurrency", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The potential savings in the billing currency."""
+    wasted_till_date: Optional[float] = rest_field(
+        name="wastedTillDate", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The amount wasted to date in the provider currency."""
+    wasted_till_date_in_billing_currency: Optional[float] = rest_field(
+        name="wastedTillDateInBillingCurrency", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The amount wasted to date in the billing currency."""
+    realized_savings: Optional[float] = rest_field(
+        name="realizedSavings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The realized savings in the provider currency."""
+    realized_savings_in_billing_currency: Optional[float] = rest_field(
+        name="realizedSavingsInBillingCurrency", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The realized savings in the billing currency."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        potential_savings: Optional[float] = None,
+        potential_savings_in_billing_currency: Optional[float] = None,
+        wasted_till_date: Optional[float] = None,
+        wasted_till_date_in_billing_currency: Optional[float] = None,
+        realized_savings: Optional[float] = None,
+        realized_savings_in_billing_currency: Optional[float] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ScoreEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The details of Advisor Score.
 
     :ivar date: The date score was calculated.
@@ -1834,7 +1989,7 @@ class ScoreEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ShortDescription(_Model):
+class ShortDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A summary of the recommendation.
 
     :ivar problem: The issue or opportunity identified by the recommendation and proposed solution.
@@ -1868,7 +2023,7 @@ class ShortDescription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SuppressionContract(ExtensionResource):
+class SuppressionContract(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The details of the snoozed or dismissed rule; for example, the duration, name, and GUID
     associated with the rule.
 
@@ -1930,7 +2085,7 @@ class SuppressionContract(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class SuppressionProperties(_Model):
+class SuppressionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the suppression.
 
     :ivar suppression_id: The GUID of the suppression.
@@ -1971,7 +2126,7 @@ class SuppressionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -2038,7 +2193,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TimeSeriesEntity(_Model):
+class TimeSeriesEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The historic data at different aggregation levels.
 
     :ivar aggregation_level: The aggregation level of the score. Known values are: "week", "day",
@@ -2076,7 +2231,7 @@ class TimeSeriesEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedRecommendationProperties(_Model):
+class TrackedRecommendationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The tracked properties of a Recommendation.
 
     :ivar priority: The Priority of the Recommendation. Known values are: "Critical", "High",
@@ -2108,7 +2263,7 @@ class TrackedRecommendationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkloadResult(_Model):
+class WorkloadResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Workload result data structure.
 
     :ivar id: Workload Id.
