@@ -12,11 +12,11 @@
   - Added enum `RecommendationListMode`
   - Added model `ResourceRecommendationSavings`
   - Added model `ResourceRecommendationSavingsDetails`
-  - Model `RecommendationMetadataOperations` added parameter `filter` in method `list`
-  - Model `RecommendationsOperations` added parameter `mode` in method `list`
-  - Model `RecommendationsOperations` added method `get_by_service_group`
-  - Model `RecommendationsOperations` added method `list_by_service_group`
-  - Model `RecommendationsOperations` added method `update_by_service_group`
+  - Operation group `RecommendationMetadataOperations` added parameter `filter` in method `list`
+  - Operation group `RecommendationsOperations` added parameter `mode` in method `list`
+  - Operation group `RecommendationsOperations` added method `get_by_service_group`
+  - Operation group `RecommendationsOperations` added method `list_by_service_group`
+  - Operation group `RecommendationsOperations` added method `update_by_service_group`
 
 ## 10.0.0b2 (2026-07-07)
 
