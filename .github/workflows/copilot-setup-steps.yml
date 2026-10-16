@@ -16,7 +16,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup Python
-        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.10'
           cache: 'pip'
@@ -55,7 +55,7 @@ jobs:
           fi
 
       - name: Set up Node.js
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "22"
 
@@ -107,6 +107,6 @@ jobs:
           ./eng/common/mcp/azure-sdk-mcp.ps1 -InstallDirectory $HOME/bin
 
       - name: Install gh-aw extension
-        uses: github/gh-aw-actions/setup-cli@5e508589e03a7757a7e05b26e834292f5445bfb6 # v0.88.8
+        uses: github/gh-aw-actions/setup-cli@7a073567000cd18a81b85d31527ac08d414c9599 # v0.91.7
         with:
           version: v0.80.9
