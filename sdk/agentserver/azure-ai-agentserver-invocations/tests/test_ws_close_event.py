@@ -4,7 +4,7 @@
 """Tests for the structured close-event log line emitted by ``/invocations_ws``.
 
 Parity with :mod:`tests.test_request_id` — verifies the spec's required
-fields (``azure.ai.agentserver.invocations_ws.session_id``, ``azure.ai.agentserver.invocations_ws.close_code``, ``azure.ai.agentserver.invocations_ws.duration_ms``) appear
+fields (``azure.ai.agentserver.session_id``, ``azure.ai.agentserver.invocations_ws.close_code``, ``azure.ai.agentserver.invocations_ws.duration_ms``) appear
 on every connection close, and that handler exception details are NOT
 leaked into the structured payload.
 """
@@ -42,11 +42,13 @@ def test_ws_close_event_log_contains_required_fields(caplog):
     assert matches, "expected a structured close-event log record"
     rec = matches[-1]
 
-    session_id = getattr(rec, "azure.ai.agentserver.invocations_ws.session_id")
+    session_id = getattr(rec, "azure.ai.agentserver.session_id")
+    legacy_session_id = getattr(rec, "azure.ai.agentserver.invocations_ws.session_id")
     close_code = getattr(rec, "azure.ai.agentserver.invocations_ws.close_code")
     duration_ms = getattr(rec, "azure.ai.agentserver.invocations_ws.duration_ms")
 
     assert isinstance(session_id, str) and session_id  # generated UUID
+    assert legacy_session_id == session_id
     assert close_code == InvocationsWSConstants.CLOSE_NORMAL
     assert isinstance(duration_ms, int)
     assert duration_ms >= 0
