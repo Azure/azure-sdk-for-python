@@ -19,8 +19,8 @@ use std::sync::Arc;
 use azure_core::credentials::TokenCredential;
 use azure_core::http::{new_http_client, HttpClientOptions, Transport, Url};
 use azure_storage_blob::{BlobClient, BlobClientOptions};
-use once_cell::sync::Lazy;
-use pyo3::exceptions::PyValueError;
+use once_cell::sync::{Lazy, OnceCell};
+use pyo3::exceptions::{PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
 use tokio::runtime::Runtime;
 
@@ -30,8 +30,14 @@ use upload::upload_blob;
 
 /// Shared tokio runtime — created once, reused across all calls to avoid
 /// per-call overhead of spawning a new runtime.
-static RUNTIME: Lazy<Runtime> =
-    Lazy::new(|| Runtime::new().expect("Failed to create tokio runtime"));
+static RUNTIME: OnceCell<Runtime> = OnceCell::new();
+
+fn get_runtime() -> PyResult<&'static Runtime> {
+    RUNTIME.get_or_try_init(|| {
+        Runtime::new()
+            .map_err(|e| PyRuntimeError::new_err(format!("Failed to create tokio runtime: {e}")))
+    })
+}
 
 /// Shared HTTP transport — a single connection pool reused by every `BlobClient` we build.
 ///
@@ -52,6 +58,13 @@ struct AzureError(azure_core::Error);
 
 impl From<AzureError> for PyErr {
     fn from(err: AzureError) -> PyErr {
+        let mut current: Option<&(dyn std::error::Error + 'static)> = Some(&err.0);
+        while let Some(error) = current {
+            if let Some(python_error) = error.downcast_ref::<PyErr>() {
+                return Python::attach(|py| python_error.clone_ref(py));
+            }
+            current = error.source();
+        }
         PyValueError::new_err(format!("Azure Storage error: {}", err.0))
     }
 }
@@ -80,13 +93,9 @@ fn build_blob_client(
     blob_url: &str,
     token_provider: Option<Py<PyAny>>,
     credential_id: Option<usize>,
-) -> Result<BlobClient, AzureError> {
-    let blob_url = Url::parse(blob_url).map_err(|e| {
-        azure_core::Error::with_message(
-            azure_core::error::ErrorKind::Other,
-            format!("Invalid URL: {}", e),
-        )
-    })?;
+) -> PyResult<BlobClient> {
+    let blob_url =
+        Url::parse(blob_url).map_err(|e| PyValueError::new_err(format!("Invalid URL: {e}")))?;
 
     // Reuse one shared connection pool across every client we build.
     let mut options = BlobClientOptions::default();
@@ -95,10 +104,7 @@ fn build_blob_client(
     let credential: Option<Arc<dyn TokenCredential>> = match token_provider {
         Some(provider) => {
             let credential_id = credential_id.ok_or_else(|| {
-                AzureError(azure_core::Error::with_message(
-                    azure_core::error::ErrorKind::Credential,
-                    "credential_id is required when token_provider is provided",
-                ))
+                PyValueError::new_err("credential_id is required when token_provider is provided")
             })?;
             Some(get_cached_credential(provider, credential_id))
         }
@@ -115,12 +121,13 @@ fn transfer_sizes(
     max_concurrency: Option<usize>,
     partition_size: Option<u64>,
 ) -> Result<(NonZero<usize>, NonZero<u64>), String> {
-    let concurrency = match max_concurrency {
-        Some(value) => NonZero::new(value)
-            .ok_or_else(|| "max_concurrency must be greater than zero.".to_string())?,
-        None => std::thread::available_parallelism()
-            .unwrap_or(NonZero::new(8).expect("Fallback concurrency is nonzero")),
-    };
+    let concurrency = max_concurrency.unwrap_or_else(|| {
+        std::thread::available_parallelism()
+            .map(NonZero::get)
+            .unwrap_or(8)
+    });
+    let concurrency = NonZero::new(concurrency)
+        .ok_or_else(|| "max_concurrency must be greater than zero.".to_string())?;
     let partition_size = NonZero::new(partition_size.unwrap_or(DEFAULT_PARTITION_SIZE))
         .ok_or_else(|| "Chunk/block size must be greater than zero.".to_string())?;
     Ok((concurrency, partition_size))
@@ -133,4 +140,42 @@ fn _native(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(download_blob, m)?)?;
     m.add_class::<NativeDownloadStream>()?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use azure_core::error::ErrorKind;
+
+    #[test]
+    fn python_error_is_preserved_through_nested_context() {
+        Python::initialize();
+        Python::attach(|py| {
+            let original = PyValueError::new_err("original Python error");
+            let error = azure_core::Error::with_error(
+                ErrorKind::Credential,
+                original.clone_ref(py),
+                "Python token provider call failed",
+            )
+            .with_context("inner SDK context")
+            .with_context("outer SDK context");
+
+            let converted = PyErr::from(AzureError(error));
+            assert!(converted.value(py).is(original.value(py)));
+        });
+    }
+
+    #[test]
+    fn sdk_error_mapping_is_unchanged() {
+        Python::initialize();
+        Python::attach(|py| {
+            let error = azure_core::Error::with_message(ErrorKind::Other, "SDK failure");
+            let converted = PyErr::from(AzureError(error));
+            assert!(converted.is_instance_of::<PyValueError>(py));
+            assert_eq!(
+                converted.value(py).to_string(),
+                "Azure Storage error: SDK failure"
+            );
+        });
+    }
 }

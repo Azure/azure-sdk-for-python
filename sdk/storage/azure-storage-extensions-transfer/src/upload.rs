@@ -13,11 +13,11 @@ use azure_storage_blob::models::{
     AccessTier, BlockBlobClientUploadOptions, EncryptionAlgorithmType, ImmutabilityPolicyMode,
 };
 use pyo3::buffer::PyBuffer;
-use pyo3::exceptions::PyValueError;
+use pyo3::exceptions::{PyTypeError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyDict};
 
-use crate::{build_blob_client, transfer_sizes, AzureError, RUNTIME};
+use crate::{build_blob_client, get_runtime, transfer_sizes, AzureError};
 
 /// An immutable Python buffer retained as the owner of a zero-copy [`Bytes`] value.
 ///
@@ -115,7 +115,7 @@ pub(crate) fn upload_blob<'py>(
     // across the FFI boundary without copying; `Bytes` keeps the export alive while the Rust SDK
     // clones and slices the body across asynchronous upload tasks.
     if !data.is_instance_of::<PyBytes>() {
-        return Err(PyValueError::new_err(
+        return Err(PyTypeError::new_err(
             "Native zero-copy upload requires an immutable bytes object.",
         ));
     }
@@ -217,9 +217,10 @@ pub(crate) fn upload_blob<'py>(
     options.parallel = Some(concurrency);
     options.partition_size = Some(block_size);
 
+    let runtime = get_runtime()?;
     // Release the interpreter (detach this thread) and perform the upload on the shared tokio runtime
     let result = py
-        .detach(|| RUNTIME.block_on(async { blob_client.upload(content, Some(options)).await }))
+        .detach(|| runtime.block_on(async { blob_client.upload(content, Some(options)).await }))
         .map_err(AzureError::from)?;
 
     // Build response dict from upload result fields
