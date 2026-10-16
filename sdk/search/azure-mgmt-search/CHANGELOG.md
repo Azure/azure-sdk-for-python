@@ -1,5 +1,55 @@
 # Release History
 
+## 10.0.0 (2026-10-13)
+
+### Features Added
+
+  - Client `SearchManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `SearchManagementClient` added method `send_request`
+  - Model `SearchService` added property `properties`
+  - Model `SearchServiceUpdate` added property `properties`
+  - Enum `SkuName` added member `SERVERLESS`
+  - Added model `CloudError`
+  - Added enum `KnowledgeRetrieval`
+  - Added model `SearchServiceProperties`
+  - Operation group `ServicesOperations` added parameter `content_type` in method `check_name_availability`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `SearchService` moved instance variable `auth_options`, `compute_type`, `data_exfiltration_protections`, `disable_local_auth`, `e_tag`, `encryption_with_cmk`, `endpoint`, `hosting_mode`, `network_rule_set`, `partition_count`, `private_endpoint_connections`, `provisioning_state`, `public_network_access`, `replica_count`, `semantic_search`, `service_upgraded_at`, `shared_private_link_resources`, `status`, `status_details` and `upgrade_available` under property `properties` whose type is `SearchServiceProperties`
+  - Model `SearchServiceUpdate` moved instance variable `auth_options`, `compute_type`, `data_exfiltration_protections`, `disable_local_auth`, `e_tag`, `encryption_with_cmk`, `endpoint`, `hosting_mode`, `network_rule_set`, `partition_count`, `private_endpoint_connections`, `provisioning_state`, `public_network_access`, `replica_count`, `semantic_search`, `service_upgraded_at`, `shared_private_link_resources`, `status`, `status_details` and `upgrade_available` under property `properties` whose type is `SearchServiceProperties`
+  - Method `ServicesOperations.check_name_availability` moved parameter `name` under parameter `check_name_availability_input`
+  - Method `SearchManagementClient.usage_by_subscription_sku` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `AdminKeysOperations.get` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `AdminKeysOperations.regenerate` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `PrivateEndpointConnectionsOperations.delete` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `PrivateEndpointConnectionsOperations.get` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `PrivateEndpointConnectionsOperations.list_by_service` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `PrivateEndpointConnectionsOperations.update` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `PrivateLinkResourcesOperations.list_supported` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `QueryKeysOperations.create` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `QueryKeysOperations.delete` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `QueryKeysOperations.list_by_search_service` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.begin_create_or_update` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.check_name_availability` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.delete` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.get` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.list_by_resource_group` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.list_by_subscription` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `ServicesOperations.update` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `SharedPrivateLinkResourcesOperations.begin_create_or_update` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `SharedPrivateLinkResourcesOperations.begin_delete` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `SharedPrivateLinkResourcesOperations.get` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `SharedPrivateLinkResourcesOperations.list_by_service` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Method `UsagesOperations.list_by_subscription` deleted or renamed its parameter `search_management_request_options` of kind `positional_or_keyword`
+  - Deleted or renamed model `SearchManagementRequestOptions`
+
+### Other Changes
+
+  - Deleted models `AsyncOperationResult`/`ListQueryKeysResult`/`NetworkSecurityPerimeterConfigurationListResult`/`OperationListResult`/`PrivateEndpointConnectionListResult`/`QuotaUsagesListResult`/`SearchServiceListResult`/`SharedPrivateLinkResourceListResult`/`SharedPrivateLinkResourceAsyncOperationResult`/`SearchManagementClientOperationsMixin` which actually were not used by SDK users
+
 ## 10.0.0b2 (2026-09-10)
 
 ### Features Added
