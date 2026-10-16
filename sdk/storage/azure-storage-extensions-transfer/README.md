@@ -38,6 +38,13 @@ When installed, this package transparently accelerates:
 - **Block blob downloads** — Downloads use Rust's `download_into` over a sliding window, giving
   parallel range fetches within each window while bounding peak memory to a single window
 
+Download errors can occur when starting a download or while consuming later windows.
+Incomplete reads raise an error rather than ending iteration successfully. After a
+stream fails, subsequent reads re-raise the failure without issuing more requests.
+Bytes already yielded or written to a destination are not rolled back. Nonempty
+ranged responses must include a valid `Content-Range` total; the response
+`Content-Length` alone does not identify the total blob size.
+
 The Python SDK automatically falls back to its built-in Python implementation when:
 - Client-side encryption is enabled
 - The blob type is not a block blob
