@@ -182,6 +182,13 @@ class TestDeviceRegistryMgmtNamespaceAssetsOperationsAsync(AzureMgmtRecordedTest
                                     ],
                                 }
                             ],
+                            "healthState": {
+                                "lastTransitionTime": "str",
+                                "lastUpdateTime": "str",
+                                "message": "str",
+                                "reasonCode": "str",
+                                "status": "str",
+                            },
                             "managementGroups": [
                                 {
                                     "name": "str",
@@ -379,11 +386,26 @@ class TestDeviceRegistryMgmtNamespaceAssetsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_namespace_assets_list_by_resource_group(self, resource_group):
-        response = self.client.namespace_assets.list_by_resource_group(
+    async def test_namespace_assets_list_by_namespace(self, resource_group):
+        response = self.client.namespace_assets.list_by_namespace(
             resource_group_name=resource_group.name,
             namespace_name="str",
         )
         result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_namespace_assets_begin_execute_action(self, resource_group):
+        response = await (
+            await self.client.namespace_assets.begin_execute_action(
+                resource_group_name=resource_group.name,
+                namespace_name="str",
+                asset_name="str",
+                body={"managementActionName": "str", "managementGroupName": "str", "payload": {"str": {}}},
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...
