@@ -14,7 +14,7 @@
 ### Breaking Changes
 
   - Create or replace operations now accept dedicated `ChatRoleCreate`, `ChatRoomCreate`, `ChatRoomMemberCreate`, and `ChatUserCreate` (including `HumanChatUserCreate`) request models instead of resource response models.
-  - Topic creation accepts `ChatTopicCreate`, which requires only `title`. Topic updates accept `ChatTopicUpdate`, whose fields are optional.
+  - Topic creation or replacement accepts `ChatTopicCreateOrReplace`, which requires only `title`. Topic updates accept `ChatTopicUpdate`, whose fields are optional.
   - Message updates accept `ChatMessageUpdate`, whose fields are optional, instead of `ChatMessage`. Resource response model names are unchanged.
 
 ## 1.0.0b1 (2026-10-08)

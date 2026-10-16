@@ -145,7 +145,7 @@ namespace azure.messaging.webpubsubchatservice
                 self, 
                 room_id: str, 
                 topic_id: str, 
-                resource: ChatTopicCreate,
+                resource: ChatTopicCreateOrReplace,
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -158,7 +158,7 @@ namespace azure.messaging.webpubsubchatservice
                 self, 
                 room_id: str, 
                 topic_id: str, 
-                resource: ChatTopicCreate,
+                resource: ChatTopicCreateOrReplace,
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -624,7 +624,7 @@ namespace azure.messaging.webpubsubchatservice.aio
                 self, 
                 room_id: str, 
                 topic_id: str, 
-                resource: ChatTopicCreate,
+                resource: ChatTopicCreateOrReplace,
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -637,7 +637,7 @@ namespace azure.messaging.webpubsubchatservice.aio
                 self, 
                 room_id: str, 
                 topic_id: str, 
-                resource: ChatTopicCreate,
+                resource: ChatTopicCreateOrReplace,
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -1137,7 +1137,7 @@ namespace azure.messaging.webpubsubchatservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.messaging.webpubsubchatservice.models.ChatTopicCreate(_Model):
+    class azure.messaging.webpubsubchatservice.models.ChatTopicCreateOrReplace(_Model):
         title: str
 
         @overload
@@ -1304,7 +1304,7 @@ namespace azure.messaging.webpubsubchatservice.types
         roleName: str
 
 
-    class azure.messaging.webpubsubchatservice.types.ChatTopicCreate(TypedDict, total=False):
+    class azure.messaging.webpubsubchatservice.types.ChatTopicCreateOrReplace(TypedDict, total=False):
         key "title": Required[str]
         title: str
 

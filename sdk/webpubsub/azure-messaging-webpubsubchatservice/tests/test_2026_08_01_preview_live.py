@@ -13,7 +13,7 @@ from azure.messaging.webpubsubchatservice.models import (
     ChatRoleCreate,
     ChatRoomCreate,
     ChatRoomMemberCreate,
-    ChatTopicCreate,
+    ChatTopicCreateOrReplace,
     ChatTopicUpdate,
     ChatTopicState,
     HumanChatUser,
@@ -42,7 +42,7 @@ class TestWebPubSubChatTopicsLive(WebPubSubChatTest):
             room = client.create_or_replace_room(room_id, ChatRoomCreate(title="Topic E2E"))
             assert all(topic.conversation_id == room.default_conversation for topic in client.list_topics(room_id))
             for topic_id in ("first", "second"):
-                topic = client.create_or_replace_topic(room_id, topic_id, ChatTopicCreate(title=topic_id))
+                topic = client.create_or_replace_topic(room_id, topic_id, ChatTopicCreateOrReplace(title=topic_id))
                 assert topic.id == topic_id
                 assert topic.title == topic_id
                 assert topic.state == ChatTopicState.NORMAL
