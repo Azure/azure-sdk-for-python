@@ -50,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +71,7 @@ def build_custom_capture_configurations_firewall_resources_get_request(  # pylin
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +100,7 @@ def build_custom_capture_configurations_firewall_resources_create_or_update_requ
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -129,7 +129,7 @@ def build_custom_capture_configurations_firewall_resources_delete_request(  # py
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/firewalls/{firewallName}/customCaptureConfigurations/default"
     path_format_arguments = {
@@ -152,7 +152,7 @@ def build_custom_capture_configurations_firewall_resources_list_by_firewall_requ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -174,11 +174,120 @@ def build_custom_capture_configurations_firewall_resources_list_by_firewall_requ
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_log_ingestion_settings_resources_get_request(  # pylint: disable=name-too-long
+    resource_group_name: str, firewall_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/firewalls/{firewallName}/logIngestionSettings/default"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "firewallName": _SERIALIZER.url("firewall_name", firewall_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_log_ingestion_settings_resources_create_or_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, firewall_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/firewalls/{firewallName}/logIngestionSettings/default"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "firewallName": _SERIALIZER.url("firewall_name", firewall_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_log_ingestion_settings_resources_delete_request(  # pylint: disable=name-too-long
+    resource_group_name: str, firewall_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/firewalls/{firewallName}/logIngestionSettings/default"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "firewallName": _SERIALIZER.url("firewall_name", firewall_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_log_ingestion_settings_resources_list_by_firewall_request(  # pylint: disable=name-too-long
+    resource_group_name: str, firewall_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/firewalls/{firewallName}/logIngestionSettings"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "firewallName": _SERIALIZER.url("firewall_name", firewall_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_global_rulestack_get_request(global_rulestack_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -205,7 +314,7 @@ def build_global_rulestack_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -232,7 +341,7 @@ def build_global_rulestack_update_request(global_rulestack_name: str, **kwargs: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -257,7 +366,7 @@ def build_global_rulestack_update_request(global_rulestack_name: str, **kwargs: 
 def build_global_rulestack_delete_request(global_rulestack_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/providers/PaloAltoNetworks.Cloudngfw/globalRulestacks/{globalRulestackName}"
     path_format_arguments = {
@@ -276,7 +385,7 @@ def build_global_rulestack_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -294,7 +403,7 @@ def build_global_rulestack_list_request(**kwargs: Any) -> HttpRequest:
 def build_global_rulestack_commit_request(global_rulestack_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/providers/PaloAltoNetworks.Cloudngfw/globalRulestacks/{globalRulestackName}/commit"
     path_format_arguments = {
@@ -315,7 +424,7 @@ def build_global_rulestack_get_change_log_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -346,7 +455,7 @@ def build_global_rulestack_list_advanced_security_objects_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -383,7 +492,7 @@ def build_global_rulestack_list_app_ids_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -417,7 +526,7 @@ def build_global_rulestack_list_countries_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -447,7 +556,7 @@ def build_global_rulestack_list_firewalls_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -473,7 +582,7 @@ def build_global_rulestack_list_predefined_url_categories_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -508,7 +617,7 @@ def build_global_rulestack_list_security_services_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -536,7 +645,7 @@ def build_global_rulestack_list_security_services_request(  # pylint: disable=na
 def build_global_rulestack_revert_request(global_rulestack_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/providers/PaloAltoNetworks.Cloudngfw/globalRulestacks/{globalRulestackName}/revert"
     path_format_arguments = {
@@ -557,7 +666,7 @@ def build_certificate_object_global_rulestack_get_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -585,7 +694,7 @@ def build_certificate_object_global_rulestack_create_or_update_request(  # pylin
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -613,7 +722,7 @@ def build_certificate_object_global_rulestack_delete_request(  # pylint: disable
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/providers/PaloAltoNetworks.Cloudngfw/globalRulestacks/{globalRulestackName}/certificates/{name}"
     path_format_arguments = {
@@ -635,7 +744,7 @@ def build_certificate_object_global_rulestack_list_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -661,7 +770,7 @@ def build_fqdn_list_global_rulestack_get_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -689,7 +798,7 @@ def build_fqdn_list_global_rulestack_create_or_update_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -717,7 +826,7 @@ def build_fqdn_list_global_rulestack_delete_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/providers/PaloAltoNetworks.Cloudngfw/globalRulestacks/{globalRulestackName}/fqdnlists/{name}"
     path_format_arguments = {
@@ -739,7 +848,7 @@ def build_fqdn_list_global_rulestack_list_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -763,7 +872,7 @@ def build_post_rules_get_request(global_rulestack_name: str, priority: str, **kw
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -791,7 +900,7 @@ def build_post_rules_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -817,7 +926,7 @@ def build_post_rules_create_or_update_request(  # pylint: disable=name-too-long
 def build_post_rules_delete_request(global_rulestack_name: str, priority: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/providers/PaloAltoNetworks.Cloudngfw/globalRulestacks/{globalRulestackName}/postRules/{priority}"
     path_format_arguments = {
@@ -837,7 +946,7 @@ def build_post_rules_list_request(global_rulestack_name: str, **kwargs: Any) -> 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -863,7 +972,7 @@ def build_post_rules_get_counters_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -893,7 +1002,7 @@ def build_post_rules_refresh_counters_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/providers/PaloAltoNetworks.Cloudngfw/globalRulestacks/{globalRulestackName}/postRules/{priority}/refreshCounters"
     path_format_arguments = {
@@ -917,7 +1026,7 @@ def build_post_rules_reset_counters_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -946,7 +1055,7 @@ def build_prefix_list_global_rulestack_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -974,7 +1083,7 @@ def build_prefix_list_global_rulestack_create_or_update_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1002,7 +1111,7 @@ def build_prefix_list_global_rulestack_delete_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/providers/PaloAltoNetworks.Cloudngfw/globalRulestacks/{globalRulestackName}/prefixlists/{name}"
     path_format_arguments = {
@@ -1024,7 +1133,7 @@ def build_prefix_list_global_rulestack_list_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1048,7 +1157,7 @@ def build_pre_rules_get_request(global_rulestack_name: str, priority: str, **kwa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1074,7 +1183,7 @@ def build_pre_rules_create_or_update_request(global_rulestack_name: str, priorit
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1100,7 +1209,7 @@ def build_pre_rules_create_or_update_request(global_rulestack_name: str, priorit
 def build_pre_rules_delete_request(global_rulestack_name: str, priority: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/providers/PaloAltoNetworks.Cloudngfw/globalRulestacks/{globalRulestackName}/preRules/{priority}"
     path_format_arguments = {
@@ -1120,7 +1229,7 @@ def build_pre_rules_list_request(global_rulestack_name: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1146,7 +1255,7 @@ def build_pre_rules_get_counters_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1176,7 +1285,7 @@ def build_pre_rules_refresh_counters_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/providers/PaloAltoNetworks.Cloudngfw/globalRulestacks/{globalRulestackName}/preRules/{priority}/refreshCounters"
     path_format_arguments = {
@@ -1200,7 +1309,7 @@ def build_pre_rules_reset_counters_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1231,7 +1340,7 @@ def build_firewalls_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1260,7 +1369,7 @@ def build_firewalls_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1291,7 +1400,7 @@ def build_firewalls_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1320,7 +1429,7 @@ def build_firewalls_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/firewalls/{firewallName}"
     path_format_arguments = {
@@ -1343,7 +1452,7 @@ def build_firewalls_list_by_resource_group_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1370,7 +1479,7 @@ def build_firewalls_list_by_subscription_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1396,7 +1505,7 @@ def build_firewalls_get_global_rulestack_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1424,7 +1533,7 @@ def build_firewalls_get_log_profile_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1452,7 +1561,7 @@ def build_firewalls_get_support_info_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1483,7 +1592,7 @@ def build_firewalls_save_log_profile_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/firewalls/{firewallName}/saveLogProfile"
     path_format_arguments = {
@@ -1510,7 +1619,7 @@ def build_local_rulestacks_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1539,7 +1648,7 @@ def build_local_rulestacks_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1570,7 +1679,7 @@ def build_local_rulestacks_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1599,7 +1708,7 @@ def build_local_rulestacks_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/localRulestacks/{localRulestackName}"
     path_format_arguments = {
@@ -1622,7 +1731,7 @@ def build_local_rulestacks_list_by_resource_group_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1649,7 +1758,7 @@ def build_local_rulestacks_list_by_subscription_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1674,7 +1783,7 @@ def build_local_rulestacks_commit_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/localRulestacks/{localRulestackName}/commit"
     path_format_arguments = {
@@ -1697,7 +1806,7 @@ def build_local_rulestacks_get_change_log_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1730,7 +1839,7 @@ def build_local_rulestacks_get_support_info_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1767,7 +1876,7 @@ def build_local_rulestacks_list_advanced_security_objects_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1808,7 +1917,7 @@ def build_local_rulestacks_list_app_ids_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1850,7 +1959,7 @@ def build_local_rulestacks_list_countries_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1882,7 +1991,7 @@ def build_local_rulestacks_list_firewalls_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1916,7 +2025,7 @@ def build_local_rulestacks_list_predefined_url_categories_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1955,7 +2064,7 @@ def build_local_rulestacks_list_security_services_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1987,7 +2096,7 @@ def build_local_rulestacks_revert_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/localRulestacks/{localRulestackName}/revert"
     path_format_arguments = {
@@ -2010,7 +2119,7 @@ def build_metrics_object_firewall_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2039,7 +2148,7 @@ def build_metrics_object_firewall_create_or_update_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2068,7 +2177,7 @@ def build_metrics_object_firewall_delete_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/firewalls/{firewallName}/metrics/default"
     path_format_arguments = {
@@ -2091,7 +2200,7 @@ def build_metrics_object_firewall_list_by_firewalls_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2119,7 +2228,7 @@ def build_firewall_status_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2147,7 +2256,7 @@ def build_firewall_status_list_by_firewalls_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2175,7 +2284,7 @@ def build_certificate_object_local_rulestack_get_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2205,7 +2314,7 @@ def build_certificate_object_local_rulestack_create_or_update_request(  # pylint
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2235,7 +2344,7 @@ def build_certificate_object_local_rulestack_delete_request(  # pylint: disable=
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/localRulestacks/{localRulestackName}/certificates/{name}"
     path_format_arguments = {
@@ -2259,7 +2368,7 @@ def build_certificate_object_local_rulestack_list_by_local_rulestacks_request(  
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2287,7 +2396,7 @@ def build_fqdn_list_local_rulestack_get_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2317,7 +2426,7 @@ def build_fqdn_list_local_rulestack_create_or_update_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2347,7 +2456,7 @@ def build_fqdn_list_local_rulestack_delete_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/localRulestacks/{localRulestackName}/fqdnlists/{name}"
     path_format_arguments = {
@@ -2371,7 +2480,7 @@ def build_fqdn_list_local_rulestack_list_by_local_rulestacks_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2399,7 +2508,7 @@ def build_local_rules_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2429,7 +2538,7 @@ def build_local_rules_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2459,7 +2568,7 @@ def build_local_rules_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/localRulestacks/{localRulestackName}/localRules/{priority}"
     path_format_arguments = {
@@ -2483,7 +2592,7 @@ def build_local_rules_list_by_local_rulestacks_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2517,7 +2626,7 @@ def build_local_rules_get_counters_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2553,7 +2662,7 @@ def build_local_rules_refresh_counters_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/localRulestacks/{localRulestackName}/localRules/{priority}/refreshCounters"
     path_format_arguments = {
@@ -2585,7 +2694,7 @@ def build_local_rules_reset_counters_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2616,7 +2725,7 @@ def build_prefix_list_local_rulestack_get_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2646,7 +2755,7 @@ def build_prefix_list_local_rulestack_create_or_update_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2676,7 +2785,7 @@ def build_prefix_list_local_rulestack_delete_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/localRulestacks/{localRulestackName}/prefixlists/{name}"
     path_format_arguments = {
@@ -2700,7 +2809,7 @@ def build_prefix_list_local_rulestack_list_by_local_rulestacks_request(  # pylin
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2728,7 +2837,7 @@ def build_palo_alto_networks_cloudngfw_operations_create_product_serial_number_r
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2754,7 +2863,7 @@ def build_palo_alto_networks_cloudngfw_operations_list_cloud_manager_tenants_req
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2780,7 +2889,7 @@ def build_palo_alto_networks_cloudngfw_operations_list_product_serial_number_sta
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2806,7 +2915,7 @@ def build_palo_alto_networks_cloudngfw_operations_list_support_info_request(  # 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-11-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2826,7 +2935,7 @@ def build_palo_alto_networks_cloudngfw_operations_list_support_info_request(  # 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2938,7 +3047,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class CustomCaptureConfigurationsFirewallResourcesOperations:  # pylint: disable=name-too-long
+class CustomCaptureConfigurationsFirewallResourcesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2963,7 +3072,7 @@ class CustomCaptureConfigurationsFirewallResourcesOperations:  # pylint: disable
         params_added_on={
             "2026-05-11-preview": ["api_version", "subscription_id", "resource_group_name", "firewall_name", "accept"]
         },
-        api_versions_list=["2026-05-11-preview"],
+        api_versions_list=["2026-05-11-preview", "2026-07-29-preview"],
     )
     def get(
         self, resource_group_name: str, firewall_name: str, **kwargs: Any
@@ -3144,7 +3253,7 @@ class CustomCaptureConfigurationsFirewallResourcesOperations:  # pylint: disable
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-11-preview"],
+        api_versions_list=["2026-05-11-preview", "2026-07-29-preview"],
     )
     def create_or_update(
         self,
@@ -3249,7 +3358,7 @@ class CustomCaptureConfigurationsFirewallResourcesOperations:  # pylint: disable
         params_added_on={
             "2026-05-11-preview": ["api_version", "subscription_id", "resource_group_name", "firewall_name"]
         },
-        api_versions_list=["2026-05-11-preview"],
+        api_versions_list=["2026-05-11-preview", "2026-07-29-preview"],
     )
     def delete(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, firewall_name: str, **kwargs: Any
@@ -3316,7 +3425,7 @@ class CustomCaptureConfigurationsFirewallResourcesOperations:  # pylint: disable
         params_added_on={
             "2026-05-11-preview": ["api_version", "subscription_id", "resource_group_name", "firewall_name", "accept"]
         },
-        api_versions_list=["2026-05-11-preview"],
+        api_versions_list=["2026-05-11-preview", "2026-07-29-preview"],
     )
     def list_by_firewall(
         self, resource_group_name: str, firewall_name: str, **kwargs: Any
@@ -3422,7 +3531,486 @@ class CustomCaptureConfigurationsFirewallResourcesOperations:  # pylint: disable
         return ItemPaged(get_next, extract_data)
 
 
-class GlobalRulestackOperations:
+class LogIngestionSettingsResourcesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.paloaltonetworksngfw.PaloAltoNetworksNgfwMgmtClient`'s
+        :attr:`log_ingestion_settings_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: PaloAltoNetworksNgfwMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-29-preview",
+        params_added_on={
+            "2026-07-29-preview": ["api_version", "subscription_id", "resource_group_name", "firewall_name", "accept"]
+        },
+        api_versions_list=["2026-07-29-preview"],
+    )
+    def get(self, resource_group_name: str, firewall_name: str, **kwargs: Any) -> _models.LogIngestionSettingsResource:
+        """Get the Log Ingestion Settings for a firewall. Live read from the partner. Returns 200 OK with
+        the current settings, or 404 when log ingestion has not been configured.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param firewall_name: Firewall resource name. Required.
+        :type firewall_name: str
+        :return: LogIngestionSettingsResource. The LogIngestionSettingsResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.LogIngestionSettingsResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.LogIngestionSettingsResource] = kwargs.pop("cls", None)
+
+        _request = build_log_ingestion_settings_resources_get_request(
+            resource_group_name=resource_group_name,
+            firewall_name=firewall_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.LogIngestionSettingsResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def create_or_update(
+        self,
+        resource_group_name: str,
+        firewall_name: str,
+        resource: _models.LogIngestionSettingsResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.LogIngestionSettingsResource:
+        """Create or update the Log Ingestion Settings for a firewall. SYNC — forwards to the partner and
+        returns 200 OK (or 201 Created on first create) with the persisted settings.
+        commonDestination.monitorConfigurationsV2 (dcrId, logIngestionEndpoint, dcrImmutableId,
+        streamName) drives where the firewall logs are ingested.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param firewall_name: Firewall resource name. Required.
+        :type firewall_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.models.LogIngestionSettingsResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: LogIngestionSettingsResource. The LogIngestionSettingsResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.LogIngestionSettingsResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        resource_group_name: str,
+        firewall_name: str,
+        resource: _types.LogIngestionSettingsResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.LogIngestionSettingsResource:
+        """Create or update the Log Ingestion Settings for a firewall. SYNC — forwards to the partner and
+        returns 200 OK (or 201 Created on first create) with the persisted settings.
+        commonDestination.monitorConfigurationsV2 (dcrId, logIngestionEndpoint, dcrImmutableId,
+        streamName) drives where the firewall logs are ingested.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param firewall_name: Firewall resource name. Required.
+        :type firewall_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.types.LogIngestionSettingsResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: LogIngestionSettingsResource. The LogIngestionSettingsResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.LogIngestionSettingsResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        resource_group_name: str,
+        firewall_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.LogIngestionSettingsResource:
+        """Create or update the Log Ingestion Settings for a firewall. SYNC — forwards to the partner and
+        returns 200 OK (or 201 Created on first create) with the persisted settings.
+        commonDestination.monitorConfigurationsV2 (dcrId, logIngestionEndpoint, dcrImmutableId,
+        streamName) drives where the firewall logs are ingested.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param firewall_name: Firewall resource name. Required.
+        :type firewall_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: LogIngestionSettingsResource. The LogIngestionSettingsResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.LogIngestionSettingsResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-29-preview",
+        params_added_on={
+            "2026-07-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "firewall_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-29-preview"],
+    )
+    def create_or_update(
+        self,
+        resource_group_name: str,
+        firewall_name: str,
+        resource: Union[_models.LogIngestionSettingsResource, _types.LogIngestionSettingsResource, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.LogIngestionSettingsResource:
+        """Create or update the Log Ingestion Settings for a firewall. SYNC — forwards to the partner and
+        returns 200 OK (or 201 Created on first create) with the persisted settings.
+        commonDestination.monitorConfigurationsV2 (dcrId, logIngestionEndpoint, dcrImmutableId,
+        streamName) drives where the firewall logs are ingested.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param firewall_name: Firewall resource name. Required.
+        :type firewall_name: str
+        :param resource: Resource create parameters. Is either a LogIngestionSettingsResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.models.LogIngestionSettingsResource or
+         ~azure.mgmt.paloaltonetworksngfw.types.LogIngestionSettingsResource or IO[bytes]
+        :return: LogIngestionSettingsResource. The LogIngestionSettingsResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.LogIngestionSettingsResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.LogIngestionSettingsResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_log_ingestion_settings_resources_create_or_update_request(
+            resource_group_name=resource_group_name,
+            firewall_name=firewall_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.LogIngestionSettingsResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-29-preview",
+        params_added_on={
+            "2026-07-29-preview": ["api_version", "subscription_id", "resource_group_name", "firewall_name"]
+        },
+        api_versions_list=["2026-07-29-preview"],
+    )
+    def delete(  # pylint: disable=inconsistent-return-statements
+        self, resource_group_name: str, firewall_name: str, **kwargs: Any
+    ) -> None:
+        """Delete (clear) the Log Ingestion Settings for a firewall. SYNC — soft-clears the DCR
+        destination on the partner (logs have no partner delete API). Returns 200 on success or 204
+        when nothing is configured.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param firewall_name: Firewall resource name. Required.
+        :type firewall_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_log_ingestion_settings_resources_delete_request(
+            resource_group_name=resource_group_name,
+            firewall_name=firewall_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-29-preview",
+        params_added_on={
+            "2026-07-29-preview": ["api_version", "subscription_id", "resource_group_name", "firewall_name", "accept"]
+        },
+        api_versions_list=["2026-07-29-preview"],
+    )
+    def list_by_firewall(
+        self, resource_group_name: str, firewall_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.LogIngestionSettingsResource"]:
+        """List the Log Ingestion Settings under a firewall. The resource is a singleton (name is fixed to
+        'default'), so the response contains at most one entry.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param firewall_name: Firewall resource name. Required.
+        :type firewall_name: str
+        :return: An iterator like instance of LogIngestionSettingsResource
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.paloaltonetworksngfw.models.LogIngestionSettingsResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.LogIngestionSettingsResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_log_ingestion_settings_resources_list_by_firewall_request(
+                    resource_group_name=resource_group_name,
+                    firewall_name=firewall_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.LogIngestionSettingsResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class GlobalRulestackOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4774,7 +5362,7 @@ class GlobalRulestackOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class CertificateObjectGlobalRulestackOperations:  # pylint: disable=name-too-long
+class CertificateObjectGlobalRulestackOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5321,7 +5909,7 @@ class CertificateObjectGlobalRulestackOperations:  # pylint: disable=name-too-lo
         return ItemPaged(get_next, extract_data)
 
 
-class FqdnListGlobalRulestackOperations:
+class FqdnListGlobalRulestackOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5858,7 +6446,7 @@ class FqdnListGlobalRulestackOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PostRulesOperations:
+class PostRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6599,7 +7187,7 @@ class PostRulesOperations:
         return deserialized  # type: ignore
 
 
-class PrefixListGlobalRulestackOperations:
+class PrefixListGlobalRulestackOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7136,7 +7724,7 @@ class PrefixListGlobalRulestackOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PreRulesOperations:
+class PreRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7873,7 +8461,7 @@ class PreRulesOperations:
         return deserialized  # type: ignore
 
 
-class FirewallsOperations:
+class FirewallsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9057,7 +9645,7 @@ class FirewallsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class LocalRulestacksOperations:
+class LocalRulestacksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10792,7 +11380,7 @@ class LocalRulestacksOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class MetricsObjectFirewallOperations:
+class MetricsObjectFirewallOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11346,7 +11934,7 @@ class MetricsObjectFirewallOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class FirewallStatusOperations:
+class FirewallStatusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11539,7 +12127,7 @@ class FirewallStatusOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class CertificateObjectLocalRulestackOperations:  # pylint: disable=name-too-long
+class CertificateObjectLocalRulestackOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12124,7 +12712,7 @@ class CertificateObjectLocalRulestackOperations:  # pylint: disable=name-too-lon
         return ItemPaged(get_next, extract_data)
 
 
-class FqdnListLocalRulestackOperations:
+class FqdnListLocalRulestackOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12705,7 +13293,7 @@ class FqdnListLocalRulestackOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class LocalRulesOperations:
+class LocalRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13524,7 +14112,7 @@ class LocalRulesOperations:
         return deserialized  # type: ignore
 
 
-class PrefixListLocalRulestackOperations:
+class PrefixListLocalRulestackOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14104,7 +14692,7 @@ class PrefixListLocalRulestackOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PaloAltoNetworksCloudngfwOperationsOperations:  # pylint: disable=name-too-long
+class PaloAltoNetworksCloudngfwOperationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14125,7 +14713,7 @@ class PaloAltoNetworksCloudngfwOperationsOperations:  # pylint: disable=name-too
 
     @distributed_trace
     def create_product_serial_number(self, **kwargs: Any) -> _models.ProductSerialNumberRequestStatus:
-        """create_product_serial_number.
+        """A long-running provider action.
 
         :return: ProductSerialNumberRequestStatus. The ProductSerialNumberRequestStatus is compatible
          with MutableMapping
@@ -14189,7 +14777,7 @@ class PaloAltoNetworksCloudngfwOperationsOperations:  # pylint: disable=name-too
 
     @distributed_trace
     def list_cloud_manager_tenants(self, **kwargs: Any) -> _models.CloudManagerTenantList:
-        """list_cloud_manager_tenants.
+        """A long-running provider action.
 
         :return: CloudManagerTenantList. The CloudManagerTenantList is compatible with MutableMapping
         :rtype: ~azure.mgmt.paloaltonetworksngfw.models.CloudManagerTenantList
@@ -14252,7 +14840,7 @@ class PaloAltoNetworksCloudngfwOperationsOperations:  # pylint: disable=name-too
 
     @distributed_trace
     def list_product_serial_number_status(self, **kwargs: Any) -> Optional[_models.ProductSerialNumberStatus]:
-        """list_product_serial_number_status.
+        """A long-running provider action.
 
         :return: ProductSerialNumberStatus or None. The ProductSerialNumberStatus is compatible with
          MutableMapping
@@ -14318,7 +14906,7 @@ class PaloAltoNetworksCloudngfwOperationsOperations:  # pylint: disable=name-too
 
     @distributed_trace
     def list_support_info(self, **kwargs: Any) -> _models.SupportInfoModel:
-        """list_support_info.
+        """A long-running provider action.
 
         :return: SupportInfoModel. The SupportInfoModel is compatible with MutableMapping
         :rtype: ~azure.mgmt.paloaltonetworksngfw.models.SupportInfoModel

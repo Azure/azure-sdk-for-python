@@ -107,6 +107,10 @@ from ...operations._operations import (
     build_local_rulestacks_list_security_services_request,
     build_local_rulestacks_revert_request,
     build_local_rulestacks_update_request,
+    build_log_ingestion_settings_resources_create_or_update_request,
+    build_log_ingestion_settings_resources_delete_request,
+    build_log_ingestion_settings_resources_get_request,
+    build_log_ingestion_settings_resources_list_by_firewall_request,
     build_metrics_object_firewall_create_or_update_request,
     build_metrics_object_firewall_delete_request,
     build_metrics_object_firewall_get_request,
@@ -146,7 +150,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -259,7 +263,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CustomCaptureConfigurationsFirewallResourcesOperations:  # pylint: disable=name-too-long
+class CustomCaptureConfigurationsFirewallResourcesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -284,7 +288,7 @@ class CustomCaptureConfigurationsFirewallResourcesOperations:  # pylint: disable
         params_added_on={
             "2026-05-11-preview": ["api_version", "subscription_id", "resource_group_name", "firewall_name", "accept"]
         },
-        api_versions_list=["2026-05-11-preview"],
+        api_versions_list=["2026-05-11-preview", "2026-07-29-preview"],
     )
     async def get(
         self, resource_group_name: str, firewall_name: str, **kwargs: Any
@@ -465,7 +469,7 @@ class CustomCaptureConfigurationsFirewallResourcesOperations:  # pylint: disable
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-11-preview"],
+        api_versions_list=["2026-05-11-preview", "2026-07-29-preview"],
     )
     async def create_or_update(
         self,
@@ -570,7 +574,7 @@ class CustomCaptureConfigurationsFirewallResourcesOperations:  # pylint: disable
         params_added_on={
             "2026-05-11-preview": ["api_version", "subscription_id", "resource_group_name", "firewall_name"]
         },
-        api_versions_list=["2026-05-11-preview"],
+        api_versions_list=["2026-05-11-preview", "2026-07-29-preview"],
     )
     async def delete(self, resource_group_name: str, firewall_name: str, **kwargs: Any) -> None:
         """Delete the Custom Capture Configuration on a firewall. SYNC — clears any in-progress or
@@ -635,7 +639,7 @@ class CustomCaptureConfigurationsFirewallResourcesOperations:  # pylint: disable
         params_added_on={
             "2026-05-11-preview": ["api_version", "subscription_id", "resource_group_name", "firewall_name", "accept"]
         },
-        api_versions_list=["2026-05-11-preview"],
+        api_versions_list=["2026-05-11-preview", "2026-07-29-preview"],
     )
     def list_by_firewall(
         self, resource_group_name: str, firewall_name: str, **kwargs: Any
@@ -741,7 +745,486 @@ class CustomCaptureConfigurationsFirewallResourcesOperations:  # pylint: disable
         return AsyncItemPaged(get_next, extract_data)
 
 
-class GlobalRulestackOperations:
+class LogIngestionSettingsResourcesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.paloaltonetworksngfw.aio.PaloAltoNetworksNgfwMgmtClient`'s
+        :attr:`log_ingestion_settings_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: PaloAltoNetworksNgfwMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-29-preview",
+        params_added_on={
+            "2026-07-29-preview": ["api_version", "subscription_id", "resource_group_name", "firewall_name", "accept"]
+        },
+        api_versions_list=["2026-07-29-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, firewall_name: str, **kwargs: Any
+    ) -> _models.LogIngestionSettingsResource:
+        """Get the Log Ingestion Settings for a firewall. Live read from the partner. Returns 200 OK with
+        the current settings, or 404 when log ingestion has not been configured.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param firewall_name: Firewall resource name. Required.
+        :type firewall_name: str
+        :return: LogIngestionSettingsResource. The LogIngestionSettingsResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.LogIngestionSettingsResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.LogIngestionSettingsResource] = kwargs.pop("cls", None)
+
+        _request = build_log_ingestion_settings_resources_get_request(
+            resource_group_name=resource_group_name,
+            firewall_name=firewall_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.LogIngestionSettingsResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        firewall_name: str,
+        resource: _models.LogIngestionSettingsResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.LogIngestionSettingsResource:
+        """Create or update the Log Ingestion Settings for a firewall. SYNC — forwards to the partner and
+        returns 200 OK (or 201 Created on first create) with the persisted settings.
+        commonDestination.monitorConfigurationsV2 (dcrId, logIngestionEndpoint, dcrImmutableId,
+        streamName) drives where the firewall logs are ingested.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param firewall_name: Firewall resource name. Required.
+        :type firewall_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.models.LogIngestionSettingsResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: LogIngestionSettingsResource. The LogIngestionSettingsResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.LogIngestionSettingsResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        firewall_name: str,
+        resource: _types.LogIngestionSettingsResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.LogIngestionSettingsResource:
+        """Create or update the Log Ingestion Settings for a firewall. SYNC — forwards to the partner and
+        returns 200 OK (or 201 Created on first create) with the persisted settings.
+        commonDestination.monitorConfigurationsV2 (dcrId, logIngestionEndpoint, dcrImmutableId,
+        streamName) drives where the firewall logs are ingested.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param firewall_name: Firewall resource name. Required.
+        :type firewall_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.types.LogIngestionSettingsResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: LogIngestionSettingsResource. The LogIngestionSettingsResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.LogIngestionSettingsResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        firewall_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.LogIngestionSettingsResource:
+        """Create or update the Log Ingestion Settings for a firewall. SYNC — forwards to the partner and
+        returns 200 OK (or 201 Created on first create) with the persisted settings.
+        commonDestination.monitorConfigurationsV2 (dcrId, logIngestionEndpoint, dcrImmutableId,
+        streamName) drives where the firewall logs are ingested.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param firewall_name: Firewall resource name. Required.
+        :type firewall_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: LogIngestionSettingsResource. The LogIngestionSettingsResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.LogIngestionSettingsResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-29-preview",
+        params_added_on={
+            "2026-07-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "firewall_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-29-preview"],
+    )
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        firewall_name: str,
+        resource: Union[_models.LogIngestionSettingsResource, _types.LogIngestionSettingsResource, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.LogIngestionSettingsResource:
+        """Create or update the Log Ingestion Settings for a firewall. SYNC — forwards to the partner and
+        returns 200 OK (or 201 Created on first create) with the persisted settings.
+        commonDestination.monitorConfigurationsV2 (dcrId, logIngestionEndpoint, dcrImmutableId,
+        streamName) drives where the firewall logs are ingested.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param firewall_name: Firewall resource name. Required.
+        :type firewall_name: str
+        :param resource: Resource create parameters. Is either a LogIngestionSettingsResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.paloaltonetworksngfw.models.LogIngestionSettingsResource or
+         ~azure.mgmt.paloaltonetworksngfw.types.LogIngestionSettingsResource or IO[bytes]
+        :return: LogIngestionSettingsResource. The LogIngestionSettingsResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.LogIngestionSettingsResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.LogIngestionSettingsResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_log_ingestion_settings_resources_create_or_update_request(
+            resource_group_name=resource_group_name,
+            firewall_name=firewall_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.LogIngestionSettingsResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-29-preview",
+        params_added_on={
+            "2026-07-29-preview": ["api_version", "subscription_id", "resource_group_name", "firewall_name"]
+        },
+        api_versions_list=["2026-07-29-preview"],
+    )
+    async def delete(self, resource_group_name: str, firewall_name: str, **kwargs: Any) -> None:
+        """Delete (clear) the Log Ingestion Settings for a firewall. SYNC — soft-clears the DCR
+        destination on the partner (logs have no partner delete API). Returns 200 on success or 204
+        when nothing is configured.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param firewall_name: Firewall resource name. Required.
+        :type firewall_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_log_ingestion_settings_resources_delete_request(
+            resource_group_name=resource_group_name,
+            firewall_name=firewall_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-29-preview",
+        params_added_on={
+            "2026-07-29-preview": ["api_version", "subscription_id", "resource_group_name", "firewall_name", "accept"]
+        },
+        api_versions_list=["2026-07-29-preview"],
+    )
+    def list_by_firewall(
+        self, resource_group_name: str, firewall_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.LogIngestionSettingsResource"]:
+        """List the Log Ingestion Settings under a firewall. The resource is a singleton (name is fixed to
+        'default'), so the response contains at most one entry.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param firewall_name: Firewall resource name. Required.
+        :type firewall_name: str
+        :return: An iterator like instance of LogIngestionSettingsResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.paloaltonetworksngfw.models.LogIngestionSettingsResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.LogIngestionSettingsResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_log_ingestion_settings_resources_list_by_firewall_request(
+                    resource_group_name=resource_group_name,
+                    firewall_name=firewall_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.LogIngestionSettingsResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class GlobalRulestackOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2091,7 +2574,7 @@ class GlobalRulestackOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class CertificateObjectGlobalRulestackOperations:  # pylint: disable=name-too-long
+class CertificateObjectGlobalRulestackOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2638,7 +3121,7 @@ class CertificateObjectGlobalRulestackOperations:  # pylint: disable=name-too-lo
         return AsyncItemPaged(get_next, extract_data)
 
 
-class FqdnListGlobalRulestackOperations:
+class FqdnListGlobalRulestackOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3179,7 +3662,7 @@ class FqdnListGlobalRulestackOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PostRulesOperations:
+class PostRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3921,7 +4404,7 @@ class PostRulesOperations:
         return deserialized  # type: ignore
 
 
-class PrefixListGlobalRulestackOperations:
+class PrefixListGlobalRulestackOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4462,7 +4945,7 @@ class PrefixListGlobalRulestackOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PreRulesOperations:
+class PreRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5204,7 +5687,7 @@ class PreRulesOperations:
         return deserialized  # type: ignore
 
 
-class FirewallsOperations:
+class FirewallsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6398,7 +6881,7 @@ class FirewallsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class LocalRulestacksOperations:
+class LocalRulestacksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8144,7 +8627,7 @@ class LocalRulestacksOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class MetricsObjectFirewallOperations:
+class MetricsObjectFirewallOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8702,7 +9185,7 @@ class MetricsObjectFirewallOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class FirewallStatusOperations:
+class FirewallStatusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8895,7 +9378,7 @@ class FirewallStatusOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CertificateObjectLocalRulestackOperations:  # pylint: disable=name-too-long
+class CertificateObjectLocalRulestackOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9480,7 +9963,7 @@ class CertificateObjectLocalRulestackOperations:  # pylint: disable=name-too-lon
         return AsyncItemPaged(get_next, extract_data)
 
 
-class FqdnListLocalRulestackOperations:
+class FqdnListLocalRulestackOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10061,7 +10544,7 @@ class FqdnListLocalRulestackOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class LocalRulesOperations:
+class LocalRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10880,7 +11363,7 @@ class LocalRulesOperations:
         return deserialized  # type: ignore
 
 
-class PrefixListLocalRulestackOperations:
+class PrefixListLocalRulestackOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11460,7 +11943,7 @@ class PrefixListLocalRulestackOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PaloAltoNetworksCloudngfwOperationsOperations:  # pylint: disable=name-too-long
+class PaloAltoNetworksCloudngfwOperationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11481,7 +11964,7 @@ class PaloAltoNetworksCloudngfwOperationsOperations:  # pylint: disable=name-too
 
     @distributed_trace_async
     async def create_product_serial_number(self, **kwargs: Any) -> _models.ProductSerialNumberRequestStatus:
-        """create_product_serial_number.
+        """A long-running provider action.
 
         :return: ProductSerialNumberRequestStatus. The ProductSerialNumberRequestStatus is compatible
          with MutableMapping
@@ -11545,7 +12028,7 @@ class PaloAltoNetworksCloudngfwOperationsOperations:  # pylint: disable=name-too
 
     @distributed_trace_async
     async def list_cloud_manager_tenants(self, **kwargs: Any) -> _models.CloudManagerTenantList:
-        """list_cloud_manager_tenants.
+        """A long-running provider action.
 
         :return: CloudManagerTenantList. The CloudManagerTenantList is compatible with MutableMapping
         :rtype: ~azure.mgmt.paloaltonetworksngfw.models.CloudManagerTenantList
@@ -11608,7 +12091,7 @@ class PaloAltoNetworksCloudngfwOperationsOperations:  # pylint: disable=name-too
 
     @distributed_trace_async
     async def list_product_serial_number_status(self, **kwargs: Any) -> Optional[_models.ProductSerialNumberStatus]:
-        """list_product_serial_number_status.
+        """A long-running provider action.
 
         :return: ProductSerialNumberStatus or None. The ProductSerialNumberStatus is compatible with
          MutableMapping
@@ -11674,7 +12157,7 @@ class PaloAltoNetworksCloudngfwOperationsOperations:  # pylint: disable=name-too
 
     @distributed_trace_async
     async def list_support_info(self, **kwargs: Any) -> _models.SupportInfoModel:
-        """list_support_info.
+        """A long-running provider action.
 
         :return: SupportInfoModel. The SupportInfoModel is compatible with MutableMapping
         :rtype: ~azure.mgmt.paloaltonetworksngfw.models.SupportInfoModel

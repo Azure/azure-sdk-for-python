@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AdvSecurityObjectListResponse(_Model):
+class AdvSecurityObjectListResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """advanced security object.
 
     :ivar value: response value. Required.
@@ -50,7 +50,7 @@ class AdvSecurityObjectListResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdvSecurityObjectModel(_Model):
+class AdvSecurityObjectModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of custom and predefined url category.
 
     :ivar type: type of object.
@@ -85,7 +85,7 @@ class AdvSecurityObjectModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationInsights(_Model):
+class ApplicationInsights(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Application Insights key.
 
     :ivar id: Resource id for Application Insights.
@@ -118,7 +118,7 @@ class ApplicationInsights(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AppSeenData(_Model):
+class AppSeenData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data Type for App Seen.
 
     :ivar count: number of rows. Required.
@@ -153,7 +153,7 @@ class AppSeenData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AppSeenInfo(_Model):
+class AppSeenInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition for App Seen.
 
     :ivar title: title. Required.
@@ -211,7 +211,9 @@ class AppSeenInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureResourceManagerManagedIdentityProperties(_Model):  # pylint: disable=name-too-long
+class AzureResourceManagerManagedIdentityProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties of the managed service identities assigned to this resource.
 
     :ivar tenant_id: The Active Directory tenant id of the principal.
@@ -259,7 +261,7 @@ class AzureResourceManagerManagedIdentityProperties(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class AzureResourceManagerUserAssignedIdentity(_Model):
+class AzureResourceManagerUserAssignedIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A managed identity assigned by the user.
 
     :ivar client_id: The active directory client identifier for this principal.
@@ -294,7 +296,7 @@ class AzureResourceManagerUserAssignedIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Category(_Model):
+class Category(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """URL/EDL to match.
 
     :ivar url_custom: custom URL. Required.
@@ -327,7 +329,7 @@ class Category(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertificateObject(_Model):
+class CertificateObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """certificate used for inbound and outbound decryption.
 
     :ivar certificate_signer_resource_id: Resource Id of certificate signer, to be populated only
@@ -437,7 +439,9 @@ class ProxyResource(Resource):
     """
 
 
-class CertificateObjectGlobalRulestackResource(ProxyResource):
+class CertificateObjectGlobalRulestackResource(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GlobalRulestack Certificate Object.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -503,7 +507,9 @@ class CertificateObjectGlobalRulestackResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CertificateObjectLocalRulestackResource(ProxyResource):
+class CertificateObjectLocalRulestackResource(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LocalRulestack Certificate Object.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -569,7 +575,7 @@ class CertificateObjectLocalRulestackResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class Changelog(_Model):
+class Changelog(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Changelog list.
 
     :ivar changes: list of changes. Required.
@@ -611,7 +617,7 @@ class Changelog(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudManagerTenantList(_Model):
+class CloudManagerTenantList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cloud Manager Tenant.
 
     :ivar value: List of Cloud Manager Tenants. Required.
@@ -639,7 +645,7 @@ class CloudManagerTenantList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CountriesResponse(_Model):
+class CountriesResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Countries Response Object.
 
     :ivar value: The Country items on this page. Required.
@@ -672,7 +678,7 @@ class CountriesResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Country(_Model):
+class Country(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Country Description.
 
     :ivar code: country code. Required.
@@ -705,7 +711,7 @@ class Country(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomCaptureConfigurationsFilter(_Model):
+class CustomCaptureConfigurationsFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single packet-capture filter rule. sourcePort is OPTIONAL — when omitted, any source port
     matches.
 
@@ -766,7 +772,9 @@ class CustomCaptureConfigurationsFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomCaptureConfigurationsFirewallResource(ProxyResource):  # pylint: disable=name-too-long
+class CustomCaptureConfigurationsFirewallResource(
+    ProxyResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Custom Capture Configuration on a firewall (singleton). Sync child resource — caller polls GET
     to track pcapStatus until terminal (Success / Failed).
 
@@ -809,7 +817,7 @@ class CustomCaptureConfigurationsFirewallResource(ProxyResource):  # pylint: dis
         super().__init__(*args, **kwargs)
 
 
-class CustomCaptureConfigurationsProperties(_Model):
+class CustomCaptureConfigurationsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a Custom Capture Configuration. NOTE: this is a sync proxy resource, NOT an LRO —
     there is intentionally no provisioningState field.
 
@@ -909,7 +917,7 @@ class CustomCaptureConfigurationsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DestinationAddr(_Model):
+class DestinationAddr(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """destination address.
 
     :ivar cidrs: special value 'any'.
@@ -961,7 +969,7 @@ class DestinationAddr(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DNSSettings(_Model):
+class DNSSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DNS Proxy settings for Firewall.
 
     :ivar enable_dns_proxy: Enable DNS proxy, disabled by default. Known values are: "DISABLED" and
@@ -1007,7 +1015,7 @@ class DNSSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointConfiguration(_Model):
+class EndpointConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Endpoint Configuration for frontend and backend.
 
     :ivar port: port ID. Required.
@@ -1084,7 +1092,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -1112,7 +1120,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventHub(_Model):
+class EventHub(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EventHub configurations.
 
     :ivar id: Resource ID of EventHub.
@@ -1164,7 +1172,7 @@ class EventHub(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FirewallDeploymentProperties(_Model):
+class FirewallDeploymentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties specific to the Firewall resource deployment.
 
     :ivar pan_etag: panEtag info.
@@ -1284,7 +1292,7 @@ class FirewallDeploymentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1328,7 +1336,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class FirewallResource(TrackedResource):
+class FirewallResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PaloAltoNetworks Firewall.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1415,7 +1423,7 @@ class FirewallResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class FirewallResourceUpdate(_Model):
+class FirewallResourceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the FirewallResource.
 
     :ivar identity: The managed service identities assigned to this resource.
@@ -1458,7 +1466,7 @@ class FirewallResourceUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FirewallResourceUpdateProperties(_Model):
+class FirewallResourceUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the FirewallResource.
 
     :ivar pan_etag: panEtag info.
@@ -1562,7 +1570,7 @@ class FirewallResourceUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FirewallStatusProperty(_Model):
+class FirewallStatusProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Firewall Status.
 
     :ivar is_panorama_managed: Panorama Managed: Default is False. Default will be CloudSec
@@ -1631,7 +1639,7 @@ class FirewallStatusProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FirewallStatusResource(ProxyResource):
+class FirewallStatusResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Firewall Status.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1698,7 +1706,7 @@ class FirewallStatusResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class FqdnListGlobalRulestackResource(ProxyResource):
+class FqdnListGlobalRulestackResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GlobalRulestack fqdnList.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1757,7 +1765,7 @@ class FqdnListGlobalRulestackResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class FqdnListLocalRulestackResource(ProxyResource):
+class FqdnListLocalRulestackResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LocalRulestack fqdnList.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1816,7 +1824,7 @@ class FqdnListLocalRulestackResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class FqdnObject(_Model):
+class FqdnObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """fqdn object.
 
     :ivar description: fqdn object description.
@@ -1870,7 +1878,7 @@ class FqdnObject(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FrontendSetting(_Model):
+class FrontendSetting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Frontend setting for Firewall.
 
     :ivar name: Settings name. Required.
@@ -1919,7 +1927,7 @@ class FrontendSetting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GlobalRulestackInfo(_Model):
+class GlobalRulestackInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PAN Rulestack Describe Object.
 
     :ivar azure_id: rulestack description. Required.
@@ -1947,7 +1955,7 @@ class GlobalRulestackInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GlobalRulestackResource(ProxyResource):
+class GlobalRulestackResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PaloAltoNetworks GlobalRulestack.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2029,7 +2037,7 @@ class GlobalRulestackResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class GlobalRulestackResourceUpdate(_Model):
+class GlobalRulestackResourceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the GlobalRulestackResource.
 
     :ivar location: Global Location.
@@ -2073,7 +2081,7 @@ class GlobalRulestackResourceUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GlobalRulestackResourceUpdateProperties(_Model):
+class GlobalRulestackResourceUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the GlobalRulestackResource.
 
     :ivar pan_etag: PanEtag info.
@@ -2149,7 +2157,7 @@ class GlobalRulestackResourceUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IPAddress(_Model):
+class IPAddress(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP Address.
 
     :ivar resource_id: Resource Id.
@@ -2184,7 +2192,7 @@ class IPAddress(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IPAddressSpace(_Model):
+class IPAddressSpace(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP Address Space.
 
     :ivar resource_id: Resource Id.
@@ -2221,7 +2229,7 @@ class IPAddressSpace(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListAppIdResponse(_Model):
+class ListAppIdResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ListAppIdResponse.
 
     :ivar value: Required.
@@ -2253,7 +2261,7 @@ class ListAppIdResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListFirewallsResponse(_Model):
+class ListFirewallsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List firewalls response.
 
     :ivar value: firewalls list. Required.
@@ -2286,7 +2294,7 @@ class ListFirewallsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LocalRulesResource(ProxyResource):
+class LocalRulesResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LocalRulestack rule list.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2366,7 +2374,7 @@ class LocalRulesResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class LocalRulestackResource(TrackedResource):
+class LocalRulestackResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PaloAltoNetworks LocalRulestack.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2449,7 +2457,7 @@ class LocalRulestackResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class LocalRulestackResourceUpdate(_Model):
+class LocalRulestackResourceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the LocalRulestackResource.
 
     :ivar identity: The managed service identities assigned to this resource.
@@ -2493,7 +2501,7 @@ class LocalRulestackResourceUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LocalRulestackResourceUpdateProperties(_Model):
+class LocalRulestackResourceUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the LocalRulestackResource.
 
     :ivar pan_etag: PanEtag info.
@@ -2569,7 +2577,7 @@ class LocalRulestackResourceUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogDestination(_Model):
+class LogDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Log Destination.
 
     :ivar storage_configurations: Storage account configurations.
@@ -2613,7 +2621,174 @@ class LogDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogSettings(_Model):
+class LogDestinationV2(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Log Destination for the Azure Monitor Log Ingestion (Data Collection Rule) method. Carries the
+    DCR-based ``monitorConfigurationsV2``.
+
+    :ivar storage_configurations: Storage account configurations.
+    :vartype storage_configurations: ~azure.mgmt.paloaltonetworksngfw.models.StorageAccount
+    :ivar event_hub_configurations: Event Hub configurations.
+    :vartype event_hub_configurations: ~azure.mgmt.paloaltonetworksngfw.models.EventHub
+    :ivar monitor_configurations_v2: Azure Monitor Log Ingestion (Data Collection Rule)
+     configuration for this destination.
+    :vartype monitor_configurations_v2: ~azure.mgmt.paloaltonetworksngfw.models.MonitorLogV2
+    """
+
+    storage_configurations: Optional["_models.StorageAccount"] = rest_field(
+        name="storageConfigurations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Storage account configurations."""
+    event_hub_configurations: Optional["_models.EventHub"] = rest_field(
+        name="eventHubConfigurations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Event Hub configurations."""
+    monitor_configurations_v2: Optional["_models.MonitorLogV2"] = rest_field(
+        name="monitorConfigurationsV2", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure Monitor Log Ingestion (Data Collection Rule) configuration for this destination."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        storage_configurations: Optional["_models.StorageAccount"] = None,
+        event_hub_configurations: Optional["_models.EventHub"] = None,
+        monitor_configurations_v2: Optional["_models.MonitorLogV2"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LogIngestionSettingsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Log Ingestion Settings for a firewall (Azure Monitor Log Ingestion / Data Collection Rule
+    based).
+
+    :ivar log_type: One of possible log type. Known values are: "TRAFFIC", "THREAT", "DECRYPTION",
+     "WILDFIRE", "DLP", and "AUDIT".
+    :vartype log_type: str or ~azure.mgmt.paloaltonetworksngfw.models.LogType
+    :ivar log_option: Log option SAME/INDIVIDUAL. Known values are: "SAME_DESTINATION" and
+     "INDIVIDUAL_DESTINATION".
+    :vartype log_option: str or ~azure.mgmt.paloaltonetworksngfw.models.LogOption
+    :ivar application_insights: Application Insight details.
+    :vartype application_insights: ~azure.mgmt.paloaltonetworksngfw.models.ApplicationInsights
+    :ivar common_destination: Common destination configurations.
+    :vartype common_destination: ~azure.mgmt.paloaltonetworksngfw.models.LogDestinationV2
+    :ivar traffic_log_destination: Traffic destination configurations.
+    :vartype traffic_log_destination: ~azure.mgmt.paloaltonetworksngfw.models.LogDestinationV2
+    :ivar threat_log_destination: Threat destination configurations.
+    :vartype threat_log_destination: ~azure.mgmt.paloaltonetworksngfw.models.LogDestinationV2
+    :ivar decrypt_log_destination: Decrypt destination configurations.
+    :vartype decrypt_log_destination: ~azure.mgmt.paloaltonetworksngfw.models.LogDestinationV2
+    """
+
+    log_type: Optional[Union[str, "_models.LogType"]] = rest_field(
+        name="logType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """One of possible log type. Known values are: \"TRAFFIC\", \"THREAT\", \"DECRYPTION\",
+     \"WILDFIRE\", \"DLP\", and \"AUDIT\"."""
+    log_option: Optional[Union[str, "_models.LogOption"]] = rest_field(
+        name="logOption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Log option SAME/INDIVIDUAL. Known values are: \"SAME_DESTINATION\" and
+     \"INDIVIDUAL_DESTINATION\"."""
+    application_insights: Optional["_models.ApplicationInsights"] = rest_field(
+        name="applicationInsights", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Application Insight details."""
+    common_destination: Optional["_models.LogDestinationV2"] = rest_field(
+        name="commonDestination", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Common destination configurations."""
+    traffic_log_destination: Optional["_models.LogDestinationV2"] = rest_field(
+        name="trafficLogDestination", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Traffic destination configurations."""
+    threat_log_destination: Optional["_models.LogDestinationV2"] = rest_field(
+        name="threatLogDestination", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Threat destination configurations."""
+    decrypt_log_destination: Optional["_models.LogDestinationV2"] = rest_field(
+        name="decryptLogDestination", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Decrypt destination configurations."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        log_type: Optional[Union[str, "_models.LogType"]] = None,
+        log_option: Optional[Union[str, "_models.LogOption"]] = None,
+        application_insights: Optional["_models.ApplicationInsights"] = None,
+        common_destination: Optional["_models.LogDestinationV2"] = None,
+        traffic_log_destination: Optional["_models.LogDestinationV2"] = None,
+        threat_log_destination: Optional["_models.LogDestinationV2"] = None,
+        decrypt_log_destination: Optional["_models.LogDestinationV2"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LogIngestionSettingsResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Log Ingestion Settings on a firewall (singleton — the name is always 'default'). This is the
+    modern Azure Monitor Log Ingestion (Data Collection Rule based) surface that supersedes the
+    legacy getLogProfile/saveLogProfile actions. Sync child resource — PUT/GET/DELETE forward to
+    the partner synchronously; the caller does not poll a long-running operation.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.paloaltonetworksngfw.models.SystemData
+    :ivar properties: The resource-specific properties for this resource. Required.
+    :vartype properties: ~azure.mgmt.paloaltonetworksngfw.models.LogIngestionSettingsProperties
+    """
+
+    properties: "_models.LogIngestionSettingsProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: "_models.LogIngestionSettingsProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LogSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Log Settings for Firewall.
 
     :ivar log_type: One of possible log type. Known values are: "TRAFFIC", "THREAT", "DECRYPTION",
@@ -2689,7 +2864,7 @@ class LogSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MarketplaceDetails(_Model):
+class MarketplaceDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MarketplaceDetails of PAN Firewall resource.
 
     :ivar marketplace_subscription_id: Marketplace Subscription Id.
@@ -2737,7 +2912,7 @@ class MarketplaceDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricsObject(_Model):
+class MetricsObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Config for Metrics for firewall metrics.
 
     :ivar application_insights_resource_id: Resource Id of application insights resource. Required.
@@ -2789,7 +2964,7 @@ class MetricsObject(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricsObjectFirewallResource(ProxyResource):
+class MetricsObjectFirewallResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Firewall Metrics Object.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2853,7 +3028,7 @@ class MetricsObjectFirewallResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class MonitorLog(_Model):
+class MonitorLog(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MonitorLog configurations.
 
     :ivar id: Resource ID of MonitorLog.
@@ -2907,7 +3082,63 @@ class MonitorLog(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NameDescriptionObject(_Model):
+class MonitorLogV2(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Log collection using the Azure Monitor Log Ingestion API (Data Collection Rule based). This
+    supersedes the legacy HTTP Data Collector ``MonitorLog`` for firewalls that have migrated to
+    the modern DCR ingestion path. When this block is supplied, all four fields are required.
+
+    :ivar dcr_id: ARM resource ID of the Data Collection Rule (DCR) that governs how these logs are
+     transformed and routed. Required.
+    :vartype dcr_id: str
+    :ivar log_ingestion_endpoint: HTTPS logs ingestion endpoint that receives the data (the DCR's
+     logs ingestion endpoint or its Data Collection Endpoint). Required.
+    :vartype log_ingestion_endpoint: str
+    :ivar dcr_immutable_id: Immutable ID of the Data Collection Rule (the value that begins with
+     ``dcr-``). Required.
+    :vartype dcr_immutable_id: str
+    :ivar stream_name: DCR input stream that receives the data. For a custom table this is
+     typically ``Custom-<TableName>``. Required.
+    :vartype stream_name: str
+    """
+
+    dcr_id: str = rest_field(name="dcrId", visibility=["read", "create", "update", "delete", "query"])
+    """ARM resource ID of the Data Collection Rule (DCR) that governs how these logs are transformed
+     and routed. Required."""
+    log_ingestion_endpoint: str = rest_field(
+        name="logIngestionEndpoint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """HTTPS logs ingestion endpoint that receives the data (the DCR's logs ingestion endpoint or its
+     Data Collection Endpoint). Required."""
+    dcr_immutable_id: str = rest_field(
+        name="dcrImmutableId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Immutable ID of the Data Collection Rule (the value that begins with ``dcr-``). Required."""
+    stream_name: str = rest_field(name="streamName", visibility=["read", "create", "update", "delete", "query"])
+    """DCR input stream that receives the data. For a custom table this is typically
+     ``Custom-<TableName>``. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        dcr_id: str,
+        log_ingestion_endpoint: str,
+        dcr_immutable_id: str,
+        stream_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NameDescriptionObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """object type info.
 
     :ivar name: name value. Required.
@@ -2940,7 +3171,7 @@ class NameDescriptionObject(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkProfile(_Model):
+class NetworkProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network settings for Firewall.
 
     :ivar vnet_configuration: Vnet configurations.
@@ -3023,7 +3254,7 @@ class NetworkProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -3111,7 +3342,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class PanoramaConfig(_Model):
+class PanoramaConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Panorama Config.
 
     :ivar config_string: Base64 encoded string representing Panorama parameters to be used by
@@ -3191,7 +3422,7 @@ class PanoramaStatus(_Model):
     """Secondary Panorama connection status. Known values are: \"UP\" and \"DOWN\"."""
 
 
-class PlanData(_Model):
+class PlanData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Billing plan information.
 
     :ivar usage_type: different usage type like PAYG/COMMITTED. Known values are: "PAYG" and
@@ -3242,7 +3473,7 @@ class PlanData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PostRulesResource(ProxyResource):
+class PostRulesResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PostRulestack rule list.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3322,7 +3553,7 @@ class PostRulesResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PredefinedUrlCategoriesResponse(_Model):
+class PredefinedUrlCategoriesResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """predefined url categories response.
 
     :ivar value: The PredefinedUrlCategory items on this page. Required.
@@ -3357,7 +3588,7 @@ class PredefinedUrlCategoriesResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PredefinedUrlCategory(_Model):
+class PredefinedUrlCategory(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Predefined URL category object.
 
     :ivar action: Required.
@@ -3390,7 +3621,7 @@ class PredefinedUrlCategory(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrefixListGlobalRulestackResource(ProxyResource):
+class PrefixListGlobalRulestackResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GlobalRulestack prefixList.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3449,7 +3680,7 @@ class PrefixListGlobalRulestackResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrefixListResource(ProxyResource):
+class PrefixListResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LocalRulestack prefixList.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3508,7 +3739,7 @@ class PrefixListResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrefixObject(_Model):
+class PrefixObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """prefix entry.
 
     :ivar description: prefix description.
@@ -3562,7 +3793,7 @@ class PrefixObject(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PreRulesResource(ProxyResource):
+class PreRulesResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PreRulestack rule list.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3642,7 +3873,7 @@ class PreRulesResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ProductSerialNumberRequestStatus(_Model):
+class ProductSerialNumberRequestStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Create Product Serial Number Request status.
 
     :ivar status: allocation status of the product serial number. Required.
@@ -3670,7 +3901,7 @@ class ProductSerialNumberRequestStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProductSerialNumberStatus(_Model):
+class ProductSerialNumberStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Product serial and status for the service.
 
     :ivar serial_number: product Serial associated with given resource.
@@ -3709,7 +3940,7 @@ class ProductSerialNumberStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RuleCounter(_Model):
+class RuleCounter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rule counter.
 
     :ivar priority: priority number. Required.
@@ -3796,7 +4027,7 @@ class RuleCounter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RuleCounterReset(_Model):
+class RuleCounterReset(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rule counter reset.
 
     :ivar priority: priority number.
@@ -3849,7 +4080,7 @@ class RuleCounterReset(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RuleEntry(_Model):
+class RuleEntry(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """definition of rule.
 
     :ivar etag: etag info.
@@ -3999,7 +4230,7 @@ class RuleEntry(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RulestackDetails(_Model):
+class RulestackDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Associated rulestack details.
 
     :ivar resource_id: Resource Id.
@@ -4041,7 +4272,7 @@ class RulestackDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RulestackProperties(_Model):
+class RulestackProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PAN Rulestack Describe Object.
 
     :ivar pan_etag: PanEtag info.
@@ -4126,7 +4357,7 @@ class RulestackProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityServices(_Model):
+class SecurityServices(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """security services.
 
     :ivar vulnerability_profile: IPs Vulnerability Profile Data.
@@ -4205,7 +4436,7 @@ class SecurityServices(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityServicesResponse(_Model):
+class SecurityServicesResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security services list response.
 
     :ivar value: response value. Required.
@@ -4238,7 +4469,7 @@ class SecurityServicesResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityServicesTypeList(_Model):
+class SecurityServicesTypeList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security services type list.
 
     :ivar type: security services type.
@@ -4273,7 +4504,7 @@ class SecurityServicesTypeList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceAddr(_Model):
+class SourceAddr(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Address properties.
 
     :ivar cidrs: special value 'any'.
@@ -4318,7 +4549,7 @@ class SourceAddr(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageAccount(_Model):
+class StorageAccount(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage Account configurations.
 
     :ivar id: Resource ID of storage account.
@@ -4360,7 +4591,7 @@ class StorageAccount(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StrataCloudManagerConfig(_Model):
+class StrataCloudManagerConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This field is only present if Strata Cloud Manager is managing the policy for this firewall.
 
     :ivar cloud_manager_name: Strata Cloud Manager name which is intended to manage the policy for
@@ -4391,7 +4622,7 @@ class StrataCloudManagerConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StrataCloudManagerInfo(_Model):
+class StrataCloudManagerInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Strata Cloud Manager Info.
 
     :ivar folder_name: Strata Cloud Manager folder in which this firewall has been placed.
@@ -4426,7 +4657,7 @@ class StrataCloudManagerInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SupportInfo(_Model):
+class SupportInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Support information for the resource.
 
     :ivar product_sku: product SKU associated with given resource.
@@ -4532,7 +4763,7 @@ class SupportInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SupportInfoModel(_Model):
+class SupportInfoModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Support information for the service.
 
     :ivar product_sku: product SKU associated with given resource.
@@ -4656,7 +4887,7 @@ class SupportInfoModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -4723,7 +4954,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagInfo(_Model):
+class TagInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tag.
 
     :ivar key: tag name. Required.
@@ -4756,7 +4987,7 @@ class TagInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VnetConfiguration(_Model):
+class VnetConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VnetInfo for Firewall Networking.
 
     :ivar vnet: Azure Virtual Network. Required.
@@ -4805,7 +5036,7 @@ class VnetConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VwanConfiguration(_Model):
+class VwanConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VwanInfo for Firewall Networking.
 
     :ivar network_virtual_appliance_id: Network Virtual Appliance resource ID.
