@@ -8340,7 +8340,6 @@ namespace azure.ai.projects.models
         code_configuration: Optional[CodeConfiguration]
         container_configuration: Optional[ContainerConfiguration]
         cpu: str
-        enable_memory_snapshot: Optional[bool]
         environment_variables: Optional[dict[str, str]]
         kind: Literal[AgentKind.HOSTED]
         memory: str
@@ -8356,7 +8355,6 @@ namespace azure.ai.projects.models
                 code_configuration: Optional[CodeConfiguration] = ..., 
                 container_configuration: Optional[ContainerConfiguration] = ..., 
                 cpu: str, 
-                enable_memory_snapshot: Optional[bool] = ..., 
                 environment_variables: Optional[dict[str, str]] = ..., 
                 memory: str, 
                 protocol_versions: Optional[list[ProtocolVersionRecord]] = ..., 
