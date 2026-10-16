@@ -215,6 +215,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
                                                     "applicationSecurityGroups": [{"id": "str"}],
                                                     "loadBalancerBackendAddressPools": [{"id": "str"}],
                                                     "primary": bool,
+                                                    "privateIPAddressPrefixLength": 0,
                                                     "privateIPAddressVersion": "str",
                                                     "publicIPAddressConfiguration": {
                                                         "name": "str",
@@ -280,6 +281,7 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperationsAsync(AzureMgmtRec
                                                     "loadBalancerBackendAddressPools": [{"id": "str"}],
                                                     "loadBalancerInboundNatPools": [{"id": "str"}],
                                                     "primary": bool,
+                                                    "privateIPAddressPrefixLength": 0,
                                                     "privateIPAddressVersion": "str",
                                                     "publicIPAddressConfiguration": {
                                                         "name": "str",
