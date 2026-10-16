@@ -17,7 +17,6 @@ import pytest
 from azure.core.credentials import AccessToken
 from azure.ai.projects import AIProjectClient
 
-
 _PRIVATE = "SENSITIVE-PAYLOAD-DO-NOT-LOG"
 
 

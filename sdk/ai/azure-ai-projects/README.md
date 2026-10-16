@@ -316,7 +316,7 @@ project_client = AIProjectClient(
 
 Note that the log level must be set to `logging.DEBUG` (see above code). Logs will be redacted with any other log level.
 
-See the logging samples in the `samples/logs/` folder for complete end-to-end examples, including console logging, file logging, OpenAI transport logging, and Voice Agent realtime logging (`sample_log_from_voice_agent.py`).
+See the logging samples in the `samples/logs/` folder for complete end-to-end examples, including console logging, file logging, OpenAI transport logging, and Voice Agent realtime logging.
 
 Be sure to protect non-redacted logs to avoid compromising security.
 

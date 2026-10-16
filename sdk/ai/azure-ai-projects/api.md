@@ -9434,6 +9434,71 @@ namespace azure.ai.projects.models
         TENANT = "Tenant"
 
 
+    class azure.ai.projects.models.MicrosoftCopilotBuiltInTool(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FILESYSTEM_READ = "filesystem_read"
+        FILESYSTEM_WRITE = "filesystem_write"
+        SHELL = "shell"
+        SUBAGENTS = "subagents"
+        WEB = "web"
+
+
+    class azure.ai.projects.models.MicrosoftCopilotHarness(AgentHarness, discriminator='microsoft_copilot_preview'):
+        type: Literal["microsoft_copilot_preview"]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.MicrosoftCopilotToolsetConfig(_Model):
+        enabled: Optional[bool]
+        name: Union[str, MicrosoftCopilotBuiltInTool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                enabled: Optional[bool] = ..., 
+                name: Union[str, MicrosoftCopilotBuiltInTool]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.MicrosoftCopilotToolsetDefaultConfig(_Model):
+        enabled: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                enabled: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.MicrosoftCopilotToolsetPreview(Tool, discriminator='microsoft_copilot_toolset_preview'):
+        configs: Optional[list[MicrosoftCopilotToolsetConfig]]
+        default_config: Optional[MicrosoftCopilotToolsetDefaultConfig]
+        type: Literal[ToolType.MICROSOFT_COPILOT_TOOLSET_PREVIEW]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                configs: Optional[list[MicrosoftCopilotToolsetConfig]] = ..., 
+                default_config: Optional[MicrosoftCopilotToolsetDefaultConfig] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.MicrosoftFabricPreviewTool(Tool, discriminator='fabric_dataagent_preview'):
         fabric_dataagent_preview: FabricDataAgentToolParameters
         type: Literal[ToolType.FABRIC_DATAAGENT_PREVIEW]
@@ -14458,6 +14523,7 @@ namespace azure.ai.projects.models
         LOCAL_SHELL = "local_shell"
         MCP = "mcp"
         MEMORY_SEARCH_PREVIEW = "memory_search_preview"
+        MICROSOFT_COPILOT_TOOLSET_PREVIEW = "microsoft_copilot_toolset_preview"
         NAMESPACE = "namespace"
         OPENAPI = "openapi"
         PROGRAMMATIC_TOOL_CALLING = "programmatic_tool_calling"

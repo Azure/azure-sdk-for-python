@@ -28,6 +28,8 @@ class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """GITHUB_COPILOT_V1_PREVIEW."""
     SKILLS_V1_PREVIEW = "Skills=V1Preview"
     """SKILLS_V1_PREVIEW."""
+    MICROSOFT_COPILOT_V1_PREVIEW = "MicrosoftCopilot=V1Preview"
+    """The Microsoft Copilot V1 preview feature opt-in."""
 
 
 class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -901,7 +903,9 @@ class GenerationWarningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class GitHubCopilotBuiltInTool(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A customer-configurable GitHub Copilot built-in tool."""
+    """The legacy GitHub Copilot built-in tool names retained for compatibility. Use
+    ``MicrosoftCopilotBuiltInTool`` for new integrations.
+    """
 
     FILESYSTEM_READ = "filesystem_read"
     """Read and search files in the harness workspace."""
@@ -1060,6 +1064,21 @@ class Microsoft365PublishScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Publish the app to a shared scope within the organization."""
     TENANT = "Tenant"
     """Publish the app tenant-wide."""
+
+
+class MicrosoftCopilotBuiltInTool(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A customer-configurable Microsoft Copilot built-in tool."""
+
+    FILESYSTEM_READ = "filesystem_read"
+    """Read and search files in the harness workspace."""
+    FILESYSTEM_WRITE = "filesystem_write"
+    """Create and modify files in the harness workspace."""
+    SHELL = "shell"
+    """Execute operating-system commands."""
+    WEB = "web"
+    """Fetch content and search external network resources."""
+    SUBAGENTS = "subagents"
+    """Delegate work to additional agents."""
 
 
 class MisalignmentErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2312,6 +2331,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CAPTURE_STRUCTURED_OUTPUTS."""
     OPENAPI = "openapi"
     """OPENAPI."""
+    MICROSOFT_COPILOT_TOOLSET_PREVIEW = "microsoft_copilot_toolset_preview"
+    """MICROSOFT_COPILOT_TOOLSET_PREVIEW."""
 
 
 class TreatmentEffectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

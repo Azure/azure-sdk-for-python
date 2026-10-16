@@ -179,8 +179,8 @@ class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
     BrowserAutomationPreviewTool, CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerTool,
     ComputerUsePreviewTool, CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool,
     FileSearchTool, FunctionTool, GitHubCopilotToolsetPreview, ImageGenTool, LocalShellToolParam,
-    MCPTool, MemorySearchPreviewTool, NamespaceToolParam, OpenApiTool,
-    ProgrammaticToolCallingParam, SharepointPreviewTool, FunctionShellToolParam,
+    MCPTool, MemorySearchPreviewTool, MicrosoftCopilotToolsetPreview, NamespaceToolParam,
+    OpenApiTool, ProgrammaticToolCallingParam, SharepointPreviewTool, FunctionShellToolParam,
     ToolSearchToolParam, WebIQPreviewTool, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
 
     :ivar type: Required. Known values are: "function", "file_search", "computer",
@@ -190,7 +190,8 @@ class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
      "browser_automation_preview", "fabric_dataagent_preview", "sharepoint_grounding_preview",
      "memory_search_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview",
      "web_iq_preview", "github_copilot_toolset_preview", "a2a", "azure_ai_search", "azure_function",
-     "bing_grounding", "browser_automation", "capture_structured_outputs", and "openapi".
+     "bing_grounding", "browser_automation", "capture_structured_outputs", "openapi", and
+     "microsoft_copilot_toolset_preview".
     :vartype type: str or ~azure.ai.projects.models.ToolType
     """
 
@@ -204,7 +205,8 @@ class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
      \"sharepoint_grounding_preview\", \"memory_search_preview\", \"work_iq_preview\",
      \"fabric_iq_preview\", \"toolbox_search_preview\", \"web_iq_preview\",
      \"github_copilot_toolset_preview\", \"a2a\", \"azure_ai_search\", \"azure_function\",
-     \"bing_grounding\", \"browser_automation\", \"capture_structured_outputs\", and \"openapi\"."""
+     \"bing_grounding\", \"browser_automation\", \"capture_structured_outputs\", \"openapi\", and
+     \"microsoft_copilot_toolset_preview\"."""
 
     @overload
     def __init__(
@@ -1276,7 +1278,7 @@ class AgentHarness(_Model):  # pylint: disable=docstring-keyword-should-match-ke
     """A managed runtime and agent loop used to execute a prompt agent.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    GitHubCopilotHarness
+    GitHubCopilotHarness, MicrosoftCopilotHarness
 
     :ivar type: The type of managed harness. Required. Default value is None.
     :vartype type: str
@@ -12067,15 +12069,18 @@ class GenerateVoiceAgentRequest(_Model):  # pylint: disable=docstring-keyword-sh
 
 
 class GitHubCopilotHarness(AgentHarness, discriminator="github_copilot_preview"):
-    """The GitHub Copilot managed harness for prompt agents.
+    """The legacy GitHub Copilot managed harness retained for compatibility. Use
+    ``MicrosoftCopilotHarness`` for new prompt agents.
 
-    :ivar type: The type of managed harness. Always ``github_copilot_preview``. Required. Default
-     value is "github_copilot_preview".
+    :ivar type: The legacy type of managed harness. Always ``github_copilot_preview``; use
+     ``microsoft_copilot_preview`` for new prompt agents. Required. Default value is
+     "github_copilot_preview".
     :vartype type: str
     """
 
     type: Literal["github_copilot_preview"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of managed harness. Always ``github_copilot_preview``. Required. Default value is
+    """The legacy type of managed harness. Always ``github_copilot_preview``; use
+     ``microsoft_copilot_preview`` for new prompt agents. Required. Default value is
      \"github_copilot_preview\"."""
 
     @overload
@@ -12096,7 +12101,8 @@ class GitHubCopilotHarness(AgentHarness, discriminator="github_copilot_preview")
 
 
 class GitHubCopilotToolsetConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """An enablement override for a GitHub Copilot built-in tool.
+    """The legacy per-tool enablement override retained for compatibility. Use
+    ``MicrosoftCopilotToolsetConfig`` for new integrations.
 
     :ivar name: The built-in tool to configure. Required. Known values are: "filesystem_read",
      "filesystem_write", "shell", "web", and "subagents".
@@ -12133,7 +12139,8 @@ class GitHubCopilotToolsetConfig(_Model):  # pylint: disable=docstring-keyword-s
 
 
 class GitHubCopilotToolsetDefaultConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The default enablement setting for GitHub Copilot built-in tools.
+    """The legacy default enablement setting retained for compatibility. Use
+    ``MicrosoftCopilotToolsetDefaultConfig`` for new integrations.
 
     :ivar enabled: Whether built-in tools are enabled by default. Defaults to true.
     :vartype enabled: bool
@@ -12163,9 +12170,11 @@ class GitHubCopilotToolsetDefaultConfig(_Model):  # pylint: disable=docstring-ke
 class GitHubCopilotToolsetPreview(
     Tool, discriminator="github_copilot_toolset_preview"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Configuration overrides for GitHub Copilot built-in tools.
+    """The legacy GitHub Copilot toolset retained for compatibility. Use
+    ``MicrosoftCopilotToolsetPreview`` for new integrations.
 
-    :ivar type: The type of the toolset. Always ``github_copilot_toolset_preview``. Required.
+    :ivar type: The legacy type of the toolset. Always ``github_copilot_toolset_preview``; use
+     ``microsoft_copilot_toolset_preview`` for new integrations. Required.
      GITHUB_COPILOT_TOOLSET_PREVIEW.
     :vartype type: str or ~azure.ai.projects.models.GITHUB_COPILOT_TOOLSET_PREVIEW
     :ivar default_config: The default configuration for built-in tools. If omitted, built-in tools
@@ -12176,7 +12185,8 @@ class GitHubCopilotToolsetPreview(
     """
 
     type: Literal[ToolType.GITHUB_COPILOT_TOOLSET_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the toolset. Always ``github_copilot_toolset_preview``. Required.
+    """The legacy type of the toolset. Always ``github_copilot_toolset_preview``; use
+     ``microsoft_copilot_toolset_preview`` for new integrations. Required.
      GITHUB_COPILOT_TOOLSET_PREVIEW."""
     default_config: Optional["_models.GitHubCopilotToolsetDefaultConfig"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -14902,6 +14912,148 @@ class Microsoft365PublishResult(_Model):  # pylint: disable=docstring-keyword-sh
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class MicrosoftCopilotHarness(AgentHarness, discriminator="microsoft_copilot_preview"):
+    """The Microsoft Copilot managed harness for prompt agents.
+
+    :ivar type: The type of managed harness. Always ``microsoft_copilot_preview``. Required.
+     Default value is "microsoft_copilot_preview".
+    :vartype type: str
+    """
+
+    type: Literal["microsoft_copilot_preview"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of managed harness. Always ``microsoft_copilot_preview``. Required. Default value is
+     \"microsoft_copilot_preview\"."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = "microsoft_copilot_preview"  # type: ignore
+
+
+class MicrosoftCopilotToolsetConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An enablement override for a Microsoft Copilot built-in tool.
+
+    :ivar name: The built-in tool to configure. Required. Known values are: "filesystem_read",
+     "filesystem_write", "shell", "web", and "subagents".
+    :vartype name: str or ~azure.ai.projects.models.MicrosoftCopilotBuiltInTool
+    :ivar enabled: Whether the built-in tool is enabled. If omitted, the toolset default applies.
+    :vartype enabled: bool
+    """
+
+    name: Union[str, "_models.MicrosoftCopilotBuiltInTool"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The built-in tool to configure. Required. Known values are: \"filesystem_read\",
+     \"filesystem_write\", \"shell\", \"web\", and \"subagents\"."""
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the built-in tool is enabled. If omitted, the toolset default applies."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Union[str, "_models.MicrosoftCopilotBuiltInTool"],
+        enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MicrosoftCopilotToolsetDefaultConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The default enablement setting for Microsoft Copilot built-in tools.
+
+    :ivar enabled: Whether built-in tools are enabled by default. Defaults to true.
+    :vartype enabled: bool
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether built-in tools are enabled by default. Defaults to true."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MicrosoftCopilotToolsetPreview(
+    Tool, discriminator="microsoft_copilot_toolset_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration overrides for Microsoft Copilot built-in tools.
+
+    :ivar type: The type of the toolset. Always ``microsoft_copilot_toolset_preview``. Required.
+     MICROSOFT_COPILOT_TOOLSET_PREVIEW.
+    :vartype type: str or ~azure.ai.projects.models.MICROSOFT_COPILOT_TOOLSET_PREVIEW
+    :ivar default_config: The default configuration for built-in tools. If omitted, built-in tools
+     are enabled by default.
+    :vartype default_config: ~azure.ai.projects.models.MicrosoftCopilotToolsetDefaultConfig
+    :ivar configs: Per-tool configuration overrides. Duplicate built-in tool names are not allowed.
+    :vartype configs: list[~azure.ai.projects.models.MicrosoftCopilotToolsetConfig]
+    """
+
+    type: Literal[ToolType.MICROSOFT_COPILOT_TOOLSET_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the toolset. Always ``microsoft_copilot_toolset_preview``. Required.
+     MICROSOFT_COPILOT_TOOLSET_PREVIEW."""
+    default_config: Optional["_models.MicrosoftCopilotToolsetDefaultConfig"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The default configuration for built-in tools. If omitted, built-in tools are enabled by
+     default."""
+    configs: Optional[list["_models.MicrosoftCopilotToolsetConfig"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Per-tool configuration overrides. Duplicate built-in tool names are not allowed."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        default_config: Optional["_models.MicrosoftCopilotToolsetDefaultConfig"] = None,
+        configs: Optional[list["_models.MicrosoftCopilotToolsetConfig"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.MICROSOFT_COPILOT_TOOLSET_PREVIEW  # type: ignore
 
 
 class MicrosoftFabricPreviewTool(

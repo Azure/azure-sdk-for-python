@@ -6,6 +6,7 @@
 
 * Added experimental Voice Agents REST and realtime tracing through `AIProjectInstrumentor`, including correlated session, connection and response spans, tool/lifecycle events, aggregate audio sizes and existing GenAI response metrics. Existing tracing and content-recording settings apply; message content is not captured by default.
 * Added an optional `transport` keyword on synchronous and asynchronous realtime `connect()` using `VoiceAgentTransport.WEBSOCKET` or `VoiceAgentTransport.WEBRTC`. The SDK constructs the transport wire query internally.
+* Added preview Microsoft Copilot managed harness and toolset support for prompt agents through `MicrosoftCopilotHarness`, `MicrosoftCopilotToolsetPreview`, `MicrosoftCopilotToolsetConfig`, `MicrosoftCopilotToolsetDefaultConfig`, and `MicrosoftCopilotBuiltInTool`, with `ToolType.MICROSOFT_COPILOT_TOOLSET_PREVIEW`. The existing GitHub Copilot types remain available for compatibility.
 
 ### Breaking Changes
 

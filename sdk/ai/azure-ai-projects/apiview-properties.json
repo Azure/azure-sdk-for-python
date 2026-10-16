@@ -318,6 +318,10 @@
         "azure.ai.projects.models.Microsoft365PermissionScopes": "Azure.AI.Projects.Microsoft365PermissionScopes",
         "azure.ai.projects.models.Microsoft365PublishDefaults": "Azure.AI.Projects.Microsoft365PublishDefaults",
         "azure.ai.projects.models.Microsoft365PublishResult": "Azure.AI.Projects.Microsoft365PublishResponse",
+        "azure.ai.projects.models.MicrosoftCopilotHarness": "Azure.AI.Projects.MicrosoftCopilotHarness",
+        "azure.ai.projects.models.MicrosoftCopilotToolsetConfig": "Azure.AI.Projects.MicrosoftCopilotToolsetConfig",
+        "azure.ai.projects.models.MicrosoftCopilotToolsetDefaultConfig": "Azure.AI.Projects.MicrosoftCopilotToolsetDefaultConfig",
+        "azure.ai.projects.models.MicrosoftCopilotToolsetPreview": "Azure.AI.Projects.MicrosoftCopilotToolsetPreview",
         "azure.ai.projects.models.MicrosoftFabricPreviewTool": "Azure.AI.Projects.MicrosoftFabricPreviewTool",
         "azure.ai.projects.models.MisalignmentErrorDetailsResource": "OpenAI.MisalignmentErrorDetailsResource",
         "azure.ai.projects.models.MisalignmentSteer": "OpenAI._MisalignmentSteer",
@@ -720,6 +724,7 @@
         "azure.ai.projects.models.GitHubCopilotBuiltInTool": "Azure.AI.Projects.GitHubCopilotBuiltInTool",
         "azure.ai.projects.models.InputFidelity": "OpenAI.InputFidelity",
         "azure.ai.projects.models.ImageGenAction": "OpenAI.ImageGenActionEnum",
+        "azure.ai.projects.models.MicrosoftCopilotBuiltInTool": "Azure.AI.Projects.MicrosoftCopilotBuiltInTool",
         "azure.ai.projects.models.OpenApiAuthType": "Azure.AI.Projects.OpenApiAuthType",
         "azure.ai.projects.models.FunctionShellToolParamEnvironmentType": "OpenAI.FunctionShellToolParamEnvironmentType",
         "azure.ai.projects.models.ContainerSkillType": "OpenAI.ContainerSkillType",
@@ -994,5 +999,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "991ba9808509"
+    "CrossLanguageVersion": "05e1b80a337b"
 }
