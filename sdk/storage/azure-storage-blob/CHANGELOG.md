@@ -5,6 +5,9 @@
 ### Features Added
 
 ### Bugs Fixed
+- Fixed UTC conversion of timezone-aware datetimes in `generate_account_sas`, `generate_container_sas`,
+  `generate_blob_sas`, and `BlobServiceClient.get_user_delegation_key` (sync and async).
+  Datetimes without timezone information continue to be treated as UTC.
 - Fixed an issue with the new generation where listing page ranges for an empty page blob could raise a `ValueError` instead of returning
   an empty list.
 - Fixed an issue where a SAS generated for a blob name containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
