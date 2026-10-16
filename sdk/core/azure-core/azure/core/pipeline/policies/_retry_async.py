@@ -26,6 +26,7 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
+
 from typing import TypeVar, Dict, Any, Optional, cast
 import logging
 import time
