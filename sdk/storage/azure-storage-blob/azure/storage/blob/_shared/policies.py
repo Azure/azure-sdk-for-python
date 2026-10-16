@@ -73,6 +73,13 @@ _LOG_REDACTED_HEADERS = frozenset(
         "x-ms-source-encryption-key",
     }
 )
+_LOG_SAS_URL_HEADERS = frozenset(
+    {
+        "x-ms-copy-source",
+        "x-ms-file-rename-source",
+        "x-ms-rename-source",
+    }
+)
 
 
 def _remove_sas_from_url(value: str) -> str:
@@ -85,7 +92,7 @@ def _remove_sas_from_url(value: str) -> str:
 def _redact_header_for_log(name: str, value: Any) -> Any:
     if name.lower() in _LOG_REDACTED_HEADERS:
         return _LOG_REDACTED
-    if "sig=" in str(value).lower():
+    if name.lower() in _LOG_SAS_URL_HEADERS or "sig=" in str(value).lower():
         return _remove_sas_from_url(str(value))
     return value
 
