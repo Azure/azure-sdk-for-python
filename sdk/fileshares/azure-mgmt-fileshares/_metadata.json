@@ -1,10 +1,11 @@
 {
-  "apiVersion": "2026-06-01",
+  "apiVersion": "2026-09-01",
   "apiVersions": {
-    "Microsoft.FileShares": "2026-06-01"
+    "Microsoft.FileShares": "2026-09-01"
   },
-  "commit": "75ca22c5387184fb1f0c3b115ed22a006813800d",
+  "commit": "cf4aa9847c9ac23bbe7c05c2c89b17ba10de9648",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/fileshares/resource-manager/Microsoft.FileShares/FileShares",
-  "emitterVersion": "0.61.3"
+  "emitterVersion": "0.63.9",
+  "httpClientPythonVersion": "0.38.1"
 }

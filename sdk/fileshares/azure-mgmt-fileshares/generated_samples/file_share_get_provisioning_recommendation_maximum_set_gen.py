@@ -32,11 +32,11 @@ def main():
 
     response = client.informational_operations.get_provisioning_recommendation(
         location="westus",
-        body={"properties": {"provisionedStorageGiB": 7}},
+        body={"properties": {"mediaTier": "HDD", "protocol": "NFS", "provisionedStorageGiB": 7, "scaleMode": "Scale"}},
     )
     print(response)
 
 
-# x-ms-original-file: 2026-06-01/FileShare_GetProvisioningRecommendation_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-01/FileShare_GetProvisioningRecommendation_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
