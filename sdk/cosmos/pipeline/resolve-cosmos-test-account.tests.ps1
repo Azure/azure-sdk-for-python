@@ -114,7 +114,7 @@ Test-Case 'emits SECONDARY_ACCOUNT_KEY only when the account defines one' {
     Assert-True ($withoutSecondary.StdOut -notmatch 'SECONDARY_ACCOUNT_KEY') 'SECONDARY_ACCOUNT_KEY emitted when absent'
 }
 
-Test-Case 'prefixes selected credentials for transport across deployment' {
+Test-Case 'supports an optional prefix for standalone callers' {
     $r = Invoke-Resolver -Json $script:ValidJson -Selector 'multimaster-multiregion-session' -VariablePrefix 'COSMOS_FIXED_'
     Assert-True ($r.ExitCode -eq 0) "expected exit 0, got $($r.ExitCode): $($r.StdErr)"
     Assert-True ($r.StdOut -match '(?m)^COSMOS_FIXED_ACCOUNT_HOST=https://multi-region\.example\.com:443/\r?$') 'prefixed host not emitted'
@@ -210,15 +210,17 @@ Test-Case 'emits ADO logging commands, using the double-set convention for secre
             '-NoLogo', '-NoProfile', '-NonInteractive',
             '-File', $script:Resolver,
             '-AccountsJson', $script:ValidJson,
-            '-Selector', 'multimaster-multiregion-session',
-            '-VariablePrefix', 'COSMOS_FIXED_'
+            '-Selector', 'multimaster-multiregion-session'
         )
         $stdout = (& pwsh @arguments 2>$stderrFile | Out-String)
         Assert-True ($LASTEXITCODE -eq 0) "expected exit 0, got $LASTEXITCODE"
-        Assert-True ($stdout -match '\#\#vso\[task\.setvariable variable=_COSMOS_FIXED_ACCOUNT_HOST;issecret=true\]') 'prefixed ACCOUNT_HOST must be registered with the log scrubber'
-        Assert-True ($stdout -match '\#\#vso\[task\.setvariable variable=COSMOS_FIXED_ACCOUNT_HOST;issecret=false\]') 'prefixed ACCOUNT_HOST must also be set plainly so it reaches the post-deployment hook'
-        Assert-True ($stdout -match '\#\#vso\[task\.setvariable variable=_COSMOS_FIXED_ACCOUNT_KEY;issecret=true\]') 'prefixed ACCOUNT_KEY must be registered with the log scrubber'
-        Assert-True ($stdout -match '\#\#vso\[task\.setvariable variable=COSMOS_FIXED_ACCOUNT_KEY;issecret=false\]') 'prefixed ACCOUNT_KEY must also be set plainly so it reaches the post-deployment hook'
+        foreach ($name in @('ACCOUNT_HOST', 'ACCOUNT_KEY', 'SECONDARY_ACCOUNT_KEY')) {
+            $secret = $stdout.IndexOf("##vso[task.setvariable variable=_$name;issecret=true]")
+            $plain = $stdout.IndexOf("##vso[task.setvariable variable=$name;issecret=false]")
+            Assert-True ($secret -ge 0 -and $plain -gt $secret) "$name must be masked before being exported to tests"
+        }
+        Assert-True ($stdout -notmatch 'COSMOS_FIXED_') 'pipeline credentials must use normal ACCOUNT_* names'
+        Assert-True ($stdout -notmatch 'primary-key-single') 'an unselected account key must not be exported'
         Assert-True ($stdout -notmatch 'key=primary-key-mm') 'the summary line must not echo the key'
     }
     finally {

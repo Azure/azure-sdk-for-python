@@ -40,6 +40,37 @@ Legacy DocumentDB SDK.
 
 Use this package if you are maintaining legacy applications that can't be upgrade for the latest features and optimizations.
 
+## Live-test accounts
+
+`tests.yml` runs two matrices through the shared Python live-test templates:
+
+- `fixed-account-platform-matrix.json` contains key-auth jobs with an `AccountSelector`.
+  These jobs omit subscription configuration, Azure resource deployment, provisioning login,
+  and resource cleanup at template expansion. Tests run in plain PowerShell without a
+  service-connection login or a `CI_HAS_DEPLOYED_RESOURCES` requirement.
+- `live-platform-matrix.json` retains the AAD and GSI jobs. Their provisioning, AAD role
+  assignments, federated test authentication, and cleanup are unchanged.
+
+The fixed-account pre-step selects credentials from the secret
+`sub-config-cosmos-azure-cloud-test-resources` in the existing Cosmos live-test variable
+group. It exports `ACCOUNT_HOST`, `ACCOUNT_KEY`, and optional `SECONDARY_ACCOUNT_KEY`
+directly, registering each with the Azure Pipelines log scrubber before setting the
+environment-visible variable. The aggregate JSON is mapped only into the resolver task.
+A missing selector or invalid configuration fails the job rather than falling back to
+provisioning. There is no post-deployment credential rebinding.
+
+When adding a key-auth job, put it in the fixed-account matrix and specify its selector.
+Set client-side options such as `AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER` in that matrix;
+fixed jobs do not receive Bicep outputs. Retained `ArmConfig` labels preserve existing
+job names and filters but do not cause deployment.
+
+Offline regression checks (no Azure login or live provisioning):
+
+```sh
+pwsh -NoProfile -File sdk/cosmos/pipeline/resolve-cosmos-test-account.tests.ps1
+python3 -m unittest discover -s sdk/cosmos/pipeline -p 'test_*.py'
+```
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
