@@ -54,7 +54,9 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class CdnManagementClient(_CdnManagementClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
+class CdnManagementClient(
+    _CdnManagementClientOperationsMixin
+):  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Use these APIs to manage Azure Front Door and CDN resources through the Azure Resource Manager.
     You must make sure that requests made to these resources are secure.
 
@@ -109,7 +111,7 @@ class CdnManagementClient(_CdnManagementClientOperationsMixin):  # pylint: disab
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2025-12-01"
+    :keyword api_version: The API version to use for this operation. Known values are "2026-07-01"
      and None. Default value is None. If not set, the operation's default API version will be used.
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
