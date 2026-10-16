@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
 from ._operations import QuotaOperationOperations  # type: ignore
 from ._operations import QuotaRequestStatusOperations  # type: ignore
+from ._operations import QuotaTransfersOperations  # type: ignore
+from ._operations import IncomingQuotaTransfersOperations  # type: ignore
 from ._operations import GroupQuotasOperations  # type: ignore
 from ._operations import GroupQuotaLimitsRequestOperations  # type: ignore
 from ._operations import GroupQuotaUsagesOperations  # type: ignore
@@ -33,6 +35,8 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "QuotaOperationOperations",
     "QuotaRequestStatusOperations",
+    "QuotaTransfersOperations",
+    "IncomingQuotaTransfersOperations",
     "GroupQuotasOperations",
     "GroupQuotaLimitsRequestOperations",
     "GroupQuotaUsagesOperations",
