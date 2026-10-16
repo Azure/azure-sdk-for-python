@@ -2374,6 +2374,17 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 attachments_patch[_ref_key(next_entry)] = None
             next_input_raw = _read_input_value(next_entry, task_info.attachments)
 
+            # Admission and recovery must see the promoted turn as the current input.
+            input_mode, input_value = _resolve_input_storage(
+                next_input_raw,
+                threshold_bytes=_INPUT_THRESHOLD_BYTES,
+                key_for_attachment=_FUNCTION_INPUT_KEY,
+                task_id=task_id,
+            )
+            payload["input"] = input_value
+            if input_mode == "attachment":
+                attachments_patch[_FUNCTION_INPUT_KEY] = next_input_raw
+
             # Update steering state. (: previous_input is
             # no longer mirrored into _steering; only the active input + queue
             # state need to survive a crash mid-drain.)

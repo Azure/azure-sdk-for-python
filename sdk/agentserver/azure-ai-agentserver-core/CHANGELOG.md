@@ -2,9 +2,15 @@
 
 ## 2.3.0b2 (Unreleased)
 
+### Features Added
+
+### Breaking Changes
+
 ### Bugs Fixed
 
 - Extended W3C trace context and baggage propagation to WebSocket connections so spans created by `invocations_ws` handlers inherit caller context and A365 correlation data.
+
+### Other Changes
 
 ## 2.3.0b1 (2026-10-15)
 
