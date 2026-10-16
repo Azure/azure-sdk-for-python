@@ -1,0 +1,2202 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+"""Offline parity gate for the generated preview against immutable Loom.
+
+Run with the existing Python environment (azure-core and the SDK dependencies
+must already be installed):
+
+    python scripts/verify_compatibility.py --loom-repo C:\\path\\to\\loom
+
+The parent imports neither SDK. Two fresh, isolated Python subprocesses import
+azure.ai.finetuningsessions from their respective source roots, run all 20 cases
+with real clients and buffered fake transports, and return JSON snapshots.
+The reference is materialized from the immutable commit in eng/generation/reference.json,
+not from the possibly older or dirty Loom working tree. Upstream test files and
+the reference hashes are exact; customer-facing API and behavior must match
+except fixed, guarded review contracts. The immutable reference always uses
+its original fixtures; candidate fixture adaptations require those contracts.
+Supported internal hook organization may differ.
+Both workers use their default routes without a route-selection flag. URLs are checked at the
+transport boundary, NEVER rewritten by this verifier. No install, generation,
+package alias, test-module import, or service is involved.
+
+Internal inspection interface:
+
+    python scripts/verify_compatibility.py --snapshot <package-directory>
+    python scripts/verify_compatibility.py --snapshot <package-directory> --legacy-routes
+
+Snapshots contain no wall-clock timestamps, process IDs, random request IDs, or task reprs.
+They retain complete JSON request/result bodies and numeric types. Only header
+casing, a validated client-request UUID, and the exact Python/platform user-agent
+suffix are normalized. The SDK user-agent moniker/version remain checked.
+Workload limits are printed separately from exact snapshot parity.
+Exit codes: 0 = pass, 1 = case/comparison failure, 2 = setup/worker failure.
+"""
+
+from __future__ import annotations
+
+import argparse
+from copy import deepcopy
+import asyncio
+import base64
+from collections import deque
+from contextlib import redirect_stdout
+from dataclasses import dataclass
+from enum import Enum
+import hashlib
+import importlib
+import inspect
+import json
+import logging
+import os
+from pathlib import Path
+import platform
+import subprocess
+import sys
+from typing import Any, Callable
+from urllib.parse import urlencode
+from uuid import UUID
+
+PACKAGE = Path(__file__).resolve().parent.parent
+MODULE = Path("azure/ai/finetuningsessions")
+NAMESPACE = "azure.ai.finetuningsessions"
+ENDPOINT = "https://offline.invalid/api/projects/compatibility"
+ROUTE = "/fine_tuning/sessions"
+SESSION = "session_workload"
+BASE_MODEL = "offline-base-model"
+PREVIEW = "FineTuningSessions=V1Preview"
+KEY = "offline-verifier-key-not-a-secret"
+TOKEN = "offline-verifier-token-not-a-secret"
+ORIGINAL_CONTRACTS = ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing"]
+SERVICE_CONTRACTS = [
+    "required-lora-config",
+    "sampling-response-format",
+    "sampling-operation-result-alias",
+    "credential-transport-security",
+    "no-post-retries",
+    "raw-request-id-polling",
+]
+INPUT_CHUNK_CONTRACT = "input-chunk-discriminator"
+INPUT_CHUNK_DEFINITION = {
+    "version": 1,
+    "exports": ["InputChunk", "InputChunkType"],
+    "base": {"name": "InputChunk", "field": "type", "type": "str", "discriminator": True},
+    "variants": {"ModelInputChunk": "text", "ImageChunk": "image"},
+    "enum": {"TEXT": "text", "IMAGE": "image"},
+    "chunks": "list[InputChunk]",
+    "legacy_text": "Only input chunk mappings with tokens and no type acquire type=text",
+    "image": "Generated public subclass; existing validation and base64 bytes preserved",
+    "wire_scope": ["model_input.chunks", "prompt.chunks"],
+}
+FOUNDRY_FEATURES_CONTRACT = "canonical-foundry-features"
+LEGACY_FOUNDRY_FEATURES = {
+    "EVALUATIONS_V1_PREVIEW": "Evaluations=V1Preview",
+    "SCHEDULES_V1_PREVIEW": "Schedules=V1Preview",
+    "RED_TEAMS_V1_PREVIEW": "RedTeams=V1Preview",
+    "INSIGHTS_V1_PREVIEW": "Insights=V1Preview",
+    "MEMORY_STORES_V1_PREVIEW": "MemoryStores=V1Preview",
+    "FINETUNING_SESSIONS_V1_PREVIEW": "FineTuningSessions=V1Preview",
+}
+FOUNDRY_FEATURES_DEFINITION = {
+    "version": 1,
+    "source": "Azure.AI.Projects.FoundryFeaturesOptInKeys",
+    "type": "FoundryFeaturesOptInKeys",
+    "members": {
+        "EVALUATIONS_V1_PREVIEW": "Evaluations=V1Preview",
+        "SCHEDULES_V1_PREVIEW": "Schedules=V1Preview",
+        "RED_TEAMS_V1_PREVIEW": "RedTeams=V1Preview",
+        "INSIGHTS_V1_PREVIEW": "Insights=V1Preview",
+        "AGENT_INSIGHTS_V1_PREVIEW": "AgentInsights=V1Preview",
+        "MEMORY_STORES_V1_PREVIEW": "MemoryStores=V1Preview",
+        "ROUTINES_V2_PREVIEW": "Routines=V2Preview",
+        "SKILLS_V1_PREVIEW": "Skills=V1Preview",
+        "DATA_GENERATION_JOBS_V1_PREVIEW": "DataGenerationJobs=V1Preview",
+        "MODELS_V1_PREVIEW": "Models=V1Preview",
+        "MODEL_ROUTER_CONTROLS_V1_PREVIEW": "ModelRouterControls=V1Preview",
+        "FINETUNING_SESSIONS_V1_PREVIEW": "FineTuningSessions=V1Preview",
+    },
+    "header": "FineTuningSessions=V1Preview",
+    "behavior": "Preserve six existing members, signatures and wire headers; add only six canonical members",
+}
+SAMPLING_PROMPT_TOKENS_CONTRACT = "sampling-prompt-tokens"
+SAMPLING_PROMPT_TOKENS_DEFINITION = {
+    "version": 1,
+    "source_commit": "3fbe2aa63d5c35fa4475ff7bcc00c7bf7878a377",
+    "model": "SampleOperationResult",
+    "alias": {"SamplingOperationResult": "SampleOperationResult", "identity_required": True},
+    "field": {
+        "name": "prompt_tokens",
+        "type": "Optional[int]",
+        "wire_name": "prompt_tokens",
+        "visibility": ["read"],
+        "discriminator": False,
+        "format": None,
+    },
+    "deserialization": "value if type(value) is int and value >= 0 else None",
+    "missing": None,
+    "constructor": "Existing keyword overload unchanged; no prompt_tokens parameter",
+    "semantics": "Backend count once per prompt; no inference or metrics/usage fallback",
+    "wire": "Absent stays absent; present field excluded from writable serialization",
+}
+# This is a fixed specification, not an allowlist of diff paths or candidate values.
+SERVICE_CONTRACT_DEFINITIONS = {
+    "version": 1,
+    "required_lora": {
+        "models": {"LoRAConfig": "rank", "CreateSessionRequest": "lora_config"},
+        "methods": [
+            "sync.create",
+            "sync.create_from_checkpoint",
+            "async.create_session",
+            "async.create_session_from_checkpoint",
+        ],
+        "default": "required; no client default",
+    },
+    "response_format": {
+        "model": "SamplingParams",
+        "field": "response_format",
+        "type": "Optional[Dict[str, Any]]",
+        "default": None,
+    },
+    "alias": {"SamplingOperationResult": "SampleOperationResult", "identity_required": True},
+    "security": {
+        "api_key": "configured HTTPS origin; explicit configured loopback HTTP opt-in only",
+        "direct_headers": "scope SDK-default values, including prepopulated values; preserve distinct overrides",
+    },
+    "retry": {"default_post_retries": 0, "caller_owned_policy": "unchanged"},
+    "raw_polling": {
+        "acceptance_status": 200,
+        "locator": ["session_id", "request_id"],
+        "poll": "GET pending then completed; never repeat POST",
+        "result": "exact OperationResult deserialization and cls",
+        "custom_polling_and_continuation": "preserved; HTTP 200, not synthetic 202",
+        "legacy_cases": 336,
+    },
+}
+IMAGE = b"\xff\xd8\xffoffline-jpeg"
+IMAGE_WIRE = {
+    "type": "image",
+    "data": base64.b64encode(IMAGE).decode("ascii"),
+    "format": "jpeg",
+    "expected_tokens": 2,
+}
+METADATA = {"enabled": True, "nested": {"values": [1, 0.5, None, False, "caf\u00e9"]}}
+LORA = {
+    "rank": 16,
+    "alpha": 32.0,
+    "seed": 7,
+    "freeze_vision_tower": False,
+    "freeze_multi_modal_projector": True,
+}
+ADAM = {"learning_rate": 0.0001, "beta1": 0.9, "beta2": 0.999, "eps": 1e-8, "weight_decay": 0.01}
+SAMPLING = {"max_tokens": 8, "temperature": 0.7, "top_p": 0.9, "top_k": -1, "seed": 17, "stop_criteria": [0]}
+LOSS_CONFIG = {"clip_low_threshold": 0.2, "clip_high_threshold": 0.3, "tau_pos": 1.0, "tau_neg": 1.5}
+IDENTITIES = (
+    ("session_canonical", "session_canonical", "session_canonical"),
+    ("model_legacy", "session_legacy", "model_legacy"),
+    ("raw", "session_raw", "model_raw"),
+)
+CHECKPOINT_PATHS = ("model_source/checkpoint_source", "loom://model_source/weights/checkpoint_source")
+MIXED_INPUT = {"chunks": [{"tokens": [1, 2]}, IMAGE_WIRE, {"tokens": [3]}]}
+BATCH = [
+    {
+        "model_input": {"chunks": [{"tokens": [1, 2, 3]}]},
+        "loss_fn_inputs": {
+            "target_tokens": {"data": [2.0, 3.0, 4.0]},
+            "weights": {"data": [0.0, 1.0, 1.0]},
+            "advantages": {"data": [0.0, 0.5, 1.0]},
+            "logprobs": {"data": [-0.1, -0.2, -0.3]},
+        },
+    },
+    {
+        "model_input": MIXED_INPUT,
+        "loss_fn_inputs": {
+            "target_tokens": {"data": [2.0, 0.0, 0.0, 3.0, 4.0]},
+            "weights": {"data": [0.0, 0.0, 0.0, 1.0, 1.0]},
+        },
+    },
+]
+FORWARD = {
+    "loss_fn_output_type": "scalar",
+    "loss_fn_outputs": [{"logprobs": [None, -0.5, -1.0]}, {"logprobs": [-0.4, None, -0.6, 0.0, -0.2]}],
+    "per_datum_logprobs": [{"data": [-0.5, -1.0]}, {"data": [-0.4, -0.6, -0.2]}],
+    "metrics": {"prefill_tokens": 8, "prefill_duration_s": 0.25, "prefill_cache_hit_tokens": None, **METADATA},
+}
+BACKWARD = {**FORWARD, "metrics": {**FORWARD["metrics"], "total_loss:sum": 1.25}}
+# Use float-valued optimizer metrics supported by BOTH existing schemas. Do not
+# conceal the legacy dict[str, float] versus regenerated JSON annotation change.
+OPTIMIZER = {"metrics": {"skyrl.ai/grad_norm": 0.75, "step_count": 3.0}}
+SAMPLES = {
+    "sequences": [
+        {"tokens": [31, 32], "text": "caf\u00e9", "logprobs": [-0.5, -1.0]},
+        {"tokens": [33], "text": None, "logprobs": None},
+    ],
+    "prompt_logprobs": [None, -0.25],
+    "topk_prompt_logprobs": [None, [[31, -0.5], [32, -1.25]]],
+    "metrics": {"sample_tokens": 3, "sample_duration_s": 0.25, **METADATA},
+}
+
+NORMALIZATIONS = [
+    "Header names are case-insensitive; all non-exempt header values are compared.",
+    "x-ms-client-request-id must be a UUID on every request; only its random value is omitted.",
+    "User-Agent must have the expected SDK moniker/version; only the exact Python/platform suffix is removed.",
+    "JSON object ordering/whitespace and Python tuple/list JSON encoding are not wire differences; scalar numeric types are preserved.",
+    "Package origins and supported internal hook placement differ; immutable reference blobs and upstream tests are verified exactly.",
+    "Workload signatures compare names, kinds, defaults and binding; scripts/verify_surface.py additionally checks all types and overloads.",
+]
+LIMITATIONS = [
+    "This workload exercises convenience APIs and selected generated reads, not every raw generated call.",
+    "All original begin_* cases remain in the separate raw gate; additional HTTP-200 request-ID protocol probes are not live-service certification.",
+    "Generated wire parity covers sessions.get/list/heartbeat and checkpoints.get/list with per-operation api_version='v1' only.",
+    "Immediate fixture completion proves client behavior, not service/GPU correctness, retry timing, multi-chunk concurrency, or background heartbeats.",
+]
+SYNC_METHODS = (
+    "create",
+    "create_from_checkpoint",
+    "forward",
+    "forward_backward",
+    "optim_step",
+    "save_weights",
+    "save_weights_for_sampler",
+    "sample",
+    "heartbeat",
+    "close",
+    "delete",
+)
+ASYNC_METHODS = (
+    "create_session",
+    "create_session_from_checkpoint",
+    "forward",
+    "forward_post",
+    "forward_async",
+    "forward_backward",
+    "forward_backward_post",
+    "forward_backward_async",
+    "optim_step",
+    "optim_step_post",
+    "optim_step_async",
+    "save_weights",
+    "save_weights_post",
+    "save_weights_async",
+    "save_weights_for_sampler_async",
+    "save_weights_and_get_sampling_client_async",
+    "sample",
+    "close_session",
+    "delete_session",
+)
+GENERATED_METHODS = ("sessions.get", "sessions.list", "sessions.heartbeat", "checkpoints.get", "checkpoints.list")
+ERROR_FIELDS = (
+    "status_code",
+    "max_batch_size",
+    "actual_batch_size",
+    "retry_after_sec",
+    "reason",
+    "session_id",
+    "error_code",
+    "debug_ref",
+    "operation_completed",
+    "field",
+)
+
+
+def _dump(value: Any) -> str:
+    return json.dumps(value, sort_keys=True, ensure_ascii=True, allow_nan=False, separators=(",", ":"))
+
+
+def _plain(value: Any) -> Any:
+    """Strict JSON conversion: no repr/string fallback that could hide a change."""
+    if isinstance(value, Enum):
+        return _plain(value.value)
+    if value is None or type(value) in (bool, int, float, str):
+        return value
+    if isinstance(value, (list, tuple)):
+        return [_plain(item) for item in value]
+    if isinstance(value, dict) and all(isinstance(key, str) for key in value):
+        return {key: _plain(item) for key, item in value.items()}
+    raise TypeError(f"Unexpected non-JSON snapshot value: {type(value).__name__}")
+
+
+def _input_chunk_wire(model_input: dict) -> dict:
+    """Project a known ModelInput fixture, never arbitrary mappings with tokens."""
+    result = deepcopy(model_input)
+    for chunk in result["chunks"]:
+        if "tokens" in chunk and "type" not in chunk:
+            chunk["type"] = "text"
+    return result
+
+
+def _input_chunk_body(body: Any) -> Any:
+    result = deepcopy(body)
+    if isinstance(result, dict):
+        for field in ("forward_input", "forward_backward_input"):
+            if field in result:
+                for datum in result[field]["data"]:
+                    datum["model_input"] = _input_chunk_wire(datum["model_input"])
+        if "prompt" in result:
+            result["prompt"] = _input_chunk_wire(result["prompt"])
+    return result
+
+
+def _signature(target: Any) -> list[dict[str, Any]]:
+    result = []
+    for name, parameter in inspect.signature(target).parameters.items():
+        if name in ("self", "cls"):
+            continue
+        entry = {"name": name, "kind": parameter.kind.name}
+        if parameter.default is not inspect.Parameter.empty:
+            entry["default"] = _plain(parameter.default)
+        result.append(entry)
+    return result
+
+
+def _source_hashes(package: Path) -> dict[str, str]:
+    return {
+        path.relative_to(package).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in sorted((package / MODULE).rglob("*"))
+        if path.is_file() and (path.suffix == ".py" or path.name == "py.typed")
+    }
+
+
+def _check_package(path: Path) -> Path:
+    path = path.resolve()
+    if not (path / MODULE / "__init__.py").is_file():
+        raise ValueError(f"Not a source package containing {NAMESPACE}: {path}")
+    return path
+
+
+def _offline_environment() -> None:
+    # Child-only changes: never let the caller's identity, proxy, or telemetry
+    # environment affect the snapshot or expose real credentials in its headers.
+    for name in (
+        "COGNITIVE_SUBSCRIPTION_ID",
+        "AZURE_SUBSCRIPTION_ID",
+        "AZURE_HTTP_USER_AGENT",
+        "HTTP_PROXY",
+        "HTTPS_PROXY",
+        "ALL_PROXY",
+        "NO_PROXY",
+        "http_proxy",
+        "https_proxy",
+        "all_proxy",
+        "no_proxy",
+    ):
+        os.environ.pop(name, None)
+    os.environ.update(
+        {
+            "X_COGNITIVE_SUBSCRIPTION_ID": "offline-subscription",
+            "LOOM_AZURE_RESOURCE_ID": "/subscriptions/offline/resourceGroups/offline/providers/Microsoft.CognitiveServices/accounts/offline",
+            "LOOM_AZURE_RESOURCE_TENANT_ID": "offline-tenant",
+            "LOOM_AZURE_RESOURCE_LOCATION": "offline-region",
+            "LOOM_WORKSPACE_RESOURCE_ID": "/subscriptions/offline/resourceGroups/offline/providers/Microsoft.MachineLearningServices/workspaces/offline",
+            "FINETUNING_VERBOSE_HTTP": "0",
+            "LOOM_POLL_WARN_SEC": "0",
+            "AZURE_AI_FINETUNING_SESSIONS_OPERATION_TIMEOUT_SEC": "5",
+            "AZURE_TRACING_ENABLED": "false",
+        }
+    )
+
+
+def _install_offline_guard() -> None:
+    """Deny network, subprocesses, and filesystem writes within this worker.
+
+    The asyncio loop is created BEFORE installing the hook because Windows may
+    use a local socket pair for its internal wakeup mechanism. No SDK is imported
+    until AFTER the guard is active; no service connection, even loopback, is allowed.
+    """
+    forbidden = {
+        "socket.connect",
+        "socket.bind",
+        "socket.getaddrinfo",
+        "socket.gethostbyname",
+        "socket.gethostbyaddr",
+        "socket.sendto",
+        "socket.sendmsg",
+        "subprocess.Popen",
+        "os.system",
+        "os.exec",
+        "os.spawn",
+        "os.remove",
+        "os.rename",
+        "os.rmdir",
+        "os.mkdir",
+        "os.link",
+        "os.symlink",
+        "os.truncate",
+        "os.chmod",
+        "os.chown",
+        "os.utime",
+        "shutil.copyfile",
+        "shutil.rmtree",
+    }
+    write_flags = os.O_WRONLY | os.O_RDWR | os.O_CREAT | os.O_TRUNC | os.O_APPEND
+
+    def audit(event: str, args: tuple[Any, ...]) -> None:
+        if event in forbidden:
+            raise RuntimeError(f"Offline/read-only verifier forbids {event}")
+        if event == "open":
+            _, mode, flags = args
+            if (isinstance(flags, int) and flags & write_flags) or (
+                isinstance(mode, str) and any(c in mode for c in "wax+")
+            ):
+                raise RuntimeError("Offline/read-only verifier forbids opening files for writing")
+
+    sys.addaudithook(audit)
+
+
+@dataclass(frozen=True)
+class _Reply:
+    method: str
+    url: str
+    body: Any
+    payload: Any
+    status: int = 200
+    headers: dict | None = None
+
+
+class _Case:
+    def __init__(self, name: str, context: "_Context", token_auth: bool = False) -> None:
+        self.name, self.context, self.token_auth = name, context, token_auth
+        self.replies: deque[_Reply] = deque()
+        self.requests: list[dict[str, Any]] = []
+        self.token_calls: list[Any] = []
+        self.checks = 0
+        self.poll_sleeps: list[float] = []
+
+    def check(self, condition: bool, label: str) -> None:
+        self.checks += 1
+        if not condition:
+            raise AssertionError(label)
+
+    def equal(self, actual: Any, expected: Any, label: str) -> None:
+        self.check(_dump(actual) == _dump(expected), f"{label}: expected {_dump(expected)}, got {_dump(actual)}")
+
+    def expect(
+        self, method: str, suffix: str, payload: Any, *, body: Any = None, status: int = 200, query: tuple = ()
+    ) -> None:
+        url = ENDPOINT + ROUTE + suffix + "?" + urlencode((("api-version", "v1"), *query))
+        self.replies.append(_Reply(method, url, body, payload, status))
+
+    def operation(
+        self,
+        action: str,
+        body: Any,
+        result: dict,
+        request_id: str,
+        *,
+        resource: str = SESSION,
+        server_id: str | None = None,
+        query: tuple = (),
+        failed: bool = False,
+    ) -> None:
+        self.expect(
+            "POST",
+            f"/{resource}/{action}",
+            {
+                "request_id": request_id,
+                "session_id": server_id or resource,
+                "status": "pending",
+            },
+            body=body,
+            query=query,
+        )
+        self.expect(
+            "GET", f"/{resource}/request/{request_id}", result if failed else {"status": "completed", "result": result}
+        )
+
+    def create(self, server_id: str, resource: str, body: dict, request_id: str) -> None:
+        self.expect("POST", "", {"session_id": server_id, "request_id": request_id, "status": "pending"}, body=body)
+        self.expect("GET", f"/{resource}/request/{request_id}", {"status": "completed", "result": {}})
+
+    def receive(self, request: Any, options: dict) -> _Reply:
+        headers = {key.lower(): value for key, value in request.headers.items()}
+        request_id = headers.pop("x-ms-client-request-id", None)
+        agent = headers.get("user-agent")
+        if isinstance(agent, str):
+            headers["user-agent"] = agent.removesuffix(self.context.user_agent_suffix)
+        content = request.content
+        body = None if content is None else json.loads(content)
+        record = {
+            "method": request.method,
+            "url": request.url,
+            "headers": headers,
+            "body": body,
+            "options": _plain(options),
+        }
+        self.requests.append(record)
+        self.check(isinstance(request_id, str), "Client request ID header must be present")
+        UUID(request_id)
+        self.equal(agent, self.context.user_agent, "SDK user agent including runtime suffix")
+        for keyword in ("api_version", "use_legacy_routes", "body"):
+            self.check(keyword not in options, f"{keyword} leaked to transport")
+        self.equal(headers.get("accept"), "application/json", "Accept header")
+        self.equal(headers.get("foundry-features"), PREVIEW, "Preview opt-in header")
+        if self.token_auth:
+            self.equal(headers.get("authorization"), f"Bearer {TOKEN}", "Fake bearer authentication")
+            self.check("api-key" not in headers, "Bearer request must not contain an API key")
+        else:
+            self.equal(headers.get("api-key"), KEY, "Fake API key authentication")
+            self.check("authorization" not in headers, "Key request must not contain bearer authentication")
+        self.check(bool(self.replies), "Unexpected extra request: possible retry, route fallback, or heartbeat")
+        reply = self.replies.popleft()
+        self.equal(request.method, reply.method, "HTTP method")
+        # Deliberately compare the entire actual URL, not a normalized path or
+        # parsed/sorted query. A /fine_tuning_sessions route reaching here is a failure.
+        self.equal(request.url, reply.url, "URL at the transport boundary")
+        self.equal(body, reply.body, "Complete JSON request body")
+        return reply
+
+    def finish(self, output: Any = None, error: Exception | None = None) -> dict:
+        if error is None:
+            try:
+                self.equal(len(self.replies), 0, "All scripted responses must be consumed")
+            except Exception as exc:
+                error = exc
+        result = {
+            "ok": error is None,
+            "checks": self.checks,
+            "requests": self.requests,
+            "token_calls": self.token_calls,
+            "remaining_responses": len(self.replies),
+        }
+        if error is None:
+            result["output"] = output
+        else:
+            result["error"] = {"type": type(error).__name__, "message": str(error)}
+        return result
+
+
+def _transport_types() -> tuple[type, type]:
+    # Worker-only imports. These are real azure-core transport/response ABCs,
+    # not clients or pipeline mocks and not imports from either test suite.
+    from azure.core.exceptions import HttpResponseError
+    from azure.core.pipeline.transport import HttpTransport, AsyncHttpTransport, HttpResponse, AsyncHttpResponse
+    from azure.core.utils import case_insensitive_dict
+
+    class _Buffer:
+        def initialize(self, reply: _Reply) -> None:
+            self.status_code = reply.status
+            self.reason = "OK" if reply.status < 400 else "Offline fixture error"
+            self.headers = case_insensitive_dict({"content-type": "application/json", **(reply.headers or {})})
+            self.content_type = "application/json"
+            self._body = _dump(reply.payload).encode("utf-8")
+            self.is_closed = False
+            self.is_stream_consumed = False
+
+        @property
+        def content(self) -> bytes:
+            return self._body
+
+        def body(self) -> bytes:
+            return self._body
+
+        def text(self, encoding: str | None = None) -> str:
+            return self._body.decode(encoding or "utf-8")
+
+        def json(self) -> Any:
+            return json.loads(self._body)
+
+        def raise_for_status(self) -> None:
+            if self.status_code >= 400:
+                raise HttpResponseError(response=self)
+
+    class _SyncResponse(_Buffer, HttpResponse):
+        def __init__(self, request: Any, reply: _Reply) -> None:
+            HttpResponse.__init__(self, request, None)
+            self.initialize(reply)
+
+        def read(self) -> bytes:
+            self.is_stream_consumed = True
+            return self._body
+
+        def close(self) -> None:
+            self.is_closed = True
+
+        def iter_bytes(self, **kwargs: Any):
+            yield self._body
+
+        def iter_raw(self, **kwargs: Any):
+            yield self._body
+
+        def stream_download(self, pipeline: Any, **kwargs: Any):
+            return self.iter_bytes(**kwargs)
+
+    class _AsyncResponse(_Buffer, AsyncHttpResponse):
+        def __init__(self, request: Any, reply: _Reply) -> None:
+            AsyncHttpResponse.__init__(self, request, None)
+            self.initialize(reply)
+
+        async def read(self) -> bytes:
+            self.is_stream_consumed = True
+            return self._body
+
+        async def close(self) -> None:
+            self.is_closed = True
+
+        async def iter_bytes(self, **kwargs: Any):
+            yield self._body
+
+        async def iter_raw(self, **kwargs: Any):
+            yield self._body
+
+        def stream_download(self, pipeline: Any, **kwargs: Any):
+            return self.iter_bytes(**kwargs)
+
+        async def __aexit__(self, *args: Any) -> None:
+            await self.close()
+
+    class _SyncTransport(HttpTransport):
+        def __init__(self, case: _Case) -> None:
+            self.case = case
+
+        def send(self, request: Any, **kwargs: Any) -> _SyncResponse:
+            return _SyncResponse(request, self.case.receive(request, kwargs))
+
+        def open(self) -> None:
+            pass
+
+        def close(self) -> None:
+            pass
+
+        def __enter__(self):
+            self.open()
+            return self
+
+        def __exit__(self, *args: Any) -> None:
+            self.close()
+
+        def sleep(self, duration: float) -> None:
+            if duration == 0 and getattr(self.case, "allow_zero_poll_sleep", False):
+                self.case.poll_sleeps.append(duration)
+                return
+            raise AssertionError("Immediate offline fixtures must not trigger transport retries/sleeps")
+
+    class _AsyncTransport(AsyncHttpTransport):
+        def __init__(self, case: _Case) -> None:
+            self.case = case
+
+        async def send(self, request: Any, **kwargs: Any) -> _AsyncResponse:
+            return _AsyncResponse(request, self.case.receive(request, kwargs))
+
+        async def open(self) -> None:
+            pass
+
+        async def close(self) -> None:
+            pass
+
+        async def __aenter__(self):
+            await self.open()
+            return self
+
+        async def __aexit__(self, *args: Any) -> None:
+            await self.close()
+
+        async def sleep(self, duration: float) -> None:
+            if duration == 0 and getattr(self.case, "allow_zero_poll_sleep", False):
+                self.case.poll_sleeps.append(duration)
+                return
+            raise AssertionError("Immediate offline fixtures must not trigger transport retries/sleeps")
+
+    return _SyncTransport, _AsyncTransport
+
+
+class _Context:
+    def __init__(
+        self,
+        legacy_routes: bool,
+        service_contracts: bool = False,
+        input_chunk_discriminator: bool = False,
+        sampling_prompt_tokens: bool = False,
+    ) -> None:
+        self.sdk = importlib.import_module(NAMESPACE)
+        self.aio = importlib.import_module(NAMESPACE + ".aio")
+        self.models = importlib.import_module(NAMESPACE + ".models")
+        self.model_base = importlib.import_module(NAMESPACE + "._utils.model_base")
+        self.async_patch = importlib.import_module(NAMESPACE + ".aio._patch")
+        self.legacy_routes = legacy_routes
+        self.service_contracts = service_contracts
+        self.input_chunk_discriminator = input_chunk_discriminator
+        self.sampling_prompt_tokens = sampling_prompt_tokens
+        # Preserve the upstream Loom moniker; do not change the SDK merely to
+        # satisfy the earlier regenerated public SDK's user-agent convention.
+        self.moniker = f"azsdk-python-finetuning-sessions/{self.sdk.__version__}"
+        self.user_agent_suffix = f" Python/{platform.python_version()} ({platform.platform()})"
+        self.user_agent = self.moniker + self.user_agent_suffix
+        self.sync_transport, self.async_transport = _transport_types()
+        # The ONLY SDK behavior patched by the harness: starting background
+        # heartbeats. Explicit heartbeat operations still use the real pipeline.
+        self.sdk.FineTuningSession._start_heartbeat = lambda *args, **kwargs: None
+        self.async_patch._start_heartbeat = lambda *args, **kwargs: None
+
+    def client(self, case: _Case, asynchronous: bool = False) -> Any:
+        from azure.core.credentials import AccessToken, AzureKeyCredential
+
+        class _Credential:
+            def get_token(self, *scopes: str, **kwargs: Any) -> Any:
+                case.token_calls.append({"scopes": list(scopes), "options": _plain(kwargs)})
+                return AccessToken(TOKEN, 4102444800)
+
+        class _AsyncCredential:
+            async def get_token(self, *scopes: str, **kwargs: Any) -> Any:
+                return _Credential().get_token(*scopes, **kwargs)
+
+        transport = (self.async_transport if asynchronous else self.sync_transport)(case)
+        credential = (
+            (_AsyncCredential() if asynchronous else _Credential()) if case.token_auth else AzureKeyCredential(KEY)
+        )
+        options = {
+            "transport": transport,
+            "retry_total": 0,
+            "allow_insecure_http": False,
+            # Forces selected per-operation api_version='v1' to work rather than
+            # accidentally passing because the public client default is also v1.
+            "api_version": "configured-not-on-wire",
+            "logging_enable": False,
+        }
+        if self.legacy_routes:
+            options["use_legacy_routes"] = True
+        client_type = (self.aio if asynchronous else self.sdk).FineTuningSessionClient
+        return client_type(ENDPOINT, credential, **options)
+
+    def value(self, value: Any) -> Any:
+        return json.loads(json.dumps(value, cls=self.model_base.SdkJSONEncoder, allow_nan=False))
+
+    def model(self, case: _Case, value: Any, name: str, expected: dict, fields: tuple = ()) -> dict:
+        case.equal(type(value).__name__, name, "Result model class")
+        wire = self.value(value)
+        case.equal(wire, expected, "Complete serialized result")
+        case.equal(self.value(value.as_dict()), expected, "Model.as_dict() result")
+        attributes = {field: self.value(getattr(value, field)) for field in fields}
+        case.equal(attributes, {field: expected.get(field) for field in fields}, "Typed attribute values")
+        return {"class": name, "json": wire, "attributes": attributes}
+
+    def input_wire(self, value: dict) -> dict:
+        return _input_chunk_wire(value) if self.input_chunk_discriminator else value
+
+    def batch_wire(self) -> list:
+        return [{**datum, "model_input": self.input_wire(datum["model_input"])} for datum in BATCH]
+
+    def batch(self) -> list:
+        m = self.models
+        return [
+            m.Datum(
+                model_input=m.ModelInput(chunks=[m.ModelInputChunk(tokens=[1, 2, 3])]),
+                loss_fn_inputs=m.LossFnInputs(
+                    **{name: m.TensorData(**value) for name, value in BATCH[0]["loss_fn_inputs"].items()}
+                ),
+            ),
+            m.Datum(
+                model_input=self.mixed_input(),
+                loss_fn_inputs=m.LossFnInputs(
+                    **{name: m.TensorData(**value) for name, value in BATCH[1]["loss_fn_inputs"].items()}
+                ),
+            ),
+        ]
+
+    def mixed_input(self) -> Any:
+        m = self.models
+        return m.ModelInput(
+            chunks=[
+                m.ModelInputChunk(tokens=[1, 2]),
+                m.ImageChunk(data=IMAGE, format="jpeg", expected_tokens=2),
+                m.ModelInputChunk(tokens=[3]),
+            ]
+        )
+
+    def exception(self, case: _Case, exc: Exception, name: str, expected: dict) -> dict:
+        from azure.core.exceptions import HttpResponseError
+
+        case.equal(type(exc).__name__, name, "Typed exception class")
+        case.check(isinstance(exc, self.sdk.FineTuningSessionsError), "Exception must retain the SDK base class")
+        case.check(isinstance(exc, HttpResponseError), "Exception must remain catchable as HttpResponseError")
+        for field, value in expected.items():
+            case.equal(getattr(exc, field), value, f"Exception.{field}")
+        return {
+            "class": type(exc).__name__,
+            "message": str(exc),
+            "args": _plain(exc.args),
+            "metadata": {field: _plain(getattr(exc, field)) for field in ERROR_FIELDS if hasattr(exc, field)},
+            "hierarchy": [base.__name__ for base in type(exc).__mro__],
+        }
+
+
+def _surface(ctx: _Context, case: _Case, client: Any) -> dict:
+    modules = {"root": ctx.sdk, "aio": ctx.aio, "models": ctx.models}
+    modules.update({name: importlib.import_module(NAMESPACE + "." + name) for name in ("operations", "aio.operations")})
+    exports = {}
+    for name, module in modules.items():
+        names = list(module.__all__)
+        case.check(
+            len(names) == len(set(names)) and all(hasattr(module, item) for item in names),
+            f"{name}.__all__ exports resolve at runtime",
+        )
+        exports[name] = sorted(names)
+    signatures = {
+        "sync.client": _signature(ctx.sdk.FineTuningSessionClient),
+        "async.client": _signature(ctx.aio.FineTuningSessionClient),
+        "sync.session": _signature(ctx.sdk.FineTuningSession),
+    }
+    for name in SYNC_METHODS:
+        method = getattr(ctx.sdk.FineTuningSession, name)
+        case.check(callable(method), f"FineTuningSession.{name} is callable")
+        signatures["sync." + name] = _signature(method)
+    for name in ASYNC_METHODS:
+        method = getattr(ctx.aio.FineTuningSessionClient, name)
+        case.check(inspect.iscoroutinefunction(method), f"Async client.{name} is an async callable")
+        signatures["async." + name] = _signature(method)
+    generated = {}
+    for prefix, module in (("sync", modules["operations"]), ("async", modules["aio.operations"])):
+        for name in GENERATED_METHODS:
+            group, operation = name.split(".")
+            operation_type = getattr(module, "SessionsOperations" if group == "sessions" else "CheckpointsOperations")
+            generated[f"{prefix}.{name}"] = _signature(getattr(operation_type, operation))
+    enums = {
+        name: {member: item.value for member, item in getattr(ctx.models, name).__members__.items()}
+        for name in (
+            "CheckpointType",
+            "FoundryFeaturesOptInKeys",
+            "LossFn",
+            "OperationStatus",
+            "OperationType",
+            "SessionStatus",
+            "SessionType",
+        )
+        + (("TrainingType",) if hasattr(ctx.models, "TrainingType") else ())
+        + (("InputChunkType",) if hasattr(ctx.models, "InputChunkType") else ())
+    }
+    groups = sorted(name for name in vars(client) if not name.startswith("_"))
+    case.equal(
+        groups, sorted(("sessions", "training", "checkpoints", "sampling", "operations")), "Client operation groups"
+    )
+    case.check(ctx.sdk.EngineDeadError is ctx.sdk.TrainingEngineError, "EngineDeadError alias")
+    case.check(ctx.sdk.MalformedDatumError is ctx.sdk.RequestValidationError, "MalformedDatumError alias")
+    if (
+        hasattr(ctx.models, "SamplingOperationResult")
+        and ctx.models.SamplingOperationResult is not ctx.models.SampleOperationResult
+    ):
+        raise AssertionError("SamplingOperationResult must be the identical SampleOperationResult class")
+    return {
+        "version": ctx.sdk.__version__,
+        "exports": exports,
+        "signatures": signatures,
+        "generated_signatures": generated,
+        "enums": enums,
+        "client_groups": groups,
+    }
+
+
+def _serialization(ctx: _Context, case: _Case, client: Any) -> dict:
+    del client
+    m = ctx.models
+    output = {}
+    for name, value, expected, fields in (
+        ("LoRAConfig", m.LoRAConfig(**LORA), LORA, tuple(LORA)),
+        ("AdamParams", m.AdamParams(**ADAM), ADAM, tuple(ADAM)),
+        ("SamplingParams", m.SamplingParams(**SAMPLING), SAMPLING, tuple(SAMPLING)),
+        ("LossFnConfig", m.LossFnConfig(**LOSS_CONFIG), LOSS_CONFIG, tuple(LOSS_CONFIG)),
+        (
+            "FromCheckpoint",
+            m.FromCheckpoint(source_session_id="session_source", checkpoint_id="checkpoint_source"),
+            {"source_session_id": "session_source", "checkpoint_id": "checkpoint_source"},
+            ("source_session_id", "checkpoint_id"),
+        ),
+        ("ModelInput", ctx.mixed_input(), ctx.input_wire(MIXED_INPUT), ("chunks",)),
+    ):
+        output[name] = ctx.model(case, value, name, expected, fields)
+    image = m.ImageChunk(data=IMAGE, format="jpeg", expected_tokens=2)
+    case.equal(ctx.value(image), IMAGE_WIRE, "Image bytes are base64 on the wire")
+    restored = m.ImageChunk(IMAGE_WIRE)
+    case.check(restored.data == IMAGE and restored.length == 2, "Image bytes and token length round-trip")
+    case.equal(ctx.value(ctx.batch()), ctx.batch_wire(), "Mixed-image Datum/LossFnInputs/TensorData construction")
+    expected_request = {"type": "training", "base_model": BASE_MODEL, "user_metadata": METADATA}
+    if ctx.service_contracts:
+        expected_request["lora_config"] = LORA
+    request = m.CreateSessionRequest(**expected_request)
+    output["CreateSessionRequest"] = ctx.model(
+        case, request, "CreateSessionRequest", expected_request, ("type", "base_model", "user_metadata", "lora_config")
+    )
+    error = m.ApiError(
+        code="invalid_request",
+        message="Invalid input",
+        details=[m.ApiError(code="field", message="Bad data")],
+        additional_info=METADATA,
+        debug_info={"ref": "offline"},
+    )
+    error_wire = {
+        "error": {
+            "code": "invalid_request",
+            "message": "Invalid input",
+            "details": [{"code": "field", "message": "Bad data"}],
+            "additionalInfo": METADATA,
+            "debugInfo": {"ref": "offline"},
+        }
+    }
+    output["ApiErrorResponse"] = ctx.model(
+        case, m.ApiErrorResponse(error=error), "ApiErrorResponse", error_wire, ("error",)
+    )
+    round_trip = ctx.model_base._deserialize(m.ApiErrorResponse, error_wire)
+    case.equal(ctx.value(round_trip.error.additional_info), METADATA, "ApiError additionalInfo attribute round-trip")
+    case.equal(round_trip.error.details[0].code, "field", "Nested error models deserialize")
+    constructors = {
+        "FineTuningSessionsError": {},
+        "BatchTooLargeError": {"max_batch_size": 1, "actual_batch_size": 2},
+        "NoCapacityError": {"retry_after_sec": 1.5, "reason": "engine_busy"},
+        "RateLimitedError": {"retry_after_sec": 2.0, "reason": "rate_limited"},
+        "TrainingEngineError": {"session_id": SESSION, "error_code": "worker_crashed", "debug_ref": "offline"},
+        "OperationResultUnavailableError": {
+            "operation_completed": True,
+            "error_code": "operation_completed_result_unavailable",
+            "debug_ref": "offline",
+        },
+        "ContentionError": {"retry_after_sec": 0.5, "reason": "busy"},
+        "RequestValidationError": {"field": "data", "error_code": "invalid_request", "debug_ref": "offline"},
+        "RequestRetryableError": {"retry_after_sec": 1.0, "error_code": "request_timeout", "debug_ref": "offline"},
+    }
+    output["exceptions"] = {
+        name: ctx.exception(case, getattr(ctx.sdk, name)("offline error", **fields), name, fields)
+        for name, fields in constructors.items()
+    }
+    case.check(issubclass(ctx.sdk.RateLimitedError, ctx.sdk.NoCapacityError), "Rate limit remains a capacity error")
+    return output
+
+
+def _create_options(ctx: _Context, index: int) -> tuple[dict, dict]:
+    options = {
+        "base_model": BASE_MODEL,
+        "user_metadata": METADATA,
+        "training_type": "DeveloperTier",
+        "timeout_sec": 5.0,
+    }
+    body = {"type": "training", "base_model": BASE_MODEL, "user_metadata": METADATA, "training_type": "DeveloperTier"}
+    if index == 1 or ctx.service_contracts:
+        options["lora_config"], body["lora_config"] = ctx.models.LoRAConfig(**LORA), LORA
+    if index == 2:
+        options["from_checkpoint"] = ctx.models.FromCheckpoint(
+            source_session_id="model_source", checkpoint_id="checkpoint_source"
+        )
+        body["from_checkpoint"] = {"source_session_id": "session_source", "checkpoint_id": "checkpoint_source"}
+    return options, body
+
+
+def _checkpoint_expected(request_id: str, path: str, result: dict) -> dict:
+    return {
+        "type": "save_checkpoint",
+        "operation_id": request_id,
+        "status": "succeeded",
+        "checkpoint_id": path,
+        "path": "",
+        **result,
+    }
+
+
+def _sync_create(ctx: _Context, case: _Case, client: Any) -> list:
+    output = []
+    for index, (raw, canonical, resource) in enumerate(IDENTITIES):
+        options, body = _create_options(ctx, index)
+        case.create(raw, resource, body, f"create_{index}")
+        session = ctx.sdk.FineTuningSession.create(client, **options)
+        state = {
+            "session_id": session.session_id,
+            "resource_id": session._resource_session_id,
+            "heartbeat_id": session._heartbeat_session_id,
+        }
+        case.equal(
+            state,
+            {"session_id": canonical, "resource_id": resource, "heartbeat_id": canonical},
+            "Canonical versus actual resource identity",
+        )
+        case.check(session._heartbeat_thread is None, "No background heartbeat thread")
+        case.operation("checkpoint", {"path": "identity"}, {}, f"identity_{index}", resource=resource, server_id=raw)
+        saved = session.save_weights("identity")
+        output.append(
+            {
+                "state": state,
+                "followup": ctx.model(
+                    case,
+                    saved,
+                    "SaveCheckpointOperationResult",
+                    _checkpoint_expected(f"identity_{index}", "identity", {}),
+                    ("checkpoint_id", "path"),
+                ),
+            }
+        )
+    return output
+
+
+def _sync_checkpoint_create(ctx: _Context, case: _Case, client: Any) -> list:
+    output = []
+    for index, path in enumerate(CHECKPOINT_PATHS):
+        body = {
+            "type": "training",
+            "base_model": BASE_MODEL,
+            "from_checkpoint": {"source_session_id": "session_source", "checkpoint_id": "checkpoint_source"},
+        }
+        options = {"lora_config": ctx.models.LoRAConfig(**LORA)} if ctx.service_contracts else {}
+        if ctx.service_contracts:
+            body["lora_config"] = LORA
+        case.create("model_resumed", "model_resumed", body, f"resume_{index}")
+        session = ctx.sdk.FineTuningSession.create_from_checkpoint(
+            client, checkpoint_path=path, base_model=BASE_MODEL, timeout_sec=5.0, **options
+        )
+        state = {"session_id": session.session_id, "resource_id": session._resource_session_id}
+        case.equal(state, {"session_id": "session_resumed", "resource_id": "model_resumed"}, "Resumed session identity")
+        output.append(state)
+    return output
+
+
+def _training_plan(case: _Case, action: str, request_id: str, configured: bool = False) -> tuple[dict, str, tuple]:
+    if action == "optim_step":
+        body, payload = {"adam_params": ADAM}, OPTIMIZER
+        expected = {**payload, "grad_norm": 0.75, "step_count": 3}
+        model, fields, discriminator = "OptimStepOperationResult", ("grad_norm", "step_count", "metrics"), "optim_step"
+    else:
+        inputs = {
+            "data": case.context.batch_wire(),
+            "loss_fn": "importance_sampling" if configured else "cross_entropy",
+        }
+        if configured:
+            inputs["loss_fn_config"] = LOSS_CONFIG
+        body = {"forward_input" if action == "forward" else "forward_backward_input": inputs}
+        payload = FORWARD if action == "forward" else BACKWARD
+        expected = {**payload, **({"total_loss": 1.25} if action == "forward_backward" else {})}
+        model, fields, discriminator = (
+            "ForwardBackwardOperationResult",
+            ("total_loss", "loss_fn_output_type", "loss_fn_outputs", "per_datum_logprobs", "metrics"),
+            "forward_backward",
+        )
+    case.operation(action, body, payload, request_id)
+    return (
+        {**expected, "operation_id": request_id, "status": "succeeded", "type": discriminator},
+        model,
+        ("operation_id", "status", "type", *fields),
+    )
+
+
+def _sync_training(ctx: _Context, case: _Case, client: Any) -> dict:
+    session = ctx.sdk.FineTuningSession(client, SESSION)
+    output = {}
+    for action in ("forward", "forward_backward", "optim_step"):
+        configured = action == "forward_backward"
+        expected, model, fields = _training_plan(case, action, action, configured)
+        argument = ctx.models.AdamParams(**ADAM) if action == "optim_step" else ctx.batch()
+        options = (
+            {"loss_fn": "importance_sampling", "loss_fn_config": ctx.models.LossFnConfig(**LOSS_CONFIG)}
+            if configured
+            else {}
+        )
+        result = getattr(session, action)(argument, **options)
+        output[action] = ctx.model(case, result, model, expected, fields)
+    return output
+
+
+def _sync_checkpoints(ctx: _Context, case: _Case, client: Any) -> list:
+    session = ctx.sdk.FineTuningSession(client, SESSION)
+    output = []
+    for index, payload in enumerate(
+        ({"path": "loom://session_workload/weights/train"}, {"checkpoint_id": "server_override", "path": "server_path"})
+    ):
+        request_id = f"save_{index}"
+        case.operation("checkpoint", {"path": "train"}, payload, request_id)
+        output.append(
+            ctx.model(
+                case,
+                session.save_weights("train"),
+                "SaveCheckpointOperationResult",
+                _checkpoint_expected(request_id, "train", payload),
+                ("checkpoint_id", "path"),
+            )
+        )
+    for index, path in enumerate((None, "sampler_explicit")):
+        body = {"seq_id": 7, "sampling_session_seq_id": 2}
+        if path is not None:
+            body["path"] = path
+        payload = {"type": "save_weights_for_sampler", "sampling_session_id": "sampling_workload"}
+        request_id = f"sampler_{index}"
+        case.operation("checkpoint_sample", body, payload, request_id)
+        result = session.save_weights_for_sampler(7, sampling_session_seq_id=2, path=path)
+        expected = {
+            **payload,
+            "type": "save_sampler_weights",
+            "checkpoint_id": path or "ss2_seq7",
+            "operation_id": request_id,
+            "status": "succeeded",
+        }
+        output.append(
+            ctx.model(
+                case, result, "SaveSamplerWeightsOperationResult", expected, ("checkpoint_id", "sampling_session_id")
+            )
+        )
+    return output
+
+
+def _sample_plan(ctx: _Context, case: _Case, index: int) -> tuple[Any, dict, dict]:
+    prompt = [1, 2] if index == 0 else ctx.mixed_input()
+    prompt_wire = ctx.input_wire({"chunks": [{"tokens": [1, 2]}]} if index == 0 else MIXED_INPUT)
+    options = {
+        "checkpoint_id": "sampler_explicit",
+        "num_samples": 2,
+        "sampling_session_id": "sampling_workload",
+        "seq_id": 7,
+        "prompt_logprobs": True,
+        "topk_prompt_logprobs": 2,
+    }
+    body = {
+        "prompt": prompt_wire,
+        "sampling_params": SAMPLING,
+        **{key: value for key, value in options.items() if key != "checkpoint_id"},
+    }
+    request_id = f"sample_{index}"
+    case.operation("sample", body, SAMPLES, request_id, query=(("checkpoint_id", "sampler_explicit"),))
+    return prompt, options, {**SAMPLES, "type": "sample", "status": "succeeded", "operation_id": request_id}
+
+
+def _sample_result(ctx: _Context, case: _Case, result: Any, expected: dict) -> dict:
+    value = ctx.model(
+        case,
+        result,
+        "SampleOperationResult",
+        expected,
+        ("sequences", "prompt_logprobs", "topk_prompt_logprobs", "metrics")
+        + (("prompt_tokens",) if ctx.sampling_prompt_tokens else ()),
+    )
+    case.equal(result.sequences[0].tokens, [31, 32], "Sample token IDs remain integers")
+    case.equal(result.sequences[0].text, "caf\u00e9", "Sample text")
+    case.check(result.sequences[1].text is None and result.sequences[1].logprobs is None, "Nullable sequence fields")
+    return value
+
+
+def _sync_sampling(ctx: _Context, case: _Case, client: Any) -> list:
+    session = ctx.sdk.FineTuningSession(client, SESSION)
+    output = []
+    for index in range(2):
+        prompt, options, expected = _sample_plan(ctx, case, index)
+        result = session.sample(prompt, ctx.models.SamplingParams(**SAMPLING), **options)
+        output.append(_sample_result(ctx, case, result, expected))
+    return output
+
+
+def _sync_lifecycle(ctx: _Context, case: _Case, client: Any) -> list:
+    output = []
+    for raw, canonical, resource in IDENTITIES:
+        session = ctx.sdk.FineTuningSession(client, raw)
+        case.expect("POST", f"/{resource}/heartbeat", {"session_id": resource})
+        heartbeat = ctx.model(case, session.heartbeat(), "HeartbeatResponse", {"session_id": resource}, ("session_id",))
+        case.expect("POST", f"/{resource}/complete", {})
+        case.equal(session.close(), None, "Close return value")
+        for status in (200, 404):
+            case.expect("DELETE", f"/{resource}", {}, status=status)
+            case.equal(session.delete(), None, "Delete is idempotent")
+        case.check(session._heartbeat_stop.is_set() and session._heartbeat_thread is None, "Lifecycle stops heartbeats")
+        output.append(
+            {"session_id": session.session_id, "resource_id": session._resource_session_id, "heartbeat": heartbeat}
+        )
+        case.equal(session.session_id, canonical, "Lifecycle canonical session ID")
+    return output
+
+
+def _generated_specs() -> list[tuple]:
+    timestamp = "2026-09-17T12:00:00Z"
+    summary = {
+        "session_id": SESSION,
+        "base_model": BASE_MODEL,
+        "status": "running",
+        "is_lora": True,
+        "lora_rank": 16,
+        "corrupted": False,
+        "last_request_time": timestamp,
+    }
+    session = {
+        "session_id": SESSION,
+        "type": "training",
+        "status": "running",
+        "model_data": {"base_model": BASE_MODEL, "lora_config": LORA, "model_name": "offline-model"},
+    }
+    page = {"data": [summary], "cursor": {"offset": 3, "limit": 2, "total_count": 4}}
+    checkpoints = {
+        "checkpoints": [
+            {"checkpoint_id": "train", "checkpoint_type": "training", "time": timestamp},
+            {"checkpoint_id": "sampler", "checkpoint_type": "sampler", "time": timestamp},
+        ]
+    }
+    return [
+        (
+            "sessions.get",
+            "GET",
+            f"/{SESSION}",
+            {"session_id": SESSION},
+            session,
+            "Session",
+            ("session_id", "status", "model_data"),
+            (),
+        ),
+        (
+            "sessions.list",
+            "GET",
+            "",
+            {"offset": 3, "limit": 2},
+            page,
+            "SessionList",
+            ("data", "cursor"),
+            (("limit", 2), ("offset", 3)),
+        ),
+        (
+            "sessions.heartbeat",
+            "POST",
+            f"/{SESSION}/heartbeat",
+            {"session_id": SESSION},
+            {"session_id": SESSION},
+            "HeartbeatResponse",
+            ("session_id",),
+            (),
+        ),
+        (
+            "checkpoints.get",
+            "GET",
+            f"/{SESSION}/checkpoints/train",
+            {"session_id": SESSION, "checkpoint_id": "train"},
+            {"base_model": BASE_MODEL, "is_lora": True, "lora_rank": 16},
+            "CheckpointInfo",
+            ("base_model", "is_lora", "lora_rank"),
+            (),
+        ),
+        (
+            "checkpoints.list",
+            "GET",
+            f"/{SESSION}/checkpoints",
+            {"session_id": SESSION},
+            checkpoints,
+            "CheckpointList",
+            ("checkpoints",),
+            (),
+        ),
+    ]
+
+
+def _generated_call(case: _Case, client: Any, spec: tuple, hooks: list) -> tuple[Any, dict]:
+    name, method, suffix, arguments, payload, _, _, query = spec
+    case.expect(method, suffix, payload, query=query)
+    group, operation = name.split(".")
+    target = getattr(getattr(client, group), operation)
+
+    def on_response(response: Any) -> None:
+        hooks.append(
+            {
+                "method": response.http_request.method,
+                "url": response.http_request.url,
+                "status": response.http_response.status_code,
+            }
+        )
+
+    options = {
+        **arguments,
+        "foundry_features": PREVIEW,
+        "api_version": "v1",
+        "headers": {"x-compatibility-probe": "shared"},
+        "raw_response_hook": on_response,
+    }
+    inspect.signature(target).bind(**options)
+    case.check(True, f"{name} legacy api_version/headers/hook keywords bind")
+    return target, options
+
+
+def _sync_generated(ctx: _Context, case: _Case, client: Any) -> dict:
+    output, hooks = {}, []
+    for spec in _generated_specs():
+        target, options = _generated_call(case, client, spec, hooks)
+        result = target(**options)
+        output[spec[0]] = ctx.model(case, result, spec[5], spec[4], spec[6])
+    case.equal(len(hooks), 5, "All real generated calls invoke response hooks")
+    case.check(
+        all(request["headers"].get("x-compatibility-probe") == "shared" for request in case.requests),
+        "Per-operation custom headers reach transport",
+    )
+    return {"results": output, "hooks": hooks}
+
+
+def _http_errors() -> tuple:
+    return (
+        (
+            413,
+            {
+                "detail": {
+                    "message": "Batch size (2) exceeds the maximum allowed (1)",
+                    "field": "forward_backward_input.data",
+                }
+            },
+            "BatchTooLargeError",
+            {"max_batch_size": 1, "actual_batch_size": 2},
+        ),
+        (
+            422,
+            {
+                "detail": {
+                    "type": "validation_error",
+                    "message": "Invalid offline datum",
+                    "field": "forward_backward_input.data",
+                    "error_code": "invalid_request",
+                    "debug_ref": "debug_fixture",
+                }
+            },
+            "RequestValidationError",
+            {"field": "forward_backward_input.data", "error_code": "invalid_request", "debug_ref": "debug_fixture"},
+        ),
+    )
+
+
+def _poll_errors() -> tuple:
+    return (
+        (
+            {
+                "status": "failed",
+                "error": "Offline engine stopped",
+                "error_code": "worker_crashed",
+                "debug_ref": "debug_fixture",
+            },
+            "TrainingEngineError",
+            {"session_id": SESSION, "error_code": "worker_crashed", "debug_ref": "debug_fixture"},
+        ),
+        (
+            {
+                "status": "failed",
+                "error": "Completed result unavailable",
+                "error_code": "operation_completed_result_unavailable",
+                "should_retry": True,
+                "debug_ref": "debug_fixture",
+            },
+            "OperationResultUnavailableError",
+            {
+                "operation_completed": True,
+                "error_code": "operation_completed_result_unavailable",
+                "debug_ref": "debug_fixture",
+            },
+        ),
+    )
+
+
+def _error_plan(case: _Case, index: int, specification: tuple, polling: bool) -> tuple[str, dict]:
+    body = {"forward_backward_input": {"data": case.context.batch_wire(), "loss_fn": "cross_entropy"}}
+    if polling:
+        payload, name, fields = specification
+        case.operation("forward_backward", body, payload, f"failed_{index}", failed=True)
+    else:
+        status, payload, name, fields = specification
+        case.expect("POST", f"/{SESSION}/forward_backward", payload, body=body, status=status)
+    return name, fields
+
+
+def _sync_errors(ctx: _Context, case: _Case, client: Any, *, polling: bool = False) -> list:
+    session, output = ctx.sdk.FineTuningSession(client, SESSION), []
+    for index, spec in enumerate(_poll_errors() if polling else _http_errors()):
+        name, fields = _error_plan(case, index, spec, polling)
+        try:
+            session.forward_backward(ctx.batch())
+        except ctx.sdk.FineTuningSessionsError as exc:
+            output.append(ctx.exception(case, exc, name, fields))
+        else:
+            raise AssertionError(f"Expected terminal {name}")
+    return output
+
+
+async def _async_create(ctx: _Context, case: _Case, client: Any) -> list:
+    output, resource_map = [], {}
+    for index, (raw, canonical, resource) in enumerate(IDENTITIES):
+        options, body = _create_options(ctx, index)
+        case.create(raw, resource, body, f"create_{index}")
+        session_id = await client.create_session(**options)
+        resource_map[canonical] = resource
+        case.equal(session_id, canonical, "Async canonical session ID")
+        case.equal(client._session_resource_ids, resource_map, "Async resource ID map")
+        case.equal(client._heartbeat_tasks, {}, "No background heartbeat tasks")
+        case.operation("checkpoint", {"path": "identity"}, {}, f"identity_{index}", resource=resource, server_id=raw)
+        saved = await client.save_weights(session_id, "identity")
+        output.append(
+            {
+                "session_id": session_id,
+                "resource_map": dict(client._session_resource_ids),
+                "followup": ctx.model(
+                    case,
+                    saved,
+                    "SaveCheckpointOperationResult",
+                    _checkpoint_expected(f"identity_{index}", "identity", {}),
+                    ("checkpoint_id", "path"),
+                ),
+            }
+        )
+    return output
+
+
+async def _async_checkpoint_create(ctx: _Context, case: _Case, client: Any) -> list:
+    output = []
+    for index, path in enumerate(CHECKPOINT_PATHS):
+        body = {
+            "type": "training",
+            "base_model": BASE_MODEL,
+            "from_checkpoint": {"source_session_id": "session_source", "checkpoint_id": "checkpoint_source"},
+        }
+        options = {"lora_config": ctx.models.LoRAConfig(**LORA)} if ctx.service_contracts else {}
+        if ctx.service_contracts:
+            body["lora_config"] = LORA
+        case.create("model_resumed", "model_resumed", body, f"resume_{index}")
+        session_id = await client.create_session_from_checkpoint(
+            checkpoint_path=path, base_model=BASE_MODEL, timeout_sec=5.0, **options
+        )
+        case.equal(session_id, "session_resumed", "Async resumed identity")
+        case.equal(client._session_resource_ids, {"session_resumed": "model_resumed"}, "Async resumed resource map")
+        output.append({"session_id": session_id, "resource_map": dict(client._session_resource_ids)})
+    return output
+
+
+async def _resolve_handle(case: _Case, handle: Any, *, posted_at: int, pending: bool = False) -> Any:
+    case.equal(len(case.requests), posted_at + 1, "Submission completes before returning the handle")
+    if pending:
+        case.equal(type(handle).__name__, "PendingRequests", "POST-only handle type")
+        case.check(inspect.iscoroutinefunction(handle.poll_result), "PendingRequests.poll_result is async")
+        return await handle.poll_result(poll_min_sec=0.001, poll_max_sec=0.001)
+    case.check(isinstance(handle, asyncio.Future), "Two-stage async API returns an awaitable Future/Task")
+    result = await handle
+    case.check(handle.done() and not handle.cancelled(), "Returned task resolves normally")
+    return result
+
+
+async def _async_training(ctx: _Context, case: _Case, client: Any) -> dict:
+    output = {}
+    for action in ("forward", "forward_backward", "optim_step"):
+        variants = ("",) if action == "optim_step" else ("", "_post", "_async")
+        for variant in variants:
+            name = action + variant
+            configured = action == "forward_backward"
+            expected, model, fields = _training_plan(case, action, name, configured)
+            options = (
+                {"loss_fn": "importance_sampling", "loss_fn_config": ctx.models.LossFnConfig(**LOSS_CONFIG)}
+                if configured
+                else {}
+            )
+            if name == "forward_backward_async":
+                options.update(poll_min_sec=0.001, poll_max_sec=0.001, max_chunks_per_wave=1)
+            argument = ctx.models.AdamParams(**ADAM) if action == "optim_step" else ctx.batch()
+            before = len(case.requests)
+            result = await getattr(client, name)(SESSION, argument, **options)
+            if variant:
+                result = await _resolve_handle(case, result, posted_at=before, pending=variant == "_post")
+            output[name] = ctx.model(case, result, model, expected, fields)
+    return output
+
+
+async def _async_checkpoints(ctx: _Context, case: _Case, client: Any) -> dict:
+    output = {}
+    for variant in ("_post", "_async"):
+        name = "optim_step" + variant
+        expected, model, fields = _training_plan(case, "optim_step", name)
+        before = len(case.requests)
+        options = {"poll_min_sec": 0.001, "poll_max_sec": 0.001} if variant == "_async" else {}
+        handle = await getattr(client, name)(SESSION, ctx.models.AdamParams(**ADAM), **options)
+        result = await _resolve_handle(case, handle, posted_at=before, pending=variant == "_post")
+        output[name] = ctx.model(case, result, model, expected, fields)
+    for variant in ("", "_post", "_async"):
+        name = "save_weights" + variant
+        options = {"step_number": 7, "metrics": METADATA} if variant else {}
+        payload = {"path": "loom://session_workload/weights/train"}
+        case.operation("checkpoint", {"path": "train", **options}, payload, name)
+        before = len(case.requests)
+        result = await getattr(client, name)(SESSION, "train", **options)
+        if variant:
+            result = await _resolve_handle(case, result, posted_at=before, pending=variant == "_post")
+        output[name] = ctx.model(
+            case,
+            result,
+            "SaveCheckpointOperationResult",
+            _checkpoint_expected(name, "train", payload),
+            ("checkpoint_id", "path"),
+        )
+    return output
+
+
+async def _async_sampling(ctx: _Context, case: _Case, client: Any) -> list:
+    output = []
+    for index in range(3):
+        name = "save_weights_for_sampler_async" if index == 0 else "save_weights_and_get_sampling_client_async"
+        body = {"seq_id": 0, "path": "sampler_explicit"}
+        if index:
+            body["sampling_session_seq_id"] = index
+        payload = {"type": "save_weights_for_sampler", "sampling_session_id": "sampling_workload"}
+        request_id = f"sampler_{index}"
+        case.operation("checkpoint_sample", body, payload, request_id)
+        before = len(case.requests)
+        handle = await getattr(client, name)(SESSION, "sampler_explicit")
+        result = await _resolve_handle(case, handle, posted_at=before)
+        expected = {
+            **payload,
+            "type": "save_sampler_weights",
+            "checkpoint_id": "sampler_explicit",
+            "operation_id": request_id,
+            "status": "succeeded",
+        }
+        output.append(
+            ctx.model(
+                case, result, "SaveSamplerWeightsOperationResult", expected, ("checkpoint_id", "sampling_session_id")
+            )
+        )
+    case.equal(
+        client._sampling_session_seq,
+        {SESSION: 2},
+        "Ephemeral sampler sequence increments independently of persisted save",
+    )
+    for index in range(2):
+        prompt, options, expected = _sample_plan(ctx, case, index)
+        result = await client.sample(SESSION, prompt, ctx.models.SamplingParams(**SAMPLING), **options)
+        output.append(_sample_result(ctx, case, result, expected))
+    return output
+
+
+async def _async_lifecycle(ctx: _Context, case: _Case, client: Any) -> list:
+    output = []
+    for index, (raw, canonical, resource) in enumerate(IDENTITIES):
+        body = {"type": "training", "base_model": BASE_MODEL}
+        options = {"lora_config": ctx.models.LoRAConfig(**LORA)} if ctx.service_contracts else {}
+        if ctx.service_contracts:
+            body["lora_config"] = LORA
+        case.create(raw, resource, body, f"lifecycle_{index}")
+        session_id = await client.create_session(base_model=BASE_MODEL, timeout_sec=5.0, **options)
+        case.equal(session_id, canonical, "Lifecycle canonical ID")
+        case.equal(client._session_resource_ids[session_id], resource, "Lifecycle resource map")
+        # Background heartbeats are disabled. Explicitly exercise the real
+        # generated heartbeat using the resource retained by create_session.
+        case.expect("POST", f"/{resource}/heartbeat", {"session_id": resource})
+        heartbeat = await client.sessions.heartbeat(
+            client._session_resource_ids[session_id], foundry_features=PREVIEW, api_version="v1"
+        )
+        output.append(ctx.model(case, heartbeat, "HeartbeatResponse", {"session_id": resource}, ("session_id",)))
+        case.expect("POST", f"/{resource}/complete", {})
+        case.equal(await client.close_session(session_id), None, "Async close result")
+        case.expect("DELETE", f"/{resource}", {}, status=404 if index == 2 else 200)
+        case.equal(await client.delete_session(session_id), None, "Async delete result")
+        case.equal(client._session_resource_ids, {}, "Delete clears canonical/resource mapping even on 404")
+    case.expect("DELETE", f"/{SESSION}", {}, status=404)
+    case.equal(await client.delete_session(SESSION), None, "Deleting an already absent session is idempotent")
+    case.equal(client._heartbeat_tasks, {}, "Lifecycle leaves no heartbeat tasks")
+    return output
+
+
+async def _async_generated(ctx: _Context, case: _Case, client: Any) -> dict:
+    output, hooks = {}, []
+    case.equal(
+        sorted(name for name in vars(client) if not name.startswith("_")),
+        sorted(("sessions", "training", "checkpoints", "sampling", "operations")),
+        "Async client operation groups",
+    )
+    for spec in _generated_specs():
+        target, options = _generated_call(case, client, spec, hooks)
+        result = await target(**options)
+        output[spec[0]] = ctx.model(case, result, spec[5], spec[4], spec[6])
+    case.equal(len(hooks), 5, "All real async generated calls invoke response hooks")
+    case.check(
+        all(request["headers"].get("x-compatibility-probe") == "shared" for request in case.requests),
+        "Async per-operation headers reach transport",
+    )
+    return {"results": output, "hooks": hooks}
+
+
+async def _async_errors(ctx: _Context, case: _Case, client: Any, *, polling: bool = False) -> list:
+    output = []
+    for index, spec in enumerate(_poll_errors() if polling else _http_errors()):
+        name, fields = _error_plan(case, index, spec, polling)
+        try:
+            await client.forward_backward(SESSION, ctx.batch())
+        except ctx.sdk.FineTuningSessionsError as exc:
+            output.append(ctx.exception(case, exc, name, fields))
+        else:
+            raise AssertionError(f"Expected terminal {name}")
+    return output
+
+
+SYNC_CASES: tuple[tuple[str, Callable], ...] = (
+    ("surface_and_signatures", _surface),
+    ("serialization_and_error_contracts", _serialization),
+    ("sync_create_identifiers", _sync_create),
+    ("sync_create_from_checkpoint", _sync_checkpoint_create),
+    ("sync_training", _sync_training),
+    ("sync_checkpoints", _sync_checkpoints),
+    ("sync_sampling", _sync_sampling),
+    ("sync_lifecycle", _sync_lifecycle),
+    ("sync_generated_reads", _sync_generated),
+    ("sync_http_errors", _sync_errors),
+    ("sync_poll_errors", lambda ctx, case, client: _sync_errors(ctx, case, client, polling=True)),
+)
+ASYNC_CASES: tuple[tuple[str, Callable], ...] = (
+    ("async_create_identifiers", _async_create),
+    ("async_create_from_checkpoint", _async_checkpoint_create),
+    ("async_training", _async_training),
+    ("async_checkpoint_pipeline", _async_checkpoints),
+    ("async_sampling", _async_sampling),
+    ("async_lifecycle", _async_lifecycle),
+    ("async_generated_reads", _async_generated),
+    ("async_http_errors", _async_errors),
+    ("async_poll_errors", lambda ctx, case, client: _async_errors(ctx, case, client, polling=True)),
+)
+CASE_NAMES = tuple(name for name, _ in (*SYNC_CASES, *ASYNC_CASES))
+
+
+async def _run_async_cases(ctx: _Context, results: dict) -> None:
+    for name, function in ASYNC_CASES:
+        case = _Case(name, ctx, token_auth=name == "async_generated_reads")
+        existing_tasks = asyncio.all_tasks()
+        output, error = None, None
+        try:
+            async with ctx.client(case, asynchronous=True) as client:
+                output = await asyncio.wait_for(function(ctx, case, client), timeout=15.0)
+        except Exception as exc:
+            error = exc
+        # A failing handle assertion must not leave its polling task running
+        # into another case. No heartbeat/task leakage is treated as success.
+        pending = asyncio.all_tasks() - existing_tasks
+        for task in pending:
+            task.cancel()
+        if pending:
+            await asyncio.gather(*pending, return_exceptions=True)
+        if error is None:
+            try:
+                case.equal(len(pending), 0, "No unawaited SDK tasks remain after the case")
+            except Exception as exc:
+                error = exc
+        results[name] = case.finish(output, error)
+
+
+def _snapshot(
+    package: Path,
+    legacy_routes: bool,
+    service_contracts: bool = False,
+    input_chunk_discriminator: bool = False,
+    sampling_prompt_tokens: bool = False,
+) -> dict:
+    sys.dont_write_bytecode = True
+    _offline_environment()
+    if any(name == NAMESPACE or name.startswith(NAMESPACE + ".") for name in sys.modules):
+        raise RuntimeError("SDK was already imported; refusing a contaminated snapshot process")
+    package = _check_package(package)
+    before = _source_hashes(package)
+    # Windows asyncio may create an internal wakeup socket here. The SDK has not
+    # been imported, and all later socket connections (including loopback) fail.
+    loop = asyncio.new_event_loop()
+    # Windows discovery may invoke a subprocess/open NUL; finish it before
+    # the guard rather than allowing filesystem writes or subprocesses in it.
+    platform.platform()
+    _install_offline_guard()
+    sys.path.insert(0, str(package))
+    try:
+        logging.getLogger("azure").setLevel(logging.CRITICAL)
+        from azure.core.settings import settings
+
+        settings.tracing_enabled = False
+        ctx = _Context(legacy_routes, service_contracts, input_chunk_discriminator, sampling_prompt_tokens)
+        expected_origin = (package / MODULE / "__init__.py").resolve()
+        if Path(ctx.sdk.__file__).resolve() != expected_origin:
+            raise RuntimeError(f"Imported the wrong SDK: {ctx.sdk.__file__}; expected {expected_origin}")
+        results: dict[str, dict] = {}
+        for name, function in SYNC_CASES:
+            case = _Case(name, ctx, token_auth=name == "sync_generated_reads")
+            try:
+                with ctx.client(case) as client:
+                    output = function(ctx, case, client)
+                results[name] = case.finish(output)
+            except Exception as exc:
+                results[name] = case.finish(error=exc)
+        loop.run_until_complete(_run_async_cases(ctx, results))
+        origins = {}
+        for name, module in sorted(sys.modules.items()):
+            if name == NAMESPACE or name.startswith(NAMESPACE + "."):
+                path = Path(module.__file__).resolve()
+                path.relative_to((package / MODULE).resolve())  # Raises on any cross-root import.
+                origins[name] = path.relative_to(package).as_posix()
+        after = _source_hashes(package)
+        if before != after:
+            raise RuntimeError("SDK source files changed during the read-only snapshot")
+        return {
+            "schema": 1,
+            "namespace": NAMESPACE,
+            "source": {
+                "package": str(package),
+                "origin": str(expected_origin),
+                "imported_modules": origins,
+                "sha256": hashlib.sha256(_dump(before).encode()).hexdigest(),
+                "unchanged": True,
+            },
+            "runtime": {
+                "legacy_routes": legacy_routes,
+                "service_contracts": service_contracts,
+                **({"input_chunk_discriminator": True} if input_chunk_discriminator else {}),
+                **({"sampling_prompt_tokens": True} if sampling_prompt_tokens else {}),
+                "network_guard": True,
+                "write_guard": True,
+                "heartbeat_start_disabled": True,
+                "bytecode_writes": False,
+            },
+            "normalizations": NORMALIZATIONS,
+            "limitations": LIMITATIONS,
+            "cases": results,
+            "counts": {
+                "cases": len(results),
+                "checks": sum(item["checks"] for item in results.values()),
+                "requests": sum(len(item["requests"]) for item in results.values()),
+            },
+        }
+    finally:
+        loop.run_until_complete(loop.shutdown_asyncgens())
+        loop.run_until_complete(loop.shutdown_default_executor())
+        loop.close()
+
+
+def _differences(left: Any, right: Any, path: str = "") -> list[str]:
+    """Type-sensitive recursive diff; bool/int/float are NOT interchangeable."""
+    if type(left) is not type(right):
+        return [f"{path}: Loom={_dump(left)}; public={_dump(right)}"]
+    if isinstance(left, dict):
+        result = []
+        for key in sorted(left.keys() | right.keys()):
+            child = f"{path}.{key}" if path else key
+            if key not in left:
+                result.append(f"{child}: public-only value {_dump(right[key])}")
+            elif key not in right:
+                result.append(f"{child}: missing public value (Loom={_dump(left[key])})")
+            else:
+                result.extend(_differences(left[key], right[key], child))
+        return result
+    if isinstance(left, list):
+        result = [] if len(left) == len(right) else [f"{path}: lengths Loom={len(left)}, public={len(right)}"]
+        for index, (old, new) in enumerate(zip(left, right)):
+            result.extend(_differences(old, new, f"{path}[{index}]"))
+        return result
+    return [] if left == right else [f"{path}: Loom={_dump(left)}; public={_dump(right)}"]
+
+
+def _apply_review_header_contract(cases: dict, *, raw: bool) -> dict:
+    """Project only the reviewed direct-header fix onto the immutable fixture.
+
+    Expected values come from this verifier's fixed environment, not from the
+    candidate response. No headers or arbitrary differences are discarded.
+    """
+    result = deepcopy(cases)
+    context = {
+        "apim-subscription-id": "offline-subscription",
+        "azure-resource-id": "/subscriptions/offline/resourceGroups/offline/providers/Microsoft.CognitiveServices/accounts/offline",
+        "azure-resource-tenant-id": "offline-tenant",
+        "azure-resource-location": "offline-region",
+        "x-workspace-resource-id": "/subscriptions/offline/resourceGroups/offline/providers/Microsoft.MachineLearningServices/workspaces/offline",
+    }
+    for name, case in result.items():
+        for request in case["requests"]:
+            if (
+                raw
+                or name in {"sync_generated_reads", "async_generated_reads"}
+                or (name in {"sync_lifecycle", "async_lifecycle"} and "/heartbeat?" in request["url"])
+            ):
+                for header, value in context.items():
+                    request["headers"].setdefault(header, value)
+    return result
+
+
+def _run_worker(
+    package: Path,
+    *,
+    legacy_routes: bool,
+    service_contracts: bool = False,
+    input_chunk_discriminator: bool = False,
+    sampling_prompt_tokens: bool = False,
+) -> dict:
+    command = [sys.executable, "-I", "-B", "-X", "utf8", str(Path(__file__).resolve()), "--snapshot", str(package)]
+    if legacy_routes:
+        command.append("--legacy-routes")
+    if service_contracts:
+        command.append("--service-contracts")
+    if input_chunk_discriminator:
+        command.append("--input-chunk-discriminator")
+    if sampling_prompt_tokens:
+        command.append("--sampling-prompt-tokens")
+    completed = subprocess.run(
+        command, cwd=package, capture_output=True, text=True, encoding="utf-8", timeout=120, check=False
+    )
+    try:
+        report = json.loads(completed.stdout)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(
+            f"Snapshot did not produce JSON for {package}:\n{completed.stdout}\n{completed.stderr}"
+        ) from exc
+    if completed.returncode not in (0, 1) or "fatal" in report:
+        raise RuntimeError(f"Snapshot setup failed for {package}: {_dump(report)}\n{completed.stderr}")
+    expected_runtime = {
+        "legacy_routes": legacy_routes,
+        "service_contracts": service_contracts,
+        **({"input_chunk_discriminator": True} if input_chunk_discriminator else {}),
+        **({"sampling_prompt_tokens": True} if sampling_prompt_tokens else {}),
+        "network_guard": True,
+        "write_guard": True,
+        "heartbeat_start_disabled": True,
+        "bytecode_writes": False,
+    }
+    if report.get("schema") != 1 or report.get("namespace") != NAMESPACE or report.get("runtime") != expected_runtime:
+        raise RuntimeError("Unexpected snapshot schema, namespace, or isolation flags")
+    source = report.get("source", {})
+    if (
+        Path(source.get("package", "")).resolve() != package
+        or Path(source.get("origin", "")).resolve() != (package / MODULE / "__init__.py").resolve()
+        or source.get("unchanged") is not True
+    ):
+        raise RuntimeError("Snapshot source origin/integrity verification failed")
+    if set(report.get("cases", {})) != set(CASE_NAMES):
+        raise RuntimeError("Snapshot did not execute exactly the required 20 cases")
+    if completed.returncode != (0 if all(case["ok"] for case in report["cases"].values()) else 1):
+        raise RuntimeError("Snapshot exit code disagrees with its case outcomes")
+    return report
+
+
+def _review_contracts(deltas: dict) -> list[str]:
+    """Reject unknown, partial or modified specifications, including extra fields."""
+    contracts = deltas.get("fixture_contracts")
+    previous = ORIGINAL_CONTRACTS + ["training-type-enum"]
+    service = previous + SERVICE_CONTRACTS
+    chunks = service + [INPUT_CHUNK_CONTRACT]
+    features = chunks + [FOUNDRY_FEATURES_CONTRACT]
+    current = features + [SAMPLING_PROMPT_TOKENS_CONTRACT]
+    if contracts not in (ORIGINAL_CONTRACTS, previous, service, chunks, features, current):
+        raise ValueError("Unsupported review comparison contract")
+    if contracts in (service, chunks, features, current):
+        if _dump(deltas.get("service_contracts")) != _dump(SERVICE_CONTRACT_DEFINITIONS):
+            raise ValueError("The fixed service contract definitions changed")
+    elif "service_contracts" in deltas:
+        raise ValueError("Service definitions require the complete explicit service contract set")
+    if contracts in (chunks, features, current):
+        if _dump(deltas.get("input_chunk_contract")) != _dump(INPUT_CHUNK_DEFINITION):
+            raise ValueError("The fixed input-chunk contract definition changed")
+    elif "input_chunk_contract" in deltas:
+        raise ValueError("Input-chunk definitions require the complete explicit contract set")
+    if contracts in (features, current):
+        if _dump(deltas.get("foundry_features_contract")) != _dump(FOUNDRY_FEATURES_DEFINITION):
+            raise ValueError("The fixed Foundry feature contract definition changed")
+    elif "foundry_features_contract" in deltas:
+        raise ValueError("Foundry feature definitions require the complete explicit contract set")
+    if contracts == current:
+        if _dump(deltas.get("sampling_prompt_tokens_contract")) != _dump(SAMPLING_PROMPT_TOKENS_DEFINITION):
+            raise ValueError("The fixed sampling prompt-token contract definition changed")
+    elif "sampling_prompt_tokens_contract" in deltas:
+        raise ValueError("Sampling prompt-token definitions require the complete explicit contract set")
+    return contracts
+
+
+def _require_baseline(value: Any, digest: str, label: str) -> None:
+    """Guard immutable observations BEFORE a delta; never hash candidate values."""
+    if hashlib.sha256(_dump(value).encode("utf-8")).hexdigest() != digest:
+        raise ValueError(f"The immutable {label} baseline changed; refusing the reviewed transformation")
+
+
+def _apply_service_contracts(cases: dict) -> dict:
+    """Adapt only required LoRA inputs, four signatures and one identical alias.
+
+    The digest is of all 20 ORIGINAL-fixture Loom observations, obtained from
+    verified commit 485774df, before header/TrainingType projections. It guards
+    every old assertion, request, signature, default and output, not source code.
+    """
+    _require_baseline(cases, "ef14400ae5ba19baf73758c3d9da1fdad3c4078fa2a64ff3f37bfff9555cc981", "20-case")
+    result = deepcopy(cases)
+    surface = result["surface_and_signatures"]["output"]
+    surface["exports"]["models"] = sorted([*surface["exports"]["models"], "SamplingOperationResult"])
+    for method in SERVICE_CONTRACT_DEFINITIONS["required_lora"]["methods"]:
+        parameter = next(p for p in surface["signatures"][method] if p["name"] == "lora_config")
+        if parameter != {"name": "lora_config", "kind": "KEYWORD_ONLY", "default": None}:
+            raise ValueError(f"Unexpected baseline parameter: {method}.lora_config")
+        del parameter["default"]
+    model = result["serialization_and_error_contracts"]["output"]["CreateSessionRequest"]
+    model["json"]["lora_config"] = deepcopy(LORA)
+    model["attributes"]["lora_config"] = deepcopy(LORA)
+    for name in (
+        "sync_create_identifiers",
+        "async_create_identifiers",
+        "sync_create_from_checkpoint",
+        "async_create_from_checkpoint",
+        "async_lifecycle",
+    ):
+        for request in result[name]["requests"]:
+            if request["method"] == "POST" and request["url"] == ENDPOINT + ROUTE + "?api-version=v1":
+                body = request["body"]
+                if "lora_config" not in body:
+                    if request["headers"]["content-length"] != str(len(json.dumps(body).encode("utf-8"))):
+                        raise ValueError("Unexpected baseline create-body encoding")
+                    body["lora_config"] = deepcopy(LORA)
+                    request["headers"]["content-length"] = str(len(json.dumps(body).encode("utf-8")))
+    return result
+
+
+def _apply_input_chunk_contract(cases: dict) -> dict:
+    """Extend the exact prior service contract, not a candidate-derived baseline."""
+    _require_baseline(
+        cases, "c7aa534f1383ce7c32984ebd9282bd60f721a86bb52606ee2567313897420ea5", "prior reviewed 20-case"
+    )
+    result = deepcopy(cases)
+    api = result["surface_and_signatures"]["output"]
+    api["exports"]["models"] = sorted([*api["exports"]["models"], "InputChunk", "InputChunkType"])
+    api["enums"]["InputChunkType"] = {"TEXT": "text", "IMAGE": "image"}
+    model = result["serialization_and_error_contracts"]["output"]["ModelInput"]
+    for kind in ("json", "attributes"):
+        model[kind] = _input_chunk_wire(model[kind])
+    for side in ("sync", "async"):
+        for name in ("training", "sampling", "http_errors", "poll_errors"):
+            for request in result[f"{side}_{name}"]["requests"]:
+                body = request["body"]
+                projected = _input_chunk_body(body)
+                if projected != body:
+                    if request["headers"]["content-length"] != str(len(json.dumps(body).encode("utf-8"))):
+                        raise ValueError("Unexpected baseline input-body encoding")
+                    request["body"] = projected
+                    request["headers"]["content-length"] = str(len(json.dumps(projected).encode("utf-8")))
+    return result
+
+
+def _apply_foundry_features_contract(cases: dict) -> dict:
+    """Replace only the fixed six-member enum, never headers or other observations."""
+    result = deepcopy(cases)
+    enums = result["surface_and_signatures"]["output"]["enums"]
+    if _dump(enums["FoundryFeaturesOptInKeys"]) != _dump(LEGACY_FOUNDRY_FEATURES):
+        raise ValueError("The immutable Foundry feature enum changed")
+    enums["FoundryFeaturesOptInKeys"] = deepcopy(FOUNDRY_FEATURES_DEFINITION["members"])
+    return result
+
+
+def _apply_sampling_prompt_tokens_contract(cases: dict) -> dict:
+    """Observe absence at four fixed sampling results; never change their wire JSON."""
+    result = deepcopy(cases)
+    for name, offset, count in (("sync_sampling", 0, 2), ("async_sampling", 3, 5)):
+        output = result[name]["output"]
+        if len(output) != count:
+            raise ValueError(f"The immutable {name} result inventory changed")
+        for index in range(2):
+            original = {
+                "class": "SampleOperationResult",
+                "json": {**deepcopy(SAMPLES), "type": "sample", "status": "succeeded", "operation_id": f"sample_{index}"},
+                "attributes": {
+                    field: deepcopy(SAMPLES[field])
+                    for field in ("sequences", "prompt_logprobs", "topk_prompt_logprobs", "metrics")
+                },
+            }
+            observation = output[offset + index]
+            if _dump(observation) != _dump(original):
+                raise ValueError(f"The immutable {name} sampling result changed")
+            observation["attributes"]["prompt_tokens"] = None
+    return result
+
+
+def _compare(
+    loom: dict,
+    public: dict,
+    *,
+    reviewed: bool = False,
+    training_type_enum: bool = False,
+    service_contracts: bool = False,
+    input_chunk_discriminator: bool = False,
+    canonical_foundry_features: bool = False,
+    sampling_prompt_tokens: bool = False,
+) -> int:
+    if service_contracts:
+        loom = {**loom, "cases": _apply_service_contracts(loom["cases"])}
+    if reviewed:
+        loom = {**loom, "cases": _apply_review_header_contract(loom["cases"], raw=False)}
+    if training_type_enum:
+        loom = deepcopy(loom)
+        surface = loom["cases"]["surface_and_signatures"]["output"]
+        exports = surface["exports"]["models"]
+        if "TrainingType" in exports or "TrainingType" in surface["enums"]:
+            raise ValueError("The immutable baseline already contains TrainingType")
+        surface["exports"]["models"] = sorted([*exports, "TrainingType"])
+        surface["enums"]["TrainingType"] = {
+            "GLOBAL_STANDARD": "GlobalStandard",
+            "DATAZONE_STANDARD": "DatazoneStandard",
+            "DEVELOPER_TIER": "DeveloperTier",
+        }
+    if input_chunk_discriminator:
+        loom = {**loom, "cases": _apply_input_chunk_contract(loom["cases"])}
+    if canonical_foundry_features:
+        loom = {**loom, "cases": _apply_foundry_features_contract(loom["cases"])}
+    if sampling_prompt_tokens:
+        loom = {**loom, "cases": _apply_sampling_prompt_tokens_contract(loom["cases"])}
+    failed = []
+    for name in CASE_NAMES:
+        left, right = loom["cases"][name], public["cases"][name]
+        differences = []
+        if not left["ok"] or not right["ok"]:
+            differences.append(
+                f"Case must succeed independently in both SDKs; Loom={left.get('error')}, public={right.get('error')}"
+            )
+        differences.extend(_differences(left, right, name))
+        if differences:
+            failed.append(name)
+        print(
+            f"{'FAIL' if differences else 'PASS'} {name}: requests {len(left['requests'])}/{len(right['requests'])}, checks {left['checks']}/{right['checks']} (Loom/public)"
+        )
+        for difference in differences[:20]:
+            print("  " + difference)
+        if len(differences) > 20:
+            print(f"  ... {len(differences) - 20} further differences; use --snapshot to inspect full actual records.")
+    print("\nExplicitly allowed surface differences:")
+    print(
+        "  "
+        + (
+            "Only the exact direct-context header additions recorded in eng/generation/review-deltas.json."
+            if reviewed
+            else "None. Customer-facing API and behavior must match; internal hook placement may differ."
+        )
+    )
+    if training_type_enum:
+        print(
+            "  Also the exact TrainingType export and three unchanged wire values; no other enum or payload differences."
+        )
+    if service_contracts:
+        print(
+            "  Also fixed required-LoRA inputs/four signatures and the identical sampling alias; original reference fixtures remain unchanged."
+        )
+    if input_chunk_discriminator:
+        print(
+            "  Also the two fixed input-chunk exports and type=text only in model-input chunks; tensors, returned tokens and extensions stay exact."
+        )
+    if canonical_foundry_features:
+        print(
+            "  Also six exact canonical Foundry feature members; six existing members and every wire header remain exact."
+        )
+    if sampling_prompt_tokens:
+        print(
+            "  Also the fixed read-only Optional[int] sampling prompt count; absent legacy values are None attributes, never new wire fields."
+        )
+    print("\nNormalization rules:")
+    for note in NORMALIZATIONS:
+        print("  " + note)
+    print("\nScope limits (not passing compatibility checks):")
+    for note in LIMITATIONS:
+        print("  " + note)
+    print(
+        f"\n{'FAIL' if failed else 'PASS'}: {len(CASE_NAMES) - len(failed)}/{len(CASE_NAMES)} paired cases; requests {loom['counts']['requests']}/{public['counts']['requests']}; checks {loom['counts']['checks']}/{public['counts']['checks']} (Loom/public)."
+    )
+    return 1 if failed else 0
+
+
+def main() -> int:
+    platform.platform()
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--loom-repo", type=Path, help="Local Git clone containing the pinned upstream Loom commit")
+    parser.add_argument("--snapshot", type=Path, help=argparse.SUPPRESS)
+    parser.add_argument("--legacy-routes", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--service-contracts", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--input-chunk-discriminator", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--sampling-prompt-tokens", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument(
+        "--artifacts", type=Path, help="Save original and candidate worker JSON without altering the source oracle"
+    )
+    args = parser.parse_args()
+    if args.snapshot is not None:
+        if args.loom_repo is not None:
+            parser.error("--snapshot and --loom-repo are mutually exclusive")
+        try:
+            with redirect_stdout(sys.stderr):
+                report = _snapshot(
+                    args.snapshot,
+                    args.legacy_routes,
+                    args.service_contracts,
+                    args.input_chunk_discriminator,
+                    args.sampling_prompt_tokens,
+                )
+            print(_dump(report))
+            return 0 if all(case["ok"] for case in report["cases"].values()) else 1
+        except Exception as exc:
+            print(_dump({"fatal": {"type": type(exc).__name__, "message": str(exc)}}))
+            return 2
+    if (
+        args.loom_repo is None
+        or args.legacy_routes
+        or args.service_contracts
+        or args.input_chunk_discriminator
+        or args.sampling_prompt_tokens
+    ):
+        parser.error("--loom-repo is required; --legacy-routes is for internal --snapshot mode only")
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from verify_reference_snapshot import reference_package, load_manifest, upstream_files, normalized_bytes
+
+        public_package = _check_package(PACKAGE)
+        manifest = load_manifest(public_package)
+        upstream = upstream_files(args.loom_repo, manifest)
+        expected_tests = {name: content for name, content in upstream.items() if name.startswith("tests/")}
+        actual_tests = {
+            path.relative_to(public_package).as_posix(): normalized_bytes(path)
+            for path in (public_package / "tests").rglob("*")
+            if path.is_file() and not {"__pycache__", ".pytest_cache"}.intersection(path.parts)
+        }
+        delta_path = PACKAGE / "eng/generation/review-deltas.json"
+        deltas = json.loads(delta_path.read_text(encoding="utf-8")) if delta_path.exists() else None
+        if deltas is None:
+            if expected_tests != actual_tests:
+                raise ValueError(
+                    "The complete upstream test inventory must remain byte-identical after naming normalization"
+                )
+        else:
+            _review_contracts(deltas)
+            adapted = deltas["adapted_upstream_tests"]
+            additions = deltas["added_tests"]
+            if actual_tests.keys() != expected_tests.keys() | additions.keys():
+                raise ValueError("Unexpected test inventory; no upstream tests may be removed")
+            for name, expected in expected_tests.items():
+                expected_hash = adapted.get(name) or hashlib.sha256(expected).hexdigest()
+                if hashlib.sha256(actual_tests[name]).hexdigest() != expected_hash:
+                    raise ValueError(f"Unrecorded upstream test change: {name}")
+            for name, expected_hash in additions.items():
+                if hashlib.sha256(actual_tests[name]).hexdigest() != expected_hash:
+                    raise ValueError(f"Unrecorded regression-test change: {name}")
+        print(f"Immutable Loom reference verified: {manifest['source_commit']}\nPublic source: {public_package}")
+        with reference_package(args.loom_repo, public_package) as reference:
+            service_contracts = deltas is not None and "raw-request-id-polling" in _review_contracts(deltas)
+            input_chunk_discriminator = deltas is not None and INPUT_CHUNK_CONTRACT in _review_contracts(deltas)
+            sampling_prompt_tokens = deltas is not None and SAMPLING_PROMPT_TOKENS_CONTRACT in _review_contracts(deltas)
+            loom = _run_worker(_check_package(reference), legacy_routes=False)
+            public = _run_worker(
+                public_package,
+                legacy_routes=False,
+                service_contracts=service_contracts,
+                input_chunk_discriminator=input_chunk_discriminator,
+                sampling_prompt_tokens=sampling_prompt_tokens,
+            )
+            if args.artifacts:
+                args.artifacts.mkdir(parents=True, exist_ok=True)
+                for name, report in (("reference-convenience", loom), ("candidate-convenience", public)):
+                    (args.artifacts / f"{name}.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+            if _compare(
+                loom,
+                public,
+                reviewed=deltas is not None,
+                training_type_enum=deltas is not None and "training-type-enum" in _review_contracts(deltas),
+                service_contracts=service_contracts,
+                input_chunk_discriminator=input_chunk_discriminator,
+                canonical_foundry_features=deltas is not None
+                and FOUNDRY_FEATURES_CONTRACT in _review_contracts(deltas),
+                sampling_prompt_tokens=sampling_prompt_tokens,
+            ):
+                return 1
+            command = [
+                sys.executable,
+                "-I",
+                "-B",
+                "-X",
+                "utf8",
+                str(PACKAGE / "scripts/verify_surface.py"),
+                "--reference",
+                str(reference),
+                "--candidate",
+                str(public_package),
+                "--harness",
+                str(Path(__file__).resolve()),
+            ]
+            if deltas is not None:
+                command.extend(["--review-deltas", str(delta_path)])
+            if args.artifacts:
+                command.extend(["--artifacts", str(args.artifacts.resolve())])
+            completed = subprocess.run(command, check=False)
+            return completed.returncode
+    except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as exc:
+        print(f"Verifier setup failed: {exc}", file=sys.stderr)
+        return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -37,13 +37,13 @@ def main():
             "location": "West US",
             "properties": {
                 "description": "This is the gallery description.",
-                "softDeletePolicy": {"isSoftDeleteEnabled": True},
+                "softDeletePolicy": {"gracePeriodInDays": 30, "isSoftDeleteEnabled": True, "retentionPeriodInDays": 7},
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-12-03/galleryExamples/Gallery_Create_SoftDeletionEnabled.json
+# x-ms-original-file: 2026-03-03/galleryExamples/Gallery_Create_SoftDeletionEnabled.json
 if __name__ == "__main__":
     main()

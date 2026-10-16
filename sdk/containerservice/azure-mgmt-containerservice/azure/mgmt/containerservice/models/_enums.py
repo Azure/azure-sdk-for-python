@@ -439,10 +439,6 @@ class InfrastructureEncryption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Encryption at rest of Kubernetes resource objects using service-managed keys is enabled. More
     information on this can be found under `https://aka.ms/aks/kubernetesResourceObjectEncryption
     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_."""
-    DISABLED = "Disabled"
-    """Encryption at rest of Kubernetes resource objects using service-managed keys is disabled. More
-    information on this can be found under `https://aka.ms/aks/kubernetesResourceObjectEncryption
-    <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_."""
 
 
 class IPFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -749,12 +745,16 @@ class MigStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     NONE = "None"
-    """Don't set a MIG strategy. If you previously had one set, this will override it and set remove
-    the set MIG strategy."""
+    """No MIG partitioning is applied; the GPU is exposed as a single unified whole-device instance.
+    Specifying this value removes any previously active MIG strategy."""
     SINGLE = "Single"
-    """Set the MIG strategy for managed MIG as single."""
+    """All MIG partitions on every GPU in the pool are the same size (``nvidia.com/mig.strategy:
+    single``). The uniform partition size is controlled by ``nvidia.migProfiles`` (exactly one
+    element required)."""
     MIXED = "Mixed"
-    """Set the MIG strategy for managed MIG as mixed."""
+    """Each GPU in the pool can host heterogeneous partitions of different sizes simultaneously
+    (``nvidia.com/mig.strategy: mixed``). The exact partition mix per GPU is declared via
+    ``nvidia.migProfiles``."""
 
 
 class Mode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

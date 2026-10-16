@@ -1,6 +1,6 @@
 # Release History
 
-## 1.8.11 (Unreleased)
+## 1.8.12 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.8.11 (2026-10-07)
+
+### Other Changes
+- Corrected the package metadata to require Python 3.10 or later, matching the existing support policy
+  ([#49200](https://github.com/Azure/azure-sdk-for-python/pull/49200))
 
 ## 1.8.10 (2026-09-09)
 

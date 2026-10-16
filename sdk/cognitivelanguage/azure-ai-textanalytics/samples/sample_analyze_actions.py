@@ -85,10 +85,10 @@ def sample_analyze():
 
     # Submit a multi-action analysis job (LRO)
     poller = client.begin_analyze_text_job(text_input=text_input, actions=actions)
-    paged_actions = poller.result()
+    job_state = poller.result()
 
     # Iterate through each action's results
-    for action_result in paged_actions:
+    for action_result in job_state.actions.items_property or []:
         print()  # spacing between action blocks
 
         # --- Entities ---

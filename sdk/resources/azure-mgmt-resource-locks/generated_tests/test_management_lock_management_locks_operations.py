@@ -30,9 +30,17 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "notes": "str",
                 "owners": [{"applicationId": "str"}],
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "type": "str",
             },
-            api_version="2016-09-01",
+            api_version="2020-05-01",
         )
 
         # please add some check logic here by yourself
@@ -44,7 +52,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
         response = self.client.management_locks.delete_at_resource_group_level(
             resource_group_name=resource_group.name,
             lock_name="str",
-            api_version="2016-09-01",
+            api_version="2020-05-01",
         )
 
         # please add some check logic here by yourself
@@ -56,7 +64,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
         response = self.client.management_locks.get_at_resource_group_level(
             resource_group_name=resource_group.name,
             lock_name="str",
-            api_version="2016-09-01",
+            api_version="2020-05-01",
         )
 
         # please add some check logic here by yourself
@@ -74,9 +82,17 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "notes": "str",
                 "owners": [{"applicationId": "str"}],
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "type": "str",
             },
-            api_version="2016-09-01",
+            api_version="2020-05-01",
         )
 
         # please add some check logic here by yourself
@@ -88,7 +104,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
         response = self.client.management_locks.delete_by_scope(
             scope="str",
             lock_name="str",
-            api_version="2016-09-01",
+            api_version="2020-05-01",
         )
 
         # please add some check logic here by yourself
@@ -100,7 +116,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
         response = self.client.management_locks.get_by_scope(
             scope="str",
             lock_name="str",
-            api_version="2016-09-01",
+            api_version="2020-05-01",
         )
 
         # please add some check logic here by yourself
@@ -122,9 +138,17 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "notes": "str",
                 "owners": [{"applicationId": "str"}],
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "type": "str",
             },
-            api_version="2016-09-01",
+            api_version="2020-05-01",
         )
 
         # please add some check logic here by yourself
@@ -140,7 +164,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
             resource_type="str",
             resource_name="str",
             lock_name="str",
-            api_version="2016-09-01",
+            api_version="2020-05-01",
         )
 
         # please add some check logic here by yourself
@@ -156,7 +180,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
             resource_type="str",
             resource_name="str",
             lock_name="str",
-            api_version="2016-09-01",
+            api_version="2020-05-01",
         )
 
         # please add some check logic here by yourself
@@ -173,9 +197,17 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "notes": "str",
                 "owners": [{"applicationId": "str"}],
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "type": "str",
             },
-            api_version="2016-09-01",
+            api_version="2020-05-01",
         )
 
         # please add some check logic here by yourself
@@ -186,7 +218,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
     def test_management_locks_delete_at_subscription_level(self, resource_group):
         response = self.client.management_locks.delete_at_subscription_level(
             lock_name="str",
-            api_version="2016-09-01",
+            api_version="2020-05-01",
         )
 
         # please add some check logic here by yourself
@@ -197,7 +229,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
     def test_management_locks_get_at_subscription_level(self, resource_group):
         response = self.client.management_locks.get_at_subscription_level(
             lock_name="str",
-            api_version="2016-09-01",
+            api_version="2020-05-01",
         )
 
         # please add some check logic here by yourself
@@ -208,7 +240,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
     def test_management_locks_list_at_resource_group_level(self, resource_group):
         response = self.client.management_locks.list_at_resource_group_level(
             resource_group_name=resource_group.name,
-            api_version="2016-09-01",
+            api_version="2020-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -223,7 +255,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
             parent_resource_path="str",
             resource_type="str",
             resource_name="str",
-            api_version="2016-09-01",
+            api_version="2020-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -233,7 +265,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_management_locks_list_at_subscription_level(self, resource_group):
         response = self.client.management_locks.list_at_subscription_level(
-            api_version="2016-09-01",
+            api_version="2020-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -244,7 +276,7 @@ class TestManagementLockManagementLocksOperations(AzureMgmtRecordedTestCase):
     def test_management_locks_list_by_scope(self, resource_group):
         response = self.client.management_locks.list_by_scope(
             scope="str",
-            api_version="2016-09-01",
+            api_version="2020-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

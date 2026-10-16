@@ -60,6 +60,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                 "properties": {
                     "accessTier": "str",
                     "allowBlobPublicAccess": bool,
+                    "allowCrossTenantDelegationSas": bool,
                     "allowCrossTenantReplication": bool,
                     "allowSharedKeyAccess": bool,
                     "allowSharedKeyAccessForServices": {
@@ -86,6 +87,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                     },
                     "customDomain": {"name": "str", "useSubDomainName": bool},
                     "dataCollaborationPolicyProperties": {
+                        "allowBlobAccessPoints": bool,
                         "allowCrossTenantDataSharing": bool,
                         "allowStorageConnectors": bool,
                         "allowStorageDataShares": bool,
@@ -143,8 +145,14 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                         "publishMicrosoftEndpoints": bool,
                         "routingChoice": "str",
                     },
-                    "sasPolicy": {"expirationAction": "str", "sasExpirationPeriod": "str"},
+                    "sasPolicy": {
+                        "expirationAction": "str",
+                        "sasExpirationPeriod": "str",
+                        "requireUserBoundUserDelegationSas": bool,
+                        "requireUserBoundUserDelegationSasAction": "str",
+                    },
                     "supportsHttpsTrafficOnly": bool,
+                    "turboTier": {"status": "str", "targetPercent": 0},
                 },
                 "tags": {"str": "str"},
                 "zones": ["str"],
@@ -172,6 +180,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                 "properties": {
                     "accessTier": "str",
                     "allowBlobPublicAccess": bool,
+                    "allowCrossTenantDelegationSas": bool,
                     "allowCrossTenantReplication": bool,
                     "allowSharedKeyAccess": bool,
                     "allowSharedKeyAccessForServices": {
@@ -198,6 +207,7 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                     },
                     "customDomain": {"name": "str", "useSubDomainName": bool},
                     "dataCollaborationPolicyProperties": {
+                        "allowBlobAccessPoints": bool,
                         "allowCrossTenantDataSharing": bool,
                         "allowStorageConnectors": bool,
                         "allowStorageDataShares": bool,
@@ -253,8 +263,14 @@ class TestStorageManagementStorageAccountsOperations(AzureMgmtRecordedTestCase):
                         "publishMicrosoftEndpoints": bool,
                         "routingChoice": "str",
                     },
-                    "sasPolicy": {"expirationAction": "str", "sasExpirationPeriod": "str"},
+                    "sasPolicy": {
+                        "expirationAction": "str",
+                        "sasExpirationPeriod": "str",
+                        "requireUserBoundUserDelegationSas": bool,
+                        "requireUserBoundUserDelegationSasAction": "str",
+                    },
                     "supportsHttpsTrafficOnly": bool,
+                    "turboTier": {"status": "str", "targetPercent": 0},
                 },
                 "sku": {"name": "str", "tier": "str"},
                 "tags": {"str": "str"},

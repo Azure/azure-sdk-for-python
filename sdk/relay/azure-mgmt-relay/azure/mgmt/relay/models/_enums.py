@@ -122,44 +122,6 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SECURED_BY_PERIMETER."""
 
 
-class RelayClusterProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning state of a Relay cluster."""
-
-    SUCCEEDED = "Succeeded"
-    """Resource has been created."""
-    FAILED = "Failed"
-    """Resource creation failed."""
-    CANCELED = "Canceled"
-    """Resource creation was canceled."""
-    CREATING = "Creating"
-    """The cluster is being created."""
-    DELETING = "Deleting"
-    """The cluster is being deleted."""
-    SCALING = "Scaling"
-    """The cluster is being scaled."""
-
-
-class RelayClusterSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Name of the Relay cluster SKU."""
-
-    DEDICATED = "Dedicated"
-    """The dedicated Relay cluster SKU."""
-
-
-class RelayClusterSkuScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Scaling mode supported by a Relay cluster SKU."""
-
-    AUTOMATIC = "Automatic"
-    """Capacity can be scaled automatically."""
-
-
-class RelayClusterSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Tier of the Relay cluster SKU."""
-
-    DEDICATED = "Dedicated"
-    """The dedicated Relay cluster SKU tier."""
-
-
 class Relaytype(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WCF relay type."""
 

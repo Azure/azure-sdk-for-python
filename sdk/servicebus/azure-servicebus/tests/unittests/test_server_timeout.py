@@ -13,6 +13,7 @@ the AMQP link itself failed. Matches the .NET, Java and Go SDKs.
 
 from unittest.mock import MagicMock, patch
 
+import asyncio  # pylint:disable=do-not-import-asyncio
 import struct
 
 import pytest
@@ -93,6 +94,7 @@ class TestManagementRequestSetsServerTimeout:
         from azure.servicebus._base_handler import BaseHandler
 
         captured = {}
+        request_timeouts = []
 
         def fake_create_mgmt_msg(message, application_properties, config, reply_to, **kwargs):
             captured.clear()
@@ -104,42 +106,48 @@ class TestManagementRequestSetsServerTimeout:
         handler._amqp_transport.create_mgmt_msg = fake_create_mgmt_msg
         handler._amqp_transport.AMQP_UINT_VALUE = PyamqpTransport.AMQP_UINT_VALUE
         handler._amqp_transport.get_handler_link_name = lambda h: "link-1"
-        handler._amqp_transport.mgmt_client_request = lambda *args, **kwargs: "response"
+
+        def fake_request(*args, **kwargs):
+            request_timeouts.append(kwargs["timeout"])
+            return "response"
+
+        handler._amqp_transport.mgmt_client_request = fake_request
         handler._amqp_transport.TIMEOUT_ERROR = TimeoutError
         handler._open = lambda timeout=None: None
         handler._handler = MagicMock()
         handler._config = MagicMock(encoding="UTF-8")
         handler._mgmt_target = "queue/$management"
-        return handler, captured
+        return handler, captured, request_timeouts
 
     def test_default_sent_when_caller_gave_no_timeout(self):
         # The gap this closes: previously no bound was sent at all.
-        handler, captured = self._make_handler()
+        handler, captured, _ = self._make_handler()
         handler._mgmt_request_response(b"op", {}, lambda *a: None, timeout=None)
         assert captured[REQUEST_RESPONSE_TIMEOUT] == {"TYPE": "UINT", "VALUE": 60000}
 
     def test_remaining_time_less_buffer_sent(self):
-        handler, captured = self._make_handler()
+        handler, captured, request_timeouts = self._make_handler()
         clock = FakeClock()
         handler._open = lambda timeout=None: clock.advance(2.0)
         with patch.object(sync_handler_module, "time", clock), patch.object(utils_module, "time", clock):
             handler._mgmt_request_response(b"op", {}, lambda *a: None, timeout=10)
         assert captured[REQUEST_RESPONSE_TIMEOUT] == {"TYPE": "UINT", "VALUE": 7000}
+        assert request_timeouts == [8]
 
     def test_clamped_below_buffer(self):
-        handler, captured = self._make_handler()
+        handler, captured, _ = self._make_handler()
         handler._mgmt_request_response(b"op", {}, lambda *a: None, timeout=0.4)
         assert captured[REQUEST_RESPONSE_TIMEOUT] == {"TYPE": "UINT", "VALUE": 0}
 
     def test_associated_link_name_preserved(self):
-        handler, captured = self._make_handler()
+        handler, captured, _ = self._make_handler()
         handler._mgmt_request_response(b"op", {}, lambda *a: None, timeout=None)
         assert b"associated-link-name" in captured
         assert REQUEST_RESPONSE_TIMEOUT in captured
 
     def test_sent_on_calls_without_an_associated_link(self):
         # list_sessions passes keep_alive_associated_link=False, starting from an empty map.
-        handler, captured = self._make_handler()
+        handler, captured, _ = self._make_handler()
         handler._mgmt_request_response(
             b"op",
             {},
@@ -239,6 +247,7 @@ class TestAsyncParity:
         from azure.servicebus.aio._base_handler_async import BaseHandler as AsyncBaseHandler
 
         captured = {}
+        request_timeouts = []
 
         def fake_create_mgmt_msg(message, application_properties, config, reply_to, **kwargs):
             captured.clear()
@@ -246,6 +255,7 @@ class TestAsyncParity:
             return MagicMock()
 
         async def fake_request(*args, **kwargs):
+            request_timeouts.append(kwargs["timeout"])
             return "response"
 
         async def fake_open(timeout=None):
@@ -275,3 +285,39 @@ class TestAsyncParity:
         with patch.object(async_handler_module, "time", clock), patch.object(utils_module, "time", clock):
             await handler._mgmt_request_response(b"op", {}, lambda *a: None, timeout=10)
         assert captured[REQUEST_RESPONSE_TIMEOUT] == {"TYPE": "UINT", "VALUE": 7000}
+        assert request_timeouts == [None, 8]
+
+    @pytest.mark.asyncio
+    async def test_async_management_request_cancels_transport_at_the_deadline(self):
+        from azure.servicebus.aio._base_handler_async import BaseHandler as AsyncBaseHandler
+
+        cancelled = asyncio.Event()
+
+        async def fake_request(*args, **kwargs):
+            try:
+                await asyncio.Event().wait()
+            finally:
+                cancelled.set()
+
+        async def fake_open(timeout=None):
+            return None
+
+        handler = AsyncBaseHandler.__new__(AsyncBaseHandler)
+        handler._amqp_transport = MagicMock()
+        handler._amqp_transport.create_mgmt_msg.return_value = MagicMock()
+        handler._amqp_transport.AMQP_UINT_VALUE = PyamqpTransport.AMQP_UINT_VALUE
+        handler._amqp_transport.get_handler_link_name = lambda h: "link-1"
+        handler._amqp_transport.mgmt_client_request_async = fake_request
+        handler._amqp_transport.TIMEOUT_ERROR = TimeoutError
+        handler._open = fake_open
+        handler._handler = MagicMock()
+        handler._config = MagicMock(encoding="UTF-8")
+        handler._mgmt_target = "queue/$management"
+
+        with pytest.raises(OperationTimeoutError):
+            await asyncio.wait_for(
+                handler._mgmt_request_response(b"op", {}, lambda *a: None, timeout=0.02),
+                timeout=5,
+            )
+
+        assert cancelled.is_set()

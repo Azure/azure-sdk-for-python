@@ -8,7 +8,7 @@ from typing import Any
 
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.responses import ResponsesAgentServerHost
+from azure.ai.agentserver.responses import ResponseEventStream, ResponsesAgentServerHost
 from tests._helpers import poll_until
 
 
@@ -580,6 +580,36 @@ def test_sync_no_terminal_event_still_completes() -> None:
     assert (
         payload.get("status") == "failed"
     ), f"S-015: synthesised terminal must set status to 'failed', got {payload.get('status')!r}"
+
+
+def test_sync_failed_terminal_preserves_public_metadata() -> None:
+    async def _failed_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
+        async def _events():
+            stream = ResponseEventStream(response_id=context.response_id, request=request)
+            yield stream.emit_created()
+            yield stream.emit_in_progress()
+            yield stream.emit_failed(
+                code="budget_exceeded",
+                message="Budget exceeded",
+                metadata={"costControl": '{"x-ms-budget-cause":"budget_exceeded"}'},
+            )
+
+        return _events()
+
+    app = ResponsesAgentServerHost()
+    app.response_handler(_failed_handler)
+    client = TestClient(app)
+
+    response = client.post(
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hello", "stream": False, "store": True, "background": False},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["status"] == "failed"
+    assert payload["error"]["code"] == "budget_exceeded"
+    assert payload["metadata"]["costControl"] == '{"x-ms-budget-cause":"budget_exceeded"}'
 
 
 # ══════════════════════════════════════════════════════════

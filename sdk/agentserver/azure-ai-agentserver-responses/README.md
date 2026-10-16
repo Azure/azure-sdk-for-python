@@ -48,6 +48,35 @@ the full surface.
 | `DELETE` | `/responses/{response_id}` | Delete a stored response |
 | `GET` | `/responses/{response_id}/input_items` | List input items (paginated) |
 
+### User isolation and response identifiers
+
+The host scopes live execution, cancellation, SSE replay, and resilient task
+state by `context.platform_context.user_id_key`. Different users can run the
+same public response ID independently. Anonymous requests use a separate
+partition. The platform must supply trusted identity headers; accepting a
+caller-supplied user header without authentication is not an isolation boundary.
+
+A duplicate `POST /responses` within the same user partition returns
+`409 response_id_conflict` while execution or replay is retained. This does not
+prevent the owner from retrieving, reconnecting to, or cancelling the existing
+response; it is not an idempotent retry of POST.
+With file-backed replay, Core 2.3.0b1 or later also discovers retained logs after
+restart for admission, authorized replay, and deletion. Missing logs are not
+created by lookups, and expired logs no longer reserve the response ID.
+DELETE keeps the same user-scoped ID reserved through stream, runtime, and
+provider cleanup. New POSTs cannot reuse it midway through deletion; other
+users' partitions remain independent.
+
+Storage providers must also enforce the supplied `PlatformContext` for response,
+item, and history operations. Runtime partitioning does not make a shared custom
+provider safe. Stored SSE replay requires a successful provider lookup for the
+requesting user before accessing that user's stream.
+
+User-scoped internal identifiers do not change response IDs on the wire.
+Legacy shared task chains and replay logs are not used for identified users;
+drain active work before upgrading. Anonymous identifiers retain their previous
+format for recovery compatibility.
+
 ### TextResponse
 
 The simplest way to return text. Handles the full SSE lifecycle automatically (`response.created` → `response.in_progress` → message/content events → `response.completed`):
@@ -132,6 +161,27 @@ The SDK automatically handles all combinations of `stream` and `background` flag
 - **Streaming** — Pipe events as SSE in real-time, cancel on client disconnect
 - **Background** — Return immediately, handler runs in the background
 - **Streaming + Background** — SSE while connected, handler continues after disconnect
+
+### Telemetry flushing
+
+`AGENTSERVER_FLUSH_MODE` controls per-request telemetry flushing independently
+of the response's `background` flag:
+
+| Value | Behavior |
+|---|---|
+| `background` (default) | Schedule a background flush without awaiting export. |
+| `async` | Await export off the event loop before completing the request. |
+| `sync` | Flush synchronously, blocking the event loop. |
+
+Values are case-insensitive and whitespace is ignored. Unset, empty, or invalid
+values use `background`; each distinct invalid value logs a warning once.
+Streaming requests dispatch one flush after stream cleanup and before HTTP
+completion.
+
+Background flushing requires the platform to allow the process to keep running
+long enough to drain telemetry before suspension or shutdown. If that window
+is unavailable, set `AGENTSERVER_FLUSH_MODE=async` to retain request-awaited
+flushing. Response completion alone does not guarantee telemetry delivery.
 
 ### Response lifecycle
 
@@ -254,6 +304,21 @@ app = ResponsesAgentServerHost(options=options)
 ```
 
 ## Troubleshooting
+
+### In-memory storage identity
+
+`InMemoryResponseProvider` partitions response envelopes, input/output items, and
+history by the exact `PlatformContext.user_id_key` supplied by a trusted host.
+Omitting context or setting the user key to `None` selects a separate anonymous
+partition for local development, not unrestricted access to named users' data.
+Empty and whitespace keys remain distinct; `call_id` does not affect the partition.
+Pass the same user key on every related provider operation, including the legacy
+execution/replay helpers when used directly.
+
+The provider does not authenticate callers. Hosts must establish trustworthy
+platform context before accessing it. This storage boundary is not complete
+end-to-end authorization: runtime routing and the process-wide SSE stream registry
+are separate from the provider's envelope, item, and history storage.
 
 ### Common errors
 

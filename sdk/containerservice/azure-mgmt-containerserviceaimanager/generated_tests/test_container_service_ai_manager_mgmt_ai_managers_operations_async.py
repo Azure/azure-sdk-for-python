@@ -49,6 +49,7 @@ class TestContainerServiceAIManagerMgmtAIManagersOperationsAsync(AzureMgmtRecord
                     },
                     "name": "str",
                     "properties": {
+                        "clusterResourceId": "str",
                         "deletePolicy": "str",
                         "managedResourceGroupName": "str",
                         "provisioningState": "str",

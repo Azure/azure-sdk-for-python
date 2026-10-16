@@ -41,13 +41,12 @@ def main():
                     "/subscriptions/11809CA1-E126-4017-945E-AA795CD5C5A9/resourceGroups/test_rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/applink-identity": {}
                 },
             },
-            "properties": {},
             "tags": {"cost-center": "platform", "environment": "production"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-08-01-preview/AppLinks_Update.json
+# x-ms-original-file: 2026-08-01-preview/AppLinks_Update.json
 if __name__ == "__main__":
     main()

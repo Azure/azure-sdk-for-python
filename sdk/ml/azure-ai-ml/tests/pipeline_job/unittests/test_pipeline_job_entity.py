@@ -14,7 +14,6 @@ from azure.ai.ml import Input, MLClient, dsl, load_component, load_job
 from azure.ai.ml._restclient.arm_ml_service.models import JobBase as RestJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
-from azure.core.serialization import as_attribute_dict
 from azure.ai.ml.automl import classification
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.dsl import pipeline
@@ -28,21 +27,12 @@ from azure.ai.ml.entities._job.automl.image import (
     ImageInstanceSegmentationJob,
     ImageObjectDetectionJob,
 )
-from azure.ai.ml.entities._job.automl.nlp import (
-    TextClassificationJob,
-    TextClassificationMultilabelJob,
-    TextNerJob,
-)
-from azure.ai.ml.entities._job.automl.tabular import (
-    ClassificationJob,
-    ForecastingJob,
-    RegressionJob,
-)
-from azure.ai.ml.entities._job.job_resource_configuration import (
-    JobResourceConfiguration,
-)
+from azure.ai.ml.entities._job.automl.nlp import TextClassificationJob, TextClassificationMultilabelJob, TextNerJob
+from azure.ai.ml.entities._job.automl.tabular import ClassificationJob, ForecastingJob, RegressionJob
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
 from azure.ai.ml.exceptions import ValidationException
+from azure.core.serialization import as_attribute_dict
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 
@@ -86,7 +76,7 @@ def load_pipeline_entity_from_rest_json(job_dict) -> PipelineJob:
     return internal_pipeline
 
 
-@pytest.mark.usefixtures("enable_pipeline_private_preview_features")
+@pytest.mark.usefixtures("enable_pipeline_private_preview_features", "mock_component_hash")
 @pytest.mark.timeout(_PIPELINE_JOB_TIMEOUT_SECOND)
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
@@ -970,6 +960,11 @@ class TestPipelineJobEntity:
 
     def test_data_transfer_copy_node_in_pipeline(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
         test_path = "./tests/test_configs/pipeline_jobs/data_transfer/copy_files.yaml"
+        workspace_get = mocker.patch.object(
+            mock_machinelearning_client.workspaces._operation,
+            "get",
+            return_value=mocker.Mock(workspace_id="test_workspace_id"),
+        )
 
         job = load_job(test_path)
         assert isinstance(job, PipelineJob)
@@ -988,6 +983,7 @@ class TestPipelineJobEntity:
             return_value="yyy",
         )
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+        workspace_get.assert_not_called()
 
         rest_job_dict = job._to_rest_object().as_dict()
         omit_fields = ["properties"]
