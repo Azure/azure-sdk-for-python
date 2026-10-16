@@ -9,6 +9,7 @@ use std::sync::{Arc, Mutex, RwLock};
 
 use azure_core::credentials::{AccessToken, Secret, TokenCredential, TokenRequestOptions};
 use once_cell::sync::Lazy;
+use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 
 /// Process-wide token credentials keyed by the identity of their Python credential.
@@ -103,25 +104,27 @@ impl TokenCredential for PyCallbackCredential {
         let (token, expires) = Python::attach(|py| {
             let scope_list: Vec<String> = scopes.iter().map(|s| s.to_string()).collect();
             let result = self.provider.bind(py).call1((scope_list,)).map_err(|e| {
-                azure_core::Error::with_message(
+                azure_core::Error::with_error(
                     azure_core::error::ErrorKind::Credential,
-                    format!("Python token provider call failed: {}", e),
+                    e,
+                    "Python token provider call failed",
                 )
             })?;
             let (token, expires_on): (String, i64) = result.extract().map_err(|e| {
-                azure_core::Error::with_message(
+                azure_core::Error::with_error(
                     azure_core::error::ErrorKind::Credential,
-                    format!(
-                        "Python token provider returned an unexpected value (expected (str, int)): {}",
-                        e
-                    ),
+                    e,
+                    "Python token provider returned an unexpected value (expected (str, int))",
                 )
             })?;
             let expires = azure_core::time::OffsetDateTime::from_unix_timestamp(expires_on)
                 .map_err(|e| {
-                    azure_core::Error::with_message(
+                    azure_core::Error::with_error(
                         azure_core::error::ErrorKind::Credential,
-                        format!("Python token provider returned an invalid expiry: {}", e),
+                        PyValueError::new_err(format!(
+                            "Python token provider returned an invalid expiry: {e}"
+                        )),
+                        "Python token provider returned an invalid expiry",
                     )
                 })?;
             Ok::<(String, azure_core::time::OffsetDateTime), azure_core::Error>((token, expires))

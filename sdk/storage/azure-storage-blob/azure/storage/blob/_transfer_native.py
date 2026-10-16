@@ -363,14 +363,17 @@ class NativeStorageStreamDownloader:
         """
         if size is None or size < 0:
             return self.readall()
+        buffer = self._buffer
+        self._buffer = bytearray()
         # Pull windows only until the buffer holds enough bytes or the stream is exhausted.
-        while len(self._buffer) < size:
+        while len(buffer) < size:
             window = next(self._iter, None)
             if window is None:
                 break
-            self._buffer += window
-        result = bytes(self._buffer[:size])
-        del self._buffer[:size]
+            buffer += window
+        result = bytes(buffer[:size])
+        del buffer[:size]
+        self._buffer = buffer
         return result
 
     def readinto(self, stream: Any) -> int:
