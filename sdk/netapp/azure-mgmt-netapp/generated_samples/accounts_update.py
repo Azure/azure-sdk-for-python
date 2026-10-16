@@ -33,11 +33,21 @@ def main():
     response = client.accounts.begin_update(
         resource_group_name="myRG",
         account_name="account1",
-        body={"tags": {"Tag1": "Value1"}},
+        body={
+            "properties": {
+                "ldapConfiguration": {
+                    "domain": "example.com",
+                    "ldapPort": 636,
+                    "ldapServers": ["192.0.2.1", "192.0.2.2"],
+                    "secureLdapType": "LdapOverTLS",
+                }
+            },
+            "tags": {"Tag1": "Value1"},
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-06-15-preview/Accounts_Update.json
+# x-ms-original-file: 2026-07-01/Accounts_Update.json
 if __name__ == "__main__":
     main()
