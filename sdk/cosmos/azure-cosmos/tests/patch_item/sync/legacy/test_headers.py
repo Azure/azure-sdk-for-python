@@ -10,8 +10,10 @@ environment. The single patch call exercises all six operation kinds
 
 Run: ``pytest --noconftest tests/patch_item/sync/legacy/test_headers.py -v``
 """
+import importlib
 import os
 import unittest
+from unittest.mock import patch
 import uuid
 
 import pytest
@@ -28,11 +30,6 @@ KEY = os.environ.get(
 
 # Same value as the source, so the wire bytes match core-python.
 request_throughput_bucket_number = 3
-
-
-def request_raw_response_hook(response):
-    assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
-            == str(request_throughput_bucket_number))
 
 
 @pytest.mark.cosmosEmulator
@@ -57,11 +54,7 @@ class TestHeaders(unittest.TestCase):
             pass
 
     def test_container_patch_item_throughput_bucket(self):
-        """Pass a throughput bucket with the copied operation arguments.
-
-        The raw-response hook checks the header if invoked, but this test
-        does not assert hook invocation or inspect transmitted bytes.
-        """
+        """Verify the operation prepares the requested throughput bucket."""
         # Source: tests/test_headers.py::TestHeaders.test_container_patch_item_throughput_bucket
         # NOTE: the partition-key value and item id are FIXED (not a random
         # uuid like the source) so the parity reporter can diff the patched
@@ -89,9 +82,16 @@ class TestHeaders(unittest.TestCase):
             {"op": "incr", "path": "/number", "value": 7},
             {"op": "move", "from": "/color", "path": "/favorite_color"}
         ]
-        self.container.patch_item(
-            item="patch_item",
-            partition_key=pkValue,
-            patch_operations=operations,
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+        binding = importlib.import_module(type(self.client._adapter).__module__)._rust_module
+        with patch.object(binding, "patch_item", wraps=binding.patch_item) as operation:
+            self.container.patch_item(
+                item="patch_item",
+                partition_key=pkValue,
+                patch_operations=operations,
+                throughput_bucket=request_throughput_bucket_number)
+        self.assertTrue(operation.called)
+        for call in operation.call_args_list:
+            self.assertEqual(
+                call.args[1].headers[http_constants.HttpHeaders.ThroughputBucket],
+                str(request_throughput_bucket_number),
+            )

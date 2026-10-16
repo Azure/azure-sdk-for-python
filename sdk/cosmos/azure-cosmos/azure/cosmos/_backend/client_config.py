@@ -49,15 +49,7 @@ from .contracts import PreparedClientConfig, PreparedFaultInjectionRule
 from ._immutable import freeze_headers
 from .request_settings import reject_trigger_header
 
-# Levels this binding supports. Strong maps to the driver's GlobalStrong;
-# other recognized Cosmos levels are rejected rather than ignored.
-_RUST_SUPPORTED_CONSISTENCY_LEVELS = (
-    ConsistencyLevel.Eventual,
-    ConsistencyLevel.Session,
-    ConsistencyLevel.Strong,
-)
-
-# Distinguish an unsupported Cosmos level from an unrecognized name.
+# Python names are preserved here; the binding maps them to read strategies.
 _ALL_CONSISTENCY_LEVELS = (
     ConsistencyLevel.Strong,
     ConsistencyLevel.BoundedStaleness,
@@ -454,27 +446,17 @@ def _normalize_transport_timeout(
 
 
 def _resolve_consistency_level(consistency_level: Optional[str]) -> Optional[str]:
-    """Reject consistency choices the binding cannot honor rather than ignore them.
+    """Validate a Python consistency name for the binding's read strategy.
 
-    Eventual, Session, and Strong are passed to the binding; Strong maps to the
-    driver's GlobalStrong. BoundedStaleness and ConsistentPrefix are rejected,
-    as are unrecognized nonempty names. An absent or empty value leaves the
-    account default unchanged.
+    The binding maps ConsistentPrefix to Eventual, BoundedStaleness to
+    LatestCommitted, and Strong to GlobalStrong. Eventual and Session map
+    directly. These read choices do not change account settings or writes.
+    An absent or empty value leaves the account default unchanged.
     """
     if not consistency_level:
         return None
-    if consistency_level in _RUST_SUPPORTED_CONSISTENCY_LEVELS:
-        return consistency_level
     if consistency_level in _ALL_CONSISTENCY_LEVELS:
-        raise ValueError(
-            "consistency_level {!r} is not yet supported by the Rust binding; "
-            "supported levels are {}. Use the core-python "
-            "backend if you need {!r}.".format(
-                consistency_level,
-                ", ".join(_RUST_SUPPORTED_CONSISTENCY_LEVELS),
-                consistency_level,
-            )
-        )
+        return consistency_level
     raise ValueError(
         "consistency_level {!r} is not a recognized Cosmos consistency level; "
         "expected one of {}.".format(

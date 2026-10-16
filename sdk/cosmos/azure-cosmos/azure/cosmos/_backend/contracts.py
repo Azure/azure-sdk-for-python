@@ -195,9 +195,10 @@ class PreparedClientConfig(_ValidatedSettings):
     #: driver's limit of 25 characters: letters, digits, "-", "_", ".", or "~".
     user_agent_suffix: Optional[str] = None
 
-    #: Requested read consistency: Eventual, Session, or Strong. The binding
-    #: maps Strong to the driver's GlobalStrong. None keeps the account default.
-    #: The builder rejects BoundedStaleness and ConsistentPrefix.
+    #: Requested Python read consistency name. The binding maps ConsistentPrefix
+    #: to Eventual, BoundedStaleness to LatestCommitted, and Strong to GlobalStrong;
+    #: Eventual and Session map directly. None keeps the account default.
+    #: This does not change account settings or write consistency.
     consistency_level: Optional[str] = None
 
     #: Retired client setting; native validation rejects non-None values.

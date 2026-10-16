@@ -50,7 +50,6 @@ class QueryIterable(PageIterator):  # pylint: disable=too-many-instance-attribut
         continuation_token=None,
         resource_type=None,
         response_hook=None,
-        raw_response_hook=None,
     ):
         """Instantiates a QueryIterable for non-client side partitioning queries.
 
@@ -85,7 +84,7 @@ class QueryIterable(PageIterator):  # pylint: disable=too-many-instance-attribut
         self._partition_key = partition_key
         self._ex_context = execution_dispatcher._ProxyQueryExecutionContext(
             self._client, self._collection_link, self._query, self._options, self._fetch_function,
-            response_hook, raw_response_hook, resource_type)
+            response_hook, resource_type)
 
         super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 

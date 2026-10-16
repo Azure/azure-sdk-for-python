@@ -45,12 +45,6 @@ def make_async_backend(
     connection_timeout_seconds: Optional[float] = None,
     fault_injection_rules: Any = None,
     headers: Optional[Mapping[str, str]] = None,
-    proxy_config: Any = None,
-    proxies: Any = None,
-    connection_verify: Any = None,
-    connection_cert: Any = None,
-    ssl_config: Any = None,
-    transport: Any = None,
 ) -> AsyncCosmosBackend:
     """Return a Python backend for async operations; this factory is not awaited.
 
@@ -78,10 +72,4 @@ def make_async_backend(
 
         fault_injection_rules=fault_injection_rules,
         headers=headers,
-        proxy_config=proxy_config,
-        proxies=proxies,
-        connection_verify=connection_verify,
-        connection_cert=connection_cert,
-        ssl_config=ssl_config,
-        transport=transport,
     )

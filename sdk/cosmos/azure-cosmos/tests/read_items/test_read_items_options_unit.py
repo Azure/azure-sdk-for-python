@@ -156,7 +156,8 @@ def test_excluded_locations_is_translated_from_its_snake_case_name():
     assert Constants.Kwargs.EXCLUDED_LOCATIONS == "excludedLocations"
 
 
-def test_consistency_level_header_comes_from_the_options_dict():
+@pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
+def test_consistency_level_header_comes_from_the_options_dict(level):
     """Prepared consistency becomes the header sent for the request."""
     connection = MagicMock()
     connection.default_headers = {}
@@ -172,18 +173,21 @@ def test_consistency_level_header_comes_from_the_options_dict():
         "containerrid==",
         http_constants.ResourceType.Document,
         documents._OperationType.Read,
-        {"consistencyLevel": "Eventual"},
+        {"consistencyLevel": level},
     )
-    assert headers[http_constants.HttpHeaders.ConsistencyLevel] == "Eventual"
+    assert headers[http_constants.HttpHeaders.ConsistencyLevel] == level
 
 
-def test_sync_read_items_puts_consistency_level_in_the_options():
+@pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
+def test_sync_read_items_puts_consistency_level_in_the_options(level):
     """Sync requests preserve the customer's consistency level."""
     proxy, captured = _make_sync_proxy()
 
-    proxy.read_items(_ITEMS, consistency_level="Eventual")
+    proxy.read_items(_ITEMS, consistency_level=level)
 
-    assert captured["options"]["consistencyLevel"] == "Eventual"
+    assert captured["options"]["consistencyLevel"] == level
+    assert "consistencyLevel" not in captured["kwargs"]
+    assert "consistency_level" not in captured["kwargs"]
 
 
 def test_sync_read_items_keeps_consistency_level_out_of_the_transport_kwargs():
@@ -239,13 +243,16 @@ def test_sync_read_items_carries_both_new_keys_alongside_the_existing_ones():
 
 
 @pytest.mark.asyncio
-async def test_async_read_items_puts_consistency_level_in_the_options():
+@pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
+async def test_async_read_items_puts_consistency_level_in_the_options(level):
     """Async requests preserve the customer's consistency level."""
     proxy, captured = _make_async_proxy()
 
-    await proxy.read_items(_ITEMS, consistency_level="Eventual")
+    await proxy.read_items(_ITEMS, consistency_level=level)
 
-    assert captured["options"]["consistencyLevel"] == "Eventual"
+    assert captured["options"]["consistencyLevel"] == level
+    assert "consistencyLevel" not in captured["kwargs"]
+    assert "consistency_level" not in captured["kwargs"]
 
 
 @pytest.mark.asyncio

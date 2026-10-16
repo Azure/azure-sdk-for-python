@@ -168,6 +168,10 @@ _TRUTHY_CASES = [
     ("responseContinuationTokenLimitInKb", 8),
     ("supportedQueryFeatures", "OrderBy"),
     ("consistencyLevel", "Eventual"),
+    ("consistencyLevel", "ConsistentPrefix"),
+    ("consistencyLevel", "Session"),
+    ("consistencyLevel", "BoundedStaleness"),
+    ("consistencyLevel", "Strong"),
 ]
 
 

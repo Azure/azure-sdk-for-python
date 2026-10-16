@@ -21,10 +21,9 @@ Third, that a failure never turns into a second attempt. A replace that is
 retried on the other engine could overwrite a definition twice, or overwrite one
 that a concurrent caller had already changed.
 
-Every test runs twice, once on the Rust path and once on legacy, because the
-two build their requests through separate code.
-
-All fakes, no Cosmos account.
+Public-method tests run on both Rust and legacy, because the two build their
+requests through separate code. Optional native checks validate the binding
+contract without acquiring a driver. No Cosmos account is needed.
 """
 from common.typed_requests import legacy_partition_key_from_request
 from common.typed_requests import wire_headers, settings_options, legacy_settings
@@ -55,6 +54,23 @@ from .test_delete_container_backend_unit import delete_case
 
 
 PK = PartitionKey(path="/pk")
+
+
+@pytest.mark.parametrize("method", ["replace_container", "replace_container_async"])
+@pytest.mark.parametrize("include_attempts", [False, True])
+@pytest.mark.parametrize("timeout", [0, -1, float("inf"), float("nan")])
+def test_native_replacement_validates_remaining_timeout(method, include_attempts, timeout):
+    binding = pytest.importorskip("azure.cosmos._rust")
+    function = getattr(binding, method)
+    parameters = inspect.signature(function).parameters
+    assert parameters["timeout_seconds"].kind is inspect.Parameter.KEYWORD_ONLY
+    assert parameters["timeout_seconds"].default is None
+    assert parameters["include_attempts"].default is False
+    prepared = build_replace_container_prepared(
+        "dbs/sales/colls/orders", {"id": "orders", "partitionKey": PartitionKey(path="/customerId")}, {}
+    )
+    with pytest.raises(ValueError, match="timeout_seconds"):
+        function("unregistered-replacement-test", prepared, timeout_seconds=timeout, include_attempts=include_attempts)
 
 
 @pytest.fixture(params=[False, True], ids=["rust", "legacy"])
@@ -255,8 +271,7 @@ def test_retired_keywords_rejected_by_presence(replace_case, option, value):
     {"timeout": 0.5}, {"timeout": False}, {"timeout": 0}, {"timeout": -1},
     {"timeout": float("nan")}, {"timeout": float("inf")}, {"timeout": "10"},
     {"timeout": 2**64 - 1}, {"timeout": 10**400},
-    {"connection_timeout": 2}, {"raw_request_hook": lambda request: None},
-    {"raw_response_hook": lambda response: None}, {"unknown_option": None},
+    {"connection_timeout": 2}, {"unknown_option": None},
     {"initial_headers": {"User-Agent": "override"}}, {"initial_headers": {"x-ms-version": "override"}},
     {"request_options": {"timeout": 10}},
 ])
@@ -335,9 +350,15 @@ def test_conditions_forwarded_without_ignored_warnings(replace_case, kwargs, exp
         assert call.kwargs["options"].get("accessCondition") == (
             {"type": expected[0], "condition": expected[1]} if expected else None
         )
-    elif expected:
-        headers = case.backend.execute.call_args.args[0].headers
-        assert headers["If-Match" if expected[0] == "IfMatch" else "If-None-Match"] == expected[1]
+    else:
+        prepared = case.backend.execute.call_args.args[0]
+        assert prepared.settings.item.if_match == (
+            expected[1] if expected and expected[0] == "IfMatch" else None
+        )
+        assert prepared.settings.item.if_none_match == (
+            expected[1] if expected and expected[0] == "IfNoneMatch" else None
+        )
+        assert not any(name.lower() in ("if-match", "if-none-match") for name in prepared.headers)
 
 
 @pytest.mark.parametrize("kwargs,error", [

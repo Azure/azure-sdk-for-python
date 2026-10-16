@@ -329,8 +329,9 @@ pub(crate) fn runtime_configuration() -> Option<(f64, f64, f64)> {
 }
 
 /// Acquire a CosmosDriver object and return a driver handle for later binding calls.
-/// The Python adapter requests this on first use. This function does not enforce
-/// one acquisition per Python client.
+/// The Python adapter requests this during async `__aenter__()` or on the first
+/// operation needing a driver handle. This function does not enforce one
+/// acquisition per Python client.
 ///
 /// A cache hit increments its count. On a miss, build outside the cache lock,
 /// then cache the CosmosDriver or use the entry another caller inserted meanwhile.
@@ -745,8 +746,8 @@ fn operation_options_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<
     }
 
     // consistency_level -> ReadConsistencyStrategy. Set only when the customer app
-    // supplied a non-empty value. This binding accepts Eventual, Session, and
-    // Strong; reject other non-empty values even if Python preparation was bypassed.
+    // supplied a non-empty value. Reject unknown names even if Python
+    // preparation was bypassed.
     if let Some(level) = get_config_opt::<String>(config, "consistency_level")? {
         if !level.is_empty() {
             match read_consistency_from_str(&level) {
@@ -756,7 +757,8 @@ fn operation_options_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<
                 None => {
                     return Err(PyValueError::new_err(format!(
                         "consistency_level {level:?} is not supported on the Rust \
-                         backend; supported levels are Eventual, Session, and Strong."
+                         backend; supported levels are Eventual, ConsistentPrefix, \
+                         Session, BoundedStaleness, and Strong."
                     )));
                 }
             }
@@ -782,12 +784,15 @@ fn client_headers_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<BTr
 
 /// Map a Python consistency-level string to the driver's `ReadConsistencyStrategy`.
 ///
-/// This binding maps `"Eventual"` and `"Session"` directly, and `"Strong"` to
-/// `GlobalStrong`. Any other string returns `None` for the caller to reject.
+/// These are read overrides, not account-policy changes. `LatestCommitted`
+/// selects the latest committed version in the read region; it does not
+/// configure account staleness bounds or wait for cross-region replication.
+/// Unknown names return `None` for the caller to reject.
 pub(crate) fn read_consistency_from_str(level: &str) -> Option<ReadConsistencyStrategy> {
     match level {
-        "Eventual" => Some(ReadConsistencyStrategy::Eventual),
+        "Eventual" | "ConsistentPrefix" => Some(ReadConsistencyStrategy::Eventual),
         "Session" => Some(ReadConsistencyStrategy::Session),
+        "BoundedStaleness" => Some(ReadConsistencyStrategy::LatestCommitted),
         "Strong" => Some(ReadConsistencyStrategy::GlobalStrong),
         _ => None,
     }
@@ -1348,6 +1353,14 @@ class ExplicitNone:
             read_consistency_from_str("Session"),
             Some(ReadConsistencyStrategy::Session)
         );
+        assert_eq!(
+            read_consistency_from_str("ConsistentPrefix"),
+            Some(ReadConsistencyStrategy::Eventual)
+        );
+        assert_eq!(
+            read_consistency_from_str("BoundedStaleness"),
+            Some(ReadConsistencyStrategy::LatestCommitted)
+        );
         // Strong maps to the driver's GlobalStrong -- there is no plain Strong.
         assert_eq!(
             read_consistency_from_str("Strong"),
@@ -1356,16 +1369,77 @@ class ExplicitNone:
     }
 
     #[test]
-    fn read_consistency_rejects_unsupported_and_unknown() {
-        // This binding mapping does not accept these two Python names.
-        assert_eq!(read_consistency_from_str("BoundedStaleness"), None);
-        assert_eq!(read_consistency_from_str("ConsistentPrefix"), None);
+    fn read_consistency_rejects_unknown_names() {
         // An outright-unknown string is rejected, not dropped.
         assert_eq!(read_consistency_from_str("Nonsense"), None);
         // The mapping is exact: the driver's own wire spelling is not a Python
         // consistency-level name, so it does not sneak through here.
         assert_eq!(read_consistency_from_str("GlobalStrong"), None);
+        assert_eq!(read_consistency_from_str("LatestCommitted"), None);
+        assert_eq!(read_consistency_from_str("Default"), None);
+        assert_eq!(read_consistency_from_str("eventual"), None);
         assert_eq!(read_consistency_from_str(""), None);
+    }
+
+    #[test]
+    fn client_consistency_config_maps_levels_and_preserves_defaults() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let config = py
+                .import_bound("types")
+                .unwrap()
+                .getattr("SimpleNamespace")
+                .unwrap()
+                .call0()
+                .unwrap();
+            assert_eq!(
+                operation_options_from_config(None)
+                    .unwrap()
+                    .read_consistency_strategy,
+                None
+            );
+            assert_eq!(
+                operation_options_from_config(Some(&config))
+                    .unwrap()
+                    .read_consistency_strategy,
+                None
+            );
+            for (level, expected) in [
+                (Some("Eventual"), Some(ReadConsistencyStrategy::Eventual)),
+                (
+                    Some("ConsistentPrefix"),
+                    Some(ReadConsistencyStrategy::Eventual),
+                ),
+                (Some("Session"), Some(ReadConsistencyStrategy::Session)),
+                (
+                    Some("BoundedStaleness"),
+                    Some(ReadConsistencyStrategy::LatestCommitted),
+                ),
+                (Some("Strong"), Some(ReadConsistencyStrategy::GlobalStrong)),
+                (Some(""), None),
+                (None, None),
+            ] {
+                config.setattr("consistency_level", level).unwrap();
+                assert_eq!(
+                    operation_options_from_config(Some(&config))
+                        .unwrap()
+                        .read_consistency_strategy,
+                    expected,
+                    "{level:?}"
+                );
+            }
+            for level in [
+                "Unknown",
+                "LatestCommitted",
+                "GlobalStrong",
+                "Default",
+                "eventual",
+            ] {
+                config.setattr("consistency_level", level).unwrap();
+                let error = operation_options_from_config(Some(&config)).unwrap_err();
+                assert!(error.is_instance_of::<PyValueError>(py));
+            }
+        });
     }
 
     #[test]

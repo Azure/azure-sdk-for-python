@@ -32,7 +32,6 @@ from .constants import (
 from .credentials import resolved_credential
 from .legacy import LEGACY_BACKEND
 from .binding_adapter import BindingAdapter
-from .transport_settings import reject_unsupported_transport_settings
 from ..runtime import CosmosRuntime
 
 _BackendT = TypeVar("_BackendT")
@@ -89,17 +88,11 @@ def _make_backend(
     connection_timeout_seconds: Optional[float] = None,
     fault_injection_rules: Any = None,
     headers: Optional[Mapping[str, str]] = None,
-    proxy_config: Any = None,
-    proxies: Any = None,
-    connection_verify: Any = None,
-    connection_cert: Any = None,
-    ssl_config: Any = None,
-    transport: Any = None,
 ) -> Union[_BackendT, _LegacyBackendT]:
     """Construct a Python backend and release its async credential bridge on failure.
 
     The retained legacy test branch skips Rust validation. The Rust branch
-    requires a nonempty endpoint and supported network settings before
+    requires a nonempty endpoint before
     preparing credentials. The binding checks URL syntax later, when a driver
     handle is acquired.
     """
@@ -109,14 +102,6 @@ def _make_backend(
             raise ValueError(
                 "The Rust binding requires the account endpoint URL."
             )
-        reject_unsupported_transport_settings(
-            proxy_config=proxy_config,
-            proxies=proxies,
-            connection_verify=connection_verify,
-            connection_cert=connection_cert,
-            ssl_config=ssl_config,
-            transport=transport,
-        )
         # Release the async credential bridge if later validation or construction
         # fails. Its thread may not have started, but it already holds the credential.
         with resolved_credential(credential) as (master_key, token_credential):
@@ -164,12 +149,6 @@ def make_backend(
     connection_timeout_seconds: Optional[float] = None,
     fault_injection_rules: Any = None,
     headers: Optional[Mapping[str, str]] = None,
-    proxy_config: Any = None,
-    proxies: Any = None,
-    connection_verify: Any = None,
-    connection_cert: Any = None,
-    ssl_config: Any = None,
-    transport: Any = None,
 ) -> CosmosBackend:
     """Build the synchronous Python wrapper object using shared preparation rules."""
     return _make_backend(
@@ -192,10 +171,4 @@ def make_backend(
 
         fault_injection_rules=fault_injection_rules,
         headers=headers,
-        proxy_config=proxy_config,
-        proxies=proxies,
-        connection_verify=connection_verify,
-        connection_cert=connection_cert,
-        ssl_config=ssl_config,
-        transport=transport,
     )

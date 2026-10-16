@@ -22,6 +22,7 @@ from _fault_injection_transport_async import FaultInjectionTransportAsync
 from azure.cosmos.http_constants import ResourceType
 from azure.cosmos._constants import _Constants
 from azure.cosmos._health_check_retry_policy import HealthCheckRetryPolicy
+from _client_transport import create_client_with_transport
 
 class ConnectionMode:
     """Represents the connection mode to be used by the client."""
@@ -41,13 +42,10 @@ class ConnectionPolicy:
         self.DBAConnectionTimeout: int = self.__defaultDBAConnectionTimeout
         self.MaxBackoff: int = self.__defaultMaxBackoff
         self.ConnectionMode: int = ConnectionMode.Gateway
-        self.SSLConfiguration: Optional[SSLConfiguration] = None
-        self.ProxyConfiguration: Optional[ProxyConfiguration] = None
         self.EnableEndpointDiscovery: bool = True
         self.PreferredLocations: List[str] = []
         self.ExcludedLocations = []
         self.RetryOptions: RetryOptions = RetryOptions()
-        self.DisableSSLVerification: bool = False
         self.UseMultipleWriteLocations: bool = False
         self.ConnectionRetryConfiguration: Optional["ConnectionRetryPolicy"] = None
         self.ResponsePayloadOnWriteDisabled: bool = False
@@ -58,7 +56,7 @@ async def setup_method_with_custom_transport(
     connection_policy = ConnectionPolicy()
     connection_retry_policy = test_config.MockConnectionRetryPolicyAsync(resource_type="docs")
     connection_policy.ConnectionRetryConfiguration = connection_retry_policy
-    client = CosmosClient(test_config.TestConfig.host, test_config.TestConfig.masterKey,
+    client = create_client_with_transport(CosmosClient, test_config.TestConfig.host, test_config.TestConfig.masterKey,
                           transport=custom_transport, connection_policy=connection_policy, **kwargs)
     db = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
     container = db.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)

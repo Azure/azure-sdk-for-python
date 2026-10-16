@@ -300,7 +300,7 @@ def test_supported_timeout(read_case, timeout):
 @pytest.mark.parametrize("kwargs", [
     {"timeout": 0.5}, {"timeout": False}, {"timeout": float("nan")},
     {"timeout": float("inf")}, {"timeout": "10"},
-    {"connection_timeout": 2}, {"raw_request_hook": lambda request: None},
+    {"connection_timeout": 2},
     {"initial_headers": {"User-Agent": "custom"}},
 ])
 def test_unsupported_rust_settings_never_replay(read_case, kwargs):

@@ -11,6 +11,7 @@ use std::future::Future;
 use std::sync::Arc;
 use std::time::Duration;
 
+use pyo3::exceptions::PyTimeoutError;
 use pyo3::prelude::*;
 use pyo3::types::PyTuple;
 
@@ -23,6 +24,7 @@ use azure_data_cosmos_driver::{
     options::{ContentResponseOnWrite, OperationOptions},
 };
 
+use super::deadline::{parse_remaining_timeout, with_timeout};
 use super::driver_runner::{run_driver_operation_async, run_driver_operation_sync};
 use super::request::{build_operation_options, RequestHeadersAndOptions};
 use super::response::{
@@ -38,17 +40,29 @@ pub(crate) fn run_create_container_operation<'py>(
     database_id: String,
     body_bytes: Vec<u8>,
     operation_name: &str,
+    timeout_seconds: Option<f64>,
     include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_sync(
         py,
         driver_handle,
         operation_name,
-        move |driver| run_create_container_future(driver, modifiers, database_id, body_bytes),
+        move |driver| {
+            let timed = with_timeout(
+                timeout,
+                run_create_container_future(driver, modifiers, database_id, body_bytes),
+            );
+            async move {
+                timed.await.map_err(|error| {
+                    PyTimeoutError::new_err(format!("Container creation timed out: {error}"))
+                })
+            }
+        },
         if include_attempts {
-            tuple_from_result_with_attempts
+            |py, result| tuple_from_result_with_attempts(py, result?)
         } else {
-            tuple_from_result
+            |py, result| tuple_from_result(py, result?)
         },
     )
 }
@@ -61,17 +75,29 @@ pub(crate) fn run_create_container_operation_async<'py>(
     database_id: String,
     body_bytes: Vec<u8>,
     operation_name: &str,
+    timeout_seconds: Option<f64>,
     include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_async(
         py,
         driver_handle,
         operation_name,
-        move |driver| run_create_container_future(driver, modifiers, database_id, body_bytes),
+        move |driver| {
+            let timed = with_timeout(
+                timeout,
+                run_create_container_future(driver, modifiers, database_id, body_bytes),
+            );
+            async move {
+                timed.await.map_err(|error| {
+                    PyTimeoutError::new_err(format!("Container creation timed out: {error}"))
+                })
+            }
+        },
         if include_attempts {
-            tuple_from_result_with_attempts
+            |py, result| tuple_from_result_with_attempts(py, result?)
         } else {
-            tuple_from_result
+            |py, result| tuple_from_result(py, result?)
         },
     )
 }
@@ -84,17 +110,29 @@ pub(crate) fn run_read_container_operation<'py>(
     database_id: String,
     container_id: String,
     operation_name: &str,
+    timeout_seconds: Option<f64>,
     include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_sync(
         py,
         driver_handle,
         operation_name,
-        move |driver| run_read_container_future(driver, modifiers, database_id, container_id),
+        move |driver| {
+            let timed = with_timeout(
+                timeout,
+                run_read_container_future(driver, modifiers, database_id, container_id),
+            );
+            async move {
+                timed.await.map_err(|error| {
+                    PyTimeoutError::new_err(format!("Container read timed out: {error}"))
+                })
+            }
+        },
         if include_attempts {
-            tuple_from_result_with_attempts
+            |py, result| tuple_from_result_with_attempts(py, result?)
         } else {
-            tuple_from_result
+            |py, result| tuple_from_result(py, result?)
         },
     )
 }
@@ -107,17 +145,29 @@ pub(crate) fn run_read_container_operation_async<'py>(
     database_id: String,
     container_id: String,
     operation_name: &str,
+    timeout_seconds: Option<f64>,
     include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_async(
         py,
         driver_handle,
         operation_name,
-        move |driver| run_read_container_future(driver, modifiers, database_id, container_id),
+        move |driver| {
+            let timed = with_timeout(
+                timeout,
+                run_read_container_future(driver, modifiers, database_id, container_id),
+            );
+            async move {
+                timed.await.map_err(|error| {
+                    PyTimeoutError::new_err(format!("Container read timed out: {error}"))
+                })
+            }
+        },
         if include_attempts {
-            tuple_from_result_with_attempts
+            |py, result| tuple_from_result_with_attempts(py, result?)
         } else {
-            tuple_from_result
+            |py, result| tuple_from_result(py, result?)
         },
     )
 }
@@ -177,6 +227,7 @@ pub(crate) fn run_replace_container_operation<'py>(
     container_id: String,
     body_bytes: Vec<u8>,
     operation_name: &str,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     run_driver_operation_sync(
         py,
@@ -185,7 +236,11 @@ pub(crate) fn run_replace_container_operation<'py>(
         move |driver| {
             run_replace_container_future(driver, modifiers, database_id, container_id, body_bytes)
         },
-        tuple_from_result,
+        if include_attempts {
+            tuple_from_result_with_attempts
+        } else {
+            tuple_from_result
+        },
     )
 }
 
@@ -198,6 +253,7 @@ pub(crate) fn run_replace_container_operation_async<'py>(
     container_id: String,
     body_bytes: Vec<u8>,
     operation_name: &str,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     run_driver_operation_async(
         py,
@@ -206,7 +262,11 @@ pub(crate) fn run_replace_container_operation_async<'py>(
         move |driver| {
             run_replace_container_future(driver, modifiers, database_id, container_id, body_bytes)
         },
-        tuple_from_result,
+        if include_attempts {
+            tuple_from_result_with_attempts
+        } else {
+            tuple_from_result
+        },
     )
 }
 
@@ -368,14 +428,14 @@ fn container_resolution_options(modifiers: &RequestHeadersAndOptions) -> Operati
     )
 }
 
-async fn with_container_timeout<T>(
+fn with_container_timeout<T>(
     timeout: Option<Duration>,
     timeout_message: &'static str,
     operation: impl Future<Output = Result<T, CosmosError>>,
-) -> Result<T, CosmosError> {
-    super::deadline::with_timeout(timeout, operation)
-        .await
-        .map_err(|error| {
+) -> impl Future<Output = Result<T, CosmosError>> {
+    let timed = super::deadline::with_timeout(timeout, operation);
+    async move {
+        timed.await.map_err(|error| {
             CosmosError::builder()
                 .with_status(
                     CosmosStatus::new(azure_core::http::StatusCode::RequestTimeout)
@@ -385,6 +445,7 @@ async fn with_container_timeout<T>(
                 .with_source(error)
                 .build()
         })?
+    }
 }
 
 /// Ask the Rust driver to resolve metadata; one timeout covers lookup and deletion.
@@ -418,17 +479,14 @@ async fn run_delete_container_future(
 }
 
 /// One timeout covers metadata lookup and PUT; only PUT receives the replacement conditions.
-async fn run_replace_container_future(
+fn run_replace_container_future(
     driver: Arc<CosmosDriver>,
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     container_id: String,
     body_bytes: Vec<u8>,
-) -> Result<CosmosResponse, CosmosError> {
-    let timeout = modifiers
-        .driver_timeout_policy
-        .as_ref()
-        .map(|policy| policy.timeout());
+) -> impl Future<Output = Result<CosmosResponse, CosmosError>> {
+    let timeout = replacement_timeout(&modifiers);
     let resolution_options = container_resolution_options(&modifiers);
     with_container_timeout(
         timeout,
@@ -445,7 +503,17 @@ async fn run_replace_container_future(
             driver.execute_singleton_operation(op, options).await
         },
     )
-    .await
+}
+
+fn replacement_timeout(modifiers: &RequestHeadersAndOptions) -> Option<Duration> {
+    let configured = modifiers
+        .driver_timeout_policy
+        .as_ref()
+        .map(|policy| policy.timeout());
+    match (modifiers.operation_timeout, configured) {
+        (Some(remaining), Some(configured)) => Some(remaining.min(configured)),
+        (remaining, configured) => remaining.or(configured),
+    }
 }
 
 /// Execute one page of a container feed.
@@ -515,6 +583,55 @@ mod tests {
             Duration::from_secs(2)
         );
         assert_eq!(modifiers.custom_headers.len(), 1);
+    }
+
+    #[test]
+    fn replacement_uses_remaining_budget_without_rounding_or_extension() {
+        let mut modifiers = RequestHeadersAndOptions {
+            activity_header: None,
+            session_header: None,
+            content_response_on_write: ContentResponseOnWrite::Enabled,
+            excluded_regions_value: None,
+            driver_timeout_policy: None,
+            operation_timeout: None,
+            availability_strategy: None,
+            read_consistency_strategy: None,
+            patch_strategy: None,
+            custom_headers: Default::default(),
+        };
+        assert_eq!(replacement_timeout(&modifiers), None);
+        modifiers.driver_timeout_policy =
+            Some(EndToEndOperationLatencyPolicy::new(Duration::from_secs(2)));
+        assert_eq!(replacement_timeout(&modifiers), Some(Duration::from_secs(2)));
+        modifiers.operation_timeout = Some(Duration::from_millis(125));
+        assert_eq!(
+            replacement_timeout(&modifiers),
+            Some(Duration::from_millis(125))
+        );
+        modifiers.operation_timeout = Some(Duration::from_secs(3));
+        assert_eq!(replacement_timeout(&modifiers), Some(Duration::from_secs(2)));
+        modifiers.driver_timeout_policy = None;
+        assert_eq!(replacement_timeout(&modifiers), Some(Duration::from_secs(3)));
+    }
+
+    #[tokio::test(start_paused = true)]
+    async fn container_scheduling_delay_does_not_restart_the_budget() {
+        let polled = AtomicBool::new(false);
+        let timed = with_container_timeout(
+            Some(Duration::from_millis(5)),
+            "container mutation timed out",
+            async {
+                polled.store(true, Ordering::SeqCst);
+                Ok(())
+            },
+        );
+        tokio::time::advance(Duration::from_millis(6)).await;
+        let error = timed.await.unwrap_err();
+        assert!(!polled.load(Ordering::SeqCst));
+        assert_eq!(
+            error.status().sub_status(),
+            Some(substatus::CLIENT_OPERATION_TIMEOUT)
+        );
     }
 
     #[tokio::test]

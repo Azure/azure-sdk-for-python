@@ -6,6 +6,7 @@
   - [`CosmosClient(...)` - Creating a Cosmos client](#cosmosclient-construction)
   - [`CosmosClient.from_connection_string` - Connection-string client creation](#cosmosclientfrom_connection_string)
   - [`CosmosClient.get_database_client` - Getting a database client from properties](#cosmosclientget_database_client)
+  - [`CosmosClient.close` - Releasing client-owned resources](#cosmosclientclose)
 - [Account and database operations](#account-and-database-operations)
   - [`CosmosClient.create_database` - Creating a database](#cosmosclientcreate_database)
   - [`CosmosClient.create_database_if_not_exists` - Creating a database if it does not exist](#cosmosclientcreate_database_if_not_exists)
@@ -121,6 +122,40 @@ Account keys and Entra credentials remain supported. Cosmos resource permissions
 are not Entra role assignments; changing the credential does not automatically
 preserve a resource-token application's access rules. Cosmos user and permission
 APIs are listed individually in their own groups below.
+
+**Client-level networking options are removed.** Suppose Alpha Bank passes
+`connection_verify="alpha-bank-ca.pem"` to trust a private certificate
+authority. The SDK raises `TypeError` during construction; it does not accept
+the file and then send the request without using it.
+
+The same rule applies to `proxy_config`, `proxies`, `ssl_config`,
+`connection_cert`, and `transport`, including values such as `None`, `True`,
+or `{}`. The sync/async constructors and connection-string factories reject
+these options on both backends. `ProxyConfiguration` and `SSLConfiguration`
+are no longer public classes. Adding either field, or
+`DisableSSLVerification`, to a `ConnectionPolicy` is rejected too.
+Selecting the legacy backend does not restore these features; no parity
+implementation is required. Runtime-controlled environment proxy use is
+separate and unchanged. See [the networking exclusion](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-22).
+
+**Regional routing switches are excluded on Rust-backed clients.** Alpha Bank
+configures the account's regions and multi-write capability. Rust discovers
+the endpoints and selects eligible destinations for requests; the client does
+not offer separate switches to disable that discovery or multi-write routing.
+Neither the Rust SDK nor its driver exposes equivalent Boolean opt-outs.
+
+The synchronous and asynchronous constructors raise `TypeError` for explicit
+`enable_endpoint_discovery` or `multiple_write_locations`, including `True`,
+`False`, and `None`, before constructing the backend or connection. The same
+rule applies through `from_connection_string` and when explicitly assigning
+`ConnectionPolicy.EnableEndpointDiscovery` or
+`ConnectionPolicy.UseMultipleWriteLocations`, even to a legacy default value.
+
+Omit these switches and leave those policy fields unset. An untouched policy
+can still group supported settings. Preferred and excluded regions remain
+supported, but are not replacements for the excluded switches. The retained
+`core-python` comparison backend continues to honor them; its code is not
+retired by this decision. See [the routing exclusion](V5/api-review/RUST_PARITY_PUSHBACKS.md#client-init-routing).
 
 <a id="1---connection-string-client-creation"></a>
 <a id="connection-string-client-creation"></a>
@@ -319,6 +354,32 @@ def get_database_client(
 ) -> DatabaseProxy:
     ...
 ```
+
+<a id="cosmosclientclose"></a>
+
+### `CosmosClient.close`
+
+**Current contract; no public API change is needed.**
+
+Alpha Bank has finished using `alpha-bank-db` / `alpha-bank-container`.
+`client.close()` releases the synchronous client's local resources;
+`await client.close()` does so for the asynchronous client. Both return
+`None` on normal completion, accept no request options, and use the same
+cleanup path as leaving their corresponding context manager.
+
+Finish operations before closing. Close does not delete service data, drain
+in-flight work, or close the application's credential. Repeated calls do not
+release another client's driver acquisition. A client or runtime still owned
+elsewhere remains usable; close is not process-wide runtime shutdown.
+
+Cancelling an async caller's wait does not cancel backend cleanup that has
+already started. A later close waits for that same completion, and the
+client's Python routing-cache share is released in `finally`. This does not
+make every cleanup step cancellation-proof. Backend cleanup failures are
+logged; Python HTTP cleanup errors can still propagate.
+
+See the [migration review](V5/api-review/RUST_MIGRATION_STATUS.md#cosmosclientclose)
+for the driver ownership and runtime-lifetime explanation.
 
 ## Account and database operations
 
@@ -2429,10 +2490,13 @@ needed to establish service acceptance and returned content for the unrelated
 escaped value. The fixed unrelated-field defect needs no breaking-change
 approval.
 
-`raw_response_hook` is also rejected. It formerly received a raw pipeline
+`raw_response_hook` is removed from both backends; supplying it raises
+`TypeError`, including when its value is `None`. It formerly received a raw pipeline
 response object, rather than the parsed headers/body given to `response_hook`.
-The replacement or removal of that contract still needs classification and
-approval; preserving selected headers alone does not settle it.
+No equivalent raw hook is planned in Rust. Use supported results, response
+headers, OpenTelemetry, and diagnostic strings for information, subject to
+their documented coverage. The shared raw-hook decision below preserves
+the ordinary `response_hook` contract.
 
 **New contract (async-client signature):**
 
@@ -2518,13 +2582,19 @@ order = container.read_item(
 )
 ```
 
-Legacy forwards the requested read level. Before the correction, Rust could
-still send the client's Session strategy and cached token. The binding now
-selects Eventual for this read without changing the client or preliminary
-metadata settings. `Session` and `Strong` use the same mapping already used
-for client settings; omitting the override preserves inherited behavior.
-Actual service guarantees still require comparison on a suitably configured
-account, not just inspection of an outgoing request.
+The binding selects Eventual for this read without changing the client or
+preliminary metadata settings. Both synchronous and asynchronous clients
+use the same mapping for client defaults and point-read overrides: Eventual
+and Session map directly, ConsistentPrefix maps to Eventual, BoundedStaleness
+to LatestCommitted, and Strong to GlobalStrong. Omitting a per-read override
+preserves the client's choice.
+
+LatestCommitted reads committed data in the selected region; it does not
+configure account staleness bounds or wait for cross-region replication.
+Writes still follow account settings. The Python names remain available;
+Rust strategy names are not added as Python aliases. Actual service guarantees
+still require comparison on a suitably configured account, not just inspection
+of an outgoing request.
 
 **Conditional results:** `IfModified` uses If-None-Match; an unchanged item
 returns an empty `CosmosDict` on 304. If-Match on item GET is service-enforced,
@@ -2604,12 +2674,11 @@ governed metadata hedging.
 | Customer need | Difference and required work or decision |
 |---|---|
 | Read an order in an older partitionless/system-key container | Excluded from the Rust-backed release. The driver team has no current implementation plans; reconsideration depends on customer need. Null and undefined keys are not substitutes for the legacy empty-key representation. See the shared older-container decision below. |
-| Explicitly request `BoundedStaleness` or `ConsistentPrefix` on one read | Legacy forwards `request_options={"consistencyLevel": ...}`. The driver has no equivalent explicit read strategy. The binding now raises `NotImplementedError` instead of accepting a setting the driver can override. Driver support or an approved restriction is needed; inheriting an account default is not an explicit per-read override. |
 | Limit connection setup or response inactivity for this read | Legacy supports per-call `connection_timeout`; `read_timeout` is removed from both paths. The Rust item path rejects non-`None` values. An overall `timeout` does not replace those separate controls. Driver support or an approved compatibility change is required. |
 | Try additional regions while earlier read attempts remain slow | The release supports threshold-only hedging with one alternate. Explicit `threshold_steps_ms` is rejected rather than discarded; progressive third/later hedges are intentionally excluded. |
 | Obtain every original service response header | The driver preserves selected fields, not the complete map. An original `date` or diagnostic header can be absent even when the order is returned. Copying hook arguments cannot restore it; driver preservation and binding forwarding are required. |
-| Inspect or modify the raw outgoing request | The Rust path rejects `raw_request_hook`. The driver needs a supported interception capability before the binding can restore it. Static headers and a success callback are not equivalent. |
-| Inspect the raw pipeline response object | `raw_response_hook` is also rejected. Its replacement/removal contract still needs classification and approval; selected response headers alone do not replace that object. |
+| Inspect or modify the raw outgoing request | `raw_request_hook` is removed from both backends and raises `TypeError`. Use supported options/static headers for configuration and supported tracing/diagnostics for information. Arbitrary prepared-request mutation is not preserved. |
+| Inspect the raw pipeline response object | `raw_response_hook` is removed from both backends and raises `TypeError`. Use supported results, headers, tracing, and diagnostics. These do not reproduce the pipeline response object. |
 | Distinguish a permission failure from a temporary failure during physical-map loading | Eager container resolution can discard the underlying metadata error and return a generic topology-resolution failure. A generic error does not tell the customer whether to repair permissions or retry a temporary failure. Preserving that distinction remains required. |
 
 For the hedging example, assume four eligible regions and unfinished earlier
@@ -2937,9 +3006,10 @@ fetching the page again. Only one fetch at a time may use a given result iterato
 | Set connection or read-inactivity limits for one scan | The Rust driver lacks those per-operation controls. An overall page-fetch budget does not provide the same limits. |
 | Start reads in additional regions when earlier attempts remain slow | Rust supports one primary and one alternate request, not progressively adding more regions. Explicit `threshold_steps_ms` is rejected. This is an accepted release-scope difference, not a request to add a third overlapping hedge. |
 | Inspect original response headers | The driver returns selected fields rather than the original complete header map. An original header such as `date` can be lost. |
-| Inspect or edit the outgoing HTTP request with `raw_request_hook` | The callback is unsupported. Removing it is not equivalent if customer code depends on its inspection or changes. |
+| Inspect or edit the outgoing HTTP request with `raw_request_hook` | Removed from both backends; supplying it raises `TypeError`. Use supported observability for information and supported settings for configuration; arbitrary prepared-request mutation is not preserved. |
 
-The driver team owns those capabilities. The Python SDK/binding team owns
+The driver team owns the remaining driver requirements, not a new raw-hook
+extension. The Python SDK/binding team owns
 verifying that the scan preserves the required results, options,
 and paging behavior. Overrides of driver-owned request headers require a
 separate compatibility decision; they are not the same as adding an
@@ -3265,8 +3335,8 @@ body fails locally rather than proceeding into driver acquisition.
 | Control ambiguous write retries through `retry_write` | The per-call option is rejected. The driver's retry policy does not preserve legacy opt-in. A replacement guarded by ETag V1 can commit as V2, lose its response, and then receive a stale-condition error if retried with V1. The customer-visible failure does not prove the first write failed. |
 | Set connection or read-inactivity limits on one replacement | Per-call `connection_timeout` and `read_timeout` are rejected. The overall `timeout` does not provide the same controls. |
 | Inspect all original service response headers | The driver reconstructs selected headers. A customer can receive ETag and request charge but lose an unmodeled header such as `date`. A response hook cannot recover discarded information. |
-| Inspect or modify the outgoing HTTP request with `raw_request_hook` | The callback is rejected; the current production driver has no equivalent supported interception point. |
-| Inspect the legacy HTTP pipeline response with `raw_response_hook` | The callback is rejected. It receives a pipeline response object, unlike `response_hook`'s headers and parsed body. For example, customer code reading `pipeline_response.http_response.status_code` cannot migrate unchanged. Its complete replacement contract remains unclassified. |
+| Inspect or modify the outgoing HTTP request with `raw_request_hook` | Removed from both backends; supplying it raises `TypeError`. Supported options/static headers and observability do not preserve arbitrary request mutation. |
+| Inspect the legacy HTTP pipeline response with `raw_response_hook` | Removed from both backends; supplying it raises `TypeError`. Use supported results, headers, tracing, and diagnostics. Customer code reading `pipeline_response.http_response.status_code` cannot migrate unchanged to `response_hook`, which receives headers and a parsed result. |
 | Override SDK-generated protocol headers through `initial_headers` | Overrides of `accept`, `cache-control`, `user-agent`, and `x-ms-version` are rejected. Supported application headers are distinct from replacing driver-owned headers. |
 
 Removing an unsupported argument is only a migration path when the customer
@@ -3883,14 +3953,38 @@ accepts the threshold-only contract, not equivalent progressive scheduling.
 `from_connection_string` applies the same constructor rules. Constructing a
 client configures future requests; it does not send a hedged request.
 
+### Raw pipeline hooks are removed from both backends
+
+`raw_request_hook` and `raw_response_hook` are Python Core-specific exposures,
+not publicly documented Cosmos SDK options. The Rust API decision is not to
+reproduce them. Customers should obtain information through supported
+response headers, results, OpenTelemetry, and diagnostic strings.
+
+For example, use the returned order to read its ID and the exposed response
+headers to record request charge. Use supported tracing and diagnostics to
+investigate execution, after verifying the information delivered to Python.
+This does not promise every original header, raw response bytes,
+per-attempt callbacks, or arbitrary prepared-request mutation.
+The ordinary `response_hook` is not excluded.
+
+Constructor and per-operation inputs, including nested option dictionaries
+and explicit `None`, raise `TypeError` on sync/async legacy and Rust paths.
+The raw-hook policy and query forwarding are removed. Execution/parity tests
+for these callbacks are retired; unsupported-input regression coverage
+remains. Gaps 26 and 27 are closed, not blocked on a new Rust extension or
+equivalent callback delivery. Separate observability integration still needs
+its own evidence.
+See [entry 26](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-26) and
+[entry 27](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-27).
+
 <a id="unsupported-settings-no-longer-silently-change-the-selected-backend"></a>
 
 ### Unsupported settings must not silently run legacy Python
 
 An unsupported setting must produce an explicit error on APIs that adopt
 this rule, not silently select the legacy request implementation. For example,
-a database listing with `raw_request_hook=my_hook` cannot appear successful
-without honoring the requested ability to edit its outgoing request.
+a database listing with `raw_request_hook=my_hook` raises `TypeError` because
+that input is removed; it cannot appear successful after discarding it.
 
 The error may occur when iteration fetches a page. Remove an unsupported
 option only if the application does not need its behavior; otherwise that

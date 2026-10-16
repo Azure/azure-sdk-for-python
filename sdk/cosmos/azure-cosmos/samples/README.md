@@ -12,8 +12,8 @@ urlFragment: cosmos-db-samples
 
 The following are code samples that show common scenario operations with the Azure Cosmos DB SQL API client library. Note that the samples use the terms 'Document' and 'Item' interchangably.
 
-* [client_from_connection_string.py](client_from_connection_string.py) and
-  [client_from_connection_string_async.py](client_from_connection_string_async.py) -
+* [client_from_connection_string.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/samples/client_from_connection_string.py) and
+  [client_from_connection_string_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/samples/client_from_connection_string_async.py) -
   Create a client from a connection string, read an existing order, and close
   the client using `with` or `async with`. These examples target the Rust-default
   SDK and do not select a backend.

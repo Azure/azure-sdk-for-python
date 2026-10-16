@@ -82,7 +82,7 @@ def tracing():
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("capability", [
-    "raw_request_default", "raw_response_default", "http_logging", "diagnostic_logging",
+    "http_logging", "diagnostic_logging",
     "filtered_logging", "network_span_namer", "connection_retry_policy",
     "headers_default", "headers_per_call",
 ])
@@ -99,14 +99,6 @@ def test_policy_capability(backend, saved_order, asynchronous, capability, monke
 
     def is_target(request):
         return request.url.split("?", 1)[0].rstrip("/").endswith(target_path)
-
-    def request_hook(request):
-        if is_target(request.http_request):
-            events.append(("request", request.http_request.headers.get("x-alpha-bank-operation-id")))
-
-    def response_hook(response):
-        if is_target(response.http_request):
-            events.append(("response", response.http_response.status_code))
 
     def span_namer(request):
         if is_target(request):
@@ -127,10 +119,6 @@ def test_policy_capability(backend, saved_order, asynchronous, capability, monke
 
     settings = {"logger": logger}
     operation_settings = {}
-    if capability in ("raw_request_default", "headers_default", "headers_per_call"):
-        settings["raw_request_hook"] = request_hook
-    if capability == "raw_response_default":
-        settings["raw_response_hook"] = response_hook
     if capability in ("diagnostic_logging", "filtered_logging"):
         settings["enable_diagnostics_logging"] = True
     if capability == "filtered_logging":
@@ -167,6 +155,23 @@ def test_policy_capability(backend, saved_order, asynchronous, capability, monke
                 return original(driver_handle, prepared, **kwargs)
 
             monkeypatch.setattr(binding, method, async_execute if asynchronous else execute)
+        elif capability in ("headers_default", "headers_per_call"):
+            transport = client.client_connection.pipeline_client._pipeline._transport
+            original_send = transport.send
+
+            def capture(request):
+                if is_target(request):
+                    prepared_headers.append(dict(request.headers))
+
+            def send(request, **kwargs):
+                capture(request)
+                return original_send(request, **kwargs)
+
+            async def send_async(request, **kwargs):
+                capture(request)
+                return await original_send(request, **kwargs)
+
+            monkeypatch.setattr(transport, "send", send_async if asynchronous else send)
         handler.reset()
         events.clear()
         exporter.clear()
@@ -237,15 +242,15 @@ def test_policy_capability(backend, saved_order, asynchronous, capability, monke
         logger.removeHandler(handler)
         handler.close()
 
-    if capability in ("raw_request_default", "raw_response_default", "connection_retry_policy"):
+    if capability == "connection_retry_policy":
         assert events, f"{capability} did not run for the item request"
     elif capability == "network_span_namer":
         assert observed["operation_spans"] == 1
         assert events and observed["named_network_spans"] > 0
         assert observed["attributed_network_spans"] == observed["named_network_spans"]
     elif capability in ("headers_default", "headers_per_call"):
-        actual = prepared_headers[-1].get("x-alpha-bank-operation-id") if backend == "rust" else events[-1][1]
-        assert actual == "read-order-42"
+        assert prepared_headers, "The item operation did not prepare a request"
+        assert all(headers.get("x-alpha-bank-operation-id") == "read-order-42" for headers in prepared_headers)
     elif capability == "filtered_logging":
         # Preserve the missing-item logging assertions from both original tests.
         assert len(handler.messages) == 2

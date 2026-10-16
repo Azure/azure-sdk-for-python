@@ -170,26 +170,6 @@ def test_deferred_pipeline_construction_failure_is_not_cached(monkeypatch):
     pipeline.__aexit__.assert_awaited_once()
 
 
-def test_legacy_custom_transport_keeps_eager_lifecycle(monkeypatch):
-    from azure.core.pipeline.transport import AsyncHttpTransport
-
-    transport = MagicMock(spec=AsyncHttpTransport)
-    transport.__aenter__ = AsyncMock(return_value=transport)
-    transport.__aexit__ = AsyncMock()
-    client = async_client.CosmosClient(
-        "https://startup.invalid", "ZmFrZQ==", _backend="core-python", transport=transport
-    )
-    assert "pipeline_client" in vars(client.client_connection)
-    setup = AsyncMock()
-    monkeypatch.setattr(client.client_connection, "_setup", setup)
-
-    async def run():
-        async with client:
-            transport.__aenter__.assert_awaited_once()
-            setup.assert_awaited_once()
-        transport.__aexit__.assert_awaited_once()
-
-    asyncio.run(run())
 
 
 @pytest.mark.parametrize("async_mode", [False, True], ids=["sync", "async"])

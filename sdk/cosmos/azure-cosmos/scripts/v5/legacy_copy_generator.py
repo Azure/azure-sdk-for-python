@@ -427,12 +427,7 @@ _HEADERS_MODULE_CODE_SYNC = """\
 # The throughput-bucket number the test asserts is set on the
 # outgoing request. Kept identical to the source constant so the wire
 # value is the same as what the legacy path sent.
-request_throughput_bucket_number = 3
-
-
-def request_raw_response_hook(response):
-    assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
-            == str(request_throughput_bucket_number))"""
+request_throughput_bucket_number = 3"""
 
 
 CREATE_ITEM_SYNC_HEADERS = LegacyFileSpec(
@@ -444,6 +439,7 @@ CREATE_ITEM_SYNC_HEADERS = LegacyFileSpec(
     license_style="mit",
     fixture="class",
     cosmos_imports=("PartitionKey", "http_constants"),
+    extra_imports=("import importlib", "from unittest.mock import patch"),
     module_code=_HEADERS_MODULE_CODE_SYNC,
     docstring="""\
 Sync ``test_container_create_item_throughput_bucket`` test against
@@ -466,10 +462,17 @@ Run with::
             name="test_container_create_item_throughput_bucket",
             source="tests/test_headers.py::TestHeaders.test_container_create_item_throughput_bucket",
             body="""\
-        self.container.create_item(
-            body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)""",
+        binding = importlib.import_module(type(self.client._adapter).__module__)._rust_module
+        with patch.object(binding, "create_item", wraps=binding.create_item) as operation:
+            self.container.create_item(
+                body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
+                throughput_bucket=request_throughput_bucket_number)
+        self.assertTrue(operation.called)
+        for call in operation.call_args_list:
+            self.assertEqual(
+                call.args[1].headers[http_constants.HttpHeaders.ThroughputBucket],
+                str(request_throughput_bucket_number),
+            )""",
         ),
     ),
 )
@@ -479,12 +482,7 @@ _HEADERS_MODULE_CODE_AIO = """\
 # The throughput-bucket number the test asserts is set on the
 # outgoing request. Kept identical to the source constant so the wire
 # value is the same as what the legacy path sent.
-request_throughput_bucket_number = 3
-
-
-async def request_raw_response_hook(response):
-    assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
-            == str(request_throughput_bucket_number))"""
+request_throughput_bucket_number = 3"""
 
 
 CREATE_ITEM_AIO_HEADERS = LegacyFileSpec(
@@ -495,6 +493,7 @@ CREATE_ITEM_AIO_HEADERS = LegacyFileSpec(
     db_id_prefix="legacy_headers_async",
     license_style="mit",
     cosmos_imports=("PartitionKey", "http_constants"),
+    extra_imports=("import importlib", "from unittest.mock import patch"),
     module_code=_HEADERS_MODULE_CODE_AIO,
     docstring="""\
 Async ``test_container_create_item_throughput_bucket`` test against
@@ -516,10 +515,17 @@ Run with::
             name="test_container_create_item_throughput_bucket_async",
             source="tests/test_headers_async.py::TestHeadersAsync.test_container_create_item_throughput_bucket_async",
             body="""\
-        await self.container.create_item(
-            body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)""",
+        binding = importlib.import_module(type(self.client._adapter).__module__)._rust_module
+        with patch.object(binding, "create_item_async", wraps=binding.create_item_async) as operation:
+            await self.container.create_item(
+                body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
+                throughput_bucket=request_throughput_bucket_number)
+        self.assertTrue(operation.called)
+        for call in operation.call_args_list:
+            self.assertEqual(
+                call.args[1].headers[http_constants.HttpHeaders.ThroughputBucket],
+                str(request_throughput_bucket_number),
+            )""",
         ),
     ),
 )
@@ -634,4 +640,3 @@ def main(argv=None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

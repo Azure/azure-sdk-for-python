@@ -20,6 +20,22 @@ self-contained copy; --surface aio selects its async counterpart (sync is defaul
 self-contained copy, also supporting --surface aio.
 --query-test count selects the original partition-scoped COUNT/metrics test
 or its copy on either surface.
+--query-test metrics selects the original query-execution-metrics header
+test or its self-contained copy on either surface.
+--query-test index-metrics selects the original index-utilization diagnostics
+test or its self-contained copy on either surface.
+--query-test advice selects the original seven-query advisor test or its
+copy on either surface. Both retain an unconditional emulator-related skip;
+selection is not runtime parity until enabled on a supported target.
+--query-test max selects the original MAX-result test or its Rust copy,
+including its async counterpart. Original item bodies omit the partition key.
+--query-test sum compares adapted full-feed-range SUM copies on either
+surface. Both columns omit the original shared high-throughput provisioning;
+three logical keys do not guarantee multiple physical partitions.
+--query-test avg compares the adapted scoped-AVG feed-range controls on
+both backends. It preserves both container cases, not their original topology.
+--query-test min compares the adapted full-feed-range MIN copies on either
+surface, preserving the query and assertions without original topology.
 --query-test top compares the self-contained TOP copy on both backends,
 changing only its backend pin for core Python. Its adapted fixture and
 public paging checks do not audit the original cross-partition setup or
@@ -48,12 +64,26 @@ QUERY_METHODS = {
     "offset": "::TestQuery::test_offset_limit",
     "distinct": "::TestQuery::test_distinct",
     "count": "::TestQuery::test_partition_scoped_count_is_index_only",
+    "metrics": "::TestQuery::test_populate_query_metrics",
+    "index-metrics": "::TestQuery::test_populate_index_metrics",
+    "advice": "::TestQuery::test_populate_query_advice",
+    "sum": "::TestQueryFeedRange::test_query_value_sum_across_full_feed_range_still_sums",
+    "avg": "::TestQueryFeedRange::test_query_with_avg_aggregate_single_partition_feed_range_succeeds",
+    "max": "::TestQuery::test_value_max_query_results",
+    "min": "::TestQueryFeedRange::test_query_value_min_across_full_feed_range_returns_scalar",
 }
 
 ASYNC_QUERY_METHODS = {
     "offset": "::TestQueryAsync::test_offset_limit_async",
     "distinct": "::TestQueryAsync::test_distinct_async",
     "count": "::TestQueryAsync::test_partition_scoped_count_is_index_only_async",
+    "metrics": "::TestQueryAsync::test_populate_query_metrics_async",
+    "index-metrics": "::TestQueryAsync::test_populate_index_metrics_async",
+    "advice": "::TestQueryAsync::test_populate_query_advice_async",
+    "sum": "::TestQueryFeedRangeAsync::test_query_value_sum_across_full_feed_range_still_sums_async",
+    "avg": "::TestQueryFeedRangeAsync::test_query_with_avg_aggregate_single_partition_feed_range_succeeds_async",
+    "max": "::TestQueryAsync::test_value_max_query_results_async",
+    "min": "::TestQueryFeedRangeAsync::test_query_value_min_across_full_feed_range_returns_scalar_async",
 }
 
 METHODS = {
@@ -107,7 +137,10 @@ def main(argv=None):
     if args.query_test is not None and args.op != "query_items":
         parser.error("--query-test requires --op query_items")
     if args.surface == "aio" and not (args.op == "query_items" and args.query_test in ASYNC_QUERY_METHODS):
-        parser.error("--surface aio requires --op query_items --query-test offset, distinct, or count")
+        parser.error(
+            "--surface aio requires --op query_items --query-test offset, distinct, count, "
+            "metrics, index-metrics, advice, sum, avg, max, or min"
+        )
     for name in ("ACCOUNT_HOST", "ACCOUNT_KEY"):
         if not os.environ.get(name):
             parser.error(f"{name} must be set explicitly for the test target")
@@ -125,6 +158,8 @@ def main(argv=None):
     if args.surface == "aio":
         source_file = "test_query_async.py"
         method = ASYNC_QUERY_METHODS[args.query_test]
+    if args.query_test in ("sum", "avg", "min"):
+        source_file = "test_query_feed_range_async.py" if args.surface == "aio" else "test_query_feed_range.py"
     selections = [(source_file, method)]
     if args.op == "upsert_item":
         selections.append(("test_crud.py", "::TestCRUDOperations::test_document_upsert"))
@@ -138,13 +173,13 @@ def main(argv=None):
         folder = ROOT / "tests" / args.op / args.surface / "legacy"
         return pytest.main(options + [str(folder / filename) + node for filename, node in selections])
 
-    if args.query_test == "top":
+    if args.query_test in ("top", "sum", "avg", "min"):
         from run_database_throughput_parity import _source_for_backend
 
-        source = ROOT / "tests" / "query_items" / "sync" / "legacy" / source_file
+        source = ROOT / "tests" / "query_items" / args.surface / "legacy" / source_file
         artifacts = ROOT / "docs" / "V5" / "_parity_runs"
         artifacts.mkdir(parents=True, exist_ok=True)
-        with TemporaryDirectory(prefix="query_top_corepy_", dir=artifacts) as temporary:
+        with TemporaryDirectory(prefix=f"query_{args.query_test}_corepy_", dir=artifacts) as temporary:
             target = Path(temporary) / source_file
             target.write_text(_source_for_backend(source, args.backend), encoding="utf-8")
             return pytest.main(options + [str(target) + method])
@@ -167,7 +202,7 @@ def main(argv=None):
             database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
             config.TEST_DATABASE_ID = database_id
             config.TEST_SINGLE_PARTITION_CONTAINER_ID = container_id
-            if args.op == "upsert_item" or args.query_test == "count":
+            if args.op == "upsert_item" or args.query_test in ("count", "max"):
                 config.TEST_MULTI_PARTITION_CONTAINER_ID = container_id
             return pytest.main(options + [
                 str(ROOT / "tests" / filename) + node for filename, node in selections

@@ -12,6 +12,7 @@ Run: ``pytest tests/patch_item/sync/test_headers.py -v -s``
 """
 import os
 import unittest
+from unittest.mock import patch
 import uuid
 
 from azure.cosmos import CosmosClient, PartitionKey, http_constants
@@ -23,12 +24,6 @@ KEY = os.environ["ACCOUNT_KEY"]
 
 # Same value as the Rust copy, so the wire bytes match.
 request_throughput_bucket_number = 3
-
-
-def request_raw_response_hook(response):
-    """Verify the prepared request contains the customer's bucket."""
-    assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
-            == str(request_throughput_bucket_number))
 
 
 class TestHeaders(unittest.TestCase):
@@ -79,9 +74,16 @@ class TestHeaders(unittest.TestCase):
             {"op": "incr", "path": "/number", "value": 7},
             {"op": "move", "from": "/color", "path": "/favorite_color"}
         ]
-        self.container.patch_item(
-            item="patch_item",
-            partition_key=pkValue,
-            patch_operations=operations,
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+        transport = self.client.client_connection.pipeline_client._pipeline._transport
+        with patch.object(transport, "send", wraps=transport.send) as send:
+            self.container.patch_item(
+                item="patch_item",
+                partition_key=pkValue,
+                patch_operations=operations,
+                throughput_bucket=request_throughput_bucket_number)
+        self.assertTrue(send.called)
+        for call in send.call_args_list:
+            self.assertEqual(
+                call.args[0].headers[http_constants.HttpHeaders.ThroughputBucket],
+                str(request_throughput_bucket_number),
+            )

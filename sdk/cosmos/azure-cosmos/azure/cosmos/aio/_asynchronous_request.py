@@ -108,38 +108,17 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     # and will raise an error on validation if they are not, so casting all header values to strings.
     request.headers.update({header: str(value) for header, value in request.headers.items()})
 
-    # We are disabling the SSL verification for local emulator(localhost/127.0.0.1) or if the user
-    # has explicitly specified to disable SSL verification.
-    is_ssl_enabled = (
-        parse_result.hostname != "localhost"
-        and parse_result.hostname != "127.0.0.1"
-        and not connection_policy.DisableSSLVerification
+    # Retain the existing local-emulator exception, not a customer TLS override.
+    is_ssl_enabled = parse_result.hostname not in ("localhost", "127.0.0.1")
+    response = await _PipelineRunFunction(
+        pipeline_client,
+        request,
+        connection_timeout=connection_timeout,
+        connection_verify=is_ssl_enabled,
+        request_params=request_params,
+        global_endpoint_manager=global_endpoint_manager,
+        **kwargs
     )
-
-    if connection_policy.SSLConfiguration or "connection_cert" in kwargs:
-        ca_certs = connection_policy.SSLConfiguration.SSLCaCerts
-        cert_files = (connection_policy.SSLConfiguration.SSLCertFile, connection_policy.SSLConfiguration.SSLKeyFile)
-        response = await _PipelineRunFunction(
-            pipeline_client,
-            request,
-            connection_timeout=connection_timeout,
-            connection_verify=kwargs.pop("connection_verify", ca_certs),
-            connection_cert=kwargs.pop("connection_cert", cert_files),
-            request_params=request_params,
-            global_endpoint_manager=global_endpoint_manager,
-            **kwargs
-        )
-    else:
-        response = await _PipelineRunFunction(
-            pipeline_client,
-            request,
-            connection_timeout=connection_timeout,
-            # If SSL is disabled, verify = false
-            connection_verify=kwargs.pop("connection_verify", is_ssl_enabled),
-            request_params=request_params,
-            global_endpoint_manager=global_endpoint_manager,
-            **kwargs
-        )
 
     response = response.http_response
     if status_capture is not None:

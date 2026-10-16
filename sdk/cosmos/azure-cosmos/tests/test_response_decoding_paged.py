@@ -47,8 +47,6 @@ def _build_request_args():
     connection_policy = MagicMock()
     connection_policy.RequestTimeout = 30
     connection_policy.DBAConnectionTimeout = 5
-    connection_policy.SSLConfiguration = None
-    connection_policy.DisableSSLVerification = False
 
     global_endpoint_manager = MagicMock()
     pipeline_client = MagicMock()

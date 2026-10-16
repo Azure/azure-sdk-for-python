@@ -20,6 +20,7 @@ The real client classes are used; only the older connection object is stood in f
 nothing opens a socket.
 """
 import asyncio
+from copy import copy, deepcopy
 import inspect
 from unittest.mock import MagicMock
 
@@ -30,8 +31,7 @@ import azure.cosmos.aio._cosmos_client as async_client
 from azure.cosmos._backend.contracts import PreparedClientConfig
 from azure.cosmos._connection_policy import resolve_connection_policy_kwargs
 from azure.cosmos._retry_options import RetryOptions
-from azure.cosmos.documents import ConnectionPolicy, ProxyConfiguration, SSLConfiguration
-from azure.cosmos import ConnectionPoolOptions, CosmosRuntime
+from azure.cosmos.documents import ConnectionPolicy
 
 
 @pytest.fixture(params=[sync_client, async_client], ids=["sync", "async"])
@@ -137,6 +137,104 @@ def test_default_policy_does_not_pin_rust_settings(construct_client, policy):
     """
     client, _ = construct_client(connection_policy=policy)
     assert client._adapter._client_config is None
+
+
+@pytest.mark.parametrize("from_connection_string", [False, True])
+@pytest.mark.parametrize("selection", ["keyword", "environment"])
+@pytest.mark.parametrize("grouped", [False, True], ids=["keyword-option", "policy-field"])
+@pytest.mark.parametrize("option,attribute", [
+    ("enable_endpoint_discovery", "EnableEndpointDiscovery"),
+    ("multiple_write_locations", "UseMultipleWriteLocations"),
+])
+@pytest.mark.parametrize("value", [True, False, None, "unused"])
+def test_rust_routing_switches_fail_before_startup(
+    client_module, monkeypatch, from_connection_string, selection, grouped, option, attribute, value,
+):
+    policy = ConnectionPolicy()
+    if grouped:
+        setattr(policy, attribute, value)
+        kwargs = {"connection_policy": policy}
+        rejected_name = rf"connection_policy\.{attribute}"
+    else:
+        kwargs = {option: value}
+        rejected_name = option
+    original = dict(vars(policy))
+    if selection == "environment":
+        monkeypatch.setenv("COSMOS_BACKEND", "rust")
+    else:
+        monkeypatch.setenv("COSMOS_BACKEND", "core-python")
+        kwargs["_backend"] = "rust"
+    connection = MagicMock()
+    factory = MagicMock()
+    monkeypatch.setattr(client_module, "CosmosClientConnection", connection)
+    factory_name = "make_async_backend" if client_module is async_client else "make_backend"
+    monkeypatch.setattr(client_module, factory_name, factory)
+    with pytest.raises(TypeError, match=rejected_name + " is not supported by Rust-backed clients"):
+        if from_connection_string:
+            client_module.CosmosClient.from_connection_string(
+                "AccountEndpoint=https://policy.invalid;AccountKey=ZmFrZQ==;", **kwargs,
+            )
+        else:
+            client_module.CosmosClient("https://policy.invalid", "ZmFrZQ==", **kwargs)
+    connection.assert_not_called()
+    factory.assert_not_called()
+    assert vars(policy) == original
+
+
+@pytest.mark.parametrize("attribute,default", [
+    ("EnableEndpointDiscovery", True), ("UseMultipleWriteLocations", False),
+])
+@pytest.mark.parametrize("duplicate", [copy, deepcopy])
+def test_copied_explicit_default_routing_policy_is_rejected(construct_client, attribute, default, duplicate):
+    policy = ConnectionPolicy()
+    setattr(policy, attribute, default)
+    with pytest.raises(TypeError, match=attribute):
+        construct_client(connection_policy=duplicate(policy))
+
+
+@pytest.mark.parametrize("attribute,value", [
+    ("EnableEndpointDiscovery", True), ("EnableEndpointDiscovery", False),
+    ("UseMultipleWriteLocations", False), ("UseMultipleWriteLocations", True),
+])
+def test_subclass_routing_switch_is_rejected(construct_client, attribute, value):
+    policy = type("RoutingPolicy", (ConnectionPolicy,), {attribute: value})()
+    with pytest.raises(TypeError, match=attribute):
+        construct_client(connection_policy=policy)
+
+
+@pytest.mark.parametrize("backend", ["core-python", "rust"])
+def test_untouched_routing_policy_can_be_reused(construct_client, backend):
+    policy = configured_policy()
+    original = dict(vars(policy))
+    _, prepared_policy = construct_client(_backend=backend, connection_policy=policy)
+    client, _ = construct_client(connection_policy=prepared_policy)
+    assert client._adapter._client_config.preferred_locations == ("West US", "East US")
+    assert client._adapter._client_config.excluded_locations == ("Central US",)
+    assert vars(policy) == original
+    assert "EnableEndpointDiscovery" not in vars(prepared_policy)
+    assert "UseMultipleWriteLocations" not in vars(prepared_policy)
+
+
+@pytest.mark.parametrize("from_connection_string", [False, True])
+@pytest.mark.parametrize("grouped", [False, True])
+@pytest.mark.parametrize("discovery,multi_write", [(True, False), (False, True), (None, None)])
+def test_legacy_routing_switches_remain_available(
+    construct_client, monkeypatch, from_connection_string, grouped, discovery, multi_write,
+):
+    monkeypatch.setenv("COSMOS_BACKEND", "rust")
+    if grouped:
+        policy = ConnectionPolicy()
+        policy.EnableEndpointDiscovery = discovery
+        policy.UseMultipleWriteLocations = multi_write
+        options = {"connection_policy": policy}
+    else:
+        options = {"enable_endpoint_discovery": discovery, "multiple_write_locations": multi_write}
+    client, prepared = construct_client(
+        _backend="core-python", from_connection_string=from_connection_string, **options,
+    )
+    assert client._adapter.name == "core-python"
+    assert prepared.EnableEndpointDiscovery is discovery
+    assert prepared.UseMultipleWriteLocations is multi_write
 
 
 def test_connection_string_factory_preserves_grouped_settings(construct_client):
@@ -260,132 +358,148 @@ def test_legacy_policy_timeouts_still_resolve_with_keyword_and_alias_precedence(
     )
     assert legacy.RequestTimeout == 2
     assert policy.RequestTimeout == 4
-
-
-@pytest.mark.parametrize("setting", ["proxy", "ca", "cert", "key", "disable_verification"])
-def test_nested_unsupported_transport_rejected_before_startup(
-    construct_client, client_module, setting
+@pytest.mark.parametrize("backend", ["rust", "core-python"])
+@pytest.mark.parametrize("from_connection_string", [False, True])
+@pytest.mark.parametrize(
+    "option",
+    ["proxy_config", "proxies", "ssl_config", "connection_verify", "connection_cert", "transport"],
+)
+@pytest.mark.parametrize("value", [None, True, False, {}, "alpha-bank-ca.pem"])
+def test_removed_network_options_fail_before_startup(
+    client_module, monkeypatch, backend, from_connection_string, option, value,
 ):
-    """Settings the Rust path cannot honor are refused at construction, not ignored.
+    connection = MagicMock()
+    backend_factory = MagicMock()
+    monkeypatch.setattr(client_module, "CosmosClientConnection", connection)
+    factory_name = "make_async_backend" if client_module is async_client else "make_backend"
+    monkeypatch.setattr(client_module, factory_name, backend_factory)
+    kwargs = {"_backend": backend, option: value}
+    with pytest.raises(TypeError, match=rf"{option} has been removed"):
+        if from_connection_string:
+            client_module.CosmosClient.from_connection_string(
+                "AccountEndpoint=https://alpha-bank-account.invalid;AccountKey=ZmFrZQ==;", **kwargs,
+            )
+        else:
+            client_module.CosmosClient("https://alpha-bank-account.invalid", "ZmFrZQ==", **kwargs)
+    connection.assert_not_called()
+    backend_factory.assert_not_called()
 
-    A proxy, any of the three certificate settings, or turning certificate checking off:
-    each is set inside the policy object rather than passed as a keyword, which is the
-    easy place for a check to miss.
 
-    Ignoring them would be the dangerous outcome. Turning certificate checking off and
-    having it stay on merely breaks a test setup, but naming a proxy and having it
-    ignored means traffic leaves by a route the customer believed it would not take.
-
-    The error names the equivalent keyword rather than the field inside the policy, which
-    is the thing the caller can actually change. The older connection object is checked
-    never to have been built, so the failure really did come first.
-
-    The last line verifies that explicit environment-proxy permission is supported
-    through an initialized custom runtime, rather than a client keyword.
-    """
+@pytest.mark.parametrize("backend", ["rust", "core-python"])
+@pytest.mark.parametrize("from_connection_string", [False, True])
+@pytest.mark.parametrize("attribute", ["ProxyConfiguration", "SSLConfiguration", "DisableSSLVerification"])
+@pytest.mark.parametrize("value", [None, False, object()])
+def test_removed_policy_fields_fail_before_startup(
+    client_module, monkeypatch, backend, from_connection_string, attribute, value,
+):
     policy = ConnectionPolicy()
-    if setting == "proxy":
-        policy.ProxyConfiguration = ProxyConfiguration()
-        policy.ProxyConfiguration.Host = "proxy.invalid"
-        expected = "proxy_config"
-    elif setting == "disable_verification":
-        policy.DisableSSLVerification = True
-        expected = "connection_verify"
+    setattr(policy, attribute, value)
+    connection = MagicMock()
+    monkeypatch.setattr(client_module, "CosmosClientConnection", connection)
+    with pytest.raises(TypeError, match=rf"connection_policy\.{attribute} has been removed"):
+        if from_connection_string:
+            client_module.CosmosClient.from_connection_string(
+                "AccountEndpoint=https://alpha-bank-account.invalid;AccountKey=ZmFrZQ==;",
+                connection_policy=policy, _backend=backend,
+            )
+        else:
+            client_module.CosmosClient(
+                "https://alpha-bank-account.invalid", "ZmFrZQ==", connection_policy=policy, _backend=backend,
+            )
+    connection.assert_not_called()
+    assert getattr(policy, attribute) is value
+
+
+@pytest.mark.parametrize("nested", ["request_options", "feed_options", "options"])
+@pytest.mark.parametrize(
+    "option",
+    ["proxy_config", "proxies", "ssl_config", "connection_verify", "connection_cert", "transport"],
+)
+def test_nested_removed_network_options_are_rejected(nested, option):
+    from azure.cosmos._backend.capabilities import reject_removed_options
+
+    with pytest.raises(TypeError, match=rf"{option} has been removed"):
+        reject_removed_options({nested: {option: None}})
+
+
+@pytest.mark.parametrize("backend", ["rust", "core-python"])
+@pytest.mark.parametrize("from_connection_string", [False, True])
+@pytest.mark.parametrize("option", ["raw_request_hook", "raw_response_hook"])
+@pytest.mark.parametrize("value", [None, False, lambda _message: None])
+def test_removed_raw_hooks_fail_before_startup(
+    client_module, monkeypatch, backend, from_connection_string, option, value,
+):
+    connection = MagicMock()
+    backend_factory = MagicMock()
+    monkeypatch.setattr(client_module, "CosmosClientConnection", connection)
+    factory_name = "make_async_backend" if client_module is async_client else "make_backend"
+    monkeypatch.setattr(client_module, factory_name, backend_factory)
+    kwargs = {"_backend": backend, option: value}
+    with pytest.raises(TypeError, match=rf"{option} has been removed"):
+        if from_connection_string:
+            client_module.CosmosClient.from_connection_string(
+                "AccountEndpoint=https://policy.invalid;AccountKey=ZmFrZQ==;", **kwargs,
+            )
+        else:
+            client_module.CosmosClient("https://policy.invalid", "ZmFrZQ==", **kwargs)
+    connection.assert_not_called()
+    backend_factory.assert_not_called()
+
+
+def test_removed_configuration_classes_are_not_exported():
+    import azure.cosmos
+    from azure.cosmos import documents
+
+    for name in ("ProxyConfiguration", "SSLConfiguration"):
+        assert not hasattr(azure.cosmos, name)
+        assert not hasattr(documents, name)
+
+
+@pytest.mark.parametrize(
+    "option",
+    ["proxy_config", "proxies", "ssl_config", "connection_verify", "connection_cert", "transport",
+     "raw_request_hook", "raw_response_hook"],
+)
+def test_direct_connection_rejects_removed_options(client_module, option):
+    with pytest.raises(TypeError, match=rf"{option} has been removed"):
+        client_module.CosmosClientConnection("https://alpha-bank-account.invalid", None, **{option: None})
+
+
+@pytest.mark.parametrize("from_connection_string", [False, True])
+def test_test_sender_uses_internal_pipeline_and_restores_factory(client_module, from_connection_string):
+    import importlib
+    from azure.core.pipeline.policies import CustomHookPolicy
+    from azure.core.pipeline.transport import AsyncHttpTransport, HttpTransport
+    from _client_transport import create_client_with_transport
+
+    async_mode = client_module is async_client
+    connection_module = importlib.import_module(client_module.CosmosClientConnection.__module__)
+    factory_name = "AsyncPipelineClient" if async_mode else "PipelineClient"
+    original_factory = getattr(connection_module, factory_name)
+    transport = MagicMock(spec=AsyncHttpTransport if async_mode else HttpTransport)
+    if from_connection_string:
+        client = create_client_with_transport(
+            client_module.CosmosClient.from_connection_string,
+            "AccountEndpoint=https://alpha-bank-account.invalid;AccountKey=ZmFrZQ==;",
+            transport=transport, _backend="rust",
+        )
     else:
-        policy.SSLConfiguration = SSLConfiguration()
-        attribute = {"ca": "SSLCaCerts", "cert": "SSLCertFile", "key": "SSLKeyFile"}[setting]
-        setattr(policy.SSLConfiguration, attribute, "test-certificate.pem")
-        expected = "ssl_config"
-    with pytest.raises(ValueError, match=expected):
-        construct_client(connection_policy=policy)
-    client_module.CosmosClientConnection.assert_not_called()
-    construct_client(runtime=CosmosRuntime.create(
-        connection_pool=ConnectionPoolOptions(proxy_allowed=False)
-    ))
-
-
-def test_explicit_transport_overrides_clear_nested_settings(construct_client):
-    """Passing nothing for a transport setting clears what the policy said, and clearing it
-    is enough to make the client acceptable.
-
-    The policy carries a proxy, a certificate authority file, and certificate checking
-    turned off -- all three of which would otherwise be refused. Passing the keywords
-    explicitly as nothing withdraws them, and the client builds. That is the escape route
-    for a caller who has a policy they cannot easily change.
-
-    Once withdrawn nothing is pinned at all, so the Rust configuration is empty rather
-    than holding cleared-out fields. The caller's policy is checked to still hold its
-    original values, since withdrawing them for this client must not disarm it for the
-    next one.
-    """
-    policy = ConnectionPolicy()
-    policy.ProxyConfiguration = ProxyConfiguration()
-    policy.SSLConfiguration = SSLConfiguration()
-    policy.SSLConfiguration.SSLCaCerts = "test-ca.pem"
-    policy.DisableSSLVerification = True
-    client, legacy = construct_client(
-        connection_policy=policy, proxy_config=None, ssl_config=None, connection_verify=True
-    )
-    assert client._adapter._client_config is None
-    assert legacy.ProxyConfiguration is None
-    assert legacy.SSLConfiguration is None
-    assert legacy.DisableSSLVerification is False
-    assert policy.SSLConfiguration.SSLCaCerts == "test-ca.pem"
-    assert policy.DisableSSLVerification is True
-
-
-def test_core_python_retains_nested_transport_and_does_not_mutate_caller(construct_client):
-    """On the older backend the transport settings are kept, and the caller's policy is
-    still not touched.
-
-    The refusals above belong to the Rust path alone. Choosing the older backend must
-    behave exactly as it always has: the proxy survives, certificate checking stays off,
-    and a certificate passed as a keyword replaces the one in the policy rather than
-    being rejected.
-
-    The rest checks that the policy handed to the older path is a separate object, along
-    with the pieces nested inside it that get written to. A shallow copy would leave those
-    shared, so changing one client's certificate would change another's. The caller's
-    original values are checked one by one afterwards, including a region list and a
-    retry count that were overridden for this client.
-    """
-    policy = configured_policy()
-    policy.ProxyConfiguration = ProxyConfiguration()
-    policy.ProxyConfiguration.Host = "proxy.invalid"
-    policy.SSLConfiguration = SSLConfiguration()
-    policy.SSLConfiguration.SSLCertFile = "original-cert.pem"
-    policy.DisableSSLVerification = True
-    _, legacy = construct_client(
-        _backend="core-python", connection_policy=policy,
-        preferred_locations=["North Europe"], retry_throttle_total=0,
-        connection_cert="override-cert.pem",
-    )
-    assert legacy.ProxyConfiguration.Host == "proxy.invalid"
-    assert legacy.SSLConfiguration.SSLCertFile == "override-cert.pem"
-    assert legacy.DisableSSLVerification is True
-    assert legacy is not policy
-    assert legacy.SSLConfiguration is not policy.SSLConfiguration
-    assert legacy.RetryOptions is not policy.RetryOptions
-    assert policy.PreferredLocations == ["West US", "East US"]
-    assert policy.RetryOptions.MaxRetryAttemptCount == 3
-    assert policy.SSLConfiguration.SSLCertFile == "original-cert.pem"
-
-
-def test_direct_ssl_object_is_not_mutated(construct_client):
-    """A certificate holder passed as a keyword is not written to either.
-
-    The test above protects one passed inside a policy. This is the same object arriving
-    by the other door, and the copying happens in different code. A caller who keeps one
-    of these around and builds several clients from it, each with a different certificate,
-    would otherwise find them all using the last one.
-    """
-    ssl = SSLConfiguration()
-    ssl.SSLCertFile = "original-cert.pem"
-    _, legacy = construct_client(
-        _backend="core-python", ssl_config=ssl, connection_cert="override-cert.pem"
-    )
-    assert ssl.SSLCertFile == "original-cert.pem"
-    assert legacy.SSLConfiguration.SSLCertFile == "override-cert.pem"
+        client = create_client_with_transport(
+            client_module.CosmosClient, "https://alpha-bank-account.invalid", "ZmFrZQ==",
+            transport=transport, _backend="rust",
+        )
+    try:
+        assert client.client_connection.pipeline_client._pipeline._transport is transport
+        assert not any(
+            isinstance(getattr(policy, "_policy", policy), CustomHookPolicy)
+            for policy in client.client_connection.pipeline_client._pipeline._impl_policies
+        )
+        assert getattr(connection_module, factory_name) is original_factory
+        transport.send.assert_not_called()
+    finally:
+        result = client.close()
+        if inspect.isawaitable(result):
+            asyncio.run(result)
 
 
 def test_mutable_policy_settings_are_snapshotted(construct_client):

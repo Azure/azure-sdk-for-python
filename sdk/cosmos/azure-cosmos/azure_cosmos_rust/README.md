@@ -49,8 +49,11 @@ status, sub_status, headers, body, diagnostics = _rust.create_item(driver_handle
 ```
 
 For public `create_item`, `read_item`, `delete_item`, `upsert_item`, `replace_item`,
-`patch_item`, `ContainerProxy.read`, `DatabaseProxy.delete_container` and
-`DatabaseProxy.create_container`, the Python
+`patch_item`, `ContainerProxy.read`, `DatabaseProxy.delete_container`,
+`DatabaseProxy.create_container`, `DatabaseProxy.replace_container`,
+`DatabaseProxy.create_container_if_not_exists`,
+`DatabaseProxy.read`, `CosmosClient.create_database`,
+`CosmosClient.delete_database` and `CosmosClient.create_database_if_not_exists`, the Python
 wrapper requests structured request diagnostics when it owns a recording
 operation span or an SDK-internal
 completion handler requires request detail. No such handler is registered by
@@ -60,7 +63,7 @@ When enabled, they return `(response_tuple, attempt_payload)`; the response tupl
 itself is unchanged. A response-less driver error keeps its existing exception
 and carries available diagnostics in `_cosmos_attempt_payload`.
 
-The item, container-read, container-delete and container-create runners reuse
+The item, integrated container-operation and database read/create/delete runners reuse
 `wire/response.rs` for this conversion.
 The shared Python module `azure.cosmos._telemetry` records the request spans before Azure Core ends
 the public operation span, including when a response hook raises. Customer apps
@@ -79,13 +82,67 @@ and the same database-owned context. Completion includes the response hook,
 property normalization and returned container proxy construction. The existing
 hook receives a header copy and the returned properties object; telemetry does
 not introduce body isolation or change either public return form.
+Public `DatabaseProxy.replace_container` uses binding operation `replace_container`
+and the same completion boundary. Its existing hook receives independent header
+and nested-body snapshots; hook mutations do not alter returned properties or
+cached metadata. A successful replacement followed by a hook error is not replayed.
+Both replacement entry points also accept internal `timeout_seconds=None`.
+The remaining budget bounds scheduling, metadata resolution and replacement
+together, without extending the configured driver timeout.
+Public `DatabaseProxy.read` uses binding operation `read_database`. Completion
+includes its response hook and the proxy's properties update. A `304` retains
+the existing empty result and `None` hook body. Header isolation and shallow
+body-copy behavior are unchanged. Both read entry points retain their existing
+`timeout_seconds` contract alongside the new opt-in attempt conversion.
+The public read decorator alone does not instrument internal helper reads.
+Public `CosmosClient.create_database` uses binding operation `create_database`.
+The client-owned context retains one contribution through the response hook
+and returned database proxy construction. Both return forms and independent
+hook snapshots are preserved, including after a successful request followed
+by a hook failure. Both native entry points retain `timeout_seconds` and add
+`include_attempts=False`; the existing async deadline task and cancellation
+path remain in use.
+
+Public `CosmosClient.delete_database` uses binding operation `delete_database`.
+Completion includes its synchronous, headers-only hook; the public return
+remains `None`. Hook failures retain the successful deletion's diagnostics
+without replay. Both native entry points accept `timeout_seconds=None` and
+`include_attempts=False`. The remaining budget bounds waiting to start and
+native execution using the shared deadline helper; an interrupted call does
+not manufacture diagnostics that the driver never returned.
+
+Public `CosmosClient.create_database_if_not_exists` owns the bounded sequence
+`read_database`, `create_database`, `read_database`, collecting only the steps
+the helper actually executes. It reuses the existing read/create binding
+entry points with `include_attempts=True` when recording is requested; there
+is no new native get-or-create operation. Its one public span includes the
+final hook and proxy construction, while handled missing/conflict responses
+remain request facts rather than failures of a successful public call.
+
+Public `DatabaseProxy.create_container_if_not_exists` owns at most two binding
+results: `read_container`, then `create_container` only after a missing result.
+A single-use authorization lets its existing internal public creation call
+join the outer operation instead of resetting or finishing its recording.
+Ordinary nested calls remain independent. Hook behavior, cache updates,
+returned proxies and public overrides are unchanged. Unlike database
+get-or-create, a creation conflict is propagated without a recovery read.
+
+Both container read/create binding entry points now accept internal
+`timeout_seconds=None` alongside `include_attempts=False`. The shared eager
+deadline wrapper covers scheduling and native execution using the remaining
+budget after Python driver setup. The composed call retains separate read
+and create budgets; this is not a new overall workflow timeout.
 
 Each binding invocation contributes through a single-use token. The Python
 collector rejects duplicate or late delivery and records operation totals once.
-The integrated public single-item and container metadata paths accept one binding result;
-future composed paths must explicitly configure a retained-detail limit before collecting
-multiple independent results. Driver retries already included in one result
-are not additional Python contributions.
+Single-operation paths accept one binding result. Database get-or-create
+accepts at most three ordered results, and container get-or-create at most two,
+retaining the native-bounded detail
+from each. Other multi-result paths must explicitly bound collection rather
+than joining an operation merely through inherited context. Driver retries
+already included in one result are not additional Python contributions.
+If a contribution has no usable diagnostics, known attempts are preserved
+without publishing partial counts as complete operation totals.
 
 The shared Python deadline helper explicitly authorizes its own async task
 to use the operation state until that task unwinds. Inherited context alone

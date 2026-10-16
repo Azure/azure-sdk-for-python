@@ -16,6 +16,33 @@ from copy import copy
 from typing import Any, Mapping, Optional
 
 from .documents import ConnectionPolicy
+from ._backend.capabilities import reject_removed_options
+
+
+def reject_rust_routing_options(kwargs: Mapping[str, Any]) -> None:
+    """Reject client routing switches; Rust owns discovery and multi-write routing."""
+    policy = kwargs.get("connection_policy")
+    for keyword, attribute in (
+        ("enable_endpoint_discovery", "EnableEndpointDiscovery"),
+        ("multiple_write_locations", "UseMultipleWriteLocations"),
+    ):
+        if keyword in kwargs:
+            raise TypeError(
+                f"{keyword} is not supported by Rust-backed clients; "
+                "the Rust driver manages endpoint discovery and routing from account settings."
+            )
+        if policy is not None and (
+            attribute in vars(policy)
+            or any(
+                attribute in cls.__dict__
+                for cls in type(policy).__mro__
+                if cls is not ConnectionPolicy
+            )
+        ):
+            raise TypeError(
+                f"connection_policy.{attribute} is not supported by Rust-backed clients; "
+                "leave this field unset and let the Rust driver manage routing."
+            )
 
 
 def copy_connection_policy(policy: Optional[ConnectionPolicy]) -> ConnectionPolicy:
@@ -23,19 +50,18 @@ def copy_connection_policy(policy: Optional[ConnectionPolicy]) -> ConnectionPoli
 
     For example, appending a preferred region to the copy does not change the
     original PreferredLocations list. Values nested inside the copied fields
-    remain shared, as do unrelated objects such as custom transports.
+    remain shared.
     None creates a new ConnectionPolicy with default settings.
     """
     if policy is None:
         return ConnectionPolicy()
     if not isinstance(policy, ConnectionPolicy):
         raise TypeError("connection_policy must be a ConnectionPolicy object or None.")
+    reject_removed_options({"connection_policy": policy})
     result = copy(policy)
     result.PreferredLocations = copy(policy.PreferredLocations)
     result.ExcludedLocations = copy(policy.ExcludedLocations)
     result.RetryOptions = copy(policy.RetryOptions)
-    result.SSLConfiguration = copy(policy.SSLConfiguration)
-    result.ProxyConfiguration = copy(policy.ProxyConfiguration)
     return result
 
 
@@ -57,13 +83,14 @@ def resolve_connection_policy_kwargs(kwargs: Mapping[str, Any]) -> dict[str, Any
     """Combine client keywords with supported ConnectionPolicy fields.
 
     For example, a supplied preferred_locations entry takes precedence over
-    policy.PreferredLocations. Retry settings and connection_verify instead
+    policy.PreferredLocations. Retry settings instead
     treat None as unspecified. Unchanged policy defaults are not copied into
     the keyword arguments.
 
     Connection timeouts are resolved separately by
     resolve_client_connection_timeout, not by this function.
     """
+    reject_removed_options(kwargs)
     resolved = dict(kwargs)
     stock = ConnectionPolicy()
     policy = kwargs.get("connection_policy")
@@ -75,15 +102,10 @@ def resolve_connection_policy_kwargs(kwargs: Mapping[str, Any]) -> dict[str, Any
     for keyword, attribute in (
         ("preferred_locations", "PreferredLocations"),
         ("excluded_locations", "ExcludedLocations"),
-        ("proxy_config", "ProxyConfiguration"),
-        ("ssl_config", "SSLConfiguration"),
     ):
         value = getattr(policy, attribute)
         if keyword not in resolved and value != getattr(stock, attribute):
             resolved[keyword] = value
-
-    if resolved.get("connection_verify") is None and policy.DisableSSLVerification:
-        resolved["connection_verify"] = False
 
     for throttle_keyword, generic_keyword, attribute in (
         ("retry_throttle_total", "retry_total", "MaxRetryAttemptCount"),

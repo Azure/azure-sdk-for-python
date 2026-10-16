@@ -604,28 +604,29 @@ def test_partition_key_sentinels_preserve_native_unknown_system_key_fallback(poi
 
 
 @pytest.mark.parametrize("source", ["request_options", "feed_options", "initial_headers"])
-def test_read_consistency_reaches_binding_settings(point_read, source):
+@pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
+def test_read_consistency_reaches_binding_settings(point_read, source, level):
     kwargs = {
         source: {
-            "x-ms-consistency-level" if source == "initial_headers" else "consistencyLevel": "Eventual",
+            "x-ms-consistency-level" if source == "initial_headers" else "consistencyLevel": level,
         },
     }
     point_read.call("item", "pk", **kwargs)
     if point_read.rust:
-        assert wire_headers(point_read.prepared)["x-ms-consistency-level"] == "Eventual"
+        assert wire_headers(point_read.prepared)["x-ms-consistency-level"] == level
     else:
         options = point_read.options
         if source == "initial_headers":
-            assert options["initialHeaders"]["x-ms-consistency-level"] == "Eventual"
+            assert options["initialHeaders"]["x-ms-consistency-level"] == level
         else:
-            assert options["consistencyLevel"] == "Eventual"
+            assert options["consistencyLevel"] == level
 
 
 @pytest.mark.parametrize("method", ["read_item", "read_item_async"])
-@pytest.mark.parametrize("level", ["BoundedStaleness", "ConsistentPrefix", "Unknown"])
+@pytest.mark.parametrize("level", ["Unknown", "LatestCommitted", "GlobalStrong", "Default", "eventual"])
 @pytest.mark.parametrize("raw_header", [False, True])
 @pytest.mark.parametrize("timeout_seconds", [None, float("nan")])
-def test_native_unsupported_read_consistency_fails_before_driver_lookup(
+def test_native_unknown_read_consistency_fails_before_driver_lookup(
     method, level, raw_header, timeout_seconds
 ):
     from azure.cosmos._backend.contracts import PreparedRequest
@@ -645,7 +646,7 @@ def test_native_unsupported_read_consistency_fails_before_driver_lookup(
 
 
 @pytest.mark.parametrize("method", ["read_item", "read_item_async"])
-@pytest.mark.parametrize("level", ["Eventual", "Session", "Strong", None])
+@pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong", None])
 @pytest.mark.parametrize("raw_header", [False, True])
 def test_native_supported_read_consistency_reaches_driver_lookup(method, level, raw_header):
     from azure.cosmos._backend.contracts import PreparedRequest

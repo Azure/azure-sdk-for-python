@@ -12,6 +12,9 @@
 
 #### Breaking Changes
 
+* Removed `raw_request_hook` and `raw_response_hook` from both legacy and Rust-backed clients, including constructor and per-operation inputs. Supplying either option, including `None`, raises `TypeError`. Use supported results, response headers, tracing, and diagnostics; the ordinary `response_hook` is unchanged.
+* Rust-backed clients reject `enable_endpoint_discovery`, `multiple_write_locations`, and explicit assignments to their `ConnectionPolicy` fields; Rust manages discovery and multi-write routing from account settings. The legacy comparison backend retains these controls.
+* Removed client-level proxy, custom CA, client-certificate, TLS-verification override, and transport options from both backends, including `ProxyConfiguration`, `SSLConfiguration`, and their policy fields; removed inputs raise `TypeError`, while runtime-controlled environment proxy use is unchanged.
 * Rust-backed clients require connection/proxy settings on `CosmosRuntime` and reject overall timeout budgets below one second.
 * Removed `read_timeout` and `ConnectionPolicy.ReadTimeout`, `RecoveryReadTimeout`, and `DBAReadTimeout` from both legacy and Rust execution; supplying the removed options now raises `TypeError`.
 * For the Rust-backed release, reject trigger options and headers and exclude stored-procedure, trigger, and UDF definition APIs, including stored-procedure execution; SQL invocation of deployed UDFs remains supported.
@@ -24,6 +27,7 @@
 
 #### Bugs Fixed
 
+* Added Rust-backed `ConsistentPrefix` and `BoundedStaleness` read mappings for synchronous and asynchronous client defaults and `read_item()` overrides; write consistency remains governed by account settings.
 * Restored synchronous and asynchronous Rust-backed `patch_item()` filter conditions by forwarding them to service-side PATCH, preserving conditional rejection without legacy replay.
 * Restored legacy resource-ID validation for synchronous and asynchronous Rust-backed `upsert_item()` calls, including `TypeError` for a non-string ID, before backend execution.
 * Fixed container `get_throughput()` response-header retention, input-option ownership, missing-offer errors and recovery after container recreation.

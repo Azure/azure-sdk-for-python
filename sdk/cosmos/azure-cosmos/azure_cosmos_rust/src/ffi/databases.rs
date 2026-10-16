@@ -21,35 +21,49 @@ use super::*;
 
 /// Create an account-level database and return a binding response tuple.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn create_database<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "create_database")?;
     let modifiers = extract_account_prepared_modifiers(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
     run_create_database_operation(
-        py, driver_handle, modifiers, body_bytes, "create_database", timeout_seconds,
+        py,
+        driver_handle,
+        modifiers,
+        body_bytes,
+        "create_database",
+        timeout_seconds,
+        include_attempts,
     )
 }
 
 /// Async counterpart of [`create_database`].
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn create_database_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "create_database")?;
     let modifiers = extract_account_prepared_modifiers(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
     run_create_database_operation_async(
-        py, driver_handle, modifiers, body_bytes, "create_database_async", timeout_seconds,
+        py,
+        driver_handle,
+        modifiers,
+        body_bytes,
+        "create_database_async",
+        timeout_seconds,
+        include_attempts,
     )
 }
 
@@ -59,59 +73,99 @@ pub(crate) fn create_database_async<'py>(
 /// create_database_if_not_exists; this binding call does not make the read/create
 /// decision or perform both operations.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn read_database<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "read_database")?;
     let (database_id, modifiers) =
         extract_database_prepared_inputs(prepared, "read_database requires a database id")?;
-    run_read_database_operation(py, driver_handle, modifiers, database_id, "read_database", timeout_seconds)
+    run_read_database_operation(
+        py,
+        driver_handle,
+        modifiers,
+        database_id,
+        "read_database",
+        timeout_seconds,
+        include_attempts,
+    )
 }
 
 /// Async counterpart of [`read_database`].
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn read_database_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "read_database")?;
     let (database_id, modifiers) =
         extract_database_prepared_inputs(prepared, "read_database requires a database id")?;
-    run_read_database_operation_async(py, driver_handle, modifiers, database_id, "read_database_async", timeout_seconds)
+    run_read_database_operation_async(
+        py,
+        driver_handle,
+        modifiers,
+        database_id,
+        "read_database_async",
+        timeout_seconds,
+        include_attempts,
+    )
 }
 
 /// Delete a database and return the service response.
 /// A successful delete has status 204 and an empty body.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn delete_database<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "delete_database")?;
     let (database_id, modifiers) =
         extract_database_prepared_inputs(prepared, DELETE_DATABASE_ID_REQUIRED)?;
-    run_delete_database_operation(py, driver_handle, modifiers, database_id, "delete_database")
+    run_delete_database_operation(
+        py,
+        driver_handle,
+        modifiers,
+        database_id,
+        "delete_database",
+        timeout_seconds,
+        include_attempts,
+    )
 }
 
 /// Return an awaitable that deletes a database.
 #[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn delete_database_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "delete_database")?;
     let (database_id, modifiers) =
         extract_database_prepared_inputs(prepared, DELETE_DATABASE_ID_REQUIRED)?;
-    run_delete_database_operation_async(py, driver_handle, modifiers, database_id, "delete_database_async")
+    run_delete_database_operation_async(
+        py,
+        driver_handle,
+        modifiers,
+        database_id,
+        "delete_database_async",
+        timeout_seconds,
+        include_attempts,
+    )
 }
 
 /// Read one page of the account's databases, for `client.list_databases()`.

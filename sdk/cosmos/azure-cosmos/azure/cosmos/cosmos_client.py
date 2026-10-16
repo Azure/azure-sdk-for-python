@@ -59,10 +59,13 @@ from ._helpers._list_databases import list_databases as _list_databases
 from ._helpers._list_databases import query_databases as _query_databases
 from ._constants import _Constants as Constants
 from ._client_lifecycle import unwind_client_construction
-from ._connection_policy import copy_connection_policy, resolve_connection_policy_kwargs, resolve_retry_option
+from ._connection_policy import (
+    copy_connection_policy, reject_rust_routing_options, resolve_connection_policy_kwargs, resolve_retry_option,
+)
 from ._connection_string import parse_connection_string
 from ._cosmos_client_connection import CosmosClientConnection, CredentialDict
 from ._cosmos_responses import CosmosDict
+from ._telemetry import trace_operation
 from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy, _get_database_link
 from .documents import ConnectionPolicy, DatabaseAccount
@@ -109,23 +112,13 @@ def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
         policy.RequestTimeout = kwargs.pop('connection_timeout', policy.RequestTimeout)
 
     policy.ConnectionMode = kwargs.pop('connection_mode', policy.ConnectionMode)
-    policy.ProxyConfiguration = copy(kwargs.pop('proxy_config', policy.ProxyConfiguration))
-    policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', policy.EnableEndpointDiscovery)
+    if 'enable_endpoint_discovery' in kwargs:
+        policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery')
     policy.PreferredLocations = copy(kwargs.pop('preferred_locations', policy.PreferredLocations))
     # TODO: Consider storing callback method instead, such as 'Supplier' in JAVA SDK
     policy.ExcludedLocations = copy(kwargs.pop('excluded_locations', policy.ExcludedLocations))
-    policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', policy.UseMultipleWriteLocations)
-
-    # SSL config
-    verify = kwargs.pop('connection_verify', None)
-    if verify is not None:
-        policy.DisableSSLVerification = not bool(verify)
-    ssl = copy(kwargs.pop('ssl_config', policy.SSLConfiguration))
-    policy.SSLConfiguration = ssl
-    if ssl:
-        ssl.SSLCertFile = kwargs.pop('connection_cert', ssl.SSLCertFile)
-        ssl.SSLCaCerts = verify or ssl.SSLCaCerts
-        policy.SSLConfiguration = ssl
+    if 'multiple_write_locations' in kwargs:
+        policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations')
 
     # Retry config
     retry_options = kwargs.pop('retry_options', None)
@@ -198,12 +191,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :paramtype runtime: ~azure.cosmos.CosmosRuntime
     :keyword float connection_timeout: Legacy-only connection timeout. Rust clients require runtime configuration.
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
-    :keyword proxy_config: Connection proxy configuration.
-    :paramtype proxy_config: ~azure.cosmos.ProxyConfiguration
-    :keyword ssl_config: Connection SSL configuration.
-    :paramtype ssl_config: ~azure.cosmos.SSLConfiguration
-    :keyword bool connection_verify: Whether to verify the connection, default value is True.
-    :keyword str connection_cert: An alternative certificate to verify the connection.
     :keyword int retry_total: Maximum retry attempts.
     :keyword int retry_backoff_max: Maximum retry wait time in seconds.
     :keyword int retry_fixed_interval: Fixed retry interval in milliseconds.
@@ -216,14 +203,18 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         even if the operation is not guaranteed to be idempotent. This should only be enabled if the application can
         tolerate such risks or has logic to safely detect and handle duplicate operations.
     :keyword bool enable_endpoint_discovery: Enable endpoint discovery for
-        geo-replicated database accounts. (Default: True)
+        geo-replicated database accounts on the legacy comparison backend (default: True).
+        Explicit use is rejected on Rust-backed clients; Rust manages discovery.
+    :keyword bool multiple_write_locations: Allow eligible multi-region writes on the
+        legacy comparison backend (default: False). Explicit use is rejected on
+        Rust-backed clients; Rust uses the account's multi-write capability.
     :keyword ~azure.cosmos.documents.ConnectionPolicy connection_policy:
         Grouped client connection settings. Supported preferred/excluded regions,
         and throttle retry limits also apply to the Rust backend. Explicit
         connection/read timeout overrides require migration to the runtime API.
         Individual keyword settings override grouped values; zero retry limits
-        are honored. The supplied policy is not modified. Unsupported Rust
-        proxy/TLS settings are rejected even when supplied inside this object.
+        are honored. The supplied policy is not modified. Removed proxy/TLS
+        settings are rejected even when supplied inside this object.
     :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
     :keyword list[str] excluded_locations: The excluded locations to be skipped from preferred locations. The locations
         in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -284,6 +275,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         # otherwise it falls back to core-python.
         backend_choice = resolve_backend_name(kwargs.pop("_backend", None))
         if backend_choice != "core-python":
+            reject_rust_routing_options(kwargs)
             validate_client_runtime_settings(dict(kwargs, runtime=runtime))
             reject_rust_arguments(kwargs)
         fault_injection_rules = kwargs.pop("_fault_injection_rules", None)
@@ -315,16 +307,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             connection_timeout_seconds=connection_timeout,
             fault_injection_rules=fault_injection_rules,
             headers=kwargs.get("headers"),
-            # Proxy and TLS settings, which the Rust path cannot apply yet.
-            # They are read rather than removed so the legacy connection can
-            # still use them. The Rust backend refuses them outright rather
-            # than accepting them and quietly doing nothing.
-            proxy_config=kwargs.get("proxy_config"),
-            proxies=kwargs.get("proxies"),
-            connection_verify=kwargs.get("connection_verify"),
-            connection_cert=kwargs.get("connection_cert"),
-            ssl_config=kwargs.get("ssl_config"),
-            transport=kwargs.get("transport"),
         )
         self._adapter: CosmosBackend = chosen
         self._item_context: ItemClientContext[CosmosBackend] = ItemClientContext(
@@ -342,7 +324,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 ),
             )
         )
-        logging.getLogger(__name__).info(
+        logging.getLogger(__name__).debug(
             "Cosmos client constructed with default backend=%s",
             chosen.name,
         )
@@ -534,7 +516,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         **kwargs: Any,
     ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]: ...
 
-    @distributed_trace
+    @trace_operation(binding_operation="create_database")
     def create_database(  # pylint:disable=docstring-missing-param, docstring-should-be-keyword
         self,
         id: str,
@@ -693,7 +675,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         **kwargs: Any,
     ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]: ...
 
-    @distributed_trace
+    @trace_operation(binding_operation=("read_database", "create_database", "read_database"))
     def create_database_if_not_exists(  # pylint:disable=docstring-missing-param, docstring-should-be-keyword
         self,
         id: str,
@@ -918,7 +900,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         kwargs["response_hook"] = response_hook
         return _query_databases(self, query, parameters, kwargs)
 
-    @distributed_trace
+    @trace_operation(binding_operation="delete_database")
     def delete_database(  # pylint:disable=docstring-missing-param
         self,
         database: Union[str, DatabaseProxy, Mapping[str, Any]],
@@ -942,6 +924,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword match_condition: Conditional request behavior. Use ``IfNotModified`` with
             ``etag`` to delete only if the database still has that ETag.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword float timeout: Operation timeout in seconds. On Rust, driver setup
+            and native execution share the remaining budget. A timeout does not undo
+            a deletion already accepted by the service.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
 

@@ -45,7 +45,6 @@ import logging
 from ._client_lifecycle import initialize_legacy_connection, unwind_connection_construction
 import os
 import threading
-import urllib.parse
 import uuid
 from concurrent.futures.thread import ThreadPoolExecutor
 from typing import Callable, Any, Dict, Mapping, NoReturn, Optional, Sequence, Tuple, Union, cast
@@ -61,9 +60,7 @@ from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     HeadersPolicy,
     NetworkTraceLoggingPolicy,
-    CustomHookPolicy,
     DistributedTracingPolicy,
-    ProxyPolicy
 )
 from azure.core.pipeline.transport import HttpRequest, \
     HttpResponse  # pylint: disable=no-legacy-azure-core-http-response-import
@@ -94,7 +91,7 @@ from ._backend.operations import (
     OP_READ_ALL_ITEMS,
 )
 from ._backend.contracts import PreparedPageRequest
-from ._backend.capabilities import OperationRouting
+from ._backend.capabilities import OperationRouting, reject_removed_options
 
 from ._backend.legacy import LEGACY_BACKEND
 from ._base import _build_properties_cache
@@ -210,6 +207,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             client. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         """
+        reject_removed_options(dict(kwargs, connection_policy=connection_policy))
         self._enable_compact_utf8_item_writes = _utils._validate_enable_compact_utf8_item_writes(
             enable_compact_utf8_item_writes
         )
@@ -272,13 +270,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             raise TypeError(
                 "Unsupported retry policy. Must be an azure.cosmos.ConnectionRetryPolicy, int, or urllib3.Retry")
 
-        proxies = kwargs.pop('proxies', {})
-        if self.connection_policy.ProxyConfiguration and self.connection_policy.ProxyConfiguration.Host:
-            host = self.connection_policy.ProxyConfiguration.Host
-            url = urllib.parse.urlparse(host)
-            proxy = host if url.port else host + ":" + str(self.connection_policy.ProxyConfiguration.Port)
-            proxies.update({url.scheme: proxy})
-
         suffix = kwargs.pop('user_agent_suffix', None)
         self._user_agent: str = _utils.get_user_agent(suffix)
 
@@ -294,12 +285,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._enable_diagnostics_logging = kwargs.pop("enable_diagnostics_logging", False)
         policies = [
             HeadersPolicy(**kwargs),
-            ProxyPolicy(proxies=proxies),
             CosmosUserAgentPolicy(base_user_agent=self._user_agent, **kwargs),
             ContentDecodePolicy(),
             retry_policy,
             credentials_policy,
-            CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
             CosmosHttpLoggingPolicy(
@@ -313,10 +302,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         kwargs.pop("user_agent", None)
         kwargs.pop("user_agent_overwrite", None)
 
-        transport = kwargs.pop("transport", None)
         self.pipeline_client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient(
             base_url=url_connection,
-            transport=transport,
             policies=policies
         )
 
@@ -900,7 +887,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             collection_link=database_or_container_link,
             page_iterator_class=query_iterable.QueryIterable,
             response_hook=response_hook,
-            raw_response_hook=kwargs.get('raw_response_hook'),
             resource_type=http_constants.ResourceType.Document,
             response_headers=response_headers
         )

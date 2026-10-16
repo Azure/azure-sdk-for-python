@@ -20,13 +20,17 @@ def _methods(path):
     test's dependencies or an account.
     """
     tree = ast.parse(path.read_text(encoding="utf-8"))
-    return {
+    methods = {
         (cls.name, method.name): method
         for cls in tree.body if isinstance(cls, ast.ClassDef)
         for method in cls.body
         if isinstance(method, (ast.FunctionDef, ast.AsyncFunctionDef))
         and method.name.startswith("test_")
     }
+    for method in methods.values():
+        if ast.get_docstring(method) is not None:
+            method.body = method.body[1:]
+    return methods
 
 
 def test_replacement_methods_match_originals():
@@ -38,8 +42,8 @@ def test_replacement_methods_match_originals():
     that behavior was preserved and starts being evidence only that the new
     engine agrees with itself.
 
-    The comparison is made on the parsed form, so formatting and comments may
-    differ but the code may not. The count is pinned at eighteen so that a copy
+    The comparison excludes leading explanatory docstrings, formatting and
+    comments, but not executable code. The count is pinned at eighteen so that a copy
     silently disappearing is a failure rather than a smaller, still-passing run.
     """
     count = 0

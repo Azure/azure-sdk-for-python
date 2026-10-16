@@ -40,11 +40,24 @@ def require_legacy_api(connection: Any, api_name: str, *, item_context: Any = No
 def reject_removed_options(kwargs: Mapping[str, Any]) -> None:
     """Reject removed settings on both execution paths, including nested options."""
     for options in (kwargs, kwargs.get("request_options"), kwargs.get("feed_options"), kwargs.get("options")):
-        if isinstance(options, Mapping) and "read_timeout" in options:
+        if not isinstance(options, Mapping):
+            continue
+        if "read_timeout" in options:
             raise TypeError("read_timeout has been removed; use timeout for the overall operation budget.")
+        for name in ("raw_request_hook", "raw_response_hook"):
+            if name in options:
+                raise TypeError(
+                    f"{name} has been removed; use response headers, results, tracing, or diagnostics."
+                )
+        for name in ("proxy_config", "proxies", "ssl_config", "connection_verify", "connection_cert", "transport"):
+            if name in options:
+                raise TypeError(f"{name} has been removed; custom proxy, TLS, and transport settings are not supported.")
     policy = kwargs.get("connection_policy")
     if policy is not None:
-        for name in ("ReadTimeout", "RecoveryReadTimeout", "DBAReadTimeout"):
+        for name in (
+            "ReadTimeout", "RecoveryReadTimeout", "DBAReadTimeout",
+            "ProxyConfiguration", "SSLConfiguration", "DisableSSLVerification",
+        ):
             if hasattr(policy, name):
                 raise TypeError(f"connection_policy.{name} has been removed.")
 

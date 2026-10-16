@@ -21,6 +21,8 @@ from fault_injection._regional_routing import (
     load_account, rules, topology, wait_topology,
 )
 
+from _client_transport import create_client_with_transport
+
 pytestmark = pytest.mark.cosmosEmulator
 
 
@@ -45,7 +47,7 @@ def test_swr_mrr_succeeds(request, regional_target, monkeypatch, backend, case):
     else:
         transport, state = legacy_transport(account, read_endpoint, observer.id, case != "guard-disabled", records)
         settings = {"transport": transport}
-    with CosmosClient(
+    with create_client_with_transport(CosmosClient,
         write_endpoint, key, _backend=backend, consistency_level="Session",
         preferred_locations=[READ_REGION, WRITE_REGION], timeout=TIMEOUT, **settings,
     ) as client:

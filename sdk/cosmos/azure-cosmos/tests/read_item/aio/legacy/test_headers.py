@@ -18,8 +18,10 @@ Run with::
 
     pytest --noconftest tests/read_item/aio/legacy/test_headers.py -v
 """
+import importlib
 import os
 import unittest
+from unittest.mock import patch
 import uuid
 
 import pytest
@@ -40,11 +42,6 @@ KEY = os.environ.get(
 request_throughput_bucket_number = 3
 
 
-async def request_raw_response_hook(response):
-    assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
-            == str(request_throughput_bucket_number))
-
-
 @pytest.mark.cosmosEmulator
 class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
@@ -63,18 +60,21 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
         )
 
     async def test_container_read_item_throughput_bucket_async(self):
-        """Pass a throughput bucket and a header-checking async raw-response hook.
-
-        The hook checks the header if invoked. The copied test does not count hook
-        calls, inspect transmitted bytes, or measure throughput isolation.
-        """
+        """Verify the operation prepares the requested throughput bucket."""
         # Source: tests/test_headers_async.py::TestHeadersAsync.test_container_read_item_throughput_bucket_async
         created_document = await self.container.create_item(
             body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'}
         )
-        await self.container.read_item(
-            item=created_document['id'],
-            partition_key="mypk",
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook,
-        )
+        binding = importlib.import_module(type(self.client._adapter).__module__)._rust_module
+        with patch.object(binding, "read_item_async", wraps=binding.read_item_async) as operation:
+            await self.container.read_item(
+                item=created_document['id'],
+                partition_key="mypk",
+                throughput_bucket=request_throughput_bucket_number,
+            )
+        self.assertTrue(operation.called)
+        for call in operation.call_args_list:
+            self.assertEqual(
+                call.args[1].headers[http_constants.HttpHeaders.ThroughputBucket],
+                str(request_throughput_bucket_number),
+            )

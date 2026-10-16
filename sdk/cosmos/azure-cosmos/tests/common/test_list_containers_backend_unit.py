@@ -346,7 +346,6 @@ def test_supported_timeout_and_application_headers(listing_case, timeout):
     {"timeout": "10"}, {"timeout": 2**64 - 1}, {"timeout": 10**400},
     {"initial_headers": {"User-Agent": "override"}},
     {"initial_headers": {"x-ms-version": "override"}},
-    {"raw_request_hook": lambda request: None}, {"raw_response_hook": lambda response: None},
     {"connection_timeout": 10}, {"unknown_option": None},
     {"request_options": {"availabilityStrategy": False}},
 ])

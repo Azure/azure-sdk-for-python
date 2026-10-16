@@ -819,8 +819,6 @@ async def test_database_feed_driver_timeout_propagates_without_replay(listing_cl
         {"connection_timeout": 1},
         {"initial_headers": {"USER-AGENT": "custom"}},
         {"initial_headers": {"x-ms-version": "2020-07-15"}},
-        {"raw_request_hook": lambda request: None},
-        {"raw_response_hook": lambda response: None},
         {"unknown_option": True},
     ],
 )
@@ -2244,7 +2242,6 @@ def test_async_list_databases_legacy_path_sends_initial_headers(monkeypatch):
         ({Constants.Kwargs.TIMEOUT: 0}, {Constants.Kwargs.TIMEOUT: 0}),
         ({Constants.Kwargs.TIMEOUT: "invalid"}, {Constants.Kwargs.TIMEOUT: "invalid"}),
         ({Constants.Kwargs.AVAILABILITY_STRATEGY: False}, {}),
-        ({}, {"raw_request_hook": lambda _request: None}),
     ],
 )
 def test_async_list_databases_backend_rejects_unrepresentable_options(monkeypatch, options, kwargs):
@@ -2288,7 +2285,6 @@ def test_async_list_databases_backend_rejects_unrepresentable_options(monkeypatc
         ({Constants.Kwargs.TIMEOUT: 0}, {Constants.Kwargs.TIMEOUT: 0}),
         ({Constants.Kwargs.TIMEOUT: "invalid"}, {Constants.Kwargs.TIMEOUT: "invalid"}),
         ({Constants.Kwargs.AVAILABILITY_STRATEGY: False}, {}),
-        ({}, {"raw_request_hook": lambda _request: None}),
     ],
 )
 def test_list_databases_backend_rejects_unrepresentable_options(monkeypatch, options, kwargs):
@@ -3224,7 +3220,6 @@ def test_query_databases_binding_request_carries_the_query_body():
         ({"initialHeaders": {"user-agent": "custom"}}, {}),
         ({Constants.Kwargs.TIMEOUT: 0.5}, {Constants.Kwargs.TIMEOUT: 0.5}),
         ({Constants.Kwargs.AVAILABILITY_STRATEGY: False}, {}),
-        ({}, {"raw_request_hook": lambda _request: None}),
     ],
 )
 @pytest.mark.asyncio

@@ -36,6 +36,7 @@ _LOGGER = logging.getLogger(__name__)
 _P = ParamSpec("_P")
 _T = TypeVar("_T")
 _Outcome = Literal["success", "error", "cancelled"]
+_BindingOperation = str | tuple[str, ...]
 _REPORTING_FAILURES = 0
 _REPORT_LOCK = Lock()
 
@@ -91,6 +92,7 @@ class CompletionHandler:
 @dataclass
 class _DiagnosticCollector:
     retained_limit: Optional[int] = None
+    contribution_limit: Optional[int] = None
     closed: bool = False
     diagnostics: Optional[_Diagnostics] = None
     contributions: int = 0
@@ -100,6 +102,8 @@ class _DiagnosticCollector:
     def __post_init__(self) -> None:
         if self.retained_limit is not None:
             _integer(self.retained_limit)
+        if self.contribution_limit is not None:
+            _integer(self.contribution_limit)
 
     def reserve(self) -> Optional[_Contribution]:
         """Reserve one independent binding result; repeated delivery is rejected.
@@ -108,12 +112,16 @@ class _DiagnosticCollector:
         :rtype: _Contribution or None
         """
         with self._lock:
-            allowed = not self.closed and (self.contributions == 0 or self.retained_limit is not None)
+            allowed = not self.closed and (
+                self.contributions < self.contribution_limit
+                if self.contribution_limit is not None
+                else self.contributions == 0 or self.retained_limit is not None
+            )
             if not self.closed:
                 self.contributions += 1
             if allowed:
                 return _Contribution(self)
-        _report("Rust telemetry rejected a closed or unbounded additional contribution")
+        _report("Rust telemetry rejected a closed, excess, or unbounded additional contribution")
         return None
 
     def accept(self, contribution: _Contribution, diagnostics: Optional[_Diagnostics]) -> None:
@@ -157,12 +165,17 @@ class _Operation:  # pylint: disable=too-many-instance-attributes
     caller: Optional[SpanContext]
     task: object
     thread: int
-    binding_operation: str
+    binding_operation: _BindingOperation
     parent: Optional[Span] = None
     handlers: tuple[CompletionHandler, ...] = ()
     started_ns: int = field(default_factory=perf_counter_ns)
     collector: _DiagnosticCollector = field(default_factory=_DiagnosticCollector)
     delegated_tasks: set[object] = field(default_factory=set, repr=False)
+
+    def __post_init__(self) -> None:
+        if isinstance(self.binding_operation, tuple):
+            # A composed call retains each step's native-bounded detail, at most once per step.
+            self.collector.contribution_limit = len(self.binding_operation)
 
     @property
     def closed(self) -> bool:
@@ -261,6 +274,65 @@ class _Contribution:
 _OPERATION: ContextVar[Optional[_Operation]] = ContextVar("cosmos_operation_telemetry", default=None)
 
 
+@dataclass
+class _DelegatedCall:
+    state: _Operation
+    owner: object
+    operation: str
+    task: object
+    consumed: bool = False
+
+
+_DELEGATED_CALL: ContextVar[Optional[_DelegatedCall]] = ContextVar("cosmos_delegated_call", default=None)
+
+
+@contextmanager
+def delegate_operation(owner: object, operation: str) -> Iterator[None]:
+    """Authorize one internal public-method call to complete with its outer operation.
+
+    Ordinary nested public calls still own independent state. This single-use
+    authorization is scoped to the specified owner, method and executing task.
+
+    :param owner: The proxy making the internal call.
+    :type owner: object
+    :param operation: The public method invoked internally.
+    :type operation: str
+    :return: A scope for the authorized call.
+    :rtype: Iterator[None]
+    """
+    state = _OPERATION.get()
+    call = None
+    if (
+        state is not None
+        and not state.closed
+        and state.owns_execution()
+        and isinstance(state.binding_operation, tuple)
+        and state.backend is getattr(getattr(owner, "_item_context", None), "adapter", None)
+    ):
+        call = _DelegatedCall(state, owner, operation, _current_task())
+    token = _DELEGATED_CALL.set(call)
+    try:
+        yield
+    finally:
+        _DELEGATED_CALL.reset(token)
+
+
+def _consume_delegated_call(owner: object, operation: str) -> bool:
+    call = _DELEGATED_CALL.get()
+    if call is None or call.consumed or call.owner is not owner or call.operation != operation:
+        return False
+    if (
+        call.task is not _current_task()
+        or call.state is not _OPERATION.get()
+        or call.state.closed
+        or not call.state.owns_execution()
+        or call.state.backend is not getattr(getattr(owner, "_item_context", None), "adapter", None)
+    ):
+        return False
+    call.consumed = True
+    return True
+
+
 def _current_task() -> object:
     try:
         return asyncio.current_task()
@@ -308,7 +380,7 @@ def bind_operation_task(operation: Callable[[], Awaitable[_T]]) -> Callable[[], 
 
 
 def _new_operation(
-    owner: object, operation: str, kwargs: Mapping[str, Any], binding_operation: Optional[str] = None
+    owner: object, operation: str, kwargs: Mapping[str, Any], binding_operation: Optional[_BindingOperation] = None
 ) -> Optional[_Operation]:
     context = getattr(owner, "_item_context", None)
     handlers = getattr(context, "telemetry_handlers", ())
@@ -347,7 +419,7 @@ def _new_operation(
 
 @contextmanager
 def _operation_scope(
-    owner: object, operation: str, kwargs: Mapping[str, Any], binding_operation: Optional[str] = None
+    owner: object, operation: str, kwargs: Mapping[str, Any], binding_operation: Optional[_BindingOperation] = None
 ) -> Iterator[None]:
     # Even a disabled call masks inherited state from an outer SDK operation.
     token = _OPERATION.set(_new_operation(owner, operation, kwargs, binding_operation))
@@ -382,11 +454,12 @@ def _record_operation() -> Iterator[None]:
             operation.finish(outcome)
 
 
-def trace_operation(*, binding_operation: str) -> Callable[[Callable[_P, _T]], Callable[_P, _T]]:
+def trace_operation(*, binding_operation: _BindingOperation) -> Callable[[Callable[_P, _T]], Callable[_P, _T]]:
     """Reuse Azure Core's span while owning diagnostics until public completion.
 
-    :keyword binding_operation: Explicit binding operation owned by this public method.
-    :paramtype binding_operation: str
+    :keyword binding_operation: One binding operation, or the ordered steps of a bounded
+        composed call. A tuple allows a prefix of that sequence, not arbitrary repeated calls.
+    :paramtype binding_operation: str or tuple[str, ...]
     :return: A decorator with operation-scoped diagnostic collection.
     :rtype: callable
     """
@@ -401,7 +474,10 @@ def trace_operation(*, binding_operation: str) -> Callable[[Callable[_P, _T]], C
 
         @wraps(func)
         def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _T:
-            with _operation_scope(args[0] if args else kwargs.get("self"), func.__name__, kwargs, binding_operation):
+            owner = args[0] if args else kwargs.get("self")
+            if _consume_delegated_call(owner, func.__name__):
+                return func(*args, **kwargs)
+            with _operation_scope(owner, func.__name__, kwargs, binding_operation):
                 return traced(*args, **kwargs)
 
         return wrapper
@@ -410,12 +486,13 @@ def trace_operation(*, binding_operation: str) -> Callable[[Callable[_P, _T]], C
 
 
 def trace_operation_async(
-    *, binding_operation: str
+    *, binding_operation: _BindingOperation
 ) -> Callable[[Callable[_P, Awaitable[_T]]], Callable[_P, Awaitable[_T]]]:
     """Async execution with the same ownership and recording rules as sync.
 
-    :keyword binding_operation: Explicit binding operation owned by this public method.
-    :paramtype binding_operation: str
+    :keyword binding_operation: One binding operation, or the ordered steps of a bounded
+        composed call. A tuple allows a prefix of that sequence, not arbitrary repeated calls.
+    :paramtype binding_operation: str or tuple[str, ...]
     :return: A decorator with operation-scoped diagnostic collection.
     :rtype: callable
     """
@@ -430,7 +507,10 @@ def trace_operation_async(
 
         @wraps(func)
         async def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _T:
-            with _operation_scope(args[0] if args else kwargs.get("self"), func.__name__, kwargs, binding_operation):
+            owner = args[0] if args else kwargs.get("self")
+            if _consume_delegated_call(owner, func.__name__):
+                return await func(*args, **kwargs)
+            with _operation_scope(owner, func.__name__, kwargs, binding_operation):
                 return await traced(*args, **kwargs)
 
         return wrapper
@@ -453,7 +533,14 @@ def get_operation(backend: object, operation: str) -> Optional[_Operation]:
         return None
     if state.parent is None and not any(handler.collect_attempts for handler in state.handlers):
         return None
-    if state.backend is not backend or state.binding_operation != operation or not state.owns_execution():
+    if state.backend is not backend or not state.owns_execution():
+        return None
+    expected = state.binding_operation
+    if isinstance(expected, tuple):
+        index = state.collector.contributions
+        if index >= len(expected) or expected[index] != operation:
+            return None
+    elif expected != operation:
         return None
     return state
 

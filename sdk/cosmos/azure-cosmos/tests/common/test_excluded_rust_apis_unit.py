@@ -66,6 +66,27 @@ ITEM_CALLS = [
     ("delete_all_items_by_partition_key", {"partition_key": "customer-17"}),
 ]
 
+@pytest.mark.parametrize("legacy", [False, True])
+@pytest.mark.parametrize("method,arguments", ITEM_CALLS)
+@pytest.mark.parametrize("option", ["raw_request_hook", "raw_response_hook"])
+@pytest.mark.parametrize("nested", [None, "request_options", "feed_options", "options"])
+@pytest.mark.parametrize("value", [None, False, lambda _message: None])
+def test_removed_raw_hooks_never_send_on_either_backend(
+    api, legacy, method, arguments, option, nested, value,
+):
+    if legacy:
+        backend = ASYNC_LEGACY_BACKEND if api.asynchronous else LEGACY_BACKEND
+        api.connection._backend = backend
+        api.container._item_context = ItemClientContext(backend)
+    options = {option: value}
+    kwargs = {nested: options} if nested else options
+    with pytest.raises(TypeError, match=rf"{option} has been removed"):
+        finish(getattr(api.container, method)(**arguments, **kwargs))
+    assert api.backend.events == []
+    assert api.connection.mock_calls == []
+    assert options[option] is value
+
+
 EXCLUDED_OPTIONS = [
     {"pre_trigger_include": "validateOrder"},
     {"post_trigger_include": None},
@@ -76,6 +97,55 @@ EXCLUDED_OPTIONS = [
     {"availability_strategy": {"threshold_ms": 100, "threshold_steps_ms": 50}},
     {"request_options": {"availabilityStrategy": {"threshold_steps_ms": None}}},
 ]
+
+
+@pytest.mark.parametrize("legacy", [False, True])
+@pytest.mark.parametrize("option", ["raw_request_hook", "raw_response_hook"])
+@pytest.mark.parametrize("nested", [None, "request_options", "feed_options", "options"])
+@pytest.mark.parametrize("target,method,arguments", [
+    ("container", "read", {}),
+    ("container", "get_throughput", {}),
+    ("container", "replace_throughput", {"throughput": 400}),
+    ("container", "read_feed_ranges", {}),
+    ("container", "read_items", {"items": [("order-42", "customer-17")]}),
+    ("database", "read", {}),
+    ("database", "get_throughput", {}),
+    ("database", "replace_throughput", {"throughput": 400}),
+    ("database", "create_container", {"id": "orders", "partition_key": {"paths": ["/id"], "kind": "Hash"}}),
+    ("database", "create_container_if_not_exists", {
+        "id": "orders", "partition_key": {"paths": ["/id"], "kind": "Hash"},
+    }),
+    ("database", "replace_container", {"container": "orders"}),
+    ("database", "delete_container", {"container": "orders"}),
+    ("database", "list_containers", {}),
+    ("database", "query_containers", {"query": "SELECT * FROM c"}),
+    ("client", "create_database", {"id": "sales"}),
+    ("client", "create_database_if_not_exists", {"id": "sales"}),
+    ("client", "delete_database", {"database": "sales"}),
+    ("client", "list_databases", {}),
+    ("client", "query_databases", {"query": "SELECT * FROM c"}),
+])
+def test_removed_raw_hooks_reject_resource_and_compound_calls(
+    api, legacy, option, nested, target, method, arguments,
+):
+    backend = api.backend
+    if legacy:
+        backend = ASYNC_LEGACY_BACKEND if api.asynchronous else LEGACY_BACKEND
+    context = ItemClientContext(backend)
+    api.connection._backend = backend
+    api.container._item_context = context
+    api.database._item_context = context
+    client = object.__new__(AsyncCosmosClient if api.asynchronous else CosmosClient)
+    client.client_connection = api.connection
+    client._adapter = backend
+    client._item_context = context
+    proxy = client if target == "client" else getattr(api, target)
+    options = {option: None}
+    kwargs = {nested: options} if nested else options
+    with pytest.raises(TypeError, match=rf"{option} has been removed"):
+        finish(getattr(proxy, method)(**arguments, **kwargs))
+    assert api.backend.events == []
+    assert api.connection.mock_calls == []
 
 
 @pytest.mark.parametrize("method,arguments", ITEM_CALLS)

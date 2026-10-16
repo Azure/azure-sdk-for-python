@@ -25,6 +25,7 @@ import test_config
 from azure.cosmos.aio import CosmosClient, _retry_utility_async, DatabaseProxy
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 from azure.cosmos.partition_key import PartitionKey
+from _client_transport import create_client_with_transport
 
 
 # Server-side scripts CRUD (sproc/trigger/UDF create/list/get/replace/delete)
@@ -668,7 +669,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # Initialize transport with passthrough enabled for client setup
         timeout_transport = TimeoutTransport(error_response, passthrough=True)
 
-        async with CosmosClient(
+        async with create_client_with_transport(CosmosClient,
                 self.host, self.masterKey, transport=timeout_transport) as client:
             # Disable passthrough to test the timeout on the next call
             timeout_transport.passthrough = False
@@ -680,7 +681,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # Throttling(429): Keeps retrying -> Eventually times out -> CosmosClientTimeoutError
         status_response = 429  # Uses Cosmos custom retry
         timeout_transport = TimeoutTransport(status_response, passthrough=True)
-        async with CosmosClient(
+        async with create_client_with_transport(CosmosClient,
                 self.host, self.masterKey, transport=timeout_transport
                 ) as client:
             print('Async initialization')
@@ -696,7 +697,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # Throttling(429): Keeps retrying -> Eventually times out -> CosmosClientTimeoutError
         status_response = 429  # Uses Cosmos custom retry
         timeout_transport = TimeoutTransport(status_response, passthrough=True)
-        async with CosmosClient(
+        async with create_client_with_transport(CosmosClient,
                 self.host, self.masterKey, transport=timeout_transport
                 ) as client:
             print('Async initialization')
@@ -753,7 +754,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             # Verify timeout fails when cumulative time exceeds limit
             delayed_transport = DelayedTransport(delay_per_request=3)
 
-            async with CosmosClient(
+            async with create_client_with_transport(CosmosClient,
                     self.host, self.masterKey, transport=delayed_transport
             ) as client_with_delay:
 
@@ -838,7 +839,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
         # Test with delayed transport - reduced delay to 1 second for stability
         delayed_transport = DelayedTransport(delay_seconds=1)
-        async with CosmosClient(
+        async with create_client_with_transport(CosmosClient,
                 self.host, self.masterKey, transport=delayed_transport
         ) as client_with_delay:
             container_with_delay = client_with_delay.get_database_client(

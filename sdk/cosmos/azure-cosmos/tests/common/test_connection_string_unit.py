@@ -51,7 +51,8 @@ def client_type(request):
 
 
 @pytest.mark.parametrize("suffix", ["", ";", ";;"])
-def test_connection_string_passes_endpoint_key_and_options(client_type, suffix):
+@pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
+def test_connection_string_passes_endpoint_key_and_options(client_type, suffix, level):
     """The address and key are pulled out of the string, any other arguments are passed
     along untouched, and trailing semicolons are tolerated.
 
@@ -70,7 +71,7 @@ def test_connection_string_passes_endpoint_key_and_options(client_type, suffix):
     with patch.object(client_type, "__init__", return_value=None) as constructor:
         client = client_type.from_connection_string(
             CONNECTION_STRING + suffix,
-            consistency_level="Session",
+            consistency_level=level,
             preferred_locations=["West US"],
             _backend="rust",
         )
@@ -80,7 +81,7 @@ def test_connection_string_passes_endpoint_key_and_options(client_type, suffix):
     constructor.assert_called_once_with(
         url=ENDPOINT,
         credential="test-key==",
-        consistency_level="Session",
+        consistency_level=level,
         preferred_locations=["West US"],
         _backend="rust",
     )

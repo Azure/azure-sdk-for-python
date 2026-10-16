@@ -18,6 +18,7 @@ import test_config
 from azure.cosmos import CosmosClient, documents
 from test_aad import CosmosEmulatorCredential
 from test_cosmos_http_logging_policy import create_logger
+from _client_transport import create_client_with_transport
 
 
 class _UserAgentCaptureTransport(RequestsTransport):
@@ -76,9 +77,8 @@ class TestUserAgentOverwriteRegression(unittest.TestCase):
     def test_overwrite_with_connection_policy(self):
         """Builds a client with a custom connection policy and the overwrite flag."""
         cp = documents.ConnectionPolicy()
-        cp.DisableSSLVerification = self.configs.is_emulator
         capture = _UserAgentCaptureTransport()
-        client = CosmosClient(
+        client = create_client_with_transport(CosmosClient,
             self.host,
             self.masterKey,
             user_agent="MyApp/1.0",
@@ -95,7 +95,7 @@ class TestUserAgentOverwriteRegression(unittest.TestCase):
     def test_overwrite_with_consistency_and_timeouts(self):
         """Builds a client combining the overwrite flag with consistency and timeout options."""
         capture = _UserAgentCaptureTransport()
-        client = CosmosClient(
+        client = create_client_with_transport(CosmosClient,
             self.host,
             self.masterKey,
             user_agent="MyApp/1.0",
@@ -115,7 +115,7 @@ class TestUserAgentOverwriteRegression(unittest.TestCase):
         mock_handler = test_config.MockHandler()
         logger = create_logger("test_ua_overwrite_diag_sync", mock_handler)
         capture = _UserAgentCaptureTransport()
-        client = CosmosClient(
+        client = create_client_with_transport(CosmosClient,
             self.host,
             self.masterKey,
             user_agent="MyApp/1.0",
@@ -139,7 +139,7 @@ class TestUserAgentOverwriteRegression(unittest.TestCase):
         """
         for overwrite_value in (True, False):
             capture = _UserAgentCaptureTransport()
-            client = CosmosClient(
+            client = create_client_with_transport(CosmosClient,
                 self.host,
                 self.masterKey,
                 user_agent="MyApp/1.0",
@@ -155,7 +155,7 @@ class TestUserAgentOverwriteRegression(unittest.TestCase):
     def test_overwrite_via_from_connection_string(self):
         """Builds a client from a connection string while also passing the overwrite flag."""
         capture = _UserAgentCaptureTransport()
-        client = CosmosClient.from_connection_string(
+        client = create_client_with_transport(CosmosClient.from_connection_string,
             self.connection_str,
             user_agent="MyApp/1.0",
             user_agent_overwrite=True,
@@ -172,7 +172,7 @@ class TestUserAgentOverwriteRegression(unittest.TestCase):
         """Builds a client with an AAD credential while also passing the overwrite flag."""
         credential = CosmosEmulatorCredential()
         capture = _UserAgentCaptureTransport()
-        client = CosmosClient(
+        client = create_client_with_transport(CosmosClient,
             self.host,
             credential,
             user_agent="MyApp/1.0",

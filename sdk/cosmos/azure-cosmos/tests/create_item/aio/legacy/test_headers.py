@@ -23,6 +23,8 @@ import pytest
 
 from azure.cosmos import PartitionKey, http_constants
 from azure.cosmos.aio import CosmosClient
+import importlib
+from unittest.mock import patch
 
 
 HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
@@ -36,11 +38,6 @@ KEY = os.environ.get(
 # outgoing request. Kept identical to the source constant so the wire
 # value is the same as what the legacy path sent.
 request_throughput_bucket_number = 3
-
-
-async def request_raw_response_hook(response):
-    assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
-            == str(request_throughput_bucket_number))
 
 
 @pytest.mark.cosmosEmulator
@@ -66,8 +63,14 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_container_create_item_throughput_bucket_async(self):
         # Source: tests/test_headers_async.py::TestHeadersAsync.test_container_create_item_throughput_bucket_async
-        await self.container.create_item(
-            body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
-            throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
-
+        binding = importlib.import_module(type(self.client._adapter).__module__)._rust_module
+        with patch.object(binding, "create_item_async", wraps=binding.create_item_async) as operation:
+            await self.container.create_item(
+                body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
+                throughput_bucket=request_throughput_bucket_number)
+        self.assertTrue(operation.called)
+        for call in operation.call_args_list:
+            self.assertEqual(
+                call.args[1].headers[http_constants.HttpHeaders.ThroughputBucket],
+                str(request_throughput_bucket_number),
+            )

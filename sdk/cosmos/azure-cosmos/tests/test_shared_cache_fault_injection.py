@@ -18,6 +18,7 @@ import pytest
 import test_config
 from azure.cosmos import CosmosClient
 from azure.cosmos._routing.routing_range import PKRange
+from _client_transport import create_client_with_transport
 
 
 @pytest.mark.cosmosEmulator
@@ -46,7 +47,7 @@ class TestSharedCacheFaultInjection(unittest.TestCase):
                 pass
 
     def _make_fault_client(self, transport):
-        return CosmosClient(self.host, self.master_key, transport=transport)
+        return create_client_with_transport(CosmosClient, self.host, self.master_key, transport=transport)
 
     def test_concurrent_cache_refresh_no_crash(self):
         """Multiple threads calling clear_cache + read concurrently don't crash or corrupt."""

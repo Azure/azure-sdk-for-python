@@ -30,8 +30,6 @@ SESSION_HEADER = "x-ms-session-token"
 
 def _client_options(backend):
     options = {"_backend": backend, "consistency_level": ConsistencyLevel.Session}
-    if backend == "core-python":
-        options["connection_verify"] = False
     return options
 
 

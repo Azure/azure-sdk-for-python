@@ -16,6 +16,7 @@ from _fault_injection_transport import FaultInjectionTransport
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 
 from fault_injection._delayed_create import emit
+from _client_transport import create_client_with_transport
 
 WRITE_REGION = "East US"
 READ_REGION = "West US"
@@ -60,7 +61,7 @@ def load_account(endpoint, key):
 
     transport.add_response_transformation(
         FaultInjectionTransport.predicate_is_database_account_call, capture)
-    with CosmosClient(endpoint, key, _backend="core-python", transport=transport, timeout=TIMEOUT):
+    with create_client_with_transport(CosmosClient, endpoint, key, _backend="core-python", transport=transport, timeout=TIMEOUT):
         pass
     assert accounts, "No account discovery response was observed"
     return accounts[-1]

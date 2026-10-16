@@ -9,6 +9,7 @@ import os
 import unittest
 from unittest.mock import MagicMock, patch, AsyncMock
 
+import pytest
 from azure.core.exceptions import DecodeError
 
 from azure.cosmos import _synchronized_request, exceptions
@@ -21,6 +22,27 @@ _VALID_UTF8 = b'{"ok":true}'
 _MALFORMED_INPUT_ENV_VAR = "AZURE_COSMOS_CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT"
 
 _FAKE_ENDPOINT = "https://example.documents.azure.com:443/"
+
+
+@pytest.mark.parametrize("async_mode", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize(
+    "endpoint,verify",
+    [("https://alpha-bank-account.invalid/", True), ("https://localhost:8081/", False),
+     ("https://127.0.0.1:8081/", False)],
+)
+def test_request_keeps_internal_certificate_verification(async_mode, endpoint, verify):
+    args, response = _build_request_args(200, _VALID_UTF8)
+    args[1].endpoint_override = endpoint
+    args[4].url = endpoint + "dbs"
+    module = _asynchronous_request if async_mode else _synchronized_request
+    sender = AsyncMock(return_value=response) if async_mode else MagicMock(return_value=response)
+    with patch.object(module, "_PipelineRunFunction", sender):
+        if async_mode:
+            asyncio.run(module._Request(*args))
+        else:
+            module._Request(*args)
+    assert sender.call_args.kwargs["connection_verify"] is verify
+    assert "connection_cert" not in sender.call_args.kwargs
 
 
 def _build_request_args(status_code: int, body: bytes):
@@ -36,8 +58,6 @@ def _build_request_args(status_code: int, body: bytes):
     connection_policy = MagicMock()
     connection_policy.RequestTimeout = 30
     connection_policy.DBAConnectionTimeout = 5
-    connection_policy.SSLConfiguration = None
-    connection_policy.DisableSSLVerification = False
 
     global_endpoint_manager = MagicMock()
 

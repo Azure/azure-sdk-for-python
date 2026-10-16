@@ -24,6 +24,7 @@ use super::driver_runner::{run_driver_operation_async, run_driver_operation_sync
 use super::request::{build_operation_options, RequestHeadersAndOptions};
 use super::response::{
     tuple_from_database_feed_result, tuple_from_query_databases_result, tuple_from_result,
+    tuple_from_result_with_attempts,
 };
 
 /// Create a database and convert the response for synchronous Python code.
@@ -34,6 +35,7 @@ pub(crate) fn run_create_database_operation<'py>(
     body_bytes: Vec<u8>,
     operation_name: &str,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     let timeout = parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_sync(
@@ -41,12 +43,20 @@ pub(crate) fn run_create_database_operation<'py>(
         driver_handle,
         operation_name,
         move |driver| {
-            with_timeout(timeout, run_create_database_future(driver, modifiers, body_bytes))
+            let timed = with_timeout(
+                timeout,
+                run_create_database_future(driver, modifiers, body_bytes),
+            );
+            async move {
+                timed.await.map_err(|error| {
+                    PyTimeoutError::new_err(format!("Database creation timed out: {error}"))
+                })
+            }
         },
-        |py, result| {
-            tuple_from_result(py, result.map_err(|error| {
-                PyTimeoutError::new_err(format!("Database creation timed out: {error}"))
-            })?)
+        if include_attempts {
+            |py, result| tuple_from_result_with_attempts(py, result?)
+        } else {
+            |py, result| tuple_from_result(py, result?)
         },
     )
 }
@@ -59,6 +69,7 @@ pub(crate) fn run_create_database_operation_async<'py>(
     body_bytes: Vec<u8>,
     operation_name: &str,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     let timeout = parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_async(
@@ -66,12 +77,20 @@ pub(crate) fn run_create_database_operation_async<'py>(
         driver_handle,
         operation_name,
         move |driver| {
-            with_timeout(timeout, run_create_database_future(driver, modifiers, body_bytes))
+            let timed = with_timeout(
+                timeout,
+                run_create_database_future(driver, modifiers, body_bytes),
+            );
+            async move {
+                timed.await.map_err(|error| {
+                    PyTimeoutError::new_err(format!("Database creation timed out: {error}"))
+                })
+            }
         },
-        |py, result| {
-            tuple_from_result(py, result.map_err(|error| {
-                PyTimeoutError::new_err(format!("Database creation timed out: {error}"))
-            })?)
+        if include_attempts {
+            |py, result| tuple_from_result_with_attempts(py, result?)
+        } else {
+            |py, result| tuple_from_result(py, result?)
         },
     )
 }
@@ -84,6 +103,7 @@ pub(crate) fn run_read_database_operation<'py>(
     database_id: String,
     operation_name: &str,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     let timeout = parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_sync(
@@ -91,12 +111,20 @@ pub(crate) fn run_read_database_operation<'py>(
         driver_handle,
         operation_name,
         move |driver| {
-            with_timeout(timeout, run_read_database_future(driver, modifiers, database_id))
+            let timed = with_timeout(
+                timeout,
+                run_read_database_future(driver, modifiers, database_id),
+            );
+            async move {
+                timed.await.map_err(|error| {
+                    PyTimeoutError::new_err(format!("Database read timed out: {error}"))
+                })
+            }
         },
-        |py, result| {
-            tuple_from_result(py, result.map_err(|error| {
-                PyTimeoutError::new_err(format!("Database read timed out: {error}"))
-            })?)
+        if include_attempts {
+            |py, result| tuple_from_result_with_attempts(py, result?)
+        } else {
+            |py, result| tuple_from_result(py, result?)
         },
     )
 }
@@ -109,6 +137,7 @@ pub(crate) fn run_read_database_operation_async<'py>(
     database_id: String,
     operation_name: &str,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     let timeout = parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_async(
@@ -116,12 +145,20 @@ pub(crate) fn run_read_database_operation_async<'py>(
         driver_handle,
         operation_name,
         move |driver| {
-            with_timeout(timeout, run_read_database_future(driver, modifiers, database_id))
+            let timed = with_timeout(
+                timeout,
+                run_read_database_future(driver, modifiers, database_id),
+            );
+            async move {
+                timed.await.map_err(|error| {
+                    PyTimeoutError::new_err(format!("Database read timed out: {error}"))
+                })
+            }
         },
-        |py, result| {
-            tuple_from_result(py, result.map_err(|error| {
-                PyTimeoutError::new_err(format!("Database read timed out: {error}"))
-            })?)
+        if include_attempts {
+            |py, result| tuple_from_result_with_attempts(py, result?)
+        } else {
+            |py, result| tuple_from_result(py, result?)
         },
     )
 }
@@ -133,13 +170,30 @@ pub(crate) fn run_delete_database_operation<'py>(
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     operation_name: &str,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_sync(
         py,
         driver_handle,
         operation_name,
-        move |driver| run_delete_database_future(driver, modifiers, database_id),
-        tuple_from_result,
+        move |driver| {
+            let timed = with_timeout(
+                timeout,
+                run_delete_database_future(driver, modifiers, database_id),
+            );
+            async move {
+                timed.await.map_err(|error| {
+                    PyTimeoutError::new_err(format!("Database deletion timed out: {error}"))
+                })
+            }
+        },
+        if include_attempts {
+            |py, result| tuple_from_result_with_attempts(py, result?)
+        } else {
+            |py, result| tuple_from_result(py, result?)
+        },
     )
 }
 
@@ -150,13 +204,30 @@ pub(crate) fn run_delete_database_operation_async<'py>(
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     operation_name: &str,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
     run_driver_operation_async(
         py,
         driver_handle,
         operation_name,
-        move |driver| run_delete_database_future(driver, modifiers, database_id),
-        tuple_from_result,
+        move |driver| {
+            let timed = with_timeout(
+                timeout,
+                run_delete_database_future(driver, modifiers, database_id),
+            );
+            async move {
+                timed.await.map_err(|error| {
+                    PyTimeoutError::new_err(format!("Database deletion timed out: {error}"))
+                })
+            }
+        },
+        if include_attempts {
+            |py, result| tuple_from_result_with_attempts(py, result?)
+        } else {
+            |py, result| tuple_from_result(py, result?)
+        },
     )
 }
 

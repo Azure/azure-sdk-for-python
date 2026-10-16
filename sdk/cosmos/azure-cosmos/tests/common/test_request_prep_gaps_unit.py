@@ -20,6 +20,8 @@ These pin the binding-layer fixes for two behaviours:
   ignores.
 """
 from __future__ import annotations
+import pytest
+
 from common.typed_requests import wire_headers, settings_options, legacy_settings
 
 from azure.cosmos.http_constants import HttpHeaders
@@ -41,11 +43,12 @@ _NO_RESPONSE_KEY = "responsePayloadOnWriteDisabled"
 # ---------------------------------------------------------------------------
 
 
-def test_consistency_level_becomes_wire_header():
+@pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
+def test_consistency_level_becomes_wire_header(level):
     """A truthy ``consistencyLevel`` option emits ``x-ms-consistency-level`` and
     drops the raw option-key (which the driver would not recognise)."""
-    headers = flatten_options_to_headers({"consistencyLevel": "Eventual"})
-    assert headers[HttpHeaders.ConsistencyLevel] == "Eventual"
+    headers = flatten_options_to_headers({"consistencyLevel": level})
+    assert headers[HttpHeaders.ConsistencyLevel] == level
     assert "consistencyLevel" not in headers
 
 
@@ -55,18 +58,18 @@ def test_consistency_level_falsy_emits_no_header():
     assert HttpHeaders.ConsistencyLevel not in flatten_options_to_headers({"consistencyLevel": None})
 
 
-def test_consistency_level_reaches_wire_through_request_options_on_create():
-    """The override the customer hand-builds in ``request_options`` survives the
-    full create prep as the proper wire header."""
+@pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
+def test_consistency_level_reaches_wire_through_request_options_on_create(level):
+    """Preparation preserves the legacy header, not a write-policy override."""
     prepared = prepare_create_item_request(
         container_link="dbs/d/colls/orders",
         body={"id": "order-1", "pk": "a"},
         partition_key_value="a",
         container_rid="RID==",
-        kwargs={"request_options": {"consistencyLevel": "Eventual"}},
+        kwargs={"request_options": {"consistencyLevel": level}},
     )
     _ = prepared.item_id
-    assert wire_headers(prepared)[HttpHeaders.ConsistencyLevel] == "Eventual"
+    assert wire_headers(prepared)[HttpHeaders.ConsistencyLevel] == level
     assert "consistencyLevel" not in wire_headers(prepared)
 
 

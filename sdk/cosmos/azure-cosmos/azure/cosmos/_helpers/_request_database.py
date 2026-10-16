@@ -46,10 +46,9 @@ from ._wire_encoding import serialize_body_to_bytes
 # The only per-call keyword arguments a database read can carry onto the Rust
 # path. ``timeout`` becomes the normalized ``timeout_seconds`` request option;
 # ``response_hook`` is invoked by the coordinator after the response is parsed,
-# so it never has to reach the binding. Anything else -- ``connection_timeout``,
-# ``raw_request_hook``, ``raw_response_hook`` -- is consumed by the legacy
-# azure-core pipeline, which the Rust path does not run, so its presence rejects
-# the Rust read instead of dropping it (see
+# so it never has to reach the binding. Other legacy settings, such as
+# ``connection_timeout``, cannot govern the Rust transport, so their presence
+# rejects the Rust read instead of dropping them (see
 # ``is_read_database_rust_eligible``).
 _RUST_READ_DATABASE_SUPPORTED_KWARGS = frozenset({
     Constants.Kwargs.TIMEOUT,
@@ -177,7 +176,8 @@ def is_create_database_rust_eligible(
     request_options: Mapping[str, Any], operation_kwargs: Mapping[str, Any],
 ) -> bool:
     """Reject settings that cannot describe an account-level creation request."""
-    if set(operation_kwargs).difference({"timeout"}):
+    # Azure Core owns tracing controls; they are not native request settings.
+    if set(operation_kwargs).difference({"timeout", "tracing_options", "tracing_attributes"}):
         return False
     if set(request_options).difference(_CREATE_DATABASE_OPTIONS):
         return False
@@ -278,7 +278,7 @@ def is_read_database_rust_eligible(
     something the Rust path would drop without saying so:
 
     * any operation kwarg outside ``_RUST_READ_DATABASE_SUPPORTED_KWARGS`` --
-      for example ``connection_timeout`` or ``raw_request_hook``, which the
+      for example ``connection_timeout``, which the
       legacy azure-core pipeline consumes and the Rust path never sees.
     * a ``timeout`` that is not a finite, non-boolean numeric duration of at least
       one second within Rust's duration range.

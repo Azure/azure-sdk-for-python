@@ -44,7 +44,8 @@ Every read test is written twice, once sync and once async. That is not
 duplication for its own sake: the async path builds its request through a
 different wrapper, so it is separate code that can break on its own.
 
-All fakes, no Cosmos account.
+No Cosmos account is needed. Adapter deadline tests use initialized adapters
+with driver setup and native dispatch mocked.
 """
 
 from __future__ import annotations
@@ -260,7 +261,6 @@ def test_read_database_prepared_rejects_empty_normalized_id(database_id):
         ({}, {"timeout": float("nan")}, False),
         ({}, {"timeout": float("inf")}, False),
         ({}, {"connection_timeout": 2}, False),
-        ({}, {"raw_request_hook": object()}, False),
         ({}, {"response_hook": object()}, True),
         ({"initialHeaders": {"x-custom": "value"}}, {}, True),
         ({"initialHeaders": {"Accept": "application/custom"}}, {}, False),
@@ -637,8 +637,6 @@ def test_database_read_invalid_timeout_never_reaches_a_transport(database_read_c
     "kwargs",
     [
         {"connection_timeout": 1},
-        {"raw_request_hook": lambda request: None},
-        {"raw_response_hook": lambda response: None},
         {"unknown_option": True},
         {"initial_headers": {"User-Agent": "custom"}},
         {"initial_headers": {"X-MS-VERSION": "custom"}},
@@ -1360,7 +1358,6 @@ def test_async_read_database_maps_not_found_and_skips_hook():
         # Transport keywords are consumed by the azure-core pipeline, which the
         # Rust path does not run.
         {"connection_timeout": 2},
-        {"raw_response_hook": object()},
     ],
 )
 def test_read_database_rejects_options_rust_cannot_honor(
@@ -1406,7 +1403,6 @@ def test_read_database_rejects_driver_owned_initial_header():
         {Constants.Kwargs.TIMEOUT: -1},
         {Constants.Kwargs.TIMEOUT: "1"},
         {"connection_timeout": 2},
-        {"raw_response_hook": object()},
     ],
 )
 def test_async_read_database_rejects_options_rust_cannot_honor(
@@ -1772,6 +1768,28 @@ def create_database_client(request):
     return client
 
 
+@pytest.fixture(name="native_create_database_client")
+def native_create_database_client_fixture(create_database_client):  # pylint: disable=redefined-outer-name
+    """Exercise real adapter preparation while tests fake driver setup and dispatch."""
+    from dataclasses import replace
+
+    from azure.cosmos._backend.binding_adapter import BindingAdapter
+    from azure.cosmos.aio._backend.binding_adapter import AsyncBindingAdapter
+
+    client = create_database_client
+    adapter_type = AsyncBindingAdapter if isinstance(client, AsyncCosmosClient) else BindingAdapter
+    adapter = adapter_type("https://example.documents.azure.com", master_key="unused")
+    client._adapter = adapter
+    client._item_context = replace(client._item_context, adapter=adapter)
+    client.client_connection._backend = adapter
+    try:
+        yield client
+    finally:
+        result = adapter.close()
+        if inspect.isawaitable(result):
+            asyncio.run(result)
+
+
 def _call_create_database(client, *args, method_name="create_database", **kwargs):
     """Call a create method on the client and wait for it if the client is async.
 
@@ -1795,8 +1813,7 @@ def test_create_database_hedging_true_retains_client_threshold(create_database_c
 
 
 @pytest.mark.parametrize("options", [
-    {"connection_timeout": 1}, {"raw_request_hook": lambda request: None},
-    {"raw_response_hook": lambda response: None}, {"misspelled_setting": None},
+    {"connection_timeout": 1}, {"misspelled_setting": None},
     {"no_response": True}, {"max_item_count": 5}, {"retry_write": True},
     {"request_options": {"sessionToken": "unused"}},
     {"request_options": {"populateQueryMetrics": False}},
@@ -2088,7 +2105,7 @@ def test_create_passes_one_deadline_and_honors_nested_timeout(create_database_cl
 
 
 @pytest.mark.parametrize("setup_seconds", [0.75, 1.25])
-def test_create_driver_setup_consumes_budget(create_database_client, monkeypatch, setup_seconds):
+def test_create_driver_setup_consumes_budget(native_create_database_client, monkeypatch, setup_seconds):
     """Time spent starting the driver counts against the customer's timeout.
 
     The customer allows one second. Preparing the driver is made to burn part of
@@ -2106,7 +2123,7 @@ def test_create_driver_setup_consumes_budget(create_database_client, monkeypatch
     from azure.cosmos.aio._backend import binding_adapter as async_rust
     from azure.cosmos._helpers import _request_database
     from azure.cosmos.exceptions import CosmosClientTimeoutError
-    client = create_database_client
+    client = native_create_database_client
     is_async = isinstance(client, AsyncCosmosClient)
     clock = [100.0]
     monkeypatch.setattr(_request_database.time, "monotonic", lambda: clock[0])
@@ -2123,13 +2140,6 @@ def test_create_driver_setup_consumes_budget(create_database_client, monkeypatch
 
     backend = client._adapter
     backend._ensure_driver_handle = AsyncMock(side_effect=setup) if is_async else setup
-    if is_async:
-        async def execute(prepared, *, deadline=None):
-            return await async_rust.AsyncBindingAdapter.execute(backend, prepared, deadline=deadline)
-    else:
-        def execute(prepared, *, deadline=None):
-            return sync_rust.BindingAdapter.execute(backend, prepared, deadline=deadline)
-    backend.execute = execute
     hook = MagicMock()
     if setup_seconds > 1:
         with pytest.raises(CosmosClientTimeoutError):
@@ -2138,8 +2148,11 @@ def test_create_driver_setup_consumes_budget(create_database_client, monkeypatch
         hook.assert_not_called()
     else:
         _call_create_database(client, "db1", timeout=1, response_hook=hook)
+        binding.assert_called_once()
         assert binding.call_args.kwargs["timeout_seconds"] == pytest.approx(0.25)
         hook.assert_called_once()
+    client.client_connection.CreateDatabase.assert_not_called()
+    client.client_connection.ReadDatabase.assert_not_called()
 
 
 def test_create_async_timeout_drains_pending_work():
@@ -2179,8 +2192,9 @@ def test_create_async_timeout_drains_pending_work():
 
 
 @pytest.mark.parametrize("name", ["create_database", "create_database_async"])
-@pytest.mark.parametrize("remaining", [0.125, 1.0])
-def test_create_native_binding_accepts_remaining_budget(name, remaining):
+@pytest.mark.parametrize("remaining", [None, 0.125, 1.0])
+@pytest.mark.parametrize("include_attempts", [False, True])
+def test_create_native_binding_accepts_remaining_budget(name, remaining, include_attempts):
     """The native create entry points, sync and async, accept a prepared request plus
     whatever time is left, and get as far as looking for the driver.
 
@@ -2193,7 +2207,11 @@ def test_create_native_binding_accepts_remaining_budget(name, remaining):
     from azure.cosmos import _rust
     prepared = build_create_database_prepared({"id": "db1"}, {})
     with pytest.raises(RuntimeError, match="(?i)driver"):
-        getattr(_rust, name)("unregistered-create-test-handle", prepared, timeout_seconds=remaining)
+        function = getattr(_rust, name)
+        assert inspect.signature(function).parameters["include_attempts"].default is False
+        function(
+            "unregistered-create-test-handle", prepared, timeout_seconds=remaining, include_attempts=include_attempts
+        )
 
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
@@ -3104,7 +3122,7 @@ def test_if_not_exists_expiration_stops_requests_and_success_hooks(
     hook.assert_not_called()
 
 
-def test_if_not_exists_native_dispatch_gets_only_remaining_time(create_database_client, monkeypatch):
+def test_if_not_exists_native_dispatch_gets_only_remaining_time(native_create_database_client, monkeypatch):
     """Each leg of the workflow is given only the time left, not a fresh budget.
 
     With a pinned clock, a five second budget, one second spent starting the
@@ -3117,7 +3135,7 @@ def test_if_not_exists_native_dispatch_gets_only_remaining_time(create_database_
     from azure.cosmos._backend import binding_adapter as sync_rust
     from azure.cosmos.aio._backend import binding_adapter as async_rust
     from azure.cosmos._helpers import _request_database
-    client = create_database_client
+    client = native_create_database_client
     is_async = isinstance(client, AsyncCosmosClient)
     module = async_rust if is_async else sync_rust
     clock = [100.0]
@@ -3145,15 +3163,15 @@ def test_if_not_exists_native_dispatch_gets_only_remaining_time(create_database_
     backend = client._adapter
     backend._ensure_driver_handle = AsyncMock(side_effect=setup) if is_async else setup
 
-    def sync_execute(prepared, *, deadline=None):
-        return sync_rust.BindingAdapter.execute(backend, prepared, deadline=deadline)
-
-    async def async_execute(prepared, *, deadline=None):
-        return await async_rust.AsyncBindingAdapter.execute(backend, prepared, deadline=deadline)
-
-    backend.execute = async_execute if is_async else sync_execute
     _call_create_database(client, "db1", method_name="create_database_if_not_exists", timeout=5)
     assert remaining == [4.0, 3.0, 2.0]
+    assert [call.args[1].op for call in binding.call_args_list] == [
+        OP_READ_DATABASE,
+        OP_CREATE_DATABASE,
+        OP_READ_DATABASE,
+    ]
+    client.client_connection.CreateDatabase.assert_not_called()
+    client.client_connection.ReadDatabase.assert_not_called()
 
 
 @pytest.mark.parametrize("stage", [1, 2, 3])
@@ -3209,7 +3227,8 @@ def test_if_not_exists_async_timeout_or_cancellation_drains_each_stage(stage, ca
 
 @pytest.mark.parametrize("name", ["read_database", "read_database_async"])
 @pytest.mark.parametrize("remaining", [None, 0.125, 1.0])
-def test_database_read_native_binding_accepts_remaining_budget(name, remaining):
+@pytest.mark.parametrize("include_attempts", [False, True])
+def test_database_read_native_binding_accepts_remaining_budget(name, remaining, include_attempts):
     """The native read entry points, sync and async, accept a prepared read plus the
     time remaining, including no limit at all.
 
@@ -3221,7 +3240,9 @@ def test_database_read_native_binding_accepts_remaining_budget(name, remaining):
     from azure.cosmos import _rust
     prepared = build_read_database_prepared("db1", {})
     with pytest.raises(RuntimeError, match="(?i)driver"):
-        getattr(_rust, name)("unregistered-read-test-handle", prepared, timeout_seconds=remaining)
+        getattr(_rust, name)(
+            "unregistered-read-test-handle", prepared, timeout_seconds=remaining, include_attempts=include_attempts
+        )
 
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
@@ -3789,8 +3810,6 @@ def test_delete_database_service_error_never_fires_success_hook_or_replays(delet
         {"timeout": 0},
         {"timeout": "invalid"},
         {"connection_timeout": 1},
-        {"raw_request_hook": lambda request: None},
-        {"raw_response_hook": lambda response: None},
         {"initial_headers": {"user-agent": "custom"}},
         {"initial_headers": {"X-MS-VERSION": "2020-07-15"}},
         {"unknown_option": True},
@@ -3934,6 +3953,74 @@ def test_delete_database_invalid_guards_fail_before_dispatch(
         _call_delete_database(client, "db1", response_hook=hook, **kwargs)
     hook.assert_not_called()
     binding_adapter.execute.assert_not_called()
+    client.client_connection.DeleteDatabase.assert_not_called()
+
+
+@pytest.mark.parametrize("name", ["delete_database", "delete_database_async"])
+@pytest.mark.parametrize("remaining", [None, 0.125, 1.0])
+@pytest.mark.parametrize("include_attempts", [False, True])
+def test_delete_native_binding_accepts_remaining_budget(name, remaining, include_attempts):
+    """Reach driver lookup with the exact remaining budget, without acquiring a driver."""
+    from azure.cosmos import _rust
+
+    prepared = build_delete_database_prepared("dbs/sales", {})
+    function = getattr(_rust, name)
+    assert inspect.signature(function).parameters["include_attempts"].default is False
+    with pytest.raises(RuntimeError, match="(?i)driver"):
+        function(
+            "unregistered-delete-test-handle", prepared, timeout_seconds=remaining, include_attempts=include_attempts
+        )
+
+
+@pytest.mark.parametrize("name", ["delete_database", "delete_database_async"])
+@pytest.mark.parametrize("remaining", [0, -1, float("inf"), float("nan")])
+def test_delete_native_binding_rejects_invalid_remaining_budget(name, remaining):
+    """Reject invalid remaining durations before driver lookup or deletion."""
+    from azure.cosmos import _rust
+
+    prepared = build_delete_database_prepared("dbs/sales", {})
+    with pytest.raises(ValueError, match="timeout_seconds"):
+        getattr(_rust, name)("unregistered-delete-test-handle", prepared, timeout_seconds=remaining)
+
+
+@pytest.mark.parametrize("setup_seconds", [0.75, 1.25])
+def test_delete_driver_setup_consumes_budget(native_create_database_client, monkeypatch, setup_seconds):
+    """Driver setup consumes deletion's one-second budget before native dispatch."""
+    from azure.cosmos._backend import binding_adapter as sync_rust
+    from azure.cosmos.aio._backend import binding_adapter as async_rust
+    from azure.cosmos import _operation_deadline
+    from azure.cosmos.exceptions import CosmosClientTimeoutError
+
+    client = native_create_database_client
+    is_async = isinstance(client, AsyncCosmosClient)
+    module = async_rust if is_async else sync_rust
+    clock = [100.0]
+    monkeypatch.setattr(_operation_deadline.time, "monotonic", lambda: clock[0])
+    response = (204, 0, {"x-ms-request-charge": "1"}, b"", None)
+    binding = AsyncMock(return_value=response) if is_async else MagicMock(return_value=response)
+    monkeypatch.setattr(module, "_rust_module", SimpleNamespace(
+        delete_database=binding, delete_database_async=binding,
+    ))
+    client.client_connection.DeleteDatabase = MagicMock(side_effect=AssertionError("legacy delete called"))
+
+    def setup():
+        clock[0] += setup_seconds
+        return "fake-handle"
+
+    monkeypatch.setattr(
+        client._adapter, "_ensure_driver_handle", AsyncMock(side_effect=setup) if is_async else setup,
+    )
+    hook = MagicMock()
+    if setup_seconds > 1:
+        with pytest.raises(CosmosClientTimeoutError):
+            _call_delete_database(client, "sales", timeout=1, response_hook=hook)
+        binding.assert_not_called()
+        hook.assert_not_called()
+    else:
+        assert _call_delete_database(client, "sales", timeout=1, response_hook=hook) is None
+        binding.assert_called_once()
+        assert binding.call_args.kwargs["timeout_seconds"] == pytest.approx(0.25)
+        hook.assert_called_once()
     client.client_connection.DeleteDatabase.assert_not_called()
 
 

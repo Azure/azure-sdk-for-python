@@ -88,7 +88,8 @@ impl RequestHeadersAndOptions {
             .ok_or_else(|| {
                 PyNotImplementedError::new_err(format!(
                     "The Rust read_item binding cannot represent per-call consistency {:?}; \
-                     supported levels are Eventual, Session, and Strong.",
+                     supported levels are Eventual, ConsistentPrefix, Session, \
+                     BoundedStaleness, and Strong.",
                     value.as_str(),
                 ))
             })

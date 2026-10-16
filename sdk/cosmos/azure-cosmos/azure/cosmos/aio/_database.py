@@ -48,7 +48,7 @@ from typing import TYPE_CHECKING, Any, Mapping, Optional, Union, Callable, overl
 import warnings
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
-from .._telemetry import trace_operation_async
+from .._telemetry import delegate_operation, trace_operation_async
 from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection
@@ -154,7 +154,7 @@ class DatabaseProxy(object):
             self._properties = await self.read()
         return self._properties
 
-    @distributed_trace_async
+    @trace_operation_async(binding_operation="read_database")
     async def read(
         self,
         *,
@@ -557,8 +557,9 @@ class DatabaseProxy(object):
         ``None``.
         Unsupported Rust options fail before the first request rather than
         falling back to legacy Python. A supported ``timeout`` applies separately
-        to the read and create steps, not to the combined workflow.
-        The response hook receives copied headers and properties from the successful
+        to the read and create steps, not to the combined workflow. Driver setup
+        consumes each step's budget before the remaining time reaches the binding.
+        The response hook receives copied headers and the returned properties from the successful
         step; its exceptions propagate without triggering creation.
         This is not atomic: a concurrent create can cause a 409 conflict, which
         propagates without rereading. Conditional headers are forwarded, not
@@ -687,7 +688,7 @@ class DatabaseProxy(object):
         """
         ...
 
-    @distributed_trace_async
+    @trace_operation_async(binding_operation=("read_container", "create_container"))
     async def create_container_if_not_exists( # pylint:disable=docstring-should-be-keyword
         self,
         *args: Any,
@@ -791,25 +792,26 @@ class DatabaseProxy(object):
                 ),
             )
         except CosmosResourceNotFoundError:
-            return await self.create_container(
-                id=id,
-                partition_key=partition_key,
-                indexing_policy=indexing_policy,
-                default_ttl=default_ttl,
-                offer_throughput=offer_throughput,
-                unique_key_policy=unique_key_policy,
-                conflict_resolution_policy=conflict_resolution_policy,
-                analytical_storage_ttl=analytical_storage_ttl,
-                computed_properties=computed_properties,
-                initial_headers=initial_headers,
-                vector_embedding_policy=vector_embedding_policy,
-                change_feed_policy=change_feed_policy,
-                full_text_policy=full_text_policy,
-                global_secondary_index=global_secondary_index,
-                return_properties=return_properties,
-                response_hook=response_hook,
-                **kwargs
-            )
+            with delegate_operation(self, "create_container"):
+                return await self.create_container(
+                    id=id,
+                    partition_key=partition_key,
+                    indexing_policy=indexing_policy,
+                    default_ttl=default_ttl,
+                    offer_throughput=offer_throughput,
+                    unique_key_policy=unique_key_policy,
+                    conflict_resolution_policy=conflict_resolution_policy,
+                    analytical_storage_ttl=analytical_storage_ttl,
+                    computed_properties=computed_properties,
+                    initial_headers=initial_headers,
+                    vector_embedding_policy=vector_embedding_policy,
+                    change_feed_policy=change_feed_policy,
+                    full_text_policy=full_text_policy,
+                    global_secondary_index=global_secondary_index,
+                    return_properties=return_properties,
+                    response_hook=response_hook,
+                    **kwargs
+                )
         _normalize_gsi_container_properties(properties)
         if response_hook is not None:
             response_hook(properties.get_response_headers(), properties)
@@ -1135,7 +1137,7 @@ class DatabaseProxy(object):
         """
         ...
 
-    @distributed_trace_async
+    @trace_operation_async(binding_operation="replace_container")
     async def replace_container( # pylint:disable=docstring-should-be-keyword
         self,
         *args: Any,

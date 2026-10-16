@@ -107,6 +107,30 @@ def test_legacy_client_network_overrides_are_rejected(client_type, setting):
 
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
+def test_legacy_connection_alias_explains_conversion_to_runtime_seconds(client_type):
+    with pytest.raises(TypeError) as caught:
+        client_type("https://runtime.invalid", "key", _backend="rust", request_timeout=5000)
+    message = str(caught.value)
+    assert "milliseconds" in message
+    assert "ConnectionPoolOptions(connection_timeout=value / 1000)" in message
+    assert "seconds" in message
+    assert "CosmosRuntime.create()/create_async()" in message
+    assert "runtime=" in message
+
+
+@pytest.mark.parametrize("client_type,factory_path", [
+    (CosmosClient, "azure.cosmos.cosmos_client.make_backend"),
+    (AsyncCosmosClient, "azure.cosmos.aio._cosmos_client.make_async_backend"),
+])
+def test_client_connection_setting_is_rejected_before_adapter_creation(client_type, factory_path, monkeypatch):
+    factory = MagicMock(side_effect=AssertionError("adapter creation must not start"))
+    monkeypatch.setattr(factory_path, factory)
+    with pytest.raises(TypeError, match="Configure connection_timeout through ConnectionPoolOptions"):
+        client_type("https://runtime.invalid", "key", _backend="rust", connection_timeout=5)
+    factory.assert_not_called()
+
+
+@pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
 def test_nested_policy_timeouts_cannot_bypass_migration(client_type):
     policy = ConnectionPolicy()
     policy.RequestTimeout = 2

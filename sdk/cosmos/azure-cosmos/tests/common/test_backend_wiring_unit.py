@@ -28,6 +28,7 @@ import sys
 import textwrap
 import threading
 import time
+from dataclasses import FrozenInstanceError
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
 
@@ -71,7 +72,6 @@ from azure.cosmos._backend.credentials import resolve_credential
 from azure.cosmos._backend.factory import make_backend, resolve_backend_name
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._backend.transport_settings import (
-    reject_unsupported_transport_settings,
     resolve_client_connection_timeout,
 )
 from azure.cosmos._backend._async_credential_bridge import (
@@ -1732,11 +1732,11 @@ def test_dataclasses_are_frozen():
         partition_key=key_from_legacy_header('["customerA"]'),
         headers={"x-ms-version": "2020-07-15"},
     )
-    with pytest.raises(Exception):  # FrozenInstanceError
+    with pytest.raises(FrozenInstanceError):
         setattr(p, "body_bytes", b"different")
 
     r = BackendResponse(status_code=201)
-    with pytest.raises(Exception):
+    with pytest.raises(FrozenInstanceError):
         setattr(r, "status_code", 200)
 
 
@@ -1883,6 +1883,39 @@ def test_async_factory_carries_explicit_runtime_into_rust_backend(monkeypatch):
     assert backend._runtime is runtime
     assert backend._client_config is None
     asyncio.run(backend.close())
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("asynchronous", [False, True])
+@pytest.mark.parametrize("log_level", [logging.INFO, logging.DEBUG])
+async def test_client_construction_logs_only_at_debug(monkeypatch, caplog, asynchronous, log_level):
+    module = async_cosmos_client_module if asynchronous else sync_cosmos_client_module
+    monkeypatch.setattr(module, "CosmosClientConnection", MagicMock())
+    with caplog.at_level(log_level, logger=module.__name__):
+        client = module.CosmosClient(
+            "https://client-logging.documents.azure.com",
+            "key",
+            _backend=BACKEND_NAME_RUST,
+        )
+    try:
+        records = [
+            record for record in caplog.records
+            if record.name == module.__name__
+            and record.msg == "Cosmos client constructed with default backend=%s"
+        ]
+        if log_level == logging.DEBUG:
+            assert len(records) == 1
+            assert records[0].levelno == logging.DEBUG
+            assert records[0].getMessage() == (
+                f"Cosmos client constructed with default backend={client._adapter.name}"
+            )
+        else:
+            assert records == []
+    finally:
+        if asynchronous:
+            await client._adapter.close()
+        else:
+            client._adapter.close()
 
 
 def test_untuned_sync_client_carries_no_transport_timeouts(monkeypatch):
@@ -2267,7 +2300,7 @@ def test_build_client_config_empty_user_agent_suffix_is_none():
     assert build_client_config(None, user_agent_suffix=None) is None
 
 
-@pytest.mark.parametrize("level", ["Eventual", "Session", "Strong"])
+@pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
 def test_build_client_config_carries_supported_consistency_level(level):
     """Each listed consistency name is retained in the prepared config."""
     config = build_client_config(None, consistency_level=level)
@@ -2345,17 +2378,24 @@ def test_native_validation_failure_does_not_record_a_client(monkeypatch):
     validator.assert_called_once_with(config)
 
 
-@pytest.mark.parametrize("level", ["BoundedStaleness", "ConsistentPrefix"])
-def test_build_client_config_rejects_unsupported_consistency_level(level):
-    """This Python Rust-backend configuration rejects the two listed levels."""
-    with pytest.raises(ValueError, match="not yet supported by the Rust binding"):
+@pytest.mark.parametrize("level", ["Nonsense", "LatestCommitted", "GlobalStrong", "Default", "eventual"])
+def test_build_client_config_rejects_unknown_consistency_level(level):
+    """An unrecognized consistency-level string is rejected, not dropped."""
+    with pytest.raises(ValueError, match="not a recognized Cosmos consistency level"):
         build_client_config(None, consistency_level=level)
 
 
-def test_build_client_config_rejects_unknown_consistency_level():
-    """An unrecognized consistency-level string is rejected, not dropped."""
-    with pytest.raises(ValueError, match="not a recognized Cosmos consistency level"):
-        build_client_config(None, consistency_level="Nonsense")
+@pytest.mark.parametrize("factory", [make_backend, make_async_backend])
+@pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
+def test_factories_preserve_consistency_names(factory, level):
+    backend = factory(
+        BACKEND_NAME_RUST,
+        url="https://consistency.documents.azure.com",
+        credential="key",
+        consistency_level=level,
+    )
+    assert backend._client_config.consistency_level == level
+    assert backend._driver_handle is None
 
 
 def test_factory_carries_all_startup_settings_into_rust_backend(monkeypatch):
@@ -3502,37 +3542,81 @@ def test_pick_backend_uses_getattr_fallback_for_slots_connection():
 # The measured acquisition count checks this run, not every possible schedule.
 
 
-def test_rust_backend_init_driver_handle_serialised_under_concurrent_threads(monkeypatch):
-    """Eight submitted calls produce one fake handle acquisition in this run."""
-    count_lock = threading.Lock()
-    calls = {"n": 0}
+@pytest.mark.parametrize("first_attempt_fails", [False, True], ids=["reuse", "retry-after-failure"])
+def test_rust_backend_init_driver_handle_serialised_under_concurrent_threads(monkeypatch, first_attempt_fails):
+    """A caller that already saw None rechecks after the first attempt finishes."""
+    first_started = threading.Event()
+    finish_first = threading.Event()
+    second_waiting = threading.Event()
+    first_error = RuntimeError("first acquisition failed")
+    fake_module = MagicMock()
+    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
+    acquisition_lock = backend._driver_handle_lock
 
-    def slow_init(_endpoint, _key, _config):
-        with count_lock:
-            calls["n"] += 1
-        time.sleep(0.02)  # hold long enough for the others to queue up
+    class ObservedLock:
+        def __enter__(self):
+            if not acquisition_lock.acquire(blocking=False):
+                # Prove the second caller reached the lock while the first owns it.
+                second_waiting.set()
+                assert acquisition_lock.acquire(timeout=5), "acquisition lock was not released"
+            return self
+
+        def __exit__(self, *_):
+            acquisition_lock.release()
+
+    monkeypatch.setattr(backend, "_driver_handle_lock", ObservedLock())
+
+    def acquire(_endpoint, _key, _config):
+        assert backend._driver_handle is None
+        if fake_module.acquire_driver_handle.call_count == 1:
+            first_started.set()
+            assert finish_first.wait(5), "first acquisition was not released"
+            if first_attempt_fails:
+                raise first_error
         return "handle-1"
 
-    fake_module = MagicMock()
-    fake_module.acquire_driver_handle.side_effect = slow_init
-    monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
+    fake_module.acquire_driver_handle.side_effect = acquire
+    results = [concurrent.futures.Future(), concurrent.futures.Future()]
 
-    backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
-    ready = threading.Barrier(8)
-    results = []
+    def worker(result):
+        try:
+            result.set_result(backend._ensure_driver_handle())
+        except BaseException as error:
+            result.set_exception(error)
 
-    def worker():
-        ready.wait()  # start all eight at the same time
-        results.append(backend._ensure_driver_handle())
+    threads = [threading.Thread(target=worker, args=(result,), daemon=True) for result in results]
+    started_threads = []
+    try:
+        threads[0].start()
+        started_threads.append(threads[0])
+        assert first_started.wait(5), "first caller did not begin acquisition"
+        threads[1].start()
+        started_threads.append(threads[1])
+        assert second_waiting.wait(5), "second caller did not wait for the acquisition lock"
+        assert backend._driver_handle is None
+        assert not results[0].done()
+        assert not results[1].done()
+        fake_module.acquire_driver_handle.assert_called_once()
 
-    threads = [threading.Thread(target=worker) for _ in range(8)]
-    for t in threads:
-        t.start()
-    for t in threads:
-        t.join()
-
-    assert calls["n"] == 1
-    assert results == ["handle-1"] * 8
+        finish_first.set()
+        if first_attempt_fails:
+            with pytest.raises(RuntimeError) as caught:
+                results[0].result(timeout=5)
+            assert caught.value is first_error
+        else:
+            assert results[0].result(timeout=5) == "handle-1"
+        assert results[1].result(timeout=5) == "handle-1"
+        assert backend._driver_handle == "handle-1"
+        assert backend._ensure_driver_handle() == "handle-1"
+        assert fake_module.acquire_driver_handle.call_count == (2 if first_attempt_fails else 1)
+    finally:
+        finish_first.set()
+        for thread in started_threads:
+            thread.join(timeout=5)
+        assert all(not thread.is_alive() for thread in started_threads), "acquisition worker did not finish"
+        backend.close()
+    fake_module.release_driver_handle.assert_called_once_with("handle-1")
 
 
 def test_async_rust_backend_init_driver_handle_serialised_under_concurrent_tasks(monkeypatch):
@@ -3628,90 +3712,6 @@ def test_async_rust_backend_close_releases_driver_handle_once(monkeypatch):
     asyncio.run(_run())
 
     fake_module.release_driver_handle.assert_called_once_with("handle-1")
-
-
-# ---------------------------------------------------------------------------
-# Transport / TLS knobs the Rust path can't honor fail loud at construction
-# ---------------------------------------------------------------------------
-#
-# The Rust driver owns its own HTTP/TLS stack and has no hook for explicit proxy
-# objects, a custom CA, a client certificate, or a stand-in transport. Rather
-# than silently ignoring these (and failing later with opaque connection/cert
-# errors far from the call site), the factory rejects them at construction with
-# a clear message naming the setting. core-python is unaffected -- it still
-# honors them.
-
-_M15_URL = "https://x.documents.azure.com"
-
-
-@pytest.mark.parametrize(
-    "setting,value",
-    [
-        ("proxy_config", object()),
-        ("proxies", {"https": "http://proxy:8080"}),
-        ("connection_cert", "/etc/ssl/client.pem"),
-        ("ssl_config", object()),
-        ("transport", object()),
-        ("connection_verify", False),
-        ("connection_verify", "/etc/ssl/corp-ca.pem"),
-    ],
-)
-def test_make_backend_rejects_unsupported_transport_settings_on_rust(monkeypatch, setting, value):
-    """Each transport/TLS knob the Rust path can't honor is rejected at
-    construction, naming the setting."""
-    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
-    with pytest.raises(ValueError, match=setting):
-        make_backend(BACKEND_NAME_RUST, url=_M15_URL, credential="k", **{setting: value})
-
-
-def test_make_backend_connection_verify_true_or_none_does_not_trip(monkeypatch):
-    """Ordinary TLS verification (the default) must NOT trip the gate -- only a
-    disable (False) or a custom CA path (str) is unsupported."""
-    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
-    assert isinstance(
-        make_backend(BACKEND_NAME_RUST, url=_M15_URL, credential="k", connection_verify=True),
-        BindingAdapter,
-    )
-    assert isinstance(
-        make_backend(BACKEND_NAME_RUST, url=_M15_URL, credential="k", connection_verify=None),
-        BindingAdapter,
-    )
-
-
-def test_reject_unsupported_transport_settings_no_op_when_unset():
-    """Nothing set (and an empty proxies dict = 'no proxy') does not raise."""
-    reject_unsupported_transport_settings()
-    reject_unsupported_transport_settings(proxies={})
-
-
-def test_make_backend_core_python_ignores_transport_settings(monkeypatch):
-    """Core Python honors these settings through the explicit legacy backend
-    without applying Rust-only validation."""
-    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
-    assert make_backend(
-        None,
-        url=_M15_URL,
-        credential="k",
-        transport=object(),
-        proxies={"https": "http://proxy:8080"},
-        connection_verify=False,
-    ) is LEGACY_BACKEND
-
-
-def test_make_async_backend_rejects_transport_on_rust(monkeypatch):
-    """The async factory rejects the same unsupported settings the same way."""
-    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
-    with pytest.raises(ValueError, match="transport"):
-        make_async_backend(BACKEND_NAME_RUST, url=_M15_URL, credential="k", transport=object())
-
-
-def test_make_async_backend_rejects_connection_cert_on_rust(monkeypatch):
-    """Async twin: a client certificate is rejected at construction."""
-    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
-    with pytest.raises(ValueError, match="connection_cert"):
-        make_async_backend(
-            BACKEND_NAME_RUST, url=_M15_URL, credential="k", connection_cert="/etc/ssl/c.pem"
-        )
 
 
 # ---------------------------------------------------------------------------
@@ -4056,7 +4056,7 @@ class _FakeAsyncCredential:
 @pytest.mark.parametrize(
     "bad_kwargs",
     [
-        {"consistency_level": "BoundedStaleness"},
+        {"consistency_level": "Unknown"},
         {"connection_timeout_seconds": 99.0},
         {"preferred_locations": "West US"},
     ],

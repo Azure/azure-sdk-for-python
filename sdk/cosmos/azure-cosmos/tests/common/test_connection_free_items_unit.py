@@ -385,7 +385,7 @@ def test_options_defaults_errors_and_hooks(async_mode):
     assert settings_options(backend.events[-1])["responsePayloadOnWriteDisabled"] is False
     backend.events.clear()
     for kwargs in ({"filter_predicate": "FROM c WHERE c.x = 1"},
-                   {"retry_write": 1}, {"raw_request_hook": MagicMock()}, {"raw_response_hook": MagicMock()},
+                   {"retry_write": 1},
                    {"initial_headers": {"User-Agent": "caller"}},
                    {"access_condition": {"type": "IfNoneMatch", "condition": '"e"'}}):
         with pytest.raises(NotImplementedError):

@@ -60,6 +60,7 @@ _PIN_LITERALS = ('_backend="rust"', "_backend='rust'")
 _STRUCTURED_SKIP_TAGS = (
     "internals-only",   # the v4 test pokes at SDK internals (not a customer contract)
     "driver-gap",       # blocked on a known Rust driver / binding gap
+    "environment-gap",  # the target service/emulator lacks the required capability
     "sync-only",        # the operation's async surface has no equivalent test
     "async-only",       # the operation's sync surface has no equivalent test
     "accepted-vnext-change",  # an explicitly documented major-version contract change

@@ -500,7 +500,6 @@ def test_container_create_preserves_throughput_headers_and_deadlines(container_c
         {"timeout": False}, {"timeout": True}, {"timeout": 0}, {"timeout": -1}, {"timeout": 0.5},
         {"timeout": "10"}, {"timeout": float("nan")}, {"timeout": float("inf")},
         {"timeout": 2**64 - 1}, {"timeout": 10**400}, {"connection_timeout": 1},
-        {"raw_request_hook": lambda request: None}, {"raw_response_hook": lambda response: None},
         {"unknown_option": True}, {"initial_headers": {"User-Agent": "custom"}},
         {"initial_headers": {"X-MS-VERSION": "custom"}}, {"initial_headers": {"Accept": "custom"}},
         {"initial_headers": {"Cache-Control": "custom"}}, {"request_options": {"timeout": 10}},
@@ -877,7 +876,6 @@ def test_container_get_or_create_preserves_shapes_and_existing_settings(
 @pytest.mark.parametrize("kwargs", [
     {"timeout": 0.5}, {"timeout": False}, {"timeout": float("nan")}, {"timeout": float("inf")},
     {"timeout": 2**64}, {"timeout": "10"}, {"connection_timeout": 1},
-    {"raw_request_hook": lambda request: None}, {"raw_response_hook": lambda response: None},
     {"initial_headers": {"User-Agent": "override"}}, {"unknown_option": None},
     {"populate_quota_info": True}, {"populate_partition_key_range_statistics": False},
     {"request_options": {Constants.ContainerRID: "rid1"}},
@@ -1244,6 +1242,44 @@ def test_container_feeds_are_paged_operations():
 
 
 # --- create_container request shape --------------------------------------
+
+@pytest.mark.parametrize("operation", ["read_container", "create_container"])
+@pytest.mark.parametrize("suffix", ["", "_async"])
+@pytest.mark.parametrize("remaining", [None, 0.125, 1.0])
+@pytest.mark.parametrize("include_attempts", [False, True])
+def test_container_composed_native_accepts_remaining_timeout(operation, suffix, remaining, include_attempts):
+    """Read/create accept a subsecond remaining budget before looking up the driver."""
+    from azure.cosmos import _rust
+
+    prepared = (
+        build_read_container_prepared("dbs/db1/colls/c1", {})
+        if operation == "read_container"
+        else build_create_container_prepared("dbs/db1", {"id": "c1"}, {})
+    )
+    native = getattr(_rust, operation + suffix)
+    assert inspect.signature(native).parameters["timeout_seconds"].default is None
+    assert inspect.signature(native).parameters["include_attempts"].default is False
+    with pytest.raises(RuntimeError, match="(?i)driver"):
+        native("unregistered-container-composed-test", prepared,
+               timeout_seconds=remaining, include_attempts=include_attempts)
+
+
+@pytest.mark.parametrize("operation", ["read_container", "create_container"])
+@pytest.mark.parametrize("suffix", ["", "_async"])
+@pytest.mark.parametrize("remaining", [0, -1, float("inf"), float("nan")])
+def test_container_composed_native_rejects_invalid_remaining_timeout(operation, suffix, remaining):
+    """An invalid remaining duration fails before driver acquisition or dispatch."""
+    from azure.cosmos import _rust
+
+    prepared = (
+        build_read_container_prepared("dbs/db1/colls/c1", {})
+        if operation == "read_container"
+        else build_create_container_prepared("dbs/db1", {"id": "c1"}, {})
+    )
+    with pytest.raises(ValueError, match="timeout_seconds"):
+        getattr(_rust, operation + suffix)(
+            "unregistered-container-composed-test", prepared, timeout_seconds=remaining
+        )
 
 
 def test_create_container_prepared_names_the_database_and_carries_the_definition():

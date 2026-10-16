@@ -905,21 +905,6 @@ namespace azure.cosmos
         def __repr__(self) -> str: ...
 
 
-    class azure.cosmos.ProxyConfiguration:
-        Host: str
-        Port: int
-
-        def __init__(self) -> None: ...
-
-
-    class azure.cosmos.SSLConfiguration:
-        SSLCaCerts: Union[str, bool]
-        SSLCertFile: str
-        SSLKeyFIle: str
-
-        def __init__(self) -> None: ...
-
-
     class azure.cosmos.ScriptsProxy:
 
         def __init__(
@@ -2848,16 +2833,13 @@ namespace azure.cosmos.documents
     class azure.cosmos.documents.ConnectionPolicy:
         ConnectionMode: ConnectionMode
         ConnectionRetryConfiguration: Union[int, ConnectionRetryPolicy]
-        DisableSSLVerification: boolean
         EnableEndpointDiscovery: boolean
         ExcludedLocations: list[str]
         PreferredLocations: list[str]
-        ProxyConfiguration: ProxyConfiguration
         RequestTimeout: int
         ResponsePayloadOnWriteDisabled: boolean
         RetryNonIdempotentWrites: int
         RetryOptions: RetryOptions
-        SSLConfiguration: SSLConfiguration
         UseMultipleWriteLocations: boolean
 
         def __init__(self) -> None: ...
@@ -2916,13 +2898,6 @@ namespace azure.cosmos.documents
         MultiHash: Literal["MultiHash"] = MultiHash
 
 
-    class azure.cosmos.documents.ProxyConfiguration:
-        Host: str
-        Port: int
-
-        def __init__(self) -> None: ...
-
-
     class azure.cosmos.documents.RetryOptions:
         property FixedRetryIntervalInMilliseconds: Optional[int]    # Read-only
         property MaxRetryAttemptCount: int    # Read-only
@@ -2937,14 +2912,6 @@ namespace azure.cosmos.documents
                 fixed_retry_interval_in_milliseconds: Optional[int] = None, 
                 max_wait_time_in_seconds: int = 30
             ): ...
-
-
-    class azure.cosmos.documents.SSLConfiguration:
-        SSLCaCerts: Union[str, bool]
-        SSLCertFile: str
-        SSLKeyFIle: str
-
-        def __init__(self) -> None: ...
 
 
     class azure.cosmos.documents.TriggerOperation:

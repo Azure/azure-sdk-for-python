@@ -303,8 +303,8 @@ class BindingAdapterShared:
         # Pass these settings, such as preferred regions, when acquiring a driver.
         self._client_config = client_config
         self._runtime = runtime
-        # The binding returns a driver handle identifying a CosmosDriver on first
-        # use. Reuse it until close; the subclasses coordinate changes with this lock.
+        # Acquire during async __aenter__() or the first operation needing the driver.
+        # Reuse the handle until close; subclasses coordinate changes with this lock.
         self._driver_handle: Optional[str] = None
         self._driver_handle_lock = threading.Lock()
         # Once close sets this flag, do not acquire another driver for the client.
@@ -354,9 +354,11 @@ class BindingAdapterShared:
     def _initialize_driver(self, binding: Any, runtime: Optional[CosmosRuntime] = None) -> str:
         """Ask the binding to acquire a driver handle using this client's saved inputs.
 
-        Pass the saved account address, credential, and PreparedClientConfig to
-        acquire_driver_handle. The binding may create a CosmosDriver or reuse
-        one it already retains; this method's name does not imply a new object.
+        Pass the saved account address, credential, PreparedClientConfig, and
+        supplied runtime reference to acquire_driver_handle. None lets the
+        binding obtain its default CosmosDriverRuntime. The binding may create
+        a CosmosDriver or reuse one for that runtime and client configuration;
+        this method's name does not imply a new object.
 
         The returned handle identifies the retained driver. After the caller
         retains it, the references look like this::

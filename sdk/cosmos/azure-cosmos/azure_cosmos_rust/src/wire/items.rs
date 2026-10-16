@@ -1181,10 +1181,14 @@ mod tests {
         .unwrap();
         for (consistency, retain_header) in [
             (Some("Eventual"), true),
+            (Some("ConsistentPrefix"), true),
+            (Some("BoundedStaleness"), true),
             (Some("Strong"), true),
             (Some("Session"), true),
             (None, true),
             (Some("Eventual"), false),
+            (Some("ConsistentPrefix"), false),
+            (Some("BoundedStaleness"), false),
         ] {
             let mut settings = modifiers();
             if let Some(level) = consistency {
@@ -1219,12 +1223,130 @@ mod tests {
             *observed.0.lock().unwrap(),
             vec![
                 ("Eventual".into(), false),
+                ("Eventual".into(), false),
+                ("LatestCommitted".into(), false),
                 ("GlobalStrong".into(), false),
                 ("Session".into(), true),
                 ("Session".into(), true),
                 ("Eventual".into(), false),
+                ("Eventual".into(), false),
+                ("LatestCommitted".into(), false),
             ]
         );
+    }
+
+    #[tokio::test]
+    async fn read_consistency_defaults_do_not_change_writes() {
+        #[derive(Debug, Default)]
+        struct Requests {
+            reads: Mutex<Vec<String>>,
+            writes: Mutex<usize>,
+        }
+        impl RequestObserver for Requests {
+            fn on_request(&self, request: &Request) {
+                let header = |name| {
+                    request
+                        .headers()
+                        .get_optional_str(&HeaderName::from_static(name))
+                };
+                if request.method() == Method::Post && request.url().path().ends_with("/docs") {
+                    assert!(header("x-ms-cosmos-read-consistency-strategy").is_none());
+                    assert!(header("x-ms-consistency-level").is_none());
+                    *self.writes.lock().unwrap() += 1;
+                } else if request.method() == Method::Get && request.url().path().contains("/docs/")
+                {
+                    assert!(header("x-ms-consistency-level").is_none());
+                    self.reads.lock().unwrap().push(
+                        header("x-ms-cosmos-read-consistency-strategy")
+                            .unwrap()
+                            .to_owned(),
+                    );
+                }
+            }
+        }
+        pyo3::prepare_freethreaded_python();
+        for (level, expected) in [
+            ("ConsistentPrefix", "Eventual"),
+            ("BoundedStaleness", "LatestCommitted"),
+        ] {
+            let url = Url::parse("https://consistency-default.emulator.local").unwrap();
+            let observed = Arc::new(Requests::default());
+            let emulator = Arc::new(
+                InMemoryEmulatorHttpClient::new(
+                    VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())])
+                        .unwrap()
+                        .with_consistency(ConsistencyLevel::Session),
+                )
+                .with_request_observer(observed.clone()),
+            );
+            emulator.store().create_database("db");
+            emulator.store().create_container(
+                "db",
+                "orders",
+                PartitionKeyDefinition::from("/customerId"),
+            );
+            let runtime = emulator.runtime_builder().build().await.unwrap();
+            let strategy = crate::runtime::read_consistency_from_str(level).unwrap();
+            let driver = runtime
+                .create_driver(
+                    DriverOptions::builder(AccountReference::with_account_key(
+                        url,
+                        "ZW11bGF0b3Ita2V5",
+                    ))
+                    .with_operation_options(
+                        OperationOptionsBuilder::new()
+                            .with_read_consistency_strategy(strategy)
+                            .build(),
+                    )
+                    .build(),
+                )
+                .await
+                .unwrap();
+            let mut write_settings = modifiers();
+            write_settings.read_consistency_strategy = Some(strategy);
+            execute_item_on_driver(
+                driver.clone(),
+                "db".into(),
+                "orders".into(),
+                None,
+                "order-42".into(),
+                br#"{"id":"order-42","customerId":"customer-17"}"#.to_vec(),
+                write_settings,
+                true,
+                |item, body| CosmosOperation::create_item(item).with_body(body),
+            )
+            .await
+            .unwrap()
+            .unwrap();
+            for override_level in [None, Some("Session"), None] {
+                let mut settings = modifiers();
+                settings.read_consistency_strategy =
+                    override_level.and_then(crate::runtime::read_consistency_from_str);
+                execute_item_on_driver(
+                    driver.clone(),
+                    "db".into(),
+                    "orders".into(),
+                    Some(PartitionKey::from("customer-17")),
+                    "order-42".into(),
+                    Vec::new(),
+                    settings,
+                    false,
+                    |item, _| CosmosOperation::read_item(item),
+                )
+                .await
+                .unwrap()
+                .unwrap();
+            }
+            assert_eq!(*observed.writes.lock().unwrap(), 1);
+            assert_eq!(
+                *observed.reads.lock().unwrap(),
+                vec![
+                    expected.to_owned(),
+                    "Session".to_owned(),
+                    expected.to_owned()
+                ],
+            );
+        }
     }
 
     #[tokio::test]

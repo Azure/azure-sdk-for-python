@@ -146,8 +146,10 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
     """Retain one client's settings and execute its prepared requests.
 
     As with BindingAdapter, the driver handle identifies a CosmosDriver retained
-    by the binding. Client entry acquires a handle; operations reuse it.
-    Operations without prior client entry still acquire it on first use.
+    by the binding. The client's __aenter__() acquires a handle before running
+    the statements inside async with; later operations reuse it.
+    Without prior initialization, the first operation needing the driver
+    acquires the handle.
     Closing releases this client's acquisition, not another client's or an
     in-flight operation's reference.
 
@@ -226,6 +228,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
                     raise RuntimeError("AsyncBindingAdapter: the client is closed.")
                 if self._driver_handle is not None:
                     return self._driver_handle
+                # Keep the selection alive if close clears self._runtime during acquisition.
                 runtime = self._runtime
             new_driver_handle: Optional[str] = self._initialize_driver(_rust_module, runtime)
             with self._driver_handle_lock:
