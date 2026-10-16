@@ -53,12 +53,6 @@ def get_snippet_aware_sample_pylint_commands(executable: str, rcfile: str, sampl
     return commands
 
 
-def get_test_pylint_command(executable: str, rcfile: str, tests_dir: str) -> List[str]:
-    if not any(Path(tests_dir).rglob("*.py")):
-        return []
-    return [executable, "-m", "pylint", f"--rcfile={rcfile}", "--output-format=parseable", "--recursive=y", tests_dir]
-
-
 class pylint(Check):
     def __init__(self) -> None:
         super().__init__()
@@ -209,10 +203,28 @@ class pylint(Check):
                 if os.path.exists(tests_dir):
                     try:
                         test_rcfile = os.path.join(REPO_ROOT, "eng/test_pylintrc")
-                        test_command = get_test_pylint_command(executable, test_rcfile, tests_dir)
-                        if test_command:
-                            logger.info(test_command)
-                            results.append(check_call(test_command))
+                        logger.info(
+                            [
+                                executable,
+                                "-m",
+                                "pylint",
+                                "--rcfile={}".format(test_rcfile),
+                                "--output-format=parseable",
+                                tests_dir,
+                            ]
+                        )
+                        results.append(
+                            check_call(
+                                [
+                                    executable,
+                                    "-m",
+                                    "pylint",
+                                    "--rcfile={}".format(test_rcfile),
+                                    "--output-format=parseable",
+                                    tests_dir,
+                                ]
+                            )
+                        )
                     except CalledProcessError as e:
                         logger.error(
                             "{} tests exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
