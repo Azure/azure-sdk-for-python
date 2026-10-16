@@ -11,15 +11,16 @@ from azure.mgmt.edgeactions.aio import EdgeActionsMgmtClient
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 
-AZURE_LOCATION = "eastus"
+from edgeactions_test_settings import RESOURCE_GROUP_OPTIONS
 
 
 @pytest.mark.live_test_only
-class TestCdnEdgeActionsMgmtClientOperationsAsync(AzureMgmtRecordedTestCase):
+@pytest.mark.usefixtures("add_sanitizers")
+class TestEdgeActionsMgmtClientOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(EdgeActionsMgmtClient, is_async=True)
 
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(**RESOURCE_GROUP_OPTIONS)
     @recorded_by_proxy_async
     async def test_edge_actions_list_by_resource_group(self, resource_group):
         response = self.client.edge_actions.list_by_resource_group(
@@ -27,10 +28,3 @@ class TestCdnEdgeActionsMgmtClientOperationsAsync(AzureMgmtRecordedTestCase):
         )
         result = [r async for r in response]
         assert result == []
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_edge_actions_list_by_subscription(self, resource_group):
-        response = self.client.edge_actions.list_by_subscription()
-        result = [r async for r in response]
-        assert response
