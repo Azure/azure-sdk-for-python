@@ -36,21 +36,21 @@ def main():
         target_name="testname",
         properties={
             "properties": {
-                "capabilities": ["dasqhyxfakivfzqb"],
-                "contextId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}",
-                "description": "yhnhdpznncdvncmnvoeohqjx",
-                "displayName": "pguujtzjjvixgjitugybrefp",
-                "hierarchyLevel": "hfyntwxetgsmnucbjvvphtyxu",
+                "capabilities": ["nbizsvnhtvhposoccvfwaf"],
+                "contextId": "/subscriptions/612CB927-8AC8-42DD-B74E-C676C3960BA5/resourceGroups/rgconfigurationmanager/providers/Microsoft.Edge/contexts/testContext",
+                "description": "gvtsccujzvogbzzccu",
+                "displayName": "zkcgsktvpwlsxtnuowajfmu",
+                "hierarchyLevel": "zwsfzqtsyswpbbakmorrzepb",
                 "solutionScope": "testname",
                 "state": "active",
                 "targetSpecification": {},
             },
-            "tags": {"key8026": "yoosplotwgoquvpox"},
+            "tags": {},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/Targets_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/Targets_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
