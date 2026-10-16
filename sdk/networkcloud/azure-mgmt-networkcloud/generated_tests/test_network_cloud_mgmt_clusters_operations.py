@@ -167,6 +167,7 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
                     ],
                     "detailedStatus": "str",
                     "detailedStatusMessage": "str",
+                    "edgeManagementServiceCaCertificate": {"hash": "str", "value": "str"},
                     "hybridAksExtendedLocation": {"name": "str", "type": "str"},
                     "lastSuccessfulVersionUpdateTime": "2020-02-20 00:00:00",
                     "managedCredentials": ["str"],
@@ -177,6 +178,8 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
                     "secretArchive": {"keyVaultId": "str", "useKeyVault": "str"},
                     "secretArchiveSettings": {
                         "associatedIdentity": {"identityType": "str", "userAssignedIdentityResourceId": "str"},
+                        "encryptionPublicKey": "str",
+                        "providerConfiguration": "secret_archive_provider_configuration",
                         "vaultUri": "str",
                     },
                     "supportExpiryDate": "str",
