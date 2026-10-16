@@ -655,11 +655,9 @@ namespace azure.ai.agentserver.core.tasks
         ) -> Callable[[Callable[[TaskContext[Input]], Awaitable[Output]]], MultiTurnTask[Input, Output]]: ...
 
 
-    @experimental
     def azure.ai.agentserver.core.tasks.resilient_tasks_enabled() -> bool: ...
 
 
-    @experimental
     def azure.ai.agentserver.core.tasks.set_resilient_tasks_enabled(value: bool = True) -> None: ...
 
 
@@ -684,7 +682,6 @@ namespace azure.ai.agentserver.core.tasks
         ) -> Callable[[Callable[[TaskContext[Input]], Awaitable[Output]]], Task[Input, Output]]: ...
 
 
-    @experimental
     class azure.ai.agentserver.core.tasks.InputTooLarge(ValueError):
 
         def __init__(
@@ -694,7 +691,6 @@ namespace azure.ai.agentserver.core.tasks
             ) -> None: ...
 
 
-    @experimental
     class azure.ai.agentserver.core.tasks.LastInputIdPreconditionFailed(TaskPreconditionFailed):
 
         def __init__(
@@ -707,7 +703,6 @@ namespace azure.ai.agentserver.core.tasks
             ) -> None: ...
 
 
-    @experimental
     class azure.ai.agentserver.core.tasks.MultiTurnTask(Generic[Input, Output]):
         property name: str    # Read-only
 
@@ -746,7 +741,6 @@ namespace azure.ai.agentserver.core.tasks
             ) -> TaskRun[Output]: ...
 
 
-    @experimental
     class azure.ai.agentserver.core.tasks.RetryPolicy:
 
         def __eq__(self, other: object) -> bool: ...
@@ -805,7 +799,6 @@ namespace azure.ai.agentserver.core.tasks
             ) -> bool: ...
 
 
-    @experimental
     class azure.ai.agentserver.core.tasks.SteeringQueueFull(RuntimeError):
 
         def __init__(
@@ -815,7 +808,6 @@ namespace azure.ai.agentserver.core.tasks
             ) -> None: ...
 
 
-    @experimental
     class azure.ai.agentserver.core.tasks.Task(Generic[Input, Output]):
 
         def __init__(
@@ -847,7 +839,6 @@ namespace azure.ai.agentserver.core.tasks
             ) -> TaskRun[Output]: ...
 
 
-    @experimental
     class azure.ai.agentserver.core.tasks.TaskCancelled(Exception):
 
         def __init__(
@@ -859,7 +850,6 @@ namespace azure.ai.agentserver.core.tasks
         def __str__(self) -> str: ...
 
 
-    @experimental
     class azure.ai.agentserver.core.tasks.TaskConflictError(RuntimeError):
 
         def __init__(
@@ -870,7 +860,6 @@ namespace azure.ai.agentserver.core.tasks
             ) -> None: ...
 
 
-    @experimental
     class azure.ai.agentserver.core.tasks.TaskContext(Generic[Input]):
         property pending_input_count: int    # Read-only
 
@@ -893,7 +882,6 @@ namespace azure.ai.agentserver.core.tasks
         async def exit_for_recovery(self) -> Any: ...
 
 
-    @experimental
     class azure.ai.agentserver.core.tasks.TaskDeferred(Exception):
 
         def __init__(
@@ -917,7 +905,6 @@ namespace azure.ai.agentserver.core.tasks
         key "type": Literal["exhausted_retries"]
 
 
-    @experimental
     class azure.ai.agentserver.core.tasks.TaskFailed(Exception):
         error: Union[TaskErrorDict, TaskExhaustedRetriesErrorDict]
 
@@ -929,11 +916,9 @@ namespace azure.ai.agentserver.core.tasks
             ) -> None: ...
 
 
-    @experimental
     class azure.ai.agentserver.core.tasks.TaskManagerNotInitialized(RuntimeError):
 
 
-    @experimental
     class azure.ai.agentserver.core.tasks.TaskRun(Generic[Output]): implements Awaitable 
         property is_queued: bool    # Read-only
 
