@@ -19,6 +19,7 @@ from typing import Any, Callable, Dict, List, Optional
 from urllib.parse import urlsplit
 
 from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy
+from azure.core.pipeline.transport import AioHttpTransport
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from ..._common.utils import construct_prompty_model_config, validate_model_config
@@ -52,6 +53,7 @@ _DECISION_CONFIG_KEYS = {
     "probability_threshold",
 }
 _DEFAULT_PROBABILITY_THRESHOLD = 0.75
+_PROBABILITY_SUM_ABS_TOLERANCE = 1e-6
 # The service adds api_version to every resolved model configuration; the decision endpoint does not use it.
 _IGNORED_CONFIG_KEYS = {"api_version"}
 
@@ -138,6 +140,9 @@ def validate_noul_answer(answer: Dict[str, Any]) -> float:
 def validate_score_answer(answer: Dict[str, Any], levels: int) -> List[float]:
     """Return the level probabilities of a ``score`` answer after validating its fields.
 
+    Probabilities must sum to one within an absolute tolerance of ``1e-6`` for decimal rounding.
+    The native mean is checked for finiteness, not consistency with the distribution.
+
     :param answer: The answer for a ``score`` question.
     :type answer: Dict[str, Any]
     :param levels: The number of levels in the question's scale.
@@ -150,6 +155,8 @@ def validate_score_answer(answer: Dict[str, Any], levels: int) -> List[float]:
     if not isinstance(probabilities, dict) or set(probabilities) != {str(i) for i in range(levels)}:
         raise ValueError(f"a score answer requires probabilities for exactly {levels} levels.")
     distribution = [_probability(probabilities[str(i)]) for i in range(levels)]
+    if not math.isclose(math.fsum(distribution), 1.0, rel_tol=0.0, abs_tol=_PROBABILITY_SUM_ABS_TOLERANCE):
+        raise ValueError("score probabilities must sum to one within an absolute tolerance of 1e-6.")
     mean = answer.get("score")
     if isinstance(mean, bool) or not isinstance(mean, (int, float)) or not math.isfinite(mean):
         raise ValueError("the score mean must be finite.")
@@ -162,13 +169,23 @@ class DecisionModelRunner:
 
     The model configuration must be tagged ``type="decision"`` and contain the Foundry resource endpoint
     (``azure_endpoint``) and the deployment name (``azure_deployment``). Authentication uses ``api_key`` when
-    present, otherwise an Entra credential (from ``credential`` in the configuration or the constructor, or the
-    SDK default). The endpoint must use HTTPS; HTTP is permitted only for localhost or loopback IP literals.
+    present, otherwise an explicitly supplied Entra credential (from ``credential`` in the configuration or the
+    constructor). No default credential is created for Decision. The endpoint must use HTTPS;
+    HTTP is permitted only for localhost or loopback IP literals.
     Caller-supplied credentials remain caller-owned. ``api_version`` is accepted and ignored.
+    Reuse a synchronous ``azure.identity.DefaultAzureCredential`` for public synchronous and batch calls,
+    and close it after all calls complete. Async credentials require a caller-managed event loop and must
+    only be reused on that loop; cross-loop reuse is not supported.
     ``probability_threshold`` (default 0.75) is only accepted when ``binary=True``.
 
+    ``azure_endpoint`` must be the account resource root, not a project or OpenAI API endpoint.
+    For example, use ``https://account.services.ai.azure.com`` rather than a URL ending in
+    ``/api/projects/project`` or ``/openai``. Any path supplied is retained when appending the provider operation.
+
     Execution controls are keyword-only and separate from model configuration. ``timeout_seconds`` bounds
-    each connect/read; the call's ``timeout`` bounds authentication, retries and the entire operation.
+    each connect/read; the call's ``timeout`` limits authentication, retries and response body reading.
+    Decision requests use the native async HTTP transport so timeout and cancellation stop body reads.
+    An injected pipeline retains its own transport; that transport must support cancellation for the same guarantee.
     ``max_retries`` defaults to 3. ``cancellation_requested`` is polled every 50 ms, including retry waits;
     it stops awaiting synchronous credentials but cannot stop their worker threads. Byte limits measure
     compact unescaped UTF-8 JSON, with ``max_state_question_bytes`` applying to the largest individual pair.
@@ -267,6 +284,8 @@ class DecisionModelRunner:
 
         # Like the Prompty path, an API key wins; a credential is only used when there is no key.
         credential = credential if credential is not None else model_config.get("credential")
+        if not api_key and not callable(getattr(credential, "get_token", None)):
+            raise _invalid_config("Decision models require an 'api_key' or a credential with a callable 'get_token'.")
         self._credential = None if api_key else credential
 
         threshold = model_config.get("probability_threshold", _DEFAULT_PROBABILITY_THRESHOLD)
@@ -385,21 +404,12 @@ class DecisionModelRunner:
                 await asyncio.gather(task, return_exceptions=True)
 
     async def _get_token(self) -> str:
-        if self._credential is None:
-            return await asyncio.to_thread(lambda: asyncio.run(self._get_default_token()))
         if inspect.iscoroutinefunction(self._credential.get_token):
             return (await self._credential.get_token(_DECISION_TOKEN_SCOPE)).token
         token = await asyncio.to_thread(self._credential.get_token, _DECISION_TOKEN_SCOPE)
         if inspect.isawaitable(token):
             token = await token
         return token.token
-
-    @staticmethod
-    async def _get_default_token() -> str:
-        from azure.ai.evaluation._legacy._common._async_token_provider import AsyncAzureTokenProvider
-
-        async with AsyncAzureTokenProvider() as provider:
-            return (await provider.get_token(_DECISION_TOKEN_SCOPE)).token
 
     async def _post(self, content: bytes, *, deadline: float) -> Any:
         headers = {"x-ms-useragent": self._user_agent, "Content-Type": "application/json"}
@@ -435,9 +445,10 @@ class DecisionModelRunner:
                 min(self._timeout_seconds, remaining) if self._timeout_seconds is not None else remaining
             ),
         }
-
         try:
-            async with get_async_http_client().with_policies(**policies) as client:
+            async with get_async_http_client(
+                transport=AioHttpTransport(read_timeout=options["connection_timeout"])
+            ).with_policies(**policies) as client:
                 response = await client.post(self._url, content=content, headers=headers, **options)
                 status = response.status_code
                 content = response.body()

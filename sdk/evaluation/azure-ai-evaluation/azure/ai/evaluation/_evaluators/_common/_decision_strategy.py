@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional, Tuple, TypeVar, Union
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from ._base_model_eval import ModelEvaluatorBase, not_applicable_result
+from ._base_model_eval import not_applicable_result
 from ._model_runners import DecisionModelRunner, validate_noul_answer, validate_score_answer
 
 STATUS_CUTOFF = 0.5
@@ -83,7 +83,11 @@ def _digest(question: Dict[str, Any]) -> str:
 
 @dataclass(frozen=True)
 class BinaryScoring:
-    """Scores 1 when the answer's probability reaches the cutoff, otherwise 0."""
+    """Scores 1 when the answer's probability reaches the cutoff, otherwise 0.
+
+    Standalone results pass only at 1, regardless of the evaluator threshold. Composites can reapply their
+    configured member thresholds, so a binary member scoring 0 can pass when its composite threshold is 0.
+    """
 
     probability_cutoff: float
 
@@ -134,6 +138,11 @@ class LikertScoring:
 
 
 class DecisionEvaluationStrategy:
+    """Interprets Decision answers using the fixed ``STATUS_CUTOFF`` of 0.5 for applicability.
+
+    The evaluator's score threshold does not change the applicability cutoff.
+    """
+
     def __init__(
         self,
         runner: DecisionModelRunner,
@@ -207,8 +216,9 @@ class DecisionEvaluationStrategy:
             exc.properties = properties
             raise
         properties["decision_model"].update(details)
-        properties["decision_model"]["native_answer"] = response["answers"][key]
-        properties.update(ModelEvaluatorBase._get_token_metadata(tokens))
+        properties["decision_model"]["native_answer"] = {
+            name: value for name, value in response["answers"][key].items() if name != "legend"
+        }
         passed = self.scoring.passes(score, self.threshold)
         return {
             key: score,

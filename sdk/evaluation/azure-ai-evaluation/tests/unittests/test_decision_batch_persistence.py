@@ -183,7 +183,9 @@ class TestDecisionBatchPersistence:
                 calls.append(json.loads(request.body))
                 return Response(request)
 
-        monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: AsyncHttpPipeline(transport=Transport()))
+        monkeypatch.setattr(
+            _model_runners, "get_async_http_client", lambda **_: AsyncHttpPipeline(transport=Transport())
+        )
 
         async def judge(query, runner=None):
             if runner is None:
@@ -414,7 +416,9 @@ class TestDecisionBatchPersistence:
                     cancelled = True
                 return Response(request)
 
-        monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: AsyncHttpPipeline(transport=Transport()))
+        monkeypatch.setattr(
+            _model_runners, "get_async_http_client", lambda **_: AsyncHttpPipeline(transport=Transport())
+        )
 
         async def judge(query):
             nonlocal cancelled

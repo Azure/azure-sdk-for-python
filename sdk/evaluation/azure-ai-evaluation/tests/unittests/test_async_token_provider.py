@@ -81,24 +81,18 @@ def test_lazy_provider_reuses_credential_and_close_is_idempotent(resources):
     client.close.assert_awaited_once_with()
 
 
-def test_repeated_default_requests_close_each_owned_provider(monkeypatch):
-    from azure.ai.evaluation._evaluators._common import _model_runners
-
+def test_repeated_provider_contexts_close_each_owned_provider(monkeypatch):
     clients = [Mock(close=AsyncMock()) for _ in range(3)]
     credentials = [Mock(get_token=Mock(return_value=SimpleNamespace(token="local-token"))) for _ in range(3)]
     monkeypatch.setattr(providers, "AzureEnvironmentClient", Mock(side_effect=clients))
     monkeypatch.setattr(providers.AsyncAzureTokenProvider, "_initialize_async", AsyncMock(side_effect=credentials))
-    http = FakeClient(FakeResponse(body=json.dumps(level_payload(4)).encode()))
-    monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: http)
-    config = {key: value for key, value in DECISION_CONFIG.items() if key != "api_key"}
 
     async def request():
-        runner = DecisionModelRunner(config)
         for _ in range(3):
-            await runner(state={}, questions=QUESTIONS, timeout=1)
+            async with providers.AsyncAzureTokenProvider() as provider:
+                await provider.get_token("https://cognitiveservices.azure.com/.default")
 
     asyncio.run(request())
-    assert len(http.calls) == 3
     for client, credential in zip(clients, credentials):
         client.close.assert_awaited_once_with()
         credential.close.assert_called_once_with()
@@ -130,12 +124,12 @@ def test_close_attempts_both_resources_and_exposes_cleanup_failures(resources, c
 
 
 @pytest.mark.parametrize("outcome", ["success", "failure", "timeout", "cancelled"])
-def test_default_request_provider_ownership_and_worker_cleanup(resources, monkeypatch, outcome):
+def test_explicit_request_credential_ownership_and_worker_cleanup(resources, monkeypatch, outcome):
     from azure.ai.evaluation._evaluators._common import _model_runners
 
     client, credential, _ = resources
     http = FakeClient(FakeResponse(body=json.dumps(level_payload(4)).encode()))
-    monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: http)
+    monkeypatch.setattr(_model_runners, "get_async_http_client", lambda **_: http)
     config = {key: value for key, value in DECISION_CONFIG.items() if key != "api_key"}
     entered, release = threading.Event(), threading.Event()
     if outcome == "failure":
@@ -151,7 +145,7 @@ def test_default_request_provider_ownership_and_worker_cleanup(resources, monkey
 
     async def request():
         cancel = False
-        runner = DecisionModelRunner(config, cancellation_requested=lambda: cancel)
+        runner = DecisionModelRunner(config, credential, cancellation_requested=lambda: cancel)
         task = asyncio.create_task(runner(state={}, questions=QUESTIONS, timeout=0.1 if outcome == "timeout" else 2))
         try:
             if outcome in ("timeout", "cancelled"):
@@ -167,9 +161,39 @@ def test_default_request_provider_ownership_and_worker_cleanup(resources, monkey
             release.set()
 
     asyncio.run(request())
-    credential.close.assert_called_once_with()
-    client.close.assert_awaited_once_with()
+    credential.close.assert_not_called()
+    client.close.assert_not_awaited()
     assert len(http.calls) == (1 if outcome == "success" else 0)
+
+
+def test_repeated_decision_calls_reuse_caller_credential_without_creating_provider(resources, monkeypatch):
+    from azure.ai.evaluation._evaluators._common import _model_runners
+
+    client, credential, initialize = resources
+    http = FakeClient(FakeResponse(body=json.dumps(level_payload(4)).encode()))
+    monkeypatch.setattr(_model_runners, "get_async_http_client", lambda **_: http)
+    config = {key: value for key, value in DECISION_CONFIG.items() if key != "api_key"}
+    runner = DecisionModelRunner(config, credential)
+    for _ in range(3):
+        asyncio.run(runner(state={}, questions=QUESTIONS, timeout=1))
+    assert len(http.calls) == credential.get_token.call_count == 3
+    initialize.assert_not_awaited()
+    credential.close.assert_not_called()
+    client.close.assert_not_awaited()
+
+
+def test_prompty_still_constructs_default_provider_when_no_credential_is_supplied(resources):
+    from azure.ai.evaluation import FluencyEvaluator
+    from test_decision_model_support import CHAT_CONFIG
+
+    client, credential, initialize = resources
+    evaluator = FluencyEvaluator({key: value for key, value in CHAT_CONFIG.items() if key != "api_key"})
+    provider = evaluator._flow._token_credential
+    assert isinstance(provider, providers.AsyncAzureTokenProvider)
+    initialize.assert_not_awaited()
+    asyncio.run(provider.close())
+    client.close.assert_awaited_once_with()
+    credential.close.assert_not_called()
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
@@ -181,7 +205,7 @@ def test_explicit_credentials_remain_caller_owned(monkeypatch, asynchronous, in_
     http = FakeClient(
         FakeResponse(body=json.dumps(level_payload(4)).encode()), delay=0.2 if outcome == "cancelled" else 0
     )
-    monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: http)
+    monkeypatch.setattr(_model_runners, "get_async_http_client", lambda **_: http)
     credential = Mock()
     token_call = AsyncMock if asynchronous else Mock
     credential.get_token = token_call(return_value=SimpleNamespace(token="caller-token"))
@@ -215,7 +239,7 @@ def test_caller_credential_remains_open_when_authentication_is_interrupted(monke
     from azure.ai.evaluation._evaluators._common import _model_runners
 
     http = FakeClient()
-    monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: http)
+    monkeypatch.setattr(_model_runners, "get_async_http_client", lambda **_: http)
     entered, release = threading.Event(), threading.Event()
     credential = Mock()
 

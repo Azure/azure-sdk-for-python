@@ -39,6 +39,11 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
     only evaluators that set ``_supports_decision_models`` accept; any other configuration selects the Prompty
     runner and exposes its flow as ``_flow``. Interpreting a model's answer remains the evaluator's job.
 
+    Decision requires an explicit API key or a credential with a callable ``get_token``. For Entra authentication,
+    pass and reuse a synchronous ``azure.identity.DefaultAzureCredential`` as ``credential=`` for synchronous
+    and batch calls, closing it after all evaluations complete. Async credentials require the same caller-managed
+    event loop for all uses. The SDK never closes caller credentials. Prompty authentication is unchanged.
+
     :param result_key: The key to use for the result of the evaluation.
     :type result_key: str
     :param prompty_file: The prompt path, required only for a Prompty runner.
@@ -51,7 +56,8 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
     :keyword timeout: Optional overall Decision time limit, including authentication and retries. Defaults to
         120 seconds for Decision; an explicit value retains the existing evaluator timeout cap.
         The remaining budget also limits native transport connect/read timeouts. Awaiting is cancelled at the
-        deadline, but synchronous credential calls cannot be forcibly interrupted and may delay synchronous return.
+        deadline and the native async transport stops response body reads. Synchronous credential calls cannot be
+        forcibly interrupted and may delay synchronous return.
     :paramtype timeout: Optional[float]
     :keyword timeout_seconds: Optional Decision connect/read timeout.
     :paramtype timeout_seconds: Optional[float]
@@ -195,6 +201,39 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
         if not isinstance(runner, DecisionModelRunner):
             raise RuntimeError("This evaluator is not configured with a decision model.")
         return runner
+
+    def _aggregate_results(self, per_turn_results: List[Dict[str, T]]) -> Dict[str, Any]:
+        """Aggregate scores normally, but sum independently known Decision usage across turns.
+
+        A single shared model is promoted for attribution. Mixed or missing model identities remain per-turn
+        rather than attributing all usage to the last model. Prompty aggregation is unchanged.
+        """
+        aggregated: Dict[str, Any] = super()._aggregate_results(per_turn_results)
+        if not self._uses_decision_model:
+            return aggregated
+        metrics = {metric for turn in per_turn_results for metric in turn}
+        for metric in metrics:
+            if metric.endswith(("_prompt_tokens", "_completion_tokens", "_total_tokens")):
+                values = (turn.get(metric) for turn in per_turn_results)
+                known = [
+                    value for value in values if isinstance(value, int) and not isinstance(value, bool) and value >= 0
+                ]
+                if known:
+                    aggregated[metric] = sum(known)
+                else:
+                    aggregated.pop(metric, None)
+            elif metric.endswith("_model"):
+                models = [turn.get(metric) for turn in per_turn_results]
+                if (
+                    models
+                    and isinstance(models[0], str)
+                    and models[0].strip()
+                    and all(model == models[0] for model in models)
+                ):
+                    aggregated[metric] = models[0]
+                else:
+                    aggregated.pop(metric, None)
+        return aggregated
 
     def _get_binary_result(self, score: float) -> str:
         """Get the binary result based on the score.

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-"""Actual localhost HTTP coverage for the default requests-backed async transport."""
+"""Actual localhost HTTP coverage for Decision async HTTP and the unchanged shared requests transport."""
 
 import asyncio
 import json
@@ -11,14 +11,15 @@ import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
+import aiohttp
 import requests
-from urllib3.util import connection
 
 from azure.ai.evaluation._evaluators._common._model_runners import DecisionModelRunner
 from azure.ai.evaluation._evaluators._common._base_model_eval import ModelEvaluatorBase
 from azure.ai.evaluation._exceptions import ErrorBlame, EvaluationException
 from azure.ai.evaluation._http_utils import get_async_http_client
 from azure.core.pipeline.policies import AsyncRetryPolicy
+from azure.core.pipeline.transport import AsyncioRequestsTransport
 
 pytestmark = pytest.mark.unittest
 QUESTIONS = {"status": {"type": "noul", "instructions": "Applicable?"}}
@@ -83,19 +84,19 @@ class SynchronousDecisionEvaluator(ModelEvaluatorBase):
 
 
 @pytest.mark.parametrize("timeout,timeout_seconds", [(0.05, None), (0.2, 0.02), (0.05, 0.2)])
-def test_public_synchronous_overall_timeout_bounds_default_requests_worker(
+def test_public_synchronous_overall_timeout_bounds_native_async_transport(
     localhost, monkeypatch, timeout, timeout_seconds
 ):
     endpoint, calls, delay, _ = localhost
     delay[0] = 0.65
     observed = []
-    original = requests.Session.request
+    original = aiohttp.ClientSession.request
 
     def record(session, *args, **kwargs):
-        observed.append(kwargs["timeout"])
+        observed.append(kwargs["timeout"].sock_connect)
         return original(session, *args, **kwargs)
 
-    monkeypatch.setattr(requests.Session, "request", record)
+    monkeypatch.setattr(aiohttp.ClientSession, "request", record)
     evaluator = SynchronousDecisionEvaluator(
         result_key="status",
         model_config={
@@ -126,10 +127,10 @@ def test_public_synchronous_authentication_consumes_transport_deadline(localhost
     endpoint, calls, delay, _ = localhost
     delay[0] = 0.65
     observed = []
-    original = requests.Session.request
+    original = aiohttp.ClientSession.request
 
     def record(session, *args, **kwargs):
-        observed.append(kwargs["timeout"])
+        observed.append(kwargs["timeout"].sock_connect)
         return original(session, *args, **kwargs)
 
     class Credential:
@@ -139,7 +140,7 @@ def test_public_synchronous_authentication_consumes_transport_deadline(localhost
 
             return AccessToken("local-test", 9999999999)
 
-    monkeypatch.setattr(requests.Session, "request", record)
+    monkeypatch.setattr(aiohttp.ClientSession, "request", record)
     evaluator = SynchronousDecisionEvaluator(
         result_key="status",
         model_config={"type": "decision", "azure_endpoint": endpoint, "azure_deployment": "Decision-1"},
@@ -155,18 +156,21 @@ def test_public_synchronous_authentication_consumes_transport_deadline(localhost
     assert 0 < observed[0] <= 0.075
 
 
-def test_public_synchronous_retries_and_backoff_share_remaining_deadline(localhost, monkeypatch):
+@pytest.mark.parametrize("first_request_delay", [0, 0.16])
+def test_public_synchronous_retries_and_backoff_share_remaining_deadline(localhost, monkeypatch, first_request_delay):
     endpoint, calls, delay, statuses = localhost
     delay[0] = 0.04
     statuses[:] = [429, 429, 200]
     observed = []
-    original = requests.Session.request
+    original = aiohttp.ClientSession.request
 
     def record(session, *args, **kwargs):
-        observed.append(kwargs["timeout"])
+        if not observed:
+            time.sleep(first_request_delay)
+        observed.append(kwargs["timeout"].sock_connect)
         return original(session, *args, **kwargs)
 
-    monkeypatch.setattr(requests.Session, "request", record)
+    monkeypatch.setattr(aiohttp.ClientSession, "request", record)
     evaluator = SynchronousDecisionEvaluator(
         result_key="status",
         model_config={
@@ -175,16 +179,17 @@ def test_public_synchronous_retries_and_backoff_share_remaining_deadline(localho
             "azure_deployment": "Decision-1",
             "api_key": "local-test",
         },
-        timeout=0.2,
+        # Allow scheduling headroom for two responses, but expire before the native 1.6s backoff.
+        timeout=0.8,
         max_retries=3,
     )
     started = time.monotonic()
     with pytest.raises(EvaluationException, match="timed out") as raised:
         evaluator(query="synthetic")
-    assert time.monotonic() - started < 0.4
+    assert time.monotonic() - started < 1.2
     assert len(calls) == len(observed) == 2
     assert 0 < observed[1] <= observed[0] - 0.03
-    assert observed[0] <= 0.2 + 1e-8
+    assert observed[0] <= 0.8 + 1e-8
     assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
 
 
@@ -192,25 +197,20 @@ def test_default_transport_sends_policy_request_and_retries(localhost, monkeypat
     endpoint, calls, _, statuses = localhost
     statuses[:] = [429, 200]
     observed_timeouts = []
-    socket_connect_timeouts = []
-    original = requests.Session.request
-    original_connect = connection.create_connection
-
-    def record_connect(address, timeout=None, *args, **kwargs):
-        socket_connect_timeouts.append(timeout)
-        return original_connect(address, timeout, *args, **kwargs)
+    socket_read_timeouts = []
+    original = aiohttp.ClientSession.request
 
     def record(session, *args, **kwargs):
-        observed_timeouts.append(kwargs["timeout"])
+        observed_timeouts.append(kwargs["timeout"].sock_connect)
+        socket_read_timeouts.append(kwargs["timeout"].sock_read)
         assert "read_timeout" not in kwargs and "connection_timeout" not in kwargs
         return original(session, *args, **kwargs)
 
-    monkeypatch.setattr(requests.Session, "request", record)
-    monkeypatch.setattr(connection, "create_connection", record_connect)
+    monkeypatch.setattr(aiohttp.ClientSession, "request", record)
     result = invoke(endpoint, timeout_seconds=0.5, max_retries=1)
     assert result["usage"] == {"input_tokens": 12, "output_tokens": 4}
     assert observed_timeouts == [0.5, 0.5]
-    assert socket_connect_timeouts == [0.5, 0.5]
+    assert socket_read_timeouts == [0.5, 0.5]
     assert len(calls) == 2 and calls[0]["body"] == calls[1]["body"]
     assert calls[0]["path"] == "/providers/microsoft/v1/systemone"
     assert calls[0]["content_type"] == "application/json"
@@ -267,6 +267,55 @@ def test_default_transport_without_read_override_preserves_scalar_timeout(localh
     assert observed == [0.7]
 
 
+def test_decision_preserves_factory_injected_requests_transport(localhost, monkeypatch):
+    from azure.ai.evaluation._evaluators._common import _model_runners
+
+    endpoint, calls, _, _ = localhost
+    observed = []
+    original = requests.Session.request
+
+    def record(session, *args, **kwargs):
+        observed.append(kwargs["timeout"])
+        assert "read_timeout" not in kwargs
+        return original(session, *args, **kwargs)
+
+    monkeypatch.setattr(requests.Session, "request", record)
+    monkeypatch.setattr(
+        _model_runners,
+        "get_async_http_client",
+        lambda **_: get_async_http_client(transport=AsyncioRequestsTransport()),
+    )
+    assert invoke(endpoint, timeout_seconds=0.7)["usage"] == {"input_tokens": 12, "output_tokens": 4}
+    assert observed == [0.7]
+    assert len(calls) == 1
+
+
+def test_repeated_public_calls_close_async_sessions_on_their_own_loops(localhost, monkeypatch):
+    endpoint, calls, _, _ = localhost
+    closed = []
+    original_close = aiohttp.ClientSession.close
+
+    async def close(session):
+        await original_close(session)
+        closed.append((session, asyncio.get_running_loop()))
+
+    monkeypatch.setattr(aiohttp.ClientSession, "close", close)
+    evaluator = SynchronousDecisionEvaluator(
+        result_key="status",
+        model_config={
+            "type": "decision",
+            "azure_endpoint": endpoint,
+            "azure_deployment": "Decision-1",
+            "api_key": "local-test",
+        },
+    )
+    for _ in range(2):
+        assert evaluator(query="synthetic")["usage"] == {"input_tokens": 12, "output_tokens": 4}
+    assert len(calls) == len(closed) == 2
+    assert all(session.closed and loop.is_closed() for session, loop in closed)
+    assert closed[0][1] is not closed[1][1]
+
+
 def test_default_transport_cancellation_interrupts_awaiting_a_real_request(localhost):
     endpoint, calls, delay, _ = localhost
     delay[0] = 0.5
@@ -292,3 +341,120 @@ def test_default_transport_cancellation_interrupts_awaiting_a_real_request(local
 
     asyncio.run(request())
     assert len(calls) == 1
+
+
+@pytest.fixture
+def trickling_endpoint():
+    sent = []
+    disconnected = threading.Event()
+    disconnected_at = []
+    payload = json.dumps(
+        {
+            "model": "native-decision",
+            "answers": {"status": {"type": "noul", "noul": 0.9}},
+            "usage": {"input_tokens": 12, "output_tokens": 4},
+            "padding": "x" * 160,
+        }
+    ).encode()
+
+    class Handler(BaseHTTPRequestHandler):
+        def log_message(self, *_):
+            pass
+
+        def do_POST(self):
+            self.rfile.read(int(self.headers["Content-Length"]))
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(payload)))
+            self.end_headers()
+            for offset in range(0, len(payload), 4):
+                try:
+                    self.wfile.write(payload[offset : offset + 4])
+                    self.wfile.flush()
+                    sent.append(len(payload[offset : offset + 4]))
+                except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
+                    disconnected_at.append(time.monotonic())
+                    disconnected.set()
+                    break
+                time.sleep(0.03)
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    thread = threading.Thread(target=server.serve_forever)
+    thread.start()
+    try:
+        yield f"http://127.0.0.1:{server.server_port}", sent, disconnected, disconnected_at, len(payload)
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join()
+
+
+@pytest.mark.parametrize("batch", [False, True], ids=["public_sync", "batch"])
+@pytest.mark.parametrize("cancel", [False, True], ids=["deadline", "cancellation"])
+def test_trickling_body_is_stopped_by_overall_deadline_or_cancellation(trickling_endpoint, monkeypatch, batch, cancel):
+    import pandas as pd
+
+    from azure.ai.evaluation._evaluate._batch_run import RunSubmitterClient
+
+    endpoint, sent, disconnected, disconnected_at, length = trickling_endpoint
+    closed_sessions = []
+    original_close = aiohttp.ClientSession.close
+
+    async def close(session):
+        await original_close(session)
+        closed_sessions.append(session)
+
+    monkeypatch.setattr(aiohttp.ClientSession, "close", close)
+    cancelled = threading.Event()
+    evaluator = SynchronousDecisionEvaluator(
+        result_key="status",
+        model_config={
+            "type": "decision",
+            "azure_endpoint": endpoint,
+            "azure_deployment": "Decision-1",
+            "api_key": "local-test",
+        },
+        timeout=3 if cancel else 0.2,
+        cancellation_requested=cancelled.is_set if cancel else None,
+        max_retries=0,
+    )
+    client = RunSubmitterClient() if batch else None
+    timer = threading.Timer(0.2, cancelled.set) if cancel else None
+    try:
+        if timer:
+            timer.start()
+        started = time.monotonic()
+        if client:
+            run = client.run(
+                evaluator,
+                pd.DataFrame([{"query": "synthetic"}]),
+                evaluator_name="judge",
+                column_mapping={"query": "${data.query}"},
+            )
+            summary = client.get_run_summary(run)
+            assert summary["failed_lines"] == 1
+            assert summary["completed_lines"] == 0
+        else:
+            with pytest.raises(EvaluationException, match="cancelled" if cancel else "timed out") as raised:
+                evaluator(query="synthetic")
+            assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
+        elapsed = time.monotonic() - started
+        # The existing batch engine polls run completion every second; the HTTP read must stop sooner.
+        assert elapsed < (1.5 if batch else 0.8)
+        assert 0 < sum(sent) < length
+        assert disconnected.wait(0.5), "The server must observe the HTTP body read stopping."
+        assert disconnected_at[0] - started < 0.8
+        assert len(closed_sessions) == 1 and closed_sessions[0].closed
+        stopped_at = sum(sent)
+        time.sleep(0.09)
+        assert sum(sent) == stopped_at < length
+        print(
+            f"batch={batch} cancel={cancel}: returned={elapsed:.3f}s disconnected="
+            f"{disconnected_at[0] - started:.3f}s bytes={stopped_at}/{length}"
+        )
+    finally:
+        if timer:
+            timer.cancel()
+            timer.join()
+        if client:
+            client._thread_pool.shutdown(wait=True)

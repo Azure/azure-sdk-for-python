@@ -7,17 +7,19 @@
 import asyncio
 import hashlib
 import json
+import math
 import threading
 from concurrent.futures import ThreadPoolExecutor
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
+from openai.types.chat import ChatCompletion
 from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport, HttpResponse
 from azure.core.exceptions import ServiceRequestError
 
-from azure.ai.evaluation import FluencyEvaluator
+from azure.ai.evaluation import CoherenceEvaluator, FluencyEvaluator
 from azure.ai.evaluation._evaluators._common import EvaluatorBase, ModelEvaluatorBase, PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common import _model_runners
 from azure.ai.evaluation._evaluators._common._decision_strategy import (
@@ -31,7 +33,7 @@ from azure.ai.evaluation._evaluators._common._model_runners import (
     validate_noul_answer,
     validate_score_answer,
 )
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorTarget, EvaluationException
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 pytestmark = pytest.mark.unittest
 
@@ -114,7 +116,7 @@ class FakeClient:
 @pytest.fixture
 def client(monkeypatch):
     fake = FakeClient()
-    monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: fake)
+    monkeypatch.setattr(_model_runners, "get_async_http_client", lambda **_: fake)
     return fake
 
 
@@ -223,13 +225,11 @@ class TestDecisionModelRunnerConfiguration:
         credential = Mock()
         if authentication != "key":
             config.pop("api_key")
-        with patch.object(DecisionModelRunner, "_get_default_token", new_callable=AsyncMock) as default_token:
-            with pytest.raises(EvaluationException, match="HTTPS") as raised:
-                DecisionModelRunner(config, credential if authentication == "credential" else None)
+        with pytest.raises(EvaluationException, match="HTTPS") as raised:
+            DecisionModelRunner(config, credential if authentication == "credential" else None)
         assert raised.value.blame == ErrorBlame.USER_ERROR
         assert endpoint not in str(raised.value)
         credential.get_token.assert_not_called()
-        default_token.assert_not_called()
         assert not client.calls
 
     def test_binary_probability_threshold(self):
@@ -238,8 +238,37 @@ class TestDecisionModelRunnerConfiguration:
         assert runner.probability_threshold == 0.7
 
     def test_api_key_wins_over_credential(self):
-        runner = DecisionModelRunner(DECISION_CONFIG, credential=Mock())
+        class IgnoredCredential:
+            @property
+            def get_token(self):
+                raise AssertionError("Ignored credential must not be inspected.")
+
+        runner = DecisionModelRunner(DECISION_CONFIG, credential=IgnoredCredential())
         assert runner._credential is None and runner._api_key == DECISION_CONFIG["api_key"]
+
+    @pytest.mark.parametrize(
+        "credential", [None, object(), "token-secret", {"get_token": "secret"}, SimpleNamespace(get_token=3)]
+    )
+    @pytest.mark.parametrize("in_config", [False, True])
+    def test_missing_or_invalid_explicit_auth_is_rejected_at_construction(self, client, credential, in_config):
+        config = {key: value for key, value in DECISION_CONFIG.items() if key != "api_key"}
+        if in_config:
+            config["credential"] = credential
+        with pytest.raises(EvaluationException, match="callable 'get_token'") as raised:
+            DecisionModelRunner(config, None if in_config else credential)
+        assert raised.value.blame == ErrorBlame.USER_ERROR
+        assert raised.value.category == ErrorCategory.INVALID_VALUE
+        assert raised.value.target == ErrorTarget.EVALUATE
+        assert "token-secret" not in str(raised.value)
+        assert not client.calls
+
+    def test_constructor_credential_takes_precedence_without_identity_fallback(self):
+        config = {key: value for key, value in DECISION_CONFIG.items() if key != "api_key"}
+        configured = Mock()
+        supplied = Mock()
+        assert DecisionModelRunner({**config, "credential": configured}, supplied)._credential is supplied
+        with pytest.raises(EvaluationException, match="callable 'get_token'"):
+            DecisionModelRunner({**config, "credential": configured}, object())
 
 
 class TestDecisionModelRunnerRequests:
@@ -311,14 +340,12 @@ class TestDecisionModelRunnerRequests:
                 return Response(request, status if self.calls == 1 else 200)
 
         transport = Transport()
-        monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: AsyncHttpPipeline(transport=transport))
+        monkeypatch.setattr(_model_runners, "get_async_http_client", lambda **_: AsyncHttpPipeline(transport=transport))
         result = run(DecisionModelRunner(DECISION_CONFIG))
         assert transport.calls == 2
         assert result["model"] == "microsoft-decision-1"
 
-    def test_default_credential_token_acquisition_runs_off_event_loop(self, client):
-        from azure.ai.evaluation._legacy._common._async_token_provider import AsyncAzureTokenProvider
-
+    def test_explicit_sync_credential_token_acquisition_runs_off_event_loop(self, client):
         client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
         loop_thread = threading.get_ident()
         token_threads = []
@@ -329,15 +356,12 @@ class TestDecisionModelRunnerRequests:
 
         credential = Mock(get_token=get_token)
         config = {key: value for key, value in DECISION_CONFIG.items() if key != "api_key"}
-        with patch.object(AsyncAzureTokenProvider, "_initialize_async", new=AsyncMock(return_value=credential)):
-            run(DecisionModelRunner(config))
+        run(DecisionModelRunner(config, credential))
         assert token_threads and all(token_thread != loop_thread for token_thread in token_threads)
-        credential.close.assert_called_once_with()
+        credential.close.assert_not_called()
         assert client.calls[0]["headers"]["Authorization"] == "Bearer default-token"
 
-    def test_default_credential_does_not_block_request_timeout(self, client):
-        from azure.ai.evaluation._legacy._common._async_token_provider import AsyncAzureTokenProvider
-
+    def test_explicit_sync_credential_does_not_block_request_timeout(self, client):
         release = threading.Event()
 
         def get_token(*scopes, **kwargs):
@@ -350,14 +374,13 @@ class TestDecisionModelRunnerRequests:
         async def request():
             try:
                 with pytest.raises(EvaluationException, match="timed out"):
-                    await DecisionModelRunner(config)(state={}, questions=QUESTIONS, timeout=0.02)
+                    await DecisionModelRunner(config, credential)(state={}, questions=QUESTIONS, timeout=0.02)
             finally:
                 release.set()
 
-        with patch.object(AsyncAzureTokenProvider, "_initialize_async", new=AsyncMock(return_value=credential)):
-            asyncio.run(request())
+        asyncio.run(request())
         assert not client.calls
-        credential.close.assert_called_once_with()
+        credential.close.assert_not_called()
 
     @pytest.mark.parametrize(
         "status, blame",
@@ -382,7 +405,7 @@ class TestDecisionModelRunnerRequests:
             async def post(self, *_, **__):
                 raise ConnectionError("https://example.services.ai.azure.com test-key-value")
 
-        monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: Broken())
+        monkeypatch.setattr(_model_runners, "get_async_http_client", lambda **_: Broken())
         with pytest.raises(EvaluationException) as raised:
             run(DecisionModelRunner(DECISION_CONFIG))
         assert "test-key-value" not in str(raised.value) and "example.services" not in str(raised.value)
@@ -440,11 +463,35 @@ class TestAnswerValidation:
             with pytest.raises(ValueError):
                 validate_noul_answer({"type": "noul", "noul": bad})
 
-    def test_score_fields_do_not_require_consistency_checks(self):
-        levels = [0.1, 0.2, 0.3, 0.4, 0.5]
+    def test_score_mean_does_not_require_distribution_consistency(self):
+        levels = [0.1, 0.2, 0.3, 0.2, 0.2]
         answer = score_answer(levels)
         answer["score"] = 0
         assert validate_score_answer(answer, 5) == levels
+
+    def test_score_accepts_rounded_distribution_without_normalizing(self):
+        levels = [0.333333, 0.333333, 0.333334]
+        assert validate_score_answer(score_answer(levels), 3) == levels
+        levels = [0.3333333] * 3
+        assert validate_score_answer(score_answer(levels), 3) == levels
+
+    @pytest.mark.parametrize("levels", [[0] * 5, [0.1] * 5, [0.3] * 5])
+    def test_score_rejects_nonunit_distribution(self, levels):
+        with pytest.raises(ValueError, match="sum to one"):
+            validate_score_answer(score_answer(levels), 5)
+
+    @pytest.mark.parametrize("direction", [-1, 1])
+    @pytest.mark.parametrize("inside", [False, True])
+    def test_score_sum_tolerance_boundary(self, direction, inside):
+        boundary = 1 + direction * 1e-6
+        total = math.nextafter(boundary, 1.0 if inside else direction * math.inf)
+        levels = [0.5, total - 0.5]
+        assert math.fsum(levels) == total
+        if inside:
+            assert validate_score_answer(score_answer(levels), 2) == levels
+        else:
+            with pytest.raises(ValueError, match="sum to one"):
+                validate_score_answer(score_answer(levels), 2)
 
     @pytest.mark.parametrize(
         "mutate",
@@ -472,6 +519,21 @@ class ProbeModelEvaluator(ModelEvaluatorBase):
 
 
 class TestSharedBaseSelection:
+    def test_common_exports_match_existing_private_imports(self):
+        from azure.ai.evaluation._evaluators import _common
+        from azure.ai.evaluation._evaluators._common._prompty_strategy import PromptyEvaluationStrategy
+
+        for name, implementation in (
+            ("DecisionModelRunner", DecisionModelRunner),
+            ("PromptyModelRunner", PromptyModelRunner),
+            ("DecisionEvaluationStrategy", DecisionEvaluationStrategy),
+            ("PromptyEvaluationStrategy", PromptyEvaluationStrategy),
+            ("BinaryScoring", BinaryScoring),
+            ("LikertScoring", LikertScoring),
+        ):
+            assert getattr(_common, name) is implementation
+            assert name in _common.__all__
+
     def test_hierarchy(self):
         assert issubclass(ModelEvaluatorBase, EvaluatorBase)
         assert issubclass(PromptyEvaluatorBase, ModelEvaluatorBase)
@@ -569,6 +631,88 @@ class TestSharedBaseSelection:
         assert evaluator._get_token_metadata({"input_token_count": 3})["prompt_tokens"] == 3
         assert evaluator._return_not_applicable_result("why", 3)["fluency_status"] == "skipped"
 
+    def test_bundled_fluency_public_call_uses_legacy_prompty_parsing(self):
+        flow = AsyncMock(
+            return_value={
+                "llm_output": "<S1>Clear prose</S1><S2>4</S2>",
+                "input_token_count": 12,
+                "output_token_count": 3,
+                "total_token_count": 15,
+                "model_id": "chat-model",
+            }
+        )
+        with patch.object(_model_runners.AsyncPrompty, "load", return_value=flow):
+            evaluator = FluencyEvaluator(CHAT_CONFIG)
+        result = evaluator(response="A clear sentence.")
+        assert result["fluency"] == 4
+        assert result["fluency_reason"] == "Clear prose"
+        assert result["fluency_result"] == "pass"
+        assert result["fluency_properties"]["model"] == "chat-model"
+        assert result["fluency_properties"]["prompt_tokens"] == 12
+        flow.assert_awaited_once_with(timeout=600, response="A clear sentence.")
+
+    @pytest.mark.parametrize(
+        "evaluator_type,metric", [(FluencyEvaluator, "fluency"), (CoherenceEvaluator, "coherence")]
+    )
+    @pytest.mark.parametrize("multi_turn", [False, True])
+    def test_bundled_prompty_public_call_loads_real_template(self, evaluator_type, metric, multi_turn):
+        completion = ChatCompletion(
+            id="offline-completion",
+            created=0,
+            object="chat.completion",
+            model="offline-chat-model",
+            choices=[
+                {
+                    "index": 0,
+                    "finish_reason": "stop",
+                    "message": {
+                        "role": "assistant",
+                        "content": json.dumps({"reason": "Clear prose", "score": 4, "status": "completed"}),
+                    },
+                }
+            ],
+            usage={"prompt_tokens": 12, "completion_tokens": 3, "total_tokens": 15},
+        )
+
+        async def send(*, api_client, params, timeout):
+            await api_client.close()
+            assert timeout == 600
+            assert params["response_format"] == {"type": "json_object"}
+            assert params["messages"]
+            assert any("A clear sentence." in str(message["content"]) for message in params["messages"])
+            return completion
+
+        with patch.object(_model_runners.AsyncPrompty, "_send_with_retries", side_effect=send) as request:
+            evaluator = evaluator_type(CHAT_CONFIG)
+            assert evaluator._flow.path.is_file()
+            assert evaluator._flow.path.name == f"{metric}.prompty"
+            if multi_turn:
+                result = evaluator(
+                    conversation={
+                        "messages": [
+                            {"role": "user", "content": "Explain clearly."},
+                            {"role": "assistant", "content": "A clear sentence."},
+                            {"role": "user", "content": "Explain again."},
+                            {"role": "assistant", "content": "A clear sentence."},
+                        ]
+                    }
+                )
+            else:
+                inputs = {"response": "A clear sentence."}
+                if metric == "coherence":
+                    inputs["query"] = "Explain clearly."
+                result = evaluator(**inputs)
+        assert result[metric] == 4
+        assert request.await_count == (2 if multi_turn else 1)
+        if multi_turn:
+            assert result["evaluation_per_turn"][metric] == [4, 4]
+            assert result["evaluation_per_turn"][f"{metric}_reason"] == ["Clear prose"] * 2
+        else:
+            assert result[f"{metric}_reason"] == "Clear prose"
+            assert result[f"{metric}_result"] == "pass"
+            assert result[f"{metric}_properties"]["model"] == "offline-chat-model"
+            assert result[f"{metric}_properties"]["prompt_tokens"] == 12
+
 
 def completion_payload(probability, status=0.95):
     return decision_payload(status, {"task_completion": {"type": "noul", "noul": probability}})
@@ -607,6 +751,14 @@ class TestSharedDecisionStrategy:
         strategy = strategy_with(completion_payload(probability), BinaryScoring(0.6), key="task_completion")
         assert asyncio.run(strategy.evaluate({}))["task_completion"] == score
 
+    def test_standalone_binary_result_does_not_use_score_threshold(self):
+        strategy = strategy_with(completion_payload(0.1), BinaryScoring(0.6), key="task_completion")
+        strategy.threshold = 0
+        result = asyncio.run(strategy.evaluate({}))
+        assert result["task_completion"] == 0
+        assert result["task_completion_threshold"] == 0
+        assert result["task_completion_passed"] is False
+
     @pytest.mark.parametrize("minimum, score", [(0, 2.0), (1, 3.0)])
     def test_likert_scoring_offsets_the_level_by_the_scale_minimum(self, minimum, score):
         strategy = strategy_with(level_payload(2), LikertScoring(5, minimum=minimum))
@@ -622,6 +774,46 @@ class TestSharedDecisionStrategy:
         with pytest.raises(EvaluationException) as raised:
             asyncio.run(strategy_with(payload, LikertScoring(5)).evaluate({}))
         assert raised.value.target == ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
+
+    @pytest.mark.parametrize("levels", [[0] * 5, [0.1] * 5, [0.3] * 5])
+    @pytest.mark.parametrize("minimum", [0, 1])
+    def test_invalid_distribution_is_system_error_before_argmax(self, levels, minimum):
+        payload = decision_payload(0.95, {"tool_call_accuracy": score_answer(levels)})
+        with pytest.raises(EvaluationException, match="sum to one") as raised:
+            asyncio.run(strategy_with(payload, LikertScoring(5, minimum=minimum)).evaluate({}))
+        assert raised.value.blame == ErrorBlame.SYSTEM_ERROR
+        assert raised.value.category == ErrorCategory.FAILED_EXECUTION
+        assert raised.value.target == ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
+        assert raised.value.properties["total_tokens"] == 123
+        assert raised.value.properties["model"] == "microsoft-decision-1"
+
+    def test_public_call_rejects_invalid_distribution_with_evaluation_system_error(self, client):
+        class ScoredEvaluator(ModelEvaluatorBase):
+            _supports_decision_models = True
+
+            def _derive_singleton_inputs(self):
+                return [["query", "response"]]
+
+            async def _do_eval(self, eval_input):
+                return await DecisionEvaluationStrategy(
+                    self._decision_model_runner,
+                    result_key="tool_call_accuracy",
+                    error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+                    questions=QUESTIONS,
+                    scoring=LikertScoring(5),
+                    threshold=3,
+                    timeout=self._LLM_CALL_TIMEOUT,
+                ).evaluate(eval_input)
+
+        payload = decision_payload(0.95, {"tool_call_accuracy": score_answer([0.3] * 5)})
+        client.response = FakeResponse(body=json.dumps(payload).encode())
+        evaluator = ScoredEvaluator(result_key="tool_call_accuracy", model_config=DECISION_CONFIG)
+        with pytest.raises(EvaluationException, match="sum to one") as raised:
+            evaluator(query="synthetic", response="synthetic")
+        assert raised.value.blame == ErrorBlame.SYSTEM_ERROR
+        assert raised.value.category == ErrorCategory.FAILED_EXECUTION
+        assert raised.value.target == ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
+        assert raised.value.properties["total_tokens"] == 123
 
     def test_extra_properties_are_added_with_the_decision_provenance(self):
         strategy = strategy_with(
@@ -698,7 +890,7 @@ class TestSharedDecisionStrategy:
             payload["answers"]["status"]
         )
 
-    def test_successful_properties_preserve_common_metadata_shape(self):
+    def test_successful_properties_only_contain_decision_metadata(self):
         properties = asyncio.run(strategy_with(level_payload(4), LikertScoring(5)).evaluate({}))[
             "tool_call_accuracy_properties"
         ]
@@ -707,21 +899,119 @@ class TestSharedDecisionStrategy:
             "prompt_tokens",
             "completion_tokens",
             "total_tokens",
-            "finish_reason",
             "model",
-            "sample_input",
-            "sample_output",
         }
-        assert {key: value for key, value in properties.items() if key != "decision_model"} == (
-            ModelEvaluatorBase._get_token_metadata(
-                {
-                    "input_token_count": 120,
-                    "output_token_count": 3,
-                    "total_token_count": 123,
-                    "model_id": "microsoft-decision-1",
-                }
-            )
+        assert {key: value for key, value in properties.items() if key != "decision_model"} == {
+            "prompt_tokens": 120,
+            "completion_tokens": 3,
+            "total_tokens": 123,
+            "model": "microsoft-decision-1",
+        }
+
+    def test_likert_provenance_omits_legend_without_mutating_shared_response(self):
+        payload = level_payload(4)
+        answer = payload["answers"]["tool_call_accuracy"]
+        answer["legend"] = {str(index): "Repeated rubric description " * 20 for index in range(5)}
+        strategy = strategy_with(payload, LikertScoring(5))
+        result = asyncio.run(strategy.evaluate({}))
+        native = result["tool_call_accuracy_properties"]["decision_model"]["native_answer"]
+        assert native == {name: value for name, value in answer.items() if name != "legend"}
+        assert "legend" in answer
+        assert result["tool_call_accuracy"] == 5
+        assert result["tool_call_accuracy_properties"]["total_tokens"] == 123
+
+
+class TestDecisionConversationUsage:
+    def test_public_split_conversation_sums_native_usage_and_retains_model(self, client):
+        import logging
+
+        from azure.ai.evaluation._evaluate._evaluate import _convert_single_row_to_aoai_format
+
+        class SplitEvaluator(ModelEvaluatorBase):
+            _supports_decision_models = True
+
+            def _derive_singleton_inputs(self):
+                return [["query", "response"]]
+
+            async def _do_eval(self, eval_input):
+                return await DecisionEvaluationStrategy(
+                    self._decision_model_runner,
+                    result_key="tool_call_accuracy",
+                    error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+                    questions=QUESTIONS,
+                    scoring=LikertScoring(5),
+                    threshold=3,
+                    timeout=self._LLM_CALL_TIMEOUT,
+                ).evaluate(eval_input)
+
+        payloads = [level_payload(0), level_payload(4)]
+        payloads[0]["usage"] = {"input_tokens": 12, "output_tokens": 3}
+        payloads[1]["usage"] = {"input_tokens": 34, "output_tokens": 5}
+        client.post = AsyncMock(side_effect=[FakeResponse(body=json.dumps(payload).encode()) for payload in payloads])
+        evaluator = SplitEvaluator(result_key="tool_call_accuracy", model_config=DECISION_CONFIG)
+        result = evaluator(
+            conversation={
+                "messages": [
+                    {"role": "user", "content": "first"},
+                    {"role": "assistant", "content": "one"},
+                    {"role": "user", "content": "second"},
+                    {"role": "assistant", "content": "two"},
+                ]
+            }
         )
+        assert client.post.await_count == 2
+        assert result["tool_call_accuracy"] == 3
+        assert result["tool_call_accuracy_prompt_tokens"] == 46
+        assert result["tool_call_accuracy_completion_tokens"] == 8
+        assert result["tool_call_accuracy_total_tokens"] == 54
+        assert result["tool_call_accuracy_model"] == "microsoft-decision-1"
+        assert result["evaluation_per_turn"]["tool_call_accuracy_prompt_tokens"] == [12, 34]
+        assert result["evaluation_per_turn"]["tool_call_accuracy_model"] == ["microsoft-decision-1"] * 2
+        assert [json.loads(call.kwargs["content"])["state"]["query"] for call in client.post.await_args_list] == [
+            "first",
+            "second",
+        ]
+        converted = _convert_single_row_to_aoai_format(
+            {f"outputs.judge.{key}": value for key, value in result.items()},
+            0,
+            None,
+            None,
+            0,
+            {"judge": {"metrics": ["tool_call_accuracy"], "type": "azure_ai_evaluator"}},
+            None,
+            logging.getLogger("test"),
+        )
+        persisted = converted["results"][0]
+        assert persisted["sample"]["usage"] == {"prompt_tokens": 46, "completion_tokens": 8, "total_tokens": 54}
+        assert persisted["sample"]["model"] == "microsoft-decision-1"
+
+    @pytest.mark.parametrize("models", [("first", "second"), ("first", None)])
+    def test_different_or_unknown_models_remain_per_turn(self, models):
+        evaluator = ProbeModelEvaluator(result_key="probe", model_config=DECISION_CONFIG)
+        turns = [{"probe": 1, "probe_model": model} for model in models]
+        result = evaluator._aggregate_results(turns)
+        assert "probe_model" not in result
+        assert result["evaluation_per_turn"]["probe_model"] == list(models)
+        assert "probe_prompt_tokens" not in result
+
+    def test_only_known_usage_is_summed_without_fabricating_totals(self):
+        evaluator = ProbeModelEvaluator(result_key="probe", model_config=DECISION_CONFIG)
+        result = evaluator._aggregate_results(
+            [{"probe": 1, "probe_prompt_tokens": 0}, {"probe": 5, "probe_completion_tokens": 4}]
+        )
+        assert result["probe"] == 3
+        assert result["probe_prompt_tokens"] == 0
+        assert result["probe_completion_tokens"] == 4
+        assert "probe_total_tokens" not in result
+
+    def test_chat_aggregation_is_unchanged(self):
+        with patch.object(_model_runners.AsyncPrompty, "load"):
+            evaluator = ProbeModelEvaluator(result_key="probe", prompty_file="probe.prompty", model_config=CHAT_CONFIG)
+        turns = [
+            {"probe": 1, "probe_prompt_tokens": 12, "probe_model": "chat"},
+            {"probe": 5, "probe_prompt_tokens": 34, "probe_model": "chat"},
+        ]
+        assert evaluator._aggregate_results(turns) == EvaluatorBase._aggregate_results(evaluator, turns)
 
 
 class TestDecisionExecutionControls:
@@ -930,7 +1220,7 @@ class TestDecisionExecutionControls:
                 finally:
                     cleaned_up.append(True)
 
-        monkeypatch.setattr(_model_runners, "get_async_http_client", WaitingClient)
+        monkeypatch.setattr(_model_runners, "get_async_http_client", lambda **_: WaitingClient())
 
         async def request():
             cancelled = False
@@ -1013,7 +1303,7 @@ class TestDecisionExecutionControls:
         assert cleaned_up == [True] and not client.calls
 
     @pytest.mark.parametrize("termination", ["timeout", "cancelled"])
-    def test_queued_default_auth_does_not_create_an_unawaited_coroutine(self, client, termination):
+    def test_queued_explicit_auth_is_not_started_after_timeout_or_cancellation(self, client, termination):
         config = {key: value for key, value in DECISION_CONFIG.items() if key != "api_key"}
         entered = threading.Event()
         release = threading.Event()
@@ -1032,15 +1322,16 @@ class TestDecisionExecutionControls:
                 while not entered.is_set():
                     await asyncio.sleep(0)
                 handle = loop.call_later(0.01, cancel.set)
-                with patch.object(DecisionModelRunner, "_get_default_token", new_callable=AsyncMock) as get_token:
-                    with pytest.raises(EvaluationException) as raised:
-                        await DecisionModelRunner(
-                            config, cancellation_requested=cancel.is_set if termination == "cancelled" else None
-                        )(state={}, questions=QUESTIONS, timeout=0.03 if termination == "timeout" else 1)
-                    assert raised.value.blame == (
-                        ErrorBlame.SYSTEM_ERROR if termination == "timeout" else ErrorBlame.USER_ERROR
-                    )
-                    get_token.assert_not_called()
+                credential = Mock(get_token=Mock(return_value=SimpleNamespace(token="unused")))
+                with pytest.raises(EvaluationException) as raised:
+                    await DecisionModelRunner(
+                        config, credential, cancellation_requested=cancel.is_set if termination == "cancelled" else None
+                    )(state={}, questions=QUESTIONS, timeout=0.03 if termination == "timeout" else 1)
+                assert raised.value.blame == (
+                    ErrorBlame.SYSTEM_ERROR if termination == "timeout" else ErrorBlame.USER_ERROR
+                )
+                credential.get_token.assert_not_called()
+                credential.close.assert_not_called()
             finally:
                 if handle is not None:
                     handle.cancel()
@@ -1090,7 +1381,7 @@ class TestDecisionExecutionControls:
                     cleaned_up.append(True)
 
         transport = Transport()
-        monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: AsyncHttpPipeline(transport=transport))
+        monkeypatch.setattr(_model_runners, "get_async_http_client", lambda **_: AsyncHttpPipeline(transport=transport))
 
         async def request():
             nonlocal cancelled
@@ -1140,7 +1431,7 @@ class TestDecisionExecutionControls:
                 raise ServiceRequestError("transport-secret")
 
         transport = Transport()
-        monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: AsyncHttpPipeline(transport=transport))
+        monkeypatch.setattr(_model_runners, "get_async_http_client", lambda **_: AsyncHttpPipeline(transport=transport))
         with pytest.raises(EvaluationException) as raised:
             run(DecisionModelRunner(DECISION_CONFIG, max_retries=max_retries))
         expected = max_retries + 1
@@ -1177,6 +1468,6 @@ class TestDecisionExecutionControls:
                 return Response(request)
 
         transport = Transport()
-        monkeypatch.setattr(_model_runners, "get_async_http_client", lambda: AsyncHttpPipeline(transport=transport))
+        monkeypatch.setattr(_model_runners, "get_async_http_client", lambda **_: AsyncHttpPipeline(transport=transport))
         assert run(DecisionModelRunner(DECISION_CONFIG))["usage"] == {"input_tokens": 120, "output_tokens": 3}
         assert transport.calls == 1
