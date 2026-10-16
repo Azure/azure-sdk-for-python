@@ -387,9 +387,9 @@ def parent_context_sampling(
     parent_span = get_current_span(parent_context)
     parent_span_context = parent_span.get_span_context()
     if parent_span_context.is_valid and not parent_span_context.is_remote:
-        new_attributes = {} if attributes is None else dict(attributes)
         if not parent_span_context.trace_flags.sampled:
             # Parent was dropped, drop this child too.
+            new_attributes = {} if attributes is None else dict(attributes)
             new_attributes[_SAMPLE_RATE_KEY] = 0.0
             return SamplingResult(
                 Decision.DROP,
@@ -401,13 +401,19 @@ def parent_context_sampling(
         parent_sample_rate = parent_attributes.get(_SAMPLE_RATE_KEY)
         if parent_sample_rate is not None:
             # Honor the parent's sampling rate when it was rate limited.
+            new_attributes = {} if attributes is None else dict(attributes)
             new_attributes[_SAMPLE_RATE_KEY] = parent_sample_rate
+            return SamplingResult(
+                Decision.RECORD_AND_SAMPLE,
+                new_attributes,
+                _get_parent_trace_state(parent_context),
+            )
 
         # A missing rate attribute represents a parent sampled at 100%.
-        # In either case, do not rate limit a child of a sampled local parent.
+        # Do not rate limit a child of a sampled local parent or mutate its attributes.
         return SamplingResult(
             Decision.RECORD_AND_SAMPLE,
-            new_attributes,
+            attributes,
             _get_parent_trace_state(parent_context),
         )
     return None
