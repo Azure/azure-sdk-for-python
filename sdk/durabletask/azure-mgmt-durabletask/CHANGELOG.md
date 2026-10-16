@@ -36,7 +36,7 @@
   - Added enum `TransparentDataEncryptionKeySource`
   - Added model `TransparentDataEncryptionProperties`
   - Added model `UserAssignedIdentity`
-  - Model `SchedulersOperations` added method `restart`
+  - Operation group `SchedulersOperations` added method `restart`
   - Added operation group `DetectorsOperations`
   - Added operation group `FailoverInstancesOperations`
   - Added operation group `TaskQueuesOperations`
