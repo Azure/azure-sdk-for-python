@@ -36,9 +36,7 @@ def register_sanitizers():
     ):
         value = os.environ.get(variable)
         if value:
-            add_general_string_sanitizer(
-                target=value, value="00000000-0000-0000-0000-000000000000"
-            )
+            add_general_string_sanitizer(target=value, value="00000000-0000-0000-0000-000000000000")
 
     add_general_regex_sanitizer(regex=POLLING_QUERY_SECRET_REGEX, value="Sanitized")
     for header in TRACE_HEADERS:

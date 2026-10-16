@@ -1,10 +1,11 @@
 # Release History
 
-## 1.0.0 (2026-10-10)
+## 1.0.0 (2026-10-16)
 
-### Other Changes
+### Breaking Changes
 
-  - First GA
+  - Method `EdgeActionVersionsOperations.begin_deploy_version_code` changed return type from `AsyncLROPoller[EdgeActionVersionProperties]` to `AsyncLROPoller[EdgeActionVersion]`
+  - Method `EdgeActionVersionsOperations.begin_deploy_version_code` changed return type from `LROPoller[EdgeActionVersionProperties]` to `LROPoller[EdgeActionVersion]`
 
 ## 1.0.0b1 (2026-02-10)
 

@@ -106,6 +106,7 @@ namespace azure.mgmt.edgeactions.aio.operations
             ) -> AsyncLROPoller[EdgeActionExecutionFilter]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_action_name', 'execution_filter']}, api_versions_list=['2026-10-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -213,6 +214,7 @@ namespace azure.mgmt.edgeactions.aio.operations
             ) -> AsyncLROPoller[EdgeActionVersion]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_action_name', 'version']}, api_versions_list=['2026-10-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -231,7 +233,7 @@ namespace azure.mgmt.edgeactions.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncLROPoller[EdgeActionVersionProperties]: ...
+            ) -> AsyncLROPoller[EdgeActionVersion]: ...
 
         @overload
         async def begin_deploy_version_code(
@@ -243,7 +245,7 @@ namespace azure.mgmt.edgeactions.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncLROPoller[EdgeActionVersionProperties]: ...
+            ) -> AsyncLROPoller[EdgeActionVersion]: ...
 
         @overload
         async def begin_deploy_version_code(
@@ -255,9 +257,10 @@ namespace azure.mgmt.edgeactions.aio.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> AsyncLROPoller[EdgeActionVersionProperties]: ...
+            ) -> AsyncLROPoller[EdgeActionVersion]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_action_name', 'version', 'content_type', 'accept']}, api_versions_list=['2026-10-01'])
         async def begin_get_version_code(
                 self, 
                 resource_group_name: str, 
@@ -267,6 +270,7 @@ namespace azure.mgmt.edgeactions.aio.operations
             ) -> AsyncLROPoller[VersionCode]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_action_name', 'version', 'content_type']}, api_versions_list=['2026-10-01'])
         async def begin_swap_default(
                 self, 
                 resource_group_name: str, 
@@ -371,6 +375,7 @@ namespace azure.mgmt.edgeactions.aio.operations
             ) -> AsyncLROPoller[EdgeAction]: ...
 
         @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_action_name']}, api_versions_list=['2026-10-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -850,6 +855,7 @@ namespace azure.mgmt.edgeactions.operations
             ) -> LROPoller[EdgeActionExecutionFilter]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_action_name', 'execution_filter']}, api_versions_list=['2026-10-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -957,6 +963,7 @@ namespace azure.mgmt.edgeactions.operations
             ) -> LROPoller[EdgeActionVersion]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_action_name', 'version']}, api_versions_list=['2026-10-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -975,7 +982,7 @@ namespace azure.mgmt.edgeactions.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> LROPoller[EdgeActionVersionProperties]: ...
+            ) -> LROPoller[EdgeActionVersion]: ...
 
         @overload
         def begin_deploy_version_code(
@@ -987,7 +994,7 @@ namespace azure.mgmt.edgeactions.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> LROPoller[EdgeActionVersionProperties]: ...
+            ) -> LROPoller[EdgeActionVersion]: ...
 
         @overload
         def begin_deploy_version_code(
@@ -999,9 +1006,10 @@ namespace azure.mgmt.edgeactions.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> LROPoller[EdgeActionVersionProperties]: ...
+            ) -> LROPoller[EdgeActionVersion]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_action_name', 'version', 'content_type', 'accept']}, api_versions_list=['2026-10-01'])
         def begin_get_version_code(
                 self, 
                 resource_group_name: str, 
@@ -1011,6 +1019,7 @@ namespace azure.mgmt.edgeactions.operations
             ) -> LROPoller[VersionCode]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_action_name', 'version', 'content_type']}, api_versions_list=['2026-10-01'])
         def begin_swap_default(
                 self, 
                 resource_group_name: str, 
@@ -1115,6 +1124,7 @@ namespace azure.mgmt.edgeactions.operations
             ) -> LROPoller[EdgeAction]: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_action_name']}, api_versions_list=['2026-10-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 

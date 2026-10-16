@@ -676,6 +676,20 @@ class EdgeActionsOperations:  # pylint: disable=docstring-missing-param
 
         return deserialized  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def _create_initial(
         self,
         resource_group_name: str,
@@ -740,11 +754,10 @@ class EdgeActionsOperations:  # pylint: disable=docstring-missing-param
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 201:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -838,6 +851,20 @@ class EdgeActionsOperations:  # pylint: disable=docstring-missing-param
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_action_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def begin_create(
         self,
         resource_group_name: str,
@@ -884,10 +911,16 @@ class EdgeActionsOperations:  # pylint: disable=docstring-missing-param
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
+            response_headers = {}
             response = pipeline_response.http_response
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
             deserialized = _deserialize(_models.EdgeAction, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -992,6 +1025,9 @@ class EdgeActionsOperations:  # pylint: disable=docstring-missing-param
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -1188,6 +1224,11 @@ class EdgeActionsOperations:  # pylint: disable=docstring-missing-param
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={"2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_action_name"]},
+        api_versions_list=["2026-10-01"],
+    )
     def _delete_initial(self, resource_group_name: str, edge_action_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1237,6 +1278,9 @@ class EdgeActionsOperations:  # pylint: disable=docstring-missing-param
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -1248,6 +1292,11 @@ class EdgeActionsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={"2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_action_name"]},
+        api_versions_list=["2026-10-01"],
+    )
     def begin_delete(self, resource_group_name: str, edge_action_name: str, **kwargs: Any) -> LROPoller[None]:
         """Delete a EdgeAction.
 
@@ -1587,6 +1636,21 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
 
         return deserialized  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_action_name",
+                "version",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def _create_initial(
         self,
         resource_group_name: str,
@@ -1653,11 +1717,10 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 201:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -1760,6 +1823,21 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_action_name",
+                "version",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def begin_create(
         self,
         resource_group_name: str,
@@ -1810,10 +1888,16 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
+            response_headers = {}
             response = pipeline_response.http_response
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
             deserialized = _deserialize(_models.EdgeActionVersion, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -1921,6 +2005,9 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -2131,6 +2218,13 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_action_name", "version"]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def _delete_initial(
         self, resource_group_name: str, edge_action_name: str, version: str, **kwargs: Any
     ) -> Iterator[bytes]:
@@ -2183,6 +2277,9 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -2194,6 +2291,13 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": ["api_version", "subscription_id", "resource_group_name", "edge_action_name", "version"]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def begin_delete(
         self, resource_group_name: str, edge_action_name: str, version: str, **kwargs: Any
     ) -> LROPoller[None]:
@@ -2357,6 +2461,21 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
 
         return ItemPaged(get_next, extract_data)
 
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_action_name",
+                "version",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def _deploy_version_code_initial(
         self,
         resource_group_name: str,
@@ -2424,6 +2543,9 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -2444,7 +2566,7 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.EdgeActionVersionProperties]:
+    ) -> LROPoller[_models.EdgeActionVersion]:
         """A long-running resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2459,10 +2581,9 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns EdgeActionVersionProperties. The
-         EdgeActionVersionProperties is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.edgeactions.models.EdgeActionVersionProperties]
+        :return: An instance of LROPoller that returns EdgeActionVersion. The EdgeActionVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeactions.models.EdgeActionVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2476,7 +2597,7 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.EdgeActionVersionProperties]:
+    ) -> LROPoller[_models.EdgeActionVersion]:
         """A long-running resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2491,10 +2612,9 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns EdgeActionVersionProperties. The
-         EdgeActionVersionProperties is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.edgeactions.models.EdgeActionVersionProperties]
+        :return: An instance of LROPoller that returns EdgeActionVersion. The EdgeActionVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeactions.models.EdgeActionVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2508,7 +2628,7 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.EdgeActionVersionProperties]:
+    ) -> LROPoller[_models.EdgeActionVersion]:
         """A long-running resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2523,14 +2643,28 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns EdgeActionVersionProperties. The
-         EdgeActionVersionProperties is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.edgeactions.models.EdgeActionVersionProperties]
+        :return: An instance of LROPoller that returns EdgeActionVersion. The EdgeActionVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeactions.models.EdgeActionVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_action_name",
+                "version",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def begin_deploy_version_code(
         self,
         resource_group_name: str,
@@ -2538,7 +2672,7 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
         version: str,
         body: Union[_models.VersionCode, _types.VersionCode, IO[bytes]],
         **kwargs: Any
-    ) -> LROPoller[_models.EdgeActionVersionProperties]:
+    ) -> LROPoller[_models.EdgeActionVersion]:
         """A long-running resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2552,17 +2686,16 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
          type. Required.
         :type body: ~azure.mgmt.edgeactions.models.VersionCode or
          ~azure.mgmt.edgeactions.types.VersionCode or IO[bytes]
-        :return: An instance of LROPoller that returns EdgeActionVersionProperties. The
-         EdgeActionVersionProperties is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.edgeactions.models.EdgeActionVersionProperties]
+        :return: An instance of LROPoller that returns EdgeActionVersion. The EdgeActionVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.edgeactions.models.EdgeActionVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.EdgeActionVersionProperties] = kwargs.pop("cls", None)
+        cls: ClsType[_models.EdgeActionVersion] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -2583,7 +2716,7 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = _deserialize(_models.EdgeActionVersionProperties, response.json())
+            deserialized = _deserialize(_models.EdgeActionVersion, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -2601,16 +2734,31 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.EdgeActionVersionProperties].from_continuation_token(
+            return LROPoller[_models.EdgeActionVersion].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.EdgeActionVersionProperties](
+        return LROPoller[_models.EdgeActionVersion](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_action_name",
+                "version",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def _get_version_code_initial(
         self, resource_group_name: str, edge_action_name: str, version: str, **kwargs: Any
     ) -> Iterator[bytes]:
@@ -2665,6 +2813,9 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -2676,6 +2827,21 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_action_name",
+                "version",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def begin_get_version_code(
         self, resource_group_name: str, edge_action_name: str, version: str, **kwargs: Any
     ) -> LROPoller[_models.VersionCode]:
@@ -2745,6 +2911,20 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_action_name",
+                "version",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def _swap_default_initial(
         self, resource_group_name: str, edge_action_name: str, version: str, **kwargs: Any
     ) -> Iterator[bytes]:
@@ -2799,6 +2979,9 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -2810,6 +2993,20 @@ class EdgeActionVersionsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_action_name",
+                "version",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def begin_swap_default(
         self, resource_group_name: str, edge_action_name: str, version: str, **kwargs: Any
     ) -> LROPoller[None]:
@@ -2967,6 +3164,21 @@ class EdgeActionExecutionFiltersOperations:  # pylint: disable=docstring-missing
 
         return deserialized  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_action_name",
+                "execution_filter",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def _create_initial(
         self,
         resource_group_name: str,
@@ -3033,11 +3245,10 @@ class EdgeActionExecutionFiltersOperations:  # pylint: disable=docstring-missing
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 201:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -3140,6 +3351,21 @@ class EdgeActionExecutionFiltersOperations:  # pylint: disable=docstring-missing
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_action_name",
+                "execution_filter",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def begin_create(
         self,
         resource_group_name: str,
@@ -3190,10 +3416,16 @@ class EdgeActionExecutionFiltersOperations:  # pylint: disable=docstring-missing
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
+            response_headers = {}
             response = pipeline_response.http_response
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
             deserialized = _deserialize(_models.EdgeActionExecutionFilter, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -3301,6 +3533,9 @@ class EdgeActionExecutionFiltersOperations:  # pylint: disable=docstring-missing
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -3507,6 +3742,19 @@ class EdgeActionExecutionFiltersOperations:  # pylint: disable=docstring-missing
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_action_name",
+                "execution_filter",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def _delete_initial(
         self, resource_group_name: str, edge_action_name: str, execution_filter: str, **kwargs: Any
     ) -> Iterator[bytes]:
@@ -3559,6 +3807,9 @@ class EdgeActionExecutionFiltersOperations:  # pylint: disable=docstring-missing
 
         response_headers = {}
         if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
@@ -3570,6 +3821,19 @@ class EdgeActionExecutionFiltersOperations:  # pylint: disable=docstring-missing
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "edge_action_name",
+                "execution_filter",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
     def begin_delete(
         self, resource_group_name: str, edge_action_name: str, execution_filter: str, **kwargs: Any
     ) -> LROPoller[None]:

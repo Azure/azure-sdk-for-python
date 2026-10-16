@@ -42,9 +42,7 @@ def test_polling_query_redaction_preserves_non_secret_fields(value, expected):
     assert re.sub(POLLING_QUERY_SECRET_REGEX, "Sanitized", value) == expected
 
 
-def test_identity_sanitizers_use_literal_nonempty_values(
-    monkeypatch, sanitizer_configuration
-):
+def test_identity_sanitizers_use_literal_nonempty_values(monkeypatch, sanitizer_configuration):
     for name in (
         "AZURE_SUBSCRIPTION_ID",
         "AZURE_TENANT_ID",
@@ -71,12 +69,8 @@ def test_identity_sanitizers_use_literal_nonempty_values(
     mocks["add_general_string_sanitizer"].assert_called_once_with(
         target="fake.secret+[regex]", value="00000000-0000-0000-0000-000000000000"
     )
-    mocks["add_general_regex_sanitizer"].assert_called_once_with(
-        regex=POLLING_QUERY_SECRET_REGEX, value="Sanitized"
-    )
-    mocks["remove_batch_sanitizers"].assert_called_once_with(
-        ["AZSDK2003", "AZSDK3430", "AZSDK3493"]
-    )
+    mocks["add_general_regex_sanitizer"].assert_called_once_with(regex=POLLING_QUERY_SECRET_REGEX, value="Sanitized")
+    mocks["remove_batch_sanitizers"].assert_called_once_with(["AZSDK2003", "AZSDK3430", "AZSDK3493"])
 
 
 @pytest.fixture
@@ -139,9 +133,7 @@ def local_upstream():
     [False, True],
     ids=["changed-values", "sanitized-polling-url"],
 )
-def test_proxy_redacts_tokens_without_erasing_polling_urls(
-    tmp_path, local_upstream, use_recorded_polling_url
-):
+def test_proxy_redacts_tokens_without_erasing_polling_urls(tmp_path, local_upstream, use_recorded_polling_url):
     upstream_url, handler = local_upstream
     recording_path = tmp_path / "sanitizer-recording.json"
     query = "?api-version=2026-10-01&t=fake-time&c=fake-context&s=fake-signature&h=fake-hash"
@@ -179,9 +171,7 @@ def test_proxy_redacts_tokens_without_erasing_polling_urls(
     assert body["name"] == "test-action"
     assert body["sku"]["name"] == "Standard"
     assert body["id"].endswith("/edgeActions/test-action")
-    response_headers = {
-        key.lower(): value for key, value in entry["ResponseHeaders"].items()
-    }
+    response_headers = {key.lower(): value for key, value in entry["ResponseHeaders"].items()}
     urls = [entry["RequestUri"], body["pollingUrl"]]
     for header in ("location", "azure-asyncoperation", "operation-location"):
         value = response_headers[header]
@@ -206,9 +196,7 @@ def test_proxy_redacts_tokens_without_erasing_polling_urls(
     try:
         if use_recorded_polling_url:
             polling_url = response_headers["azure-asyncoperation"]
-            polling_url = (
-                polling_url[0] if isinstance(polling_url, list) else polling_url
-            )
+            polling_url = polling_url[0] if isinstance(polling_url, list) else polling_url
             playback_query = "?" + urlsplit(polling_url).query
         else:
             playback_query = query.replace("fake-", "different-")
