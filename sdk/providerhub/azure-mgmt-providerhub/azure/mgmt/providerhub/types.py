@@ -16,7 +16,6 @@ if TYPE_CHECKING:
         AdditionalOptionsResourceTypeRegistration,
         AuthenticationScheme,
         AvailabilityZonePolicy,
-        AvailableCheckInManifestEnvironment,
         BlockActionVerb,
         CapacityPolicy,
         CommonApiVersionsMergeMode,
@@ -58,7 +57,6 @@ if TYPE_CHECKING:
         ProvisioningState,
         QuotaPolicy,
         RPaaSResourceDeletionPolicy,
-        Readiness,
         Regionality,
         ResourceAccessPolicy,
         ResourceDeletionPolicy,
@@ -74,7 +72,6 @@ if TYPE_CHECKING:
         RoutingType,
         ServerFailureResponseMessageType,
         ServiceClientOptionsType,
-        ServiceFeatureFlagAction,
         ServiceStatus,
         SignedRequestScope,
         SkipNotifications,
@@ -1055,21 +1052,6 @@ class DeleteDependency(TypedDict, total=False):
     """Linked type."""
 
 
-class DstsConfiguration(TypedDict, total=False):
-    """DstsConfiguration.
-
-    :ivar serviceName: The service name. Required.
-    :vartype serviceName: str
-    :ivar serviceDnsName: This is a URI property.
-    :vartype serviceDnsName: str
-    """
-
-    serviceName: Required[str]
-    """The service name. Required."""
-    serviceDnsName: str
-    """This is a URI property."""
-
-
 class EndpointInformation(TypedDict, total=False):
     """EndpointInformation.
 
@@ -1157,8 +1139,6 @@ class FanoutLinkedNotificationRule(TypedDict, total=False):
     :vartype actions: list[str]
     :ivar endpoints: The endpoints.
     :vartype endpoints: list["ResourceProviderEndpoint"]
-    :ivar dstsConfiguration: The dsts configuration.
-    :vartype dstsConfiguration: "FanoutLinkedNotificationRuleDstsConfiguration"
     """
 
     tokenAuthConfiguration: "TokenAuthConfiguration"
@@ -1167,18 +1147,6 @@ class FanoutLinkedNotificationRule(TypedDict, total=False):
     """The actions."""
     endpoints: list["ResourceProviderEndpoint"]
     """The endpoints."""
-    dstsConfiguration: "FanoutLinkedNotificationRuleDstsConfiguration"
-    """The dsts configuration."""
-
-
-class FanoutLinkedNotificationRuleDstsConfiguration(DstsConfiguration):  # pylint: disable=name-too-long
-    """The dsts configuration.
-
-    :ivar serviceName: The service name. Required.
-    :vartype serviceName: str
-    :ivar serviceDnsName: This is a URI property.
-    :vartype serviceDnsName: str
-    """
 
 
 class FeaturesRule(TypedDict, total=False):
@@ -1206,178 +1174,6 @@ class FilterRule(TypedDict, total=False):
     """The filter query."""
     endpointInformation: list["EndpointInformation"]
     """The endpoint information."""
-
-
-class FrontloadPayload(TypedDict, total=False):
-    """FrontloadPayload.
-
-    :ivar properties: Properties of the frontload payload. Required.
-    :vartype properties: "FrontloadPayloadProperties"
-    """
-
-    properties: Required["FrontloadPayloadProperties"]
-    """Properties of the frontload payload. Required."""
-
-
-class FrontloadPayloadProperties(TypedDict, total=False):
-    """FrontloadPayloadProperties.
-
-    :ivar operationType: The operation type. Required.
-    :vartype operationType: str
-    :ivar providerNamespace: The provider namespace. Required.
-    :vartype providerNamespace: str
-    :ivar frontloadLocation: The frontload location. Required.
-    :vartype frontloadLocation: str
-    :ivar copyFromLocation: The copy from location. Required.
-    :vartype copyFromLocation: str
-    :ivar environmentType: The environment type. Required. Known values are: "NotSpecified",
-     "Canary", "Prod", "All", "Mooncake", and "Fairfax".
-    :vartype environmentType: Union[str, "AvailableCheckInManifestEnvironment"]
-    :ivar serviceFeatureFlag: The service feature flag. Required. Known values are: "DoNotCreate"
-     and "Create".
-    :vartype serviceFeatureFlag: Union[str, "ServiceFeatureFlagAction"]
-    :ivar includeResourceTypes: The resource types to include. Required.
-    :vartype includeResourceTypes: list[str]
-    :ivar excludeResourceTypes: The resource types to exclude. Required.
-    :vartype excludeResourceTypes: list[str]
-    :ivar overrideManifestLevelFields: The manifest level fields to override. Required.
-    :vartype overrideManifestLevelFields: "FrontloadPayloadPropertiesOverrideManifestLevelFields"
-    :ivar overrideEndpointLevelFields: The endpoint level fields to override. Required.
-    :vartype overrideEndpointLevelFields: "FrontloadPayloadPropertiesOverrideEndpointLevelFields"
-    :ivar ignoreFields: The fields to ignore. Required.
-    :vartype ignoreFields: list[str]
-    """
-
-    operationType: Required[str]
-    """The operation type. Required."""
-    providerNamespace: Required[str]
-    """The provider namespace. Required."""
-    frontloadLocation: Required[str]
-    """The frontload location. Required."""
-    copyFromLocation: Required[str]
-    """The copy from location. Required."""
-    environmentType: Required[Union[str, "AvailableCheckInManifestEnvironment"]]
-    """The environment type. Required. Known values are: \"NotSpecified\", \"Canary\", \"Prod\",
-     \"All\", \"Mooncake\", and \"Fairfax\"."""
-    serviceFeatureFlag: Required[Union[str, "ServiceFeatureFlagAction"]]
-    """The service feature flag. Required. Known values are: \"DoNotCreate\" and \"Create\"."""
-    includeResourceTypes: Required[list[str]]
-    """The resource types to include. Required."""
-    excludeResourceTypes: Required[list[str]]
-    """The resource types to exclude. Required."""
-    overrideManifestLevelFields: Required["FrontloadPayloadPropertiesOverrideManifestLevelFields"]
-    """The manifest level fields to override. Required."""
-    overrideEndpointLevelFields: Required["FrontloadPayloadPropertiesOverrideEndpointLevelFields"]
-    """The endpoint level fields to override. Required."""
-    ignoreFields: Required[list[str]]
-    """The fields to ignore. Required."""
-
-
-class ResourceTypeEndpointBase(TypedDict, total=False):
-    """ResourceTypeEndpointBase.
-
-    :ivar enabled: Whether it's enabled. Required.
-    :vartype enabled: bool
-    :ivar apiVersions: The api versions. Required.
-    :vartype apiVersions: list[str]
-    :ivar endpointUri: The endpoint uri. Required.
-    :vartype endpointUri: str
-    :ivar locations: The locations. Required.
-    :vartype locations: list[str]
-    :ivar requiredFeatures: The required features. Required.
-    :vartype requiredFeatures: list[str]
-    :ivar featuresRule: The features rule. Required.
-    :vartype featuresRule: "ResourceTypeEndpointBaseFeaturesRule"
-    :ivar timeout: This is a TimeSpan property. Required.
-    :vartype timeout: str
-    :ivar endpointType: The endpoint type. Required. Known values are: "NotSpecified", "Canary",
-     "Production", and "TestInProduction".
-    :vartype endpointType: Union[str, "EndpointType"]
-    :ivar dstsConfiguration: The dsts configuration. Required.
-    :vartype dstsConfiguration: "ResourceTypeEndpointBaseDstsConfiguration"
-    :ivar skuLink: The sku link. Required.
-    :vartype skuLink: str
-    :ivar apiVersion: The api version. Required.
-    :vartype apiVersion: str
-    :ivar zones: The zones. Required.
-    :vartype zones: list[str]
-    """
-
-    enabled: Required[bool]
-    """Whether it's enabled. Required."""
-    apiVersions: Required[list[str]]
-    """The api versions. Required."""
-    endpointUri: Required[str]
-    """The endpoint uri. Required."""
-    locations: Required[list[str]]
-    """The locations. Required."""
-    requiredFeatures: Required[list[str]]
-    """The required features. Required."""
-    featuresRule: Required["ResourceTypeEndpointBaseFeaturesRule"]
-    """The features rule. Required."""
-    timeout: Required[str]
-    """This is a TimeSpan property. Required."""
-    endpointType: Required[Union[str, "EndpointType"]]
-    """The endpoint type. Required. Known values are: \"NotSpecified\", \"Canary\", \"Production\",
-     and \"TestInProduction\"."""
-    dstsConfiguration: Required["ResourceTypeEndpointBaseDstsConfiguration"]
-    """The dsts configuration. Required."""
-    skuLink: Required[str]
-    """The sku link. Required."""
-    apiVersion: Required[str]
-    """The api version. Required."""
-    zones: Required[list[str]]
-    """The zones. Required."""
-
-
-class FrontloadPayloadPropertiesOverrideEndpointLevelFields(ResourceTypeEndpointBase):  # pylint: disable=name-too-long
-    """The endpoint level fields to override.
-
-    :ivar enabled: Whether it's enabled. Required.
-    :vartype enabled: bool
-    :ivar apiVersions: The api versions. Required.
-    :vartype apiVersions: list[str]
-    :ivar endpointUri: The endpoint uri. Required.
-    :vartype endpointUri: str
-    :ivar locations: The locations. Required.
-    :vartype locations: list[str]
-    :ivar requiredFeatures: The required features. Required.
-    :vartype requiredFeatures: list[str]
-    :ivar featuresRule: The features rule. Required.
-    :vartype featuresRule: "ResourceTypeEndpointBaseFeaturesRule"
-    :ivar timeout: This is a TimeSpan property. Required.
-    :vartype timeout: str
-    :ivar endpointType: The endpoint type. Required. Known values are: "NotSpecified", "Canary",
-     "Production", and "TestInProduction".
-    :vartype endpointType: Union[str, "EndpointType"]
-    :ivar dstsConfiguration: The dsts configuration. Required.
-    :vartype dstsConfiguration: "ResourceTypeEndpointBaseDstsConfiguration"
-    :ivar skuLink: The sku link. Required.
-    :vartype skuLink: str
-    :ivar apiVersion: The api version. Required.
-    :vartype apiVersion: str
-    :ivar zones: The zones. Required.
-    :vartype zones: list[str]
-    """
-
-
-class ManifestLevelPropertyBag(TypedDict, total=False):
-    """ManifestLevelPropertyBag.
-
-    :ivar resourceHydrationAccounts: The resource hydration accounts.
-    :vartype resourceHydrationAccounts: list["ResourceHydrationAccount"]
-    """
-
-    resourceHydrationAccounts: list["ResourceHydrationAccount"]
-    """The resource hydration accounts."""
-
-
-class FrontloadPayloadPropertiesOverrideManifestLevelFields(ManifestLevelPropertyBag):  # pylint: disable=name-too-long
-    """The manifest level fields to override.
-
-    :ivar resourceHydrationAccounts: The resource hydration accounts.
-    :vartype resourceHydrationAccounts: list["ResourceHydrationAccount"]
-    """
 
 
 class GroupConnectivityInformation(TypedDict, total=False):
@@ -2500,8 +2296,6 @@ class ResourceProviderManifestProperties(TypedDict, total=False):
     :vartype linkedNotificationRules: list["FanoutLinkedNotificationRule"]
     :ivar resourceProviderAuthorizationRules: The resource provider authorization rules.
     :vartype resourceProviderAuthorizationRules: "ResourceProviderAuthorizationRules"
-    :ivar dstsConfiguration: The dsts configuration.
-    :vartype dstsConfiguration: "ResourceProviderManifestPropertiesDstsConfiguration"
     :ivar notificationOptions: Notification options. Known values are: "NotSpecified", "None", and
      "EmitSpendingLimit".
     :vartype notificationOptions: Union[str, "NotificationOptions"]
@@ -2570,8 +2364,6 @@ class ResourceProviderManifestProperties(TypedDict, total=False):
     """The linked notification rules."""
     resourceProviderAuthorizationRules: "ResourceProviderAuthorizationRules"
     """The resource provider authorization rules."""
-    dstsConfiguration: "ResourceProviderManifestPropertiesDstsConfiguration"
-    """The dsts configuration."""
     notificationOptions: Union[str, "NotificationOptions"]
     """Notification options. Known values are: \"NotSpecified\", \"None\", and \"EmitSpendingLimit\"."""
     resourceHydrationAccounts: list["ResourceHydrationAccount"]
@@ -2641,8 +2433,6 @@ class ProviderRegistrationProperties(ResourceProviderManifestProperties):
     :vartype linkedNotificationRules: list["FanoutLinkedNotificationRule"]
     :ivar resourceProviderAuthorizationRules: The resource provider authorization rules.
     :vartype resourceProviderAuthorizationRules: "ResourceProviderAuthorizationRules"
-    :ivar dstsConfiguration: The dsts configuration.
-    :vartype dstsConfiguration: "ResourceProviderManifestPropertiesDstsConfiguration"
     :ivar notificationOptions: Notification options. Known values are: "NotSpecified", "None", and
      "EmitSpendingLimit".
     :vartype notificationOptions: Union[str, "NotificationOptions"]
@@ -3106,10 +2896,7 @@ class ResourceProviderManagement(TypedDict, total=False):
     :vartype incidentRoutingTeam: str
     :ivar incidentContactEmail: The incident contact email.
     :vartype incidentContactEmail: str
-    :ivar serviceTreeInfos: The service tree infos.
-    :vartype serviceTreeInfos: list["ServiceTreeInfo"]
-    :ivar resourceAccessPolicy: The resource access policy. Known values are: "NotSpecified",
-     "AcisReadAllowed", and "AcisActionAllowed".
+    :ivar resourceAccessPolicy: The resource access policy. "NotSpecified"
     :vartype resourceAccessPolicy: Union[str, "ResourceAccessPolicy"]
     :ivar resourceAccessRoles: The resource access roles.
     :vartype resourceAccessRoles: list["ResourceAccessRole"]
@@ -3141,11 +2928,8 @@ class ResourceProviderManagement(TypedDict, total=False):
     """The incident routing team."""
     incidentContactEmail: str
     """The incident contact email."""
-    serviceTreeInfos: list["ServiceTreeInfo"]
-    """The service tree infos."""
     resourceAccessPolicy: Union[str, "ResourceAccessPolicy"]
-    """The resource access policy. Known values are: \"NotSpecified\", \"AcisReadAllowed\", and
-     \"AcisActionAllowed\"."""
+    """The resource access policy. \"NotSpecified\""""
     resourceAccessRoles: list["ResourceAccessRole"]
     """The resource access roles."""
     expeditedRolloutSubmitters: list[str]
@@ -3193,16 +2977,6 @@ class ResourceProviderManagementExpeditedRolloutMetadata(TypedDict, total=False)
     """Expedited rollout intent. Known values are: \"NotSpecified\" and \"Hotfix\"."""
 
 
-class ResourceProviderManifestPropertiesDstsConfiguration(DstsConfiguration):  # pylint: disable=name-too-long
-    """The dsts configuration.
-
-    :ivar serviceName: The service name. Required.
-    :vartype serviceName: str
-    :ivar serviceDnsName: This is a URI property.
-    :vartype serviceDnsName: str
-    """
-
-
 class ResourceProviderManifestPropertiesFeaturesRule(FeaturesRule):  # pylint: disable=name-too-long
     """The features rule.
 
@@ -3227,10 +3001,7 @@ class ResourceProviderManifestPropertiesManagement(ResourceProviderManagement): 
     :vartype incidentRoutingTeam: str
     :ivar incidentContactEmail: The incident contact email.
     :vartype incidentContactEmail: str
-    :ivar serviceTreeInfos: The service tree infos.
-    :vartype serviceTreeInfos: list["ServiceTreeInfo"]
-    :ivar resourceAccessPolicy: The resource access policy. Known values are: "NotSpecified",
-     "AcisReadAllowed", and "AcisActionAllowed".
+    :ivar resourceAccessPolicy: The resource access policy. "NotSpecified"
     :vartype resourceAccessPolicy: Union[str, "ResourceAccessPolicy"]
     :ivar resourceAccessRoles: The resource access roles.
     :vartype resourceAccessRoles: list["ResourceAccessRole"]
@@ -3391,8 +3162,6 @@ class ResourceTypeEndpoint(TypedDict, total=False):
     :vartype apiVersion: str
     :ivar zones: List of zones.
     :vartype zones: list[str]
-    :ivar dstsConfiguration: The dsts configuration.
-    :vartype dstsConfiguration: "ResourceTypeEndpointDstsConfiguration"
     :ivar dataBoundary: The data boundary. Known values are: "NotDefined", "Global", "EU", and
      "US".
     :vartype dataBoundary: Union[str, "DataBoundary"]
@@ -3429,39 +3198,8 @@ class ResourceTypeEndpoint(TypedDict, total=False):
     """Api version."""
     zones: list[str]
     """List of zones."""
-    dstsConfiguration: "ResourceTypeEndpointDstsConfiguration"
-    """The dsts configuration."""
     dataBoundary: Union[str, "DataBoundary"]
     """The data boundary. Known values are: \"NotDefined\", \"Global\", \"EU\", and \"US\"."""
-
-
-class ResourceTypeEndpointBaseDstsConfiguration(DstsConfiguration):  # pylint: disable=name-too-long
-    """The dsts configuration.
-
-    :ivar serviceName: The service name. Required.
-    :vartype serviceName: str
-    :ivar serviceDnsName: This is a URI property.
-    :vartype serviceDnsName: str
-    """
-
-
-class ResourceTypeEndpointBaseFeaturesRule(FeaturesRule):
-    """The features rule.
-
-    :ivar requiredFeaturesPolicy: The required feature policy. Required. Known values are: "Any"
-     and "All".
-    :vartype requiredFeaturesPolicy: Union[str, "FeaturesPolicy"]
-    """
-
-
-class ResourceTypeEndpointDstsConfiguration(DstsConfiguration):
-    """The dsts configuration.
-
-    :ivar serviceName: The service name. Required.
-    :vartype serviceName: str
-    :ivar serviceDnsName: This is a URI property.
-    :vartype serviceDnsName: str
-    """
 
 
 class ResourceTypeEndpointFeaturesRule(FeaturesRule):
@@ -3645,8 +3383,6 @@ class ResourceTypeRegistrationProperties(TypedDict, total=False):
      "ResourceTypeRegistrationPropertiesCheckNameAvailabilitySpecifications"
     :ivar disallowedActionVerbs: The disallowed action verbs.
     :vartype disallowedActionVerbs: list[str]
-    :ivar serviceTreeInfos: The service tree infos.
-    :vartype serviceTreeInfos: list["ServiceTreeInfo"]
     :ivar requestHeaderOptions: The request header options.
     :vartype requestHeaderOptions: "ResourceTypeRegistrationPropertiesRequestHeaderOptions"
     :ivar subscriptionStateRules: The subscription state rules.
@@ -3713,8 +3449,6 @@ class ResourceTypeRegistrationProperties(TypedDict, total=False):
     :vartype policyExecutionType: Union[str, "PolicyExecutionType"]
     :ivar availabilityZoneRule: The availability zone rule.
     :vartype availabilityZoneRule: "ResourceTypeRegistrationPropertiesAvailabilityZoneRule"
-    :ivar dstsConfiguration: The dsts configuration.
-    :vartype dstsConfiguration: "ResourceTypeRegistrationPropertiesDstsConfiguration"
     :ivar asyncTimeoutRules: Async timeout rules.
     :vartype asyncTimeoutRules: list["AsyncTimeoutRule"]
     :ivar commonApiVersions: Common API versions for the resource type.
@@ -3827,8 +3561,6 @@ class ResourceTypeRegistrationProperties(TypedDict, total=False):
     """The check name availability specifications."""
     disallowedActionVerbs: list[str]
     """The disallowed action verbs."""
-    serviceTreeInfos: list["ServiceTreeInfo"]
-    """The service tree infos."""
     requestHeaderOptions: "ResourceTypeRegistrationPropertiesRequestHeaderOptions"
     """The request header options."""
     subscriptionStateRules: list["SubscriptionStateRule"]
@@ -3892,8 +3624,6 @@ class ResourceTypeRegistrationProperties(TypedDict, total=False):
      \"BypassPolicies\", and \"ExpectPartialPutRequests\"."""
     availabilityZoneRule: "ResourceTypeRegistrationPropertiesAvailabilityZoneRule"
     """The availability zone rule."""
-    dstsConfiguration: "ResourceTypeRegistrationPropertiesDstsConfiguration"
-    """The dsts configuration."""
     asyncTimeoutRules: list["AsyncTimeoutRule"]
     """Async timeout rules."""
     commonApiVersions: list[str]
@@ -3981,16 +3711,6 @@ class ResourceTypeRegistrationPropertiesCheckNameAvailabilitySpecifications(
     """
 
 
-class ResourceTypeRegistrationPropertiesDstsConfiguration(DstsConfiguration):  # pylint: disable=name-too-long
-    """The dsts configuration.
-
-    :ivar serviceName: The service name. Required.
-    :vartype serviceName: str
-    :ivar serviceDnsName: This is a URI property.
-    :vartype serviceDnsName: str
-    """
-
-
 class ResourceTypeRegistrationPropertiesExtensionOptions(ResourceTypeExtensionOptions):  # pylint: disable=name-too-long
     """The extension options.
 
@@ -4053,10 +3773,7 @@ class ResourceTypeRegistrationPropertiesManagement(ResourceProviderManagement): 
     :vartype incidentRoutingTeam: str
     :ivar incidentContactEmail: The incident contact email.
     :vartype incidentContactEmail: str
-    :ivar serviceTreeInfos: The service tree infos.
-    :vartype serviceTreeInfos: list["ServiceTreeInfo"]
-    :ivar resourceAccessPolicy: The resource access policy. Known values are: "NotSpecified",
-     "AcisReadAllowed", and "AcisActionAllowed".
+    :ivar resourceAccessPolicy: The resource access policy. "NotSpecified"
     :vartype resourceAccessPolicy: Union[str, "ResourceAccessPolicy"]
     :ivar resourceAccessRoles: The resource access roles.
     :vartype resourceAccessRoles: list["ResourceAccessRole"]
@@ -4331,28 +4048,6 @@ class ResourceTypeSku(TypedDict, total=False):
     """The provisioning state. Known values are: \"NotSpecified\", \"Accepted\", \"Running\",
      \"Creating\", \"Created\", \"Deleting\", \"Deleted\", \"Canceled\", \"Failed\", \"Succeeded\",
      \"MovingResources\", \"TransientFailure\", and \"RolloutInProgress\"."""
-
-
-class ServiceTreeInfo(TypedDict, total=False):
-    """ServiceTreeInfo.
-
-    :ivar serviceId: The service id.
-    :vartype serviceId: str
-    :ivar componentId: The component id.
-    :vartype componentId: str
-    :ivar readiness: The readiness. Known values are: "ClosingDown", "Deprecated", "GA",
-     "InDevelopment", "InternalOnly", "PrivatePreview", "PublicPreview", "RemovedFromARM", and
-     "Retired".
-    :vartype readiness: Union[str, "Readiness"]
-    """
-
-    serviceId: str
-    """The service id."""
-    componentId: str
-    """The component id."""
-    readiness: Union[str, "Readiness"]
-    """The readiness. Known values are: \"ClosingDown\", \"Deprecated\", \"GA\", \"InDevelopment\",
-     \"InternalOnly\", \"PrivatePreview\", \"PublicPreview\", \"RemovedFromARM\", and \"Retired\"."""
 
 
 class SkuCapability(TypedDict, total=False):

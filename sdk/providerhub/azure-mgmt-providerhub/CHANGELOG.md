@@ -1,5 +1,42 @@
 # Release History
 
+## 3.0.0 (2026-10-16)
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `ProviderHubMgmtClient.new_region_frontload_release`
+  - Model `FanoutLinkedNotificationRule` deleted or renamed its instance variable `dsts_configuration`
+  - Model `ProviderRegistrationProperties` deleted or renamed its instance variable `dsts_configuration`
+  - Deleted or renamed enum value `ResourceAccessPolicy.ACIS_ACTION_ALLOWED`
+  - Deleted or renamed enum value `ResourceAccessPolicy.ACIS_READ_ALLOWED`
+  - Model `ResourceProviderManagement` deleted or renamed its instance variable `service_tree_infos`
+  - Model `ResourceProviderManifestManagement` deleted or renamed its instance variable `service_tree_infos`
+  - Model `ResourceProviderManifestProperties` deleted or renamed its instance variable `dsts_configuration`
+  - Model `ResourceProviderManifestPropertiesManagement` deleted or renamed its instance variable `service_tree_infos`
+  - Model `ResourceType` deleted or renamed its instance variable `service_tree_infos`
+  - Model `ResourceTypeEndpoint` deleted or renamed its instance variable `dsts_configuration`
+  - Model `ResourceTypeRegistrationProperties` deleted or renamed its instance variable `dsts_configuration`
+  - Model `ResourceTypeRegistrationProperties` deleted or renamed its instance variable `service_tree_infos`
+  - Model `ResourceTypeRegistrationPropertiesManagement` deleted or renamed its instance variable `service_tree_infos`
+  - Deleted or renamed model `AvailableCheckInManifestEnvironment`
+  - Deleted or renamed model `DstsConfiguration`
+  - Deleted or renamed model `FanoutLinkedNotificationRuleDstsConfiguration`
+  - Deleted or renamed model `FrontloadPayload`
+  - Deleted or renamed model `FrontloadPayloadProperties`
+  - Deleted or renamed model `FrontloadPayloadPropertiesOverrideEndpointLevelFields`
+  - Deleted or renamed model `FrontloadPayloadPropertiesOverrideManifestLevelFields`
+  - Deleted or renamed model `ManifestLevelPropertyBag`
+  - Deleted or renamed model `Readiness`
+  - Deleted or renamed model `ResourceProviderManifestPropertiesDstsConfiguration`
+  - Deleted or renamed model `ResourceTypeEndpointBase`
+  - Deleted or renamed model `ResourceTypeEndpointBaseDstsConfiguration`
+  - Deleted or renamed model `ResourceTypeEndpointBaseFeaturesRule`
+  - Deleted or renamed model `ResourceTypeEndpointDstsConfiguration`
+  - Deleted or renamed model `ResourceTypeRegistrationPropertiesDstsConfiguration`
+  - Deleted or renamed model `ServiceFeatureFlagAction`
+  - Deleted or renamed model `ServiceTreeInfo`
+  - Deleted or renamed model `NewRegionFrontloadReleaseOperations`
+
 ## 2.0.0 (2026-08-25)
 
 ### Features Added

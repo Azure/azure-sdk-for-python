@@ -2114,41 +2114,6 @@ class DeleteDependency(_Model):  # pylint: disable=docstring-keyword-should-matc
         super().__init__(*args, **kwargs)
 
 
-class DstsConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """DstsConfiguration.
-
-    :ivar service_name: The service name. Required.
-    :vartype service_name: str
-    :ivar service_dns_name: This is a URI property.
-    :vartype service_dns_name: str
-    """
-
-    service_name: str = rest_field(name="serviceName", visibility=["read", "create", "update", "delete", "query"])
-    """The service name. Required."""
-    service_dns_name: Optional[str] = rest_field(
-        name="serviceDnsName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """This is a URI property."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        service_name: str,
-        service_dns_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class EndpointInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EndpointInformation.
 
@@ -2401,9 +2366,6 @@ class FanoutLinkedNotificationRule(_Model):  # pylint: disable=docstring-keyword
     :vartype actions: list[str]
     :ivar endpoints: The endpoints.
     :vartype endpoints: list[~azure.mgmt.providerhub.models.ResourceProviderEndpoint]
-    :ivar dsts_configuration: The dsts configuration.
-    :vartype dsts_configuration:
-     ~azure.mgmt.providerhub.models.FanoutLinkedNotificationRuleDstsConfiguration
     """
 
     token_auth_configuration: Optional["_models.TokenAuthConfiguration"] = rest_field(
@@ -2416,10 +2378,6 @@ class FanoutLinkedNotificationRule(_Model):  # pylint: disable=docstring-keyword
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The endpoints."""
-    dsts_configuration: Optional["_models.FanoutLinkedNotificationRuleDstsConfiguration"] = rest_field(
-        name="dstsConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The dsts configuration."""
 
     @overload
     def __init__(
@@ -2428,37 +2386,6 @@ class FanoutLinkedNotificationRule(_Model):  # pylint: disable=docstring-keyword
         token_auth_configuration: Optional["_models.TokenAuthConfiguration"] = None,
         actions: Optional[list[str]] = None,
         endpoints: Optional[list["_models.ResourceProviderEndpoint"]] = None,
-        dsts_configuration: Optional["_models.FanoutLinkedNotificationRuleDstsConfiguration"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FanoutLinkedNotificationRuleDstsConfiguration(
-    DstsConfiguration
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """The dsts configuration.
-
-    :ivar service_name: The service name. Required.
-    :vartype service_name: str
-    :ivar service_dns_name: This is a URI property.
-    :vartype service_dns_name: str
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        service_name: str,
-        service_dns_name: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2527,355 +2454,6 @@ class FilterRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         *,
         filter_query: Optional[str] = None,
         endpoint_information: Optional[list["_models.EndpointInformation"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FrontloadPayload(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """FrontloadPayload.
-
-    :ivar properties: Properties of the frontload payload. Required.
-    :vartype properties: ~azure.mgmt.providerhub.models.FrontloadPayloadProperties
-    """
-
-    properties: "_models.FrontloadPayloadProperties" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Properties of the frontload payload. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: "_models.FrontloadPayloadProperties",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FrontloadPayloadProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """FrontloadPayloadProperties.
-
-    :ivar operation_type: The operation type. Required.
-    :vartype operation_type: str
-    :ivar provider_namespace: The provider namespace. Required.
-    :vartype provider_namespace: str
-    :ivar frontload_location: The frontload location. Required.
-    :vartype frontload_location: str
-    :ivar copy_from_location: The copy from location. Required.
-    :vartype copy_from_location: str
-    :ivar environment_type: The environment type. Required. Known values are: "NotSpecified",
-     "Canary", "Prod", "All", "Mooncake", and "Fairfax".
-    :vartype environment_type: str or
-     ~azure.mgmt.providerhub.models.AvailableCheckInManifestEnvironment
-    :ivar service_feature_flag: The service feature flag. Required. Known values are: "DoNotCreate"
-     and "Create".
-    :vartype service_feature_flag: str or ~azure.mgmt.providerhub.models.ServiceFeatureFlagAction
-    :ivar include_resource_types: The resource types to include. Required.
-    :vartype include_resource_types: list[str]
-    :ivar exclude_resource_types: The resource types to exclude. Required.
-    :vartype exclude_resource_types: list[str]
-    :ivar override_manifest_level_fields: The manifest level fields to override. Required.
-    :vartype override_manifest_level_fields:
-     ~azure.mgmt.providerhub.models.FrontloadPayloadPropertiesOverrideManifestLevelFields
-    :ivar override_endpoint_level_fields: The endpoint level fields to override. Required.
-    :vartype override_endpoint_level_fields:
-     ~azure.mgmt.providerhub.models.FrontloadPayloadPropertiesOverrideEndpointLevelFields
-    :ivar ignore_fields: The fields to ignore. Required.
-    :vartype ignore_fields: list[str]
-    """
-
-    operation_type: str = rest_field(name="operationType", visibility=["read", "create", "update", "delete", "query"])
-    """The operation type. Required."""
-    provider_namespace: str = rest_field(
-        name="providerNamespace", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The provider namespace. Required."""
-    frontload_location: str = rest_field(
-        name="frontloadLocation", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The frontload location. Required."""
-    copy_from_location: str = rest_field(
-        name="copyFromLocation", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The copy from location. Required."""
-    environment_type: Union[str, "_models.AvailableCheckInManifestEnvironment"] = rest_field(
-        name="environmentType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The environment type. Required. Known values are: \"NotSpecified\", \"Canary\", \"Prod\",
-     \"All\", \"Mooncake\", and \"Fairfax\"."""
-    service_feature_flag: Union[str, "_models.ServiceFeatureFlagAction"] = rest_field(
-        name="serviceFeatureFlag", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The service feature flag. Required. Known values are: \"DoNotCreate\" and \"Create\"."""
-    include_resource_types: list[str] = rest_field(
-        name="includeResourceTypes", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource types to include. Required."""
-    exclude_resource_types: list[str] = rest_field(
-        name="excludeResourceTypes", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource types to exclude. Required."""
-    override_manifest_level_fields: "_models.FrontloadPayloadPropertiesOverrideManifestLevelFields" = rest_field(
-        name="overrideManifestLevelFields", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The manifest level fields to override. Required."""
-    override_endpoint_level_fields: "_models.FrontloadPayloadPropertiesOverrideEndpointLevelFields" = rest_field(
-        name="overrideEndpointLevelFields", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The endpoint level fields to override. Required."""
-    ignore_fields: list[str] = rest_field(
-        name="ignoreFields", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The fields to ignore. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        operation_type: str,
-        provider_namespace: str,
-        frontload_location: str,
-        copy_from_location: str,
-        environment_type: Union[str, "_models.AvailableCheckInManifestEnvironment"],
-        service_feature_flag: Union[str, "_models.ServiceFeatureFlagAction"],
-        include_resource_types: list[str],
-        exclude_resource_types: list[str],
-        override_manifest_level_fields: "_models.FrontloadPayloadPropertiesOverrideManifestLevelFields",
-        override_endpoint_level_fields: "_models.FrontloadPayloadPropertiesOverrideEndpointLevelFields",
-        ignore_fields: list[str],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceTypeEndpointBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """ResourceTypeEndpointBase.
-
-    :ivar enabled: Whether it's enabled. Required.
-    :vartype enabled: bool
-    :ivar api_versions: The api versions. Required.
-    :vartype api_versions: list[str]
-    :ivar endpoint_uri: The endpoint uri. Required.
-    :vartype endpoint_uri: str
-    :ivar locations: The locations. Required.
-    :vartype locations: list[str]
-    :ivar required_features: The required features. Required.
-    :vartype required_features: list[str]
-    :ivar features_rule: The features rule. Required.
-    :vartype features_rule: ~azure.mgmt.providerhub.models.ResourceTypeEndpointBaseFeaturesRule
-    :ivar timeout: This is a TimeSpan property. Required.
-    :vartype timeout: ~datetime.timedelta
-    :ivar endpoint_type: The endpoint type. Required. Known values are: "NotSpecified", "Canary",
-     "Production", and "TestInProduction".
-    :vartype endpoint_type: str or ~azure.mgmt.providerhub.models.EndpointType
-    :ivar dsts_configuration: The dsts configuration. Required.
-    :vartype dsts_configuration:
-     ~azure.mgmt.providerhub.models.ResourceTypeEndpointBaseDstsConfiguration
-    :ivar sku_link: The sku link. Required.
-    :vartype sku_link: str
-    :ivar api_version: The api version. Required.
-    :vartype api_version: str
-    :ivar zones: The zones. Required.
-    :vartype zones: list[str]
-    """
-
-    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether it's enabled. Required."""
-    api_versions: list[str] = rest_field(name="apiVersions", visibility=["read", "create", "update", "delete", "query"])
-    """The api versions. Required."""
-    endpoint_uri: str = rest_field(name="endpointUri", visibility=["read", "create", "update", "delete", "query"])
-    """The endpoint uri. Required."""
-    locations: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The locations. Required."""
-    required_features: list[str] = rest_field(
-        name="requiredFeatures", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The required features. Required."""
-    features_rule: "_models.ResourceTypeEndpointBaseFeaturesRule" = rest_field(
-        name="featuresRule", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The features rule. Required."""
-    timeout: datetime.timedelta = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """This is a TimeSpan property. Required."""
-    endpoint_type: Union[str, "_models.EndpointType"] = rest_field(
-        name="endpointType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The endpoint type. Required. Known values are: \"NotSpecified\", \"Canary\", \"Production\",
-     and \"TestInProduction\"."""
-    dsts_configuration: "_models.ResourceTypeEndpointBaseDstsConfiguration" = rest_field(
-        name="dstsConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The dsts configuration. Required."""
-    sku_link: str = rest_field(name="skuLink", visibility=["read", "create", "update", "delete", "query"])
-    """The sku link. Required."""
-    api_version: str = rest_field(name="apiVersion", visibility=["read", "create", "update", "delete", "query"])
-    """The api version. Required."""
-    zones: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The zones. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        enabled: bool,
-        api_versions: list[str],
-        endpoint_uri: str,
-        locations: list[str],
-        required_features: list[str],
-        features_rule: "_models.ResourceTypeEndpointBaseFeaturesRule",
-        timeout: datetime.timedelta,
-        endpoint_type: Union[str, "_models.EndpointType"],
-        dsts_configuration: "_models.ResourceTypeEndpointBaseDstsConfiguration",
-        sku_link: str,
-        api_version: str,
-        zones: list[str],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FrontloadPayloadPropertiesOverrideEndpointLevelFields(
-    ResourceTypeEndpointBase
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """The endpoint level fields to override.
-
-    :ivar enabled: Whether it's enabled. Required.
-    :vartype enabled: bool
-    :ivar api_versions: The api versions. Required.
-    :vartype api_versions: list[str]
-    :ivar endpoint_uri: The endpoint uri. Required.
-    :vartype endpoint_uri: str
-    :ivar locations: The locations. Required.
-    :vartype locations: list[str]
-    :ivar required_features: The required features. Required.
-    :vartype required_features: list[str]
-    :ivar features_rule: The features rule. Required.
-    :vartype features_rule: ~azure.mgmt.providerhub.models.ResourceTypeEndpointBaseFeaturesRule
-    :ivar timeout: This is a TimeSpan property. Required.
-    :vartype timeout: ~datetime.timedelta
-    :ivar endpoint_type: The endpoint type. Required. Known values are: "NotSpecified", "Canary",
-     "Production", and "TestInProduction".
-    :vartype endpoint_type: str or ~azure.mgmt.providerhub.models.EndpointType
-    :ivar dsts_configuration: The dsts configuration. Required.
-    :vartype dsts_configuration:
-     ~azure.mgmt.providerhub.models.ResourceTypeEndpointBaseDstsConfiguration
-    :ivar sku_link: The sku link. Required.
-    :vartype sku_link: str
-    :ivar api_version: The api version. Required.
-    :vartype api_version: str
-    :ivar zones: The zones. Required.
-    :vartype zones: list[str]
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        enabled: bool,
-        api_versions: list[str],
-        endpoint_uri: str,
-        locations: list[str],
-        required_features: list[str],
-        features_rule: "_models.ResourceTypeEndpointBaseFeaturesRule",
-        timeout: datetime.timedelta,
-        endpoint_type: Union[str, "_models.EndpointType"],
-        dsts_configuration: "_models.ResourceTypeEndpointBaseDstsConfiguration",
-        sku_link: str,
-        api_version: str,
-        zones: list[str],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ManifestLevelPropertyBag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """ManifestLevelPropertyBag.
-
-    :ivar resource_hydration_accounts: The resource hydration accounts.
-    :vartype resource_hydration_accounts:
-     list[~azure.mgmt.providerhub.models.ResourceHydrationAccount]
-    """
-
-    resource_hydration_accounts: Optional[list["_models.ResourceHydrationAccount"]] = rest_field(
-        name="resourceHydrationAccounts", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource hydration accounts."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_hydration_accounts: Optional[list["_models.ResourceHydrationAccount"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FrontloadPayloadPropertiesOverrideManifestLevelFields(
-    ManifestLevelPropertyBag
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """The manifest level fields to override.
-
-    :ivar resource_hydration_accounts: The resource hydration accounts.
-    :vartype resource_hydration_accounts:
-     list[~azure.mgmt.providerhub.models.ResourceHydrationAccount]
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_hydration_accounts: Optional[list["_models.ResourceHydrationAccount"]] = None,
     ) -> None: ...
 
     @overload
@@ -5460,9 +5038,6 @@ class ResourceProviderManifestProperties(_Model):  # pylint: disable=docstring-k
     :ivar resource_provider_authorization_rules: The resource provider authorization rules.
     :vartype resource_provider_authorization_rules:
      ~azure.mgmt.providerhub.models.ResourceProviderAuthorizationRules
-    :ivar dsts_configuration: The dsts configuration.
-    :vartype dsts_configuration:
-     ~azure.mgmt.providerhub.models.ResourceProviderManifestPropertiesDstsConfiguration
     :ivar notification_options: Notification options. Known values are: "NotSpecified", "None", and
      "EmitSpendingLimit".
     :vartype notification_options: str or ~azure.mgmt.providerhub.models.NotificationOptions
@@ -5571,10 +5146,6 @@ class ResourceProviderManifestProperties(_Model):  # pylint: disable=docstring-k
         name="resourceProviderAuthorizationRules", visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource provider authorization rules."""
-    dsts_configuration: Optional["_models.ResourceProviderManifestPropertiesDstsConfiguration"] = rest_field(
-        name="dstsConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The dsts configuration."""
     notification_options: Optional[Union[str, "_models.NotificationOptions"]] = rest_field(
         name="notificationOptions", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5642,7 +5213,6 @@ class ResourceProviderManifestProperties(_Model):  # pylint: disable=docstring-k
         notifications: Optional[list["_models.Notification"]] = None,
         linked_notification_rules: Optional[list["_models.FanoutLinkedNotificationRule"]] = None,
         resource_provider_authorization_rules: Optional["_models.ResourceProviderAuthorizationRules"] = None,
-        dsts_configuration: Optional["_models.ResourceProviderManifestPropertiesDstsConfiguration"] = None,
         notification_options: Optional[Union[str, "_models.NotificationOptions"]] = None,
         resource_hydration_accounts: Optional[list["_models.ResourceHydrationAccount"]] = None,
         notification_settings: Optional["_models.ResourceProviderManifestPropertiesNotificationSettings"] = None,
@@ -5726,9 +5296,6 @@ class ProviderRegistrationProperties(
     :ivar resource_provider_authorization_rules: The resource provider authorization rules.
     :vartype resource_provider_authorization_rules:
      ~azure.mgmt.providerhub.models.ResourceProviderAuthorizationRules
-    :ivar dsts_configuration: The dsts configuration.
-    :vartype dsts_configuration:
-     ~azure.mgmt.providerhub.models.ResourceProviderManifestPropertiesDstsConfiguration
     :ivar notification_options: Notification options. Known values are: "NotSpecified", "None", and
      "EmitSpendingLimit".
     :vartype notification_options: str or ~azure.mgmt.providerhub.models.NotificationOptions
@@ -5841,7 +5408,6 @@ class ProviderRegistrationProperties(
         notifications: Optional[list["_models.Notification"]] = None,
         linked_notification_rules: Optional[list["_models.FanoutLinkedNotificationRule"]] = None,
         resource_provider_authorization_rules: Optional["_models.ResourceProviderAuthorizationRules"] = None,
-        dsts_configuration: Optional["_models.ResourceProviderManifestPropertiesDstsConfiguration"] = None,
         notification_options: Optional[Union[str, "_models.NotificationOptions"]] = None,
         resource_hydration_accounts: Optional[list["_models.ResourceHydrationAccount"]] = None,
         notification_settings: Optional["_models.ResourceProviderManifestPropertiesNotificationSettings"] = None,
@@ -6803,10 +6369,7 @@ class ResourceProviderManagement(_Model):  # pylint: disable=docstring-keyword-s
     :vartype incident_routing_team: str
     :ivar incident_contact_email: The incident contact email.
     :vartype incident_contact_email: str
-    :ivar service_tree_infos: The service tree infos.
-    :vartype service_tree_infos: list[~azure.mgmt.providerhub.models.ServiceTreeInfo]
-    :ivar resource_access_policy: The resource access policy. Known values are: "NotSpecified",
-     "AcisReadAllowed", and "AcisActionAllowed".
+    :ivar resource_access_policy: The resource access policy. "NotSpecified"
     :vartype resource_access_policy: str or ~azure.mgmt.providerhub.models.ResourceAccessPolicy
     :ivar resource_access_roles: The resource access roles.
     :vartype resource_access_roles: list[~azure.mgmt.providerhub.models.ResourceAccessRole]
@@ -6852,15 +6415,10 @@ class ResourceProviderManagement(_Model):  # pylint: disable=docstring-keyword-s
         name="incidentContactEmail", visibility=["read", "create", "update", "delete", "query"]
     )
     """The incident contact email."""
-    service_tree_infos: Optional[list["_models.ServiceTreeInfo"]] = rest_field(
-        name="serviceTreeInfos", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The service tree infos."""
     resource_access_policy: Optional[Union[str, "_models.ResourceAccessPolicy"]] = rest_field(
         name="resourceAccessPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The resource access policy. Known values are: \"NotSpecified\", \"AcisReadAllowed\", and
-     \"AcisActionAllowed\"."""
+    """The resource access policy. \"NotSpecified\""""
     resource_access_roles: Optional[list["_models.ResourceAccessRole"]] = rest_field(
         name="resourceAccessRoles", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6902,7 +6460,6 @@ class ResourceProviderManagement(_Model):  # pylint: disable=docstring-keyword-s
         incident_routing_service: Optional[str] = None,
         incident_routing_team: Optional[str] = None,
         incident_contact_email: Optional[str] = None,
-        service_tree_infos: Optional[list["_models.ServiceTreeInfo"]] = None,
         resource_access_policy: Optional[Union[str, "_models.ResourceAccessPolicy"]] = None,
         resource_access_roles: Optional[list["_models.ResourceAccessRole"]] = None,
         expedited_rollout_submitters: Optional[list[str]] = None,
@@ -7232,10 +6789,7 @@ class ResourceProviderManifestManagement(
     :vartype incident_routing_team: str
     :ivar incident_contact_email: The incident contact email.
     :vartype incident_contact_email: str
-    :ivar service_tree_infos: The service tree infos.
-    :vartype service_tree_infos: list[~azure.mgmt.providerhub.models.ServiceTreeInfo]
-    :ivar resource_access_policy: The resource access policy. Known values are: "NotSpecified",
-     "AcisReadAllowed", and "AcisActionAllowed".
+    :ivar resource_access_policy: The resource access policy. "NotSpecified"
     :vartype resource_access_policy: str or ~azure.mgmt.providerhub.models.ResourceAccessPolicy
     :ivar resource_access_roles: The resource access roles.
     :vartype resource_access_roles: list[~azure.mgmt.providerhub.models.ResourceAccessRole]
@@ -7267,7 +6821,6 @@ class ResourceProviderManifestManagement(
         incident_routing_service: Optional[str] = None,
         incident_routing_team: Optional[str] = None,
         incident_contact_email: Optional[str] = None,
-        service_tree_infos: Optional[list["_models.ServiceTreeInfo"]] = None,
         resource_access_policy: Optional[Union[str, "_models.ResourceAccessPolicy"]] = None,
         resource_access_roles: Optional[list["_models.ResourceAccessRole"]] = None,
         expedited_rollout_submitters: Optional[list[str]] = None,
@@ -7279,36 +6832,6 @@ class ResourceProviderManifestManagement(
         pc_code: Optional[str] = None,
         profit_center_program_id: Optional[str] = None,
         feature_management_owners: Optional[list[str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceProviderManifestPropertiesDstsConfiguration(
-    DstsConfiguration
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """The dsts configuration.
-
-    :ivar service_name: The service name. Required.
-    :vartype service_name: str
-    :ivar service_dns_name: This is a URI property.
-    :vartype service_dns_name: str
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        service_name: str,
-        service_dns_name: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -7367,10 +6890,7 @@ class ResourceProviderManifestPropertiesManagement(
     :vartype incident_routing_team: str
     :ivar incident_contact_email: The incident contact email.
     :vartype incident_contact_email: str
-    :ivar service_tree_infos: The service tree infos.
-    :vartype service_tree_infos: list[~azure.mgmt.providerhub.models.ServiceTreeInfo]
-    :ivar resource_access_policy: The resource access policy. Known values are: "NotSpecified",
-     "AcisReadAllowed", and "AcisActionAllowed".
+    :ivar resource_access_policy: The resource access policy. "NotSpecified"
     :vartype resource_access_policy: str or ~azure.mgmt.providerhub.models.ResourceAccessPolicy
     :ivar resource_access_roles: The resource access roles.
     :vartype resource_access_roles: list[~azure.mgmt.providerhub.models.ResourceAccessRole]
@@ -7402,7 +6922,6 @@ class ResourceProviderManifestPropertiesManagement(
         incident_routing_service: Optional[str] = None,
         incident_routing_team: Optional[str] = None,
         incident_contact_email: Optional[str] = None,
-        service_tree_infos: Optional[list["_models.ServiceTreeInfo"]] = None,
         resource_access_policy: Optional[Union[str, "_models.ResourceAccessPolicy"]] = None,
         resource_access_roles: Optional[list["_models.ResourceAccessRole"]] = None,
         expedited_rollout_submitters: Optional[list[str]] = None,
@@ -7837,8 +7356,6 @@ class ResourceType(_Model):  # pylint: disable=docstring-keyword-should-match-ke
     :vartype features_rule: ~azure.mgmt.providerhub.models.ResourceTypeFeaturesRule
     :ivar subscription_state_rules: The subscription state rules.
     :vartype subscription_state_rules: list[~azure.mgmt.providerhub.models.SubscriptionStateRule]
-    :ivar service_tree_infos: The service tree infos.
-    :vartype service_tree_infos: list[~azure.mgmt.providerhub.models.ServiceTreeInfo]
     :ivar request_header_options: The request header options.
     :vartype request_header_options:
      ~azure.mgmt.providerhub.models.ResourceTypeRequestHeaderOptions
@@ -7949,10 +7466,6 @@ class ResourceType(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         name="subscriptionStateRules", visibility=["read", "create", "update", "delete", "query"]
     )
     """The subscription state rules."""
-    service_tree_infos: Optional[list["_models.ServiceTreeInfo"]] = rest_field(
-        name="serviceTreeInfos", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The service tree infos."""
     request_header_options: Optional["_models.ResourceTypeRequestHeaderOptions"] = rest_field(
         name="requestHeaderOptions", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -8024,7 +7537,6 @@ class ResourceType(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         required_features: Optional[list[str]] = None,
         features_rule: Optional["_models.ResourceTypeFeaturesRule"] = None,
         subscription_state_rules: Optional[list["_models.SubscriptionStateRule"]] = None,
-        service_tree_infos: Optional[list["_models.ServiceTreeInfo"]] = None,
         request_header_options: Optional["_models.ResourceTypeRequestHeaderOptions"] = None,
         sku_link: Optional[str] = None,
         disallowed_action_verbs: Optional[list[str]] = None,
@@ -8084,9 +7596,6 @@ class ResourceTypeEndpoint(_Model):  # pylint: disable=docstring-keyword-should-
     :vartype api_version: str
     :ivar zones: List of zones.
     :vartype zones: list[str]
-    :ivar dsts_configuration: The dsts configuration.
-    :vartype dsts_configuration:
-     ~azure.mgmt.providerhub.models.ResourceTypeEndpointDstsConfiguration
     :ivar data_boundary: The data boundary. Known values are: "NotDefined", "Global", "EU", and
      "US".
     :vartype data_boundary: str or ~azure.mgmt.providerhub.models.DataBoundary
@@ -8141,10 +7650,6 @@ class ResourceTypeEndpoint(_Model):  # pylint: disable=docstring-keyword-should-
     """Api version."""
     zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of zones."""
-    dsts_configuration: Optional["_models.ResourceTypeEndpointDstsConfiguration"] = rest_field(
-        name="dstsConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The dsts configuration."""
     data_boundary: Optional[Union[str, "_models.DataBoundary"]] = rest_field(
         name="dataBoundary", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -8168,94 +7673,7 @@ class ResourceTypeEndpoint(_Model):  # pylint: disable=docstring-keyword-should-
         endpoint_uri: Optional[str] = None,
         api_version: Optional[str] = None,
         zones: Optional[list[str]] = None,
-        dsts_configuration: Optional["_models.ResourceTypeEndpointDstsConfiguration"] = None,
         data_boundary: Optional[Union[str, "_models.DataBoundary"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceTypeEndpointBaseDstsConfiguration(
-    DstsConfiguration
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """The dsts configuration.
-
-    :ivar service_name: The service name. Required.
-    :vartype service_name: str
-    :ivar service_dns_name: This is a URI property.
-    :vartype service_dns_name: str
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        service_name: str,
-        service_dns_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceTypeEndpointBaseFeaturesRule(FeaturesRule):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The features rule.
-
-    :ivar required_features_policy: The required feature policy. Required. Known values are: "Any"
-     and "All".
-    :vartype required_features_policy: str or ~azure.mgmt.providerhub.models.FeaturesPolicy
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        required_features_policy: Union[str, "_models.FeaturesPolicy"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceTypeEndpointDstsConfiguration(
-    DstsConfiguration
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The dsts configuration.
-
-    :ivar service_name: The service name. Required.
-    :vartype service_name: str
-    :ivar service_dns_name: This is a URI property.
-    :vartype service_dns_name: str
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        service_name: str,
-        service_dns_name: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -8660,8 +8078,6 @@ class ResourceTypeRegistrationProperties(_Model):  # pylint: disable=docstring-k
      ~azure.mgmt.providerhub.models.ResourceTypeRegistrationPropertiesCheckNameAvailabilitySpecifications
     :ivar disallowed_action_verbs: The disallowed action verbs.
     :vartype disallowed_action_verbs: list[str]
-    :ivar service_tree_infos: The service tree infos.
-    :vartype service_tree_infos: list[~azure.mgmt.providerhub.models.ServiceTreeInfo]
     :ivar request_header_options: The request header options.
     :vartype request_header_options:
      ~azure.mgmt.providerhub.models.ResourceTypeRegistrationPropertiesRequestHeaderOptions
@@ -8739,9 +8155,6 @@ class ResourceTypeRegistrationProperties(_Model):  # pylint: disable=docstring-k
     :ivar availability_zone_rule: The availability zone rule.
     :vartype availability_zone_rule:
      ~azure.mgmt.providerhub.models.ResourceTypeRegistrationPropertiesAvailabilityZoneRule
-    :ivar dsts_configuration: The dsts configuration.
-    :vartype dsts_configuration:
-     ~azure.mgmt.providerhub.models.ResourceTypeRegistrationPropertiesDstsConfiguration
     :ivar async_timeout_rules: Async timeout rules.
     :vartype async_timeout_rules: list[~azure.mgmt.providerhub.models.AsyncTimeoutRule]
     :ivar common_api_versions: Common API versions for the resource type.
@@ -8914,10 +8327,6 @@ class ResourceTypeRegistrationProperties(_Model):  # pylint: disable=docstring-k
         name="disallowedActionVerbs", visibility=["read", "create", "update", "delete", "query"]
     )
     """The disallowed action verbs."""
-    service_tree_infos: Optional[list["_models.ServiceTreeInfo"]] = rest_field(
-        name="serviceTreeInfos", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The service tree infos."""
     request_header_options: Optional["_models.ResourceTypeRegistrationPropertiesRequestHeaderOptions"] = rest_field(
         name="requestHeaderOptions", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9037,10 +8446,6 @@ class ResourceTypeRegistrationProperties(_Model):  # pylint: disable=docstring-k
         name="availabilityZoneRule", visibility=["read", "create", "update", "delete", "query"]
     )
     """The availability zone rule."""
-    dsts_configuration: Optional["_models.ResourceTypeRegistrationPropertiesDstsConfiguration"] = rest_field(
-        name="dstsConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The dsts configuration."""
     async_timeout_rules: Optional[list["_models.AsyncTimeoutRule"]] = rest_field(
         name="asyncTimeoutRules", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9168,7 +8573,6 @@ class ResourceTypeRegistrationProperties(_Model):  # pylint: disable=docstring-k
             "_models.ResourceTypeRegistrationPropertiesCheckNameAvailabilitySpecifications"
         ] = None,
         disallowed_action_verbs: Optional[list[str]] = None,
-        service_tree_infos: Optional[list["_models.ServiceTreeInfo"]] = None,
         request_header_options: Optional["_models.ResourceTypeRegistrationPropertiesRequestHeaderOptions"] = None,
         subscription_state_rules: Optional[list["_models.SubscriptionStateRule"]] = None,
         template_deployment_options: Optional[
@@ -9205,7 +8609,6 @@ class ResourceTypeRegistrationProperties(_Model):  # pylint: disable=docstring-k
         allow_empty_role_assignments: Optional[bool] = None,
         policy_execution_type: Optional[Union[str, "_models.PolicyExecutionType"]] = None,
         availability_zone_rule: Optional["_models.ResourceTypeRegistrationPropertiesAvailabilityZoneRule"] = None,
-        dsts_configuration: Optional["_models.ResourceTypeRegistrationPropertiesDstsConfiguration"] = None,
         async_timeout_rules: Optional[list["_models.AsyncTimeoutRule"]] = None,
         common_api_versions: Optional[list[str]] = None,
         api_profiles: Optional[list["_models.ApiProfile"]] = None,
@@ -9333,36 +8736,6 @@ class ResourceTypeRegistrationPropertiesCheckNameAvailabilitySpecifications(
         *,
         enable_default_validation: Optional[bool] = None,
         resource_types_with_custom_validation: Optional[list[str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceTypeRegistrationPropertiesDstsConfiguration(
-    DstsConfiguration
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """The dsts configuration.
-
-    :ivar service_name: The service name. Required.
-    :vartype service_name: str
-    :ivar service_dns_name: This is a URI property.
-    :vartype service_dns_name: str
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        service_name: str,
-        service_dns_name: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -9524,10 +8897,7 @@ class ResourceTypeRegistrationPropertiesManagement(
     :vartype incident_routing_team: str
     :ivar incident_contact_email: The incident contact email.
     :vartype incident_contact_email: str
-    :ivar service_tree_infos: The service tree infos.
-    :vartype service_tree_infos: list[~azure.mgmt.providerhub.models.ServiceTreeInfo]
-    :ivar resource_access_policy: The resource access policy. Known values are: "NotSpecified",
-     "AcisReadAllowed", and "AcisActionAllowed".
+    :ivar resource_access_policy: The resource access policy. "NotSpecified"
     :vartype resource_access_policy: str or ~azure.mgmt.providerhub.models.ResourceAccessPolicy
     :ivar resource_access_roles: The resource access roles.
     :vartype resource_access_roles: list[~azure.mgmt.providerhub.models.ResourceAccessRole]
@@ -9559,7 +8929,6 @@ class ResourceTypeRegistrationPropertiesManagement(
         incident_routing_service: Optional[str] = None,
         incident_routing_team: Optional[str] = None,
         incident_contact_email: Optional[str] = None,
-        service_tree_infos: Optional[list["_models.ServiceTreeInfo"]] = None,
         resource_access_policy: Optional[Union[str, "_models.ResourceAccessPolicy"]] = None,
         resource_access_roles: Optional[list["_models.ResourceAccessRole"]] = None,
         expedited_rollout_submitters: Optional[list[str]] = None,
@@ -10251,51 +9620,6 @@ class ResourceTypeTemplateDeploymentPolicy(
         capabilities: Union[str, "_models.TemplateDeploymentCapabilities"],
         preflight_options: Union[str, "_models.TemplateDeploymentPreflightOptions"],
         preflight_notifications: Optional[Union[str, "_models.TemplateDeploymentPreflightNotifications"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ServiceTreeInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """ServiceTreeInfo.
-
-    :ivar service_id: The service id.
-    :vartype service_id: str
-    :ivar component_id: The component id.
-    :vartype component_id: str
-    :ivar readiness: The readiness. Known values are: "ClosingDown", "Deprecated", "GA",
-     "InDevelopment", "InternalOnly", "PrivatePreview", "PublicPreview", "RemovedFromARM", and
-     "Retired".
-    :vartype readiness: str or ~azure.mgmt.providerhub.models.Readiness
-    """
-
-    service_id: Optional[str] = rest_field(name="serviceId", visibility=["read", "create", "update", "delete", "query"])
-    """The service id."""
-    component_id: Optional[str] = rest_field(
-        name="componentId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The component id."""
-    readiness: Optional[Union[str, "_models.Readiness"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The readiness. Known values are: \"ClosingDown\", \"Deprecated\", \"GA\", \"InDevelopment\",
-     \"InternalOnly\", \"PrivatePreview\", \"PublicPreview\", \"RemovedFromARM\", and \"Retired\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        service_id: Optional[str] = None,
-        component_id: Optional[str] = None,
-        readiness: Optional[Union[str, "_models.Readiness"]] = None,
     ) -> None: ...
 
     @overload

@@ -60,23 +60,6 @@ class AvailabilityZonePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MULTI_ZONED."""
 
 
-class AvailableCheckInManifestEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The environment type."""
-
-    NOT_SPECIFIED = "NotSpecified"
-    """NOT_SPECIFIED."""
-    CANARY = "Canary"
-    """CANARY."""
-    PROD = "Prod"
-    """PROD."""
-    ALL = "All"
-    """ALL."""
-    MOONCAKE = "Mooncake"
-    """MOONCAKE."""
-    FAIRFAX = "Fairfax"
-    """FAIRFAX."""
-
-
 class BlockActionVerb(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The action verb that will be blocked when the resource group is locked during move."""
 
@@ -601,29 +584,6 @@ class QuotaPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RESTRICTED."""
 
 
-class Readiness(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The readiness."""
-
-    CLOSING_DOWN = "ClosingDown"
-    """CLOSING_DOWN."""
-    DEPRECATED = "Deprecated"
-    """DEPRECATED."""
-    GA = "GA"
-    """GA."""
-    IN_DEVELOPMENT = "InDevelopment"
-    """IN_DEVELOPMENT."""
-    INTERNAL_ONLY = "InternalOnly"
-    """INTERNAL_ONLY."""
-    PRIVATE_PREVIEW = "PrivatePreview"
-    """PRIVATE_PREVIEW."""
-    PUBLIC_PREVIEW = "PublicPreview"
-    """PUBLIC_PREVIEW."""
-    REMOVED_FROM_ARM = "RemovedFromARM"
-    """REMOVED_FROM_ARM."""
-    RETIRED = "Retired"
-    """RETIRED."""
-
-
 class Regionality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The regionality."""
 
@@ -640,10 +600,6 @@ class ResourceAccessPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NOT_SPECIFIED = "NotSpecified"
     """NOT_SPECIFIED."""
-    ACIS_READ_ALLOWED = "AcisReadAllowed"
-    """ACIS_READ_ALLOWED."""
-    ACIS_ACTION_ALLOWED = "AcisActionAllowed"
-    """ACIS_ACTION_ALLOWED."""
 
 
 class ResourceDeletionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -836,15 +792,6 @@ class ServiceClientOptionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """NOT_SPECIFIED."""
     DISABLE_AUTOMATIC_DECOMPRESSION = "DisableAutomaticDecompression"
     """DISABLE_AUTOMATIC_DECOMPRESSION."""
-
-
-class ServiceFeatureFlagAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The service feature flag."""
-
-    DO_NOT_CREATE = "DoNotCreate"
-    """DO_NOT_CREATE."""
-    CREATE = "Create"
-    """CREATE."""
 
 
 class ServiceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

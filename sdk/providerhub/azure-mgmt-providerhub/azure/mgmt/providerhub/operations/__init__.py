@@ -14,7 +14,6 @@ if TYPE_CHECKING:
 
 from ._operations import Operations  # type: ignore
 from ._operations import CustomRolloutsOperations  # type: ignore
-from ._operations import NewRegionFrontloadReleaseOperations  # type: ignore
 from ._operations import ProviderRegistrationsOperations  # type: ignore
 from ._operations import DefaultRolloutsOperations  # type: ignore
 from ._operations import NotificationRegistrationsOperations  # type: ignore
@@ -33,7 +32,6 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "Operations",
     "CustomRolloutsOperations",
-    "NewRegionFrontloadReleaseOperations",
     "ProviderRegistrationsOperations",
     "DefaultRolloutsOperations",
     "NotificationRegistrationsOperations",

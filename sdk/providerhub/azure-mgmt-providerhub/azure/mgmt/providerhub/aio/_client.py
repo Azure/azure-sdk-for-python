@@ -24,7 +24,6 @@ from .operations import (
     CustomRolloutsOperations,
     DefaultRolloutsOperations,
     ManifestsOperations,
-    NewRegionFrontloadReleaseOperations,
     NotificationRegistrationsOperations,
     Operations,
     ProviderMonitorSettingsOperations,
@@ -54,9 +53,6 @@ class ProviderHubMgmtClient(
     :vartype operations: azure.mgmt.providerhub.aio.operations.Operations
     :ivar custom_rollouts: CustomRolloutsOperations operations
     :vartype custom_rollouts: azure.mgmt.providerhub.aio.operations.CustomRolloutsOperations
-    :ivar new_region_frontload_release: NewRegionFrontloadReleaseOperations operations
-    :vartype new_region_frontload_release:
-     azure.mgmt.providerhub.aio.operations.NewRegionFrontloadReleaseOperations
     :ivar provider_registrations: ProviderRegistrationsOperations operations
     :vartype provider_registrations:
      azure.mgmt.providerhub.aio.operations.ProviderRegistrationsOperations
@@ -148,9 +144,6 @@ class ProviderHubMgmtClient(
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.custom_rollouts = CustomRolloutsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.new_region_frontload_release = NewRegionFrontloadReleaseOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.provider_registrations = ProviderRegistrationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
