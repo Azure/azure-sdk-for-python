@@ -60,6 +60,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-15-preview/EventSubscriptions_UpdateForCustomTopic_StorageQueueDestination.json
+# x-ms-original-file: 2026-06-15-preview/EventSubscriptions_UpdateForCustomTopic_StorageQueueDestination.json
 if __name__ == "__main__":
     main()
