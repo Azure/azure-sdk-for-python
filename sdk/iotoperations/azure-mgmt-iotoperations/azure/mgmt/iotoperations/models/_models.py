@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AdvancedSettings(_Model):
+class AdvancedSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Broker Advanced Settings.
 
     :ivar clients: Configurations related to All Clients.
@@ -169,7 +169,7 @@ class ProxyResource(Resource):
     """
 
 
-class AkriConnectorResource(ProxyResource):
+class AkriConnectorResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriConnector resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -217,7 +217,7 @@ class AkriConnectorResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AkriConnectorsRegistrySettings(_Model):
+class AkriConnectorsRegistrySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriConnectorsRegistrySettings properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -253,7 +253,9 @@ class AkriConnectorsRegistrySettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AkriConnectorsContainerRegistry(AkriConnectorsRegistrySettings, discriminator="ContainerRegistry"):
+class AkriConnectorsContainerRegistry(
+    AkriConnectorsRegistrySettings, discriminator="ContainerRegistry"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriConnectorsContainerRegistry properties.
 
     :ivar registry_settings_type: The registry settings type. Required. A Container Registry
@@ -290,7 +292,7 @@ class AkriConnectorsContainerRegistry(AkriConnectorsRegistrySettings, discrimina
         self.registry_settings_type = AkriConnectorsRegistrySettingsType.CONTAINER_REGISTRY  # type: ignore
 
 
-class AkriConnectorsContainerRegistrySettings(_Model):
+class AkriConnectorsContainerRegistrySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriConnectorsContainerRegistry properties.
 
     :ivar registry: The container registry to use for the artifact. Required.
@@ -328,7 +330,7 @@ class AkriConnectorsContainerRegistrySettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AkriConnectorsDiagnosticsLogs(_Model):
+class AkriConnectorsDiagnosticsLogs(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriConnectorsDiagnostic Log properties.
 
     :ivar level: The log level. Examples - 'debug', 'info', 'warn', 'error', 'trace'.
@@ -356,7 +358,7 @@ class AkriConnectorsDiagnosticsLogs(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AkriConnectorsTagDigestSettings(_Model):
+class AkriConnectorsTagDigestSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriConnectorsTagDigestSettings properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -390,7 +392,9 @@ class AkriConnectorsTagDigestSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AkriConnectorsDigest(AkriConnectorsTagDigestSettings, discriminator="Digest"):
+class AkriConnectorsDigest(
+    AkriConnectorsTagDigestSettings, discriminator="Digest"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriConnectorsDigest properties.
 
     :ivar tag_digest_type: The tag or digest type. Required. Indicates that a digest should be
@@ -424,7 +428,7 @@ class AkriConnectorsDigest(AkriConnectorsTagDigestSettings, discriminator="Diges
         self.tag_digest_type = AkriConnectorsTagDigestType.DIGEST  # type: ignore
 
 
-class AkriConnectorsImagePullSecret(_Model):
+class AkriConnectorsImagePullSecret(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriConnectorsImagePullSecret properties.
 
     :ivar secret_ref: The name of the image pull secret. Required.
@@ -452,7 +456,7 @@ class AkriConnectorsImagePullSecret(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AkriConnectorsMqttAuthentication(_Model):
+class AkriConnectorsMqttAuthentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriConnectorsMqttAuthentication properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -485,7 +489,9 @@ class AkriConnectorsMqttAuthentication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AkriConnectorsMqttConnectionConfiguration(_Model):  # pylint: disable=name-too-long
+class AkriConnectorsMqttConnectionConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AkriConnectorsMqttConnectionConfiguration properties.
 
     :ivar authentication: Authentication properties.
@@ -557,7 +563,9 @@ class AkriConnectorsMqttConnectionConfiguration(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class AkriConnectorsRegistryEndpointRef(AkriConnectorsRegistrySettings, discriminator="RegistryEndpointRef"):
+class AkriConnectorsRegistryEndpointRef(
+    AkriConnectorsRegistrySettings, discriminator="RegistryEndpointRef"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriConnectorsRegistryEndpointRef properties.
 
     :ivar registry_settings_type: The registry endpoint reference. Required. A Registry Endpoint
@@ -593,7 +601,7 @@ class AkriConnectorsRegistryEndpointRef(AkriConnectorsRegistrySettings, discrimi
         self.registry_settings_type = AkriConnectorsRegistrySettingsType.REGISTRY_ENDPOINT_REF  # type: ignore
 
 
-class AkriConnectorsSecret(_Model):
+class AkriConnectorsSecret(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriConnectorsSecret properties.
 
     :ivar secret_key: The key in the secret to be mounted. Required.
@@ -633,7 +641,7 @@ class AkriConnectorsSecret(_Model):
 
 class AkriConnectorsServiceAccountAuthentication(
     AkriConnectorsMqttAuthentication, discriminator="ServiceAccountToken"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AkriConnectorsServiceAccountAuthentication properties.
 
     :ivar method: The authentication method for the MQTT connection. Required. Service Account
@@ -672,7 +680,9 @@ class AkriConnectorsServiceAccountAuthentication(
         self.method = AkriConnectorsMqttAuthenticationMethod.SERVICE_ACCOUNT_TOKEN  # type: ignore
 
 
-class AkriConnectorsServiceAccountTokenSettings(_Model):  # pylint: disable=name-too-long
+class AkriConnectorsServiceAccountTokenSettings(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AkriConnectorsServiceAccountTokenSettings properties.
 
     :ivar audience: The audience for the service account token. Required.
@@ -700,7 +710,9 @@ class AkriConnectorsServiceAccountTokenSettings(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class AkriConnectorsTag(AkriConnectorsTagDigestSettings, discriminator="Tag"):
+class AkriConnectorsTag(
+    AkriConnectorsTagDigestSettings, discriminator="Tag"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriConnectorsTag properties.
 
     :ivar tag_digest_type: The tag or digest type. Required. Indicates that a tag should be
@@ -745,7 +757,7 @@ class AkriConnectorStatus(_Model):
     """The health state of the AkriConnector."""
 
 
-class AkriConnectorTemplateAioMetadata(_Model):
+class AkriConnectorTemplateAioMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriConnectorTemplateAioMetadata properties.
 
     :ivar aio_min_version: The minimum version of AIO required for the connector.
@@ -782,7 +794,7 @@ class AkriConnectorTemplateAioMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AkriConnectorTemplateAllocation(_Model):
+class AkriConnectorTemplateAllocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriConnectorTemplateAllocation properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -816,7 +828,7 @@ class AkriConnectorTemplateAllocation(_Model):
 
 class AkriConnectorTemplateBucketizedAllocation(
     AkriConnectorTemplateAllocation, discriminator="Bucketized"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AkriConnectorTemplateBucketizedAllocation properties.
 
     :ivar policy: The allocation policy type. Required. Bucketized allocation policy.
@@ -849,7 +861,9 @@ class AkriConnectorTemplateBucketizedAllocation(
         self.policy = AkriConnectorTemplateAllocationPolicy.BUCKETIZED  # type: ignore
 
 
-class AkriConnectorTemplateDeviceInboundEndpointType(_Model):  # pylint: disable=name-too-long
+class AkriConnectorTemplateDeviceInboundEndpointType(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AkriConnectorTemplateDeviceInboundEndpointType properties.
 
     :ivar display_name: The display name of the device inbound endpoint.
@@ -889,7 +903,7 @@ class AkriConnectorTemplateDeviceInboundEndpointType(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class AkriConnectorTemplateDiagnostics(_Model):
+class AkriConnectorTemplateDiagnostics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriConnectorTemplateDiagnostics properties.
 
     :ivar logs: The log settings for the Connector template. Required.
@@ -919,7 +933,7 @@ class AkriConnectorTemplateDiagnostics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AkriConnectorTemplateExecAction(_Model):
+class AkriConnectorTemplateExecAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriConnectorTemplateExecAction properties. Describes a command to execute in a container.
 
     :ivar command: The command to execute inside the container. Exit status of 0 is treated as
@@ -949,7 +963,9 @@ class AkriConnectorTemplateExecAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AkriConnectorTemplateRuntimeConfiguration(_Model):  # pylint: disable=name-too-long
+class AkriConnectorTemplateRuntimeConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AkriConnectorTemplateRuntimeConfiguration properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -987,7 +1003,7 @@ class AkriConnectorTemplateRuntimeConfiguration(_Model):  # pylint: disable=name
 
 class AkriConnectorTemplateManagedConfiguration(
     AkriConnectorTemplateRuntimeConfiguration, discriminator="ManagedConfiguration"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AkriConnectorTemplateManagedConfiguration properties.
 
     :ivar runtime_configuration_type: The runtime configuration type for the Connector template.
@@ -1026,7 +1042,9 @@ class AkriConnectorTemplateManagedConfiguration(
         self.runtime_configuration_type = AkriConnectorTemplateRuntimeConfigurationType.MANAGED_CONFIGURATION  # type: ignore
 
 
-class AkriConnectorTemplateManagedConfigurationSettings(_Model):  # pylint: disable=name-too-long
+class AkriConnectorTemplateManagedConfigurationSettings(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AkriConnectorTemplateManagedConfiguration properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1115,7 +1133,9 @@ class AkriConnectorTemplateManagedConfigurationSettings(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class AkriConnectorTemplatePersistentVolumeClaim(_Model):  # pylint: disable=name-too-long
+class AkriConnectorTemplatePersistentVolumeClaim(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AkriConnectorTemplatePersistentVolumeClaim properties.
 
     :ivar claim_name: The name of the persistent volume claim. Required.
@@ -1148,7 +1168,7 @@ class AkriConnectorTemplatePersistentVolumeClaim(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class AkriConnectorTemplateProperties(_Model):
+class AkriConnectorTemplateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriConnectorTemplate properties.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -1233,7 +1253,7 @@ class AkriConnectorTemplateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AkriConnectorTemplateReadinessProbe(_Model):
+class AkriConnectorTemplateReadinessProbe(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriConnectorTemplateReadinessProbe properties. Defines a readiness probe for the connector
     container.
 
@@ -1302,7 +1322,7 @@ class AkriConnectorTemplateReadinessProbe(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AkriConnectorTemplateResource(ProxyResource):
+class AkriConnectorTemplateResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriConnectorTemplate resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1352,7 +1372,7 @@ class AkriConnectorTemplateResource(ProxyResource):
 
 class AkriConnectorTemplateRuntimeImageConfiguration(
     AkriConnectorTemplateManagedConfigurationSettings, discriminator="ImageConfiguration"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AkriConnectorTemplateRuntimeImageConfiguration properties.
 
     :ivar allocation: Allocation settings for the managed configuration.
@@ -1414,7 +1434,9 @@ class AkriConnectorTemplateRuntimeImageConfiguration(
         self.managed_configuration_type = AkriConnectorTemplateManagedConfigurationType.IMAGE_CONFIGURATION  # type: ignore
 
 
-class AkriConnectorTemplateRuntimeImageConfigurationSettings(_Model):  # pylint: disable=name-too-long
+class AkriConnectorTemplateRuntimeImageConfigurationSettings(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AkriConnectorTemplateRuntimeImageConfiguration properties.
 
     :ivar image_name: The image name without any registry reference, tag or digest. Required.
@@ -1486,7 +1508,7 @@ class AkriConnectorTemplateRuntimeImageConfigurationSettings(_Model):  # pylint:
 
 class AkriConnectorTemplateRuntimeStatefulSetConfiguration(
     AkriConnectorTemplateManagedConfigurationSettings, discriminator="StatefulSetConfiguration"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AkriConnectorTemplateRuntimeStatefulSetConfiguration properties.
 
     :ivar allocation: Allocation settings for the managed configuration.
@@ -1556,7 +1578,7 @@ class AkriConnectorTemplateRuntimeStatefulSetConfiguration(
         self.managed_configuration_type = AkriConnectorTemplateManagedConfigurationType.STATEFUL_SET_CONFIGURATION  # type: ignore
 
 
-class AkriConnectorTemplateTrustList(_Model):
+class AkriConnectorTemplateTrustList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriConnectorTemplateTrustList properties.
 
     :ivar trust_list_secret_ref: The secret reference for certificates to trust. Required.
@@ -1605,7 +1627,7 @@ class AkriServiceProperties(_Model):
     """The status for the service."""
 
 
-class AkriServiceResource(ProxyResource):
+class AkriServiceResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AkriService resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1664,7 +1686,7 @@ class AkriServiceStatus(_Model):
     """The health state of the AkriService."""
 
 
-class AuthorizationConfig(_Model):
+class AuthorizationConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Broker AuthorizationConfig properties.
 
     :ivar cache: Enable caching of the authorization rules. Known values are: "Enabled" and
@@ -1704,7 +1726,7 @@ class AuthorizationConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthorizationRule(_Model):
+class AuthorizationRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AuthorizationConfig Rule Properties.
 
     :ivar broker_resources: Give access to Broker methods and topics. Required.
@@ -1746,7 +1768,7 @@ class AuthorizationRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureDeviceRegistryNamespaceRef(_Model):
+class AzureDeviceRegistryNamespaceRef(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Device Registry Namespace reference.
 
     :ivar resource_id: The resource ID of the Azure Device Registry Namespace. Required.
@@ -1774,7 +1796,7 @@ class AzureDeviceRegistryNamespaceRef(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackendChain(_Model):
+class BackendChain(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Desired properties of the backend instances of the broker.
 
     :ivar partitions: The desired number of physical backend partitions. Required.
@@ -1815,7 +1837,7 @@ class BackendChain(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchingConfiguration(_Model):
+class BatchingConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Batching configuration.
 
     :ivar latency_seconds: Batching latency in seconds.
@@ -1852,7 +1874,7 @@ class BatchingConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerAuthenticationProperties(_Model):
+class BrokerAuthenticationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BrokerAuthentication Resource properties.
 
     :ivar authentication_methods: Defines a set of Broker authentication methods to be used on
@@ -1901,7 +1923,7 @@ class BrokerAuthenticationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerAuthenticationResource(ProxyResource):
+class BrokerAuthenticationResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instance broker authentication resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1949,7 +1971,7 @@ class BrokerAuthenticationResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class BrokerAuthenticatorCustomAuth(_Model):
+class BrokerAuthenticatorCustomAuth(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom Authentication properties.
 
     :ivar x509: X509 Custom Auth type details. Required.
@@ -1977,7 +1999,7 @@ class BrokerAuthenticatorCustomAuth(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerAuthenticatorMethodCustom(_Model):
+class BrokerAuthenticatorMethodCustom(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom method for BrokerAuthentication.
 
     :ivar auth: Optional authentication needed for authenticating with the custom authentication
@@ -2027,7 +2049,7 @@ class BrokerAuthenticatorMethodCustom(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerAuthenticatorMethods(_Model):
+class BrokerAuthenticatorMethods(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Set of broker authentication policies. Only one method is supported for each entry.
 
     :ivar method: Custom authentication configuration. Required. Known values are: "Custom",
@@ -2081,7 +2103,7 @@ class BrokerAuthenticatorMethods(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerAuthenticatorMethodSat(_Model):
+class BrokerAuthenticatorMethodSat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Service Account Token for BrokerAuthentication.
 
     :ivar audiences: List of allowed audience. Required.
@@ -2109,7 +2131,7 @@ class BrokerAuthenticatorMethodSat(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerAuthenticatorMethodX509(_Model):
+class BrokerAuthenticatorMethodX509(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """X509 for BrokerAuthentication.
 
     :ivar authorization_attributes: X509 authorization attributes properties.
@@ -2157,7 +2179,7 @@ class BrokerAuthenticatorMethodX509(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerAuthenticatorMethodX509Attributes(_Model):
+class BrokerAuthenticatorMethodX509Attributes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BrokerAuthenticatorMethodX509Attributes properties.
 
     :ivar attributes: Attributes object. Required.
@@ -2190,7 +2212,7 @@ class BrokerAuthenticatorMethodX509Attributes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerAuthorizationProperties(_Model):
+class BrokerAuthorizationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BrokerAuthorization Resource properties.
 
     :ivar authorization_policies: The list of authorization policies supported by the Authorization
@@ -2237,7 +2259,7 @@ class BrokerAuthorizationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerAuthorizationResource(ProxyResource):
+class BrokerAuthorizationResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instance broker authorizations resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2285,7 +2307,7 @@ class BrokerAuthorizationResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class BrokerDiagnostics(_Model):
+class BrokerDiagnostics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Broker Diagnostic Setting properties.
 
     :ivar logs: Diagnostic log settings for the resource.
@@ -2330,7 +2352,7 @@ class BrokerDiagnostics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerListenerProperties(_Model):
+class BrokerListenerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a Broker listener. A listener is a collection of ports on which the broker accepts
     connections from clients.
 
@@ -2391,7 +2413,7 @@ class BrokerListenerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerListenerResource(ProxyResource):
+class BrokerListenerResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instance broker resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2439,7 +2461,7 @@ class BrokerListenerResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class BrokerPersistence(_Model):
+class BrokerPersistence(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disk persistence configuration.
 
     When persistence is enabled, certain items (non-performance-critical data) selected for
@@ -2541,7 +2563,7 @@ class BrokerPersistence(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerPersistenceEncryption(_Model):
+class BrokerPersistenceEncryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Broker Persistence Encryption properties.
 
     :ivar mode: Determines if encryption is enabled. Required. Known values are: "Enabled" and
@@ -2570,7 +2592,7 @@ class BrokerPersistenceEncryption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerProperties(_Model):
+class BrokerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Broker Resource properties.
 
     :ivar advanced: Advanced settings of Broker.
@@ -2692,7 +2714,7 @@ class BrokerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerResource(ProxyResource):
+class BrokerResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instance broker resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2740,7 +2762,7 @@ class BrokerResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class BrokerResourceRule(_Model):
+class BrokerResourceRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Broker Resource Rule properties. This defines the objects that represent the actions or topics,
     such as - method.Connect, method.Publish, etc.
 
@@ -2791,7 +2813,7 @@ class BrokerResourceRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerRetainMessagesPolicy(_Model):
+class BrokerRetainMessagesPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Broker Retain policy properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2825,7 +2847,9 @@ class BrokerRetainMessagesPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerRetainMessagesCustomPolicy(BrokerRetainMessagesPolicy, discriminator="Custom"):
+class BrokerRetainMessagesCustomPolicy(
+    BrokerRetainMessagesPolicy, discriminator="Custom"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom Broker Retain Message Policy.
 
     :ivar mode: The mode of the policy. Required. Indicates that the policy is a custom policy.
@@ -2860,7 +2884,7 @@ class BrokerRetainMessagesCustomPolicy(BrokerRetainMessagesPolicy, discriminator
         self.mode = BrokerPersistencePolicyMode.CUSTOM  # type: ignore
 
 
-class BrokerRetainMessagesDynamic(_Model):
+class BrokerRetainMessagesDynamic(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dynamic settings of BrokerRetainMessagesCustomPolicy.
 
     :ivar mode: Mode of the BrokerRetainMessagesCustomPolicy. Required. Known values are: "Enabled"
@@ -2890,7 +2914,7 @@ class BrokerRetainMessagesDynamic(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerRetainMessagesSettings(_Model):
+class BrokerRetainMessagesSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Broker Retain Messages properties.
 
     :ivar topics: List of topics under which retained messages would be persisted to disk.
@@ -2929,7 +2953,7 @@ class BrokerRetainMessagesSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerStateStorePolicy(_Model):
+class BrokerStateStorePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Broker State Store Policy.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2963,7 +2987,9 @@ class BrokerStateStorePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerStateStoreCustomPolicy(BrokerStateStorePolicy, discriminator="Custom"):
+class BrokerStateStoreCustomPolicy(
+    BrokerStateStorePolicy, discriminator="Custom"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Broker State Store Custom Policy.
 
     :ivar mode: The mode of the policy. Required. Indicates that the policy is a custom policy.
@@ -2998,7 +3024,7 @@ class BrokerStateStoreCustomPolicy(BrokerStateStorePolicy, discriminator="Custom
         self.mode = BrokerPersistencePolicyMode.CUSTOM  # type: ignore
 
 
-class BrokerStateStoreDynamic(_Model):
+class BrokerStateStoreDynamic(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dynamic settings of BrokerStateStoreCustomPolicy.
 
     :ivar mode: Mode of the BrokerStateStoreCustomPolicy. Required. Known values are: "Enabled" and
@@ -3028,7 +3054,7 @@ class BrokerStateStoreDynamic(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerStateStorePolicyResources(_Model):
+class BrokerStateStorePolicyResources(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Broker State Store Policy Resources properties.
 
     :ivar key_type: The key to persist to disk. Required. Known values are: "Pattern", "String",
@@ -3067,7 +3093,7 @@ class BrokerStateStorePolicyResources(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerStateStorePolicySettings(_Model):
+class BrokerStateStorePolicySettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Broker State Store Custom Policy Settings.
 
     :ivar state_store_resources: List of key and key type to persist to disk.
@@ -3118,7 +3144,7 @@ class BrokerStatus(_Model):
     """The health state of the Broker."""
 
 
-class BrokerSubscriberQueuePolicy(_Model):
+class BrokerSubscriberQueuePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Broker Subscriber Queue Policy properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3152,7 +3178,9 @@ class BrokerSubscriberQueuePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BrokerSubscriberQueueCustomPolicy(BrokerSubscriberQueuePolicy, discriminator="Custom"):
+class BrokerSubscriberQueueCustomPolicy(
+    BrokerSubscriberQueuePolicy, discriminator="Custom"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom Subscriber Queue Policy Properties.
 
     :ivar mode: The mode of the policy. Required. Indicates that the policy is a custom policy.
@@ -3190,7 +3218,9 @@ class BrokerSubscriberQueueCustomPolicy(BrokerSubscriberQueuePolicy, discriminat
         self.mode = BrokerPersistencePolicyMode.CUSTOM  # type: ignore
 
 
-class BrokerSubscriberQueueCustomPolicySettings(_Model):  # pylint: disable=name-too-long
+class BrokerSubscriberQueueCustomPolicySettings(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Broker Subscriber Queue Custom Policy properties.
 
     :ivar subscriber_client_ids: List of client IDs of the subscribers, wildcard * supported.
@@ -3229,7 +3259,7 @@ class BrokerSubscriberQueueCustomPolicySettings(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class BrokerSubscriberQueueDynamic(_Model):
+class BrokerSubscriberQueueDynamic(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dynamic settings of BrokerSubscriberQueueCustomPolicy.
 
     :ivar mode: Mode of the BrokerSubscriberQueueCustomPolicy. Required. Known values are:
@@ -3259,7 +3289,7 @@ class BrokerSubscriberQueueDynamic(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Cardinality(_Model):
+class Cardinality(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cardinality properties.
 
     :ivar backend_chain: The backend broker desired properties. Required.
@@ -3294,7 +3324,7 @@ class Cardinality(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertManagerCertificateSpec(_Model):
+class CertManagerCertificateSpec(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Automatic TLS server certificate management with cert-manager.
 
     :ivar duration: Lifetime of certificate. Must be specified using a Go time.Duration format
@@ -3362,7 +3392,7 @@ class CertManagerCertificateSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertManagerCertOptions(_Model):
+class CertManagerCertOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cert Manager Cert properties.
 
     :ivar duration: Lifetime of certificate. Must be specified using a Go time.Duration format
@@ -3406,10 +3436,10 @@ class CertManagerCertOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertManagerIssuerRef(_Model):
+class CertManagerIssuerRef(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cert-Manager issuerRef properties.
 
-    :ivar group: group of issuer. Required.
+    :ivar group: group of issuer.
     :vartype group: str
     :ivar kind: kind of issuer (Issuer or ClusterIssuer). Required. Known values are: "Issuer" and
      "ClusterIssuer".
@@ -3418,8 +3448,8 @@ class CertManagerIssuerRef(_Model):
     :vartype name: str
     """
 
-    group: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """group of issuer. Required."""
+    group: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """group of issuer."""
     kind: Union[str, "_models.CertManagerIssuerKind"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3432,9 +3462,9 @@ class CertManagerIssuerRef(_Model):
     def __init__(
         self,
         *,
-        group: str,
         kind: Union[str, "_models.CertManagerIssuerKind"],
         name: str,
+        group: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3448,7 +3478,7 @@ class CertManagerIssuerRef(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CertManagerPrivateKey(_Model):
+class CertManagerPrivateKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cert Manager private key properties.
 
     :ivar algorithm: algorithm for private key. Required. Known values are: "Ec256", "Ec384",
@@ -3488,7 +3518,7 @@ class CertManagerPrivateKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientConfig(_Model):
+class ClientConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The settings of Client Config.
 
     :ivar max_session_expiry_seconds: Upper bound of Session Expiry Interval, in seconds.
@@ -3554,7 +3584,7 @@ class ClientConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowBuiltInTransformationDataset(_Model):
+class DataflowBuiltInTransformationDataset(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dataflow BuiltIn Transformation dataset properties.
 
     :ivar key: The key of the dataset. Required.
@@ -3605,7 +3635,7 @@ class DataflowBuiltInTransformationDataset(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowBuiltInTransformationFilter(_Model):
+class DataflowBuiltInTransformationFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dataflow BuiltIn Transformation filter properties.
 
     :ivar type: The type of dataflow operation. "Filter"
@@ -3654,7 +3684,7 @@ class DataflowBuiltInTransformationFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowBuiltInTransformationMap(_Model):
+class DataflowBuiltInTransformationMap(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dataflow BuiltIn Transformation map properties.
 
     :ivar type: Type of transformation. Known values are: "NewProperties", "Rename", "Compute",
@@ -3708,7 +3738,7 @@ class DataflowBuiltInTransformationMap(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowBuiltInTransformationSettings(_Model):
+class DataflowBuiltInTransformationSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dataflow BuiltIn Transformation properties.
 
     :ivar serialization_format: Serialization format. Optional; defaults to JSON. Allowed value
@@ -3770,7 +3800,7 @@ class DataflowBuiltInTransformationSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowDestinationHeaderAction(_Model):
+class DataflowDestinationHeaderAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dataflow Destination Header Action properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3807,7 +3837,7 @@ class DataflowDestinationHeaderAction(_Model):
 
 class DataflowDestinationAddIfNotPresentHeaderAction(
     DataflowDestinationHeaderAction, discriminator="AddIfNotPresent"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Dataflow Destination Add if not present HeaderAction properties.
 
     :ivar action_type: The type of header operation to perform. Required. Add if not present type.
@@ -3847,7 +3877,7 @@ class DataflowDestinationAddIfNotPresentHeaderAction(
 
 class DataflowDestinationAddOrReplaceHeaderAction(
     DataflowDestinationHeaderAction, discriminator="AddOrReplace"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Dataflow Destination Add or Replace HeaderAction properties.
 
     :ivar action_type: The type of header operation to perform. Required. Add or Replace type.
@@ -3885,7 +3915,7 @@ class DataflowDestinationAddOrReplaceHeaderAction(
         self.action_type = DataflowHeaderActionType.ADD_OR_REPLACE  # type: ignore
 
 
-class DataflowDestinationOperationSettings(_Model):
+class DataflowDestinationOperationSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dataflow Destination Operation properties.
 
     :ivar endpoint_ref: Reference to the Endpoint CR. Can be of Broker, Kafka, Fabric, ADLS, ADX
@@ -3931,7 +3961,9 @@ class DataflowDestinationOperationSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowDestinationRemoveHeaderAction(DataflowDestinationHeaderAction, discriminator="Remove"):
+class DataflowDestinationRemoveHeaderAction(
+    DataflowDestinationHeaderAction, discriminator="Remove"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dataflow Destination Remove HeaderAction properties.
 
     :ivar action_type: The type of header operation to perform. Required. Remove type.
@@ -3964,7 +3996,9 @@ class DataflowDestinationRemoveHeaderAction(DataflowDestinationHeaderAction, dis
         self.action_type = DataflowHeaderActionType.REMOVE  # type: ignore
 
 
-class DataflowEndpointAuthenticationAccessToken(_Model):  # pylint: disable=name-too-long
+class DataflowEndpointAuthenticationAccessToken(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """DataflowEndpoint Authentication Access Token properties.
 
     :ivar secret_ref: Token secret name. Required.
@@ -3996,7 +4030,7 @@ class DataflowEndpointAuthenticationAnonymous(_Model):
     """DataflowEndpoint Anonymous Authentication properties."""
 
 
-class DataflowEndpointAuthenticationSasl(_Model):
+class DataflowEndpointAuthenticationSasl(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataflowEndpoint Authentication Sasl properties.
 
     :ivar sasl_type: Type of SASL authentication. Can be PLAIN, SCRAM-SHA-256, or SCRAM-SHA-512.
@@ -4034,7 +4068,9 @@ class DataflowEndpointAuthenticationSasl(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointAuthenticationServiceAccountToken(_Model):  # pylint: disable=name-too-long
+class DataflowEndpointAuthenticationServiceAccountToken(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Service Account Token for BrokerAuthentication.
 
     :ivar audience: Audience of the service account. Optional, defaults to the broker internal
@@ -4064,7 +4100,9 @@ class DataflowEndpointAuthenticationServiceAccountToken(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointAuthenticationSystemAssignedManagedIdentity(_Model):  # pylint: disable=name-too-long
+class DataflowEndpointAuthenticationSystemAssignedManagedIdentity(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """DataflowEndpoint Authentication SystemAssignedManagedIdentity properties.
 
     :ivar audience: Audience of the service to authenticate against. Optional; defaults to the
@@ -4094,7 +4132,9 @@ class DataflowEndpointAuthenticationSystemAssignedManagedIdentity(_Model):  # py
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointAuthenticationUserAssignedManagedIdentity(_Model):  # pylint: disable=name-too-long
+class DataflowEndpointAuthenticationUserAssignedManagedIdentity(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """DataflowEndpoint Authentication UserAssignedManagedIdentity properties.
 
     :ivar client_id: Client ID for the user-assigned managed identity. Required.
@@ -4133,7 +4173,7 @@ class DataflowEndpointAuthenticationUserAssignedManagedIdentity(_Model):  # pyli
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointAuthenticationX509(_Model):
+class DataflowEndpointAuthenticationX509(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataflowEndpoint Authentication X509 properties.
 
     :ivar secret_ref: Secret reference of the X.509 certificate. Required.
@@ -4161,7 +4201,7 @@ class DataflowEndpointAuthenticationX509(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointDataExplorer(_Model):
+class DataflowEndpointDataExplorer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Data Explorer endpoint properties.
 
     :ivar authentication: Authentication configuration. NOTE - only authentication property is
@@ -4171,7 +4211,8 @@ class DataflowEndpointDataExplorer(_Model):
     :ivar database: Database name. Required.
     :vartype database: str
     :ivar host: Host of the Azure Data Explorer in the form of <cluster>.<region>.kusto.windows.net
-     . Required.
+     (Azure Public) or <cluster>.<region>.kusto.usgovcloudapi.net (Azure US Government). This will
+     be validated by the regex ``.*\\.*\\.kusto\\.(windows\\.net|usgovcloudapi\\.net)``. Required.
     :vartype host: str
     :ivar batching: Azure Data Explorer endpoint batching configuration.
     :vartype batching: ~azure.mgmt.iotoperations.models.BatchingConfiguration
@@ -4185,7 +4226,9 @@ class DataflowEndpointDataExplorer(_Model):
     database: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Database name. Required."""
     host: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Host of the Azure Data Explorer in the form of <cluster>.<region>.kusto.windows.net . Required."""
+    """Host of the Azure Data Explorer in the form of <cluster>.<region>.kusto.windows.net (Azure
+     Public) or <cluster>.<region>.kusto.usgovcloudapi.net (Azure US Government). This will be
+     validated by the regex ``.*\\.*\\.kusto\\.(windows\\.net|usgovcloudapi\\.net)``. Required."""
     batching: Optional["_models.BatchingConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4212,7 +4255,9 @@ class DataflowEndpointDataExplorer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointDataExplorerAuthentication(_Model):  # pylint: disable=name-too-long
+class DataflowEndpointDataExplorerAuthentication(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure Data Explorer Authentication properties. NOTE - only authentication property is allowed
     per entry.
 
@@ -4270,15 +4315,16 @@ class DataflowEndpointDataExplorerAuthentication(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointDataLakeStorage(_Model):
+class DataflowEndpointDataLakeStorage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Data Lake endpoint properties.
 
     :ivar authentication: Authentication configuration. NOTE - only authentication property is
      allowed per entry. Required.
     :vartype authentication:
      ~azure.mgmt.iotoperations.models.DataflowEndpointDataLakeStorageAuthentication
-    :ivar host: Host of the Azure Data Lake in the form of <account>.blob.core.windows.net .
-     Required.
+    :ivar host: Host of the Azure Data Lake in the form of <account>.blob.core.windows.net (Azure
+     Public) or <account>.blob.core.usgovcloudapi.net (Azure US Government). This will be validated
+     by the regex ``.*\\.blob\\.core\\.(windows\\.net|usgovcloudapi\\.net)``. Required.
     :vartype host: str
     :ivar batching: Azure Data Lake endpoint batching configuration.
     :vartype batching: ~azure.mgmt.iotoperations.models.BatchingConfiguration
@@ -4290,7 +4336,9 @@ class DataflowEndpointDataLakeStorage(_Model):
     """Authentication configuration. NOTE - only authentication property is allowed per entry.
      Required."""
     host: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Host of the Azure Data Lake in the form of <account>.blob.core.windows.net . Required."""
+    """Host of the Azure Data Lake in the form of <account>.blob.core.windows.net (Azure Public) or
+     <account>.blob.core.usgovcloudapi.net (Azure US Government). This will be validated by the
+     regex ``.*\\.blob\\.core\\.(windows\\.net|usgovcloudapi\\.net)``. Required."""
     batching: Optional["_models.BatchingConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4316,7 +4364,9 @@ class DataflowEndpointDataLakeStorage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointDataLakeStorageAuthentication(_Model):  # pylint: disable=name-too-long
+class DataflowEndpointDataLakeStorageAuthentication(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure Data Lake endpoint Authentication properties.  NOTE Enum - Only one method is supported
     for one entry.
 
@@ -4382,7 +4432,7 @@ class DataflowEndpointDataLakeStorageAuthentication(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointFabricOneLake(_Model):
+class DataflowEndpointFabricOneLake(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft Fabric endpoint properties.
 
     :ivar authentication: Authentication configuration. NOTE - only one authentication property is
@@ -4395,8 +4445,9 @@ class DataflowEndpointFabricOneLake(_Model):
      or files. Required. Known values are: "Files" and "Tables".
     :vartype one_lake_path_type: str or
      ~azure.mgmt.iotoperations.models.DataflowEndpointFabricPathType
-    :ivar host: Host of the Microsoft Fabric in the form of https://<host>.fabric.microsoft.com.
-     Required.
+    :ivar host: Host of the Microsoft Fabric in the form of https://<host>.fabric.microsoft.com
+     (Azure Public) or https://<host>.fabric.microsoft.us (Azure US Government). This will be
+     validated by the regex ``.*\\.fabric\\.microsoft\\.(com|us)``. Required.
     :vartype host: str
     :ivar batching: Batching configuration.
     :vartype batching: ~azure.mgmt.iotoperations.models.BatchingConfiguration
@@ -4417,7 +4468,9 @@ class DataflowEndpointFabricOneLake(_Model):
     """Type of location of the data in the workspace. Can be either tables or files. Required. Known
      values are: \"Files\" and \"Tables\"."""
     host: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Host of the Microsoft Fabric in the form of https://<host>.fabric.microsoft.com. Required."""
+    """Host of the Microsoft Fabric in the form of https://<host>.fabric.microsoft.com (Azure Public)
+     or https://<host>.fabric.microsoft.us (Azure US Government). This will be validated by the
+     regex ``.*\\.fabric\\.microsoft\\.(com|us)``. Required."""
     batching: Optional["_models.BatchingConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4445,7 +4498,9 @@ class DataflowEndpointFabricOneLake(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointFabricOneLakeAuthentication(_Model):  # pylint: disable=name-too-long
+class DataflowEndpointFabricOneLakeAuthentication(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Microsoft Fabric endpoint. Authentication properties. NOTE - Only one method is supported for
     one entry.
 
@@ -4503,7 +4558,7 @@ class DataflowEndpointFabricOneLakeAuthentication(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointFabricOneLakeNames(_Model):
+class DataflowEndpointFabricOneLakeNames(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft Fabric endpoint Names properties.
 
     :ivar lakehouse_name: Lakehouse name. Required.
@@ -4536,7 +4591,7 @@ class DataflowEndpointFabricOneLakeNames(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointKafka(_Model):
+class DataflowEndpointKafka(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Kafka endpoint properties.
 
     :ivar authentication: Authentication configuration. NOTE - only authentication property is
@@ -4640,7 +4695,7 @@ class DataflowEndpointKafka(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointKafkaAuthentication(_Model):
+class DataflowEndpointKafkaAuthentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Kafka endpoint Authentication properties. NOTE - only authentication property is allowed per
     entry.
 
@@ -4714,7 +4769,7 @@ class DataflowEndpointKafkaAuthentication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointKafkaBatching(_Model):
+class DataflowEndpointKafkaBatching(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Kafka endpoint Batching properties.
 
     :ivar mode: Mode for batching. Known values are: "Enabled" and "Disabled".
@@ -4761,7 +4816,7 @@ class DataflowEndpointKafkaBatching(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointLocalStorage(_Model):
+class DataflowEndpointLocalStorage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Local persistent volume endpoint properties.
 
     :ivar persistent_volume_claim_ref: Persistent volume claim name. Required.
@@ -4791,7 +4846,7 @@ class DataflowEndpointLocalStorage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointMqtt(_Model):
+class DataflowEndpointMqtt(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Broker endpoint properties.
 
     :ivar authentication: authentication properties. DEFAULT: kubernetes.audience=aio-internal.
@@ -4895,7 +4950,7 @@ class DataflowEndpointMqtt(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointMqttAuthentication(_Model):
+class DataflowEndpointMqttAuthentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Mqtt endpoint Authentication properties. NOTE - only authentication property is allowed per
     entry.
 
@@ -4972,7 +5027,7 @@ class DataflowEndpointMqttAuthentication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointOpenTelemetry(_Model):
+class DataflowEndpointOpenTelemetry(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OpenTelemetry endpoint properties.
 
     :ivar host: Host of the OpenTelemetry in the form of <host>:<port>. Required.
@@ -5019,7 +5074,7 @@ class DataflowEndpointOpenTelemetry(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointProperties(_Model):
+class DataflowEndpointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataflowEndpoint Resource properties. NOTE - Only one type of endpoint is supported for one
     Resource.
 
@@ -5129,7 +5184,7 @@ class DataflowEndpointProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowEndpointResource(ProxyResource):
+class DataflowEndpointResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instance dataflowEndpoint resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5177,7 +5232,7 @@ class DataflowEndpointResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DataflowGraphConnectionInput(_Model):
+class DataflowGraphConnectionInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataflowGraph DataflowGraphNode Connection Input.
 
     :ivar name: Name of the input node. Required.
@@ -5212,7 +5267,7 @@ class DataflowGraphConnectionInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowGraphConnectionOutput(_Model):
+class DataflowGraphConnectionOutput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataflowGraph DataflowGraphNode Connection Output.
 
     :ivar name: Name of the destination node. Required.
@@ -5240,7 +5295,7 @@ class DataflowGraphConnectionOutput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowGraphConnectionSchemaSettings(_Model):
+class DataflowGraphConnectionSchemaSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataflowGraph connection node output schema settings.
 
     :ivar serialization_format: Output serialization format. Known values are: "Delta", "Json",
@@ -5277,7 +5332,7 @@ class DataflowGraphConnectionSchemaSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowGraphDestinationHeaderAction(_Model):
+class DataflowGraphDestinationHeaderAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataflowGraph Destination Header Action.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -5315,7 +5370,7 @@ class DataflowGraphDestinationHeaderAction(_Model):
 
 class DataflowGraphDestinationAddIfNotPresentHeaderAction(
     DataflowGraphDestinationHeaderAction, discriminator="AddIfNotPresent"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """DataflowGraph Destination Add if not present HeaderAction properties.
 
     :ivar action_type: Required. Add if not present type.
@@ -5355,7 +5410,7 @@ class DataflowGraphDestinationAddIfNotPresentHeaderAction(
 
 class DataflowGraphDestinationAddOrReplaceHeaderAction(
     DataflowGraphDestinationHeaderAction, discriminator="AddOrReplace"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """DataflowGraph Destination Add or Replace HeaderAction properties.
 
     :ivar action_type: Required. Add or Replace type.
@@ -5393,7 +5448,7 @@ class DataflowGraphDestinationAddOrReplaceHeaderAction(
         self.action_type = DataflowGraphDestinationHeaderActionType.ADD_OR_REPLACE  # type: ignore
 
 
-class DataflowGraphNode(_Model):
+class DataflowGraphNode(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataflowGraph node properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -5431,7 +5486,9 @@ class DataflowGraphNode(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowGraphDestinationNode(DataflowGraphNode, discriminator="Destination"):
+class DataflowGraphDestinationNode(
+    DataflowGraphNode, discriminator="Destination"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataflowGraph destination node properties.
 
     :ivar name: Name of the node. Required.
@@ -5470,7 +5527,7 @@ class DataflowGraphDestinationNode(DataflowGraphNode, discriminator="Destination
         self.node_type = DataflowGraphNodeType.DESTINATION  # type: ignore
 
 
-class DataflowGraphDestinationNodeSettings(_Model):
+class DataflowGraphDestinationNodeSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataflowGraph destination node settings.
 
     :ivar endpoint_ref: The name of the DataflowEndpoint resource . Required.
@@ -5479,6 +5536,9 @@ class DataflowGraphDestinationNodeSettings(_Model):
     :vartype data_destination: str
     :ivar headers: Headers for the output data.
     :vartype headers: list[~azure.mgmt.iotoperations.models.DataflowGraphDestinationHeaderAction]
+    :ivar output_schema_settings: Output schema settings.
+    :vartype output_schema_settings:
+     ~azure.mgmt.iotoperations.models.DataflowGraphDestinationSchemaSettings
     """
 
     endpoint_ref: str = rest_field(name="endpointRef", visibility=["read", "create", "update", "delete", "query"])
@@ -5491,6 +5551,10 @@ class DataflowGraphDestinationNodeSettings(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Headers for the output data."""
+    output_schema_settings: Optional["_models.DataflowGraphDestinationSchemaSettings"] = rest_field(
+        name="outputSchemaSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Output schema settings."""
 
     @overload
     def __init__(
@@ -5499,6 +5563,7 @@ class DataflowGraphDestinationNodeSettings(_Model):
         endpoint_ref: str,
         data_destination: str,
         headers: Optional[list["_models.DataflowGraphDestinationHeaderAction"]] = None,
+        output_schema_settings: Optional["_models.DataflowGraphDestinationSchemaSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -5514,7 +5579,7 @@ class DataflowGraphDestinationNodeSettings(_Model):
 
 class DataflowGraphDestinationRemoveHeaderAction(
     DataflowGraphDestinationHeaderAction, discriminator="Remove"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """DataflowGraph Destination Remove HeaderAction properties.
 
     :ivar action_type: Required. Remove type.
@@ -5547,7 +5612,46 @@ class DataflowGraphDestinationRemoveHeaderAction(
         self.action_type = DataflowGraphDestinationHeaderActionType.REMOVE  # type: ignore
 
 
-class DataflowGraphGraphNode(DataflowGraphNode, discriminator="Graph"):
+class DataflowGraphDestinationSchemaSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """DataflowGraph destination node output schema settings.
+
+    :ivar serialization_format: The format of the output data. Required. Known values are:
+     "Parquet" and "Delta".
+    :vartype serialization_format: str or
+     ~azure.mgmt.iotoperations.models.DataflowGraphDestinationSchemaSerializationFormat
+    :ivar schema_ref: Reference to the schema that describes the output of the transformation.
+    :vartype schema_ref: str
+    """
+
+    serialization_format: Union[str, "_models.DataflowGraphDestinationSchemaSerializationFormat"] = rest_field(
+        name="serializationFormat", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The format of the output data. Required. Known values are: \"Parquet\" and \"Delta\"."""
+    schema_ref: Optional[str] = rest_field(name="schemaRef", visibility=["read", "create", "update", "delete", "query"])
+    """Reference to the schema that describes the output of the transformation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        serialization_format: Union[str, "_models.DataflowGraphDestinationSchemaSerializationFormat"],
+        schema_ref: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DataflowGraphGraphNode(
+    DataflowGraphNode, discriminator="Graph"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataflowGraph graph node properties.
 
     :ivar name: Name of the node. Required.
@@ -5585,7 +5689,7 @@ class DataflowGraphGraphNode(DataflowGraphNode, discriminator="Graph"):
         self.node_type = DataflowGraphNodeType.GRAPH  # type: ignore
 
 
-class DataflowGraphGraphNodeConfiguration(_Model):
+class DataflowGraphGraphNodeConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataflowGraph graph node configuration.
 
     :ivar key: Key of the configuration. Required.
@@ -5618,7 +5722,7 @@ class DataflowGraphGraphNodeConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowGraphNodeConnection(_Model):
+class DataflowGraphNodeConnection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataflowGraph DataflowGraphNode Connection.
 
     :ivar from_property: Information about the source node. Required.
@@ -5653,7 +5757,7 @@ class DataflowGraphNodeConnection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowGraphNodeGraphSettings(_Model):
+class DataflowGraphNodeGraphSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataflowGraph graph node settings.
 
     :ivar registry_endpoint_ref: Reference to the registry endpoint for pulling the artifact.
@@ -5699,7 +5803,7 @@ class DataflowGraphNodeGraphSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowGraphProperties(_Model):
+class DataflowGraphProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataflowGraph properties.
 
     :ivar mode: The mode of the dataflow graph. Known values are: "Enabled" and "Disabled".
@@ -5769,7 +5873,7 @@ class DataflowGraphProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowGraphResource(ProxyResource):
+class DataflowGraphResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instance dataflowEndpoint resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5817,7 +5921,9 @@ class DataflowGraphResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DataflowGraphSourceNode(DataflowGraphNode, discriminator="Source"):
+class DataflowGraphSourceNode(
+    DataflowGraphNode, discriminator="Source"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataflowGraph source node properties.
 
     :ivar name: Name of the node. Required.
@@ -5855,7 +5961,7 @@ class DataflowGraphSourceNode(DataflowGraphNode, discriminator="Source"):
         self.node_type = DataflowGraphNodeType.SOURCE  # type: ignore
 
 
-class DataflowGraphSourceSettings(_Model):
+class DataflowGraphSourceSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataflowGraph source node settings.
 
     :ivar endpoint_ref: The endpoint reference for the source. Required.
@@ -5906,7 +6012,7 @@ class DataflowGraphStatus(_Model):
     """The health state of the DataflowGraph."""
 
 
-class DataflowOpenTelemetryAuthentication(_Model):
+class DataflowOpenTelemetryAuthentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dataflow OpenTelemetry authentication properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -5945,7 +6051,7 @@ class DataflowOpenTelemetryAuthentication(_Model):
 
 class DataflowOpenTelemetryAnonymousAuthentication(
     DataflowOpenTelemetryAuthentication, discriminator="Anonymous"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """DataflowOpenTelemetryAnonymousAuthentication properties.
 
     :ivar method: The authentication method. Required. Connects anonymously.
@@ -5983,7 +6089,7 @@ class DataflowOpenTelemetryAnonymousAuthentication(
 
 class DataflowOpenTelemetryServiceAccountAuthentication(
     DataflowOpenTelemetryAuthentication, discriminator="ServiceAccountToken"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """DataflowOpenTelemetryServiceAccountAuthentication properties.
 
     :ivar method: The authentication method. Required. Uses serviceaccount token.
@@ -6022,7 +6128,7 @@ class DataflowOpenTelemetryServiceAccountAuthentication(
 
 class DataflowOpenTelemetryX509CertificateAuthentication(
     DataflowOpenTelemetryAuthentication, discriminator="X509Certificate"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """DataflowOpenTelemetryX509CertificateAuthentication properties.
 
     :ivar method: The authentication method. Required. Uses x509 certificate.
@@ -6058,7 +6164,7 @@ class DataflowOpenTelemetryX509CertificateAuthentication(
         self.method = DataflowOpenTelemetryAuthenticationMethod.X509_CERTIFICATE  # type: ignore
 
 
-class DataflowOperation(_Model):
+class DataflowOperation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dataflow Operation properties. NOTE - One only method is allowed to be used for one entry.
 
     :ivar operation_type: Type of operation. Required. Known values are: "Source", "Destination",
@@ -6118,7 +6224,7 @@ class DataflowOperation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowProfileProperties(_Model):
+class DataflowProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataflowProfile Resource properties.
 
     :ivar diagnostics: Spec defines the desired identities of NBC diagnostics settings.
@@ -6177,7 +6283,7 @@ class DataflowProfileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowProfileResource(ProxyResource):
+class DataflowProfileResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instance dataflowProfile resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6236,7 +6342,7 @@ class DataflowProfileStatus(_Model):
     """The health state of the DataflowProfile."""
 
 
-class DataflowProperties(_Model):
+class DataflowProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dataflow Resource properties.
 
     :ivar mode: Mode for Dataflow. Optional; defaults to Enabled. Known values are: "Enabled" and
@@ -6305,7 +6411,7 @@ class DataflowProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataflowResource(ProxyResource):
+class DataflowResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instance dataflowProfile dataflow resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6353,7 +6459,7 @@ class DataflowResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DataflowSourceOperationSettings(_Model):
+class DataflowSourceOperationSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dataflow Source Operation properties.
 
     :ivar endpoint_ref: Reference to the Dataflow Endpoint resource. Can only be of Broker and
@@ -6421,7 +6527,7 @@ class DataflowStatus(_Model):
     """The health state of the Dataflow."""
 
 
-class DiagnosticsLogs(_Model):
+class DiagnosticsLogs(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Diagnostic Log properties.
 
     :ivar level: The log level. Examples - 'debug', 'info', 'warn', 'error', 'trace'.
@@ -6449,7 +6555,7 @@ class DiagnosticsLogs(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskBackedMessageBuffer(_Model):
+class DiskBackedMessageBuffer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DiskBackedMessageBuffer properties.
 
     :ivar max_size: The max size of the message buffer on disk. If a PVC template is specified
@@ -6555,7 +6661,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -6583,7 +6689,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendedLocation(_Model):
+class ExtendedLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Extended location is an extension of Azure locations. They provide a way to use their Azure ARC
     enabled Kubernetes clusters as target locations for deploying Azure services instances.
 
@@ -6619,7 +6725,7 @@ class ExtendedLocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Frontend(_Model):
+class Frontend(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The desired properties of the frontend instances of the Broker.
 
     :ivar replicas: The desired number of frontend instances (pods). Required.
@@ -6652,7 +6758,7 @@ class Frontend(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GenerateResourceLimits(_Model):
+class GenerateResourceLimits(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GenerateResourceLimits properties.
 
     :ivar cpu: The toggle to enable/disable cpu resource limits. Known values are: "Enabled" and
@@ -6684,7 +6790,7 @@ class GenerateResourceLimits(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstanceFeature(_Model):
+class InstanceFeature(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The features of the AIO Instance.
 
     :ivar mode: The state of the feature. Known values are: "Stable", "Preview", and "Disabled".
@@ -6721,7 +6827,7 @@ class InstanceFeature(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstancePatchModel(_Model):
+class InstancePatchModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Instance update model.
 
     :ivar tags: Resource tags.
@@ -6756,7 +6862,7 @@ class InstancePatchModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstanceProperties(_Model):
+class InstanceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the Instance resource.
 
     :ivar description: Detailed description of the Instance.
@@ -6835,7 +6941,7 @@ class InstanceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6879,7 +6985,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class InstanceResource(TrackedResource):
+class InstanceResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Instance resource is a logical container for a set of child resources.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6903,6 +7009,8 @@ class InstanceResource(TrackedResource):
     :vartype extended_location: ~azure.mgmt.iotoperations.models.ExtendedLocation
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity: ~azure.mgmt.iotoperations.models.ManagedServiceIdentity
+    :ivar sku: The billing SKU for the AIO Instance. Defaults to Standard.
+    :vartype sku: ~azure.mgmt.iotoperations.models.InstanceSku
     """
 
     properties: Optional["_models.InstanceProperties"] = rest_field(
@@ -6915,6 +7023,8 @@ class InstanceResource(TrackedResource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The managed service identities assigned to this resource."""
+    sku: Optional["_models.InstanceSku"] = rest_field(visibility=["read", "create"])
+    """The billing SKU for the AIO Instance. Defaults to Standard."""
 
     @overload
     def __init__(
@@ -6925,6 +7035,7 @@ class InstanceResource(TrackedResource):
         tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.InstanceProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
+        sku: Optional["_models.InstanceSku"] = None,
     ) -> None: ...
 
     @overload
@@ -6938,7 +7049,37 @@ class InstanceResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class KubernetesReference(_Model):
+class InstanceSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The billing SKU for an AIO Instance.
+
+    :ivar name: The name of the SKU. Determines the billing meter applied to this instance.
+     Required. Known values are: "Essentials" and "Standard".
+    :vartype name: str or ~azure.mgmt.iotoperations.models.InstanceSkuName
+    """
+
+    name: Union[str, "_models.InstanceSkuName"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the SKU. Determines the billing meter applied to this instance. Required. Known
+     values are: \"Essentials\" and \"Standard\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Union[str, "_models.InstanceSkuName"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KubernetesReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Kubernetes reference.
 
     :ivar api_group: APIGroup is the group for the resource being referenced. If APIGroup is not
@@ -6987,7 +7128,7 @@ class KubernetesReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListenerPort(_Model):
+class ListenerPort(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines a TCP port on which a ``BrokerListener`` listens.
 
     :ivar authentication_ref: Reference to client authentication settings. Omit to disable
@@ -7050,7 +7191,7 @@ class ListenerPort(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LocalKubernetesReference(_Model):
+class LocalKubernetesReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Kubernetes reference.
 
     :ivar api_group: APIGroup is the group for the resource being referenced. If APIGroup is not
@@ -7092,7 +7233,7 @@ class LocalKubernetesReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -7144,7 +7285,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Metrics(_Model):
+class Metrics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Diagnostic Metrics properties.
 
     :ivar prometheus_port: The prometheus port to expose the metrics.
@@ -7174,7 +7315,7 @@ class Metrics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -7262,7 +7403,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class PrincipalDefinition(_Model):
+class PrincipalDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PrincipalDefinition properties of Rule.
 
     :ivar attributes: A list of key-value pairs that match the attributes of the clients. The
@@ -7309,7 +7450,7 @@ class PrincipalDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProfileDiagnostics(_Model):
+class ProfileDiagnostics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataflowProfile Diagnostics properties.
 
     :ivar logs: Diagnostic log settings for the resource.
@@ -7342,7 +7483,7 @@ class ProfileDiagnostics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegistryEndpointAuthentication(_Model):
+class RegistryEndpointAuthentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model for RegistryEndpointAuthentication.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -7379,7 +7520,9 @@ class RegistryEndpointAuthentication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegistryEndpointAnonymousAuthentication(RegistryEndpointAuthentication, discriminator="Anonymous"):
+class RegistryEndpointAnonymousAuthentication(
+    RegistryEndpointAuthentication, discriminator="Anonymous"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Anonymous authentication.
 
     :ivar method: The authentication method. Required. Anonymous Option.
@@ -7420,7 +7563,7 @@ class RegistryEndpointAnonymousSettings(_Model):
 
 class RegistryEndpointArtifactPullSecretAuthentication(
     RegistryEndpointAuthentication, discriminator="ArtifactPullSecret"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Artifact Pull Secret authentication.
 
     :ivar method: The authentication method. Required. Artifact Pull Secret authentication.
@@ -7456,7 +7599,9 @@ class RegistryEndpointArtifactPullSecretAuthentication(
         self.method = RegistryEndpointAuthenticationMethod.ARTIFACT_PULL_SECRET  # type: ignore
 
 
-class RegistryEndpointArtifactPullSecretSettings(_Model):  # pylint: disable=name-too-long
+class RegistryEndpointArtifactPullSecretSettings(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """RegistryEndpoint Artifact Pull Secret authentication properties.
 
     :ivar secret_ref: The name of the kubernetes secret that contains the artifact pull secret.
@@ -7485,7 +7630,7 @@ class RegistryEndpointArtifactPullSecretSettings(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class RegistryEndpointProperties(_Model):
+class RegistryEndpointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RegistryEndpoint properties.
 
     :ivar host: The Container Registry endpoint hostname. Required.
@@ -7545,7 +7690,7 @@ class RegistryEndpointProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegistryEndpointResource(ProxyResource):
+class RegistryEndpointResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RegistryEndpoint resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7595,7 +7740,7 @@ class RegistryEndpointResource(ProxyResource):
 
 class RegistryEndpointSystemAssignedIdentityAuthentication(
     RegistryEndpointAuthentication, discriminator="SystemAssignedManagedIdentity"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """System assigned identity authentication.
 
     :ivar method: The authentication method. Required. SystemAssignedManagedIdentity type.
@@ -7634,7 +7779,9 @@ class RegistryEndpointSystemAssignedIdentityAuthentication(
         self.method = RegistryEndpointAuthenticationMethod.SYSTEM_ASSIGNED_MANAGED_IDENTITY  # type: ignore
 
 
-class RegistryEndpointSystemAssignedManagedIdentitySettings(_Model):  # pylint: disable=name-too-long
+class RegistryEndpointSystemAssignedManagedIdentitySettings(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """System assigned managed identity properties.
 
     :ivar audience: Audience of the service to authenticate against. Optional; defaults to the
@@ -7664,7 +7811,7 @@ class RegistryEndpointSystemAssignedManagedIdentitySettings(_Model):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class RegistryEndpointTrustedSigningKey(_Model):
+class RegistryEndpointTrustedSigningKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RegistryEndpoint Trust properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -7700,7 +7847,7 @@ class RegistryEndpointTrustedSigningKey(_Model):
 
 class RegistryEndpointTrustedSigningKeyConfigMap(
     RegistryEndpointTrustedSigningKey, discriminator="ConfigMap"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Settings for RegistryEndpoint trust provided through a configmap.
 
     :ivar type: The trust type for the registry endpoint. Required. Trust settings stored in a
@@ -7735,7 +7882,9 @@ class RegistryEndpointTrustedSigningKeyConfigMap(
         self.type = RegistryEndpointTrustedSigningKeyType.CONFIG_MAP  # type: ignore
 
 
-class RegistryEndpointTrustedSigningKeySecret(RegistryEndpointTrustedSigningKey, discriminator="Secret"):
+class RegistryEndpointTrustedSigningKeySecret(
+    RegistryEndpointTrustedSigningKey, discriminator="Secret"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for RegistryEndpoint trust provided through a secret.
 
     :ivar type: The trust type for the registry endpoint. Required. Trust settings stored in a
@@ -7772,7 +7921,7 @@ class RegistryEndpointTrustedSigningKeySecret(RegistryEndpointTrustedSigningKey,
 
 class RegistryEndpointUserAssignedIdentityAuthentication(
     RegistryEndpointAuthentication, discriminator="UserAssignedManagedIdentity"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """User assigned identity authentication.
 
     :ivar method: The authentication method. Required. UserAssignedManagedIdentity type.
@@ -7809,7 +7958,9 @@ class RegistryEndpointUserAssignedIdentityAuthentication(
         self.method = RegistryEndpointAuthenticationMethod.USER_ASSIGNED_MANAGED_IDENTITY  # type: ignore
 
 
-class RegistryEndpointUserAssignedManagedIdentitySettings(_Model):  # pylint: disable=name-too-long
+class RegistryEndpointUserAssignedManagedIdentitySettings(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """User assigned managed identity properties.
 
     :ivar client_id: Client ID for the user-assigned managed identity. Required.
@@ -7880,7 +8031,7 @@ class ResourceHealthStatus(_Model):
     """Unique, CamelCase reason code describing the cause of the last health state transition."""
 
 
-class SanForCert(_Model):
+class SanForCert(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Subject Alternative Names (SANs) for certificate.
 
     :ivar dns: DNS SANs. Required.
@@ -7913,7 +8064,7 @@ class SanForCert(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SchemaRegistryRef(_Model):
+class SchemaRegistryRef(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The reference to the Schema Registry for this AIO Instance.
 
     :ivar resource_id: The resource ID of the Schema Registry. Required.
@@ -7941,7 +8092,7 @@ class SchemaRegistryRef(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecretProviderClassRef(_Model):
+class SecretProviderClassRef(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The reference to the AIO Secret provider class.
 
     :ivar resource_id: The resource ID of the AIO Secret provider class. Required.
@@ -7969,7 +8120,7 @@ class SecretProviderClassRef(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SelfCheck(_Model):
+class SelfCheck(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Broker Diagnostic Self check properties.
 
     :ivar mode: The toggle to enable/disable self check. Known values are: "Enabled" and
@@ -8014,7 +8165,7 @@ class SelfCheck(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SelfTracing(_Model):
+class SelfTracing(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Diagnostic Self tracing properties.
 
     :ivar mode: The toggle to enable/disable self tracing. Known values are: "Enabled" and
@@ -8052,7 +8203,7 @@ class SelfTracing(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StateStoreResourceRule(_Model):
+class StateStoreResourceRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """State Store Resource Rule properties.
 
     :ivar key_type: Allowed keyTypes pattern, string, binary. The key type used for matching, for
@@ -8104,7 +8255,7 @@ class StateStoreResourceRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriberQueueLimit(_Model):
+class SubscriberQueueLimit(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The settings of Subscriber Queue Limit.
 
     :ivar length: The maximum length of the queue before messages start getting dropped.
@@ -8141,7 +8292,7 @@ class SubscriberQueueLimit(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -8208,7 +8359,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TlsCertMethod(_Model):
+class TlsCertMethod(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Collection of different TLS types, NOTE- Enum at a time only one of them needs to be supported.
 
     :ivar mode: Mode of TLS server certificate management. Required. Known values are: "Automatic"
@@ -8256,7 +8407,7 @@ class TlsCertMethod(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TlsProperties(_Model):
+class TlsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tls properties.
 
     :ivar mode: Mode for TLS. Known values are: "Enabled" and "Disabled".
@@ -8293,7 +8444,7 @@ class TlsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Traces(_Model):
+class Traces(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Broker Diagnostic Trace properties.
 
     :ivar mode: The toggle to enable/disable traces. Known values are: "Enabled" and "Disabled".
@@ -8359,7 +8510,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class VolumeClaimResourceRequirements(_Model):
+class VolumeClaimResourceRequirements(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VolumeClaimResourceRequirements properties.
 
     :ivar limits: Limits describes the maximum amount of compute resources allowed. More info:
@@ -8421,7 +8572,7 @@ class VolumeClaimResourceRequirements(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeClaimResourceRequirementsClaims(_Model):
+class VolumeClaimResourceRequirementsClaims(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VolumeClaimResourceRequirementsClaims properties.
 
     :ivar name: Name of the resource. This must match the name of a resource in
@@ -8450,7 +8601,7 @@ class VolumeClaimResourceRequirementsClaims(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeClaimSpec(_Model):
+class VolumeClaimSpec(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VolumeClaimSpec properties.
 
     :ivar volume_name: VolumeName is the binding reference to the PersistentVolume backing this
@@ -8584,7 +8735,7 @@ class VolumeClaimSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeClaimSpecSelector(_Model):
+class VolumeClaimSpecSelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VolumeClaimSpecSelector properties.
 
     :ivar match_expressions: MatchExpressions is a list of label selector requirements. The
@@ -8627,7 +8778,7 @@ class VolumeClaimSpecSelector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeClaimSpecSelectorMatchExpressions(_Model):
+class VolumeClaimSpecSelectorMatchExpressions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VolumeClaimSpecSelectorMatchExpressions properties.
 
     :ivar key: key is the label key that the selector applies to. Required.
@@ -8677,7 +8828,7 @@ class VolumeClaimSpecSelectorMatchExpressions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class X509ManualCertificate(_Model):
+class X509ManualCertificate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """X509 Certificate Authentication properties.
 
     :ivar secret_ref: Kubernetes secret containing an X.509 client certificate. This is a reference
