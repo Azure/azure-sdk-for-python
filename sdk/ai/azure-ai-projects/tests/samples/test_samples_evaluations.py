@@ -151,6 +151,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         get_sample_paths(
             "evaluations",
             samples_to_skip=[
+                "sample_audio_conversation_evaluation.py",  # Requires audio scoring service support, registered recording and Test Proxy recording
                 "sample_evaluations_ai_assisted.py",  # Similarity evaluator returns FAILED_EXECUTION ('query' is missing)
                 "sample_evaluations_builtin_with_inline_data_oai.py",  # 401 AuthenticationError (invalid subscription key or API endpoint)
                 "sample_evaluations_builtin_with_traces.py",  # Missing required env var APPINSIGHTS_RESOURCE_ID (KeyError)

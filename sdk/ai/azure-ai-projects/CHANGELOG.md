@@ -4,6 +4,7 @@
 
 ### Sample updates
 
+* Added `sample_audio_conversation_evaluation.py` and its async equivalent demonstrating recorded voice evaluation with `input_modality="audio"` and an existing project recording asset. Requires audio scoring service support and a compatible evaluator and judge.
 * Updated Voice Agent samples to use `FOUNDRY_VOICE_AGENT_MODEL` for model configuration, retaining `FOUNDRY_VOICE_MODEL` as a deprecated fallback in `sample_voice_agent_with_tools.py`.
 * Renamed Voice Agent realtime samples from `sample_voice_agent_live_*` to `sample_voice_agent_realtime_*`, updating usage instructions and cross-references.
 * Updated `sample_multiturn_trace_evaluation_agent_filter.py` to use the supported agent-name/version filter, remove unsupported command-line filtering options, and configure trace lookback and maximum trace count through `TRACE_LOOKBACK_HOURS` and `TRACE_MAX_TRACES`.
