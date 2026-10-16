@@ -510,5 +510,7 @@ def patch_sdk():
     `patch_sdk` is a last resort escape hatch that allows you to do customizations
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
+
+    :return: None
+    :rtype: None
     """
-    pass
