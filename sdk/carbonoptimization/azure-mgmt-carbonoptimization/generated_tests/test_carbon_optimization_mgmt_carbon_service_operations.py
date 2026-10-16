@@ -68,6 +68,6 @@ class TestCarbonOptimizationMgmtCarbonServiceOperations(AzureMgmtRecordedTestCas
                 "subscriptionList": ["str"],
             },
         )
-
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

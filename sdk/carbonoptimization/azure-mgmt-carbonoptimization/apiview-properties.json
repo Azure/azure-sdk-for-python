@@ -9,7 +9,6 @@
         "azure.mgmt.carbonoptimization.models.BillingAccountTopItemsSummaryReportQueryFilter": "Microsoft.Carbon.BillingAccountTopItemsSummaryReportQueryFilter",
         "azure.mgmt.carbonoptimization.models.CarbonEmissionData": "Microsoft.Carbon.CarbonEmissionData",
         "azure.mgmt.carbonoptimization.models.CarbonEmissionDataAvailableDateRange": "Microsoft.Carbon.CarbonEmissionDataAvailableDateRange",
-        "azure.mgmt.carbonoptimization.models.CarbonEmissionDataListResult": "Microsoft.Carbon.CarbonEmissionDataListResult",
         "azure.mgmt.carbonoptimization.models.CarbonEmissionItemDetailData": "Microsoft.Carbon.CarbonEmissionItemDetailData",
         "azure.mgmt.carbonoptimization.models.CarbonEmissionMonthlySummaryData": "Microsoft.Carbon.CarbonEmissionMonthlySummaryData",
         "azure.mgmt.carbonoptimization.models.CarbonEmissionOverallSummaryData": "Microsoft.Carbon.CarbonEmissionOverallSummaryData",
@@ -54,5 +53,5 @@
         "azure.mgmt.carbonoptimization.operations.CarbonServiceOperations.query_carbon_emission_reports_by_billing_account": "Microsoft.Carbon.CarbonService.queryCarbonEmissionReportsByBillingAccount",
         "azure.mgmt.carbonoptimization.aio.operations.CarbonServiceOperations.query_carbon_emission_reports_by_billing_account": "Microsoft.Carbon.CarbonService.queryCarbonEmissionReportsByBillingAccount"
     },
-    "CrossLanguageVersion": "fbec3b3e5059"
+    "CrossLanguageVersion": "c77dd6ad6b55"
 }

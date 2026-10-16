@@ -55,8 +55,7 @@ class BillingAccountItemDetailsReportQueryFilter(TypedDict, total=False):  # pyl
     :ivar categoryType: Specifies the category type for item details. Required. Known values are:
      "Subscription", "Location", and "ResourceType".
     :vartype categoryType: Union[str, "BillingAccountCategoryTypeEnum"]
-    :ivar pageSize: Page size for server paging. Optional. Default value is 1000 items per page.
-     Required.
+    :ivar pageSize: Number of items to return in one request, max value is 5000. Required.
     :vartype pageSize: int
     :ivar skipToken: Pagination token for fetching the next page of data. Optional.
     :vartype skipToken: str
@@ -99,7 +98,7 @@ class BillingAccountItemDetailsReportQueryFilter(TypedDict, total=False):  # pyl
     """Specifies the category type for item details. Required. Known values are: \"Subscription\",
      \"Location\", and \"ResourceType\"."""
     pageSize: Required[int]
-    """Page size for server paging. Optional. Default value is 1000 items per page. Required."""
+    """Number of items to return in one request, max value is 5000. Required."""
     skipToken: str
     """Pagination token for fetching the next page of data. Optional."""
     orderBy: Union[str, "BillingAccountOrderByColumnEnum"]

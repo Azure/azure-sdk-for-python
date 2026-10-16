@@ -154,8 +154,7 @@ class BillingAccountItemDetailsReportQueryFilter(
      "Subscription", "Location", and "ResourceType".
     :vartype category_type: str or
      ~azure.mgmt.carbonoptimization.models.BillingAccountCategoryTypeEnum
-    :ivar page_size: Page size for server paging. Optional. Default value is 1000 items per page.
-     Required.
+    :ivar page_size: Number of items to return in one request, max value is 5000. Required.
     :vartype page_size: int
     :ivar skip_token: Pagination token for fetching the next page of data. Optional.
     :vartype skip_token: str
@@ -180,7 +179,7 @@ class BillingAccountItemDetailsReportQueryFilter(
     """Specifies the category type for item details. Required. Known values are: \"Subscription\",
      \"Location\", and \"ResourceType\"."""
     page_size: int = rest_field(name="pageSize", visibility=["read", "create", "update", "delete", "query"])
-    """Page size for server paging. Optional. Default value is 1000 items per page. Required."""
+    """Number of items to return in one request, max value is 5000. Required."""
     skip_token: Optional[str] = rest_field(name="skipToken", visibility=["read", "create", "update", "delete", "query"])
     """Pagination token for fetching the next page of data. Optional."""
     order_by: Optional[Union[str, "_models.BillingAccountOrderByColumnEnum"]] = rest_field(
@@ -623,49 +622,6 @@ class CarbonEmissionDataAvailableDateRange(_Model):  # pylint: disable=docstring
         *,
         start_date: str,
         end_date: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CarbonEmissionDataListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """List of carbon emission results.
-
-    :ivar value: The CarbonEmissionData items on this page. Required.
-    :vartype value: list[~azure.mgmt.carbonoptimization.models.CarbonEmissionData]
-    :ivar skip_token: The pagination token to fetch next page data, it's null or empty if it
-     doesn't have next page data.
-    :vartype skip_token: str
-    :ivar subscription_access_decision_list: The access decision list for each input subscription.
-    :vartype subscription_access_decision_list:
-     list[~azure.mgmt.carbonoptimization.models.SubscriptionAccessDecision]
-    """
-
-    value: list["_models.CarbonEmissionData"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The CarbonEmissionData items on this page. Required."""
-    skip_token: Optional[str] = rest_field(name="skipToken", visibility=["read", "create", "update", "delete", "query"])
-    """The pagination token to fetch next page data, it's null or empty if it doesn't have next page
-     data."""
-    subscription_access_decision_list: Optional[list["_models.SubscriptionAccessDecision"]] = rest_field(
-        name="subscriptionAccessDecisionList", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The access decision list for each input subscription."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: list["_models.CarbonEmissionData"],
-        skip_token: Optional[str] = None,
-        subscription_access_decision_list: Optional[list["_models.SubscriptionAccessDecision"]] = None,
     ) -> None: ...
 
     @overload

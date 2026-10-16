@@ -37,7 +37,8 @@ def main():
             "reportType": "OverallSummaryReport",
         },
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
 # x-ms-original-file: 2026-05-01-preview/queryCarbonEmissionsByBillingAccountOverallSummaryReport.json

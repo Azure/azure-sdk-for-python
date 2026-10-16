@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0b1 (2026-10-15)
+## 2.0.0b1 (2026-10-16)
 
 ### Features Added
 
@@ -13,11 +13,12 @@
   - Added model `BillingAccountQueryFilter`
   - Added model `BillingAccountTopItemsMonthlySummaryReportQueryFilter`
   - Added model `BillingAccountTopItemsSummaryReportQueryFilter`
-  - Operation group `CarbonServiceOperations` added method `query_carbon_emission_reports_by_billing_account`
+  - Model `CarbonServiceOperations` added method `query_carbon_emission_reports_by_billing_account`
 
 ### Breaking Changes
 
   - Method `CarbonServiceOperations.query_carbon_emission_reports` changed from `asynchronous` to `synchronous`
+  - Deleted or renamed model `CarbonEmissionDataListResult`
   - Method `CarbonServiceOperations.query_carbon_emission_reports` changed return type from `CarbonEmissionDataListResult` to `AsyncItemPaged[CarbonEmissionData]`
   - Method `CarbonServiceOperations.query_carbon_emission_reports` changed return type from `CarbonEmissionDataListResult` to `ItemPaged[CarbonEmissionData]`
 

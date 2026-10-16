@@ -94,34 +94,34 @@ namespace azure.mgmt.carbonoptimization.aio.operations
             ) -> AsyncItemPaged[CarbonEmissionData]: ...
 
         @overload
-        async def query_carbon_emission_reports_by_billing_account(
+        def query_carbon_emission_reports_by_billing_account(
                 self, 
                 scope: str, 
                 query_parameters: BillingAccountQueryFilter, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> CarbonEmissionDataListResult: ...
+            ) -> AsyncItemPaged[CarbonEmissionData]: ...
 
         @overload
-        async def query_carbon_emission_reports_by_billing_account(
+        def query_carbon_emission_reports_by_billing_account(
                 self, 
                 scope: str, 
                 query_parameters: BillingAccountQueryFilter, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> CarbonEmissionDataListResult: ...
+            ) -> AsyncItemPaged[CarbonEmissionData]: ...
 
         @overload
-        async def query_carbon_emission_reports_by_billing_account(
+        def query_carbon_emission_reports_by_billing_account(
                 self, 
                 scope: str, 
                 query_parameters: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> CarbonEmissionDataListResult: ...
+            ) -> AsyncItemPaged[CarbonEmissionData]: ...
 
 
     class azure.mgmt.carbonoptimization.aio.operations.Operations:
@@ -350,24 +350,6 @@ namespace azure.mgmt.carbonoptimization.models
                 *, 
                 end_date: str, 
                 start_date: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.carbonoptimization.models.CarbonEmissionDataListResult(_Model):
-        skip_token: Optional[str]
-        subscription_access_decision_list: Optional[list[SubscriptionAccessDecision]]
-        value: list[CarbonEmissionData]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                skip_token: Optional[str] = ..., 
-                subscription_access_decision_list: Optional[list[SubscriptionAccessDecision]] = ..., 
-                value: list[CarbonEmissionData]
             ) -> None: ...
 
         @overload
@@ -1044,7 +1026,7 @@ namespace azure.mgmt.carbonoptimization.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> CarbonEmissionDataListResult: ...
+            ) -> ItemPaged[CarbonEmissionData]: ...
 
         @overload
         def query_carbon_emission_reports_by_billing_account(
@@ -1054,7 +1036,7 @@ namespace azure.mgmt.carbonoptimization.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> CarbonEmissionDataListResult: ...
+            ) -> ItemPaged[CarbonEmissionData]: ...
 
         @overload
         def query_carbon_emission_reports_by_billing_account(
@@ -1064,7 +1046,7 @@ namespace azure.mgmt.carbonoptimization.operations
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
-            ) -> CarbonEmissionDataListResult: ...
+            ) -> ItemPaged[CarbonEmissionData]: ...
 
 
     class azure.mgmt.carbonoptimization.operations.Operations:
