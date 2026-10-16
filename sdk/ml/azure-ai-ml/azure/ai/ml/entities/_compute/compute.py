@@ -26,7 +26,7 @@ class Compute(Resource, RestTranslatableMixin):
     This class should not be instantiated directly. Instead, use one of its subclasses.
 
     :param type: The compute type. Accepted values are "amlcompute", "computeinstance",
-        "virtualmachine", "kubernetes", and "synapsespark".
+        "virtualmachine", "kubernetes", "synapsespark", and "fabricspark".
     :type type: str
     :param name: Name of the compute resource.
     :type name: str
@@ -106,6 +106,7 @@ class Compute(Resource, RestTranslatableMixin):
         from azure.ai.ml.entities import (
             AmlCompute,
             ComputeInstance,
+            FabricSparkCompute,
             KubernetesCompute,
             SynapseSparkCompute,
             UnsupportedCompute,
@@ -118,11 +119,21 @@ class Compute(Resource, RestTranslatableMixin):
             ComputeType.VIRTUALMACHINE.lower(): VirtualMachineCompute,
             ComputeType.KUBERNETES.lower(): KubernetesCompute,
             ComputeType.SYNAPSESPARK.lower(): SynapseSparkCompute,
+            ComputeType.FABRICSPARK.lower(): FabricSparkCompute,
         }
         compute_type = obj.properties.compute_type.lower() if obj.properties.compute_type else None
 
         class_type = cast(
-            Optional[Union[AmlCompute, ComputeInstance, VirtualMachineCompute, KubernetesCompute, SynapseSparkCompute]],
+            Optional[
+                Union[
+                    AmlCompute,
+                    ComputeInstance,
+                    VirtualMachineCompute,
+                    KubernetesCompute,
+                    SynapseSparkCompute,
+                    FabricSparkCompute,
+                ]
+            ],
             mapping.get(compute_type, None),  # type: ignore
         )
         if class_type:
@@ -174,6 +185,7 @@ class Compute(Resource, RestTranslatableMixin):
         from azure.ai.ml.entities import (
             AmlCompute,
             ComputeInstance,
+            FabricSparkCompute,
             KubernetesCompute,
             SynapseSparkCompute,
             VirtualMachineCompute,
@@ -197,6 +209,8 @@ class Compute(Resource, RestTranslatableMixin):
             if compute_type.lower() == ComputeType.SYNAPSESPARK:
                 _synapse_spark_load_from_dict: Compute = SynapseSparkCompute._load_from_dict(data, context, **kwargs)
                 return _synapse_spark_load_from_dict
+            if compute_type.lower() == ComputeType.FABRICSPARK:
+                return FabricSparkCompute._load_from_dict(data, context, **kwargs)
         msg = f"Unknown compute type: {compute_type}"
         raise ValidationException(
             message=msg,
