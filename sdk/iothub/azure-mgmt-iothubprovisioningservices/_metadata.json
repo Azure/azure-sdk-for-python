@@ -1,11 +1,11 @@
 {
-  "apiVersion": "2026-08-31",
+  "apiVersion": "2026-11-01",
   "apiVersions": {
-    "Microsoft.Devices": "2026-08-31"
+    "Microsoft.Devices": "2026-11-01"
   },
-  "commit": "755079f3ca75208c0fca7a348d12f70406afe5d2",
+  "commit": "1cd6a5cae7ce742d186a182fd482b2f592b8f97b",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/deviceprovisioningservices/resource-manager/Microsoft.Devices/DeviceProvisioningServices",
-  "emitterVersion": "0.63.5",
-  "httpClientPythonVersion": "^0.36.0"
+  "emitterVersion": "0.63.8",
+  "httpClientPythonVersion": "0.38.0"
 }
