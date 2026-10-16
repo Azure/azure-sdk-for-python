@@ -217,9 +217,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             )
         self.snapshot = _parse_snapshot(snapshot, path_snapshot)
         self.share_name = share_name
-        self.file_path = file_path.split("/")
-        self.file_name = self.file_path[-1]
-        self.directory_path = "/".join(self.file_path[:-1])
+        self.file_path: Optional[List[str]] = None if self.file_id else file_path.split("/")
+        self.file_name: Optional[str] = self.file_path[-1] if self.file_path else None
+        self.directory_path: Optional[str] = "/".join(self.file_path[:-1]) if self.file_path else None
 
         self._query_str, credential = self._format_query_string(sas_token, credential, share_snapshot=self.snapshot)
         super(ShareFileClient, self).__init__(parsed_url, service="file-share", credential=credential, **kwargs)
@@ -285,7 +285,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :rtype: ~azure.storage.fileshare.ShareFileClient
         """
         account_url, share_name, file_path, snapshot, file_id = _from_file_url(file_url, snapshot)
-        return cls(account_url, share_name, file_path, snapshot, credential, _file_id=file_id, **kwargs)
+        return cls(account_url, share_name, file_path, snapshot, credential, _file_id=file_id, **kwargs)  # type: ignore[arg-type]
 
     def _format_url(self, hostname: str):
         return _format_url(self.scheme, hostname, self.share_name, self.file_path, self._query_str, self.file_id)
@@ -1008,7 +1008,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             end_range=range_end,
             validate_content=validate_content,
             name=self.file_name,
-            path="/".join(self.file_path),
+            path="/".join(self.file_path) if self.file_path is not None else None,
             share=self.share_name,
             lease_id=lease_id,
             cls=deserialize_file_stream,
@@ -1230,10 +1230,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             )
         except HttpResponseError as error:
             process_storage_error(error)
-        file_props.name = file_props.name or self.file_name
+        file_props.name = file_props.name or self.file_name  # type: ignore[assignment]
         file_props.share = self.share_name
         file_props.snapshot = self.snapshot
-        file_props.path = "/".join(self.file_path) if self.file_id is None else None
+        file_props.path = "/".join(self.file_path) if self.file_path is not None else None
         return file_props
 
     @distributed_trace_async

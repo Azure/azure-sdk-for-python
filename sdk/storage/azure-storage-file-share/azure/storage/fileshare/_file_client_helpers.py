@@ -48,7 +48,7 @@ def _parse_url(account_url: str, share_name: str, file_path: str, file_id: Optio
 
 def _from_file_url(
     file_url: str, snapshot: Optional[Union[str, Dict[str, Any]]] = None
-) -> Tuple[str, str, str, Optional[Union[str, Dict[str, Any]]], Optional[str]]:
+) -> Tuple[str, str, Optional[str], Optional[Union[str, Dict[str, Any]]], Optional[str]]:
     try:
         if not file_url.lower().startswith("http"):
             file_url = "https://" + file_url
@@ -67,14 +67,14 @@ def _from_file_url(
     share_name = unquote(path_share)
     file_path = "/".join([unquote(p) for p in path_file.split("/")])
 
-    return account_url, share_name, file_path, snapshot, file_id
+    return account_url, share_name, None if file_id else file_path, snapshot, file_id
 
 
 def _format_url(
     scheme: str,
     hostname: str,
     share_name: Union[str, bytes],
-    file_path: List[str],
+    file_path: Optional[List[str]],
     query_str: str,
     file_id: Optional[str] = None,
 ) -> str:
@@ -82,9 +82,8 @@ def _format_url(
         share_name = share_name.encode("UTF-8")
     if file_id:
         return _format_file_id_url(scheme, hostname, share_name, file_id, query_str)
-    return (
-        f"{scheme}://{hostname}/{quote(share_name)}" f"/{'/'.join([quote(p, safe='~') for p in file_path])}{query_str}"
-    )
+    path = "/".join([quote(p, safe="~") for p in file_path or []])
+    return f"{scheme}://{hostname}/{quote(share_name)}/{path}{query_str}"
 
 
 def _upload_range_from_url_options(
