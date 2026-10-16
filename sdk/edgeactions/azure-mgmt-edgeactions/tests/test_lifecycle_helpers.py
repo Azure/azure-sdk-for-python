@@ -10,6 +10,7 @@ import os
 import subprocess
 import sys
 import zipfile
+from copy import deepcopy
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import MagicMock, Mock
@@ -55,8 +56,9 @@ def http_response(body=None, status=200, headers=None):
 
 def configure_lro(operation, result=None, responses=None, method="POST"):
     if responses is None:
-        response = http_response(result.as_dict() if result is not None else None)
-        responses = [("https://management.azure.com/resource", response)]
+        assert result is None, "Typed-result mocks must supply their documented request and response"
+        responses = [(VERSION_URL, http_response())]
+        method = "DELETE"
     poller = operation.return_value
     poller.result.return_value = result
     poller.done.return_value = True
@@ -69,6 +71,54 @@ def configure_lro(operation, result=None, responses=None, method="POST"):
         return poller
 
     operation.side_effect = begin
+
+
+@pytest.mark.parametrize("flow", ["synchronous", "created", "polled", "accepted-without-location"])
+@pytest.mark.parametrize("invalid_field", [None, "missing-required", "wrong-type", "date-time", "null-status"])
+def test_typed_results_without_final_location_are_schema_validated(flow, invalid_field, caplog):
+    client = Mock()
+    operation = Mock()
+    body = deepcopy(VERSION_BODY)
+    if invalid_field == "missing-required":
+        del body["properties"]["deploymentType"]
+    elif invalid_field == "wrong-type":
+        body["properties"]["isDefaultVersion"] = True
+    elif invalid_field == "date-time":
+        body["properties"]["lastPackageUpdateTime"] = "not-a-date"
+    elif invalid_field == "null-status":
+        body["properties"]["validationStatus"] = None
+    result = models.EdgeActionVersion(body)
+    if flow == "synchronous":
+        method = "POST"
+        responses = [(VERSION_URL + "/deployVersionCode", http_response(body))]
+    elif flow == "created":
+        method = "PUT"
+        responses = [(VERSION_URL, http_response(body, status=201))]
+    else:
+        method = "PUT" if flow == "polled" else "PATCH"
+        status_url = "https://management.azure.com/operations/test"
+        responses = [
+            (
+                VERSION_URL,
+                http_response(
+                    VERSION_BODY if flow == "polled" else None,
+                    status=201 if flow == "polled" else 202,
+                    headers={"Azure-AsyncOperation": status_url},
+                ),
+            ),
+            (status_url, http_response({"status": "Running"})),
+            (status_url, http_response({"status": "Succeeded"})),
+            (VERSION_URL, http_response(body)),
+        ]
+    configure_lro(operation, result=result, responses=responses, method=method)
+    waived_null = invalid_field == "null-status" and flow in ("created", "polled")
+    if invalid_field and not waived_null:
+        with pytest.raises(AssertionError, match="violates OpenAPI"):
+            complete_lro(client, operation, result_type=models.EdgeActionVersion)
+    else:
+        assert complete_lro(client, operation, result_type=models.EdgeActionVersion) is result
+    assert ("known version-creation service bug" in caplog.text) == waived_null
+    client.send_request.assert_not_called()
 
 
 @pytest.mark.parametrize("sdk_reads_location", [False, True])
@@ -224,6 +274,15 @@ def test_created_location_is_not_an_accepted_operation_result(monkeypatch):
     assert complete_lro(client, operation, result_type=models.EdgeActionVersion) is result
     assert spec.validate_status_response.call_count == 2
     spec.validate_location.assert_not_called()
+    spec.operation.assert_called_once_with("PUT", VERSION_URL)
+    spec.validate_response.assert_called_once_with(
+        spec.operation.return_value,
+        200,
+        VERSION_BODY,
+        {},
+        body_present=True,
+        allow_known_null_validation_status=True,
+    )
     client.send_request.assert_not_called()
 
 
@@ -469,19 +528,20 @@ def test_failure_still_cleans_owned_action(monkeypatch, failure_during_create):
     client = MagicMock()
     client.__enter__.return_value = client
     client.edge_actions.get.side_effect = [ResourceNotFoundError("Not found"), models.EdgeAction(location="global")]
+    body = {
+        "id": "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Cdn/edgeActions/owned",
+        "name": "owned",
+        "type": "Microsoft.Cdn/edgeActions",
+        "location": "global",
+        "sku": {"name": "Standard", "tier": "Standard"},
+        "tags": {"purpose": "initial", "remove-me": "initial"},
+        "properties": {"provisioningState": "Succeeded", "attachments": []},
+    }
     configure_lro(
         client.edge_actions.begin_create,
-        models.EdgeAction(
-            {
-                "id": "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Cdn/edgeActions/owned",
-                "name": "owned",
-                "type": "Microsoft.Cdn/edgeActions",
-                "location": "global",
-                "sku": {"name": "Standard", "tier": "Standard"},
-                "tags": {"purpose": "initial", "remove-me": "initial"},
-                "properties": {"provisioningState": "Succeeded", "attachments": []},
-            }
-        ),
+        models.EdgeAction(body),
+        responses=[("https://management.azure.com" + body["id"], http_response(body, status=201))],
+        method="PUT",
     )
     configure_lro(client.edge_actions.begin_delete)
     if failure_during_create:

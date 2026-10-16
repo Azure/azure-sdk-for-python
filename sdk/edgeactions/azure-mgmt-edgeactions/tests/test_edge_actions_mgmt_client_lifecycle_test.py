@@ -40,6 +40,7 @@ def complete_lro(client, operation, *args, result_type, **kwargs):
     initial = responses[0].http_response
     request = responses[0].http_request
     final = responses[-1].http_response
+    final_schema_validated = False
     if initial.status_code in (201, 202):
         spec = response_spec()
         if initial.status_code == 202:
@@ -101,6 +102,7 @@ def complete_lro(client, operation, *args, result_type, **kwargs):
                 body_present=bool(final.content),
                 allow_known_swap_default_response=True,
             )
+            final_schema_validated = True
 
     if result_type is None:
         assert result is None
@@ -109,8 +111,17 @@ def complete_lro(client, operation, *args, result_type, **kwargs):
             assert not final.content, "A synchronous no-content operation must not return a response body"
     else:
         assert isinstance(result, result_type)
-        assert final.status_code in ((200,) if initial.status_code == 202 else (200, 201))
-        body = final.json()
+        body = final.json() if final.content else None
+        if not final_schema_validated:
+            spec = response_spec()
+            spec.validate_response(
+                spec.operation(request.method, request.url),
+                final.status_code,
+                body,
+                final.headers,
+                body_present=bool(final.content),
+                allow_known_null_validation_status=True,
+            )
         required = (
             {"name", "content"}
             if result_type is models.VersionCode

@@ -54,6 +54,87 @@ def test_deployment_final_location_returns_full_version():
     response_spec().validate_location("POST", action_url("deployVersionCode"), RESULT_URL, 200, VERSION_BODY, {})
 
 
+@pytest.mark.parametrize("status", [200, 201])
+def test_explicit_null_status_exception_preserves_response_and_spec(status, caplog):
+    spec = response_spec()
+    snapshot = deepcopy(spec.snapshot)
+    body = deepcopy(VERSION_BODY)
+    body["properties"]["validationStatus"] = None
+    original = deepcopy(body)
+    operation = spec.operation("PUT", VERSION_URL)
+    spec.validate_response(operation, status, body, {}, allow_known_null_validation_status=True)
+    assert "known version-creation service bug" in caplog.text
+    assert body == original
+    assert spec.snapshot == snapshot
+    with pytest.raises(AssertionError, match="properties.validationStatus violates OpenAPI"):
+        spec.validate_response(operation, status, body, {})
+
+
+@pytest.mark.parametrize(
+    "method,url,status",
+    [
+        ("GET", VERSION_URL, 200),
+        ("PATCH", VERSION_URL, 200),
+        ("POST", action_url("deployVersionCode"), 200),
+        ("DELETE", VERSION_URL, 200),
+        ("PUT", VERSION_URL, 202),
+        ("PUT", VERSION_URL, 500),
+    ],
+)
+def test_null_status_exception_does_not_relax_other_operations_or_statuses(method, url, status):
+    spec = response_spec()
+    body = deepcopy(VERSION_BODY)
+    body["properties"]["validationStatus"] = None
+    with pytest.raises(AssertionError):
+        spec.validate_response(spec.operation(method, url), status, body, {}, allow_known_null_validation_status=True)
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("deploymentType", None),
+        ("isDefaultVersion", True),
+        ("lastPackageUpdateTime", "not-a-date"),
+        ("provisioningState", []),
+        ("validationStatus", []),
+    ],
+)
+def test_null_status_exception_keeps_other_property_checks(field, value):
+    spec = response_spec()
+    body = deepcopy(VERSION_BODY)
+    body["properties"]["validationStatus"] = None
+    body["properties"][field] = value
+    with pytest.raises(AssertionError, match=f"properties.{field} violates OpenAPI"):
+        spec.validate_response(
+            spec.operation("PUT", VERSION_URL), 201, body, {}, allow_known_null_validation_status=True
+        )
+
+
+def test_null_status_exception_keeps_required_properties():
+    spec = response_spec()
+    body = deepcopy(VERSION_BODY)
+    body["properties"]["validationStatus"] = None
+    del body["properties"]["deploymentType"]
+    with pytest.raises(AssertionError, match="properties violates OpenAPI required"):
+        spec.validate_response(
+            spec.operation("PUT", VERSION_URL), 201, body, {}, allow_known_null_validation_status=True
+        )
+
+
+def test_null_status_exception_keeps_header_checks():
+    spec = response_spec()
+    body = deepcopy(VERSION_BODY)
+    body["properties"]["validationStatus"] = None
+    with pytest.raises(AssertionError, match="Retry-After must be an integer"):
+        spec.validate_response(
+            spec.operation("PUT", VERSION_URL),
+            201,
+            body,
+            {"Retry-After": "not-an-integer"},
+            allow_known_null_validation_status=True,
+        )
+
+
 def test_version_get_does_not_override_swap_default_final_contract():
     spec = response_spec()
     spec.validate_response(spec.operation("GET", VERSION_URL), 200, VERSION_BODY, {})

@@ -90,6 +90,10 @@ URL the service returns. If ARM polling does not fetch that endpoint itself, the
 test issues a GET after completion to validate it; a successful poller alone is
 not sufficient. The PUT operations use `Azure-AsyncOperation` for completion;
 a `201` creation `Location` is not treated as a separate final-result contract.
+Typed results on all remaining paths are validated against the initiating
+operation's response schema, including synchronous HTTP 200 responses, PUTs
+starting with HTTP 201, and accepted operations without a `Location` header.
+These checks validate the actual final HTTP body, not just its deserialized SDK model.
 
 | Operation | Expected final response |
 | --- | --- |
@@ -120,11 +124,22 @@ Lifecycle validation temporarily exempts **only that operation's HTTP-200-with-b
 final response**, and logs when the exception is used. The initial response,
 polling envelope and successful completion, Location URL, SDK `None` result,
 and subsequent GET assertions that the default version changed are still checked.
-Other operations retain full final-response schema validation; a malformed 204 or
+The swap exception does not relax other operations; a malformed 204 or
 an unsuccessful final response is not exempted. The generic validator defaults
 to strict validation, with a regression demonstrating the underlying swap mismatch.
 Remove the explicit exception after the service fix and refresh recordings normally;
 do not modify the captured responses or the pinned schemas to hide the bug.
+
+Version creation has a second temporary exception: its HTTP 200/201 resource
+response may contain `properties.validationStatus: null`, although the pinned
+schema does not allow null. Lifecycle validation logs and ignores only that
+field's null-related schema errors for `EdgeActionVersions_Create`. All other
+fields, required properties, formats, headers, and SDK-result checks remain
+enabled. Non-null validation-status values and other operations remain strict,
+including the deployment checks that require `validationStatus` to be `Succeeded`.
+The response body and schema snapshot are not changed, and the generic validator
+is strict unless explicitly opted in. Remove this exception after the service
+fix and refresh recordings normally.
 
 For persistent local configuration, use this package's `.env.example` file.
 Copy it to `.env` at the worktree root, or merge its settings into an existing `.env`

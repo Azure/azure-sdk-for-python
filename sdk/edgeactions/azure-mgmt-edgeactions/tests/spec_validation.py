@@ -13,7 +13,7 @@ from urllib.parse import parse_qs, urldefrag, urljoin, urlsplit
 from urllib.request import urlopen
 
 import yaml
-from jsonschema import Draft4Validator, FormatChecker, ValidationError
+from jsonschema import Draft4Validator, FormatChecker
 
 PACKAGE = Path(__file__).resolve().parents[1]
 SNAPSHOT = Path(__file__).with_name("response_spec.json")
@@ -44,16 +44,29 @@ class ResponseSpec:
                 return methods.get(method.lower())
         return None
 
-    def _validate_schema(self, value, schema, description):
+    def _validate_schema(self, value, schema, description, *, allow_null_validation_status=False):
         schema = {**schema, "definitions": self.snapshot["definitions"]}
-        try:
-            Draft4Validator(schema, format_checker=FormatChecker()).validate(value)
-        except ValidationError as error:
+        skipped_null_status = False
+        for error in Draft4Validator(schema, format_checker=FormatChecker()).iter_errors(value):
+            if (
+                allow_null_validation_status
+                and tuple(error.absolute_path) == ("properties", "validationStatus")
+                and error.instance is None
+                and error.validator in ("enum", "type")
+            ):
+                skipped_null_status = True
+                continue
             path = ".".join(str(part) for part in error.absolute_path) or "<body>"
             # Report the violated rule without echoing potentially sensitive response values.
             raise AssertionError(f"{description}: {path} violates OpenAPI {error.validator}") from None
+        if skipped_null_status:
+            LOGGER.warning(
+                "Skipping only null validationStatus schema errors for the known version-creation service bug."
+            )
 
-    def validate_response(self, operation, status, body, headers, *, body_present=None):
+    def validate_response(
+        self, operation, status, body, headers, *, body_present=None, allow_known_null_validation_status=False
+    ):
         assert operation is not None, "No matching operation in the pinned response spec"
         response = operation["responses"].get(str(status))
         name = operation["operationId"]
@@ -62,7 +75,14 @@ class ResponseSpec:
             body_present = body is not None
         if "schema" in response:
             assert body_present, f"{name}: HTTP {status} requires a response body"
-            self._validate_schema(body, response["schema"], name)
+            self._validate_schema(
+                body,
+                response["schema"],
+                name,
+                allow_null_validation_status=(
+                    allow_known_null_validation_status and name == "EdgeActionVersions_Create" and status in (200, 201)
+                ),
+            )
         else:
             assert not body_present, f"{name}: HTTP {status} does not declare a response body"
         actual_headers = {key.lower(): value for key, value in headers.items()}
