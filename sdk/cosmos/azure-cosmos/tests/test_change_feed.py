@@ -16,6 +16,8 @@ from azure.cosmos.partition_key import PartitionKey
 
 @pytest.fixture(scope="class")
 def setup():
+    # Build two clients: a key-auth client for create/delete container (control plane)
+    # and a data-plane client (AAD or key) for the change feed reads.
     config = test_config.TestConfig()
     use_multiple_write_locations = False
     if os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "False") == "True":
@@ -37,6 +39,8 @@ def setup():
     }
 
 def round_time():
+    # Round now down to whole seconds: change feed start_time is second-granular, so
+    # sub-second values would make the start_time checks flaky.
     utc_now = datetime.now(timezone.utc)
     return utc_now - timedelta(microseconds=utc_now.microsecond)
 
@@ -46,9 +50,15 @@ def round_time():
 @pytest.mark.unittest
 @pytest.mark.usefixtures("setup")
 class TestChangeFeed:
-    """Test to ensure escaping of non-ascii characters from partition key"""
+    """Live change feed tests: prove query_items_change_feed reads a container's log of
+    created/updated items across every way a customer can scope and start it -- filter
+    type, from-current, from-beginning, continuation token, and start time, over single
+    and multiple partitions. Without these, a regression in any of those paths could
+    silently return wrong or missing changes to customers who rely on the change feed."""
 
     def test_get_feed_ranges(self, setup):
+        # read_feed_ranges must return the container's ranges (one for a fresh
+        # single-partition container); the feed_range filter test below depends on it.
         created_collection_ref = setup["key_db"].create_container("get_feed_ranges_" + str(uuid.uuid4()),
                                                                       PartitionKey(path="/pk"))
         created_collection = setup["data_db"].get_container_client(created_collection_ref.id)
@@ -60,6 +70,10 @@ class TestChangeFeed:
 
     @pytest.mark.parametrize("change_feed_filter_param", ["partitionKey", "partitionKeyRangeId", "feedRange"])
     def test_query_change_feed_with_different_filter(self, change_feed_filter_param, setup):
+        # Core test: read the change feed scoped by each filter type (partition key /
+        # range id / feed range), from current, from beginning, and from a continuation
+        # token, and check new items show up and paging works. Without it, any of these
+        # paths could silently return wrong or missing changes.
         created_collection_ref = setup["key_db"].create_container(
             f"change_feed_test_{change_feed_filter_param}_{str(uuid.uuid4())}",
             PartitionKey(path="/pk"))
@@ -186,6 +200,9 @@ class TestChangeFeed:
         setup["key_db"].delete_container(created_collection.id)
 
     def test_query_change_feed_with_start_time(self, setup):
+        # start_time must select only changes at or after that instant; a future time
+        # returns nothing; a non-UTC time is normalized to UTC. Without it, timezone or
+        # start-position bugs would slip through.
         created_collection_ref = setup["key_db"].create_container_if_not_exists(
             "query_change_feed_start_time_test",
             PartitionKey(path="/pk"))
@@ -253,6 +270,8 @@ class TestChangeFeed:
         reason="post-create RBAC activation window (403/5302)  -  migrate after service-side fix",
     )
     def test_query_change_feed_with_multi_partition(self, setup):
+        # Change feed from the beginning must return items from every partition. Without
+        # it, a multi-partition read could drop some partitions' items unnoticed.
         created_collection = setup["key_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
                                                                PartitionKey(path="/pk"),
                                                                offer_throughput=11000)

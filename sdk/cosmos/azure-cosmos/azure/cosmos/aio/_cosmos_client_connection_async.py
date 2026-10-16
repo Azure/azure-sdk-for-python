@@ -21,13 +21,33 @@
 
 # pylint: disable=protected-access,too-many-lines
 
-"""Document client class for the Azure Cosmos database service.
+"""Provide the retained asynchronous Python connection and legacy request methods.
+
+CosmosClient still creates CosmosClientConnection for helpers and lifecycle
+methods that depend on it. This is a Python wrapper object, not a single
+network connection or a CosmosDriver. Legacy means the Python request
+implementation that predates the Rust driver.
+
+Construction can defer the asynchronous Python HTTP pipeline for a Rust
+client. The explicit legacy path constructs it immediately and performs
+account setup on entry to an async with block. A retained legacy request
+can create the deferred pipeline and initialize account state later.
+
+A migrated Rust operation uses the binding and Rust driver instead of
+this legacy account setup. Retaining this object does not mean that
+every operation uses the Python HTTP pipeline.
+
+This object is retained during migration and is intended to be removed
+after its remaining responsibilities move and callers no longer depend
+on it. The public CosmosClient, DatabaseProxy, and ContainerProxy classes
+remain; their dependency on this internal connection object is removed.
 """
+import asyncio
 import logging
 import os
-from urllib.parse import urlparse
 import uuid
-from typing import Callable, Any, Dict, Iterable, Mapping, NoReturn, Optional, Sequence, Tuple, Union, cast
+from functools import cached_property
+from typing import Callable, Any, Dict, Mapping, NoReturn, Optional, Sequence, Tuple, Union, cast
 from typing_extensions import TypedDict
 from urllib3.util.retry import Retry
 
@@ -41,14 +61,25 @@ from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     HeadersPolicy,
     NetworkTraceLoggingPolicy,
-    CustomHookPolicy,
-    DistributedTracingPolicy,
-    ProxyPolicy)
+    DistributedTracingPolicy)
 from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos.aio._global_partition_endpoint_manager_per_partition_automatic_failover_async import (
     _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync)
 from .. import _base as base
+from .._client_lifecycle import initialize_async_legacy_connection
+from .._operation_deadline import legacy_deadline_options
 from .._availability_strategy_config import CrossRegionHedgingStrategy, validate_client_hedging_strategy
+from .._backend.operations import (
+    OP_LIST_CONTAINERS,
+    OP_LIST_DATABASES,
+    OP_QUERY_CONTAINERS,
+    OP_QUERY_DATABASES,
+    OP_QUERY_ITEMS,
+    OP_READ_ALL_ITEMS,
+)
+from .._backend.contracts import PreparedPageRequest
+from .._backend.capabilities import OperationRouting, reject_removed_options
+
 from .._base import _build_properties_cache
 from .. import documents
 from .._change_feed.aio.change_feed_iterable import ChangeFeedIterable
@@ -70,11 +101,16 @@ from .._routing.feed_range_continuation import (
     _write_query_outbound_continuation,
 )
 from ..documents import ConnectionPolicy, DatabaseAccount
+from .._backend.credentials import reject_resource_token_fields
 from .._constants import _Constants as Constants
 from .._query_advisor import get_query_advice_info
 from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
+from .._query_rust_routing import build_list_databases_prepared_page_request, build_query_databases_prepared_page_request, build_list_containers_prepared_page_request, build_query_containers_prepared_page_request, build_read_all_items_prepared_page_request, build_query_items_prepared_page_request, can_use_rust_backend_for_list_databases_page, can_use_rust_backend_for_query_databases_page, can_use_rust_backend_for_list_containers_page, can_use_rust_backend_for_query_containers_page, can_use_rust_backend_for_query_page, can_use_rust_backend_for_read_all_items_page, process_query_page
 from .. import http_constants, exceptions
 from . import _query_iterable_async as query_iterable
+from ._backend.cosmos_backend import AsyncCosmosBackend
+from .._helpers._item_context import ClientLastResponseHeaders
+from ._backend.legacy import ASYNC_LEGACY_BACKEND
 from .. import _runtime_constants as runtime_constants
 from .. import _request_object
 from . import _asynchronous_request as asynchronous_request
@@ -102,8 +138,6 @@ _LOGGER = logging.getLogger(__name__)
 
 class CredentialDict(TypedDict, total=False):
     masterKey: str
-    resourceTokens: Mapping[str, Any]
-    permissionFeed: Iterable[Mapping[str, Any]]
     clientSecretCredential: AsyncTokenCredential
 
 
@@ -131,6 +165,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     _DefaultStringHashPrecision = 3
     _DefaultStringRangePrecision = -1
 
+    @property
+    def last_response_headers(self) -> CaseInsensitiveDict:
+        """Historical header view shared with connection-free item execution."""
+        return self._response_state.last_response_headers
+
+    @last_response_headers.setter
+    def last_response_headers(self, headers: CaseInsensitiveDict) -> None:
+        self._response_state.last_response_headers = headers
+
     def __init__( # pylint: disable=too-many-statements
             self,
             url_connection: str,
@@ -140,16 +183,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             availability_strategy: Union[bool, dict[str, Any]] = False,
             availability_strategy_max_concurrency: Optional[int] = None,
             enable_compact_utf8_item_writes: bool = False,
+            _defer_pipeline: bool = False,
             **kwargs: Any
     ) -> None:
         """
         :param str url_connection:
             The URL for connecting to the DB server.
         :param dict auth:
-            Contains 'masterKey' or 'resourceTokens', where
-            auth['masterKey'] is the default authorization key to use to
-            create the client, and auth['resourceTokens'] is the alternative
-            authorization key.
+            Contains an account key in 'masterKey' or a Microsoft Entra
+            credential in 'clientSecretCredential'.
         :param documents.ConnectionPolicy connection_policy:
             The connection policy for the client.
         :param documents.ConsistencyLevel consistency_level:
@@ -160,6 +202,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             client. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         """
+        reject_removed_options(dict(kwargs, connection_policy=connection_policy))
         self._enable_compact_utf8_item_writes = _utils._validate_enable_compact_utf8_item_writes(
             enable_compact_utf8_item_writes
         )
@@ -169,23 +212,16 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             validate_client_hedging_strategy(availability_strategy)
         self.availability_strategy_max_concurrency: Optional[int] = availability_strategy_max_concurrency
         self.master_key: Optional[str] = None
-        self.resource_tokens: Optional[Mapping[str, Any]] = None
         self.aad_credentials: Optional[AsyncTokenCredential] = None
         if auth is not None:
+            reject_resource_token_fields(auth)
             self.master_key = auth.get("masterKey")
-            self.resource_tokens = auth.get("resourceTokens")
             self.aad_credentials = auth.get("clientSecretCredential")
-
-            if auth.get("permissionFeed"):
-                self.resource_tokens = {}
-                for permission_feed in auth["permissionFeed"]:
-                    resource_parts = permission_feed["resource"].split("/")
-                    id_ = resource_parts[-1]
-                    self.resource_tokens[id_] = permission_feed["_token"]
 
         self.connection_policy = connection_policy or ConnectionPolicy()
         self.partition_resolvers: dict[str, RangePartitionResolver] = {}
         self.__container_properties_cache: dict[str, dict[str, Any]] = {}
+        self._backend: AsyncCosmosBackend = ASYNC_LEGACY_BACKEND
         self.default_headers: dict[str, Any] = {
             http_constants.HttpHeaders.CacheControl: "no-cache",
             http_constants.HttpHeaders.Version: http_constants.Versions.CurrentVersion,
@@ -206,7 +242,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 
         # Keeps the latest response headers from the server.
-        self.last_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
+        self._response_state = kwargs.pop("_response_state", None) or ClientLastResponseHeaders()
         self.UseMultipleWriteLocations = False
         self._global_endpoint_manager = _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(self)
 
@@ -230,13 +266,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             raise TypeError(
                 "Unsupported retry policy. Must be an azure.cosmos.ConnectionRetryPolicy, int, or urllib3.Retry")
 
-        proxies = kwargs.pop('proxies', {})
-        if self.connection_policy.ProxyConfiguration and self.connection_policy.ProxyConfiguration.Host:
-            host = self.connection_policy.ProxyConfiguration.Host
-            url = urlparse(host)
-            proxy = host if url.port else host + ":" + str(self.connection_policy.ProxyConfiguration.Port)
-            proxies.update({url.scheme: proxy})
-
         suffix = kwargs.pop('user_agent_suffix', None)
         self._user_agent = _utils.get_user_agent_async(suffix)
 
@@ -252,12 +281,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._enable_diagnostics_logging = kwargs.pop("enable_diagnostics_logging", False)
         policies = [
             HeadersPolicy(**kwargs),
-            ProxyPolicy(proxies=proxies),
             CosmosUserAgentPolicy(base_user_agent=self._user_agent, **kwargs),
             ContentDecodePolicy(),
             retry_policy,
             credentials_policy,
-            CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
             CosmosHttpLoggingPolicy(
@@ -271,16 +298,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         kwargs.pop("user_agent", None)
         kwargs.pop("user_agent_overwrite", None)
 
-        transport = kwargs.pop("transport", None)
-        self.pipeline_client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse] = AsyncPipelineClient(
-            base_url=url_connection,
-            transport=transport,
-            policies=policies
-        )
+        self._pipeline_policies = policies
+        if not _defer_pipeline:
+            _ = self.pipeline_client
 
         self._inference_service: Optional[_InferenceService] = None
 
         self._setup_kwargs: dict[str, Any] = kwargs
+        self._setup_complete = False
+        self._setup_lock = asyncio.Lock()
         self.session: Optional[_session.Session] = None
 
         # Query compatibility mode.
@@ -290,6 +316,20 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # Routing map provider
         self._routing_map_provider: SmartRoutingMapProvider = SmartRoutingMapProvider(self)
+
+    @cached_property
+    def pipeline_client(self) -> AsyncPipelineClient[HttpRequest, AsyncHttpResponse]:
+        """Construct the retained Python pipeline only when it is needed."""
+        return AsyncPipelineClient(
+            base_url=self.url_connection,
+            policies=self._pipeline_policies,
+        )
+
+    async def _close_pipeline(self, *args: Any) -> None:
+        """Close an existing pipeline without constructing an unused one."""
+        pipeline = vars(self).get("pipeline_client")
+        if pipeline is not None:
+            await pipeline.__aexit__(*args)
 
     @property
     def _container_properties_cache(self) -> dict[str, dict[str, Any]]:
@@ -359,27 +399,41 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return self._global_endpoint_manager.get_read_endpoint()
 
     async def _setup(self) -> None:
-        if 'database_account' not in self._setup_kwargs:
-            database_account = await self._global_endpoint_manager._GetDatabaseAccount(
-                **self._setup_kwargs
-            )
+        """Prepare this connection's account information for legacy requests.
+
+        Use account information already supplied in _setup_kwargs, or fetch it
+        and refresh the Python endpoint information. Apply the requested or
+        account-default consistency choice and create session state if needed.
+        This does not read the sales database, orders container, or order-42 item.
+
+        The per-connection asynchronous lock lets one caller complete setup
+        while other callers wait. Later calls reuse successfully initialized
+        state. Failure or cancellation propagates without marking setup complete.
+        """
+        if self._setup_complete:
+            return
+        async with self._setup_lock:
+            if self._setup_complete:
+                return
+            if 'database_account' not in self._setup_kwargs:
+                database_account = await self._global_endpoint_manager._GetDatabaseAccount(
+                    **self._setup_kwargs
+                )
+                await self._global_endpoint_manager.force_refresh_on_startup(database_account)
+            else:
+                database_account = self._setup_kwargs['database_account']
+
+            if self.default_headers.get(http_constants.HttpHeaders.ConsistencyLevel):
+                user_defined_consistency = self.default_headers[http_constants.HttpHeaders.ConsistencyLevel]
+            else:
+                user_defined_consistency = self._check_if_account_session_consistency(database_account)
+
+            if user_defined_consistency == documents.ConsistencyLevel.Session:
+                self.session = _session.Session(self.url_connection)
+            else:
+                self.session = None
             self._setup_kwargs['database_account'] = database_account
-            await self._global_endpoint_manager.force_refresh_on_startup(self._setup_kwargs['database_account'])
-        else:
-            database_account = self._setup_kwargs['database_account']
-
-        # Save the choice that was made (either None or some value) and branch to set or get the consistency
-        if self.default_headers.get(http_constants.HttpHeaders.ConsistencyLevel):
-            user_defined_consistency = self.default_headers[http_constants.HttpHeaders.ConsistencyLevel]
-        else:
-            # Use database_account if no consistency passed in to verify consistency level to be used
-            user_defined_consistency = self._check_if_account_session_consistency(database_account)
-
-        if user_defined_consistency == documents.ConsistencyLevel.Session:
-            # create a Session if the user wants Session consistency
-            self.session = _session.Session(self.url_connection)
-        else:
-            self.session = None
+            self._setup_complete = True
 
     def _check_if_account_session_consistency(self, database_account: DatabaseAccount) -> Optional[str]:
         """Checks account consistency level to set header if needed.
@@ -399,63 +453,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
             return consistency_level
         return None
-
-    def _GetDatabaseIdWithPathForUser(
-        self,
-        database_link: str,
-        user: Mapping[str, Any]
-    ) -> Tuple[Optional[str], str]:
-        base._validate_resource(user)
-        path = base.GetPathFromLink(database_link, http_constants.ResourceType.User)
-        database_id = base.GetResourceIdOrFullNameFromLink(database_link)
-        return database_id, path
-
-    def _GetContainerIdWithPathForSproc(
-        self,
-        collection_link: str,
-        sproc: Mapping[str, Any]
-    ) -> Tuple[Optional[str], str, dict[str, Any]]:
-        base._validate_resource(sproc)
-        sproc = dict(sproc)
-        if sproc.get("serverScript"):
-            sproc["body"] = str(sproc.pop("serverScript", ""))
-        elif sproc.get("body"):
-            sproc["body"] = str(sproc["body"])
-        path = base.GetPathFromLink(collection_link, http_constants.ResourceType.StoredProcedure)
-        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
-        return collection_id, path, sproc
-
-    def _GetContainerIdWithPathForTrigger(
-        self,
-        collection_link: str,
-        trigger: Mapping[str, Any]
-    ) -> Tuple[Optional[str], str, dict[str, Any]]:
-        base._validate_resource(trigger)
-        trigger = dict(trigger)
-        if trigger.get("serverScript"):
-            trigger["body"] = str(trigger.pop("serverScript", ""))
-        elif trigger.get("body"):
-            trigger["body"] = str(trigger["body"])
-
-        path = base.GetPathFromLink(collection_link, http_constants.ResourceType.Trigger)
-        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
-        return collection_id, path, trigger
-
-    def _GetContainerIdWithPathForUDF(
-        self,
-        collection_link: str,
-        udf: Mapping[str, Any]
-    ) -> Tuple[Optional[str], str, dict[str, Any]]:
-        base._validate_resource(udf)
-        udf = dict(udf)
-        if udf.get("serverScript"):
-            udf["body"] = str(udf.pop("serverScript", ""))
-        elif udf.get("body"):
-            udf["body"] = str(udf["body"])
-
-        path = base.GetPathFromLink(collection_link, http_constants.ResourceType.UserDefinedFunction)
-        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
-        return collection_id, path, udf
 
     async def GetDatabaseAccount(
         self,
@@ -563,33 +560,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = "/dbs"
         return await self.Create(database, path, http_constants.ResourceType.Database, None, None, options, **kwargs)
 
-    async def CreateUser(
-        self,
-        database_link: str,
-        user: dict[str, Any],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Creates a user.
-
-        :param str database_link:
-            The link to the database.
-        :param dict user:
-            The Azure Cosmos user to create.
-        :param dict options:
-            The request options for the request.
-        :return:
-            The created User.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        database_id, path = self._GetDatabaseIdWithPathForUser(database_link, user)
-        return await self.Create(user, path, http_constants.ResourceType.User, database_id, None, options, **kwargs)
-
     async def CreateContainer(
         self,
         database_link: str,
@@ -663,157 +633,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return await self.Create(document, path, http_constants.ResourceType.Document, collection_id, None,
                                  options, **kwargs)
 
-    async def CreatePermission(
-        self,
-        user_link: str,
-        permission: dict[str, Any],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Creates a permission for a user.
-
-        :param str user_link:
-            The link to the user entity.
-        :param dict permission:
-            The Azure Cosmos user permission to create.
-        :param dict options:
-            The request options for the request.
-        :return:
-            The created Permission.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        path, user_id = self._GetUserIdWithPathForPermission(permission, user_link)
-        return await self.Create(permission, path, "permissions", user_id, None, options, **kwargs)
-
-    async def CreateUserDefinedFunction(
-        self,
-        collection_link: str,
-        udf: dict[str, Any],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Creates a user-defined function in a collection.
-
-        :param str collection_link:
-            The link to the collection.
-        :param str udf:
-        :param dict options:
-            The request options for the request.
-        :return:
-            The created UDF.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        collection_id, path, udf = self._GetContainerIdWithPathForUDF(collection_link, udf)
-        return await self.Create(udf, path, http_constants.ResourceType.UserDefinedFunction, collection_id, None,
-                                 options, **kwargs)
-
-    async def CreateTrigger(
-        self,
-        collection_link: str,
-        trigger: dict[str, Any],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Creates a trigger in a collection.
-
-        :param str collection_link:
-            The link to the document collection.
-        :param dict trigger:
-        :param dict options:
-            The request options for the request.
-        :return:
-            The created Trigger.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        collection_id, path, trigger = self._GetContainerIdWithPathForTrigger(collection_link, trigger)
-        return await self.Create(trigger, path, http_constants.ResourceType.Trigger, collection_id, None,
-                                 options, **kwargs)
-
-    async def CreateStoredProcedure(
-        self,
-        collection_link: str,
-        sproc: dict[str, Any],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Creates a stored procedure in a collection.
-
-        :param str collection_link:
-            The link to the document collection.
-        :param str sproc:
-        :param dict options:
-            The request options for the request.
-        :return:
-            The created Stored Procedure.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        collection_id, path, sproc = self._GetContainerIdWithPathForSproc(collection_link, sproc)
-        return await self.Create(sproc, path, http_constants.ResourceType.StoredProcedure, collection_id, None,
-                                 options, **kwargs)
-
-    async def ExecuteStoredProcedure(
-        self,
-        sproc_link: str,
-        params: Optional[Union[dict[str, Any], list[dict[str, Any]]]],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> Any:
-        """Executes a store procedure.
-
-        :param str sproc_link:
-            The link to the stored procedure.
-        :param dict params:
-            List or None
-        :param dict options:
-            The request options for the request.
-        :return:
-            The Stored Procedure response.
-        :rtype:
-            Any
-
-        """
-        if options is None:
-            options = {}
-
-        initial_headers = dict(self.default_headers)
-        initial_headers.update({http_constants.HttpHeaders.Accept: (runtime_constants.MediaTypes.Json)})
-
-        if params and not isinstance(params, list):
-            params = [params]
-
-        path = base.GetPathFromLink(sproc_link)
-        sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
-        headers = base.GetHeaders(self, initial_headers, "post", path, sproc_id,
-                                  http_constants.ResourceType.StoredProcedure,
-                                  documents._OperationType.ExecuteJavaScript, options)
-
-        # ExecuteStoredProcedure will use WriteEndpoint since it uses POST operation
-        request_params = _request_object.RequestObject(http_constants.ResourceType.StoredProcedure,
-                                                       documents._OperationType.ExecuteJavaScript, headers)
-        request_params.set_excluded_location_from_options(options)
-        result, self.last_response_headers = await self.__Post(path, request_params, params, headers, **kwargs)
-        return result
-
+    @initialize_async_legacy_connection
     async def Create(
         self,
         body: dict[str, Any],
@@ -843,7 +663,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        initial_headers = initial_headers or self.default_headers
+        initial_headers = {**self.default_headers, **(initial_headers or {})}
         headers = base.GetHeaders(self, initial_headers, "post", path, id, resource_type,
                                   documents._OperationType.Create, options)
         # Create will use WriteEndpoint since it uses POST operation
@@ -864,60 +684,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if response_hook:
             response_hook(last_response_headers, result)
         return CosmosDict(result, response_headers=last_response_headers)
-
-    async def UpsertUser(
-        self,
-        database_link: str,
-        user: dict[str, Any],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Upserts a user.
-
-        :param str database_link:
-            The link to the database.
-        :param dict user:
-            The Azure Cosmos user to upsert.
-        :param dict options:
-            The request options for the request.
-        :return:
-            The upserted User.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        database_id, path = self._GetDatabaseIdWithPathForUser(database_link, user)
-        return await self.Upsert(user, path, http_constants.ResourceType.User, database_id, None, options, **kwargs)
-
-    async def UpsertPermission(
-        self,
-        user_link: str,
-        permission: dict[str, Any],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Upserts a permission for a user.
-
-        :param str user_link:
-            The link to the user entity.
-        :param dict permission:
-            The Azure Cosmos user permission to upsert.
-        :param dict options:
-            The request options for the request.
-        :return:
-            The upserted permission.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        path, user_id = self._GetUserIdWithPathForPermission(permission, user_link)
-        return await self.Upsert(permission, path, "permissions", user_id, None, options, **kwargs)
 
     async def UpsertItem(
         self,
@@ -961,6 +727,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return await self.Upsert(document, path, http_constants.ResourceType.Document, collection_id, None,
                                  options, **kwargs)
 
+    @initialize_async_legacy_connection
     async def Upsert(
         self,
         body: dict[str, Any],
@@ -990,7 +757,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        initial_headers = initial_headers or self.default_headers
+        initial_headers = {**self.default_headers, **(initial_headers or {})}
         headers = base.GetHeaders(self, initial_headers, "post", path, id, resource_type,
                                     documents._OperationType.Upsert, options)
         headers[http_constants.HttpHeaders.IsUpsert] = True
@@ -1065,7 +832,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(database_link)
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
-        return await self.Read(path, http_constants.ResourceType.Database, database_id, None, options, **kwargs)
+        initial_headers = base.resolve_initial_headers(self.default_headers, options)
+        return await self.Read(
+            path,
+            http_constants.ResourceType.Database,
+            database_id,
+            initial_headers,
+            options,
+            **kwargs
+        )
 
     async def ReadContainer(
         self,
@@ -1119,135 +894,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         return await self.Read(path, http_constants.ResourceType.Document, document_id, None, options, **kwargs)
 
-    async def ReadUser(
-        self,
-        user_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Reads a user.
-
-        :param str user_link:
-            The link to the user entity.
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The read User.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(user_link)
-        user_id = base.GetResourceIdOrFullNameFromLink(user_link)
-        return await self.Read(path, http_constants.ResourceType.User, user_id, None, options, **kwargs)
-
-    async def ReadPermission(
-        self,
-        permission_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Reads a permission.
-
-        :param str permission_link:
-            The link to the permission.
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The read permission.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(permission_link)
-        permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
-        return await self.Read(path, "permissions", permission_id, None, options, **kwargs)
-
-    async def ReadUserDefinedFunction(
-        self,
-        udf_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Reads a user-defined function.
-
-        :param str udf_link:
-            The link to the user-defined function.
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The read UDF.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(udf_link)
-        udf_id = base.GetResourceIdOrFullNameFromLink(udf_link)
-        return await self.Read(path, http_constants.ResourceType.UserDefinedFunction, udf_id, None, options, **kwargs)
-
-    async def ReadStoredProcedure(
-        self,
-        sproc_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Reads a stored procedure.
-
-        :param str sproc_link:
-            The link to the stored procedure.
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The read Stored Procedure.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(sproc_link)
-        sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
-        return await self.Read(path, http_constants.ResourceType.StoredProcedure, sproc_id, None, options, **kwargs)
-
-    async def ReadTrigger(
-        self,
-        trigger_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Reads a trigger.
-
-        :param str trigger_link:
-            The link to the trigger.
-        :param dict options:
-            The request options for the request.
-
-        :return:
-            The read Trigger.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(trigger_link)
-        trigger_id = base.GetResourceIdOrFullNameFromLink(trigger_link)
-        return await self.Read(path, http_constants.ResourceType.Trigger, trigger_id, None, options, **kwargs)
-
     async def ReadConflict(
         self,
         conflict_link: str,
@@ -1273,6 +919,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         conflict_id = base.GetResourceIdOrFullNameFromLink(conflict_link)
         return await self.Read(path, http_constants.ResourceType.Conflict, conflict_id, None, options, **kwargs)
 
+    @initialize_async_legacy_connection
     async def Read(
         self,
         path: str,
@@ -1301,7 +948,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        initial_headers = initial_headers or self.default_headers
+        initial_headers = {**self.default_headers, **(initial_headers or {})}
         headers = base.GetHeaders(self, initial_headers, "get", path, id, resource_type,
                                     documents._OperationType.Read, options)
         # Read will use ReadEndpoint since it uses GET operation
@@ -1348,62 +995,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             **kwargs
         )
 
-    async def ReplaceUser(
-        self,
-        user_link: str,
-        user: dict[str, Any],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Replaces a user and return it.
-
-        :param str user_link:
-            The link to the user entity.
-        :param dict user:
-        :param dict options:
-            The request options for the request.
-        :return:
-            The new User.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        base._validate_resource(user)
-        path = base.GetPathFromLink(user_link)
-        user_id = base.GetResourceIdOrFullNameFromLink(user_link)
-        return await self.Replace(user, path, http_constants.ResourceType.User, user_id, None, options, **kwargs)
-
-    async def ReplacePermission(
-        self,
-        permission_link: str,
-        permission: dict[str, Any],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Replaces a permission and return it.
-
-        :param str permission_link:
-            The link to the permission.
-        :param dict permission:
-        :param dict options:
-            The request options for the request.
-        :return:
-            The new Permission.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        base._validate_resource(permission)
-        path = base.GetPathFromLink(permission_link)
-        permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
-        return await self.Replace(permission, path, "permissions", permission_id, None, options, **kwargs)
-
     async def ReplaceContainer(
         self,
         collection_link: str,
@@ -1432,76 +1023,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(collection_link)
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return await self.Replace(collection, path, http_constants.ResourceType.Collection, collection_id, None,
-                                  options, **kwargs)
-
-    async def ReplaceUserDefinedFunction(
-        self,
-        udf_link: str,
-        udf: dict[str, Any],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Replaces a user-defined function and returns it.
-
-        :param str udf_link:
-            The link to the user-defined function.
-        :param dict udf:
-        :param dict options:
-            The request options for the request.
-        :return:
-            The new UDF.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        base._validate_resource(udf)
-        udf = udf.copy()
-        if udf.get("serverScript"):
-            udf["body"] = str(udf.pop("serverScript", ""))
-        elif udf.get("body"):
-            udf["body"] = str(udf["body"])
-
-        path = base.GetPathFromLink(udf_link)
-        udf_id = base.GetResourceIdOrFullNameFromLink(udf_link)
-        return await self.Replace(udf, path, http_constants.ResourceType.UserDefinedFunction, udf_id, None,
-                                  options, **kwargs)
-
-    async def ReplaceTrigger(
-        self,
-        trigger_link: str,
-        trigger: dict[str, Any],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs
-    ) -> CosmosDict:
-        """Replaces a trigger and returns it.
-
-        :param str trigger_link:
-            The link to the trigger.
-        :param dict trigger:
-        :param dict options:
-            The request options for the request.
-        :return:
-            The replaced Trigger.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        base._validate_resource(trigger)
-        trigger = trigger.copy()
-        if trigger.get("serverScript"):
-            trigger["body"] = str(trigger.pop("serverScript", ""))
-        elif trigger.get("body"):
-            trigger["body"] = str(trigger["body"])
-
-        path = base.GetPathFromLink(trigger_link)
-        trigger_id = base.GetResourceIdOrFullNameFromLink(trigger_link)
-        return await self.Replace(trigger, path, http_constants.ResourceType.Trigger, trigger_id, None,
                                   options, **kwargs)
 
     async def ReplaceItem(
@@ -1545,6 +1066,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return await self.Replace(new_document, path, http_constants.ResourceType.Document, document_id, None,
                                   options, **kwargs)
 
+    @initialize_async_legacy_connection
     async def PatchItem(
         self,
         document_link: str,
@@ -1619,41 +1141,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         offer_id = base.GetResourceIdOrFullNameFromLink(offer_link)
         return await self.Replace(offer, path, http_constants.ResourceType.Offer, offer_id, None, None, **kwargs)
 
-    async def ReplaceStoredProcedure(
-        self,
-        sproc_link: str,
-        sproc: dict[str, Any],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> CosmosDict:
-        """Replaces a stored procedure and returns it.
-
-        :param str sproc_link:
-            The link to the stored procedure.
-        :param dict sproc:
-        :param dict options:
-            The request options for the request.
-        :return:
-            The replaced Stored Procedure.
-        :rtype:
-            ~azure.cosmos.CosmosDict[str, Any]
-
-        """
-        if options is None:
-            options = {}
-
-        base._validate_resource(sproc)
-        sproc = sproc.copy()
-        if sproc.get("serverScript"):
-            sproc["body"] = str(sproc.pop("serverScript", ""))
-        elif sproc.get("body"):
-            sproc["body"] = str(sproc["body"])
-
-        path = base.GetPathFromLink(sproc_link)
-        sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
-        return await self.Replace(sproc, path, http_constants.ResourceType.StoredProcedure, sproc_id, None,
-                                  options, **kwargs)
-
+    @initialize_async_legacy_connection
     async def Replace(
         self,
         resource: dict[str, Any],
@@ -1683,7 +1171,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        initial_headers = initial_headers or self.default_headers
+        initial_headers = {**self.default_headers, **(initial_headers or {})}
         headers = base.GetHeaders(self, initial_headers, "put", path, id, resource_type,
                                     documents._OperationType.Replace, options)
         # Replace will use WriteEndpoint since it uses PUT operation
@@ -1786,54 +1274,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         await self.DeleteResource(path, http_constants.ResourceType.Database, database_id, None, options, **kwargs)
 
-    async def DeleteUser(
-        self,
-        user_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Deletes a user.
-
-        :param str user_link:
-            The link to the user entity.
-        :param dict options:
-            The request options for the request.
-
-        :rtype:
-            None
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(user_link)
-        user_id = base.GetResourceIdOrFullNameFromLink(user_link)
-        await self.DeleteResource(path, http_constants.ResourceType.User, user_id, None, options, **kwargs)
-
-    async def DeletePermission(
-        self,
-        permission_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Deletes a permission.
-
-        :param str permission_link:
-            The link to the permission.
-        :param dict options:
-            The request options for the request.
-
-        :rtype:
-            None
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(permission_link)
-        permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
-        await self.DeleteResource(path, "permissions", permission_id, None, options, **kwargs)
-
     async def DeleteContainer(
         self,
         collection_link: str,
@@ -1882,78 +1322,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         await self.DeleteResource(path, http_constants.ResourceType.Document, document_id, None, options, **kwargs)
 
-    async def DeleteUserDefinedFunction(
-        self,
-        udf_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Deletes a user-defined function.
-
-        :param str udf_link:
-            The link to the user-defined function.
-        :param dict options:
-            The request options for the request.
-
-        :rtype:
-            None
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(udf_link)
-        udf_id = base.GetResourceIdOrFullNameFromLink(udf_link)
-        await self.DeleteResource(path, http_constants.ResourceType.UserDefinedFunction, udf_id, None,
-                                  options, **kwargs)
-
-    async def DeleteTrigger(
-        self,
-        trigger_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Deletes a trigger.
-
-        :param str trigger_link:
-            The link to the trigger.
-        :param dict options:
-            The request options for the request.
-
-        :rtype:
-            None
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(trigger_link)
-        trigger_id = base.GetResourceIdOrFullNameFromLink(trigger_link)
-        await self.DeleteResource(path, http_constants.ResourceType.Trigger, trigger_id, None, options, **kwargs)
-
-    async def DeleteStoredProcedure(
-        self,
-        sproc_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Deletes a stored procedure.
-
-        :param str sproc_link:
-            The link to the stored procedure.
-        :param dict options:
-            The request options for the request.
-
-        :rtype:
-            None
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(sproc_link)
-        sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
-        await self.DeleteResource(path, http_constants.ResourceType.StoredProcedure, sproc_id, None, options, **kwargs)
-
     async def DeleteConflict(
         self,
         conflict_link: str,
@@ -1978,6 +1346,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         conflict_id = base.GetResourceIdOrFullNameFromLink(conflict_link)
         await self.DeleteResource(path, http_constants.ResourceType.Conflict, conflict_id, None, options, **kwargs)
 
+    @initialize_async_legacy_connection
     async def DeleteResource(
         self,
         path: str,
@@ -2004,7 +1373,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        initial_headers = initial_headers or self.default_headers
+        initial_headers = {**self.default_headers, **(initial_headers or {})}
         headers = base.GetHeaders(self, initial_headers, "delete", path, id, resource_type,
                                     documents._OperationType.Delete, options)
         # Delete will use WriteEndpoint since it uses DELETE operation
@@ -2117,6 +1486,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return CosmosList(final_responses,
                                   response_headers=last_response_headers)
 
+    @initialize_async_legacy_connection
     async def _Batch(
         self,
         batch_operations: list[dict[str, Any]],
@@ -2357,8 +1727,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             **kwargs)
         return await helper.read_items()
 
-
-
     def ReadItems(
         self,
         collection_link: str,
@@ -2443,7 +1811,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     response_headers=response_headers,
                     **kwargs
                 ),
-                self.last_response_headers,
+                response_headers if "_read_all_response_headers" in options else self.last_response_headers,
             )
 
         return CosmosAsyncItemPaged(
@@ -2454,7 +1822,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             collection_link=database_or_container_link,
             page_iterator_class=query_iterable.QueryIterable,
             response_hook=response_hook,
-            raw_response_hook=kwargs.get('raw_response_hook'),
             resource_type=http_constants.ResourceType.Document,
             response_headers=response_headers
         )
@@ -2590,322 +1957,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             fetch_function=fetch_fn,
             page_iterator_class=query_iterable.QueryIterable,
             resource_type=http_constants.ResourceType.Offer
-        )
-
-    def ReadUsers(
-        self,
-        database_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """Reads all users in a database.
-
-        :param str database_link:
-            The link to the database.
-        :param dict[str, Any] options:
-            The request options for the request.
-        :return:
-            Query iterable of Users.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-
-        return self.QueryUsers(database_link, None, options, **kwargs)
-
-    def QueryUsers(
-        self,
-        database_link: str,
-        query: Optional[Union[str, dict[str, Any]]],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """Queries users in a database.
-
-        :param str database_link:
-            The link to the database.
-        :param (str or dict) query:
-        :param dict options:
-            The request options for the request.
-        :return:
-            Query Iterable of Users.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(database_link, http_constants.ResourceType.User)
-        database_id = base.GetResourceIdOrFullNameFromLink(database_link)
-
-        async def fetch_fn(options: Mapping[str, Any]) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
-            return (
-                await self.__QueryFeed(
-                    path, http_constants.ResourceType.User, database_id, lambda r: r["Users"],
-                    lambda _, b: b, query, options, **kwargs
-                ),
-                self.last_response_headers,
-            )
-
-        return AsyncItemPaged(
-            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable,
-            resource_type=http_constants.ResourceType.User
-        )
-
-    def ReadPermissions(
-        self,
-        user_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """Reads all permissions for a user.
-
-        :param str user_link:
-            The link to the user entity.
-        :param dict options:
-            The request options for the request.
-        :return:
-            Query Iterable of Permissions.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-
-        return self.QueryPermissions(user_link, None, options, **kwargs)
-
-    def QueryPermissions(
-        self,
-        user_link: str,
-        query: Optional[Union[str, dict[str, Any]]],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """Queries permissions for a user.
-
-        :param str user_link:
-            The link to the user entity.
-        :param (str or dict) query:
-        :param dict options:
-            The request options for the request.
-        :return:
-            Query Iterable of Permissions.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(user_link, http_constants.ResourceType.Permission)
-        user_id = base.GetResourceIdOrFullNameFromLink(user_link)
-
-        async def fetch_fn(options: Mapping[str, Any]) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
-            return (
-                await self.__QueryFeed(
-                    path, http_constants.ResourceType.Permission, user_id, lambda r: r["Permissions"], lambda _, b: b,
-                    query, options, **kwargs
-                ),
-                self.last_response_headers,
-            )
-
-        return AsyncItemPaged(
-            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable,
-            resource_type=http_constants.ResourceType.Permission
-        )
-
-    def ReadStoredProcedures(
-        self,
-        collection_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """Reads all store procedures in a collection.
-
-        :param str collection_link:
-            The link to the document collection.
-        :param dict options:
-            The request options for the request.
-        :return:
-            Query Iterable of Stored Procedures.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-
-        return self.QueryStoredProcedures(collection_link, None, options, **kwargs)
-
-    def QueryStoredProcedures(
-        self,
-        collection_link: str,
-        query: Optional[Union[str, dict[str, Any]]],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """Queries stored procedures in a collection.
-
-        :param str collection_link:
-            The link to the document collection.
-        :param (str or dict) query:
-        :param dict options:
-            The request options for the request.
-        :return:
-            Query Iterable of Stored Procedures.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(collection_link, http_constants.ResourceType.StoredProcedure)
-        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
-
-        async def fetch_fn(options: Mapping[str, Any]) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
-            return (
-                await self.__QueryFeed(
-                    path, http_constants.ResourceType.StoredProcedure, collection_id, lambda r: r["StoredProcedures"],
-                    lambda _, b: b, query, options, **kwargs
-                ),
-                self.last_response_headers,
-            )
-
-        return AsyncItemPaged(
-            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable,
-            resource_type=http_constants.ResourceType.StoredProcedure
-        )
-
-    def ReadTriggers(
-        self,
-        collection_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """Reads all triggers in a collection.
-
-        :param str collection_link:
-            The link to the document collection.
-        :param dict options:
-            The request options for the request.
-        :return:
-            Query Iterable of Triggers.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-
-        return self.QueryTriggers(collection_link, None, options, **kwargs)
-
-    def QueryTriggers(
-        self,
-        collection_link: str,
-        query: Optional[Union[str, dict[str, Any]]],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """Queries triggers in a collection.
-
-        :param str collection_link:
-            The link to the document collection.
-        :param (str or dict) query:
-        :param dict options:
-            The request options for the request.
-        :return:
-            Query Iterable of Triggers.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(collection_link, http_constants.ResourceType.Trigger)
-        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
-
-        async def fetch_fn(options: Mapping[str, Any]) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
-            return (
-                await self.__QueryFeed(
-                    path, http_constants.ResourceType.Trigger, collection_id, lambda r: r["Triggers"],
-                    lambda _, b: b, query, options, **kwargs
-                ),
-                self.last_response_headers,
-            )
-
-        return AsyncItemPaged(
-            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable,
-            resource_type=http_constants.ResourceType.Trigger
-        )
-
-    def ReadUserDefinedFunctions(
-        self,
-        collection_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """Reads all user-defined functions in a collection.
-
-        :param str collection_link:
-            The link to the document collection.
-        :param dict options:
-            The request options for the request.
-        :return:
-            Query Iterable of UDFs.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-
-        return self.QueryUserDefinedFunctions(collection_link, None, options, **kwargs)
-
-    def QueryUserDefinedFunctions(
-        self,
-        collection_link: str,
-        query: Optional[Union[str, dict[str, Any]]],
-        options: Optional[Mapping[str, Any]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """Queries user-defined functions in a collection.
-
-        :param str collection_link:
-            The link to the collection.
-        :param (str or dict) query:
-        :param dict options:
-            The request options for the request.
-        :return:
-            Query Iterable of UDFs.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-
-        path = base.GetPathFromLink(collection_link, http_constants.ResourceType.UserDefinedFunction)
-        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
-
-        async def fetch_fn(options: Mapping[str, Any]) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
-            return (
-                await self.__QueryFeed(
-                    path, http_constants.ResourceType.UserDefinedFunction, collection_id,
-                    lambda r: r["UserDefinedFunctions"],
-                    lambda _, b: b, query, options, **kwargs
-                ),
-                self.last_response_headers,
-            )
-
-        return AsyncItemPaged(
-            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable,
-            resource_type=http_constants.ResourceType.UserDefinedFunction
         )
 
     def ReadConflicts(
@@ -3044,11 +2095,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        read_timeout = options.get("read_timeout")
-        if read_timeout is not None:
-            # we currently have a gap where kwargs are not getting passed correctly down the pipeline. In order to make
-            # absolute time out work, we are passing read_timeout via kwargs as a temporary fix
-            kwargs.setdefault("read_timeout", read_timeout)
+        page_backend = kwargs.pop("_read_all_backend", self._backend)
+        deadline = options.get("_item_operation_deadline")
+        if deadline is not None:
+            options = legacy_deadline_options(options, deadline)
+            kwargs["timeout"] = options["timeout"]
+            kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
 
         operation_start_time = options.get(Constants.OperationStartTime)
         if operation_start_time is not None:
@@ -3095,7 +2147,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 # This case should be interpreted as an empty array.
                 return []
 
-        initial_headers = self.default_headers.copy()
+        initial_headers = (
+            base.resolve_initial_headers(self.default_headers, options)
+            or self.default_headers.copy()
+        )
         container_property_func = kwargs.pop("containerProperties", None)
         container_property = None
         if container_property_func:
@@ -3103,43 +2158,130 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # Copy to make sure that default_headers won't be changed.
         if query is None:
-            op_type = documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed
-            # Query operations will use ReadEndpoint even though it uses GET(for feed requests)
-            headers = base.GetHeaders(self, initial_headers, "get", path, id_, resource_type, op_type,
-                                      options, partition_key_range_id)
-            request_params = _request_object.RequestObject(
-                resource_type,
-                op_type,
-                headers,
-                options.get("partitionKey", None),
-            )
-            request_params.set_excluded_location_from_options(options)
-            request_params.set_availability_strategy(options, self.availability_strategy)
-            request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
-            headers = base.GetHeaders(self, initial_headers, "get", path, id_, resource_type,
-                                      request_params.operation_type, options, partition_key_range_id)
-            await base.set_session_token_header_async(self, headers, path, request_params, options,
-                                                      partition_key_range_id)
-            change_feed_state: Optional[ChangeFeedState] = options.get("changeFeedState")
-            if change_feed_state is not None:
-                feed_options = {}
-                if 'excludedLocations' in options:
-                    feed_options['excludedLocations'] = options['excludedLocations']
-                await change_feed_state.populate_request_headers_async(self._routing_map_provider, headers,
-                                                                       feed_options)
-                request_params.headers = headers
+            async def _run_legacy_read_feed() -> list[dict[str, Any]]:
+                await self._setup()
+                initial_headers = (
+                    base.resolve_initial_headers(self.default_headers, options)
+                    or self.default_headers.copy()
+                )
+                op_type = documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed
+                headers = base.GetHeaders(
+                    self, initial_headers, "get", path, id_, resource_type, op_type,
+                    options, partition_key_range_id
+                )
+                request_params = _request_object.RequestObject(
+                    resource_type,
+                    op_type,
+                    headers,
+                    options.get("partitionKey", None),
+                )
+                request_params.set_excluded_location_from_options(options)
+                request_params.set_availability_strategy(options, self.availability_strategy)
+                request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
+                headers = base.GetHeaders(
+                    self, initial_headers, "get", path, id_, resource_type,
+                    request_params.operation_type, options, partition_key_range_id
+                )
+                await base.set_session_token_header_async(
+                    self, headers, path, request_params, options, partition_key_range_id
+                )
+                change_feed_state: Optional[ChangeFeedState] = options.get("changeFeedState")
+                if change_feed_state is not None:
+                    feed_options = dict(options)
+                    await change_feed_state.populate_request_headers_async(
+                        self._routing_map_provider, headers, feed_options
+                    )
+                    request_params.headers = headers
 
-            result, last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
-            self.last_response_headers = last_response_headers
-            if internal_headers_capture is not None:
-                _capture_internal_headers(last_response_headers)
-            self._UpdateSessionIfRequired(headers, result, last_response_headers)
-            if response_headers is not None:
-                response_headers.clear()
-                response_headers.update(last_response_headers)
-            if response_hook:
-                response_hook(self.last_response_headers, result)
-            return __GetBodiesFromQueryResult(result)
+                result, last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
+                self.last_response_headers = last_response_headers
+                if internal_headers_capture is not None:
+                    _capture_internal_headers(last_response_headers)
+                self._UpdateSessionIfRequired(headers, result, last_response_headers)
+                if response_headers is not None:
+                    response_headers.clear()
+                    response_headers.update(last_response_headers)
+                if response_hook:
+                    response_hook(last_response_headers, result)
+                return __GetBodiesFromQueryResult(result)
+
+            rust_request_headers: Mapping[str, Any] = {}
+            if resource_type == http_constants.ResourceType.Database:
+                page_op = OP_LIST_DATABASES
+                rust_eligible = can_use_rust_backend_for_list_databases_page(
+                    options=options,
+                    kwargs=kwargs,
+                    is_query_plan=is_query_plan,
+                    resource_type=resource_type,
+                )
+
+                def _build_list_databases_page() -> PreparedPageRequest:
+                    nonlocal rust_request_headers
+                    prepared = build_list_databases_prepared_page_request(
+                        options=options,
+                        req_headers=self.default_headers,
+                    )
+                    rust_request_headers = prepared.headers
+                    return prepared
+                build_request_page = _build_list_databases_page
+            elif resource_type == http_constants.ResourceType.Collection:
+                page_op = OP_LIST_CONTAINERS
+                rust_eligible = can_use_rust_backend_for_list_containers_page(
+                    path=path,
+                    options=options,
+                    kwargs=kwargs,
+                    is_query_plan=is_query_plan,
+                    resource_type=resource_type,
+                )
+
+                def _build_list_containers_page() -> PreparedPageRequest:
+                    nonlocal rust_request_headers
+                    prepared = build_list_containers_prepared_page_request(
+                        path=path,
+                        options=options,
+                        req_headers=self.default_headers,
+                    )
+                    rust_request_headers = prepared.headers
+                    return prepared
+                build_request_page = _build_list_containers_page
+            else:
+                page_op = OP_READ_ALL_ITEMS
+                rust_eligible = can_use_rust_backend_for_read_all_items_page(
+                    options=options,
+                    kwargs=kwargs,
+                    is_query_plan=is_query_plan,
+                    resource_type=resource_type,
+                    partition_key_range_id=partition_key_range_id,
+                )
+
+                def _build_read_all_items_page() -> PreparedPageRequest:
+                    nonlocal rust_request_headers
+                    prepared = build_read_all_items_prepared_page_request(
+                        path=path,
+                        options=options,
+                        req_headers=self.default_headers,
+                    )
+                    rust_request_headers = prepared.headers
+                    return prepared
+                build_request_page = _build_read_all_items_page
+
+            def _parse_rust_page(page):
+                parsed_page = process_query_page(
+                    page=page,
+                    client_connection=self,
+                    req_headers=rust_request_headers,
+                    internal_headers_capture=internal_headers_capture,
+                    response_hook=response_hook,
+                    response_headers=response_headers,
+                )
+                return __GetBodiesFromQueryResult(parsed_page.body)
+
+            return await page_backend.run_page_operation(
+                build_request=build_request_page,
+                routing=OperationRouting(page_op, rust_eligible),
+                legacy_call=_run_legacy_read_feed,
+                process_response=_parse_rust_page,
+            )
 
         query = self.__CheckAndUnifyQueryFormat(query)
 
@@ -3154,35 +2296,128 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         else:
             raise SystemError("Unexpected query compatibility mode.")
 
-        # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
-        req_headers = base.GetHeaders(self, initial_headers, "post", path, id_, resource_type,
-                                      documents._OperationType.SqlQuery, options, partition_key_range_id)
-        request_params = _request_object.RequestObject(resource_type,
-                                                       documents._OperationType.SqlQuery,
-                                                       req_headers,
-                                                       options.get("partitionKey", None))
-        request_params.set_excluded_location_from_options(options)
-        request_params.set_availability_strategy(options, self.availability_strategy)
-        request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
-        if not is_query_plan:
-            await base.set_session_token_header_async(self, req_headers, path, request_params, options,
-                                                      partition_key_range_id)
+        req_headers: dict[str, Any] = {}
+        legacy_request_params: Optional[_request_object.RequestObject] = None
+        rust_query_headers: Mapping[str, Any] = {}
+
+        async def _prepare_legacy_query_request() -> _request_object.RequestObject:
+            nonlocal req_headers, legacy_request_params
+            if legacy_request_params is not None:
+                return legacy_request_params
+            await self._setup()
+            initial_headers.update({
+                key: value for key, value in self.default_headers.items()
+                if key not in initial_headers
+            })
+            req_headers = base.GetHeaders(
+                self, initial_headers, "post", path, id_, resource_type,
+                documents._OperationType.SqlQuery, options, partition_key_range_id,
+            )
+            legacy_request_params = _request_object.RequestObject(
+                resource_type, documents._OperationType.SqlQuery,
+                req_headers, options.get("partitionKey", None),
+            )
+            legacy_request_params.set_excluded_location_from_options(options)
+            legacy_request_params.set_availability_strategy(options, self.availability_strategy)
+            legacy_request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
+            if not is_query_plan:
+                await base.set_session_token_header_async(
+                    self, req_headers, path, legacy_request_params, options, partition_key_range_id,
+                )
+            return legacy_request_params
+
+        # A feed of databases is account-scoped: no container, no partition key,
+        # and its own binding entry point. The feed-range block below is reached
+        # by both branches but does nothing for a database feed, because that
+        # feed never carries a ``feed_range`` kwarg, a partition key in options,
+        # or container properties -- the three things that block is keyed on.
+        if resource_type == http_constants.ResourceType.Database:
+            page_op = OP_QUERY_DATABASES
+            rust_eligible = can_use_rust_backend_for_query_databases_page(
+                query_payload=query,
+                options=options,
+                kwargs=kwargs,
+                is_query_plan=is_query_plan,
+                resource_type=resource_type,
+            )
+
+            def _build_query_page() -> PreparedPageRequest:
+                nonlocal rust_query_headers
+                prepared = build_query_databases_prepared_page_request(
+                    query_payload=query,
+                    options=options,
+                    req_headers=self.default_headers,
+                )
+                rust_query_headers = prepared.headers
+                return prepared
+        elif resource_type == http_constants.ResourceType.Collection:
+            # A feed of containers is database-scoped. Same shape as the
+            # database feed above -- no partition key, its own binding entry
+            # point -- but the owning database has to reach the Rust side, so the
+            # builder parses it out of ``path``.
+            page_op = OP_QUERY_CONTAINERS
+            rust_eligible = can_use_rust_backend_for_query_containers_page(
+                path=path,
+                query_payload=query,
+                options=options,
+                kwargs=kwargs,
+                is_query_plan=is_query_plan,
+                resource_type=resource_type,
+            )
+
+            def _build_query_page() -> PreparedPageRequest:
+                nonlocal rust_query_headers
+                prepared = build_query_containers_prepared_page_request(
+                    path=path,
+                    query_payload=query,
+                    options=options,
+                    req_headers=self.default_headers,
+                )
+                rust_query_headers = prepared.headers
+                return prepared
+        else:
+            page_op = OP_QUERY_ITEMS
+            rust_eligible = can_use_rust_backend_for_query_page(
+                query_payload=query,
+                options=options,
+                kwargs=kwargs,
+                container_properties=container_property,
+                is_query_plan=is_query_plan,
+                resource_type=resource_type,
+            )
+
+            def _build_query_page() -> PreparedPageRequest:
+                nonlocal rust_query_headers
+                prepared = build_query_items_prepared_page_request(
+                    path=path,
+                    query_payload=query,
+                    options=options,
+                    req_headers=self.default_headers,
+                )
+                rust_query_headers = prepared.headers
+                return prepared
 
         # Check if the overlapping ranges can be populated
         feed_range_epk = None
-        if "feed_range" in kwargs:
+        if not rust_eligible and "feed_range" in kwargs:
             feed_range = kwargs.pop("feed_range")
             feed_range_epk = FeedRangeInternalEpk.from_json(feed_range).get_normalized_range()
-        elif options.get("partitionKey") is not None and container_property is not None:
+        elif (
+            not rust_eligible
+            and options.get("partitionKey") is not None
+            and container_property is not None
+        ):
             partition_key_value = options["partitionKey"]
             partition_key_obj = _build_partition_key_from_properties(container_property)
             # Only HPK prefixes require EPK routing; complete keys keep the normal PartitionKey request path.
             if partition_key_obj._is_prefix_partition_key(partition_key_value):
+                await _prepare_legacy_query_request()
                 req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
                 partition_key_value = cast(_SequentialPartitionKeyType, partition_key_value)
                 feed_range_epk = partition_key_obj._get_epk_range_for_prefix_partition_key(partition_key_value)
 
         if feed_range_epk is not None:
+            request_params = await _prepare_legacy_query_request()
             if id_ is None:
                 raise ValueError("resource_id is required for feed_range continuation.")
             # The None-check above already narrows ``id_`` to ``str`` for the
@@ -3489,28 +2724,47 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     return __GetBodiesFromQueryResult(results)
                 return []
 
-        result, last_response_headers = await self.__Post(path, request_params, query, req_headers, **kwargs)
-        self.last_response_headers = last_response_headers
-        if internal_headers_capture is not None:
-            _capture_internal_headers(last_response_headers)
+        async def _run_legacy_query_page() -> list[dict[str, Any]]:
+            request_params = await _prepare_legacy_query_request()
+            result, last_response_headers = await self.__Post(path, request_params, query, req_headers, **kwargs)
+            self.last_response_headers = last_response_headers
+            if internal_headers_capture is not None:
+                _capture_internal_headers(last_response_headers)
 
-        # update session for request mutates data on server side
-        self._UpdateSessionIfRequired(req_headers, result, last_response_headers)
-        # TODO: this part might become an issue since HTTP/2 can return read-only headers
-        if self.last_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:
-            INDEX_METRICS_HEADER = http_constants.HttpHeaders.IndexUtilization
-            index_metrics_raw = self.last_response_headers[INDEX_METRICS_HEADER]
-            self.last_response_headers[INDEX_METRICS_HEADER] = _utils.get_index_metrics_info(index_metrics_raw)
-        if self.last_response_headers.get(http_constants.HttpHeaders.QueryAdvice) is not None:
-            query_advice_raw = self.last_response_headers[http_constants.HttpHeaders.QueryAdvice]
-            self.last_response_headers[http_constants.HttpHeaders.QueryAdvice] = get_query_advice_info(query_advice_raw)
-        if response_headers is not None:
-            response_headers.clear()
-            response_headers.update(last_response_headers)
-        if response_hook:
-            response_hook(self.last_response_headers, result)
+            self._UpdateSessionIfRequired(req_headers, result, last_response_headers)
+            if self.last_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:
+                index_metrics_header = http_constants.HttpHeaders.IndexUtilization
+                index_metrics_raw = self.last_response_headers[index_metrics_header]
+                self.last_response_headers[index_metrics_header] = _utils.get_index_metrics_info(index_metrics_raw)
+            if self.last_response_headers.get(http_constants.HttpHeaders.QueryAdvice) is not None:
+                query_advice_raw = self.last_response_headers[http_constants.HttpHeaders.QueryAdvice]
+                self.last_response_headers[http_constants.HttpHeaders.QueryAdvice] = (
+                    get_query_advice_info(query_advice_raw)
+                )
+            if response_headers is not None:
+                response_headers.clear()
+                response_headers.update(last_response_headers)
+            if response_hook:
+                response_hook(self.last_response_headers, result)
+            return __GetBodiesFromQueryResult(result)
 
-        return __GetBodiesFromQueryResult(result)
+        def _parse_rust_query_page(page):
+            parsed_page = process_query_page(
+                page=page,
+                client_connection=self,
+                req_headers=rust_query_headers,
+                internal_headers_capture=internal_headers_capture,
+                response_headers=response_headers,
+                response_hook=response_hook,
+            )
+            return __GetBodiesFromQueryResult(parsed_page.body)
+
+        return await page_backend.run_page_operation(
+            build_request=_build_query_page,
+            routing=OperationRouting(page_op, rust_eligible),
+            legacy_call=_run_legacy_query_page,
+            process_response=_parse_rust_query_page,
+        )
 
     def __CheckAndUnifyQueryFormat(
         self,
@@ -3612,12 +2866,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(collection_link, http_constants.ResourceType.Document)
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return collection_id, document, path
-
-    def _GetUserIdWithPathForPermission(self, permission, user_link):
-        base._validate_resource(permission)
-        path = base.GetPathFromLink(user_link, "permissions")
-        user_id = base.GetResourceIdOrFullNameFromLink(user_link)
-        return path, user_id
 
     def RegisterPartitionResolver(
         self,
@@ -3809,6 +3057,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             "supportedQueryFeatures": supported_query_features,
             "queryVersion": http_constants.Versions.QueryVersion,
         }
+        deadline = kwargs.pop("_item_operation_deadline", None)
+        if deadline is not None:
+            options = legacy_deadline_options(options, deadline)
         if excluded_locations is not None:
             options["excludedLocations"] = excluded_locations
         path = base.GetPathFromLink(resource_link, http_constants.ResourceType.Document)
@@ -3826,6 +3077,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             **kwargs
         )
 
+    @initialize_async_legacy_connection
     async def DeleteAllItemsByPartitionKey(
         self,
         collection_link: str,

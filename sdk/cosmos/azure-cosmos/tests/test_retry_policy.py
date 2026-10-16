@@ -16,13 +16,14 @@ from _fault_injection_transport import FaultInjectionTransport
 from azure.core.exceptions import ServiceResponseError, ServiceRequestError
 from azure.cosmos._health_check_retry_policy import HealthCheckRetryPolicy
 from azure.cosmos._constants import _Constants
+from _client_transport import create_client_with_transport
 
 
 def setup_method_with_custom_transport(
         custom_transport,
         **kwargs):
     connection_retry_policy = test_config.MockConnectionRetryPolicy(resource_type="docs")
-    client = cosmos_client.CosmosClient(test_config.TestConfig.host, test_config.TestConfig.masterKey,
+    client = create_client_with_transport(cosmos_client.CosmosClient, test_config.TestConfig.host, test_config.TestConfig.masterKey,
                                         transport=custom_transport, connection_retry_policy=connection_retry_policy, **kwargs)
     db = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
     container = db.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)

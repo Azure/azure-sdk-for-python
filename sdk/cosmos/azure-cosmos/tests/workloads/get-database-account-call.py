@@ -1,15 +1,13 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
+import asyncio
 import os
-
-from workload_utils import create_logger
-from workload_configs import COSMOS_URI, COSMOS_CREDENTIAL, PREFERRED_LOCATIONS
+from datetime import datetime
 
 from azure.cosmos.aio import CosmosClient as AsyncClient
-import asyncio
 
-import time
-from datetime import datetime
+from workload_configs import COSMOS_CREDENTIAL, COSMOS_URI, PREFERRED_LOCATIONS
+from workload_utils import create_logger
 
 
 async def run_workload(client_id: str):
@@ -28,10 +26,10 @@ async def run_workload(client_id: str):
                 logger.info("%s - Database account - readable locations: %s",
                             datetime.now().strftime("%Y%m%d-%H%M%S"),
                             database_account.ReadableLocations)
-                time.sleep(1)
+                await asyncio.sleep(1)
             except Exception as e:
                 logger.error(e)
-                raise e
+                raise
 
 
 if __name__ == "__main__":

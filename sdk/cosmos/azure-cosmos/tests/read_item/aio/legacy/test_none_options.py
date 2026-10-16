@@ -1,0 +1,82 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+"""Async ``test_container_read_item_none_options_async`` test against
+the ``_backend="rust"`` path.
+
+Source: ``tests/test_none_options_async.py``. The class name and method
+name match the source so the parity reporter can pair the two runs by
+``(file basename, class name, method name)``.
+
+Self-contained: builds its own database + container in ``asyncSetUp``
+and registers deletion and client closure immediately, including on setup failure. Reads ``ACCOUNT_HOST`` and
+``ACCOUNT_KEY`` from the environment, defaulting to the local emulator when unset.
+
+Run with::
+
+    pytest --noconftest tests/read_item/aio/legacy/test_none_options.py -v
+"""
+import os
+import unittest
+import uuid
+
+import pytest
+
+from azure.cosmos.aio import CosmosClient
+from azure.cosmos import PartitionKey
+
+
+HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
+KEY = os.environ.get(
+    "ACCOUNT_KEY",
+    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+)
+
+
+@pytest.mark.cosmosEmulator
+class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
+
+    async def asyncSetUp(self):
+        self.client = CosmosClient(HOST, KEY, _backend="rust")
+        self.addAsyncCleanup(self.client.close)
+        await self.client.__aenter__()
+        self._db_id = "legacy_ri_none_opts_" + uuid.uuid4().hex[:8]
+        self._container_id = "c_" + uuid.uuid4().hex[:8]
+        self.database = await self.client.create_database(self._db_id)
+        self.addAsyncCleanup(self.client.delete_database, self._db_id)
+        print(f"\nOwned read-test database: {self._db_id}")
+        self.container = await self.database.create_container(
+            id=self._container_id,
+            partition_key=PartitionKey(path="/pk"),
+        )
+
+    async def _create_sample_item(self):
+        item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 42}
+        await self.container.create_item(
+            item, pre_trigger_include=None, post_trigger_include=None,
+            indexing_directive=None, enable_automatic_id_generation=False,
+            session_token=None, initial_headers=None, priority=None,
+            no_response=None, retry_write=None, throughput_bucket=None,
+        )
+        return item
+
+    async def test_container_read_item_none_options_async(self):
+        """The async read_item accepts None for every optional argument.
+
+        None means "not supplied". Customers commonly build one call site
+        that passes every option through from their own config, leaving most
+        of them None, so each must behave as if it had been omitted: no
+        header, no error, and the item comes back unchanged.
+
+        The options covered are post_trigger_include, session_token,
+        initial_headers, max_integrated_cache_staleness_in_ms, priority and
+        throughput_bucket.
+        """
+        # Source: tests/test_none_options_async.py::TestNoneOptionsAsync.test_container_read_item_none_options_async
+        item = await self._create_sample_item()
+        read_back = await self.container.read_item(
+            item["id"], partition_key=item["pk"], post_trigger_include=None,
+            session_token=None, initial_headers=None,
+            max_integrated_cache_staleness_in_ms=None, priority=None,
+            throughput_bucket=None,
+        )
+        assert read_back["id"] == item["id"]

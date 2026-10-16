@@ -18,6 +18,7 @@ from azure.cosmos.database import DatabaseProxy
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport import FaultInjectionTransport
 from azure.core.exceptions import ServiceRequestError
+from _client_transport import create_client_with_transport
 
 logger = logging.getLogger('azure.cosmos')
 logger.setLevel(logging.DEBUG)
@@ -70,7 +71,7 @@ class TestFaultInjectionTransport:
             container_id: str = SINGLE_PARTITION_CONTAINER_NAME,
             custom_logger = logger,
             **kwargs):
-        client = CosmosClient(default_endpoint, key, consistency_level="Session",
+        client = create_client_with_transport(CosmosClient, default_endpoint, key, consistency_level="Session",
                               transport=custom_transport, logger=custom_logger, enable_diagnostics_logging=True, **kwargs)
         db: DatabaseProxy = client.get_database_client(database_id)
         container: ContainerProxy = db.get_container_client(container_id)
@@ -104,6 +105,44 @@ class TestFaultInjectionTransport:
             assert end > 10
             if cosmosError.status_code != 502:
                 raise cosmosError
+
+    def test_throws_injected_error_rust(self: "TestFaultInjectionTransport"):
+        """Recreate the 502 transport fault through the Rust driver's fault layer."""
+        rule_id = "python-create-item-502"
+        client = CosmosClient(
+            self.host,
+            self.master_key,
+            consistency_level="Session",
+            _backend="rust",
+            _fault_injection_rules=[
+                {
+                    "id": rule_id,
+                    "operation_type": "CreateItem",
+                    "container_id": self.single_partition_container_name,
+                    "status_code": 502,
+                }
+            ],
+        )
+        container = client.get_database_client(
+            self.database_id
+        ).get_container_client(self.single_partition_container_name)
+        item_id = str(uuid.uuid4())
+
+        try:
+            with pytest.raises(CosmosHttpResponseError) as error:
+                container.create_item(
+                    {
+                        "id": item_id,
+                        "pk": item_id,
+                        "name": "sample document",
+                        "key": "value",
+                    }
+                )
+
+            assert error.value.status_code == 502
+            assert client._adapter._debug_fault_injection_rule_hit_count(rule_id) > 0
+        finally:
+            client.close()
 
     def test_swr_mrr_succeeds(self: "TestFaultInjectionTransport"):
         expected_read_region_uri: str = test_config.TestConfig.local_host

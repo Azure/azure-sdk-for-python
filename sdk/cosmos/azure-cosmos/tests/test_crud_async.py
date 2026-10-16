@@ -25,16 +25,17 @@ import test_config
 from azure.cosmos.aio import CosmosClient, _retry_utility_async, DatabaseProxy
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 from azure.cosmos.partition_key import PartitionKey
+from _client_transport import create_client_with_transport
 
 
-# Server-side scripts CRUD (sproc/trigger/UDF create/list/get/replace/delete),
-# users, and permissions are not in the AAD/RBAC data-plane action set today.
+# Server-side scripts CRUD (sproc/trigger/UDF create/list/get/replace/delete)
+# is not in the AAD/RBAC data-plane action set today.
 # Empirically these operations return 403 under AAD in data-plane tests.
 # Stored procedure EXECUTE is currently also skipped under AAD in this class.
 # TODO: re-enable these under AAD once the service exposes RBAC actions for these APIs.
 _skip_under_aad = pytest.mark.skipif(
     test_config.TestConfig.data_auth_mode == 'aad',
-    reason="server-side scripts CRUD / users / permissions are not authorized via AAD/RBAC "
+    reason="server-side scripts CRUD is not authorized via AAD/RBAC "
            "data plane today (403).",
 )
 
@@ -105,7 +106,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         use_multiple_write_locations = False
         if os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "False") == "True":
             use_multiple_write_locations = True
-        # Key-auth async client for control-plane operations (create/delete containers, users, permissions, sprocs)
+        # Key-auth async client for control-plane operations (create/delete containers, sprocs)
         self.key_client, self.key_database_for_test, self.client, self.database_for_test = (
             test_config.TestConfig.create_test_clients_async(self.configs.TEST_DATABASE_ID, multiple_write_locations=use_multiple_write_locations))
         await self.key_client.__aenter__()
@@ -124,38 +125,6 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         """Delete container via key-auth setup client (control-plane)."""
         cid = container_id_or_container if isinstance(container_id_or_container, str) else container_id_or_container.id
         await self.key_database_for_test.delete_container(cid)
-
-    @_skip_under_aad
-    async def test_partitioned_collection_execute_stored_procedure_async(self):
-        key_collection = self.key_database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        created_collection = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        document_id = str(uuid.uuid4())
-
-        sproc = {
-            'id': 'storedProcedure' + str(uuid.uuid4()),
-            'body': (
-                    'function () {' +
-                    '   var client = getContext().getCollection();' +
-                    '   client.createDocument(client.getSelfLink(), { id: "' + document_id + '", pk : 2}, ' +
-                    '   {}, function(err, docCreated, options) { ' +
-                    '   if(err) throw new Error(\'Error while creating document: \' + err.message);' +
-                    '   else {' +
-                    '   getContext().getResponse().setBody(1);' +
-                    '        }' +
-                    '   });}')
-        }
-
-        created_sproc = await key_collection.scripts.create_stored_procedure(body=sproc)
-
-        # Partiton Key value same as what is specified in the stored procedure body
-        result = await created_collection.scripts.execute_stored_procedure(sproc=created_sproc['id'], partition_key=2)
-        assert result == 1
-
-        # Partiton Key value different than what is specified in the stored procedure body will cause a bad request(400) error
-        await self.__assert_http_failure_with_status(
-            StatusCodes.BAD_REQUEST,
-            created_collection.scripts.execute_stored_procedure,
-            created_sproc['id'])
 
     async def test_partitioned_collection_partition_key_value_types_async(self):
 
@@ -530,450 +499,17 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self._delete_container_for_test(collection.id)
 
-    # CRUD test for User resource
-
-    @_skip_under_aad
-    async def test_user_crud_async(self):
-
-        # Should do User CRUD operations successfully.
-        # create database
-        db = self.key_database_for_test
-        users = [user async for user in db.list_users()]
-        before_create_count = len(users)
-        # create user
-        user_id = 'new user' + str(uuid.uuid4())
-        user = await db.create_user(body={'id': user_id})
-        assert user.id == user_id
-        # list users after creation
-        users = [user async for user in db.list_users()]
-        assert len(users) == before_create_count + 1
-        # query users
-        results = [user async for user in db.query_users(
-            query='SELECT * FROM root r WHERE r.id=@id',
-            parameters=[
-                {'name': '@id', 'value': user_id}
-            ]
-        )]
-        assert results is not None
-
-        # replace user
-        replaced_user_id = 'replaced user' + str(uuid.uuid4())
-        user_properties = await user.read()
-        user_properties['id'] = replaced_user_id
-        replaced_user = await db.replace_user(user_id, user_properties)
-        assert replaced_user.id == replaced_user_id
-        assert user_properties['id'] == replaced_user.id
-
-        # read user
-        user = db.get_user_client(replaced_user.id)
-        assert replaced_user.id == user.id
-
-        # delete user
-        await db.delete_user(user.id)
-
-        # read user after deletion
-        deleted_user = db.get_user_client(user.id)
-        await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
-                                                     deleted_user.read)
-
-    @_skip_under_aad
-    async def test_user_upsert_async(self):
-
-        # create database
-        db = self.key_database_for_test
-
-        # read users and check count
-        users = [user async for user in db.list_users()]
-        before_create_count = len(users)
-
-        # create user using Upsert API
-        user_id = 'user' + str(uuid.uuid4())
-        user = await db.upsert_user(body={'id': user_id})
-
-        # verify id property
-        assert user.id == user_id
-
-        # read users after creation and verify updated count
-        users = [user async for user in db.list_users()]
-        assert len(users) == before_create_count + 1
-
-        # Should replace the user since it already exists, there is no public property to change here
-        user_properties = await user.read()
-        upserted_user = await db.upsert_user(user_properties)
-
-        # verify id property
-        assert upserted_user.id == user.id
-
-        # read users after upsert and verify count doesn't increase again
-        users = [user async for user in db.list_users()]
-        assert len(users) == before_create_count + 1
-
-        user_properties = await user.read()
-        user_properties['id'] = 'new user' + str(uuid.uuid4())
-        user.id = user_properties['id']
-
-        # Upsert should create new user since id is different
-        new_user = await db.upsert_user(user_properties)
-
-        # verify id property
-        assert new_user.id == user.id
-
-        # read users after upsert and verify count increases
-        users = [user async for user in db.list_users()]
-        assert len(users) == before_create_count + 2
-
-        # delete users
-        await db.delete_user(upserted_user.id)
-        await db.delete_user(new_user.id)
-
-        # read users after delete and verify count remains the same
-        users = [user async for user in db.list_users()]
-        assert len(users) == before_create_count
-
-    @_skip_under_aad
-    async def test_permission_crud_async(self):
-
-        # create database
-        db = self.key_database_for_test
-        # create user
-        user = await db.create_user(body={'id': 'new user' + str(uuid.uuid4())})
-        # list permissions
-        permissions = [permission async for permission in user.list_permissions()]
-        before_create_count = len(permissions)
-        permission = {
-            'id': 'new permission',
-            'permissionMode': documents.PermissionMode.Read,
-            'resource': 'dbs/AQAAAA==/colls/AQAAAJ0fgTc='  # A random one.
-        }
-        # create permission
-        permission = await user.create_permission(permission)
-        assert permission.id == 'new permission'
-        # list permissions after creation
-        permissions = [permission async for permission in user.list_permissions()]
-        assert len(permissions) == before_create_count + 1
-        # query permissions
-        results = [permission async for permission in user.query_permissions(
-            query='SELECT * FROM root r WHERE r.id=@id',
-            parameters=[
-                {'name': '@id', 'value': permission.id}
-            ]
-        )]
-        assert results is not None
-
-        # replace permission
-        change_permission = permission.properties.copy()
-        permission.properties['id'] = 'replaced permission'
-        permission.id = permission.properties['id']
-        replaced_permission = await user.replace_permission(change_permission['id'], permission.properties)
-        assert replaced_permission.id == 'replaced permission'
-        assert permission.id == replaced_permission.id
-        # read permission
-        permission = await user.get_permission(replaced_permission.id)
-        assert replaced_permission.id == permission.id
-        # delete permission
-        await user.delete_permission(replaced_permission.id)
-        # read permission after deletion
-        await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
-                                                     user.get_permission,
-                                                     permission.id)
-
-    @_skip_under_aad
-    async def test_permission_upsert_async(self):
-
-        # create database
-        db = self.key_database_for_test
-
-        # create user
-        user = await db.create_user(body={'id': 'new user' + str(uuid.uuid4())})
-
-        # read permissions and check count
-        permissions = [permission async for permission in user.list_permissions()]
-        before_create_count = len(permissions)
-
-        permission_definition = {
-            'id': 'permission',
-            'permissionMode': documents.PermissionMode.Read,
-            'resource': 'dbs/AQAAAA==/colls/AQAAAJ0fgTc='  # A random one.
-        }
-
-        # create permission using Upsert API
-        created_permission = await user.upsert_permission(permission_definition)
-
-        # verify id property
-        assert created_permission.id == permission_definition['id']
-
-        # read permissions after creation and verify updated count
-        permissions = [permission async for permission in user.list_permissions()]
-        assert len(permissions) == before_create_count + 1
-
-        # update permission mode
-        permission_definition['permissionMode'] = documents.PermissionMode.All
-
-        # should repace the permission since it already exists
-        upserted_permission = await user.upsert_permission(permission_definition)
-        # verify id property
-        assert upserted_permission.id == created_permission.id
-
-        # verify changed property
-        assert upserted_permission.permission_mode == permission_definition['permissionMode']
-
-        # read permissions and verify count doesn't increase again
-        permissions = [permission async for permission in user.list_permissions()]
-        assert len(permissions) == before_create_count + 1
-
-        # update permission id
-        created_permission.properties['id'] = 'new permission'
-        created_permission.id = created_permission.properties['id']
-        # resource needs to be changed along with the id in order to create a new permission
-        created_permission.properties['resource'] = 'dbs/N9EdAA==/colls/N9EdAIugXgA='
-        created_permission.resource_link = created_permission.properties['resource']
-
-        # should create new permission since id has changed
-        new_permission = await user.upsert_permission(created_permission.properties)
-
-        # verify id and resource property
-        assert new_permission.id == created_permission.id
-
-        assert new_permission.resource_link == created_permission.resource_link
-
-        # read permissions and verify count increases
-        permissions = [permission async for permission in user.list_permissions()]
-        assert len(permissions) == before_create_count + 2
-
-        # delete permissions
-        await user.delete_permission(upserted_permission.id)
-        await user.delete_permission(new_permission.id)
-
-        # read permissions and verify count remains the same
-        permissions = [permission async for permission in user.list_permissions()]
-        assert len(permissions) == before_create_count
-
     async def test_authorization_async(self):
+        with self.assertRaises(ValueError):
+            CosmosClient(TestCRUDOperationsAsync.host, {})
 
-        async def __setup_entities():
-            """
-            Sets up entities for this test.
-
-            :Parameters:
-                - `client`: cosmos_client_connection.CosmosClientConnection
-
-            :Returns:
-                dict
-
-            """
-            # create database
-            db = self.key_database_for_test
-            data_db = self.database_for_test
-            # create collection via setup (control-plane)
-            collection = await db.create_container(
-                id='test_authorization' + str(uuid.uuid4()),
-                partition_key=PartitionKey(path='/id', kind='Hash')
-            )
-            data_collection = data_db.get_container_client(collection.id)
-            # create document1
-            document = await data_collection.create_item(
-                body={'id': 'doc1',
-                      'spam': 'eggs',
-                      'key': 'value'},
-            )
-
-            # create user
-            user = await db.create_user(body={'id': 'user' + str(uuid.uuid4())})
-
-            # create permission for collection
-            permission = {
-                'id': 'permission On Coll',
-                'permissionMode': documents.PermissionMode.Read,
-                'resource': "dbs/" + db.id + "/colls/" + collection.id
-            }
-            permission_on_coll = await user.create_permission(body=permission)
-            assert permission_on_coll.properties['_token'] is not None
-
-            # create permission for document
-            permission = {
-                'id': 'permission On Doc',
-                'permissionMode': documents.PermissionMode.All,
-                'resource': "dbs/" + db.id + "/colls/" + collection.id + "/docs/" + document["id"]
-            }
-            permission_on_doc = await user.create_permission(body=permission)
-            assert permission_on_doc.properties['_token'] is not None
-
-            entities = {
-                'db': db,
-                'coll': collection,
-                'doc': document,
-                'user': user,
-                'permissionOnColl': permission_on_coll,
-                'permissionOnDoc': permission_on_doc,
-            }
-            return entities
-
-        # Client without any authorization will fail.
-        unauthorized_client = None
-        try:
-            unauthorized_client = CosmosClient(TestCRUDOperationsAsync.host, {})
-            try:
-                [db async for db in unauthorized_client.list_databases()]
-                self.fail("Test did not fail as expected.")
-            except exceptions.CosmosHttpResponseError as e:
-                assert e.status_code == StatusCodes.UNAUTHORIZED
-        finally:
-            if unauthorized_client:
-                await unauthorized_client.close()
-
-        # Client with master key.
-        async with CosmosClient(TestCRUDOperationsAsync.host,
-                                TestCRUDOperationsAsync.masterKey) as client:
-            # setup entities
-            entities = await __setup_entities()
-            resource_tokens = {"dbs/" + entities['db'].id + "/colls/" + entities['coll'].id:
-                                   entities['permissionOnColl'].properties['_token']}
-
-        async with CosmosClient(
-                TestCRUDOperationsAsync.host, resource_tokens) as col_client:
-            db = entities['db']
-
-            old_client_connection = db.client_connection
-            db.client_connection = col_client.client_connection
-            # 1. Success-- Use Col Permission to Read
-            success_coll = db.get_container_client(container=entities['coll'])
-            # 2. Failure-- Use Col Permission to delete
-            await self.__assert_http_failure_with_status(StatusCodes.FORBIDDEN,
-                                                         db.delete_container,
-                                                         success_coll)
-            # 3. Success-- Use Col Permission to Read All Docs
-            success_documents = [document async for document in success_coll.read_all_items()]
-            assert success_documents is not None
-            assert len(success_documents) == 1
-            # 4. Success-- Use Col Permission to Read Doc
-
-            doc_id = entities['doc']['id']
-            success_doc = await success_coll.read_item(
-                item=doc_id,
-                partition_key=doc_id
-            )
-            assert success_doc is not None
-            assert success_doc['id'] == entities['doc']['id']
-
-            # 5. Failure-- Use Col Permission to Delete Doc
-            await self.__assert_http_failure_with_status(StatusCodes.FORBIDDEN,
-                                                         success_coll.delete_item,
-                                                         doc_id, doc_id)
-
-            resource_tokens = {"dbs/" + entities['db'].id + "/colls/" + entities['coll'].id + "/docs/" + doc_id:
-                                   entities['permissionOnDoc'].properties['_token']}
-
-        async with CosmosClient(
-                TestCRUDOperationsAsync.host, resource_tokens) as doc_client:
-
-            # 6. Success-- Use Doc permission to read doc
-            read_doc = await doc_client.get_database_client(db.id).get_container_client(success_coll.id).read_item(
-                doc_id, doc_id)
-            assert read_doc["id"] == doc_id
-
-            # 6. Success-- Use Doc permission to delete doc
-            await doc_client.get_database_client(db.id).get_container_client(success_coll.id).delete_item(doc_id,
-                                                                                                          doc_id)
-            assert read_doc["id"] == doc_id
-
-            db.client_connection = old_client_connection
-            await db.delete_container(entities['coll'])
-
-    @_skip_under_aad
-    async def test_script_logging_execute_stored_procedure_async(self):
-
-        created_collection = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-
-        sproc = {
-            'id': 'storedProcedure' + str(uuid.uuid4()),
-            'body': (
-                    'function () {' +
-                    '   var mytext = \'x\';' +
-                    '   var myval = 1;' +
-                    '   try {' +
-                    '       console.log(\'The value of %s is %s.\', mytext, myval);' +
-                    '       getContext().getResponse().setBody(\'Success!\');' +
-                    '   }' +
-                    '   catch (err) {' +
-                    '       getContext().getResponse().setBody(\'inline err: [\' + err.number + \'] \' + err);' +
-                    '   }'
-                    '}')
-        }
-
-        created_sproc = await created_collection.scripts.create_stored_procedure(body=sproc)
-
-        result = await created_collection.scripts.execute_stored_procedure(
-            sproc=created_sproc['id'],
-            partition_key=1
-        )
-
-        assert result == 'Success!'
-        assert HttpHeaders.ScriptLogResults not in created_collection.scripts.client_connection.last_response_headers
-
-        result = await created_collection.scripts.execute_stored_procedure(
-            sproc=created_sproc['id'],
-            enable_script_logging=True,
-            partition_key=1
-        )
-
-        assert result == 'Success!'
-        assert urllib.quote('The value of x is 1.') == created_collection.scripts.client_connection. \
-            last_response_headers.get(HttpHeaders.ScriptLogResults)
-
-        result = await created_collection.scripts.execute_stored_procedure(
-            sproc=created_sproc['id'],
-            enable_script_logging=False,
-            partition_key=1
-        )
-
-        assert result == 'Success!'
-        assert HttpHeaders.ScriptLogResults not in created_collection.scripts.client_connection.last_response_headers
-
-    async def test_client_request_timeout_async(self):
-        # Test is flaky on Emulator
-        if not ('localhost' in self.host or '127.0.0.1' in self.host):
-            connection_policy = documents.ConnectionPolicy()
-            # making timeout 0 ms to make sure it will throw
-            connection_policy.ReadTimeout = 0.000000000001
-            # client does a getDatabaseAccount on initialization, which will not time out because
-            # there is a forced timeout for those calls
-            async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy) as client:
-                with self.assertRaises(ServiceResponseError):
-                    databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
-                    container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
-                    item = {'id': str(uuid.uuid4()), 'name': 'sample'}
-                    await container.create_item(body=item)
-                    await container.read_item(item=item['id'], partition_key=item['id'])
-                    print('Async initialization')
-
-    async def test_read_timeout_async(self):
+    async def test_database_account_connection_timeout_async(self):
         connection_policy = documents.ConnectionPolicy()
-        # making timeout 0 ms to make sure it will throw
-        connection_policy.DBAReadTimeout = 0.000000000001
-        # this will make a get database account call
-        async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy):
-            print('Async initialization')
-
         connection_policy.DBAConnectionTimeout = 0.000000000001
         with self.assertRaises(ServiceRequestError):
             async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy):
                 print('Async initialization')
 
-    async def test_client_request_timeout_when_connection_retry_configuration_specified_async(self):
-        connection_policy = documents.ConnectionPolicy()
-        # making timeout 0 ms to make sure it will throw
-        connection_policy.ReadTimeout = 0.000000000001
-        async with CosmosClient(TestCRUDOperationsAsync.host, TestCRUDOperationsAsync.masterKey,
-                                connection_policy=connection_policy,
-                                retry_total=3, retry_connect=3, retry_read=3, retry_backoff_max=0.3,
-                                retry_on_status_codes=[500, 502, 504]) as client:
-            with self.assertRaises(ServiceResponseError):
-                databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
-                container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
-                item = {'id': str(uuid.uuid4()), 'name': 'sample'}
-                await container.create_item(body=item)
-                await container.read_item(item=item['id'], partition_key=item['id'])
-                print('Async Initialization')
 
     async def test_read_collection_only_once_async(self):
         # Add filter to the filtered diagnostics handler
@@ -1050,7 +586,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # Initialize transport with passthrough enabled for client setup
         timeout_transport = TimeoutTransport(error_response, passthrough=True)
 
-        async with CosmosClient(
+        async with create_client_with_transport(CosmosClient,
                 self.host, self.masterKey, transport=timeout_transport) as client:
             # Disable passthrough to test the timeout on the next call
             timeout_transport.passthrough = False
@@ -1062,7 +598,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # Throttling(429): Keeps retrying -> Eventually times out -> CosmosClientTimeoutError
         status_response = 429  # Uses Cosmos custom retry
         timeout_transport = TimeoutTransport(status_response, passthrough=True)
-        async with CosmosClient(
+        async with create_client_with_transport(CosmosClient,
                 self.host, self.masterKey, transport=timeout_transport
                 ) as client:
             print('Async initialization')
@@ -1078,7 +614,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # Throttling(429): Keeps retrying -> Eventually times out -> CosmosClientTimeoutError
         status_response = 429  # Uses Cosmos custom retry
         timeout_transport = TimeoutTransport(status_response, passthrough=True)
-        async with CosmosClient(
+        async with create_client_with_transport(CosmosClient,
                 self.host, self.masterKey, transport=timeout_transport
                 ) as client:
             print('Async initialization')
@@ -1135,7 +671,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             # Verify timeout fails when cumulative time exceeds limit
             delayed_transport = DelayedTransport(delay_per_request=3)
 
-            async with CosmosClient(
+            async with create_client_with_transport(CosmosClient,
                     self.host, self.masterKey, transport=delayed_transport
             ) as client_with_delay:
 
@@ -1162,169 +698,9 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self._delete_container_for_test(created_container.id)
 
-    async def test_request_level_timeout_overrides_client_read_timeout_async(self):
-        """Test that request-level read_timeout overrides client-level timeout for reads and writes """
-
-        # Create container with normal client
-        normal_container = await self._create_container_for_test(
-            container_id='request_timeout_container_' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/pk")
-        )
-
-        try:
-            # Create test items
-            for i in range(5):
-                test_item = {
-                    'id': f'test_item_{i}',
-                    'pk': f'partition{i}',
-                    'data': f'test_data_{i}'
-                }
-                await normal_container.create_item(test_item)
-
-            # Create async client with very short read timeout at client level
-            async with CosmosClient(
-                    url=self.host,
-                    credential=self.masterKey,
-                    read_timeout=0.000000000001  # Very short timeout that would normally fail
-            ) as timeout_client:
-                database = timeout_client.get_database_client(self.database_for_test.id)
-                container = database.get_container_client(normal_container.id)
-
-                # Test 1: Point read with request-level timeout should succeed (overrides client timeout)
-                result = await container.read_item(
-                    item='test_item_0',
-                    partition_key='partition0',
-                    read_timeout=30  # Higher timeout at request level
-                )
-                self.assertEqual(result['id'], 'test_item_0')
-
-                # Test 2: Query with request-level timeout should succeed (overrides client timeout)
-                results = []
-                async for item in container.query_items(
-                        query="SELECT * FROM c WHERE c.pk = @pk",
-                        parameters=[{"name": "@pk", "value": "partition1"}],
-                        read_timeout=30  # Higher timeout at request level
-                ):
-                    results.append(item)
-                self.assertEqual(len(results), 1)
-                self.assertEqual(results[0]['id'], 'test_item_1')
-
-                # Test 3: Upsert (write) with request-level timeout should succeed
-                upsert_item = {
-                    'id': 'test_item_0',
-                    'pk': 'partition0',
-                    'data': 'updated_data'
-                }
-                result = await container.upsert_item(
-                    body=upsert_item,
-                    read_timeout=30  # Higher timeout at request level
-                )
-                self.assertEqual(result['data'], 'updated_data')
-
-                # Test 4: Create (write) with request-level timeout should succeed
-                new_item = {
-                    'id': 'new_test_item',
-                    'pk': 'new_partition',
-                    'data': 'new_data'
-                }
-                result = await container.create_item(
-                    body=new_item,
-                    read_timeout=30  # Higher timeout at request level
-                )
-                self.assertEqual(result['id'], 'new_test_item')
-
-        finally:
-            await self.key_database_for_test.delete_container(normal_container.id)
-
-    async def test_client_level_read_timeout_on_queries_and_point_operations_async(self):
-        """Test that queries and point operations respect client-level read timeout"""
-
-        # Create container with normal client
-        normal_container = self.database_for_test.get_container_client(
-            self.configs.TEST_MULTI_PARTITION_CONTAINER_ID
-        )
-
-        # Create test items
-        for i in range(5):
-            await normal_container.create_item(
-                body={'id': f'item{i}', 'pk': f'partition{i % 2}'}
-            )
-
-        # Create client with very short read timeout
-        async with CosmosClient(
-            url=self.host,
-            credential=self.masterKey,
-            read_timeout=0.000000000001  # should time out
-        ) as timeout_client:
-            database = timeout_client.get_database_client(self.database_for_test.id)
-            container = database.get_container_client(normal_container.id)
-
-            # Test 1: Point read operation should time out
-            with self.assertRaises((exceptions.CosmosClientTimeoutError, ServiceResponseError)):
-                await container.read_item(item='item0', partition_key='partition0')
-
-            # Test 2: Query operation should time out
-            with self.assertRaises((exceptions.CosmosClientTimeoutError, ServiceResponseError)):
-                items = [doc async for doc in container.query_items(
-                    query="SELECT * FROM c WHERE c.pk = @pk",
-                    parameters=[{"name": "@pk", "value": "partition0"}]
-                )]
 
 
-    async def test_policy_level_read_timeout_on_queries_and_point_operations_async(self):
-        """Test that queries and point operations respect policy-level read timeout"""
 
-        # Create container with normal client
-        normal_container = self.database_for_test.get_container_client(
-            self.configs.TEST_MULTI_PARTITION_CONTAINER_ID
-        )
-
-        # Create test items
-        for i in range(5):
-            await normal_container.create_item(
-                body={'id': f'policy_item{i}', 'pk': f'policy_partition{i % 2}'}
-            )
-
-        # Create connection policy with very short read timeout
-        policy = documents.ConnectionPolicy()
-        policy.ReadTimeout = 0.000000000001  # should timeout
-
-        # Create client with the policy
-        async with CosmosClient(
-            url=self.host,
-            credential=self.masterKey,
-            connection_policy=policy
-        ) as timeout_client:
-            database = timeout_client.get_database_client(self.database_for_test.id)
-            container = database.get_container_client(normal_container.id)
-
-            # Test 1: Point read operation should time out
-            with self.assertRaises((exceptions.CosmosClientTimeoutError, ServiceResponseError)):
-                await container.read_item(item='policy_item0', partition_key='policy_partition0')
-
-            # Test 2: Query operation should time out
-            with self.assertRaises((exceptions.CosmosClientTimeoutError, ServiceResponseError)):
-                items = [doc async for doc in container.query_items(
-                    query="SELECT * FROM c WHERE c.pk = @pk",
-                    parameters=[{"name": "@pk", "value": "policy_partition0"}]
-                )]
-
-            # Test 3: Point read with request-level override should succeed
-            # Request-level read_timeout takes precedence over the short policy-level timeout
-            result = await container.read_item(
-                item='policy_item0',
-                partition_key='policy_partition0',
-                read_timeout=30
-            )
-            self.assertEqual(result['id'], 'policy_item0')
-
-            # Test 4: Query with request-level override should succeed
-            results = [doc async for doc in container.query_items(
-                query="SELECT * FROM c WHERE c.pk = @pk",
-                parameters=[{"name": "@pk", "value": "policy_partition1"}],
-                read_timeout=30
-            )]
-            self.assertEqual(len(results), 2)
 
 
 
@@ -1380,7 +756,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
         # Test with delayed transport - reduced delay to 1 second for stability
         delayed_transport = DelayedTransport(delay_seconds=1)
-        async with CosmosClient(
+        async with create_client_with_transport(CosmosClient,
                 self.host, self.masterKey, transport=delayed_transport
         ) as client_with_delay:
             container_with_delay = client_with_delay.get_database_client(
@@ -1418,80 +794,8 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         await self.key_database_for_test.delete_container(created_container.id)
 
     # TODO: for read timeouts azure-core returns a ServiceResponseError, needs to be fixed in azure-core and then this test can be enabled
-    @unittest.skip
-    async def test_query_operation_single_partition_read_timeout_async(self):
-        """Test that timeout is properly maintained across multiple network requests for a single logical operation
-        """
-        # Create a container with multiple partitions
-        container = await self._create_container_for_test(
-            container_id='single_partition_container_' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/pk"),
-        )
-        single_partition_key = 0
-
-        large_string = 'a' * 1000  # 1KB string
-        for i in range(200):  # Insert 500 documents
-            await container.create_item({
-                'id': f'item_{i}',
-                'pk': single_partition_key,
-                'data': large_string,
-                'order_field': i
-            })
-
-        start_time = time.time()
-        with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            async for item in container.query_items(
-                    query="SELECT * FROM c ORDER BY c.order_field ASC",
-                    max_item_count=200,
-                    read_timeout=0.00005,
-                    partition_key=single_partition_key
-            ):
-                pass
-
-        elapsed_time = time.time() - start_time
 
     # TODO: for read timeouts azure-core returns a ServiceResponseError, needs to be fixed in azure-core and then this test can be enabled
-    @unittest.skip
-    async def test_query_operation_cross_partition_read_timeout_async(self):
-        """Test that timeout is properly maintained across multiple partition requests for a single logical operation
-        """
-        # Create a container with multiple partitions
-        container = await self._create_container_for_test(
-            container_id='multi_partition_container_' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/pk"),
-            offer_throughput=11000
-        )
-
-        # 2. Create large documents to increase payload size
-        large_string = 'a' * 1000  # 1KB string
-        for i in range(1000):  # Insert 500 documents
-            await container.create_item({
-                'id': f'item_{i}',
-                'pk': i % 2,
-                'data': large_string,
-                'order_field': i
-            })
-
-        pk_ranges = [
-            pk async for pk in container.client_connection._ReadPartitionKeyRanges(container.container_link)
-        ]
-
-        self.assertGreater(len(pk_ranges), 1, "Container should have multiple physical partitions.")
-
-        with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            # This should timeout because of multiple partition requests
-            items = [doc async for doc in container.query_items(
-                query="SELECT * FROM c ORDER BY c.order_field ASC",
-                max_item_count=100,
-                read_timeout=0.00005,
-            )]
-        # This shouldn't result in any error because the default 65seconds is respected
-
-        items = [doc async for doc in container.query_items(
-            query="SELECT * FROM c ORDER BY c.order_field ASC",
-            max_item_count=100,
-        )]
-        self.assertEqual(len(items), 1000)
 
 
 
@@ -1545,65 +849,9 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
         await self._delete_container_for_test(collection.id)
 
-    @_skip_under_aad
-    async def test_stored_procedure_functionality_async(self):
-
-        # create collection
-        collection = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-
-        sproc1 = {
-            'id': 'storedProcedure1' + str(uuid.uuid4()),
-            'body': (
-                    'function () {' +
-                    '  for (var i = 0; i < 1000; i++) {' +
-                    '    var item = getContext().getResponse().getBody();' +
-                    '    if (i > 0 && item != i - 1) throw \'body mismatch\';' +
-                    '    getContext().getResponse().setBody(i);' +
-                    '  }' +
-                    '}')
-        }
-
-        retrieved_sproc = await collection.scripts.create_stored_procedure(body=sproc1)
-        result = await collection.scripts.execute_stored_procedure(
-            sproc=retrieved_sproc['id'],
-            partition_key=1
-        )
-        assert result == 999
-        sproc2 = {
-            'id': 'storedProcedure2' + str(uuid.uuid4()),
-            'body': (
-                    'function () {' +
-                    '  for (var i = 0; i < 10; i++) {' +
-                    '    getContext().getResponse().appendValue(\'Body\', i);' +
-                    '  }' +
-                    '}')
-        }
-        retrieved_sproc2 = await collection.scripts.create_stored_procedure(body=sproc2)
-        result = await collection.scripts.execute_stored_procedure(
-            sproc=retrieved_sproc2['id'],
-            partition_key=1
-        )
-        assert int(result) == 123456789
-        sproc3 = {
-            'id': 'storedProcedure3' + str(uuid.uuid4()),
-            'body': (
-                    'function (input) {' +
-                    '  getContext().getResponse().setBody(' +
-                    '      \'a\' + input.temp);' +
-                    '}')
-        }
-        retrieved_sproc3 = await collection.scripts.create_stored_procedure(body=sproc3)
-        result = await collection.scripts.execute_stored_procedure(
-            sproc=retrieved_sproc3['id'],
-            parameters={'temp': 'so'},
-            partition_key=1
-        )
-        assert result == 'aso'
-
     async def test_get_resource_with_dictionary_and_object_async(self):
 
         created_db = self.database_for_test
-        key_db = self.key_database_for_test
 
         # read database with id
         read_db = self.client.get_database_client(created_db.id)
@@ -1618,7 +866,6 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         assert read_db.id == created_db.id
 
         created_container = self.database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        key_container = self.key_database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         # read container with id
         read_container = created_db.get_container_client(created_container.id)
@@ -1643,84 +890,6 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # read item with properties
         read_item = await created_container.read_item(item=created_item, partition_key=created_item['pk'])
         assert read_item['id'] == created_item['id']
-
-        # Sproc/trigger/UDF operations are control-plane; route through setup container.
-        created_sproc = await key_container.scripts.create_stored_procedure({
-            'id': 'storedProcedure' + str(uuid.uuid4()),
-            'body': 'function () { }'
-        })
-
-        # read sproc with id
-        read_sproc = await key_container.scripts.get_stored_procedure(created_sproc['id'])
-        assert read_sproc['id'] == created_sproc['id']
-
-        # read sproc with properties
-        read_sproc = await key_container.scripts.get_stored_procedure(created_sproc)
-        assert read_sproc['id'] == created_sproc['id']
-
-        created_trigger = await key_container.scripts.create_trigger({
-            'id': 'sample trigger' + str(uuid.uuid4()),
-            'serverScript': 'function() {var x = 10;}',
-            'triggerType': documents.TriggerType.Pre,
-            'triggerOperation': documents.TriggerOperation.All
-        })
-
-        # read trigger with id
-        read_trigger = await key_container.scripts.get_trigger(created_trigger['id'])
-        assert read_trigger['id'] == created_trigger['id']
-
-        # read trigger with properties
-        read_trigger = await key_container.scripts.get_trigger(created_trigger)
-        assert read_trigger['id'] == created_trigger['id']
-
-        created_udf = await key_container.scripts.create_user_defined_function({
-            'id': 'sample udf' + str(uuid.uuid4()),
-            'body': 'function() {var x = 10;}'
-        })
-
-        # read udf with id
-        read_udf = await key_container.scripts.get_user_defined_function(created_udf['id'])
-        assert created_udf['id'] == read_udf['id']
-
-        # read udf with properties
-        read_udf = await key_container.scripts.get_user_defined_function(created_udf)
-        assert created_udf['id'] == read_udf['id']
-
-        # User/permission operations are control-plane; route through setup database.
-        created_user = await key_db.create_user({
-            'id': 'user' + str(uuid.uuid4())})
-
-        # read user with id
-        read_user = key_db.get_user_client(created_user.id)
-        assert read_user.id == created_user.id
-
-        # read user with instance
-        read_user = key_db.get_user_client(created_user)
-        assert read_user.id == created_user.id
-
-        # read user with properties
-        created_user_properties = await created_user.read()
-        read_user = key_db.get_user_client(created_user_properties)
-        assert read_user.id == created_user.id
-
-        created_permission = await created_user.create_permission({
-            'id': 'all permission' + str(uuid.uuid4()),
-            'permissionMode': documents.PermissionMode.All,
-            'resource': created_container.container_link,
-            'resourcePartitionKey': [1]
-        })
-
-        # read permission with id
-        read_permission = await created_user.get_permission(created_permission.id)
-        assert read_permission.id == created_permission.id
-
-        # read permission with instance
-        read_permission = await created_user.get_permission(created_permission)
-        assert read_permission.id == created_permission.id
-
-        # read permission with properties
-        read_permission = await created_user.get_permission(created_permission.properties)
-        assert read_permission.id == created_permission.id
 
 
     async def test_delete_all_items_by_partition_key_async(self):
@@ -1801,44 +970,45 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         patched_item = await created_container.patch_item(item=item_id, partition_key="patch_item_pk",
                                                           patch_operations=operations)
         # Verify results from patch operations
-        assert patched_item.get("color") is None
-        assert patched_item.get("prop") is None
+        assert "color" not in patched_item
+        assert "prop" not in patched_item
         assert patched_item.get("company") == "CosmosDB"
         assert patched_item.get("address").get("new_city") == "Atlanta"
         assert patched_item.get("number") == 10
         assert patched_item.get("favorite_color") == "yellow"
 
+        stored_item = await created_container.read_item(item_id, partition_key="patch_item_pk")
+        assert "color" not in stored_item
+        assert "prop" not in stored_item
+        assert stored_item.get("favorite_color") == "yellow"
+
         # Negative test - attempt to replace non-existent field
         operations = [{"op": "replace", "path": "/wrong_field", "value": "wrong_value"}]
-        try:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
             await created_container.patch_item(item=item_id, partition_key="patch_item_pk",
                                                patch_operations=operations)
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == StatusCodes.BAD_REQUEST
+        assert caught.exception.status_code == StatusCodes.BAD_REQUEST
 
         # Negative test - attempt to remove non-existent field
         operations = [{"op": "remove", "path": "/wrong_field"}]
-        try:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
             await created_container.patch_item(item=item_id, partition_key="patch_item_pk",
                                                patch_operations=operations)
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == StatusCodes.BAD_REQUEST
+        assert caught.exception.status_code == StatusCodes.BAD_REQUEST
 
         # Negative test - attempt to increment non-number field
         operations = [{"op": "incr", "path": "/company", "value": 3}]
-        try:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
             await created_container.patch_item(item=item_id, partition_key="patch_item_pk",
                                                patch_operations=operations)
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == StatusCodes.BAD_REQUEST
+        assert caught.exception.status_code == StatusCodes.BAD_REQUEST
 
         # Negative test - attempt to move from non-existent field
         operations = [{"op": "move", "from": "/wrong_field", "path": "/other_field"}]
-        try:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
             await created_container.patch_item(item=item_id, partition_key="patch_item_pk",
                                                patch_operations=operations)
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == StatusCodes.BAD_REQUEST
+        assert caught.exception.status_code == StatusCodes.BAD_REQUEST
 
     async def test_conditional_patching_async(self):
 
@@ -1869,11 +1039,14 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # Run patch operations with wrong filter
         num_false = item.get("number") + 1
         filter_predicate = "from root where root.number = " + str(num_false)
-        try:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as caught:
             await created_container.patch_item(item=item_id, partition_key="patch_item_pk",
                                                patch_operations=operations, filter_predicate=filter_predicate)
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == StatusCodes.PRECONDITION_FAILED
+        assert caught.exception.status_code == StatusCodes.PRECONDITION_FAILED
+        unchanged = await created_container.read_item(item_id, partition_key="patch_item_pk")
+        assert {key: unchanged[key] for key in item} == item
+        assert "color" not in unchanged
+        assert "favorite_color" not in unchanged
 
         # Run patch operations with correct filter
         filter_predicate = "from root where root.number = " + str(item.get("number"))
@@ -1887,6 +1060,18 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         assert patched_item.get("address").get("new_city") == "Atlanta"
         assert patched_item.get("number") == 10
         assert patched_item.get("favorite_color") == "yellow"
+
+        expected = {
+            "id": item["id"], "pk": item["pk"], "company": "CosmosDB",
+            "address": {"city": "Redmond", "new_city": "Atlanta"},
+            "number": 10, "favorite_color": "yellow",
+        }
+        assert {key: patched_item[key] for key in expected} == expected
+        stored = await created_container.read_item(item_id, partition_key="patch_item_pk")
+        assert {key: stored[key] for key in expected} == expected
+        for result in (patched_item, stored):
+            assert "color" not in result
+            assert "prop" not in result
 
     # Temporarily commenting analytical storage tests until emulator support comes.
     #
@@ -2009,5 +1194,3 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-

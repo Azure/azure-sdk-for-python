@@ -20,14 +20,23 @@
 # SOFTWARE.
 
 import logging
+import threading
 from collections.abc import Sequence
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Tuple, Any, Optional, TYPE_CHECKING, Mapping
+from concurrent.futures import CancelledError, ThreadPoolExecutor, TimeoutError as FuturesTimeoutError, as_completed
+from typing import Tuple, Any, Optional, TYPE_CHECKING, Mapping, Union
 
 from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos import _base, exceptions
+from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._query_builder import _QueryBuilder
+from azure.cosmos._helpers._item_operations import ItemHelper
+from azure.cosmos._helpers._legacy_item_operations import LegacyItemHelper
+from azure.cosmos._helpers._read_items import (
+    ResponseHeaderAccumulator, complete_read_items_response, index_query_results, index_requested_items,
+    normalize_read_items, partition_key_identity, validate_concurrency,
+)
+from azure.cosmos._operation_deadline import legacy_deadline_options, remaining_timeout
 from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition
 from azure.cosmos import CosmosList
 if TYPE_CHECKING:
@@ -52,14 +61,23 @@ class ReadItemsHelperSync:
             **kwargs: Any
     ):
         self.client = client
+        self._item_context = kwargs.pop("_item_context", None)
         self.collection_link = collection_link
-        self.items = items
+        validate_concurrency(max_concurrency)
+        self.items = normalize_read_items(items, partition_key_definition) if items else []
         self.options = dict(options) if options is not None else {}
         self.partition_key_definition = partition_key_definition
         self.kwargs = kwargs
         self.executor = executor
         self.max_concurrency = max_concurrency
         self.max_items_per_query = 1000
+        self.deadline = kwargs.get("_item_operation_deadline", self.options.get("_item_operation_deadline"))
+        self._cancelled = threading.Event()
+
+    def _check_deadline(self) -> None:
+        if self._cancelled.is_set():
+            raise CancelledError()
+        remaining_timeout(self.deadline)
 
     def read_items(self) -> CosmosList:
         """Reads many items synchronously using a query-based approach with a thread pool.
@@ -69,11 +87,14 @@ class ReadItemsHelperSync:
         """
 
         if not self.items:
-            return CosmosList([], response_headers=CaseInsensitiveDict())
+            return complete_read_items_response(
+                CosmosList([], response_headers=CaseInsensitiveDict()), self.kwargs.get("response_hook"), self.deadline
+            )
 
+        self._check_deadline()
         items_by_partition = self._partition_items_by_range()
         if not items_by_partition:
-            return CosmosList([], response_headers=CaseInsensitiveDict())
+            raise exceptions.CosmosHttpResponseError(message="read_items could not resolve partition routing.")
 
         query_chunks = self._create_query_chunks(items_by_partition)
 
@@ -82,8 +103,13 @@ class ReadItemsHelperSync:
             return self._execute_with_executor(self.executor, query_chunks)
 
         # Create a new executor; if max_concurrency is None, use ThreadPoolExecutor's default
-        with ThreadPoolExecutor(max_workers=self.max_concurrency) as executor:
+        executor = ThreadPoolExecutor(max_workers=self.max_concurrency)
+        try:
             return self._execute_with_executor(executor, query_chunks)
+        finally:
+            # Running synchronous requests cannot be forcibly cancelled. Do not
+            # make the caller wait for them after its operation has failed.
+            executor.shutdown(wait=False, cancel_futures=True)
 
     def _execute_with_executor(
             self,
@@ -100,22 +126,28 @@ class ReadItemsHelperSync:
         """
         indexed_results = []
         total_request_charge = 0.0
+        diagnostics = []
         futures = []
-        # Create a clear mapping of futures to chunks for better error handling
-        future_to_chunk = {}
-
-        for chunk in query_chunks:
-            for partition_id, partition_items in chunk.items():
-                future = executor.submit(self._execute_query_chunk_worker, partition_id, partition_items)
-                futures.append(future)
-                future_to_chunk[future] = (partition_id, partition_items)
-
         try:
-            for future in as_completed(futures):
-                chunk_results, chunk_ru_charge = future.result()
+            for chunk in query_chunks:
+                for partition_id, partition_items in chunk.items():
+                    self._check_deadline()
+                    futures.append(executor.submit(self._execute_query_chunk_worker, partition_id, partition_items))
+            completed = as_completed(futures, timeout=remaining_timeout(self.deadline))
+            while True:
+                try:
+                    future = next(completed)
+                except StopIteration:
+                    break
+                except FuturesTimeoutError as exc:
+                    raise exceptions.CosmosClientTimeoutError(error=exc) from exc
+                chunk_results, chunk_ru_charge, chunk_diagnostics = future.result()
                 indexed_results.extend(chunk_results)
                 total_request_charge += chunk_ru_charge
+                if chunk_diagnostics is not None:
+                    diagnostics.append(chunk_diagnostics)
         except (Exception, KeyboardInterrupt) as e:
+            self._cancelled.set()
             self.logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug,do-not-log-raised-errors
                 "Error in query execution: %s", str(e))
             # Cancel all pending futures
@@ -123,8 +155,6 @@ class ReadItemsHelperSync:
                 if not f.done():
                     f.cancel()
 
-            if self.executor is None:
-                executor.shutdown(wait=False, cancel_futures=True)
             raise
 
         # Sort results by original index
@@ -134,14 +164,12 @@ class ReadItemsHelperSync:
 
         final_headers = CaseInsensitiveDict()
         final_headers['x-ms-request-charge'] = str(total_request_charge)
+        if diagnostics:
+            final_headers['x-ms-cosmos-sdk-diagnostics'] = "; ".join(diagnostics)
 
         cosmos_list = CosmosList(results, response_headers=final_headers)
 
-        # Call the original response hook with the final results if provided
-        if 'response_hook' in self.kwargs:
-            self.kwargs['response_hook'](final_headers, cosmos_list)
-
-        return cosmos_list
+        return complete_read_items_response(cosmos_list, self.kwargs.get("response_hook"), self.deadline)
 
     def _partition_items_by_range(self) -> dict[str, list[Tuple[int, str, "PartitionKeyType"]]]:
         # pylint: disable=protected-access
@@ -157,20 +185,25 @@ class ReadItemsHelperSync:
         # Group items by logical partition key first to avoid redundant range lookups
         items_by_pk_value: dict[Any, list[Tuple[int, str, "PartitionKeyType"]]] = {}
         for idx, (item_id, pk_value) in enumerate(self.items):
-            # Convert list to tuple to use as a dictionary key, as lists are unhashable
-            key = tuple(pk_value) if isinstance(pk_value, list) else pk_value
+            key = partition_key_identity(pk_value)
             if key not in items_by_pk_value:
                 items_by_pk_value[key] = []
             items_by_pk_value[key].append((idx, item_id, pk_value))
 
         # Now, resolve the range ID once per unique logical partition key
         for _, pk_items in items_by_pk_value.items():
+            self._check_deadline()
             # All items in this list share the same partition key value. Get it from the first item.
             pk_value = pk_items[0][2]
             epk_range = partition_key._get_epk_range_for_partition_key(pk_value)
             overlapping_ranges = self.client._routing_map_provider.get_overlapping_ranges(
-                collection_rid, [epk_range], self.options
+                collection_rid, [epk_range], legacy_deadline_options(self.options, self.deadline)
             )
+            self._check_deadline()
+            if not overlapping_ranges or len(overlapping_ranges) != 1:
+                raise exceptions.CosmosHttpResponseError(
+                    message="read_items could not resolve a unique physical range for a full partition key."
+                )
             if overlapping_ranges:
                 range_id = overlapping_ranges[0]["id"]
                 if range_id not in items_by_partition:
@@ -201,24 +234,27 @@ class ReadItemsHelperSync:
 
     def _execute_query_chunk_worker(
             self, partition_id: str, chunk_partition_items: Sequence[Tuple[int, str, "PartitionKeyType"]]
-    ) -> Tuple[list[Tuple[int, dict[str, Any]]], float]:
+    ) -> Tuple[list[Tuple[int, dict[str, Any]]], float, Optional[str]]:
         """Synchronous worker to build and execute a query for a chunk of items.
 
         :param str partition_id: The ID of the partition to query.
         :param list[tuple[int, str, any]] chunk_partition_items: A chunk of items to be queried.
-        :return: A tuple containing the list of query results with original indices and the request charge.
-        :rtype: tuple[list[tuple[int, dict[str, any]]], float]
+        :return: Indexed query results, request charge, and any SDK diagnostics.
+        :rtype: tuple[list[tuple[int, dict[str, any]]], float, str or None]
         """
-        id_to_idx = {item[1]: item[0] for item in chunk_partition_items}
+        self._check_deadline()
+        identity_to_indices = index_requested_items(chunk_partition_items)
         items_for_query = [(item[1], item[2]) for item in chunk_partition_items]
         request_kwargs = self.kwargs.copy()
 
         if len(items_for_query) == 1:
             item_id, pk_value = items_for_query[0]
             result, headers = self._execute_point_read(item_id, pk_value, request_kwargs)
-            chunk_results = [(id_to_idx[item_id], result)] if result else []
+            chunk_results = [(chunk_partition_items[0][0], result)] if result is not None else []
         else:
-            chunk_results, headers = self._execute_query(partition_id, items_for_query, id_to_idx, request_kwargs)
+            chunk_results, headers = self._execute_query(
+                partition_id, items_for_query, identity_to_indices, request_kwargs
+            )
 
         total_ru_charge = 0.0
         charge = headers.get('x-ms-request-charge')
@@ -228,13 +264,13 @@ class ReadItemsHelperSync:
             except (ValueError, TypeError):
                 self.logger.warning("Invalid request charge format: %s", charge)
 
-        return chunk_results, total_ru_charge
+        return chunk_results, total_ru_charge, headers.get('x-ms-cosmos-sdk-diagnostics')
 
     def _execute_query(
             self,
             partition_id: str,
             items_for_query: Sequence[Tuple[str, "PartitionKeyType"]],
-            id_to_idx: dict[str, int],
+            identity_to_indices: dict[tuple, list[int]],
             request_kwargs: dict[str, Any]
     ) -> Tuple[list[Tuple[int, Any]], CaseInsensitiveDict]:
         """
@@ -244,19 +280,18 @@ class ReadItemsHelperSync:
         :type partition_id: str
         :param items_for_query: List of tuples containing item IDs and partition key values.
         :type items_for_query: list[tuple[str, PartitionKeyType]]
-        :param id_to_idx: Mapping from item ID to its original index in the input list.
-        :type id_to_idx: dict[str, int]
+        :param identity_to_indices: Input positions for each typed ID/partition-key identity.
+        :type identity_to_indices: dict[tuple, list[int]]
         :param request_kwargs: Additional keyword arguments for the request.
         :type request_kwargs: dict[str, any]
         :return: A tuple containing the list of query results with original indices and the request charge headers.
         :rtype: tuple[list[tuple[int, dict[str, any]]], CaseInsensitiveDict]
         """
-        captured_headers = {}
-
-        def local_response_hook(hook_headers, _):
-            captured_headers.update(hook_headers)
-
-        request_kwargs['response_hook'] = local_response_hook
+        captured_headers = ResponseHeaderAccumulator()
+        request_kwargs['response_hook'] = captured_headers
+        request_kwargs.pop("_item_operation_deadline", None)
+        request_kwargs.pop("timeout", None)
+        request_kwargs.pop(Constants.OperationStartTime, None)
 
         if _QueryBuilder.is_id_partition_key_query(items_for_query, self.partition_key_definition):
             query_obj = _QueryBuilder.build_id_in_query(items_for_query)
@@ -267,18 +302,19 @@ class ReadItemsHelperSync:
             query_obj = _QueryBuilder.build_parameterized_query_for_items(
                 partition_items_dict, self.partition_key_definition)
 
-        query_iterator = self.client.QueryItems(self.collection_link, query_obj, self.options, **request_kwargs)
-        results = list(query_iterator)
-
-        chunk_indexed_results = []
-        for item in results:
-            doc_id = item.get('id')
-            if doc_id in id_to_idx:
-                chunk_indexed_results.append((id_to_idx[doc_id], item))
-            else:
-                self.logger.warning("Received document with unexpected ID: %s", doc_id)
-
-        return chunk_indexed_results, CaseInsensitiveDict(captured_headers)
+        # Query migration is separate; preserve the existing legacy query leg.
+        query_options = legacy_deadline_options(self.options, self.deadline)
+        query_options[Constants.ReadItemsQueryLeg] = True
+        query_iterator = self.client.QueryItems(self.collection_link, query_obj, query_options, **request_kwargs)
+        iterator = iter(query_iterator)
+        results = []
+        while True:
+            self._check_deadline()
+            try:
+                results.append(next(iterator))
+            except StopIteration:
+                break
+        return index_query_results(results, identity_to_indices, self.partition_key_definition), captured_headers.headers
 
     def _execute_point_read(
             self,
@@ -299,7 +335,11 @@ class ReadItemsHelperSync:
         :rtype: tuple[Optional[any], CaseInsensitiveDict]
         """
         doc_link = f"{self.collection_link}/docs/{item_id}"
-        point_read_options = self.options.copy()
+        self._check_deadline()
+        point_read_options = legacy_deadline_options(self.options, self.deadline)
+        point_read_options.pop("_item_operation_deadline", None)
+        if self.deadline is not None:
+            request_kwargs["_item_operation_deadline"] = self.deadline
         point_read_options["partitionKey"] = pk_value
         captured_headers = {}
 
@@ -309,8 +349,37 @@ class ReadItemsHelperSync:
         request_kwargs['response_hook'] = local_response_hook
         request_kwargs.pop("containerProperties", None)
 
+        # read_items is a read-many built from many small reads: items are grouped
+        # by partition, and a single-item group is read here as a point read (a
+        # multi-item group becomes a query in _execute_query). Route that point read
+        # through the shared ItemHelper -- the same read path container.read_item
+        # uses -- with explicit parity selected separately. point_read_options (this item's
+        # partition key plus the operation's options) is passed as request_options,
+        # so the request matches the one the legacy point read would send. The
+        # multi-item (query) legs deliberately stay on legacy (see _execute_query),
+        # so a read_items call runs its point reads on rust and its batched queries
+        # on legacy. The not-found case is caught here (not inside the helper) so a
+        # missing item is left out of the result, as before.
+        request_kwargs["request_options"] = point_read_options
+        # This read-many coordinator is still connection-owned. Its Rust point
+        # leg requires independently propagated context, never connection discovery.
+        context = self._item_context
+        helper: Union[ItemHelper, LegacyItemHelper]
+        if context is None:
+            helper = LegacyItemHelper.from_legacy_connection(self.client)
+        elif context.adapter.name == "core-python":
+            helper = LegacyItemHelper(self.client)
+        else:
+            helper = ItemHelper(
+                context.adapter, context.defaults, context.response_state,
+            )
         try:
-            result = self.client.ReadItem(doc_link, point_read_options, **request_kwargs)
+            result = helper.read_item(
+                container_link=self.collection_link,
+                document_link=doc_link,
+                item_id=item_id,
+                **request_kwargs,
+            )
             return result, CaseInsensitiveDict(captured_headers)
         except exceptions.CosmosResourceNotFoundError as e:
             captured_headers.update(e.headers)

@@ -91,17 +91,25 @@ class TestCosmosResponses(unittest.TestCase):
         assert isinstance(first_response, DatabaseProxy)
 
     def test_create_database_if_not_exists_headers(self):
-        first_response = self.client.create_database_if_not_exists(id=test_config.unique_database_id("responses"), return_properties=True)
-        assert len(first_response[1].get_response_headers()) > 0
+        database_id = test_config.unique_database_id("responses")
+        first_response = self.client.create_database_if_not_exists(id=database_id, return_properties=True)
+        try:
+            assert first_response[1]["id"] == database_id
+            assert len(first_response[1].get_response_headers()) > 0
+        finally:
+            self.client.delete_database(database_id)
 
     def test_create_database_if_not_exists_headers_negative(self):
-        # Both calls must target the same id so the second one exercises the
-        # already-exists path; the id is run-scoped so a leftover database from another
-        # run can't make the first call take that path too.
         database_id = test_config.unique_database_id("responses-negative")
-        first_response = self.client.create_database_if_not_exists(id=database_id, return_properties=True)
-        second_response = self.client.create_database_if_not_exists(id=database_id, return_properties=True)
-        assert len(second_response[1].get_response_headers()) > 0
+        _, existing = self.client.create_database(id=database_id, return_properties=True)
+        try:
+            first_response = self.client.create_database_if_not_exists(id=database_id, return_properties=True)
+            second_response = self.client.create_database_if_not_exists(id=database_id, return_properties=True)
+            assert first_response[1]["id"] == second_response[1]["id"] == database_id
+            assert first_response[1]["_rid"] == second_response[1]["_rid"] == existing["_rid"]
+            assert len(second_response[1].get_response_headers()) > 0
+        finally:
+            self.client.delete_database(database_id)
 
     def test_create_container_headers(self):
         first_response = self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),

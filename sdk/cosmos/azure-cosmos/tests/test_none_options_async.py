@@ -12,6 +12,14 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 
 @pytest.mark.cosmosEmulator
 class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
+    """Live async "None options" tests: call every customer-facing container operation with all
+    of its optional keyword arguments explicitly set to None, and check the call still works.
+    Customers and wrapper libraries often pass None for options they don't care about (e.g.
+    session_token=None, priority=None). Without these tests, an operation could start treating
+    a passed None differently from an omitted argument -- crashing, or putting a bad value on
+    the wire -- and those callers would break. Data-plane item ops run on self.container;
+    control-plane ops (throughput, conflicts) run on the key-auth self.key_container."""
+
     configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
@@ -36,6 +44,8 @@ class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
         await self.key_client.close()
 
     async def _create_sample_item(self):
+        # Insert one item (itself passing all options as None) so the read/replace/patch/
+        # delete tests below have a row to act on.
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 42}
         await self.container.create_item(item, pre_trigger_include=None, post_trigger_include=None, indexing_directive=None,
                                      enable_automatic_id_generation=False, session_token=None, initial_headers=None,

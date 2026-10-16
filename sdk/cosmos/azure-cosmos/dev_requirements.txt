@@ -1,4 +1,7 @@
 aiohttp>=3.8.5,<=3.12.2
+azure-monitor-opentelemetry
+hdrhistogram
+psutil
 ../../core/azure-core
 ../../identity/azure-identity
 -e ../../../eng/tools/azure-sdk-tools

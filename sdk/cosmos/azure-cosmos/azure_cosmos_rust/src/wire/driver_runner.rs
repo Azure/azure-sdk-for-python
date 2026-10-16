@@ -1,0 +1,129 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+//! Share CosmosDriver lookup, waiting, and result conversion across binding calls.
+//!
+//! For example, an item read retains the CosmosDriver named by its driver handle.
+//! The sync path waits on the calling thread with Python's global interpreter
+//! lock (GIL) released. The async path schedules work on the Tokio runtime and
+//! returns a Python awaitable. Both convert the result with the GIL held.
+
+use std::future::Future;
+use std::sync::atomic::Ordering;
+use std::sync::Arc;
+
+use pyo3::exceptions::PyRuntimeError;
+use pyo3::prelude::*;
+use pyo3::types::PyTuple;
+
+use azure_data_cosmos_driver::driver::CosmosDriver;
+
+use super::diagnostics::BINDING_OP_COUNT;
+use super::{lookup_driver, AbortOnDrop};
+use crate::runtime::require_runtime_context;
+
+/// Convert a Rust driver result into the binding response tuple returned to Python.
+pub(super) type ResponseTupleConverter<R> =
+    for<'py> fn(Python<'py>, R) -> PyResult<Bound<'py, PyTuple>>;
+
+/// Run an operation on the Tokio runtime and return its binding response tuple.
+/// Release the GIL while waiting; this still blocks the calling thread.
+pub(super) fn run_driver_operation_sync<'py, R, F, Fut>(
+    py: Python<'py>,
+    driver_handle: &str,
+    operation_name: &str,
+    operation_future_factory: F,
+    convert_response: ResponseTupleConverter<R>,
+) -> PyResult<Bound<'py, PyTuple>>
+where
+    F: FnOnce(Arc<CosmosDriver>) -> Fut + Send,
+    Fut: Future<Output = R> + Send,
+    R: Send,
+{
+    run_prepared_driver_operation_sync(
+        py,
+        driver_handle,
+        operation_name,
+        move |driver| Ok(operation_future_factory(driver)),
+        convert_response,
+    )
+}
+
+/// Prepare after driver lookup, preserving synchronous validation errors.
+pub(super) fn run_prepared_driver_operation_sync<'py, R, F, Fut>(
+    py: Python<'py>,
+    driver_handle: &str,
+    operation_name: &str,
+    prepare: F,
+    convert_response: ResponseTupleConverter<R>,
+) -> PyResult<Bound<'py, PyTuple>>
+where
+    F: FnOnce(Arc<CosmosDriver>) -> PyResult<Fut>,
+    Fut: Future<Output = R> + Send,
+    R: Send,
+{
+    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
+    let driver = lookup_driver(driver_handle)?;
+    let future = prepare(driver)?;
+    let runtime_ctx = require_runtime_context(operation_name)?;
+    let response_result = py.allow_threads(|| runtime_ctx.tokio_rt.block_on(future));
+    convert_response(py, response_result)
+}
+
+/// Start an operation on the Tokio runtime and return a Python awaitable.
+/// The Rust bridge future owns a guard that requests task cancellation when
+/// dropped. Merely discarding a Python reference is not a cancellation contract.
+pub(super) fn run_driver_operation_async<'py, R, F, Fut>(
+    py: Python<'py>,
+    driver_handle: &str,
+    operation_name: &str,
+    operation_future_factory: F,
+    convert_response: ResponseTupleConverter<R>,
+) -> PyResult<Bound<'py, PyAny>>
+where
+    F: FnOnce(Arc<CosmosDriver>) -> Fut + Send + 'static,
+    Fut: Future<Output = R> + Send + 'static,
+    R: Send + 'static,
+{
+    run_prepared_driver_operation_async(
+        py,
+        driver_handle,
+        operation_name,
+        move |driver| Ok(operation_future_factory(driver)),
+        convert_response,
+    )
+}
+
+/// Preparation errors are raised before returning the awaitable, not on await.
+pub(super) fn run_prepared_driver_operation_async<'py, R, F, Fut>(
+    py: Python<'py>,
+    driver_handle: &str,
+    operation_name: &str,
+    prepare: F,
+    convert_response: ResponseTupleConverter<R>,
+) -> PyResult<Bound<'py, PyAny>>
+where
+    F: FnOnce(Arc<CosmosDriver>) -> PyResult<Fut>,
+    Fut: Future<Output = R> + Send + 'static,
+    R: Send + 'static,
+{
+    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
+    let driver = lookup_driver(driver_handle)?;
+    let future = prepare(driver)?;
+    let runtime_ctx = require_runtime_context(operation_name)?;
+    let join = runtime_ctx.tokio_rt.spawn(future);
+    let abort_guard = AbortOnDrop(join.abort_handle());
+    pyo3_async_runtimes::tokio::future_into_py(py, async move {
+        let _abort_guard = abort_guard;
+        let response_result = join.await.map_err(|join_error| {
+            if join_error.is_cancelled() {
+                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
+            } else {
+                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
+            }
+        })?;
+        Python::with_gil(|py| {
+            convert_response(py, response_result).map(|tuple| tuple.into_any().unbind())
+        })
+    })
+}

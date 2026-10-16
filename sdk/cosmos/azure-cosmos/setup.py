@@ -6,6 +6,7 @@
 # ------------------------------------
 # pylint:disable=missing-docstring
 
+# Shared metadata must match pyproject.toml; Maturin does not read setup.py.
 import re
 import os
 from io import open
@@ -62,7 +63,6 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
@@ -72,10 +72,10 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     package_data={
-        "azure.cosmos": ["py.typed"],
+        "azure.cosmos": ["py.typed", "_rust.pyi"],
         "azure.cosmos._query_advisor": ["query_advice_rules.json"],
     },
-    python_requires=">=3.9",
+    python_requires=">=3.10",
     install_requires=[
         "azure-core>=1.30.0",
         "typing-extensions>=4.6.0"

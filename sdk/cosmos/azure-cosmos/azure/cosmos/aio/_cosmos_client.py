@@ -19,11 +19,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Create, read, and delete databases in the Azure Cosmos DB SQL API service.
+"""Provide the asynchronous CosmosClient used by the customer app.
+
+The customer app supplies an account address, credential, and optional
+settings. This module defines the Python wrapper's account client, which
+prepares and retains client state for later operations.
+
+For example, client.get_database_client("sales") returns an asynchronous
+DatabaseProxy without reading or creating the database. This call does
+not require await. Operations such as await database.read() then use
+the configured asynchronous Python backend.
+
+This module is Python wrapper code, not the binding or the Rust driver.
 """
 
-import warnings
-from typing import Any, Optional, Union, cast, Mapping, Iterable, Callable, overload, Literal
+import logging
+from .._backend.capabilities import reject_removed_options, reject_rust_arguments, prepare_operation_kwargs
+from copy import copy
+from typing import Any, Optional, Union, Mapping, Callable, overload, Literal
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import TokenCredential
@@ -31,24 +44,44 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import RetryMode
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-
+from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos.offer import ThroughputProperties
+
+from .._backend.errors import raise_account_read_unsupported
+from .._backend.credentials import validate_credential
+from .._backend.constants import is_rust_backend
+from .._backend.client_config import _resolve_hedging
+from .._backend.transport_settings import resolve_client_connection_timeout, validate_client_runtime_settings
+from ..runtime import CosmosRuntime
+from .._base import build_options as _build_options
+from .._helpers._request_database import prepare_create_database_options
+from .._constants import _Constants as Constants
+from .._client_lifecycle import unwind_client_construction
+from .._connection_policy import (
+    copy_connection_policy, reject_rust_routing_options, resolve_connection_policy_kwargs, resolve_retry_option,
+)
+from .._connection_string import parse_connection_string
+from .._cosmos_responses import CosmosDict
+from .._telemetry import trace_operation_async
+from ..documents import ConnectionPolicy, DatabaseAccount
+from ._backend.cosmos_backend import AsyncCosmosBackend
+from .._helpers._item_context import ItemClientContext, ItemClientDefaults
+from .._utils import _validate_enable_compact_utf8_item_writes
+from ._backend.factory import make_async_backend
+from .._backend.factory import resolve_backend_name
 from ._cosmos_client_connection_async import CosmosClientConnection, CredentialDict
 from ._database import DatabaseProxy, _get_database_link
+from ._helpers._database_operations import AsyncDatabaseHelper
+from ._helpers._list_databases import list_databases as _list_databases
+from ._helpers._list_databases import query_databases as _query_databases
 from ._retry_utility_async import _ConnectionRetryPolicy
-from .._base import build_options as _build_options, _set_throughput_options
-from .._constants import _Constants as Constants
-from .._cosmos_responses import CosmosDict
-from ..cosmos_client import _parse_connection_str
-from ..documents import ConnectionPolicy, DatabaseAccount
-from ..exceptions import CosmosResourceNotFoundError
 
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 __all__ = ("CosmosClient",)
 
 CredentialType = Union[
-    AsyncTokenCredential, CredentialDict, str, Mapping[str, Any], Iterable[Mapping[str, Any]]
+    AsyncTokenCredential, CredentialDict, str, Mapping[str, Any]
 ]
 
 def _build_auth(credential: CredentialType) -> CredentialDict:
@@ -56,17 +89,13 @@ def _build_auth(credential: CredentialType) -> CredentialDict:
     if isinstance(credential, str):
         auth['masterKey'] = credential
     elif isinstance(credential, Mapping):
-        if any(k for k in credential.keys() if k in ['masterKey', 'resourceTokens', 'permissionFeed']):
-            return cast(CredentialDict, credential)  # Backwards compatible
-        auth['resourceTokens'] = credential
-    elif isinstance(credential, Iterable):
-        auth['permissionFeed'] = cast(Iterable[Mapping[str, Any]], credential)
+        auth['masterKey'] = credential['masterKey']
     elif isinstance(credential, (TokenCredential, AsyncTokenCredential)):
         auth['clientSecretCredential'] = credential
     else:
         raise TypeError(
             "Unrecognized credential type. Please supply the master key as a string "
-            "or a dictionary, or resource tokens, or a list of permissions, or any instance of a class implementing"
+            "or a dictionary containing 'masterKey', or any instance of a class implementing"
             " AsyncTokenCredential (see azure.identity module for specific implementations "
             "such as ClientSecretCredential).")
     return auth
@@ -74,7 +103,7 @@ def _build_auth(credential: CredentialType) -> CredentialDict:
 
 def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
     # pylint: disable=protected-access
-    policy = kwargs.pop('connection_policy', None) or ConnectionPolicy()
+    policy = copy_connection_policy(kwargs.pop('connection_policy', None))
 
     # Connection config
     # `request_timeout` is supported as a legacy parameter later replaced by `connection_timeout`
@@ -83,36 +112,30 @@ def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
     else:
         policy.RequestTimeout = kwargs.pop('connection_timeout', policy.RequestTimeout)
 
-    policy.ReadTimeout = kwargs.pop(Constants.Kwargs.READ_TIMEOUT, policy.ReadTimeout)
-
     policy.ConnectionMode = kwargs.pop('connection_mode', policy.ConnectionMode)
-    policy.ProxyConfiguration = kwargs.pop('proxy_config', policy.ProxyConfiguration)
-    policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', policy.EnableEndpointDiscovery)
-    policy.PreferredLocations = kwargs.pop('preferred_locations', policy.PreferredLocations)
-    policy.ExcludedLocations = kwargs.pop('excluded_locations', policy.ExcludedLocations)
-    policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', policy.UseMultipleWriteLocations)
-
-    # SSL config
-    verify = kwargs.pop('connection_verify', None)
-    policy.DisableSSLVerification = not bool(verify if verify is not None else True)
-    ssl = kwargs.pop('ssl_config', None) or policy.SSLConfiguration
-    if ssl:
-        ssl.SSLCertFile = kwargs.pop('connection_cert', ssl.SSLCertFile)
-        ssl.SSLCaCerts = verify or ssl.SSLCaCerts
-        policy.SSLConfiguration = ssl
+    if 'enable_endpoint_discovery' in kwargs:
+        policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery')
+    policy.PreferredLocations = copy(kwargs.pop('preferred_locations', policy.PreferredLocations))
+    policy.ExcludedLocations = copy(kwargs.pop('excluded_locations', policy.ExcludedLocations))
+    if 'multiple_write_locations' in kwargs:
+        policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations')
 
     # Retry config
     retry_options = policy.RetryOptions
+    throttle_count = resolve_retry_option(
+        kwargs, 'retry_throttle_total', 'retry_total', retry_options.MaxRetryAttemptCount
+    )
+    throttle_wait = resolve_retry_option(
+        kwargs, 'retry_throttle_backoff_max', 'retry_backoff_max', retry_options.MaxWaitTimeInSeconds
+    )
     total_retries = kwargs.pop('retry_total', None)
-    total_throttle_retries = kwargs.pop('retry_throttle_total', None)
-    retry_options._max_retry_attempt_count = \
-        total_throttle_retries or total_retries or retry_options._max_retry_attempt_count
+    kwargs.pop('retry_throttle_total', None)
+    retry_options._max_retry_attempt_count = throttle_count
     retry_options._fixed_retry_interval_in_milliseconds = \
         kwargs.pop('retry_fixed_interval', retry_options._fixed_retry_interval_in_milliseconds)
     max_backoff = kwargs.pop('retry_backoff_max', None)
-    max_throttle_backoff = kwargs.pop('retry_throttle_backoff_max', None)
-    retry_options._max_wait_time_in_seconds = \
-        max_throttle_backoff or max_backoff or retry_options._max_wait_time_in_seconds
+    kwargs.pop('retry_throttle_backoff_max', None)
+    retry_options._max_wait_time_in_seconds = throttle_wait
     policy.RetryOptions = retry_options
     connection_retry = policy.ConnectionRetryConfiguration
     if not connection_retry:
@@ -133,9 +156,10 @@ def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
 
 
 class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
-    """A client-side logical representation of an Azure Cosmos DB account.
+    """The asynchronous Python client for one Azure Cosmos DB account.
 
-    Use this client to configure and execute requests to the Azure Cosmos DB service.
+    Use this client to obtain database objects and perform account-level
+    database operations.
 
     It's recommended to maintain a single instance of CosmosClient per lifetime of the application which enables
         efficient connection management and performance.
@@ -144,22 +168,19 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         credentials or network connectivity validations.
 
     :param str url: The URL of the Cosmos DB account.
-    :param credential: Can be the account key, or a dictionary of resource tokens.
+    :param credential: An account key or Microsoft Entra token credential.
+        Resource-token dictionaries and permission lists are supported only by
+        legacy Python and are intentionally excluded from the Rust-backed release.
     :type credential: Union[str, dict[str, str], ~azure.core.credentials_async.AsyncTokenCredential]
     :keyword str consistency_level: Consistency level to use for the session. Default value is None (account-level).
         More on consistency levels and possible values: https://aka.ms/cosmos-consistency-levels
-    :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
-    :keyword int connection_timeout: The HTTP request timeout in seconds.
-    :keyword float read_timeout: The socket read timeout in seconds. This is the time the client will wait for a
-        response from the server after a connection has been established. If not specified, the default value of
-        65 seconds is used. This can be overridden at the request level.
+    :keyword float timeout: Default overall operation budget in seconds, including retries.
+        Rust requires a finite value >= 1 and < 2**64; individual calls may override it.
+    :keyword runtime: An initialized Rust runtime, created without blocking the event loop using
+        ``await CosmosRuntime.create_async(...)``. Omit to use the default process-wide singleton.
+    :paramtype runtime: ~azure.cosmos.CosmosRuntime
+    :keyword float connection_timeout: Legacy-only connection timeout. Rust clients require runtime configuration.
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
-    :keyword proxy_config: Connection proxy configuration.
-    :paramtype proxy_config: ~azure.cosmos.ProxyConfiguration
-    :keyword ssl_config: Connection SSL configuration.
-    :paramtype ssl_config: ~azure.cosmos.SSLConfiguration
-    :keyword bool connection_verify: Whether to verify the connection, default value is True.
-    :keyword str connection_cert: An alternative certificate to verify the connection.
     :keyword int retry_total: Maximum retry attempts.
     :keyword int retry_backoff_max: Maximum retry wait time in seconds.
     :keyword int retry_fixed_interval: Fixed retry interval in milliseconds.
@@ -172,7 +193,18 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         the operation is not guaranteed to be idempotent. This should only be enabled if the application can
         tolerate such risks or has logic to safely detect and handle duplicate operations.
     :keyword bool enable_endpoint_discovery: Enable endpoint discovery for
-        geo-replicated database accounts. (Default: True)
+        geo-replicated database accounts on the legacy comparison backend (default: True).
+        Explicit use is rejected on Rust-backed clients; Rust manages discovery.
+    :keyword bool multiple_write_locations: Allow eligible multi-region writes on the
+        legacy comparison backend (default: False). Explicit use is rejected on
+        Rust-backed clients; Rust uses the account's multi-write capability.
+    :keyword ~azure.cosmos.documents.ConnectionPolicy connection_policy:
+        Grouped client connection settings. Supported preferred/excluded regions,
+        and throttle retry limits also apply to the Rust backend. Explicit
+        connection/read timeout overrides require migration to the runtime API.
+        Individual keyword settings override grouped values; zero retry limits
+        are honored. The supplied policy is not modified. Removed proxy/TLS
+        settings are rejected even when supplied inside this object.
     :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
     :keyword list[str] excluded_locations: The excluded locations to be skipped from preferred locations. The locations
         in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -187,8 +219,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
     :keyword Union[bool, dict[str, Any]] availability_strategy:
         Enables an availability strategy by using cross-region request hedging.
-        Can be True (use default values: threshold_ms=500, threshold_steps_ms=100),
-        False (disable hedging), or a dict with keys ``threshold_ms`` and ``threshold_steps_ms``.
+        Can be True (use default values: threshold_ms=500),
+        False (disable hedging), or a dict with key ``threshold_ms``.
         Default value is False (hedging disabled).
     :paramtype availability_strategy: Union[bool, dict[str, Any]]
     :keyword int availability_strategy_max_concurrency: The max concurrency for parallel requests.
@@ -207,6 +239,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             :name: create_client
     """
 
+    @unwind_client_construction
     def __init__(
             self,
             url: str,
@@ -215,13 +248,88 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             consistency_level: Optional[str] = None,
             availability_strategy: Union[bool, dict[str, Any]] = False,
             availability_strategy_max_concurrency: Optional[int] = None,
+            runtime: Optional[CosmosRuntime] = None,
             **kwargs: Any
     ) -> None:
-        """Instantiate a new CosmosClient."""
+        """Prepare this client from the supplied account address and credential.
+
+        Resolve client settings, select the asynchronous Python backend, and
+        retain the state used by later operations. Create and store
+        CosmosClientConnection for the operation helpers and client-lifecycle
+        methods that still require it.
+
+        If construction fails, the customer app does not receive a usable client.
+        """
+        validate_credential(credential)
+        reject_removed_options(kwargs)
+        kwargs = resolve_connection_policy_kwargs(kwargs)
+        # Choose which backend this client will use. A ``_backend=`` argument
+        # wins; otherwise the COSMOS_BACKEND environment variable decides;
+        # otherwise it falls back to core-python.
+        backend_choice = resolve_backend_name(kwargs.pop("_backend", None))
+        if backend_choice != "core-python":
+            reject_rust_routing_options(kwargs)
+            validate_client_runtime_settings(dict(kwargs, runtime=runtime))
+            reject_rust_arguments(kwargs, strategy=availability_strategy)
+        fault_injection_rules = kwargs.pop("_fault_injection_rules", None)
+        proxy_allowed = kwargs.pop("proxy_allowed", None)
+        connection_timeout = resolve_client_connection_timeout(kwargs)
+        # These startup settings are read, not removed, so that they are still
+        # in kwargs when the legacy connection is built further down. Both need
+        # them. See azure/cosmos/cosmos_client.py for the same handling.
+        #
+        # One difference from the sync client: here availability_strategy is a
+        # real parameter with a default of False, so it is passed straight
+        # through instead of being read out of kwargs. False or None means the
+        # feature stays off; True or a dict carries the threshold that turns it
+        # on. consistency_level comes from the named argument above, so that the
+        # level the caller asked for actually reaches the driver rather than
+        # every read quietly using whatever the account defaults to.
+        chosen = make_async_backend(
+            backend_choice,
+            url=url,
+            credential=credential,
+            runtime=runtime,
+            operation_timeout=kwargs.get("timeout"),
+            preferred_locations=kwargs.get("preferred_locations"),
+            excluded_locations=kwargs.get("excluded_locations"),
+            throttling_max_retry_count=kwargs.get("retry_throttle_total"),
+            throttling_max_retry_wait_time_seconds=kwargs.get("retry_throttle_backoff_max"),
+            availability_strategy=availability_strategy,
+            user_agent_suffix=kwargs.get("user_agent_suffix"),
+            consistency_level=consistency_level,
+            proxy_allowed=proxy_allowed,
+            connection_timeout_seconds=connection_timeout,
+            fault_injection_rules=fault_injection_rules,
+            headers=kwargs.get("headers"),
+        )
+        self._adapter: AsyncCosmosBackend = chosen
+        self._item_context: ItemClientContext[AsyncCosmosBackend] = ItemClientContext(
+            chosen, ItemClientDefaults(
+                operation_timeout_seconds=kwargs.get("timeout") if chosen.name != "core-python" else None,
+                priority=kwargs.get("priority"),
+                throughput_bucket=kwargs.get("throughput_bucket"),
+                hedging_threshold_ms=(
+                    _resolve_hedging(availability_strategy)
+                    if chosen.name != "core-python" else None
+                ),
+                no_response_on_write=bool(kwargs.get("no_response_on_write", False)),
+                enable_compact_utf8_item_writes=_validate_enable_compact_utf8_item_writes(
+                    kwargs.get("enable_compact_utf8_item_writes", False)
+                ),
+            )
+        )
+        logging.getLogger(__name__).debug(
+            "Cosmos client constructed with default backend=%s",
+            chosen.name,
+        )
+
         auth = _build_auth(credential)
         enable_compact_utf8_item_writes = kwargs.pop("enable_compact_utf8_item_writes", False)
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
+            _response_state=self._item_context.response_state,
+            _defer_pipeline=is_rust_backend(self._adapter),
             url_connection=url,
             auth=auth,
             consistency_level=consistency_level,
@@ -231,27 +339,61 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             enable_compact_utf8_item_writes=enable_compact_utf8_item_writes,
             **kwargs
         )
+        # Retained item/feed paths use _item_context directly. Attach the adapter
+        # under the legacy connection's _backend field for remaining coordinators.
+        self.client_connection._backend = self._adapter  # pylint: disable=protected-access
 
     def __repr__(self) -> str:
         return "<CosmosClient [{}]>".format(self.client_connection.url_connection)[:1024]
 
     async def __aenter__(self) -> "CosmosClient":
-        await self.client_connection.pipeline_client.__aenter__()
-        await self.client_connection._setup()
+        """Prepare account-level state before running statements inside ``async with``.
+
+        This does not load a selected container's metadata or partition map.
+        """
+        try:
+            if is_rust_backend(self._adapter):
+                await self._adapter.initialize()
+            else:
+                await self.client_connection.pipeline_client.__aenter__()
+                await self.client_connection._setup()
+        except BaseException:
+            try:
+                await self.close()
+            except Exception:
+                logging.getLogger(__name__).warning("Failed cleanup after async client entry", exc_info=True)
+            raise
         return self
 
     async def __aexit__(self, *args) -> None:
         try:
-            await self.client_connection._global_endpoint_manager.close() # pylint: disable=protected-access
-            return await self.client_connection.pipeline_client.__aexit__(*args)
+            try:
+                await self.client_connection._global_endpoint_manager.close() # pylint: disable=protected-access
+            finally:
+                await self.client_connection._close_pipeline(*args) # pylint: disable=protected-access
         finally:
             try:
-                self.client_connection._routing_map_provider.release()  # pylint: disable=protected-access
-            except Exception:  # pylint: disable=broad-except
-                pass
+                try:
+                    await self._adapter.close()
+                except Exception:  # pylint: disable=broad-except
+                    logging.getLogger(__name__).warning("Failed closing async client backend", exc_info=True)
+            finally:
+                try:
+                    self.client_connection._routing_map_provider.release()  # pylint: disable=protected-access
+                except Exception:  # pylint: disable=broad-except
+                    logging.getLogger(__name__).warning("Failed releasing async client routing state", exc_info=True)
 
     async def close(self) -> None:
-        """Close this instance of CosmosClient."""
+        """Release local resources owned by this client, as on leaving an ``async with`` block.
+
+        Finish outstanding operations before closing. This does not delete data
+        or close the customer's credential. Other clients can continue using
+        shared Rust resources. Safe to call multiple times; repeated calls wait
+        for Rust cleanup already in progress.
+
+        Backend cleanup failures are logged rather than raised. Errors closing
+        the Python HTTP resources or account-refresh task can still raise.
+        """
         await self.__aexit__()
 
     @classmethod
@@ -259,24 +401,31 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         cls,
         conn_str: str,
         *,
-        credential: Optional[Union[str, dict[str, str]]] = None,
         consistency_level: Optional[str] = None,
         **kwargs: Any
     ) -> "CosmosClient":
-        """Create a CosmosClient instance from a connection string.
+        """Create a CosmosClient instance using key-based authentication.
 
-        This can be retrieved from the Azure portal.For full list of optional
-        keyword arguments, see the CosmosClient constructor.
+        The connection string must contain both AccountEndpoint and AccountKey.
+        A separate credential is not accepted, so there is only one source for the key.
+        For a separate key or Microsoft Entra credential, use CosmosClient(url, credential=...).
+        Other client settings are forwarded to the CosmosClient constructor.
 
-        :param str conn_str: The connection string.
-        :keyword credential: Alternative credentials to use instead of the key provided in the connection string.
-        :paramtype credential: Union[str, dict[str, str]]
-        :keyword str consistency_level: Consistency level to use for the session. Default value is None (account-level).
+        :param str conn_str: The connection string containing the account endpoint and key.
+        :keyword str consistency_level:
+            Default consistency level for requests made by this client. None uses the account default.
             More on consistency levels and possible values: https://aka.ms/cosmos-consistency-levels
         :returns: a CosmosClient instance
         :rtype: ~azure.cosmos.aio.CosmosClient
+        :raises ValueError: The connection string is malformed or a required setting is missing or empty.
+        :raises TypeError: The connection string is not a string, or a separate credential is supplied.
         """
-        settings = _parse_connection_str(conn_str, credential)
+        if "credential" in kwargs:
+            raise TypeError(
+                "from_connection_string() does not accept 'credential'; "
+                "use CosmosClient(url, credential=...) for a separate credential."
+            )
+        settings = parse_connection_string(conn_str)
         return cls(
             url=settings['AccountEndpoint'],
             credential=settings['AccountKey'],
@@ -291,7 +440,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[dict[str, str]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[False] = False,
         **kwargs: Any
@@ -303,8 +452,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable[[dict[str, str], dict[str, Any]], None] response_hook: A callable invoked with
-            the response metadata.
+        :keyword Callable[[Mapping[str, Any], Mapping[str, Any]], None] response_hook:
+            A callable invoked with the response metadata and database properties.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
@@ -331,7 +480,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[dict[str, str]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[True],
         **kwargs: Any
@@ -343,8 +492,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable[[dict[str, str], dict[str, Any]], None] response_hook: A callable invoked with
-            the response metadata.
+        :keyword Callable[[Mapping[str, Any], Mapping[str, Any]], None] response_hook:
+            A callable invoked with the response metadata and database properties.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
@@ -364,22 +513,36 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         """
         ...
 
-    @distributed_trace_async
+    @overload
+    async def create_database(
+        self,
+        id: str,
+        *,
+        offer_throughput: Optional[Union[int, 'ThroughputProperties']] = None,
+        initial_headers: Optional[dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
+        throughput_bucket: Optional[int] = None,
+        return_properties: bool,
+        **kwargs: Any,
+    ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]: ...
+
+    @trace_operation_async(binding_operation="create_database")
     async def create_database( # pylint:disable=docstring-should-be-keyword
         self,
-        *args: Any,
+        id: str,
+        *,
+        offer_throughput: Optional[Union[int, 'ThroughputProperties']] = None,
         **kwargs: Any
     ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]:
         """
         Create a new database with the given ID (name).
 
-        :param Any args: args
-        :param str id: ID (name) of the database to read or create.
+        :param str id: ID (name) of the database to create.
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable[[dict[str, str], dict[str, Any]], None] response_hook: A callable invoked with
-            the response metadata.
+        :keyword Callable[[Mapping[str, Any], Mapping[str, Any]], None] response_hook:
+            A callable invoked with the response metadata and database properties.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
@@ -387,6 +550,25 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: A DatabaseProxy instance representing the database or a tuple of DatabaseProxy
             and CosmosDict with the database properties.
         :rtype: ~azure.cosmos.aio.DatabaseProxy or tuple [~azure.cosmos.aio.DatabaseProxy, ~azure.cosmos.CosmosDict]
+        :raises TypeError: An extra positional argument or an unsupported option is supplied.
+
+        ``timeout`` is a finite, non-boolean number of seconds >= 1 and < 2**64.
+        One budget covers preparation, driver setup, and execution. Cancellation
+        waits for in-flight work to stop. Hook headers and properties are
+        independent copies; the ordinary synchronous hook is not awaited.
+        Hook failures do not retry or undo creation. Request-option dictionaries
+        are not modified. Manual throughput and autoscale are mutually exclusive;
+        an empty ThroughputProperties is invalid. Rust rejects unsupported options.
+
+        Client priority and throughput-bucket defaults apply unless a per-call
+        value or matching initial header overrides them. Nonempty typed options
+        take precedence over matching initial headers, regardless of dictionary
+        order. These request settings do not provision database capacity.
+        Without a throughput input, no shared database throughput is requested.
+
+        Only ``id`` may be positional. ``populate_query_metrics``, ``session_token``,
+        ``etag``, and ``match_condition`` do not apply to database creation and are
+        rejected, including when set to ``None``.
 
         .. admonition:: Example:
 
@@ -398,41 +580,30 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 :caption: Create a database in the Cosmos DB account:
                 :name: create_database
         """
-        id = args[0] if args else kwargs.pop("id")
-        if len(args) > 1:
-            raise TypeError(f"Unexpected positional parameters: {args[1:]}")
-        session_token = kwargs.get('session_token')
-        if session_token is not None:
-            warnings.warn(
-                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-        etag = kwargs.get('etag')
-        if etag is not None:
-            warnings.warn(
-                "The 'etag' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
-        if match_condition is not None:
-            warnings.warn(
-                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-
-        offer_throughput = kwargs.pop("offer_throughput", None)
+        prepare_operation_kwargs(self, kwargs)
         return_properties = kwargs.pop("return_properties", False)
         response_hook = kwargs.pop("response_hook", None)
 
-        request_options = _build_options(kwargs)
-        _set_throughput_options(offer=offer_throughput, request_options=request_options)
+        request_options, deadline = prepare_create_database_options(
+            kwargs, offer_throughput, defaults=self._item_context.defaults,
+        )
 
-        result = await self.client_connection.CreateDatabase(database={"id": id}, options=request_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+        database = {"id": id}
+        result = await AsyncDatabaseHelper(
+            self.client_connection, self._adapter,
+            response_state=self._item_context.response_state,
+        ).create_database(
+            database,
+            request_options,
+            response_hook=response_hook,
+            kwargs=kwargs,
+            deadline=deadline,
+        )
         if not return_properties:
-            return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
-        return  DatabaseProxy(self.client_connection, id=result["id"], properties=result), result
+            return DatabaseProxy(self.client_connection, id=result["id"], properties=result,
+                                 _item_context=self._item_context)
+        return DatabaseProxy(self.client_connection, id=result["id"], properties=result,
+                             _item_context=self._item_context), result
 
     @overload
     async def create_database_if_not_exists(  # pylint: disable=redefined-builtin
@@ -441,7 +612,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[dict[str, str]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[False] = False,
         **kwargs: Any
@@ -459,8 +630,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable[[dict[str, str], dict[str, Any]], None] response_hook: A callable invoked with
-            the response metadata.
+        :keyword Callable[[Mapping[str, Any], Mapping[str, Any]], None] response_hook:
+            A callable invoked with the response metadata and database properties.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
@@ -477,7 +648,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[dict[str, str]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[True],
         **kwargs: Any
@@ -495,8 +666,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable[[dict[str, str], dict[str, Any]], None] response_hook: A callable invoked with
-            the response metadata.
+        :keyword Callable[[Mapping[str, Any], Mapping[str, Any]], None] response_hook:
+            A callable invoked with the response metadata and database properties.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
@@ -506,10 +677,25 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         """
         ...
 
-    @distributed_trace_async
+    @overload
+    async def create_database_if_not_exists(
+        self,
+        id: str,
+        *,
+        offer_throughput: Optional[Union[int, 'ThroughputProperties']] = None,
+        initial_headers: Optional[dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
+        throughput_bucket: Optional[int] = None,
+        return_properties: bool,
+        **kwargs: Any,
+    ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]: ...
+
+    @trace_operation_async(binding_operation=("read_database", "create_database", "read_database"))
     async def create_database_if_not_exists( # pylint:disable=docstring-should-be-keyword
         self,
-        *args: Any,
+        id: str,
+        *,
+        offer_throughput: Optional[Union[int, 'ThroughputProperties']] = None,
         **kwargs: Any
     ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]:
         """
@@ -521,13 +707,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             This function does not check or update existing database settings or
             offer throughput if they differ from what is passed in.
 
-        :param Any args: args
         :param str id: ID (name) of the database to read or create.
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable[[dict[str, str], dict[str, Any]], None] response_hook: A callable invoked with
-            the response metadata.
+        :keyword Callable[[Mapping[str, Any], Mapping[str, Any]], None] response_hook:
+            A callable invoked with the response metadata and database properties.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
@@ -535,56 +720,77 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: A DatabaseProxy instance representing the database or a tuple of DatabaseProxy
             and CosmosDict with the database properties.
         :rtype: ~azure.cosmos.aio.DatabaseProxy or tuple [~azure.cosmos.aio.DatabaseProxy, ~azure.cosmos.CosmosDict]
+
+        Only ``id`` may be positional. ``populate_query_metrics``, ``session_token``,
+        ``etag``, and ``match_condition`` do not apply to this operation and raise
+        ``TypeError``, including when set to ``None``.
+
+        If another caller creates the database between the read and creation
+        attempt, read it once more and return it without changing its settings.
+        Any error from that follow-up read is propagated.
+
+        An explicit ``timeout`` is one budget across preparation, driver setup,
+        read, creation, and conflict recovery. Timed-out request work is cancelled
+        and awaited before returning; an already-started setup worker can finish
+        separately. Throughput types, manual integer representation, and
+        conflicting modes are checked before the existence read, even when the
+        database exists. For example, nested ``offerThroughput="4000"`` raises
+        ``TypeError``; use integer ``4000`` instead. Service capacity rules and
+        serialized autoscale/header contents are not exhaustively checked locally.
+        Conditional headers are not supported.
+        The success hook is an ordinary synchronous callable, given independent
+        copies of the final response's headers and properties outside the request
+        timeout and retry handling.
+
+        Client priority and throughput-bucket defaults apply to each step.
+        Nonempty per-call typed options override matching initial headers;
+        those headers override client defaults. ``None``/empty priority and
+        ``None``/zero bucket do not disable an inherited client default.
+        These settings do not allocate capacity. Without any throughput input,
+        creation requests no shared database throughput; an existing database's
+        allocation is never changed.
         """
-
-        id = args[0] if args else kwargs.pop("id")
-        if len(args) > 1:
-            raise TypeError(f"Unexpected positional parameters: {args[1:]}")
-
-        session_token = kwargs.get('session_token')
-        if session_token is not None:
-            warnings.warn(
-                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-        etag = kwargs.get('etag')
-        if etag is not None:
-            warnings.warn(
-                "The 'etag' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
-        if match_condition is not None:
-            warnings.warn(
-                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-
-        offer_throughput = kwargs.pop("offer_throughput", None)
+        prepare_operation_kwargs(self, kwargs)
         return_properties = kwargs.pop("return_properties", False)
-
-        try:
-            database_proxy = self.get_database_client(id)
-            result = await database_proxy.read(**kwargs)
-            if not return_properties:
-                return database_proxy
+        response_hook = kwargs.pop("response_hook", None)
+        request_options, deadline = prepare_create_database_options(
+            kwargs, offer_throughput,
+            operation_name="create_database_if_not_exists",
+            defaults=self._item_context.defaults,
+        )
+        database = {"id": id}
+        result = await AsyncDatabaseHelper(
+            self.client_connection,
+            self._adapter,
+            response_state=self._item_context.response_state,
+        ).create_database_if_not_exists(
+            database,
+            request_options,
+            response_hook=response_hook,
+            kwargs=kwargs,
+            deadline=deadline,
+        )
+        database_proxy = DatabaseProxy(self.client_connection, id=result["id"], properties=result,
+                                       _item_context=self._item_context)
+        if return_properties:
             return database_proxy, result
-        except CosmosResourceNotFoundError:
-            return await self.create_database(
-                id,
-                offer_throughput=offer_throughput,
-                return_properties=return_properties,
-                **kwargs
-            )
+        return database_proxy
 
-    def get_database_client(self, database: Union[str, DatabaseProxy, dict[str, Any]]) -> DatabaseProxy:
-        """Retrieve an existing database with the ID (name) `id`.
+    def get_database_client(self, database: Union[str, DatabaseProxy, Mapping[str, Any]]) -> DatabaseProxy:
+        """Return a local proxy for a database without checking its existence.
 
-        :param database: The ID (name), dict representing the properties, or :class:`DatabaseProxy`
-            instance of the database to get.
-        :type database: Union[str, ~azure.cosmos.DatabaseProxy, dict[str, Any]]
-        :returns: A `DatabaseProxy` instance representing the retrieved database.
-        :rtype: ~azure.cosmos.DatabaseProxy
+        This method makes no service request. It always creates a new proxy attached
+        to this client. An existing proxy supplies only its ID, not its connection
+        or cached properties. Properties mappings supply only ``id``, which is
+        converted to a string; other properties are not cached.
+        Call this method without ``await``; await the returned proxy's service operations.
+
+        :param database: The ID (name), a mapping of properties containing ``id``,
+            or a :class:`~azure.cosmos.aio.DatabaseProxy` instance.
+        :type database: Union[str, ~azure.cosmos.aio.DatabaseProxy, Mapping[str, Any]]
+        :returns: A new async `DatabaseProxy` instance attached to this client.
+        :rtype: ~azure.cosmos.aio.DatabaseProxy
+        :raises KeyError: If the properties mapping does not contain ``id``.
         """
         if isinstance(database, str):
             id_value = database
@@ -592,7 +798,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             id_value = database.id
         else:
             id_value = str(database['id'])
-        return DatabaseProxy(self.client_connection, id_value)
+        return DatabaseProxy(self.client_connection, id_value, _item_context=self._item_context)
 
     @distributed_trace
     def list_databases(
@@ -606,38 +812,51 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     ) -> AsyncItemPaged[dict[str, Any]]:
         """List the databases in a Cosmos DB SQL database account.
 
-        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword str session_token: Token for use with Session consistency.
+        :keyword int max_item_count: Maximum number of databases requested per page, not a total result limit.
+            Use a positive integer below ``2**63``, ``-1`` to let the service choose, or ``None`` to leave unset.
+        :keyword float timeout: Timeout in seconds per public page fetch by default, not for
+            draining the whole iterator. Rust supports finite numeric durations of at least
+            one second within its duration range; ``None`` leaves the override unset.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A synchronous callable invoked once after each successfully fetched page,
+            with a snapshot of that page's response headers. It is not called until iteration fetches a page.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :paramtype response_hook: Callable[[Mapping[str, Any]], None]
         :returns: An AsyncItemPaged of database properties (dicts).
-        :rtype: AsyncItemPaged[dict[str, str]]
+        :rtype: AsyncItemPaged[dict[str, Any]]
+
+        Unsupported Rust page options raise during iteration instead of using
+        the legacy transport. All settings are keyword-only. ``session_token``,
+        ``populate_query_metrics``, ``availability_strategy``, ``no_response``,
+        and ``content_type`` do not apply to database listing and are rejected,
+        including explicit ``None`` or ``False`` and equivalent nested options.
+        Settings are copied when this method is called. Each pager owns its bookmark.
+        A page-fetch timeout includes driver setup and any empty service pages, but
+        not application processing between delivered pages. Cancellation waits for
+        the request task to stop; a started initialization worker can finish separately.
+        Synchronous callbacks cannot be forcibly interrupted. Hook failures never retry
+        a page. After a failed or cancelled fetch, use a new pager from the last
+        successfully processed page's bookmark.
+        Invalid timeouts/page sizes raise ``ValueError`` at listing construction.
+        Page-size headers follow the same range checks; a non-``None``
+        ``max_item_count`` takes precedence over the header.
+        A non-callable hook raises ``TypeError``. Hook iteration-stop exceptions
+        become ``RuntimeError`` rather than ending the listing silently.
         """
-        session_token = kwargs.pop('session_token', None)
-        if session_token is not None:
-            warnings.warn(
-                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
+        prepare_operation_kwargs(self, kwargs, headers=initial_headers)
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
-
-        result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers)
-        return result
+            kwargs["max_item_count"] = max_item_count
+        kwargs["response_hook"] = response_hook
+        return _list_databases(self, kwargs)
 
     @distributed_trace
     def query_databases(
         self,
-        query: str,
+        query: Optional[Union[str, dict[str, Any]]],
         *,
         parameters: Optional[list[dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
@@ -645,45 +864,63 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
+    ) -> AsyncItemPaged[Any]:
         """Query the databases in a Cosmos DB SQL database account.
 
-        :param Union[str, dict[str, Any]] query: The Azure Cosmos DB SQL query to execute.
-        :keyword parameters: Optional array of parameters to the query.
-            Each parameter is a dict() with 'name' and 'value' keys.
-        :paramtype parameters: list[dict[str, Any]]
-        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword str session_token: Token for use with Session consistency.
+        Find databases by their metadata, not orders stored inside their containers.
+        Constructing the iterator sends no request. Use ``async for`` to fetch results;
+        do not await ``query_databases()`` itself.
+
+        :param query: A nonempty SQL string or a dictionary with ``query`` and optional
+            ``parameters``. This argument is required. Explicit ``None`` enumerates all
+            databases for compatibility; prefer ``list_databases()`` for that purpose.
+        :type query: Union[str, dict[str, Any], None]
+        :keyword list[dict[str, Any]] parameters: Query parameters with ``name`` and ``value`` keys.
+            Names start with ``@``. Supply parameters here or in the query dictionary, not both.
+            Ignored when ``query`` is ``None``.
+        :keyword int max_item_count: Requested maximum results per page, not a total limit.
+            Use a positive integer below ``2**63``, ``-1`` for a service-selected size,
+            or ``None`` to leave this argument unset.
+        :keyword float timeout: Timeout in seconds per public page fetch, including setup,
+            retries, and empty service pages. Time processing delivered results is excluded.
+            Supply finite non-boolean seconds with ``1 <= timeout < 2**64``, or ``None``.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A synchronous callable invoked once per successfully fetched page
+            with a separate snapshot of that page's response headers.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :paramtype response_hook: Callable[[Mapping[str, Any]], None]
-        :returns: An AsyncItemPaged of database properties (dicts).
-        :rtype: AsyncItemPaged[dict[str, str]]
+        :returns: An iterator of query results. ``SELECT *`` returns database-property dictionaries;
+            projections determine the returned row shape.
+        :rtype: AsyncItemPaged[Any]
+
+        Only ``query`` may be positional; all optional settings are keyword-only.
+        Query inputs and settings are copied at construction. Invalid query specifications,
+        timeouts, and page sizes raise ``ValueError`` before iteration. Page-size headers
+        use the same range checks; a non-``None`` named count takes precedence.
+        A non-callable hook raises ``TypeError`` before any request.
+
+        ``session_token``, ``populate_query_metrics``, ``availability_strategy``,
+        ``enable_cross_partition_query``, ``no_response``, and ``content_type`` are
+        rejected with ``TypeError``, including explicit ``None``/``False`` and nested equivalents.
+        Unsupported Rust page options fail without switching to the legacy transport.
+
+        Each pager owns its continuation. Hook failures do not replay pages; hook
+        iteration-stop exceptions become ``RuntimeError``. After a failed or cancelled
+        fetch, start a new pager from the last fully processed page's bookmark.
+        Synchronous setup and callbacks cannot be forcibly interrupted; cancellation
+        cleanup can delay return beyond the timeout.
         """
-        session_token = kwargs.get('session_token')
-        if session_token is not None:
-            warnings.warn(
-                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
+        prepare_operation_kwargs(self, kwargs, headers=initial_headers)
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         if throughput_bucket is not None:
             kwargs['throughput_bucket'] = throughput_bucket
-        feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            kwargs["max_item_count"] = max_item_count
+        kwargs["response_hook"] = response_hook
+        return _query_databases(self, query, parameters, kwargs)
 
-        result = self.client_connection.QueryDatabases(
-            query=query if parameters is None else {"query": query, "parameters": parameters},
-            options=feed_options,
-            **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers)
-        return result
-
-    @distributed_trace_async
+    @trace_operation_async(binding_operation="delete_database")
     async def delete_database(
         self,
         database: Union[str, DatabaseProxy, dict[str, Any]],
@@ -699,39 +936,45 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             instance of the database to delete.
         :type database: Union[str, ~azure.cosmos.DatabaseProxy, dict[str, Any]]
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: A synchronous callable invoked once after a successful delete
+            with a separate snapshot of the response headers.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :paramtype response_hook: Callable[[Mapping[str, Any]], None]
+        :keyword str etag: ETag to use with a matching condition.
+        :keyword match_condition: Conditional request behavior. Use ``IfNotModified`` with
+            ``etag`` to delete only if the database still has that ETag.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword float timeout: Operation timeout in seconds. On Rust, driver setup
+            and native execution share the remaining budget. A timeout does not undo
+            a deletion already accepted by the service.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
+
+        Only ``database`` may be positional. ``session_token`` and
+        ``populate_query_metrics`` are rejected, including explicit ``None`` or
+        ``False``. Conditional request arguments remain supported and are validated
+        before dispatch. Unsupported Rust requests raise without using legacy transport.
         """
-        session_token = kwargs.get('session_token')
-        if session_token is not None:
-            warnings.warn(
-                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-        etag = kwargs.get('etag')
-        if etag is not None:
-            warnings.warn(
-                "The 'etag' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
-        if match_condition is not None:
-            warnings.warn(
-                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
-                DeprecationWarning)
+        prepare_operation_kwargs(self, kwargs, headers=initial_headers)
+        for option in ("session_token", "populate_query_metrics"):
+            if option in kwargs:
+                raise TypeError(f"delete_database() does not support the '{option}' keyword argument")
         if throughput_bucket is not None:
             kwargs['throughput_bucket'] = throughput_bucket
         if initial_headers is not None:
             kwargs["initial_headers"] = initial_headers
         request_options = _build_options(kwargs)
+        # A wildcard match condition does not need an etag, so one may be left
+        # over in kwargs after the options are built. Drop it.
+        kwargs.pop("etag", None)
         database_link = _get_database_link(database)
-        await self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+        await AsyncDatabaseHelper(self.client_connection, self._adapter).delete_database(
+            database_link,
+            request_options,
+            kwargs=kwargs,
+        )
+        if response_hook is not None:
+            response_hook(CaseInsensitiveDict(self.client_connection.last_response_headers))
 
     @distributed_trace_async
     async def _get_database_account(
@@ -747,6 +990,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
         :rtype: ~azure.cosmos.DatabaseAccount
         """
+        # Reading account properties has not moved to the Rust path yet. On a
+        # Rust-backed client, raise rather than quietly falling back to the
+        # legacy connection, which would hide that this is still missing.
+        raise_account_read_unsupported(self._adapter)
         result = await self.client_connection.GetDatabaseAccount(**kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)

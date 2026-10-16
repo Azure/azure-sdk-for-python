@@ -12,6 +12,14 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 
 @pytest.mark.cosmosEmulator
 class TestNoneOptions(unittest.TestCase):
+    """Live "None options" tests: call every customer-facing container operation with all of
+    its optional keyword arguments explicitly set to None, and check the call still works.
+    Customers and wrapper libraries often pass None for options they don't care about (e.g.
+    session_token=None, priority=None). Without these tests, an operation could start treating
+    a passed None differently from an omitted argument -- crashing, or putting a bad value on
+    the wire -- and those callers would break. Data-plane item ops run on self.container;
+    control-plane ops (throughput, conflicts) run on the key-auth self.key_container."""
+
     configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
@@ -20,15 +28,19 @@ class TestNoneOptions(unittest.TestCase):
     def setUp(self) -> None:
         # Key-auth client for control-plane operations (throughput, conflicts, etc.)
         self.key_client = cosmos_client.CosmosClient(self.host, self.masterKey)
+        self.addCleanup(self.key_client.close)
         self.key_database = self.key_client.get_database_client(self.configs.TEST_DATABASE_ID)
         self.key_container = self.key_database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
         # AAD (or key, depending on env var) client for data-plane operations
         self.client = test_config.TestConfig.create_data_client()
+        self.addCleanup(self.client.close)
         self.database = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
         self.container = self.database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
     def _create_sample_item(self):
+        # Insert one item (itself passing all options as None) so the read/replace/patch/
+        # delete tests below have a row to act on.
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 42}
         self.container.create_item(item, pre_trigger_include=None, post_trigger_include=None, indexing_directive=None,
                                    enable_automatic_id_generation=False, session_token=None, initial_headers=None,
@@ -108,18 +120,25 @@ class TestNoneOptions(unittest.TestCase):
                                             session_token=None, etag=None, match_condition=None, priority=None,
                                             no_response=None, retry_write=None, throughput_bucket=None)
         assert patched["patched"] is True
+        expected = {**item, "patched": True}
+        self.assertEqual({key: patched[key] for key in expected}, expected)
+        stored = self.container.read_item(item["id"], partition_key=item["pk"])
+        self.assertEqual({key: stored[key] for key in expected}, expected)
 
     def test_delete_item_none_options(self):
         item = self._create_sample_item()
+        before_delete = self.container.read_item(item["id"], partition_key=item["pk"])
+        self.assertEqual({key: before_delete[key] for key in item}, item)
         self.container.delete_item(item["id"], partition_key=item["pk"], pre_trigger_include=None,
                                     post_trigger_include=None, session_token=None, initial_headers=None,
                                     etag=None, match_condition=None, priority=None, retry_write=None,
                                     throughput_bucket=None)
-        with self.assertRaises(CosmosHttpResponseError):
+        with self.assertRaises(CosmosHttpResponseError) as caught:
             self.container.read_item(item["id"], partition_key=item["pk"], post_trigger_include=None,
                                      session_token=None, initial_headers=None,
                                      max_integrated_cache_staleness_in_ms=None, priority=None,
                                      throughput_bucket=None)
+        self.assertEqual(caught.exception.status_code, 404)
 
     def test_get_throughput_none_options(self):
         # get_throughput reads the offer, which is a control-plane operation that may

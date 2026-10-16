@@ -46,7 +46,7 @@ def _is_partitioned_execution_info(e):
 
 def _is_hybrid_search_query(query, e):
     # had to add this logic since error returned from service is different, will need to ask Neil
-    if e.status_code == StatusCodes.INTERNAL_SERVER_ERROR:
+    if query is not None and e.status_code == StatusCodes.INTERNAL_SERVER_ERROR:
         if "RRF" in query or "FullTextContains" in query or "FullTextScore" in query:
             return True
     return False
@@ -78,7 +78,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
     """
 
     def __init__(self, client, resource_link, query, options, fetch_function, response_hook,
-                 raw_response_hook, resource_type):
+                 resource_type):
         """
         Constructor
         """
@@ -91,17 +91,20 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         self._fetch_function = fetch_function
         self._resource_type = resource_type
         self._response_hook = response_hook
-        self._raw_response_hook = raw_response_hook
         self._fetched_query_plan = False
 
     def _create_execution_context_with_query_plan(self):
         self._fetched_query_plan = True
         query_to_use = self._query if self._query is not None else "Select * from root r"
+        read_all_options = {}
+        if "_read_all_response_headers" in self._options:
+            read_all_options["_item_operation_deadline"] = self._options.get("_item_operation_deadline")
         query_plan = self._client._GetQueryPlanThroughGateway(
             query_to_use,
             self._resource_link,
             self._options.get('excludedLocations'),
-            read_timeout=self._options.get('read_timeout')
+
+            **read_all_options
         )
         query_execution_info = _PartitionedQueryExecutionInfo(query_plan)
         qe_info = getattr(query_execution_info, "_query_execution_info", None)
@@ -176,8 +179,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                                         self._query,
                                                                                         self._options,
                                                                                         query_execution_info,
-                                                                                        self._response_hook,
-                                                                                        self._raw_response_hook)
+                                                                                        self._response_hook)
         elif query_execution_info.has_hybrid_search_query_info():
             hybrid_search_query_info = query_execution_info._query_execution_info['hybridSearchQueryInfo']
             _verify_valid_hybrid_search_query(hybrid_search_query_info)
@@ -187,8 +189,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                         self._options,
                                                                         query_execution_info,
                                                                         hybrid_search_query_info,
-                                                                        self._response_hook,
-                                                                        self._raw_response_hook)
+                                                                        self._response_hook)
             execution_context_aggregator._run_hybrid_search()
         else:
             execution_context_aggregator = \
@@ -197,8 +198,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                                                                             self._query,
                                                                             self._options,
                                                                             query_execution_info,
-                                                                            self._response_hook,
-                                                                            self._raw_response_hook)
+                                                                            self._response_hook)
             execution_context_aggregator._configure_partition_ranges()
         return _PipelineExecutionContext(self._client, self._options, execution_context_aggregator,
                                          query_execution_info)
