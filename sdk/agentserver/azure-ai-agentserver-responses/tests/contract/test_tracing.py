@@ -92,6 +92,7 @@ def test_tracing__span_tags_include_genai_parity_fields() -> None:
     assert tags["gen_ai.agent.name"] == "my-agent"
     assert tags["gen_ai.agent.id"] == "my-agent:v2"
     assert tags["gen_ai.provider.name"] == "AzureAI Hosted Agents"
+    assert tags["microsoft.foundry"] == "True"
     assert tags["service.name"] == "azure.ai.agentserver"
 
 

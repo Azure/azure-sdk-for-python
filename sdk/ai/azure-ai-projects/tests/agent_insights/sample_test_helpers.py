@@ -11,7 +11,6 @@ from datetime import datetime
 from devtools_testutils import EnvironmentVariableLoader
 from azure.ai.projects.models import AgentInsightStatus, JobStatus
 
-
 agentInsightsServicePreparer = functools.partial(
     EnvironmentVariableLoader,
     "",

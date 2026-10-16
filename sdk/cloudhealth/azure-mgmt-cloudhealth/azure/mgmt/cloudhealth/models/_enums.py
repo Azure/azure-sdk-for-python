@@ -11,7 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
@@ -191,7 +191,7 @@ class MetricAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"
@@ -306,3 +306,14 @@ class SignalOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Dynamic threshold — uses deviation from a ML-computed baseline to determine health state
     transitions. Only valid for the unhealthy threshold rule. Requires ``sensitivity`` and
     ``lookBackWindow`` on the rule; ``threshold`` is ignored."""
+
+
+class SignalRecommendationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported signal recommendation kinds."""
+
+    AZURE_RESOURCE_METRIC = "AzureResourceMetric"
+    """Azure Resource Metric recommendation."""
+    LOG_ANALYTICS_QUERY = "LogAnalyticsQuery"
+    """Log Analytics Query recommendation."""
+    PROMETHEUS_METRICS_QUERY = "PrometheusMetricsQuery"
+    """Prometheus Metrics Query recommendation."""

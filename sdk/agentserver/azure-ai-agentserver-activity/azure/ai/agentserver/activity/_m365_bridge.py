@@ -226,11 +226,11 @@ def _build_outbound_claims(
                 "as the Microsoft 365 Agents Playground 'emulator' channel.",
                 OutboundAuth.CLAIM_APP_ID,
             )
-        return claims_cls({}, is_authenticated=False, authentication_type=OutboundAuth.AUTH_TYPE_ANONYMOUS)
+        return claims_cls({}, authentication_type=OutboundAuth.AUTH_TYPE_ANONYMOUS)
 
     # Simple model: present authenticated claims whose appid matches the
     # service-connection client id (the agent instance identity). This makes the
     # adapter use the real MSAL ``UserManagedIdentity`` connection for the
     # outbound reply instead of an anonymous/empty token.
     claim_dict = {OutboundAuth.CLAIM_APP_ID: bot_app_id, OutboundAuth.CLAIM_AUDIENCE: bot_app_id} if bot_app_id else {}
-    return claims_cls(claim_dict, is_authenticated=True, authentication_type=OutboundAuth.AUTH_TYPE_BEARER)
+    return claims_cls(claim_dict, authentication_type=OutboundAuth.AUTH_TYPE_BEARER)

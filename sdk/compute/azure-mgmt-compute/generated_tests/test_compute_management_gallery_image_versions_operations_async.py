@@ -27,7 +27,7 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
             gallery_name="str",
             gallery_image_name="str",
             gallery_image_version_name="str",
-            api_version="2025-12-03",
+            api_version="2026-03-03",
         )
 
         # please add some check logic here by yourself
@@ -63,6 +63,13 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
                             },
                             "source": {"communityGalleryImageId": "str", "id": "str", "virtualMachineId": "str"},
                         },
+                        "imageMetadataProfiles": [
+                            {
+                                "type": "str",
+                                "internalMetadataList": [{"metadataKey": "str", "metadataValue": "str"}],
+                                "publicMetadataList": [{"metadataKey": "str", "metadataValue": "str"}],
+                            }
+                        ],
                         "provisioningState": "str",
                         "publishingProfile": {
                             "endOfLifeDate": "2020-02-20 00:00:00",
@@ -75,7 +82,16 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
                             "targetExtendedLocations": [
                                 {
                                     "encryption": {
-                                        "dataDiskImages": [{"lun": 0, "diskEncryptionSetId": "str"}],
+                                        "dataDiskImages": [
+                                            {
+                                                "lun": 0,
+                                                "diskEncryptionSetId": "str",
+                                                "securityProfile": {
+                                                    "confidentialVMEncryptionType": "str",
+                                                    "secureVMDiskEncryptionSetId": "str",
+                                                },
+                                            }
+                                        ],
                                         "osDiskImage": {
                                             "diskEncryptionSetId": "str",
                                             "securityProfile": {
@@ -95,7 +111,16 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
                                     "name": "str",
                                     "additionalReplicaSets": [{"regionalReplicaCount": 0, "storageAccountType": "str"}],
                                     "encryption": {
-                                        "dataDiskImages": [{"lun": 0, "diskEncryptionSetId": "str"}],
+                                        "dataDiskImages": [
+                                            {
+                                                "lun": 0,
+                                                "diskEncryptionSetId": "str",
+                                                "securityProfile": {
+                                                    "confidentialVMEncryptionType": "str",
+                                                    "secureVMDiskEncryptionSetId": "str",
+                                                },
+                                            }
+                                        ],
                                         "osDiskImage": {
                                             "diskEncryptionSetId": "str",
                                             "securityProfile": {
@@ -122,6 +147,11 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
                             "reportedForPolicyViolation": bool,
                         },
                         "securityProfile": {
+                            "secretsProvisioningSettings": {
+                                "components": [{"name": "str", "version": "str"}],
+                                "isSupported": bool,
+                                "osName": "str",
+                            },
                             "uefiSettings": {
                                 "additionalSignatures": {
                                     "db": [{"type": "str", "value": ["str"]}],
@@ -130,7 +160,7 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
                                     "pk": {"type": "str", "value": ["str"]},
                                 },
                                 "signatureTemplateNames": ["str"],
-                            }
+                            },
                         },
                         "validationsProfile": {
                             "executedValidations": [
@@ -156,7 +186,7 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-12-03",
+                api_version="2026-03-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -192,6 +222,13 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
                             },
                             "source": {"communityGalleryImageId": "str", "id": "str", "virtualMachineId": "str"},
                         },
+                        "imageMetadataProfiles": [
+                            {
+                                "type": "str",
+                                "internalMetadataList": [{"metadataKey": "str", "metadataValue": "str"}],
+                                "publicMetadataList": [{"metadataKey": "str", "metadataValue": "str"}],
+                            }
+                        ],
                         "provisioningState": "str",
                         "publishingProfile": {
                             "endOfLifeDate": "2020-02-20 00:00:00",
@@ -204,7 +241,16 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
                             "targetExtendedLocations": [
                                 {
                                     "encryption": {
-                                        "dataDiskImages": [{"lun": 0, "diskEncryptionSetId": "str"}],
+                                        "dataDiskImages": [
+                                            {
+                                                "lun": 0,
+                                                "diskEncryptionSetId": "str",
+                                                "securityProfile": {
+                                                    "confidentialVMEncryptionType": "str",
+                                                    "secureVMDiskEncryptionSetId": "str",
+                                                },
+                                            }
+                                        ],
                                         "osDiskImage": {
                                             "diskEncryptionSetId": "str",
                                             "securityProfile": {
@@ -224,7 +270,16 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
                                     "name": "str",
                                     "additionalReplicaSets": [{"regionalReplicaCount": 0, "storageAccountType": "str"}],
                                     "encryption": {
-                                        "dataDiskImages": [{"lun": 0, "diskEncryptionSetId": "str"}],
+                                        "dataDiskImages": [
+                                            {
+                                                "lun": 0,
+                                                "diskEncryptionSetId": "str",
+                                                "securityProfile": {
+                                                    "confidentialVMEncryptionType": "str",
+                                                    "secureVMDiskEncryptionSetId": "str",
+                                                },
+                                            }
+                                        ],
                                         "osDiskImage": {
                                             "diskEncryptionSetId": "str",
                                             "securityProfile": {
@@ -251,6 +306,11 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
                             "reportedForPolicyViolation": bool,
                         },
                         "securityProfile": {
+                            "secretsProvisioningSettings": {
+                                "components": [{"name": "str", "version": "str"}],
+                                "isSupported": bool,
+                                "osName": "str",
+                            },
                             "uefiSettings": {
                                 "additionalSignatures": {
                                     "db": [{"type": "str", "value": ["str"]}],
@@ -259,7 +319,7 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
                                     "pk": {"type": "str", "value": ["str"]},
                                 },
                                 "signatureTemplateNames": ["str"],
-                            }
+                            },
                         },
                         "validationsProfile": {
                             "executedValidations": [
@@ -277,7 +337,7 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-12-03",
+                api_version="2026-03-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -293,7 +353,7 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
                 gallery_name="str",
                 gallery_image_name="str",
                 gallery_image_version_name="str",
-                api_version="2025-12-03",
+                api_version="2026-03-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -307,7 +367,7 @@ class TestComputeManagementGalleryImageVersionsOperationsAsync(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             gallery_name="str",
             gallery_image_name="str",
-            api_version="2025-12-03",
+            api_version="2026-03-03",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

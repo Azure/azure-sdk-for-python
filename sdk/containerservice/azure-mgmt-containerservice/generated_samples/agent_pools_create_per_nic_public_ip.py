@@ -69,6 +69,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-06-02-preview/AgentPoolsCreate_PerNICPublicIP.json
+# x-ms-original-file: 2026-07-02-preview/AgentPoolsCreate_PerNICPublicIP.json
 if __name__ == "__main__":
     main()
