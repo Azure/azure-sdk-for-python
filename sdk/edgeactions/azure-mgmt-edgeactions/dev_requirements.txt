@@ -4,3 +4,4 @@
 ../../core/azure-mgmt-core
 ../../resources/azure-mgmt-resource
 aiohttp
+jsonschema[format-nongpl]>=4.18.0

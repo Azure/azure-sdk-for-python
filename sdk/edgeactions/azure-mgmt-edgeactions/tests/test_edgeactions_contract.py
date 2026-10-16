@@ -26,7 +26,12 @@ SUBSCRIPTION = "00000000-0000-0000-0000-000000000000"
 RESOURCE_ID = f"/subscriptions/{SUBSCRIPTION}/resourceGroups/rg/providers/Microsoft.Cdn/edgeActions/action"
 RESOURCE_URL = f"https://management.azure.com{RESOURCE_ID}"
 API_VERSION = "2026-10-01"
-VERSION_PROPERTIES = {"deploymentType": "file", "isDefaultVersion": "False", "provisioningState": "Succeeded"}
+VERSION_PROPERTIES = {
+    "deploymentType": "file",
+    "isDefaultVersion": "False",
+    "provisioningState": "Succeeded",
+    "validationStatus": "Succeeded",
+}
 GROUPS = [
     ("edge_actions", (), "", models.EdgeAction, models.EdgeActionUpdate),
     ("edge_action_versions", ("v1",), "/versions/v1", models.EdgeActionVersion, models.EdgeActionVersionUpdate),
@@ -38,6 +43,41 @@ GROUPS = [
         models.EdgeActionExecutionFilterUpdate,
     ),
 ]
+
+
+def resource_response(group, path):
+    properties = {
+        "edge_actions": {"provisioningState": "Succeeded", "attachments": []},
+        "edge_action_versions": dict(VERSION_PROPERTIES),
+        "edge_action_execution_filters": {
+            "provisioningState": "Succeeded",
+            "versionId": RESOURCE_ID + "/versions/v1",
+            "executionFilterIdentifierHeaderName": "x-sdk-test",
+            "executionFilterIdentifierHeaderValue": "test",
+        },
+    }
+    resource_types = {
+        "edge_actions": "Microsoft.Cdn/edgeActions",
+        "edge_action_versions": "Microsoft.Cdn/edgeActions/versions",
+        "edge_action_execution_filters": "Microsoft.Cdn/edgeActions/executionFilters",
+    }
+    body = {
+        "id": RESOURCE_ID + path,
+        "name": path.rsplit("/", 1)[-1] if path else "action",
+        "type": resource_types[group],
+        "location": "global",
+        "tags": {"purpose": "test"},
+        "properties": properties[group],
+    }
+    if group == "edge_actions":
+        body["sku"] = {"name": "Standard", "tier": "Standard"}
+    return body
+
+
+def assert_resource_response(result, model, expected):
+    assert isinstance(result, model)
+    assert result.as_dict() == expected
+    assert result.properties.provisioning_state == "Succeeded"
 
 
 async def resolve(value):
@@ -129,13 +169,13 @@ async def test_resource_request_serialization(api, group, children, path, model,
     payload = body_model(body) if body_format == "model" else body
     if body_format == "stream":
         payload = io.BytesIO(json.dumps(body).encode())
-    api.respond({"id": RESOURCE_ID + path, "location": "global", **body})
+    expected = resource_response(group, path)
+    api.respond(expected)
     poller = await resolve(
         getattr(getattr(api.client, group), operation)("rg", "action", *children, payload, polling=False)
     )
     result = await resolve(poller.result())
-    assert isinstance(result, model)
-    assert result.tags == body["tags"]
+    assert_resource_response(result, model, expected)
     assert len(api.requests) == 1
     request = api.requests[0]
     assert request.method == ("PUT" if operation == "begin_create" else "PATCH")
@@ -147,9 +187,11 @@ async def test_resource_request_serialization(api, group, children, path, model,
 @pytest.mark.parametrize("tags", [{}, {"purpose": "replacement"}], ids=["cleared", "replaced"])
 async def test_tag_patch_does_not_add_sku_or_properties(api, tags):
     body = models.EdgeActionUpdate(tags=tags)
-    api.respond({"location": "global", "tags": tags})
+    expected = resource_response("edge_actions", "")
+    expected["tags"] = tags
+    api.respond(expected)
     poller = await resolve(api.client.edge_actions.begin_update("rg", "action", body, polling=False))
-    await resolve(poller.result())
+    assert_resource_response(await resolve(poller.result()), models.EdgeAction, expected)
     assert request_body(api.requests[0]) == {"tags": tags}
 
 
@@ -170,9 +212,11 @@ async def test_version_update_preserves_explicit_false_string(api):
     body = models.EdgeActionVersionUpdate(
         properties=models.EdgeActionVersionUpdateProperties(deployment_type="file", is_default_version="False")
     )
-    api.respond({"location": "global", "properties": VERSION_PROPERTIES})
+    expected = resource_response("edge_action_versions", "/versions/v1")
+    api.respond(expected)
     poller = await resolve(api.client.edge_action_versions.begin_update("rg", "action", "v1", body, polling=False))
     result = await resolve(poller.result())
+    assert_resource_response(result, models.EdgeActionVersion, expected)
     assert result.properties.is_default_version == "False"
     assert request_body(api.requests[0]) == {"properties": {"deploymentType": "file", "isDefaultVersion": "False"}}
 
@@ -183,7 +227,9 @@ async def test_execution_filter_update_wire_names(api):
         "executionFilterIdentifierHeaderName": "x-sdk-test",
         "executionFilterIdentifierHeaderValue": "updated",
     }
-    api.respond({"location": "global", "properties": properties})
+    expected = resource_response("edge_action_execution_filters", "/executionFilters/filter")
+    expected["properties"].update(properties)
+    api.respond(expected)
     body = models.EdgeActionExecutionFilterUpdate(
         properties=models.EdgeActionExecutionFilterUpdateProperties(
             version_id=properties["versionId"],
@@ -195,6 +241,7 @@ async def test_execution_filter_update_wire_names(api):
         api.client.edge_action_execution_filters.begin_update("rg", "action", "filter", body, polling=False)
     )
     result = await resolve(poller.result())
+    assert_resource_response(result, models.EdgeActionExecutionFilter, expected)
     assert result.properties.version_id == properties["versionId"]
     assert request_body(api.requests[0]) == {"properties": properties}
 
@@ -206,13 +253,14 @@ async def test_deploy_version_code_preserves_base64_content(api, body_format):
     payload = models.VersionCode(**body) if body_format == "model" else body
     if body_format == "stream":
         payload = io.BytesIO(json.dumps(body).encode())
-    api.respond(VERSION_PROPERTIES)
+    expected = resource_response("edge_action_versions", "/versions/v1")
+    api.respond(expected)
     poller = await resolve(
         api.client.edge_action_versions.begin_deploy_version_code("rg", "action", "v1", payload, polling=False)
     )
     result = await resolve(poller.result())
-    assert isinstance(result, models.EdgeActionVersionProperties)
-    assert result.deployment_type == "file"
+    assert_resource_response(result, models.EdgeActionVersion, expected)
+    assert result.properties.deployment_type == "file"
     assert len(api.requests) == 1
     assert api.requests[0].method == "POST"
     assert api.requests[0].url == f"{RESOURCE_URL}/versions/v1/deployVersionCode?api-version={API_VERSION}"
@@ -231,6 +279,8 @@ async def test_version_action_routes(api, operation, route):
     result = await resolve(poller.result())
     if route == "getVersionCode":
         assert isinstance(result, models.VersionCode)
+        assert result.name == "v1"
+        assert result.content == "aGVsbG8="
         assert base64.b64decode(result.content) == b"hello"
     else:
         assert result is None
@@ -254,35 +304,129 @@ async def test_delete_status_and_polling(api, group, children, path, model, upda
 
 
 @pytest.mark.parametrize("group,children,path,model,update_model", GROUPS)
-@pytest.mark.parametrize("operation", ["begin_create", "begin_update"])
+@pytest.mark.parametrize(
+    "operation,status,header_mode",
+    [
+        ("begin_create", 200, "async"),
+        ("begin_create", 201, "async"),
+        ("begin_update", 202, "async"),
+        ("begin_update", 202, "location"),
+        ("begin_update", 202, "both"),
+    ],
+)
 async def test_resource_lro_polls_and_deserializes_final_result(
-    api, group, children, path, model, update_model, operation
+    api, group, children, path, model, update_model, operation, status, header_mode
 ):
     url = f"{RESOURCE_URL}{path}?api-version={API_VERSION}"
     polling_url = f"https://management.azure.com/subscriptions/{SUBSCRIPTION}/operations/test?api-version={API_VERSION}"
+    result_url = polling_url.replace("/operations/", "/operationResults/")
+    headers = {"Retry-After": "0"}
+    if header_mode in ("async", "both"):
+        headers["Azure-AsyncOperation"] = polling_url
+    if header_mode in ("location", "both"):
+        headers["Location"] = result_url
+    expected = resource_response(group, path)
+    initial = resource_response(group, path)
+    initial["properties"]["provisioningState"] = "Provisioning"
+    initial["tags"] = {"purpose": "not-final"}
     api.respond(
-        {"properties": {"provisioningState": "Provisioning"}},
-        status=201 if operation == "begin_create" else 202,
-        headers={"Azure-AsyncOperation": polling_url, "Retry-After": "0"},
+        initial if operation == "begin_create" else None,
+        status=status,
+        headers=headers,
     )
-    api.respond({"status": "Succeeded"})
-    api.respond({"id": RESOURCE_ID + path, "name": "completed", "location": "global"})
+    expected_requests = [("PUT" if operation == "begin_create" else "PATCH", url)]
+    if header_mode != "location":
+        api.respond({"status": "Running"})
+        api.respond({"status": "Succeeded"})
+        expected_requests.extend([("GET", polling_url), ("GET", polling_url)])
+    # ARM polling reads the original resource after Azure-AsyncOperation for PUT/PATCH.
+    final_url = result_url if header_mode == "location" else url
+    api.respond(expected)
+    expected_requests.append(("GET", final_url))
     body = {"location": "global"} if operation == "begin_create" else {"tags": {"purpose": "updated"}}
     poller = await resolve(getattr(getattr(api.client, group), operation)("rg", "action", *children, body))
     result = await resolve(poller.result())
-    assert isinstance(result, model)
-    assert result.name == "completed"
+    assert_resource_response(result, model, expected)
+    assert poller.done()
+    assert poller.status() == "Succeeded"
+    assert [(r.method, r.url) for r in api.requests] == expected_requests
+
+
+@pytest.mark.parametrize("header_mode", ["location", "both"])
+@pytest.mark.parametrize("operation", ["begin_deploy_version_code", "begin_get_version_code", "begin_swap_default"])
+async def test_version_action_lro_returns_final_result(api, operation, header_mode):
+    routes = {
+        "begin_deploy_version_code": "deployVersionCode",
+        "begin_get_version_code": "getVersionCode",
+        "begin_swap_default": "swapDefault",
+    }
+    url = f"{RESOURCE_URL}/versions/v1/{routes[operation]}?api-version={API_VERSION}"
+    polling_url = f"https://management.azure.com/subscriptions/{SUBSCRIPTION}/operations/test?api-version={API_VERSION}"
+    result_url = polling_url.replace("/operations/", "/operationResults/")
+    headers = {"Location": result_url, "Retry-After": "0"}
+    if header_mode == "both":
+        headers["Azure-AsyncOperation"] = polling_url
+    api.respond(status=202, headers=headers)
+    expected_requests = [("POST", url)]
+    if header_mode == "both":
+        api.respond({"status": "Running"})
+        api.respond({"status": "Succeeded"})
+        expected_requests.extend([("GET", polling_url), ("GET", polling_url)])
+
+    body = models.VersionCode(name="v1", content="aGVsbG8=")
+    args = ("rg", "action", "v1")
+    if operation == "begin_deploy_version_code":
+        expected = resource_response("edge_action_versions", "/versions/v1")
+        args += (body,)
+    elif operation == "begin_get_version_code":
+        expected = {"name": "v1", "content": "aGVsbG8="}
+    else:
+        expected = None
+    api.respond(expected, status=204 if expected is None else 200)
+    expected_requests.append(("GET", result_url))
+    poller = await resolve(getattr(api.client.edge_action_versions, operation)(*args))
+    result = await resolve(poller.result())
+    if operation == "begin_deploy_version_code":
+        assert_resource_response(result, models.EdgeActionVersion, expected)
+    elif operation == "begin_get_version_code":
+        assert isinstance(result, models.VersionCode)
+        assert result.as_dict() == expected
+    else:
+        assert result is None
+    assert poller.done()
+    assert poller.status() == "Succeeded"
+    assert [(r.method, r.url) for r in api.requests] == expected_requests
+
+
+@pytest.mark.parametrize("group,children,path,model,update_model", GROUPS)
+async def test_delete_lro_with_status_and_result_headers_returns_none(api, group, children, path, model, update_model):
+    url = f"{RESOURCE_URL}{path}?api-version={API_VERSION}"
+    polling_url = f"https://management.azure.com/subscriptions/{SUBSCRIPTION}/operations/test?api-version={API_VERSION}"
+    result_url = polling_url.replace("/operations/", "/operationResults/")
+    api.respond(
+        status=202,
+        headers={"Azure-AsyncOperation": polling_url, "Location": result_url, "Retry-After": "0"},
+    )
+    api.respond({"status": "Running"})
+    api.respond({"status": "Succeeded"})
+    poller = await resolve(getattr(api.client, group).begin_delete("rg", "action", *children))
+    assert await resolve(poller.result()) is None
+    assert poller.done()
+    assert poller.status() == "Succeeded"
+    # DELETE has no SDK return body, so ARM polling stops at the terminal status.
     assert [(r.method, r.url) for r in api.requests] == [
-        ("PUT" if operation == "begin_create" else "PATCH", url),
+        ("DELETE", url),
         ("GET", polling_url),
-        ("GET", url),
+        ("GET", polling_url),
     ]
 
 
-async def test_failed_lro_surfaces_service_error(api):
+@pytest.mark.parametrize("status", ["Failed", "Canceled"])
+async def test_failed_lro_surfaces_service_error(api, status):
     polling_url = f"https://management.azure.com/subscriptions/{SUBSCRIPTION}/operations/test?api-version={API_VERSION}"
     api.respond(status=202, headers={"Azure-AsyncOperation": polling_url, "Retry-After": "0"})
-    api.respond({"status": "Failed", "error": {"code": "DeploymentFailed", "message": "Code validation failed"}})
+    api.respond({"status": "Running"})
+    api.respond({"status": status, "error": {"code": "DeploymentFailed", "message": "Code validation failed"}})
     with pytest.raises(HttpResponseError, match="Code validation failed"):
         poller = await resolve(
             api.client.edge_action_versions.begin_deploy_version_code(
@@ -290,7 +434,8 @@ async def test_failed_lro_surfaces_service_error(api):
             )
         )
         await resolve(poller.result())
-    assert [request.method for request in api.requests] == ["POST", "GET"]
+    assert poller.status() == status
+    assert [request.method for request in api.requests] == ["POST", "GET", "GET"]
 
 
 @pytest.mark.parametrize("body", [{"sku": None}, {"sku": {"name": "Standard", "tier": "Standard"}}, {"tags": None}])
