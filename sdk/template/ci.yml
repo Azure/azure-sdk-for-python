@@ -31,6 +31,10 @@ pr:
     - eng/common/
 
 parameters:
+  - name: ReleasePlanId
+    displayName: 'Release plan ID (0 uses package-based lookup)'
+    type: string
+    default: '0'
   - name: ReleaseToDevOpsOnly
     displayName: 'Release package to DevOps feed instead of PyPi'
     type: boolean
@@ -57,6 +61,7 @@ extends:
       PublicPublishEnvironment: none
     oneESTemplateTag: ${{ parameters.oneESTemplateTag }}
     ServiceDirectory: template
+    ReleasePlanId: ${{ parameters.ReleasePlanId }}
     TestProxy: true
     Artifacts:
     - name: azure-template
