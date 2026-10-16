@@ -14,7 +14,11 @@ from azure.ai.evaluation._azure._envs import AzureEnvironmentClient
 
 class AsyncAzureTokenProvider(AsyncContextManager["AsyncAzureTokenProvider"]):
     """Asynchronous token provider for Azure services that supports non-default Azure clouds
-    (e.g. Azure China, Azure US Government, etc.)."""
+    (e.g. Azure China, Azure US Government, etc.).
+
+    Closing the provider releases both its internally created synchronous credential and environment client.
+    Lazy token acquisition remains reusable until the provider is closed.
+    """
 
     def __init__(self, *, base_url: Optional[str] = None, **kwargs: Any) -> None:
         """Initialize the AsyncAzureTokenProvider."""
@@ -22,11 +26,16 @@ class AsyncAzureTokenProvider(AsyncContextManager["AsyncAzureTokenProvider"]):
         self._env_client: Optional[AzureEnvironmentClient] = AzureEnvironmentClient(base_url=base_url, **kwargs)
 
     async def close(self) -> None:
-        if self._env_client:
-            await self._env_client.close()
-            self._env_client = None
-
+        credential, client = self._credential, self._env_client
         self._credential = None
+        self._env_client = None
+        try:
+            close_credential = getattr(credential, "close", None)
+            if close_credential is not None:
+                close_credential()
+        finally:
+            if client is not None:
+                await client.close()
 
     async def get_token(
         self,
@@ -50,7 +59,12 @@ class AsyncAzureTokenProvider(AsyncContextManager["AsyncAzureTokenProvider"]):
         return self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs)
 
     async def __aenter__(self) -> "AsyncAzureTokenProvider":
-        self._credential = await self._initialize_async(self._env_client)
+        try:
+            if self._credential is None:
+                self._credential = await self._initialize_async(self._env_client)
+        except BaseException:
+            await self.close()
+            raise
         return self
 
     async def __aexit__(

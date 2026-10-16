@@ -2,9 +2,21 @@
 
 ## 1.18.10 (Unreleased)
 
+### Features Added
+
+- Added shared model runners and evaluation strategies for asset evaluators using Decision models in Microsoft Foundry, including Output Quality and Tool Use Quality aggregate and member metrics.
+- Decision authentication uses an explicit `api_key` or caller-owned credential with a callable `get_token`. Reuse a synchronous `azure.identity.DefaultAzureCredential` for synchronous or batch calls and close it afterward; async credentials require the same caller-managed event loop. API keys take precedence; Prompty authentication is unchanged.
+- Decision score probabilities must sum to one within an absolute `1e-6` tolerance; invalid distributions raise a system-classified `EvaluationException`.
+- Decision results expose known final-response usage, model, and provenance on completed, skipped, and failed evaluations, counting shared requests once and summing split-turn usage. Usage excludes earlier retry attempts.
+- Decision native async HTTP supports overall deadlines and cancellation during response body reads. TLS uses Python/OpenSSL trust settings such as `SSL_CERT_FILE`, not `REQUESTS_CA_BUNDLE`; shared Prompty transport behavior is unchanged.
+
+### Breaking Changes
+
 ### Bugs Fixed
 
 - Hardened local Prompty image resolution so only relative files within the Prompty directory are inlined, with opened-file validation to prevent path changes from redirecting reads and without exposing the local directory in fallback logs.
+
+### Other Changes
 
 ## 1.18.9 (2026-10-12)
 
