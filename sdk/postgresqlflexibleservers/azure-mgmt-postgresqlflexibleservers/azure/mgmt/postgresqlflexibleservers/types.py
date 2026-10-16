@@ -19,7 +19,6 @@ if TYPE_CHECKING:
         CreateModeForPatch,
         CreatedByType,
         DataEncryptionType,
-        DbAgentForUpdateState,
         EncryptionKeyStatus,
         FailoverMode,
         FipsMode,
@@ -39,7 +38,6 @@ if TYPE_CHECKING:
         OverwriteDatabasesOnTargetServer,
         PasswordBasedAuth,
         PostgreSqlFlexibleServerHighAvailabilityMode,
-        PostgresMajorVersion,
         PrincipalType,
         PrivateEndpointConnectionProvisioningState,
         PrivateEndpointServiceConnectionStatus,
@@ -648,30 +646,6 @@ class DataEncryption(TypedDict, total=False):
     geoBackupFederatedIdentityClientId: str
     """Client id of multi-tenant Microsoft Entra application for when it is configured to support
      geographically redundant backups."""
-
-
-class DbAgentForUpdate(TypedDict, total=False):
-    """A request to enable or disable the database agent.
-
-    :ivar properties: The requested database agent properties. Required.
-    :vartype properties: "DbAgentForUpdateProperties"
-    """
-
-    properties: Required["DbAgentForUpdateProperties"]
-    """The requested database agent properties. Required."""
-
-
-class DbAgentForUpdateProperties(TypedDict, total=False):
-    """Writable properties of the database agent configuration.
-
-    :ivar state: The requested state of the database agent. Required. Known values are: "Enabled"
-     and "Disabled".
-    :vartype state: Union[str, "DbAgentForUpdateState"]
-    """
-
-    state: Required[Union[str, "DbAgentForUpdateState"]]
-    """The requested state of the database agent. Required. Known values are: \"Enabled\" and
-     \"Disabled\"."""
 
 
 class DbLevelValidationStatus(TypedDict, total=False):
@@ -1590,9 +1564,8 @@ class ServerProperties(TypedDict, total=False):
     :ivar administratorLoginPassword: Password assigned to the administrator login. As long as
      password authentication is enabled, this password can be changed at any time.
     :vartype administratorLoginPassword: str
-    :ivar version: Major version of PostgreSQL database engine. Known values are: "19", "18", "17",
-     "16", "15", "14", "13", "12", and "11".
-    :vartype version: Union[str, "PostgresMajorVersion"]
+    :ivar version: Major version of PostgreSQL database engine.
+    :vartype version: str
     :ivar minorVersion: Minor version of PostgreSQL database engine.
     :vartype minorVersion: str
     :ivar state: Possible states of a server. Known values are: "Ready", "Dropping", "Disabled",
@@ -1657,9 +1630,8 @@ class ServerProperties(TypedDict, total=False):
     administratorLoginPassword: str
     """Password assigned to the administrator login. As long as password authentication is enabled,
      this password can be changed at any time."""
-    version: Union[str, "PostgresMajorVersion"]
-    """Major version of PostgreSQL database engine. Known values are: \"19\", \"18\", \"17\", \"16\",
-     \"15\", \"14\", \"13\", \"12\", and \"11\"."""
+    version: str
+    """Major version of PostgreSQL database engine."""
     minorVersion: str
     """Minor version of PostgreSQL database engine."""
     state: Union[str, "ServerState"]
@@ -1724,9 +1696,8 @@ class ServerPropertiesForPatch(TypedDict, total=False):
     :ivar administratorLoginPassword: Password assigned to the administrator login. As long as
      password authentication is enabled, this password can be changed at any time.
     :vartype administratorLoginPassword: str
-    :ivar version: Major version of PostgreSQL database engine. Known values are: "19", "18", "17",
-     "16", "15", "14", "13", "12", and "11".
-    :vartype version: Union[str, "PostgresMajorVersion"]
+    :ivar version: Major version of PostgreSQL database engine.
+    :vartype version: str
     :ivar storage: Storage properties of a server.
     :vartype storage: "Storage"
     :ivar backup: Backup properties of a server.
@@ -1772,9 +1743,8 @@ class ServerPropertiesForPatch(TypedDict, total=False):
     administratorLoginPassword: str
     """Password assigned to the administrator login. As long as password authentication is enabled,
      this password can be changed at any time."""
-    version: Union[str, "PostgresMajorVersion"]
-    """Major version of PostgreSQL database engine. Known values are: \"19\", \"18\", \"17\", \"16\",
-     \"15\", \"14\", \"13\", \"12\", and \"11\"."""
+    version: str
+    """Major version of PostgreSQL database engine."""
     storage: "Storage"
     """Storage properties of a server."""
     backup: "BackupForPatch"
@@ -1864,14 +1834,12 @@ class SkuForPatch(TypedDict, total=False):
 class StartMajorVersionUpgradePrecheckRequest(TypedDict, total=False):
     """Request model for starting a major version upgrade precheck.
 
-    :ivar targetVersion: The target major version to upgrade to. Required. Known values are: "19",
-     "18", "17", "16", "15", "14", "13", "12", and "11".
-    :vartype targetVersion: Union[str, "PostgresMajorVersion"]
+    :ivar targetVersion: The target major version to upgrade to. Required.
+    :vartype targetVersion: str
     """
 
-    targetVersion: Required[Union[str, "PostgresMajorVersion"]]
-    """The target major version to upgrade to. Required. Known values are: \"19\", \"18\", \"17\",
-     \"16\", \"15\", \"14\", \"13\", \"12\", and \"11\"."""
+    targetVersion: Required[str]
+    """The target major version to upgrade to. Required."""
 
 
 class Storage(TypedDict, total=False):

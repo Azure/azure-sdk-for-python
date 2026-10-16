@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-01-preview/ServersStartMajorVersionUpgradePrecheck.json
+# x-ms-original-file: 2026-10-01/ServersStartMajorVersionUpgradePrecheck.json
 if __name__ == "__main__":
     main()
