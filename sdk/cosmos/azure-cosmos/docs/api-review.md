@@ -136,7 +136,7 @@ are no longer public classes. Adding either field, or
 `DisableSSLVerification`, to a `ConnectionPolicy` is rejected too.
 Selecting the legacy backend does not restore these features; no parity
 implementation is required. Runtime-controlled environment proxy use is
-separate and unchanged. See [the networking exclusion](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-22).
+separate and unchanged. See the networking exclusion (gap 22).
 
 **Regional routing switches are excluded on Rust-backed clients.** Alpha Bank
 configures the account's regions and multi-write capability. Rust discovers
@@ -155,7 +155,7 @@ Omit these switches and leave those policy fields unset. An untouched policy
 can still group supported settings. Preferred and excluded regions remain
 supported, but are not replacements for the excluded switches. The retained
 `core-python` comparison backend continues to honor them; its code is not
-retired by this decision. See [the routing exclusion](V5/api-review/RUST_PARITY_PUSHBACKS.md#client-init-routing).
+retired by this decision. See the routing exclusion (client init routing).
 
 <a id="1---connection-string-client-creation"></a>
 <a id="connection-string-client-creation"></a>
@@ -378,7 +378,7 @@ client's Python routing-cache share is released in `finally`. This does not
 make every cleanup step cancellation-proof. Backend cleanup failures are
 logged; Python HTTP cleanup errors can still propagate.
 
-See the [migration review](V5/api-review/RUST_MIGRATION_STATUS.md#cosmosclientclose)
+See the migration review (CosmosClient.close)
 for the driver ownership and runtime-lifetime explanation.
 
 ## Account and database operations
@@ -3974,8 +3974,7 @@ for these callbacks are retired; unsupported-input regression coverage
 remains. Gaps 26 and 27 are closed, not blocked on a new Rust extension or
 equivalent callback delivery. Separate observability integration still needs
 its own evidence.
-See [entry 26](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-26) and
-[entry 27](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-27).
+See entry 26 and entry 27 (gaps 26 and 27).
 
 <a id="unsupported-settings-no-longer-silently-change-the-selected-backend"></a>
 
