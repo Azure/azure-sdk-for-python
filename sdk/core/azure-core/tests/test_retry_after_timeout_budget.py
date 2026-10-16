@@ -50,11 +50,14 @@ class AsyncRecordingTransport(RecordingTransport):
         self.sleeps.append(seconds)
 
 
-@pytest.mark.parametrize("header,value", [
-    ("Retry-After", "120"),
-    ("retry-after-ms", "120000"),
-    ("x-ms-retry-after-ms", "120000"),
-])
+@pytest.mark.parametrize(
+    "header,value",
+    [
+        ("Retry-After", "120"),
+        ("retry-after-ms", "120000"),
+        ("x-ms-retry-after-ms", "120000"),
+    ],
+)
 @pytest.mark.parametrize("retry_total", [1, 3])
 def test_retry_after_exceeding_timeout_does_not_sleep_sync(header, value, retry_total):
     transport = RecordingTransport(429, {header: value})
@@ -67,11 +70,14 @@ def test_retry_after_exceeding_timeout_does_not_sleep_sync(header, value, retry_
     assert transport.sleeps == []
 
 
-@pytest.mark.parametrize("header,value", [
-    ("Retry-After", "120"),
-    ("retry-after-ms", "120000"),
-    ("x-ms-retry-after-ms", "120000"),
-])
+@pytest.mark.parametrize(
+    "header,value",
+    [
+        ("Retry-After", "120"),
+        ("retry-after-ms", "120000"),
+        ("x-ms-retry-after-ms", "120000"),
+    ],
+)
 @pytest.mark.parametrize("retry_total", [1, 3])
 def test_retry_after_exceeding_timeout_does_not_sleep_async(header, value, retry_total):
     transport = AsyncRecordingTransport(429, {header: value})
@@ -91,14 +97,13 @@ def test_retry_after_exceeding_timeout_does_not_sleep_async(header, value, retry
 def test_retry_after_within_timeout_still_retries(async_mode):
     transport = (
         AsyncRecordingTransport(429, {"Retry-After": "0.25"})
-        if async_mode else RecordingTransport(429, {"Retry-After": "0.25"})
+        if async_mode
+        else RecordingTransport(429, {"Retry-After": "0.25"})
     )
     request = HttpRequest("GET", "https://example.invalid")
 
     if async_mode:
-        response = asyncio.run(
-            AsyncPipeline(transport, [AsyncRetryPolicy(timeout=1, retry_total=1)]).run(request)
-        )
+        response = asyncio.run(AsyncPipeline(transport, [AsyncRetryPolicy(timeout=1, retry_total=1)]).run(request))
     else:
         response = Pipeline(transport, [RetryPolicy(timeout=1, retry_total=1)]).run(request)
 
@@ -111,14 +116,13 @@ def test_retry_after_within_timeout_still_retries(async_mode):
 def test_successful_response_ignores_retry_after(async_mode):
     transport = (
         AsyncRecordingTransport(200, {"Retry-After": "120"})
-        if async_mode else RecordingTransport(200, {"Retry-After": "120"})
+        if async_mode
+        else RecordingTransport(200, {"Retry-After": "120"})
     )
     request = HttpRequest("GET", "https://example.invalid")
 
     if async_mode:
-        response = asyncio.run(
-            AsyncPipeline(transport, [AsyncRetryPolicy(timeout=1, retry_total=1)]).run(request)
-        )
+        response = asyncio.run(AsyncPipeline(transport, [AsyncRetryPolicy(timeout=1, retry_total=1)]).run(request))
     else:
         response = Pipeline(transport, [RetryPolicy(timeout=1, retry_total=1)]).run(request)
 
