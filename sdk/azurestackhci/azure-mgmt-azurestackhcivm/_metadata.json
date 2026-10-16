@@ -1,7 +1,11 @@
 {
-  "apiVersion": "2025-06-01-preview",
-  "commit": "fb6e96b466e5a45bbbfb6e2a8a36ab862dfea923",
+  "apiVersion": "2026-07-01-preview",
+  "apiVersions": {
+    "Microsoft.AzureStackHCI": "2026-07-01-preview"
+  },
+  "commit": "190c0d79b596c68c9228668fe90c1027dc8966a0",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "typespec_src": "specification/azurestackhci/AzureStackHCI.StackHCIVM.Management",
-  "emitterVersion": "0.48.0"
+  "typespec_src": "specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/StackHCIVM",
+  "emitterVersion": "0.63.10",
+  "httpClientPythonVersion": "0.39.0"
 }
