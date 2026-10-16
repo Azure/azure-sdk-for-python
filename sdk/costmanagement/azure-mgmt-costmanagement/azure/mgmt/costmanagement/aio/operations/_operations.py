@@ -37,6 +37,7 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._validation import api_version_validation
 from ...operations._operations import (
     build_alerts_dismiss_request,
     build_alerts_get_request,
@@ -79,6 +80,10 @@ from ...operations._operations import (
     build_generate_detailed_cost_report_operation_status_get_request,
     build_generate_reservation_details_report_by_billing_account_id_request,
     build_generate_reservation_details_report_by_billing_profile_id_request,
+    build_markup_rules_create_or_update_request,
+    build_markup_rules_delete_request,
+    build_markup_rules_get_request,
+    build_markup_rules_list_request,
     build_operations_list_request,
     build_price_sheet_download_by_billing_account_request,
     build_price_sheet_download_by_billing_profile_request,
@@ -117,7 +122,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class GenerateDetailedCostReportOperationStatusOperations:  # pylint: disable=name-too-long
+class GenerateDetailedCostReportOperationStatusOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -207,7 +212,7 @@ class GenerateDetailedCostReportOperationStatusOperations:  # pylint: disable=na
         return deserialized  # type: ignore
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -318,7 +323,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BudgetsOperations:
+class BudgetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -728,7 +733,7 @@ class BudgetsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ExportsOperations:
+class ExportsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1357,7 +1362,7 @@ class ExportsOperations:
         return deserialized  # type: ignore
 
 
-class GenerateDetailedCostReportOperationResultsOperations:  # pylint: disable=name-too-long
+class GenerateDetailedCostReportOperationResultsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1498,7 +1503,7 @@ class GenerateDetailedCostReportOperationResultsOperations:  # pylint: disable=n
         )
 
 
-class ViewsOperations:
+class ViewsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2256,7 +2261,7 @@ class ViewsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AlertsOperations:
+class AlertsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2661,7 +2666,7 @@ class AlertsOperations:
         return deserialized  # type: ignore
 
 
-class ScheduledActionsOperations:
+class ScheduledActionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3989,7 +3994,7 @@ class ScheduledActionsOperations:
         return deserialized  # type: ignore
 
 
-class SettingsOperations:
+class SettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4361,7 +4366,466 @@ class SettingsOperations:
         return deserialized  # type: ignore
 
 
-class GenerateCostDetailsReportOperations:
+class MarkupRulesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.costmanagement.aio.CostManagementClient`'s
+        :attr:`markup_rules` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: CostManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": ["api_version", "billing_account_id", "billing_profile_id", "rule_name", "accept"]
+        },
+        api_versions_list=["2026-06-01"],
+    )
+    async def get(
+        self, billing_account_id: str, billing_profile_id: str, rule_name: str, **kwargs: Any
+    ) -> _models.MarkupRule:
+        """Get a markup rule by name for a billing account and billing profile.
+
+        :param billing_account_id: BillingAccount ID. Required.
+        :type billing_account_id: str
+        :param billing_profile_id: BillingProfile ID. Required.
+        :type billing_profile_id: str
+        :param rule_name: Markup rule name. Required.
+        :type rule_name: str
+        :return: MarkupRule. The MarkupRule is compatible with MutableMapping
+        :rtype: ~azure.mgmt.costmanagement.models.MarkupRule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.MarkupRule] = kwargs.pop("cls", None)
+
+        _request = build_markup_rules_get_request(
+            billing_account_id=billing_account_id,
+            billing_profile_id=billing_profile_id,
+            rule_name=rule_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.MarkupRule, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        billing_account_id: str,
+        billing_profile_id: str,
+        rule_name: str,
+        resource: _models.MarkupRule,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.MarkupRule:
+        """Create or update a markup rule for a billing account and billing profile.
+
+        :param billing_account_id: BillingAccount ID. Required.
+        :type billing_account_id: str
+        :param billing_profile_id: BillingProfile ID. Required.
+        :type billing_profile_id: str
+        :param rule_name: Markup rule name. Required.
+        :type rule_name: str
+        :param resource: The markup rule to create or update. Required.
+        :type resource: ~azure.mgmt.costmanagement.models.MarkupRule
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MarkupRule. The MarkupRule is compatible with MutableMapping
+        :rtype: ~azure.mgmt.costmanagement.models.MarkupRule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        billing_account_id: str,
+        billing_profile_id: str,
+        rule_name: str,
+        resource: _types.MarkupRule,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.MarkupRule:
+        """Create or update a markup rule for a billing account and billing profile.
+
+        :param billing_account_id: BillingAccount ID. Required.
+        :type billing_account_id: str
+        :param billing_profile_id: BillingProfile ID. Required.
+        :type billing_profile_id: str
+        :param rule_name: Markup rule name. Required.
+        :type rule_name: str
+        :param resource: The markup rule to create or update. Required.
+        :type resource: ~azure.mgmt.costmanagement.types.MarkupRule
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MarkupRule. The MarkupRule is compatible with MutableMapping
+        :rtype: ~azure.mgmt.costmanagement.models.MarkupRule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        billing_account_id: str,
+        billing_profile_id: str,
+        rule_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.MarkupRule:
+        """Create or update a markup rule for a billing account and billing profile.
+
+        :param billing_account_id: BillingAccount ID. Required.
+        :type billing_account_id: str
+        :param billing_profile_id: BillingProfile ID. Required.
+        :type billing_profile_id: str
+        :param rule_name: Markup rule name. Required.
+        :type rule_name: str
+        :param resource: The markup rule to create or update. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MarkupRule. The MarkupRule is compatible with MutableMapping
+        :rtype: ~azure.mgmt.costmanagement.models.MarkupRule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={
+            "2026-06-01": [
+                "api_version",
+                "billing_account_id",
+                "billing_profile_id",
+                "rule_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-01"],
+    )
+    async def create_or_update(
+        self,
+        billing_account_id: str,
+        billing_profile_id: str,
+        rule_name: str,
+        resource: Union[_models.MarkupRule, _types.MarkupRule, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.MarkupRule:
+        """Create or update a markup rule for a billing account and billing profile.
+
+        :param billing_account_id: BillingAccount ID. Required.
+        :type billing_account_id: str
+        :param billing_profile_id: BillingProfile ID. Required.
+        :type billing_profile_id: str
+        :param rule_name: Markup rule name. Required.
+        :type rule_name: str
+        :param resource: The markup rule to create or update. Is either a MarkupRule type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.costmanagement.models.MarkupRule or
+         ~azure.mgmt.costmanagement.types.MarkupRule or IO[bytes]
+        :return: MarkupRule. The MarkupRule is compatible with MutableMapping
+        :rtype: ~azure.mgmt.costmanagement.models.MarkupRule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.MarkupRule] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_markup_rules_create_or_update_request(
+            billing_account_id=billing_account_id,
+            billing_profile_id=billing_profile_id,
+            rule_name=rule_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.MarkupRule, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={"2026-06-01": ["api_version", "billing_account_id", "billing_profile_id", "rule_name"]},
+        api_versions_list=["2026-06-01"],
+    )
+    async def delete(self, billing_account_id: str, billing_profile_id: str, rule_name: str, **kwargs: Any) -> None:
+        """Delete a markup rule for a billing account and billing profile.
+
+        :param billing_account_id: BillingAccount ID. Required.
+        :type billing_account_id: str
+        :param billing_profile_id: BillingProfile ID. Required.
+        :type billing_profile_id: str
+        :param rule_name: Markup rule name. Required.
+        :type rule_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_markup_rules_delete_request(
+            billing_account_id=billing_account_id,
+            billing_profile_id=billing_profile_id,
+            rule_name=rule_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-01",
+        params_added_on={"2026-06-01": ["api_version", "billing_account_id", "billing_profile_id", "accept"]},
+        api_versions_list=["2026-06-01"],
+    )
+    def list(
+        self, billing_account_id: str, billing_profile_id: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.MarkupRule"]:
+        """List all markup rules for a billing account and billing profile.
+
+        :param billing_account_id: BillingAccount ID. Required.
+        :type billing_account_id: str
+        :param billing_profile_id: BillingProfile ID. Required.
+        :type billing_profile_id: str
+        :return: An iterator like instance of MarkupRule
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.costmanagement.models.MarkupRule]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.MarkupRule]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_markup_rules_list_request(
+                    billing_account_id=billing_account_id,
+                    billing_profile_id=billing_profile_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.MarkupRule],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class GenerateCostDetailsReportOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4783,7 +5247,7 @@ class GenerateCostDetailsReportOperations:
         )
 
 
-class CostAllocationRulesOperations:
+class CostAllocationRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5371,7 +5835,7 @@ class CostAllocationRulesOperations:
         return deserialized  # type: ignore
 
 
-class BenefitRecommendationsOperations:
+class BenefitRecommendationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5515,7 +5979,7 @@ class BenefitRecommendationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BenefitUtilizationSummariesOperations:
+class BenefitUtilizationSummariesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5985,7 +6449,7 @@ class BenefitUtilizationSummariesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=name-too-long
+class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7432,7 +7896,7 @@ class GenerateBenefitUtilizationSummariesReportOperations:  # pylint: disable=na
         )
 
 
-class GenerateDetailedCostReportOperations:
+class GenerateDetailedCostReportOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7697,7 +8161,7 @@ class GenerateDetailedCostReportOperations:
         )
 
 
-class ForecastOperations:
+class ForecastOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8167,7 +8631,7 @@ class ForecastOperations:
         return deserialized  # type: ignore
 
 
-class DimensionsOperations:
+class DimensionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8456,7 +8920,7 @@ class DimensionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class QueryOperations:
+class QueryOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8861,7 +9325,7 @@ class QueryOperations:
         return deserialized  # type: ignore
 
 
-class GenerateReservationDetailsReportOperations:  # pylint: disable=name-too-long
+class GenerateReservationDetailsReportOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9145,7 +9609,7 @@ class GenerateReservationDetailsReportOperations:  # pylint: disable=name-too-lo
         )
 
 
-class PriceSheetOperations:
+class PriceSheetOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

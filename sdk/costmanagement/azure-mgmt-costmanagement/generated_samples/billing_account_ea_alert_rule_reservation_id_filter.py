@@ -66,6 +66,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-01/Budgets/CreateOrUpdate/ReservationUtilization/EA/BillingAccountEA-AlertRule-ReservationIdFilter.json
+# x-ms-original-file: 2026-06-01/Budgets/CreateOrUpdate/ReservationUtilization/EA/BillingAccountEA-AlertRule-ReservationIdFilter.json
 if __name__ == "__main__":
     main()

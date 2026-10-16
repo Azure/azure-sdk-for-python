@@ -86,9 +86,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -114,9 +114,9 @@ class ExtensionResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -131,21 +131,21 @@ class AlertProperties(TypedDict, total=False):
     :vartype source: Union[str, "AlertSource"]
     :ivar details: Alert details.
     :vartype details: "AlertPropertiesDetails"
-    :ivar cost_entity_id: related budget.
-    :vartype cost_entity_id: str
+    :ivar costEntityId: related budget.
+    :vartype costEntityId: str
     :ivar status: alert status. Known values are: "None", "Active", "Overridden", "Resolved", and
      "Dismissed".
     :vartype status: Union[str, "AlertStatus"]
-    :ivar creation_time: dateTime in which alert was created.
-    :vartype creation_time: str
-    :ivar close_time: dateTime in which alert was closed.
-    :vartype close_time: str
-    :ivar modification_time: dateTime in which alert was last modified.
-    :vartype modification_time: str
-    :ivar status_modification_user_name: User who last modified the alert.
-    :vartype status_modification_user_name: str
-    :ivar status_modification_time: dateTime in which the alert status was last modified.
-    :vartype status_modification_time: str
+    :ivar creationTime: dateTime in which alert was created.
+    :vartype creationTime: str
+    :ivar closeTime: dateTime in which alert was closed.
+    :vartype closeTime: str
+    :ivar modificationTime: dateTime in which alert was last modified.
+    :vartype modificationTime: str
+    :ivar statusModificationUserName: User who last modified the alert.
+    :vartype statusModificationUserName: str
+    :ivar statusModificationTime: dateTime in which the alert status was last modified.
+    :vartype statusModificationTime: str
     """
 
     definition: "AlertPropertiesDefinition"
@@ -207,21 +207,21 @@ class AlertPropertiesDefinition(TypedDict, total=False):
 class AlertPropertiesDetails(TypedDict, total=False):
     """Alert details.
 
-    :ivar time_grain_type: Type of timegrain cadence. Known values are: "None", "Monthly",
+    :ivar timeGrainType: Type of timegrain cadence. Known values are: "None", "Monthly",
      "Quarterly", "Annually", "BillingMonth", "BillingQuarter", and "BillingAnnual".
-    :vartype time_grain_type: Union[str, "AlertTimeGrainType"]
-    :ivar period_start_date: datetime of periodStartDate.
-    :vartype period_start_date: str
-    :ivar triggered_by: notificationId that triggered this alert.
-    :vartype triggered_by: str
-    :ivar resource_group_filter: array of resourceGroups to filter by.
-    :vartype resource_group_filter: list[Any]
-    :ivar resource_filter: array of resources to filter by.
-    :vartype resource_filter: list[Any]
-    :ivar meter_filter: array of meters to filter by.
-    :vartype meter_filter: list[Any]
-    :ivar tag_filter: tags to filter by.
-    :vartype tag_filter: Any
+    :vartype timeGrainType: Union[str, "AlertTimeGrainType"]
+    :ivar periodStartDate: datetime of periodStartDate.
+    :vartype periodStartDate: str
+    :ivar triggeredBy: notificationId that triggered this alert.
+    :vartype triggeredBy: str
+    :ivar resourceGroupFilter: array of resourceGroups to filter by.
+    :vartype resourceGroupFilter: list[Any]
+    :ivar resourceFilter: array of resources to filter by.
+    :vartype resourceFilter: list[Any]
+    :ivar meterFilter: array of meters to filter by.
+    :vartype meterFilter: list[Any]
+    :ivar tagFilter: tags to filter by.
+    :vartype tagFilter: Any
     :ivar threshold: notification threshold percentage as a decimal which activated this alert.
     :vartype threshold: float
     :ivar operator: operator used to compare currentSpend with amount. Known values are: "None",
@@ -231,28 +231,28 @@ class AlertPropertiesDetails(TypedDict, total=False):
     :vartype amount: float
     :ivar unit: unit of currency being used.
     :vartype unit: str
-    :ivar current_spend: current spend.
-    :vartype current_spend: float
-    :ivar contact_emails: list of emails to contact.
-    :vartype contact_emails: list[str]
-    :ivar contact_groups: list of action groups to broadcast to.
-    :vartype contact_groups: list[str]
-    :ivar contact_roles: list of contact roles.
-    :vartype contact_roles: list[str]
-    :ivar overriding_alert: overriding alert.
-    :vartype overriding_alert: str
-    :ivar department_name: department name.
-    :vartype department_name: str
-    :ivar company_name: company name.
-    :vartype company_name: str
-    :ivar enrollment_number: enrollment number.
-    :vartype enrollment_number: str
-    :ivar enrollment_start_date: datetime of enrollmentStartDate.
-    :vartype enrollment_start_date: str
-    :ivar enrollment_end_date: datetime of enrollmentEndDate.
-    :vartype enrollment_end_date: str
-    :ivar invoicing_threshold: invoicing threshold.
-    :vartype invoicing_threshold: float
+    :ivar currentSpend: current spend.
+    :vartype currentSpend: float
+    :ivar contactEmails: list of emails to contact.
+    :vartype contactEmails: list[str]
+    :ivar contactGroups: list of action groups to broadcast to.
+    :vartype contactGroups: list[str]
+    :ivar contactRoles: list of contact roles.
+    :vartype contactRoles: list[str]
+    :ivar overridingAlert: overriding alert.
+    :vartype overridingAlert: str
+    :ivar departmentName: department name.
+    :vartype departmentName: str
+    :ivar companyName: company name.
+    :vartype companyName: str
+    :ivar enrollmentNumber: enrollment number.
+    :vartype enrollmentNumber: str
+    :ivar enrollmentStartDate: datetime of enrollmentStartDate.
+    :vartype enrollmentStartDate: str
+    :ivar enrollmentEndDate: datetime of enrollmentEndDate.
+    :vartype enrollmentEndDate: str
+    :ivar invoicingThreshold: invoicing threshold.
+    :vartype invoicingThreshold: float
     """
 
     timeGrainType: Union[str, "AlertTimeGrainType"]
@@ -306,26 +306,26 @@ class AlertPropertiesDetails(TypedDict, total=False):
 class BenefitUtilizationSummariesRequest(TypedDict, total=False):
     """Properties of an async benefit utilization summaries request.
 
-    :ivar billing_account_id: Billing account the benefit utilization summaries report is for.
+    :ivar billingAccountId: Billing account the benefit utilization summaries report is for.
      Required for billing account and billing profile scopes. Not supported for any benefit scopes.
-    :vartype billing_account_id: str
-    :ivar billing_profile_id: Billing profile id the benefit utilization summaries report is for.
+    :vartype billingAccountId: str
+    :ivar billingProfileId: Billing profile id the benefit utilization summaries report is for.
      Required for billing profile scope. Not supported for billing account or any benefit scopes.
-    :vartype billing_profile_id: str
-    :ivar benefit_order_id: Benefit order id the benefit utilization summaries report is for.
+    :vartype billingProfileId: str
+    :ivar benefitOrderId: Benefit order id the benefit utilization summaries report is for.
      Required for benefit order and benefit id scopes. Not supported for any billing scopes.
-    :vartype benefit_order_id: str
-    :ivar benefit_id: Benefit id the benefit utilization summaries report is for. Required for
+    :vartype benefitOrderId: str
+    :ivar benefitId: Benefit id the benefit utilization summaries report is for. Required for
      benefit id scope. Not supported for benefit order or any billing scopes.
-    :vartype benefit_id: str
+    :vartype benefitId: str
     :ivar grain: The grain the summaries data is served at in the report. Accepted values are
      'Daily' or 'Monthly'. Required. Known values are: "Hourly", "Daily", and "Monthly".
     :vartype grain: Union[str, "Grain"]
-    :ivar start_date: The start date of the summaries data that will be served in the report.
+    :ivar startDate: The start date of the summaries data that will be served in the report.
      Required.
-    :vartype start_date: str
-    :ivar end_date: The end date of the summaries data that will be served in the report. Required.
-    :vartype end_date: str
+    :vartype startDate: str
+    :ivar endDate: The end date of the summaries data that will be served in the report. Required.
+    :vartype endDate: str
     :ivar kind: The type of benefit data requested. Required for billing account and billing
      profile scopes. Implied and not to be passed at benefit scopes. Supported values are
      Reservation and SavingsPlan. Known values are: "IncludedQuantity", "Reservation", and
@@ -369,14 +369,14 @@ class Budget(ExtensionResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of the budget.
     :vartype properties: "BudgetProperties"
-    :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
-     used to determine whether the user is updating the latest version or not.
-    :vartype e_tag: str
+    :ivar eTag: eTag of the resource. To handle concurrent update scenario, this field will be used
+     to determine whether the user is updating the latest version or not.
+    :vartype eTag: str
     """
 
     properties: "BudgetProperties"
@@ -393,8 +393,8 @@ class BudgetComparisonExpression(TypedDict, total=False):
     :vartype name: str
     :ivar operator: The operator to use for comparison. Required. "In"
     :vartype operator: Union[str, "BudgetOperatorType"]
-    :ivar values_property: Array of values to use for comparison. Required.
-    :vartype values_property: list[str]
+    :ivar values: Array of values to use for comparison. Required.
+    :vartype values: list[str]
     """
 
     name: Required[str]
@@ -418,10 +418,10 @@ BudgetFilter.__doc__ = """May be used to filter budgets by user-specified dimens
 
 Supported for CategoryType(s): Cost, ReservationUtilization.
 
-:ivar and_property: The logical "AND" expression. Must have at least 2 items.
+:ivar and: The logical "AND" expression. Must have at least 2 items.
  
  Supported for CategoryType(s): Cost.
-:vartype and_property: list["BudgetFilterProperties"]
+:vartype and: list["BudgetFilterProperties"]
 :ivar dimensions: Has comparison expression for a dimension. Supported for CategoryType(s):
  Cost, ReservationUtilization. Supported dimension names for **CategoryType:
  ReservationUtilization**
@@ -481,7 +481,7 @@ class BudgetProperties(TypedDict, total=False):
 
      Required for CategoryType(s): Cost.
     :vartype amount: float
-    :ivar time_grain: The time covered by a budget. Tracking of the amount will be reset based on
+    :ivar timeGrain: The time covered by a budget. Tracking of the amount will be reset based on
      the time grain. Supported for CategoryType(s): Cost, ReservationUtilization. Supported
      timeGrainTypes for **CategoryType: Cost**
 
@@ -502,22 +502,22 @@ class BudgetProperties(TypedDict, total=False):
      Required for CategoryType(s): Cost, ReservationUtilization. Required. Known values are:
      "Monthly", "Quarterly", "Annually", "BillingMonth", "BillingQuarter", "BillingAnnual",
      "Last7Days", and "Last30Days".
-    :vartype time_grain: Union[str, "TimeGrainType"]
-    :ivar time_period: The time period that defines the active period of the budget. The budget
-     will evaluate data on or after the startDate and will expire on the endDate.
+    :vartype timeGrain: Union[str, "TimeGrainType"]
+    :ivar timePeriod: The time period that defines the active period of the budget. The budget will
+     evaluate data on or after the startDate and will expire on the endDate.
 
      Supported for CategoryType(s): Cost, ReservationUtilization.
 
      Required for CategoryType(s): Cost, ReservationUtilization. Required.
-    :vartype time_period: "BudgetTimePeriod"
+    :vartype timePeriod: "BudgetTimePeriod"
     :ivar filter: May be used to filter budgets by user-specified dimensions and/or tags.
 
      Supported for CategoryType(s): Cost, ReservationUtilization.
     :vartype filter: "BudgetFilter"
-    :ivar current_spend: The current amount of cost which is being tracked for a budget.
+    :ivar currentSpend: The current amount of cost which is being tracked for a budget.
 
      Supported for CategoryType(s): Cost.
-    :vartype current_spend: "CurrentSpend"
+    :vartype currentSpend: "CurrentSpend"
     :ivar notifications: Dictionary of notifications associated with the budget. Supported for
      CategoryType(s): Cost, ReservationUtilization.
 
@@ -526,10 +526,10 @@ class BudgetProperties(TypedDict, total=False):
      * Constraints for **CategoryType: ReservationUtilization** - Only one notification
        allowed. thresholdType is not applicable.
     :vartype notifications: dict[str, "Notification"]
-    :ivar forecast_spend: The forecasted cost which is being tracked for a budget.
+    :ivar forecastSpend: The forecasted cost which is being tracked for a budget.
 
      Supported for CategoryType(s): Cost.
-    :vartype forecast_spend: "ForecastSpend"
+    :vartype forecastSpend: "ForecastSpend"
     """
 
     category: Required[Union[str, "CategoryType"]]
@@ -603,7 +603,7 @@ class BudgetTimePeriod(TypedDict, total=False):
 
     Required for CategoryType(s): Cost, ReservationUtilization.
 
-    :ivar start_date: The start date for the budget.
+    :ivar startDate: The start date for the budget.
 
      * Constraints for **CategoryType: Cost** - Must be first of the month and should be less
        than the end date. Budget start date must be on or after June 1, 2017. Future start date should
@@ -612,15 +612,15 @@ class BudgetTimePeriod(TypedDict, total=False):
 
      * Constraints for **CategoryType: ReservationUtilization** - Must be on or after the
        current date and less than the end date. Required.
-    :vartype start_date: str
-    :ivar end_date: The end date for the budget.
+    :vartype startDate: str
+    :ivar endDate: The end date for the budget.
 
      * Constraints for **CategoryType: Cost** - No constraints. If not provided, we default
        this to 10 years from the start date.
 
      * Constraints for **CategoryType: ReservationUtilization** - End date cannot be more than
        3 years after the start date.
-    :vartype end_date: str
+    :vartype endDate: str
     """
 
     startDate: Required[str]
@@ -663,33 +663,33 @@ class CommonExportProperties(TypedDict, total=False):
 
     :ivar format: The format of the export being delivered. Known values are: "Csv" and "Parquet".
     :vartype format: Union[str, "FormatType"]
-    :ivar delivery_info: Has delivery information for the export. Required.
-    :vartype delivery_info: "ExportDeliveryInfo"
+    :ivar deliveryInfo: Has delivery information for the export. Required.
+    :vartype deliveryInfo: "ExportDeliveryInfo"
     :ivar definition: Has the definition for the export. Required.
     :vartype definition: "ExportDefinition"
-    :ivar run_history: If requested, has the most recent run history for the export.
-    :vartype run_history: "ExportExecutionListResult"
-    :ivar partition_data: If set to true, exported data will be partitioned by size and placed in a
+    :ivar runHistory: If requested, has the most recent run history for the export.
+    :vartype runHistory: "ExportExecutionListResult"
+    :ivar partitionData: If set to true, exported data will be partitioned by size and placed in a
      blob directory together with a manifest file.
-    :vartype partition_data: bool
-    :ivar data_overwrite_behavior: Allow customers to select overwrite
-     data(OverwritePreviousReport) for exports. This setting will enable overwrite data for the same
-     month in customer storage account. By default set to CreateNewReport. Known values are:
-     "OverwritePreviousReport" and "CreateNewReport".
-    :vartype data_overwrite_behavior: Union[str, "DataOverwriteBehaviorType"]
-    :ivar compression_mode: Allow customers to select compress data for exports. This setting will
+    :vartype partitionData: bool
+    :ivar dataOverwriteBehavior: Allow customers to select overwrite data(OverwritePreviousReport)
+     for exports. This setting will enable overwrite data for the same month in customer storage
+     account. By default set to CreateNewReport. Known values are: "OverwritePreviousReport" and
+     "CreateNewReport".
+    :vartype dataOverwriteBehavior: Union[str, "DataOverwriteBehaviorType"]
+    :ivar compressionMode: Allow customers to select compress data for exports. This setting will
      enable destination file compression scheme at runtime. By default set to None. Gzip is for csv
      and snappy for parquet. Known values are: "gzip", "snappy", and "none".
-    :vartype compression_mode: Union[str, "CompressionModeType"]
-    :ivar export_description: The export description set by customer at time of export
+    :vartype compressionMode: Union[str, "CompressionModeType"]
+    :ivar exportDescription: The export description set by customer at time of export
      creation/update.
-    :vartype export_description: str
-    :ivar next_run_time_estimate: If the export has an active schedule, provides an estimate of the
+    :vartype exportDescription: str
+    :ivar nextRunTimeEstimate: If the export has an active schedule, provides an estimate of the
      next run time.
-    :vartype next_run_time_estimate: str
-    :ivar system_suspension_context: The export suspension reason if export is in SystemSuspended
+    :vartype nextRunTimeEstimate: str
+    :ivar systemSuspensionContext: The export suspension reason if export is in SystemSuspended
      state. This is not populated currently.
-    :vartype system_suspension_context: "ExportSuspensionContext"
+    :vartype systemSuspensionContext: "ExportSuspensionContext"
     """
 
     format: Union[str, "FormatType"]
@@ -742,9 +742,9 @@ class CostAllocationProportion(TypedDict, total=False):
 class CostAllocationResource(TypedDict, total=False):
     """Common values for resources for cost allocation.
 
-    :ivar resource_type: Type of resources contained in this cost allocation rule. Required. Known
+    :ivar resourceType: Type of resources contained in this cost allocation rule. Required. Known
      values are: "Dimension" and "Tag".
-    :vartype resource_type: Union[str, "CostAllocationResourceType"]
+    :vartype resourceType: Union[str, "CostAllocationResourceType"]
     :ivar name: If resource type is dimension, this must be either ResourceGroupName or
      SubscriptionId. If resource type is tag, this must be a valid Azure tag. Required.
     :vartype name: str
@@ -784,9 +784,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -801,9 +801,9 @@ class CostAllocationRuleDefinition(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Cost allocation rule properties.
     :vartype properties: "CostAllocationRuleProperties"
     """
@@ -815,12 +815,12 @@ class CostAllocationRuleDefinition(ProxyResource):
 class CostAllocationRuleDetails(TypedDict, total=False):
     """Resource details of the cost allocation rule.
 
-    :ivar source_resources: Source resources for cost allocation. At this time, this list can
+    :ivar sourceResources: Source resources for cost allocation. At this time, this list can
      contain no more than one element.
-    :vartype source_resources: list["SourceCostAllocationResource"]
-    :ivar target_resources: Target resources for cost allocation. At this time, this list can
+    :vartype sourceResources: list["SourceCostAllocationResource"]
+    :ivar targetResources: Target resources for cost allocation. At this time, this list can
      contain no more than one element.
-    :vartype target_resources: list["TargetCostAllocationResource"]
+    :vartype targetResources: list["TargetCostAllocationResource"]
     """
 
     sourceResources: list["SourceCostAllocationResource"]
@@ -841,11 +841,11 @@ class CostAllocationRuleProperties(TypedDict, total=False):
     :ivar status: Status of the rule. Required. Known values are: "NotActive", "Active", and
      "Processing".
     :vartype status: Union[str, "RuleStatus"]
-    :ivar created_date: Time at which the rule was created. Rules that change cost for the same
+    :ivar createdDate: Time at which the rule was created. Rules that change cost for the same
      resource are applied in order of creation.
-    :vartype created_date: str
-    :ivar updated_date: Time at which the rule was last updated.
-    :vartype updated_date: str
+    :vartype createdDate: str
+    :ivar updatedDate: Time at which the rule was last updated.
+    :vartype updatedDate: str
     """
 
     description: str
@@ -886,9 +886,9 @@ class CostManagementProxyResource(TypedDict, total=False):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
-     used to determine whether the user is updating the latest version or not.
-    :vartype e_tag: str
+    :ivar eTag: eTag of the resource. To handle concurrent update scenario, this field will be used
+     to determine whether the user is updating the latest version or not.
+    :vartype eTag: str
     """
 
     id: str
@@ -917,6 +917,21 @@ class CurrentSpend(TypedDict, total=False):
     """The total amount of cost which is being tracked by the budget."""
     unit: str
     """The unit of measure for the budget amount."""
+
+
+class CustomerMetadata(TypedDict, total=False):
+    """The customer billing metadata.
+
+    :ivar billingAccountId: Customer billing account id. Required.
+    :vartype billingAccountId: str
+    :ivar billingProfileId: Customer billing profile id. Required.
+    :vartype billingProfileId: str
+    """
+
+    billingAccountId: Required[str]
+    """Customer billing account id. Required."""
+    billingProfileId: Required[str]
+    """Customer billing profile id. Required."""
 
 
 class DismissAlertPayload(TypedDict, total=False):
@@ -956,9 +971,9 @@ class Export(ExtensionResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of the export.
     :vartype properties: "ExportProperties"
     :ivar identity: The managed identity associated with Export.
@@ -966,9 +981,9 @@ class Export(ExtensionResource):
     :ivar location: The location of the Export's managed identity. Only required when utilizing
      managed identity.
     :vartype location: str
-    :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
-     used to determine whether the user is updating the latest version or not.
-    :vartype e_tag: str
+    :ivar eTag: eTag of the resource. To handle concurrent update scenario, this field will be used
+     to determine whether the user is updating the latest version or not.
+    :vartype eTag: str
     """
 
     properties: "ExportProperties"
@@ -1006,9 +1021,9 @@ class ExportDatasetConfiguration(TypedDict, total=False):
      export will include all available columns. The available columns can vary by customer channel
      (see examples).
     :vartype columns: list[str]
-    :ivar data_version: The data version for the selected for the export. If not provided then the
+    :ivar dataVersion: The data version for the selected for the export. If not provided then the
      export will default to latest data version.
-    :vartype data_version: str
+    :vartype dataVersion: str
     :ivar filters: Filters associated with the data sets.
     :vartype filters: list["FilterItems"]
     """
@@ -1037,10 +1052,10 @@ class ExportDefinition(TypedDict, total=False):
      time period must be provided. Required. Known values are: "MonthToDate", "BillingMonthToDate",
      "TheLastMonth", "TheLastBillingMonth", "WeekToDate", "Custom", and "TheCurrentMonth".
     :vartype timeframe: Union[str, "TimeframeType"]
-    :ivar time_period: Has time period for pulling data for the export.
-    :vartype time_period: "ExportTimePeriod"
-    :ivar data_set: The definition for data in the export.
-    :vartype data_set: "ExportDataset"
+    :ivar timePeriod: Has time period for pulling data for the export.
+    :vartype timePeriod: "ExportTimePeriod"
+    :ivar dataSet: The definition for data in the export.
+    :vartype dataSet: "ExportDataset"
     """
 
     type: Required[Union[str, "ExportType"]]
@@ -1082,23 +1097,23 @@ class ExportDeliveryDestination(TypedDict, total=False):
     :ivar type: The export delivery destination type. Currently only 'AzureBlob' is supported.
      "AzureBlob"
     :vartype type: Union[str, "DestinationType"]
-    :ivar resource_id: The resource id of the storage account where exports will be delivered. This
+    :ivar resourceId: The resource id of the storage account where exports will be delivered. This
      is not required if a sasToken and storageAccount are specified.
-    :vartype resource_id: str
+    :vartype resourceId: str
     :ivar container: The name of the container where exports will be uploaded. If the container
      does not exist it will be created. Required.
     :vartype container: str
-    :ivar root_folder_path: The name of the directory where exports will be uploaded.
-    :vartype root_folder_path: str
-    :ivar sas_token: A SAS token for the storage account. For a restricted set of Azure customers
+    :ivar rootFolderPath: The name of the directory where exports will be uploaded.
+    :vartype rootFolderPath: str
+    :ivar sasToken: A SAS token for the storage account. For a restricted set of Azure customers
      this together with storageAccount can be specified instead of resourceId. Note: the value
      returned by the API for this property will always be obfuscated. Returning this same obfuscated
      value will not result in the SAS token being updated. To update this value a new SAS token must
      be specified.
-    :vartype sas_token: str
-    :ivar storage_account: The storage account where exports will be uploaded. For a restricted set
+    :vartype sasToken: str
+    :ivar storageAccount: The storage account where exports will be uploaded. For a restricted set
      of Azure customers this together with sasToken can be specified instead of resourceId.
-    :vartype storage_account: str
+    :vartype storageAccount: str
     """
 
     type: Union[str, "DestinationType"]
@@ -1148,33 +1163,33 @@ class ExportProperties(CommonExportProperties):
 
     :ivar format: The format of the export being delivered. Known values are: "Csv" and "Parquet".
     :vartype format: Union[str, "FormatType"]
-    :ivar delivery_info: Has delivery information for the export. Required.
-    :vartype delivery_info: "ExportDeliveryInfo"
+    :ivar deliveryInfo: Has delivery information for the export. Required.
+    :vartype deliveryInfo: "ExportDeliveryInfo"
     :ivar definition: Has the definition for the export. Required.
     :vartype definition: "ExportDefinition"
-    :ivar run_history: If requested, has the most recent run history for the export.
-    :vartype run_history: "ExportExecutionListResult"
-    :ivar partition_data: If set to true, exported data will be partitioned by size and placed in a
+    :ivar runHistory: If requested, has the most recent run history for the export.
+    :vartype runHistory: "ExportExecutionListResult"
+    :ivar partitionData: If set to true, exported data will be partitioned by size and placed in a
      blob directory together with a manifest file.
-    :vartype partition_data: bool
-    :ivar data_overwrite_behavior: Allow customers to select overwrite
-     data(OverwritePreviousReport) for exports. This setting will enable overwrite data for the same
-     month in customer storage account. By default set to CreateNewReport. Known values are:
-     "OverwritePreviousReport" and "CreateNewReport".
-    :vartype data_overwrite_behavior: Union[str, "DataOverwriteBehaviorType"]
-    :ivar compression_mode: Allow customers to select compress data for exports. This setting will
+    :vartype partitionData: bool
+    :ivar dataOverwriteBehavior: Allow customers to select overwrite data(OverwritePreviousReport)
+     for exports. This setting will enable overwrite data for the same month in customer storage
+     account. By default set to CreateNewReport. Known values are: "OverwritePreviousReport" and
+     "CreateNewReport".
+    :vartype dataOverwriteBehavior: Union[str, "DataOverwriteBehaviorType"]
+    :ivar compressionMode: Allow customers to select compress data for exports. This setting will
      enable destination file compression scheme at runtime. By default set to None. Gzip is for csv
      and snappy for parquet. Known values are: "gzip", "snappy", and "none".
-    :vartype compression_mode: Union[str, "CompressionModeType"]
-    :ivar export_description: The export description set by customer at time of export
+    :vartype compressionMode: Union[str, "CompressionModeType"]
+    :ivar exportDescription: The export description set by customer at time of export
      creation/update.
-    :vartype export_description: str
-    :ivar next_run_time_estimate: If the export has an active schedule, provides an estimate of the
+    :vartype exportDescription: str
+    :ivar nextRunTimeEstimate: If the export has an active schedule, provides an estimate of the
      next run time.
-    :vartype next_run_time_estimate: str
-    :ivar system_suspension_context: The export suspension reason if export is in SystemSuspended
+    :vartype nextRunTimeEstimate: str
+    :ivar systemSuspensionContext: The export suspension reason if export is in SystemSuspended
      state. This is not populated currently.
-    :vartype system_suspension_context: "ExportSuspensionContext"
+    :vartype systemSuspensionContext: "ExportSuspensionContext"
     :ivar schedule: Has schedule information for the export.
     :vartype schedule: "ExportSchedule"
     """
@@ -1193,8 +1208,8 @@ ExportRecurrencePeriod = TypedDict(
 )
 ExportRecurrencePeriod.__doc__ = """The start and end date for recurrence schedule.
 
-:ivar from_property: The start date of recurrence. Required.
-:vartype from_property: str
+:ivar from: The start date of recurrence. Required.
+:vartype from: str
 :ivar to: The end date of recurrence.
 :vartype to: str
 """
@@ -1209,9 +1224,9 @@ class ExportRun(CostManagementProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
-     used to determine whether the user is updating the latest version or not.
-    :vartype e_tag: str
+    :ivar eTag: eTag of the resource. To handle concurrent update scenario, this field will be used
+     to determine whether the user is updating the latest version or not.
+    :vartype eTag: str
     :ivar properties: The properties of the export run.
     :vartype properties: "ExportRunProperties"
     """
@@ -1223,30 +1238,30 @@ class ExportRun(CostManagementProxyResource):
 class ExportRunProperties(TypedDict, total=False):
     """The properties of the export run.
 
-    :ivar execution_type: The type of the export run. Known values are: "OnDemand" and "Scheduled".
-    :vartype execution_type: Union[str, "ExecutionType"]
+    :ivar executionType: The type of the export run. Known values are: "OnDemand" and "Scheduled".
+    :vartype executionType: Union[str, "ExecutionType"]
     :ivar status: The last known status of the export run. Known values are: "Queued",
      "InProgress", "Completed", "Failed", "Timeout", "NewDataNotAvailable", and "DataNotAvailable".
     :vartype status: Union[str, "ExecutionStatus"]
-    :ivar submitted_by: The identifier for the entity that triggered the export. For on-demand runs
+    :ivar submittedBy: The identifier for the entity that triggered the export. For on-demand runs
      it is the user email. For scheduled runs it is 'System'.
-    :vartype submitted_by: str
-    :ivar submitted_time: The time when export was queued to be run.
-    :vartype submitted_time: str
-    :ivar processing_start_time: The time when export was picked up to be run.
-    :vartype processing_start_time: str
-    :ivar processing_end_time: The time when the export run finished.
-    :vartype processing_end_time: str
-    :ivar start_date: The start datetime for the export.
-    :vartype start_date: str
-    :ivar end_date: The end datetime for the export.
-    :vartype end_date: str
-    :ivar file_name: The name of the exported file.
-    :vartype file_name: str
-    :ivar manifest_file: The manifest file location(URI location) for the exported files.
-    :vartype manifest_file: str
-    :ivar run_settings: The export settings that were in effect for this run.
-    :vartype run_settings: "CommonExportProperties"
+    :vartype submittedBy: str
+    :ivar submittedTime: The time when export was queued to be run.
+    :vartype submittedTime: str
+    :ivar processingStartTime: The time when export was picked up to be run.
+    :vartype processingStartTime: str
+    :ivar processingEndTime: The time when the export run finished.
+    :vartype processingEndTime: str
+    :ivar startDate: The start datetime for the export.
+    :vartype startDate: str
+    :ivar endDate: The end datetime for the export.
+    :vartype endDate: str
+    :ivar fileName: The name of the exported file.
+    :vartype fileName: str
+    :ivar manifestFile: The manifest file location(URI location) for the exported files.
+    :vartype manifestFile: str
+    :ivar runSettings: The export settings that were in effect for this run.
+    :vartype runSettings: "CommonExportProperties"
     :ivar error: The details of any error.
     :vartype error: "ErrorDetails"
     """
@@ -1282,8 +1297,8 @@ class ExportRunProperties(TypedDict, total=False):
 class ExportRunRequest(TypedDict, total=False):
     """The export run request.
 
-    :ivar time_period: Has time period for pulling data for the export.
-    :vartype time_period: "ExportTimePeriod"
+    :ivar timePeriod: Has time period for pulling data for the export.
+    :vartype timePeriod: "ExportTimePeriod"
     """
 
     timePeriod: "ExportTimePeriod"
@@ -1300,9 +1315,9 @@ class ExportSchedule(TypedDict, total=False):
     :ivar recurrence: The schedule recurrence. Known values are: "Daily", "Weekly", "Monthly", and
      "Annually".
     :vartype recurrence: Union[str, "RecurrenceType"]
-    :ivar recurrence_period: Has start and end date of the recurrence. The start date must be in
+    :ivar recurrencePeriod: Has start and end date of the recurrence. The start date must be in
      future. If present, the end date must be greater than start date.
-    :vartype recurrence_period: "ExportRecurrencePeriod"
+    :vartype recurrencePeriod: "ExportRecurrencePeriod"
     """
 
     status: Union[str, "StatusType"]
@@ -1320,12 +1335,12 @@ class ExportSchedule(TypedDict, total=False):
 class ExportSuspensionContext(TypedDict, total=False):
     """The properties of the export run. This is not populated currently.
 
-    :ivar suspension_code: The code for export suspension.
-    :vartype suspension_code: str
-    :ivar suspension_reason: The detailed reason for export suspension.
-    :vartype suspension_reason: str
-    :ivar suspension_time: The time when the export was suspended.
-    :vartype suspension_time: str
+    :ivar suspensionCode: The code for export suspension.
+    :vartype suspensionCode: str
+    :ivar suspensionReason: The detailed reason for export suspension.
+    :vartype suspensionReason: str
+    :ivar suspensionTime: The time when the export was suspended.
+    :vartype suspensionTime: str
     """
 
     suspensionCode: str
@@ -1347,8 +1362,8 @@ ExportTimePeriod = TypedDict(
 ExportTimePeriod.__doc__ = """The date range for data in the export. This should only be specified with timeFrame set to
 'Custom'. The maximum date range is 1 calendar month.
 
-:ivar from_property: The start date for export data. Required.
-:vartype from_property: str
+:ivar from: The start date for export data. Required.
+:vartype from: str
 :ivar to: The end date for export data. Required.
 :vartype to: str
 """
@@ -1357,8 +1372,8 @@ ExportTimePeriod.__doc__ = """The date range for data in the export. This should
 class FileDestination(TypedDict, total=False):
     """Destination of the view data. This is optional. Currently only CSV format is supported.
 
-    :ivar file_formats: Destination of the view data. Currently only CSV format is supported.
-    :vartype file_formats: list[Union[str, "FileFormat"]]
+    :ivar fileFormats: Destination of the view data. Currently only CSV format is supported.
+    :vartype fileFormats: list[Union[str, "FileFormat"]]
     """
 
     fileFormats: list[Union[str, "FileFormat"]]
@@ -1420,8 +1435,8 @@ class ForecastComparisonExpression(TypedDict, total=False):
     :vartype name: str
     :ivar operator: The operator to use for comparison. Required. "In"
     :vartype operator: Union[str, "ForecastOperatorType"]
-    :ivar values_property: Array of values to use for comparison. Required.
-    :vartype values_property: list[str]
+    :ivar values: Array of values to use for comparison. Required.
+    :vartype values: list[str]
     """
 
     name: Required[str]
@@ -1484,14 +1499,14 @@ class ForecastDefinition(TypedDict, total=False):
     :ivar timeframe: The time frame for pulling data for the forecast. If custom, then a specific
      time period must be provided. Required. "Custom"
     :vartype timeframe: Union[str, "ForecastTimeframe"]
-    :ivar time_period: Has time period for pulling data for the forecast.
-    :vartype time_period: "ForecastTimePeriod"
+    :ivar timePeriod: Has time period for pulling data for the forecast.
+    :vartype timePeriod: "ForecastTimePeriod"
     :ivar dataset: Has definition for data in this forecast. Required.
     :vartype dataset: "ForecastDataset"
-    :ivar include_actual_cost: A boolean determining if actualCost will be included.
-    :vartype include_actual_cost: bool
-    :ivar include_fresh_partial_cost: A boolean determining if FreshPartialCost will be included.
-    :vartype include_fresh_partial_cost: bool
+    :ivar includeActualCost: A boolean determining if actualCost will be included.
+    :vartype includeActualCost: bool
+    :ivar includeFreshPartialCost: A boolean determining if FreshPartialCost will be included.
+    :vartype includeFreshPartialCost: bool
     """
 
     type: Required[Union[str, "ForecastType"]]
@@ -1522,10 +1537,10 @@ ForecastFilter = TypedDict(
 )
 ForecastFilter.__doc__ = """The filter expression to be used in the export.
 
-:ivar and_property: The logical "AND" expression. Must have at least 2 items.
-:vartype and_property: list["ForecastFilter"]
-:ivar or_property: The logical "OR" expression. Must have at least 2 items.
-:vartype or_property: list["ForecastFilter"]
+:ivar and: The logical "AND" expression. Must have at least 2 items.
+:vartype and: list["ForecastFilter"]
+:ivar or: The logical "OR" expression. Must have at least 2 items.
+:vartype or: list["ForecastFilter"]
 :ivar dimensions: Has comparison expression for a dimension.
 :vartype dimensions: "ForecastComparisonExpression"
 :ivar tags: Has comparison expression for a tag.
@@ -1562,8 +1577,8 @@ ForecastTimePeriod = TypedDict(
 )
 ForecastTimePeriod.__doc__ = """Has time period for pulling data for the forecast.
 
-:ivar from_property: The start date to pull data from. Required.
-:vartype from_property: str
+:ivar from: The start date to pull data from. Required.
+:vartype from: str
 :ivar to: The end date to pull data to. Required.
 :vartype to: str
 """
@@ -1575,24 +1590,24 @@ class GenerateCostDetailsReportRequestDefinition(TypedDict, total=False):  # pyl
     :ivar metric: The type of the detailed report. By default ActualCost is provided. Known values
      are: "ActualCost" and "AmortizedCost".
     :vartype metric: Union[str, "CostDetailsMetricType"]
-    :ivar time_period: The specific date range of cost details requested for the report. This
+    :ivar timePeriod: The specific date range of cost details requested for the report. This
      parameter cannot be used alongside either the invoiceId or billingPeriod parameters. If a
      timePeriod, invoiceId or billingPeriod parameter is not provided in the request body the API
      will return the current month's cost. API only allows data to be pulled for 1 month or less and
      no older than 13 months. If no timePeriod or billingPeriod or invoiceId is provided the API
      defaults to the open month time period.
-    :vartype time_period: "CostDetailsTimePeriod"
-    :ivar billing_period: This parameter can be used only by Enterprise Agreement customers. Use
-     the YearMonth(e.g. 202008) format. This parameter cannot be used alongside either the invoiceId
-     or timePeriod parameters. If a timePeriod, invoiceId or billingPeriod parameter is not provided
-     in the request body the API will return the current month's cost.
-    :vartype billing_period: str
-    :ivar invoice_id: This parameter can only be used by Microsoft Customer Agreement customers.
+    :vartype timePeriod: "CostDetailsTimePeriod"
+    :ivar billingPeriod: This parameter can be used only by Enterprise Agreement customers. Use the
+     YearMonth(e.g. 202008) format. This parameter cannot be used alongside either the invoiceId or
+     timePeriod parameters. If a timePeriod, invoiceId or billingPeriod parameter is not provided in
+     the request body the API will return the current month's cost.
+    :vartype billingPeriod: str
+    :ivar invoiceId: This parameter can only be used by Microsoft Customer Agreement customers.
      Additionally, it can only be used at the Billing Profile or Customer scope. This parameter
      cannot be used alongside either the billingPeriod or timePeriod parameters. If a timePeriod,
      invoiceId or billingPeriod parameter is not provided in the request body the API will return
      the current month's cost.
-    :vartype invoice_id: str
+    :vartype invoiceId: str
     """
 
     metric: Union[str, "CostDetailsMetricType"]
@@ -1623,21 +1638,21 @@ class GenerateDetailedCostReportDefinition(TypedDict, total=False):
     :ivar metric: The type of the detailed report. By default ActualCost is provided. Known values
      are: "ActualCost" and "AmortizedCost".
     :vartype metric: Union[str, "GenerateDetailedCostReportMetricType"]
-    :ivar time_period: Has time period for pulling data for the cost detailed report. Can only have
+    :ivar timePeriod: Has time period for pulling data for the cost detailed report. Can only have
      one of either timePeriod or invoiceId or billingPeriod parameters. If none provided current
      month cost is provided.
-    :vartype time_period: "GenerateDetailedCostReportTimePeriod"
-    :ivar billing_period: Billing period in YearMonth(e.g. 202008) format. Only for legacy
+    :vartype timePeriod: "GenerateDetailedCostReportTimePeriod"
+    :ivar billingPeriod: Billing period in YearMonth(e.g. 202008) format. Only for legacy
      enterprise customers can use this. Can only have one of either timePeriod or invoiceId or
      billingPeriod parameters. If none provided current month cost is provided.
-    :vartype billing_period: str
-    :ivar invoice_id: Invoice ID for Pay-as-you-go and Microsoft Customer Agreement scopes. Can
-     only have one of either timePeriod or invoiceId or billingPeriod parameters. If none provided
+    :vartype billingPeriod: str
+    :ivar invoiceId: Invoice ID for Pay-as-you-go and Microsoft Customer Agreement scopes. Can only
+     have one of either timePeriod or invoiceId or billingPeriod parameters. If none provided
      current month cost is provided.
-    :vartype invoice_id: str
-    :ivar customer_id: Customer ID for Microsoft Customer Agreement scopes (Invoice Id is also
+    :vartype invoiceId: str
+    :ivar customerId: Customer ID for Microsoft Customer Agreement scopes (Invoice Id is also
      required for this).
-    :vartype customer_id: str
+    :vartype customerId: str
     """
 
     metric: Union[str, "GenerateDetailedCostReportMetricType"]
@@ -1693,6 +1708,55 @@ class KpiProperties(TypedDict, total=False):
     """show the KPI in the UI?."""
 
 
+class MarkupRule(ProxyResource):
+    """Markup rule.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: Markup rule properties.
+    :vartype properties: "MarkupRuleProperties"
+    """
+
+    properties: "MarkupRuleProperties"
+    """Markup rule properties."""
+
+
+class MarkupRuleProperties(TypedDict, total=False):
+    """The properties of the markup rule.
+
+    :ivar description: The description of the markup rule.
+    :vartype description: str
+    :ivar percentage: The markup percentage of the rule. Required.
+    :vartype percentage: float
+    :ivar startDate: Starting date of the markup rule. Required.
+    :vartype startDate: str
+    :ivar endDate: Ending date of the markup rule.
+    :vartype endDate: str
+    :ivar customerDetails: Customer information for the markup rule. Required.
+    :vartype customerDetails: "CustomerMetadata"
+    """
+
+    description: str
+    """The description of the markup rule."""
+    percentage: Required[float]
+    """The markup percentage of the rule. Required."""
+    startDate: Required[str]
+    """Starting date of the markup rule. Required."""
+    endDate: str
+    """Ending date of the markup rule."""
+    customerDetails: Required["CustomerMetadata"]
+    """Customer information for the markup rule. Required."""
+
+
 class Notification(TypedDict, total=False):
     """The notification associated with a budget.
 
@@ -1732,27 +1796,27 @@ class Notification(TypedDict, total=False):
      Supported for CategoryType(s): ReservationUtilization. Known values are: "Daily", "Weekly", and
      "Monthly".
     :vartype frequency: Union[str, "Frequency"]
-    :ivar contact_emails: Email addresses to send the notification to when the threshold is
+    :ivar contactEmails: Email addresses to send the notification to when the threshold is
      breached. Must have at least one contact email or contact group specified at the Subscription
      or Resource Group scopes. All other scopes must have at least one contact email specified.
 
      Supported for CategoryType(s): Cost, ReservationUtilization. Required.
-    :vartype contact_emails: list[str]
-    :ivar contact_roles: Subscription or Resource Group scopes only. Contact roles to send the
+    :vartype contactEmails: list[str]
+    :ivar contactRoles: Subscription or Resource Group scopes only. Contact roles to send the
      notification to when the threshold is breached.
 
      Supported for CategoryType(s): Cost.
-    :vartype contact_roles: list[str]
-    :ivar contact_groups: Subscription or Resource Group scopes only. Action groups to send the
+    :vartype contactRoles: list[str]
+    :ivar contactGroups: Subscription or Resource Group scopes only. Action groups to send the
      notification to when the threshold is exceeded. Must be provided as a fully qualified Azure
      resource id.
 
      Supported for CategoryType(s): Cost.
-    :vartype contact_groups: list[str]
-    :ivar threshold_type: The type of threshold.
+    :vartype contactGroups: list[str]
+    :ivar thresholdType: The type of threshold.
 
      Supported for CategoryType(s): Cost. Known values are: "Actual" and "Forecasted".
-    :vartype threshold_type: Union[str, "ThresholdType"]
+    :vartype thresholdType: Union[str, "ThresholdType"]
     :ivar locale: Language in which the recipient will receive the notification,
 
      Supported for CategoryType(s): Cost, ReservationUtilization. Known values are: "en-us",
@@ -1833,9 +1897,9 @@ class NotificationProperties(TypedDict, total=False):
     :vartype language: str
     :ivar message: Optional message to be added in the email. Length is limited to 250 characters.
     :vartype message: str
-    :ivar regional_format: Regional format used for formatting date/time and currency values in the
+    :ivar regionalFormat: Regional format used for formatting date/time and currency values in the
      email.
-    :vartype regional_format: str
+    :vartype regionalFormat: str
     :ivar subject: Subject of the email. Length is limited to 70 characters. Required.
     :vartype subject: str
     """
@@ -1889,8 +1953,8 @@ class QueryComparisonExpression(TypedDict, total=False):
     :vartype name: str
     :ivar operator: The operator to use for comparison. Required. "In"
     :vartype operator: Union[str, "QueryOperatorType"]
-    :ivar values_property: Array of values to use for comparison. Required.
-    :vartype values_property: list[str]
+    :ivar values: Array of values to use for comparison. Required.
+    :vartype values: list[str]
     """
 
     name: Required[str]
@@ -1961,8 +2025,8 @@ class QueryDefinition(TypedDict, total=False):
      period must be provided. Required. Known values are: "MonthToDate", "BillingMonthToDate",
      "TheLastMonth", "TheLastBillingMonth", "WeekToDate", "Custom", and "TheCurrentMonth".
     :vartype timeframe: Union[str, "TimeframeType"]
-    :ivar time_period: Has time period for pulling data for the query.
-    :vartype time_period: "QueryTimePeriod"
+    :ivar timePeriod: Has time period for pulling data for the query.
+    :vartype timePeriod: "QueryTimePeriod"
     :ivar dataset: Has definition for data in this query. Required.
     :vartype dataset: "QueryDataset"
     """
@@ -1993,10 +2057,10 @@ QueryFilter = TypedDict(
 )
 QueryFilter.__doc__ = """The filter expression to be used in the export.
 
-:ivar and_property: The logical "AND" expression. Must have at least 2 items.
-:vartype and_property: list["QueryFilter"]
-:ivar or_property: The logical "OR" expression. Must have at least 2 items.
-:vartype or_property: list["QueryFilter"]
+:ivar and: The logical "AND" expression. Must have at least 2 items.
+:vartype and: list["QueryFilter"]
+:ivar or: The logical "OR" expression. Must have at least 2 items.
+:vartype or: list["QueryFilter"]
 :ivar dimensions: Has comparison expression for a dimension.
 :vartype dimensions: "QueryComparisonExpression"
 :ivar tags: Has comparison expression for a tag.
@@ -2030,8 +2094,8 @@ QueryTimePeriod = TypedDict(
 )
 QueryTimePeriod.__doc__ = """The start and end date for pulling data for the query.
 
-:ivar from_property: The start date to pull data from. Required.
-:vartype from_property: str
+:ivar from: The start date to pull data from. Required.
+:vartype from: str
 :ivar to: The end date to pull data to. Required.
 :vartype to: str
 """
@@ -2060,8 +2124,8 @@ class ReportConfigComparisonExpression(TypedDict, total=False):
     :ivar operator: The operator to use for comparison. Required. Known values are: "In" and
      "Contains".
     :vartype operator: Union[str, "OperatorType"]
-    :ivar values_property: Array of values to use for comparison. Required.
-    :vartype values_property: list[str]
+    :ivar values: Array of values to use for comparison. Required.
+    :vartype values: list[str]
     """
 
     name: Required[str]
@@ -2134,12 +2198,12 @@ class ReportConfigDefinition(TypedDict, total=False):
      time period must be provided. Required. Known values are: "WeekToDate", "MonthToDate",
      "YearToDate", and "Custom".
     :vartype timeframe: Union[str, "ReportTimeframeType"]
-    :ivar time_period: Has time period for pulling data for the report.
-    :vartype time_period: "ReportConfigTimePeriod"
-    :ivar data_set: Has definition for data in this report config.
-    :vartype data_set: "ReportConfigDataset"
-    :ivar include_monetary_commitment: If true, report includes monetary commitment.
-    :vartype include_monetary_commitment: bool
+    :ivar timePeriod: Has time period for pulling data for the report.
+    :vartype timePeriod: "ReportConfigTimePeriod"
+    :ivar dataSet: Has definition for data in this report config.
+    :vartype dataSet: "ReportConfigDataset"
+    :ivar includeMonetaryCommitment: If true, report includes monetary commitment.
+    :vartype includeMonetaryCommitment: bool
     """
 
     type: Required[Union[str, "ReportType"]]
@@ -2170,10 +2234,10 @@ ReportConfigFilter = TypedDict(
 )
 ReportConfigFilter.__doc__ = """The filter expression to be used in the report.
 
-:ivar and_property: The logical "AND" expression. Must have at least 2 items.
-:vartype and_property: list["ReportConfigFilter"]
-:ivar or_property: The logical "OR" expression. Must have at least 2 items.
-:vartype or_property: list["ReportConfigFilter"]
+:ivar and: The logical "AND" expression. Must have at least 2 items.
+:vartype and: list["ReportConfigFilter"]
+:ivar or: The logical "OR" expression. Must have at least 2 items.
+:vartype or: list["ReportConfigFilter"]
 :ivar dimensions: Has comparison expression for a dimension.
 :vartype dimensions: "ReportConfigComparisonExpression"
 :ivar tags: Has comparison expression for a tag.
@@ -2224,8 +2288,8 @@ ReportConfigTimePeriod = TypedDict(
 )
 ReportConfigTimePeriod.__doc__ = """The start and end date for pulling data for the report.
 
-:ivar from_property: The start date to pull data from. Required.
-:vartype from_property: str
+:ivar from: The start date to pull data from. Required.
+:vartype from: str
 :ivar to: The end date to pull data to. Required.
 :vartype to: str
 """
@@ -2242,16 +2306,16 @@ class ScheduledAction(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of the scheduled action.
     :vartype properties: "ScheduledActionProperties"
-    :ivar e_tag: Resource Etag. For update calls, eTag is optional and can be specified to achieve
+    :ivar eTag: Resource Etag. For update calls, eTag is optional and can be specified to achieve
      optimistic concurrency. Fetch the resource's eTag by doing a 'GET' call first and then
      including the latest eTag as part of the request body or 'If-Match' header while performing the
      update. For create calls, eTag is not required.
-    :vartype e_tag: str
+    :vartype eTag: str
     :ivar kind: Kind of the scheduled action. Known values are: "Email" and "InsightAlert".
     :vartype kind: Union[str, "ScheduledActionKind"]
     """
@@ -2270,15 +2334,15 @@ class ScheduledAction(ProxyResource):
 class ScheduledActionProperties(TypedDict, total=False):
     """The properties of the scheduled action.
 
-    :ivar display_name: Scheduled action name. Required.
-    :vartype display_name: str
-    :ivar file_destination: Destination format of the view data. This is optional.
-    :vartype file_destination: "FileDestination"
+    :ivar displayName: Scheduled action name. Required.
+    :vartype displayName: str
+    :ivar fileDestination: Destination format of the view data. This is optional.
+    :vartype fileDestination: "FileDestination"
     :ivar notification: Notification properties based on scheduled action kind. Required.
     :vartype notification: "NotificationProperties"
-    :ivar notification_email: Email address of the point of contact that should get the unsubscribe
+    :ivar notificationEmail: Email address of the point of contact that should get the unsubscribe
      requests and notification emails.
-    :vartype notification_email: str
+    :vartype notificationEmail: str
     :ivar schedule: Schedule of the scheduled action. Required.
     :vartype schedule: "ScheduleProperties"
     :ivar scope: For private scheduled action(Create or Update), scope will be empty.<br /> For
@@ -2302,9 +2366,9 @@ class ScheduledActionProperties(TypedDict, total=False):
     :ivar status: Status of the scheduled action. Required. Known values are: "Enabled", "Expired",
      and "Disabled".
     :vartype status: Union[str, "ScheduledActionStatus"]
-    :ivar view_id: Cost analysis viewId used for scheduled action. For example,
+    :ivar viewId: Cost analysis viewId used for scheduled action. For example,
      '/providers/Microsoft.CostManagement/views/swaggerExample'. Required.
-    :vartype view_id: str
+    :vartype viewId: str
     """
 
     displayName: Required[str]
@@ -2350,22 +2414,22 @@ class ScheduleProperties(TypedDict, total=False):
     :ivar frequency: Frequency of the schedule. Required. Known values are: "Daily", "Weekly", and
      "Monthly".
     :vartype frequency: Union[str, "ScheduleFrequency"]
-    :ivar hour_of_day: UTC time at which cost analysis data will be emailed.
-    :vartype hour_of_day: int
-    :ivar days_of_week: Day names in english on which cost analysis data will be emailed. This
+    :ivar hourOfDay: UTC time at which cost analysis data will be emailed.
+    :vartype hourOfDay: int
+    :ivar daysOfWeek: Day names in english on which cost analysis data will be emailed. This
      property is applicable when frequency is Weekly or Monthly.
-    :vartype days_of_week: list[Union[str, "DaysOfWeek"]]
-    :ivar weeks_of_month: Weeks in which cost analysis data will be emailed. This property is
+    :vartype daysOfWeek: list[Union[str, "DaysOfWeek"]]
+    :ivar weeksOfMonth: Weeks in which cost analysis data will be emailed. This property is
      applicable when frequency is Monthly and used in combination with daysOfWeek.
-    :vartype weeks_of_month: list[Union[str, "WeeksOfMonth"]]
-    :ivar day_of_month: UTC day on which cost analysis data will be emailed. Must be between 1 and
+    :vartype weeksOfMonth: list[Union[str, "WeeksOfMonth"]]
+    :ivar dayOfMonth: UTC day on which cost analysis data will be emailed. Must be between 1 and
      31. This property is applicable when frequency is Monthly and overrides weeksOfMonth or
      daysOfWeek.
-    :vartype day_of_month: int
-    :ivar start_date: The start date and time of the scheduled action (UTC). Required.
-    :vartype start_date: str
-    :ivar end_date: The end date and time of the scheduled action (UTC). Required.
-    :vartype end_date: str
+    :vartype dayOfMonth: int
+    :ivar startDate: The start date and time of the scheduled action (UTC). Required.
+    :vartype startDate: str
+    :ivar endDate: The end date and time of the scheduled action (UTC). Required.
+    :vartype endDate: str
     """
 
     frequency: Required[Union[str, "ScheduleFrequency"]]
@@ -2390,15 +2454,15 @@ class ScheduleProperties(TypedDict, total=False):
 class SourceCostAllocationResource(CostAllocationResource):
     """Source resources for cost allocation.
 
-    :ivar resource_type: Type of resources contained in this cost allocation rule. Required. Known
+    :ivar resourceType: Type of resources contained in this cost allocation rule. Required. Known
      values are: "Dimension" and "Tag".
-    :vartype resource_type: Union[str, "CostAllocationResourceType"]
+    :vartype resourceType: Union[str, "CostAllocationResourceType"]
     :ivar name: If resource type is dimension, this must be either ResourceGroupName or
      SubscriptionId. If resource type is tag, this must be a valid Azure tag. Required.
     :vartype name: str
-    :ivar values_property: Source Resources for cost allocation. This list cannot contain more than
-     25 values. Required.
-    :vartype values_property: list[str]
+    :ivar values: Source Resources for cost allocation. This list cannot contain more than 25
+     values. Required.
+    :vartype values: list[str]
     """
 
     values: Required[list[str]]
@@ -2408,12 +2472,12 @@ class SourceCostAllocationResource(CostAllocationResource):
 class SystemAssignedServiceIdentity(TypedDict, total=False):
     """Managed service identity (either system assigned, or none).
 
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+    :ivar principalId: The service principal ID of the system assigned identity. This property will
+     only be provided for a system assigned identity.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
-    :vartype tenant_id: str
+    :vartype tenantId: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
      "None" and "SystemAssigned".
     :vartype type: Union[str, "SystemAssignedServiceIdentityType"]
@@ -2433,20 +2497,20 @@ class SystemAssignedServiceIdentity(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -2468,14 +2532,14 @@ class SystemData(TypedDict, total=False):
 class TagInheritanceProperties(TypedDict, total=False):
     """The properties of the tag inheritance setting.
 
-    :ivar prefer_container_tags: This property defines the behavior when an inherited tag being
+    :ivar preferContainerTags: This property defines the behavior when an inherited tag being
      applied matches a lower scope tag (Eg. Subscription tag matches the resource tag). If set to
      true - when tags match, the highest scope tags will be applied. Billing profile is the highest
      scope,  followed by invoice sections, subscriptions and resource groups (allows overriding of
      lower scope tag values). If set to false - when tags match, the lowest scope tags will be
      applied. So, if a resource has the same tag as a subscription tag, the resource tag will be
      applied (does not allow overriding of lower scope tag values). Required.
-    :vartype prefer_container_tags: bool
+    :vartype preferContainerTags: bool
     """
 
     preferContainerTags: Required[bool]
@@ -2499,9 +2563,9 @@ class TagInheritanceSetting(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of the tag inheritance setting.
     :vartype properties: "TagInheritanceProperties"
     :ivar kind: Specifies the kind of settings. Required. TAGINHERITANCE.
@@ -2527,17 +2591,17 @@ class TagInheritanceSetting(TypedDict, total=False):
 class TargetCostAllocationResource(CostAllocationResource):
     """Target resources for cost allocation.
 
-    :ivar resource_type: Type of resources contained in this cost allocation rule. Required. Known
+    :ivar resourceType: Type of resources contained in this cost allocation rule. Required. Known
      values are: "Dimension" and "Tag".
-    :vartype resource_type: Union[str, "CostAllocationResourceType"]
+    :vartype resourceType: Union[str, "CostAllocationResourceType"]
     :ivar name: If resource type is dimension, this must be either ResourceGroupName or
      SubscriptionId. If resource type is tag, this must be a valid Azure tag. Required.
     :vartype name: str
-    :ivar values_property: Target resources for cost allocation. This list cannot contain more than
-     25 values. Required.
-    :vartype values_property: list["CostAllocationProportion"]
-    :ivar policy_type: Method of cost allocation for the rule. Required. "FixedProportion"
-    :vartype policy_type: Union[str, "CostAllocationPolicyType"]
+    :ivar values: Target resources for cost allocation. This list cannot contain more than 25
+     values. Required.
+    :vartype values: list["CostAllocationProportion"]
+    :ivar policyType: Method of cost allocation for the rule. Required. "FixedProportion"
+    :vartype policyType: Union[str, "CostAllocationPolicyType"]
     """
 
     values: Required[list["CostAllocationProportion"]]
@@ -2557,14 +2621,14 @@ class View(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of the view.
     :vartype properties: "ViewProperties"
-    :ivar e_tag: eTag of the resource. To handle concurrent update scenario, this field will be
-     used to determine whether the user is updating the latest version or not.
-    :vartype e_tag: str
+    :ivar eTag: eTag of the resource. To handle concurrent update scenario, this field will be used
+     to determine whether the user is updating the latest version or not.
+    :vartype eTag: str
     """
 
     properties: "ViewProperties"
@@ -2577,8 +2641,8 @@ class View(ProxyResource):
 class ViewProperties(TypedDict, total=False):
     """The properties of the view.
 
-    :ivar display_name: User input name of the view. Required.
-    :vartype display_name: str
+    :ivar displayName: User input name of the view. Required.
+    :vartype displayName: str
     :ivar scope: Cost Management scope to save the view on. This includes
      'subscriptions/{subscriptionId}' for subscription scope,
      'subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}' for resourceGroup scope,
@@ -2597,12 +2661,12 @@ class ViewProperties(TypedDict, total=False):
      '/providers/Microsoft.CostManagement/externalSubscriptions/{externalSubscriptionName}' for
      ExternalSubscription scope.
     :vartype scope: str
-    :ivar created_on: Date the user created this view.
-    :vartype created_on: str
-    :ivar modified_on: Date when the user last modified this view.
-    :vartype modified_on: str
-    :ivar date_range: Date range of the current view.
-    :vartype date_range: str
+    :ivar createdOn: Date the user created this view.
+    :vartype createdOn: str
+    :ivar modifiedOn: Date when the user last modified this view.
+    :vartype modifiedOn: str
+    :ivar dateRange: Date range of the current view.
+    :vartype dateRange: str
     :ivar currency: Currency of the current view.
     :vartype currency: str
     :ivar query: Query body configuration. Required.

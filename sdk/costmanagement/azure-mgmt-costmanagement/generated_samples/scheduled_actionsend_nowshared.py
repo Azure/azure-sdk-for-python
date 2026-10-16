@@ -35,6 +35,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2025-03-01/scheduledActions/scheduledAction-sendNow-shared.json
+# x-ms-original-file: 2026-06-01/scheduledActions/scheduledAction-sendNow-shared.json
 if __name__ == "__main__":
     main()

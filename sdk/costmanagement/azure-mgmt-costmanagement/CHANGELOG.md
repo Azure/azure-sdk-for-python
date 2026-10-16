@@ -1,5 +1,17 @@
 # Release History
 
+## 5.1.0 (2026-08-12)
+
+### Features Added
+
+  - Client `CostManagementClient` added operation group `markup_rules`
+  - Enum `Scope` added member `MANAGEMENT_GROUP`
+  - Added model `CustomerMetadata`
+  - Added model `ManagementGroupScopeBenefitRecommendationProperties`
+  - Added model `MarkupRule`
+  - Added model `MarkupRuleProperties`
+  - Added operation group `MarkupRulesOperations`
+
 ## 5.0.0 (2026-07-08)
 
 ### Features Added

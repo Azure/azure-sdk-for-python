@@ -21,6 +21,7 @@ from ._operations import ViewsOperations  # type: ignore
 from ._operations import AlertsOperations  # type: ignore
 from ._operations import ScheduledActionsOperations  # type: ignore
 from ._operations import SettingsOperations  # type: ignore
+from ._operations import MarkupRulesOperations  # type: ignore
 from ._operations import GenerateCostDetailsReportOperations  # type: ignore
 from ._operations import CostAllocationRulesOperations  # type: ignore
 from ._operations import BenefitRecommendationsOperations  # type: ignore
@@ -47,6 +48,7 @@ __all__ = [
     "AlertsOperations",
     "ScheduledActionsOperations",
     "SettingsOperations",
+    "MarkupRulesOperations",
     "GenerateCostDetailsReportOperations",
     "CostAllocationRulesOperations",
     "BenefitRecommendationsOperations",
