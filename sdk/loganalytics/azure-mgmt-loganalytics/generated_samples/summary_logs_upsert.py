@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -35,6 +36,12 @@ def main():
         workspace_name="oiautorest6685",
         summary_logs_name="summarylogs1",
         parameters={
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/oiautorest6685/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myIdentity": {}
+                },
+            },
             "properties": {
                 "ruleDefinition": {
                     "binDelay": 10,
@@ -44,12 +51,12 @@ def main():
                     "query": "MyTable_CL",
                 },
                 "ruleType": "User",
-            }
+            },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-07-01/SummaryLogsUpsert.json
+# x-ms-original-file: 2026-03-01/SummaryLogsUpsert.json
 if __name__ == "__main__":
     main()
