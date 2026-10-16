@@ -2286,9 +2286,8 @@ is required for this excluded property.
 The property tells a customer whether a container uses a legacy
 system-defined partition key. Legacy partitionless/system-key container
 compatibility is outside this release's scope.
-The driver requests in [gap 1](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-1)
-and [gap 2](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-2) are closed with no
-implementation planned.
+The driver requests for this property are closed with no implementation
+planned.
 
 For customer operations within the supported scope, this property provides
 no necessary capability. An administration tool could use it to identify

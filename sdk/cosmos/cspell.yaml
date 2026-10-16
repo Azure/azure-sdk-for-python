@@ -13,8 +13,10 @@ words:
   - appidacr
   - AQAAAA
   - AQAAAJ
+  - archs
   - cdfg
   - colls
+  - concs
   - DBA's
   - dedup
   - dedupe
@@ -23,6 +25,7 @@ words:
   - dedups
   - Docoptype
   - formattableorderbyquery
+  - FUNCS
   - globaldb
   - hdrh
   - hdrhistogram
@@ -30,6 +33,10 @@ words:
   - iscontinuationexpected
   - isquery
   - llsn
+  - msrustup
+  - MSRUSTUP
+  - msvc
+  - musllinux
   - mycoll
   - mycontainer
   - mydb
@@ -38,14 +45,20 @@ words:
   - mytext
   - myval
   - noconftest
+  - nprocs
+  - nseen
   - opqrs
   - paas
   - perfdb
   - perfresults
+  - pidx
   - pkrange
   - pkranges
   - ppcb
   - prange
+  - procs
+  - PROCS
+  - pymodule
   - qlist
   - RDFE
   - referer
@@ -53,18 +66,26 @@ words:
   - rerank
   - reranker
   - responsecontinuationtokenlimitinkb
+  - rups
+  - rustc
+  - sdists
   - sessionlsn
   - sproc
   - sprocs
   - Strin
   - Strin'g
+  - syscpu
   - testdb
+  - thrs
   - toctou
   - Tohost
+  - topn
   - ufffd
   - unconfigure
   - undoc
   - unreachability
   - Upserts
   - vals
+  - wids
+  - wsec
   - xjwm
