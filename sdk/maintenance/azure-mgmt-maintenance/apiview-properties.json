@@ -18,7 +18,11 @@
         "azure.mgmt.maintenance.models.MaintenanceWindow": "Microsoft.Maintenance.MaintenanceWindow",
         "azure.mgmt.maintenance.models.Operation": "Azure.ResourceManager.CommonTypes.Operation",
         "azure.mgmt.maintenance.models.OperationInfo": "Azure.ResourceManager.CommonTypes.OperationDisplay",
-        "azure.mgmt.maintenance.models.ScheduledEventApproveResponse": "Microsoft.Maintenance.ScheduledEventApproveResponse",
+        "azure.mgmt.maintenance.models.ScheduledEventsAcknowledgeErrorDetails": "Microsoft.Maintenance.ScheduledEventsAcknowledgeErrorDetails",
+        "azure.mgmt.maintenance.models.ScheduledEventsApproveResponse": "Microsoft.Maintenance.ScheduledEventsApproveResponse",
+        "azure.mgmt.maintenance.models.ScheduledEventsIdList": "Microsoft.Maintenance.ScheduledEventsIdList",
+        "azure.mgmt.maintenance.models.ScheduledEventsListAcknowledgeError": "Microsoft.Maintenance.ScheduledEventsListAcknowledgeError",
+        "azure.mgmt.maintenance.models.ScheduledEventsListAcknowledgeErrorDetails": "Microsoft.Maintenance.ScheduledEventsListAcknowledgeErrorDetails",
         "azure.mgmt.maintenance.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
         "azure.mgmt.maintenance.models.TagSettingsProperties": "Microsoft.Maintenance.TagSettingsProperties",
         "azure.mgmt.maintenance.models.Update": "Microsoft.Maintenance.Update",
@@ -96,8 +100,10 @@
         "azure.mgmt.maintenance.aio.operations.MaintenanceConfigurationsForResourceGroupOperations.list": "Microsoft.Maintenance.MaintenanceConfigurationOperationGroup.list",
         "azure.mgmt.maintenance.operations.ConfigurationAssignmentsWithinSubscriptionOperations.list": "Microsoft.Maintenance.ConfigurationAssignmentsForSubscriptions.list",
         "azure.mgmt.maintenance.aio.operations.ConfigurationAssignmentsWithinSubscriptionOperations.list": "Microsoft.Maintenance.ConfigurationAssignmentsForSubscriptions.list",
-        "azure.mgmt.maintenance.operations.ScheduledEventOperations.acknowledge": "Microsoft.Maintenance.ScheduledEventOperationGroup.acknowledge",
-        "azure.mgmt.maintenance.aio.operations.ScheduledEventOperations.acknowledge": "Microsoft.Maintenance.ScheduledEventOperationGroup.acknowledge",
+        "azure.mgmt.maintenance.operations.ScheduledEventsOperations.acknowledge": "Microsoft.Maintenance.ScheduledEventOperationGroup.acknowledge",
+        "azure.mgmt.maintenance.aio.operations.ScheduledEventsOperations.acknowledge": "Microsoft.Maintenance.ScheduledEventOperationGroup.acknowledge",
+        "azure.mgmt.maintenance.operations.ScheduledEventsOperations.acknowledge_list": "Microsoft.Maintenance.ScheduledEventOperationGroup.acknowledgeList",
+        "azure.mgmt.maintenance.aio.operations.ScheduledEventsOperations.acknowledge_list": "Microsoft.Maintenance.ScheduledEventOperationGroup.acknowledgeList",
         "azure.mgmt.maintenance.operations.ApplyUpdateForResourceGroupOperations.list": "Microsoft.Maintenance.ApplyUpdateForResourceGroupOperationGroup.list",
         "azure.mgmt.maintenance.aio.operations.ApplyUpdateForResourceGroupOperations.list": "Microsoft.Maintenance.ApplyUpdateForResourceGroupOperationGroup.list",
         "azure.mgmt.maintenance.operations.UpdatesOperations.list_parent": "Microsoft.Maintenance.UpdatesOperationGroup.listParent",
@@ -105,5 +111,5 @@
         "azure.mgmt.maintenance.operations.UpdatesOperations.list": "Microsoft.Maintenance.UpdatesOperationGroup.list",
         "azure.mgmt.maintenance.aio.operations.UpdatesOperations.list": "Microsoft.Maintenance.UpdatesOperationGroup.list"
     },
-    "CrossLanguageVersion": "832e7455484c"
+    "CrossLanguageVersion": "14d43b8aaf3a"
 }
