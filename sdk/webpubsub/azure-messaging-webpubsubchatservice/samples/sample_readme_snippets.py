@@ -60,12 +60,12 @@ def list_messages(client: WebPubSubChatServiceClient) -> None:
 def create_topic(client: WebPubSubChatServiceClient) -> None:
     # [START create_topic]
     import os
-    from azure.messaging.webpubsubchatservice.models import ChatTopicCreate
+    from azure.messaging.webpubsubchatservice.models import ChatTopicCreateOrReplace
 
     topic = client.create_or_replace_topic(
         os.environ["WPS_CHAT_ROOM_ID"],
         os.environ["WPS_CHAT_TOPIC_ID"],
-        ChatTopicCreate(title="Announcements"),
+        ChatTopicCreateOrReplace(title="Announcements"),
     )
     print(topic.id, topic.etag)
     # [END create_topic]

@@ -13,10 +13,10 @@ from azure.core.credentials import AzureKeyCredential
 
 from azure.messaging.webpubsubchatservice import WebPubSubChatServiceClient
 from azure.messaging.webpubsubchatservice.aio import WebPubSubChatServiceClient as AsyncClient
-from azure.messaging.webpubsubchatservice import models
+from azure.messaging.webpubsubchatservice import models, types
 
 MODEL_SHAPES = [
-    (models.ChatTopicCreate, {"title"}, {"title"}),
+    (models.ChatTopicCreateOrReplace, {"title"}, {"title"}),
     (models.ChatTopicUpdate, {"title", "state"}, set()),
     (models.ChatMessageUpdate, {"created_by", "content"}, set()),
     (models.ChatRoleCreate, {"permissions"}, {"permissions"}),
@@ -30,7 +30,7 @@ CASES = [
     (
         "create_or_replace_topic",
         ("room", "topic"),
-        models.ChatTopicCreate(title="Title"),
+        models.ChatTopicCreateOrReplace(title="Title"),
         models.ChatTopic,
         {"title": "Title"},
     ),
@@ -47,6 +47,41 @@ CASES = [
         models.ChatTopicUpdate(title="New title"),
         models.ChatTopic,
         {"title": "New title"},
+    ),
+    (
+        "update_message",
+        ("conversation", "message"),
+        models.ChatMessageUpdate(created_by="Updated creator"),
+        models.ChatMessage,
+        {"createdBy": "Updated creator"},
+    ),
+    (
+        "update_topic",
+        ("room", "topic"),
+        types.ChatTopicUpdate(title="New title"),
+        models.ChatTopic,
+        {"title": "New title"},
+    ),
+    (
+        "update_topic",
+        ("room", "topic"),
+        types.ChatTopicUpdate(state=models.ChatTopicState.ARCHIVED),
+        models.ChatTopic,
+        {"state": "Archived"},
+    ),
+    (
+        "update_message",
+        ("conversation", "message"),
+        types.ChatMessageUpdate(createdBy="Updated creator"),
+        models.ChatMessage,
+        {"createdBy": "Updated creator"},
+    ),
+    (
+        "update_message",
+        ("conversation", "message"),
+        types.ChatMessageUpdate(content={"text": "Updated"}),
+        models.ChatMessage,
+        {"content": {"text": "Updated"}},
     ),
     (
         "update_message",

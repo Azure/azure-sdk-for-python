@@ -17,7 +17,7 @@ from azure.messaging.webpubsubchatservice.aio import WebPubSubChatServiceClient 
 from azure.messaging.webpubsubchatservice.models import (
     ChatRoom,
     ChatTopic,
-    ChatTopicCreate,
+    ChatTopicCreateOrReplace,
     ChatTopicState,
     ChatTopicUpdate,
     ChatUserRoom,
@@ -127,7 +127,7 @@ def test_topic_serialization_lifecycle_and_etag():
             "run",
             side_effect=[_response(TOPIC, 201), _response(TOPIC), _response(archived), _response({}, 204)],
         ) as run:
-            topic = client.create_or_replace_topic("room", "topic", ChatTopicCreate(title=TOPIC["title"]))
+            topic = client.create_or_replace_topic("room", "topic", ChatTopicCreateOrReplace(title=TOPIC["title"]))
             assert topic.created_at == datetime.datetime(2026, 8, 1, tzinfo=datetime.timezone.utc)
             fetched = client.get_topic("room", "topic")
             assert fetched.state == ChatTopicState.NORMAL
@@ -157,7 +157,9 @@ async def test_async_topic_serialization_lifecycle_and_etag():
             new_callable=AsyncMock,
             side_effect=[_response(TOPIC, 201), _response(TOPIC), _response(archived), _response({}, 204)],
         ) as run:
-            topic = await client.create_or_replace_topic("room", "topic", ChatTopicCreate(title=TOPIC["title"]))
+            topic = await client.create_or_replace_topic(
+                "room", "topic", ChatTopicCreateOrReplace(title=TOPIC["title"])
+            )
             assert topic.created_at == datetime.datetime(2026, 8, 1, tzinfo=datetime.timezone.utc)
             fetched = await client.get_topic("room", "topic")
             assert fetched.state == ChatTopicState.NORMAL

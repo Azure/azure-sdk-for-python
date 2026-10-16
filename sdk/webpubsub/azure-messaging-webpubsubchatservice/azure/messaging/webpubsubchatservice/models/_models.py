@@ -392,8 +392,8 @@ class ChatTopic(_Model):  # pylint: disable=docstring-keyword-should-match-keywo
         super().__init__(*args, **kwargs)
 
 
-class ChatTopicCreate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Properties supplied when creating a topic.
+class ChatTopicCreateOrReplace(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties supplied when creating or replacing a topic.
 
     :ivar title: Topic title. Required.
     :vartype title: str

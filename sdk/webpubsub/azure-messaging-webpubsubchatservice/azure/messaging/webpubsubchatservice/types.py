@@ -65,8 +65,8 @@ class ChatRoomMemberCreate(TypedDict, total=False):
     """Room role assigned to the user within this room. Required."""
 
 
-class ChatTopicCreate(TypedDict, total=False):
-    """Properties supplied when creating a topic.
+class ChatTopicCreateOrReplace(TypedDict, total=False):
+    """Properties supplied when creating or replacing a topic.
 
     :ivar title: Topic title. Required.
     :vartype title: str

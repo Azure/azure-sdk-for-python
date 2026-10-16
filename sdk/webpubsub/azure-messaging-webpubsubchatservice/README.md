@@ -297,12 +297,12 @@ topic ID specified by `WPS_CHAT_TOPIC_ID`.
 
 ```python
 import os
-from azure.messaging.webpubsubchatservice.models import ChatTopicCreate
+from azure.messaging.webpubsubchatservice.models import ChatTopicCreateOrReplace
 
 topic = client.create_or_replace_topic(
     os.environ["WPS_CHAT_ROOM_ID"],
     os.environ["WPS_CHAT_TOPIC_ID"],
-    ChatTopicCreate(title="Announcements"),
+    ChatTopicCreateOrReplace(title="Announcements"),
 )
 print(topic.id, topic.etag)
 ```
@@ -338,7 +338,8 @@ print(topic.id, topic.title, topic.state, topic.etag)
 #### Archive a topic
 
 Set `WPS_CHAT_TOPIC_ETAG` to the ETag returned by a previous create or get
-operation.
+operation. The update below changes only `state`; the existing title is left
+unchanged. To change only the title, use `ChatTopicUpdate(title="New title")`.
 
 <!-- SNIPPET:sample_readme_snippets.archive_topic -->
 
