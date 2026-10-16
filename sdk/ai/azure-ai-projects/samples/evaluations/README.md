@@ -56,6 +56,44 @@ python sample_evaluations_builtin_with_inline_data.py
 |--------|-------------|
 | [sample_redteam_evaluations.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_redteam_evaluations.py) | Security and safety evaluations using red team techniques |
 
+### Recorded Voice Evaluation
+
+[sample_audio_conversation_evaluation.py](sample_audio_conversation_evaluation.py) and its
+[async version](sample_audio_conversation_evaluation_async.py) evaluate a completed recording.
+They require service support for `input_modality`, a published audio-capable evaluator, and a
+compatible audio-input judge deployment. Evaluator availability and judge configuration are
+service prerequisites; installing the SDK alone does not enable audio scoring.
+
+Upload and register the recording through the existing project dataset/storage workflow.
+Each JSONL item references the recording as a member of a versioned dataset asset:
+
+```json
+{
+  "conversation_artifacts": {
+    "audio": {
+      "asset_id": "azureai://accounts/<account>/projects/<project>/datasets/<dataset>/versions/1",
+      "asset_file_path": "recordings/conversation.wav"
+    }
+  }
+}
+```
+
+The samples use inline JSONL items referencing an existing recording, so they do not upload
+or delete that asset. Set the environment variables documented in the samples, including
+the evaluator name, judge deployment, asset ID, and relative file path. The selected
+evaluator determines supported recording formats and initialization parameters.
+
+Select audio through the existing OpenAI client extension:
+
+```python
+extra_body={"evaluation_level": "conversation", "input_modality": "audio"}
+```
+
+Omitting `input_modality` means text. Audio runs require audio evidence and never fall back
+to transcript evaluation, even if transcript fields are present. The service retrieves the
+recording; do not supply evaluator-local `audio_path` values. Run status, scores, reasons,
+and pass/fail results use the existing run and output-item APIs.
+
 ### Additional Scenarios
 
 These samples require additional setup or Azure services:
@@ -128,4 +166,3 @@ Located in the [agentic_evaluators](https://github.com/Azure/azure-sdk-for-pytho
 |--------|-------------|
 | [sample_evaluation_compare_insight.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluation_compare_insight.py) | Compare evaluation runs and generate statistics |
 | [sample_evaluation_cluster_insight.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluation_cluster_insight.py) | Analyze evaluation runs with cluster insights |
-
