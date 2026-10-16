@@ -30,3 +30,5 @@ extends:
     Artifacts:
     - name: azure-mgmt-apimanagement
       safeName: azuremgmtapimanagement
+    - name: azure-mgmt-aigateway
+      safeName: azuremgmtaigateway
