@@ -15,8 +15,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, TypeVar, Union
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from ._base_model_eval import not_applicable_result
-from ._model_runners import DecisionModelRunner, validate_noul_answer, validate_score_answer
-from ._decision_execution import validated_execution
+from ._model_runners import DecisionModelRunner, validate_noul_answer, validate_score_answer, validated_execution
 
 STATUS_CUTOFF = 0.5
 T = TypeVar("T")

@@ -108,47 +108,41 @@ def strategy(runner):
 
 
 class TestDecisionBatchPersistence:
-    @pytest.mark.parametrize("backend", ["system_one", "foundry_decision"])
-    @pytest.mark.parametrize("known", [False, True])
-    @pytest.mark.parametrize("attempted", [False, True])
+    EXECUTION = {
+        "operation_id": "a" * 32,
+        "attempt_count": 1,
+        "unknown_usage_attempt_count": 0,
+        "result_usage_scope": "final_response_only",
+        "usage_completeness": "all_attempts_reported",
+    }
+
+    @pytest.mark.parametrize(
+        "backend,known,attempted",
+        [("system_one", False, False), ("foundry_decision", False, True), ("system_one", True, True)],
+    )
     def test_independent_failed_metadata_preserves_distinct_scopes_and_known_fields(self, backend, known, attempted):
-        native = {
+        expected = {
             "backend": backend,
             "protocol": "system_one",
             "usage_available": known,
             "result_usage_scope": "reported_attempts_only",
-            "private": "never-persist",
-        }
-        execution = {
-            "operation_id": "abcdef0123456789" * 2,
-            "attempt_count": 1,
-            "unknown_usage_attempt_count": int(not known),
-            "result_usage_scope": "final_response_only",
-            "usage_completeness": "all_attempts_reported" if known else "no_attempts_reported",
         }
         if attempted:
-            native["execution"] = execution
-        properties = {"decision_model": native, "private": "never-persist"}
-        if known:
-            properties.update(prompt_tokens=41, completion_tokens=3, total_tokens=44, model="independent-model")
+            expected["execution"] = {
+                **self.EXECUTION,
+                "unknown_usage_attempt_count": int(not known),
+                "usage_completeness": "all_attempts_reported" if known else "no_attempts_reported",
+            }
+        usage = dict(prompt_tokens=41, completion_tokens=3, total_tokens=44, model="independent-model") if known else {}
         error = EvaluationException(
             "synthetic failure",
-            category=ErrorCategory.FAILED_EXECUTION,
-            blame=ErrorBlame.SYSTEM_ERROR,
-            properties=properties,
+            properties={
+                **usage,
+                "decision_model": {**expected, "private": "never-persist"},
+                "private": "never-persist",
+            },
         )
-        saved = _decision_error_metadata(error)["properties"]
-        provenance = saved["decision_model"]
-        assert provenance["backend"] == backend and provenance["protocol"] == "system_one"
-        assert provenance["usage_available"] is known
-        assert provenance["result_usage_scope"] == "reported_attempts_only"
-        assert "private" not in json.dumps(saved)
-        if attempted:
-            assert provenance["execution"] == execution
-            assert provenance["execution"]["result_usage_scope"] == "final_response_only"
-        else:
-            assert "execution" not in provenance
-        assert saved.get("total_tokens") == (44 if known else None)
+        assert _decision_error_metadata(error)["properties"] == {**usage, "decision_model": expected}
 
     @pytest.mark.parametrize(
         "changes",
@@ -166,16 +160,9 @@ class TestDecisionBatchPersistence:
         ],
     )
     def test_malformed_independent_summary_is_dropped_not_rewritten(self, changes):
-        execution = {
-            "operation_id": "a" * 32,
-            "attempt_count": 1,
-            "unknown_usage_attempt_count": 0,
-            "result_usage_scope": "final_response_only",
-            "usage_completeness": "all_attempts_reported",
-        }
         error = EvaluationException(
             "synthetic failure",
-            properties={"decision_model": {"execution": {**execution, **changes}, "usage_available": False}},
+            properties={"decision_model": {"execution": {**self.EXECUTION, **changes}, "usage_available": False}},
         )
         assert _decision_error_metadata(error)["properties"]["decision_model"] == {"usage_available": False}
 

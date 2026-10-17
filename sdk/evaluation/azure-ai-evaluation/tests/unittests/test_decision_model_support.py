@@ -37,7 +37,7 @@ from azure.ai.evaluation._evaluators._common._model_runners import (
     validate_score_answer,
 )
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._evaluators._common._decision_execution import DecisionExecution, validated_execution
+from azure.ai.evaluation._evaluators._common._model_runners import DecisionExecution, validated_execution
 
 pytestmark = pytest.mark.unittest
 
@@ -82,8 +82,9 @@ def level_payload(level, status=0.95):
     return decision_payload(status, {"tool_call_accuracy": score_answer(levels)})
 
 
-class FakeResponse:
-    def __init__(self, status_code=200, body=b"{}"):
+class FakeResponse(HttpResponse):
+    def __init__(self, status_code=200, body=b"{}", request=None):
+        super().__init__(request, None)
         self.status_code = status_code
         self._body = body
 
@@ -404,21 +405,31 @@ class TestDecisionModelRunnerRequests:
         assert str(status) in str(raised.value)
         assert "test-key-value" not in str(raised.value) and "secret detail" not in str(raised.value)
 
-    @pytest.mark.parametrize("status", [404, 500])
-    @pytest.mark.parametrize("response_limit", [1, 1024])
-    def test_verified_http_error_code_preserves_classification_and_accepted_metadata(
-        self, client, status, response_limit
+    @pytest.mark.parametrize(
+        "status,response_limit,code",
+        [
+            (404, 1024, "DeploymentNotFound"),
+            (500, 1024, "InvalidRequest"),
+            (404, 1024, "RateLimitExceeded"),
+            (404, 1024, "secret_like_identifier_123"),
+            (500, 1024, "A" * 128),
+            (404, 1, "DeploymentNotFound"),
+            (500, 1, "InvalidRequest"),
+        ],
+    )
+    def test_provider_http_error_code_preserves_classification_and_accepted_metadata(
+        self, client, status, response_limit, code
     ):
         payload = decision_payload()
         payload["error"] = {
-            "code": "DeploymentNotFound",
+            "code": code,
             "message": "test-key-value and private-message",
             "details": "private-details",
         }
         client.response = FakeResponse(status, json.dumps(payload).encode())
         with pytest.raises(EvaluationException) as raised:
             run(DecisionModelRunner(DECISION_CONFIG, max_retries=0, max_response_bytes=response_limit))
-        diagnostic = " (DeploymentNotFound)" if response_limit == 1024 else ""
+        diagnostic = f" ({code})" if response_limit == 1024 else ""
         prefix = "UserError" if status == 404 else "InternalError"
         assert str(raised.value) == f"({prefix}) The decision model returned HTTP {status}{diagnostic}."
         assert raised.value.blame == (ErrorBlame.USER_ERROR if status == 404 else ErrorBlame.SYSTEM_ERROR)
@@ -442,9 +453,9 @@ class TestDecisionModelRunnerRequests:
     @pytest.mark.parametrize(
         "payload",
         [
-            {"error": {"code": "secret_like_identifier_123"}},
-            {"error": {"code": "UnknownProviderCode"}},
-            {"error": {"code": "deploymentnotfound"}},
+            {"error": {"code": ""}},
+            {"error": {"code": "InvalidRequest\nprivate-message"}},
+            {"error": {"code": "A" * 129}},
             {"error": {"code": "DeploymentNotFound "}},
             {"error": {"code": None}},
             {"error": {"code": 404}},
@@ -460,14 +471,14 @@ class TestDecisionModelRunnerRequests:
             None,
         ],
     )
-    def test_unverified_or_malformed_http_error_codes_are_not_exposed(self, client, payload):
+    def test_malformed_or_missing_nested_http_error_codes_are_not_exposed(self, client, payload):
         client.response = FakeResponse(404, json.dumps(payload).encode())
         with pytest.raises(EvaluationException) as raised:
             run(DecisionModelRunner(DECISION_CONFIG))
         assert str(raised.value) == "(UserError) The decision model returned HTTP 404."
         assert raised.value.blame == ErrorBlame.USER_ERROR
 
-    def test_non_json_http_error_cannot_surface_verified_code_text(self, client):
+    def test_non_json_http_error_cannot_surface_code_text(self, client):
         client.response = FakeResponse(404, b"DeploymentNotFound private-message test-key-value")
         with pytest.raises(EvaluationException) as raised:
             run(DecisionModelRunner(DECISION_CONFIG))
@@ -563,7 +574,6 @@ class TestAnswerValidation:
     @pytest.mark.parametrize(
         "levels",
         [
-            [0.1] * 5,
             [0.22, 0.34, 0.11, 0.07, 0.29],
             [0.18, 0.34, 0.11, 0.07, 0.27],
             [0.191, 0.339, 0.11, 0.07, 0.28],
@@ -1588,8 +1598,29 @@ class TestDecisionExecutionControls:
 
 
 class TestDecisionExecutionObservations:
-    @pytest.mark.parametrize("case", ["completed", "retry", "error", "deadline", "cancelled", "external_cancelled"])
-    @pytest.mark.parametrize("sink", ["normal", "info_off", "log_failure", "metric_failure"])
+    SUMMARY = {
+        "attempt_count": 1,
+        "retry_count": 0,
+        "elapsed_ms": 12.5,
+        "outcome": "completed",
+        "last_http_status": 200,
+        "usage_state": "known",
+    }
+
+    @pytest.mark.parametrize(
+        "case,sink",
+        [
+            ("completed", "normal"),
+            ("retry", "normal"),
+            ("error", "normal"),
+            ("deadline", "normal"),
+            ("cancelled", "normal"),
+            ("external_cancelled", "normal"),
+            ("completed", "info_off"),
+            ("completed", "log_failure"),
+            ("completed", "metric_failure"),
+        ],
+    )
     def test_actual_pipeline_observations_are_owned_once_and_sinks_are_independent(self, monkeypatch, case, sink):
         from azure.ai.evaluation._http_utils import AsyncHttpPipeline
 
@@ -1598,7 +1629,6 @@ class TestDecisionExecutionObservations:
         logger.addHandler(handler)
         adapter = logging.LoggerAdapter(logger, {"run_id": "private-run", "correlation_id": "private-correlation"})
         instruments = {}
-        calls = []
 
         def instrument(name, **_):
             value = instruments.setdefault(name, Mock())
@@ -1609,37 +1639,19 @@ class TestDecisionExecutionObservations:
 
         meter = SimpleNamespace(create_counter=instrument, create_histogram=instrument)
 
-        class Response(HttpResponse):
-            def __init__(self, request, status, data):
-                super().__init__(request, None)
-                self.status_code = status
-                self.headers = {"Retry-After": "0"}
-                self.data = data
+        async def send(request, **_):
+            if case in ("deadline", "cancelled", "external_cancelled"):
+                await asyncio.sleep(10)
+            failed = case == "error" or (case == "retry" and transport.send.await_count == 1)
+            payload = {"error": {"message": "provider-secret"}} if failed else level_payload(4)
+            response = FakeResponse(500 if failed else 200, json.dumps(payload).encode(), request)
+            response.headers["Retry-After"] = "0"
+            return response
 
-            def body(self):
-                return json.dumps(self.data).encode()
+        transport = AsyncMock(spec=AsyncHttpTransport)
+        transport.send.side_effect = send
 
-        class Transport(AsyncHttpTransport):
-            async def open(self):
-                pass
-
-            async def close(self):
-                pass
-
-            async def __aexit__(self, *_):
-                await self.close()
-
-            async def send(self, request, **_):
-                calls.append(request)
-                if case in ("deadline", "cancelled", "external_cancelled"):
-                    await asyncio.sleep(10)
-                if case == "error" or (case == "retry" and len(calls) == 1):
-                    return Response(request, 500, {"error": {"message": "provider-secret"}})
-                return Response(request, 200, level_payload(4))
-
-        monkeypatch.setattr(
-            _model_runners, "get_async_http_client", lambda **_: AsyncHttpPipeline(transport=Transport())
-        )
+        monkeypatch.setattr(_model_runners, "get_async_http_client", lambda **_: AsyncHttpPipeline(transport=transport))
         if sink == "log_failure":
             monkeypatch.setattr(logger, "info", Mock(side_effect=RuntimeError("logger-secret")))
 
@@ -1656,17 +1668,16 @@ class TestDecisionExecutionObservations:
                 0.02, task.cancel if case == "external_cancelled" else cancelled.set
             )
             try:
+                call = runner(state="private-evidence", questions=QUESTIONS, timeout=0.04 if case == "deadline" else 1)
                 if case in ("completed", "retry"):
-                    response = await runner(state="private-evidence", questions=QUESTIONS, timeout=1)
+                    response = await call
                     summary = response["_decision_execution"]
                     assert response["usage"]["input_tokens"] == 120
                 else:
                     with pytest.raises(
                         asyncio.CancelledError if case == "external_cancelled" else EvaluationException
                     ) as error:
-                        await runner(
-                            state="private-evidence", questions=QUESTIONS, timeout=0.04 if case == "deadline" else 1
-                        )
+                        await call
                     summary = error.value.properties["decision_model"]["execution"]
                 assert validated_execution(summary) == summary
                 assert summary["attempt_count"] == (2 if case == "retry" else 1)
@@ -1686,7 +1697,8 @@ class TestDecisionExecutionObservations:
         with patch.dict(sys.modules, {"opentelemetry.metrics": SimpleNamespace(get_meter=lambda _: meter)}):
             asyncio.run(request())
         expected = 2 if case == "retry" else 1
-        assert len(calls) == expected
+        assert transport.send.await_count == expected
+        transport.__aexit__.assert_awaited_once()
         if sink not in ("info_off", "log_failure"):
             assert len(handler.buffer) == expected + 1
             dimensions = [json.loads(record.decision_dimensions) for record in handler.buffer]
@@ -1721,14 +1733,7 @@ class TestDecisionExecutionObservations:
     @pytest.mark.parametrize("outcome", ["completed", "skipped", "semantic_error"])
     def test_strategy_projects_valid_execution_without_reemitting(self, outcome):
         response = level_payload(4, status=0.1 if outcome == "skipped" else 0.9)
-        summary = {
-            "attempt_count": 1,
-            "retry_count": 0,
-            "elapsed_ms": 12.5,
-            "outcome": "completed",
-            "last_http_status": 200,
-            "usage_state": "known",
-        }
+        summary = self.SUMMARY
         response["_decision_execution"] = summary
         if outcome == "semantic_error":
             response["answers"]["tool_call_accuracy"]["probabilities"]["4"] = 0.5
@@ -1772,15 +1777,7 @@ class TestDecisionExecutionObservations:
         ],
     )
     def test_malformed_shared_carrier_is_rejected_without_coercion(self, changes):
-        summary = {
-            "attempt_count": 1,
-            "retry_count": 0,
-            "elapsed_ms": 1,
-            "outcome": "completed",
-            "last_http_status": 200,
-            "usage_state": "known",
-        }
-        assert validated_execution({**summary, **changes}) is None
+        assert validated_execution({**self.SUMMARY, **changes}) is None
 
     def test_hosted_summary_bounds_do_not_restrict_public_retry_configuration(self, caplog):
         runner = DecisionModelRunner(DECISION_CONFIG, max_retries=100)

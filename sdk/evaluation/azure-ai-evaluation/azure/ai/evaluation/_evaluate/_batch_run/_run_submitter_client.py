@@ -23,7 +23,7 @@ from ..._legacy._common._thread_pool_executor_with_context import ThreadPoolExec
 from ..._evaluate._utils import _has_aggregator
 from ..._constants import Prefixes, PF_BATCH_TIMEOUT_SEC
 from ..._exceptions import EvaluationException
-from ..._evaluators._common._decision_execution import validated_execution
+from ..._evaluators._common._model_runners import validated_execution
 
 from .._utils import get_int_env_var as get_int
 

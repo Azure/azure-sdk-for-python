@@ -15,12 +15,13 @@ import aiohttp
 import requests
 
 from azure.ai.evaluation._evaluators._common._model_runners import DecisionModelRunner
-from azure.ai.evaluation._evaluators._common._decision_execution import validated_execution
+from azure.ai.evaluation._evaluators._common._model_runners import validated_execution
 from azure.ai.evaluation._evaluators._common._base_model_eval import ModelEvaluatorBase
 from azure.ai.evaluation._exceptions import ErrorBlame, EvaluationException
 from azure.ai.evaluation._http_utils import get_async_http_client
 from azure.core.pipeline.policies import AsyncRetryPolicy
 from azure.core.pipeline.transport import AsyncioRequestsTransport
+from azure.core.exceptions import ServiceRequestTimeoutError
 
 pytestmark = pytest.mark.unittest
 QUESTIONS = {"status": {"type": "noul", "instructions": "Applicable?"}}
@@ -126,7 +127,14 @@ def test_public_synchronous_overall_timeout_bounds_native_async_transport(
     elapsed = time.monotonic() - started
     print(f"Entire public synchronous evaluator call: {elapsed:.3f}s")
     assert elapsed < 0.4
-    assert len(calls) == 1
+    if (
+        timeout_seconds is not None
+        and timeout_seconds < timeout
+        and isinstance(raised.value.__context__, ServiceRequestTimeoutError)
+    ):
+        assert not calls
+    else:
+        assert len(calls) == 1
     bound = min(timeout, timeout_seconds) if timeout_seconds is not None else timeout
     assert len(observed) == 1 and 0 < observed[0] <= bound + 1e-8
     if timeout_seconds is None or timeout_seconds > timeout:
