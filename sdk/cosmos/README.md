@@ -64,12 +64,8 @@ Set client-side options such as `AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER` in that ma
 fixed jobs do not receive Bicep outputs. Retained `ArmConfig` labels preserve existing
 job names and filters but do not cause deployment.
 
-Offline regression checks (no Azure login or live provisioning):
-
-```sh
-pwsh -NoProfile -File sdk/cosmos/pipeline/resolve-cosmos-test-account.tests.ps1
-python3 -m unittest discover -s sdk/cosmos/pipeline -p 'test_*.py'
-```
+The `pipeline` directory contains the CI runtime resolver template and PowerShell
+script; both are required by the fixed-account jobs.
 
 ## Contributing
 
