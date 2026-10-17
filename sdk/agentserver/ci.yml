@@ -38,6 +38,8 @@ extends:
         Selection: sparse
         GenerateVMJobs: true
     Artifacts:
+      - name: azure-ai-agentserver-a2a
+        safeName: azureaiagentservera2a
       - name: azure-ai-agentserver-core
         safeName: azureaiagentservercore
       - name: azure-ai-agentserver-invocations

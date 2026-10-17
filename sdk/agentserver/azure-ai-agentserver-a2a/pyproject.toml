@@ -1,0 +1,82 @@
+[project]
+name = "azure-ai-agentserver-a2a"
+dynamic = ["version", "readme"]
+description = "A2A protocol host for Azure AI Hosted Agents"
+requires-python = ">=3.10"
+authors = [
+  { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+keywords = ["azure", "azure sdk", "agent", "agentserver", "a2a"]
+
+dependencies = [
+    "a2a-sdk[http-server]>=1.0.0,<2.0.0",
+    "azure-ai-agentserver-core>=2.1.0,<3.0.0",
+    "starlette>=0.45.0,<2.0.0",
+]
+
+[dependency-groups]
+# keep in sync with dev_requirements.txt
+dev = [
+    "a2a-sdk[http-server]>=1.0.0,<2.0.0",
+    "azure-ai-agentserver-invocations>=1.2.0,<2.0.0",
+    "azure-sdk-tools==0.0.0",
+    "httpx>=0.27.0,<1.0.0",
+    "pytest-asyncio>=0.24.0,<2.0.0",
+    "pytest>=8.3.5,<10.0.0",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "samples*",
+    "doc*",
+    "azure",
+    "azure.ai",
+    "azure.ai.agentserver",
+]
+
+[tool.setuptools.dynamic]
+version = { attr = "azure.ai.agentserver.a2a._version.VERSION" }
+readme = { file = ["README.md"], content-type = "text/markdown" }
+
+[tool.setuptools.package-data]
+"azure.ai.agentserver.a2a" = ["py.typed"]
+
+[tool.azure-sdk-conda]
+in_bundle = false
+
+[tool.azure-sdk-build]
+analyze_python_version = "3.11"
+breaking = false
+mypy = true
+pyright = true
+verifytypes = false
+latestdependency = false
+mindependency = false
+pylint = true
+type_check_samples = false
+apistub = true
+
+[tool.uv.sources]
+azure-ai-agentserver-core = { path = "../azure-ai-agentserver-core", editable = true }
+azure-ai-agentserver-invocations = { path = "../azure-ai-agentserver-invocations", editable = true }
+azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
