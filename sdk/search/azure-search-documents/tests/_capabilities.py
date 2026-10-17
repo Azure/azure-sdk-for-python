@@ -434,18 +434,6 @@ _CAPS: dict = {
     "KnowledgeBaseRetrievalClient.aio": _surface(
         "azure.search.documents.knowledgebases.aio.KnowledgeBaseRetrievalClient"
     ),
-    "KnowledgeBaseRetrievalEvent": _surface(
-        "azure.search.documents.knowledgebases.KnowledgeBaseRetrievalEvent",
-        available_from=PREVIEW_2026_08_01,
-    ),
-    "KnowledgeBaseRetrievalStream": _surface(
-        "azure.search.documents.knowledgebases.KnowledgeBaseRetrievalStream",
-        available_from=PREVIEW_2026_08_01,
-    ),
-    "AsyncKnowledgeBaseRetrievalStream": _surface(
-        "azure.search.documents.knowledgebases.aio.AsyncKnowledgeBaseRetrievalStream",
-        available_from=PREVIEW_2026_08_01,
-    ),
 }
 _CAPS.update(_model_capabilities())
 _CAPS.update(_client_capabilities())

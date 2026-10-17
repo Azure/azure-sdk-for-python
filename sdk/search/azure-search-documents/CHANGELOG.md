@@ -1,5 +1,194 @@
 # Release History
 
+## 12.1.0 (2026-10-01)
+
+### Features Added
+
+- Added support for the `2026-10-01` GA API, which is now the default.
+- Below enum members and parameters are added for API version selection and document search:
+  - `azure.search.documents.ApiVersion.V2026_10_01`
+  - `azure.search.documents.SearchClient.get_document.enable_elevated_read`
+  - `azure.search.documents.SearchClient.get_document.query_source_authorization`
+  - `azure.search.documents.SearchClient.search.enable_elevated_read`
+  - `azure.search.documents.SearchClient.search.more_like_this`
+  - `azure.search.documents.SearchClient.search.query_source_authorization`
+- Below pageable operations and enum members are added for resource listing:
+  - `azure.search.documents.indexes.SearchIndexClient.list_index_stats_summary`
+  - `azure.search.documents.indexes.SearchIndexClient.list_synonym_maps`
+  - `azure.search.documents.indexes.SearchIndexerClient.list_data_source_connections`
+  - `azure.search.documents.indexes.SearchIndexerClient.list_indexers`
+  - `azure.search.documents.indexes.SearchIndexerClient.list_skillsets`
+  - `azure.search.documents.indexes.models.ListingSearchType.PREFIX`
+- Added `search`, `page_size`, and `search_type` controls to resource listings, including the existing
+  index, alias, synonym map, knowledge base, knowledge source, indexer, data source, and skillset
+  listing helpers. The existing `get_*` helpers continue to return lists.
+- Below models and properties are added for index statistics and indexer runtime reporting:
+  - `azure.search.documents.indexes.models.IndexStatisticsSummary`
+  - `azure.search.documents.indexes.models.IndexerRuntime`
+  - `azure.search.documents.indexes.models.SearchIndexerStatus.runtime`
+  - `azure.search.documents.indexes.models.SearchServiceStatistics.indexers_runtime`
+  - `azure.search.documents.indexes.models.ServiceIndexersRuntime`
+- Added `azure.search.documents.indexes.SearchIndexerClient.resync`, using `IndexerResyncBody` and
+  `azure.search.documents.indexes.models.IndexerResyncOption.PERMISSIONS`, to resynchronize indexed
+  permission data.
+- Below models and operations are added for File knowledge sources:
+  - `azure.search.documents.indexes.SearchIndexClient.delete_knowledge_source_file`
+  - `azure.search.documents.indexes.SearchIndexClient.list_knowledge_source_files`
+  - `azure.search.documents.indexes.SearchIndexClient.update_knowledge_source_file`
+  - `azure.search.documents.indexes.SearchIndexClient.upload_knowledge_source_file_multipart`
+  - `azure.search.documents.indexes.models.FileKnowledgeSource`
+  - `azure.search.documents.indexes.models.FileKnowledgeSourceExtractionMode`
+  - `azure.search.documents.indexes.models.FileKnowledgeSourceParameters`
+  - `azure.search.documents.indexes.models.FileUploadMetadata`
+  - `azure.search.documents.indexes.models.KnowledgeSourceFile`
+  - `azure.search.documents.indexes.models.KnowledgeSourceFileCapacity`
+  - `azure.search.documents.indexes.models.UpdateKnowledgeSourceFileRequest`
+  - `azure.search.documents.indexes.models.UploadKnowledgeSourceFileMultipartRequest`
+  - `azure.search.documents.knowledgebases.models.FileKnowledgeSourceParams`
+- Added file metadata, relative-path prefixes, parsing and extraction modes, timestamps, file sizes,
+  and processing errors to the File knowledge source lifecycle. File listing supports prefix
+  filtering and pagination. `azure.search.documents.knowledgebases.models.KnowledgeSourceStatus.file_capacity`
+  reports maximum file size, maximum file count, and remaining file count.
+- Below models are added for indexed SQL and SharePoint knowledge sources:
+  - `azure.search.documents.indexes.models.ContentColumnMapping`
+  - `azure.search.documents.indexes.models.EmbeddingColumnMapping`
+  - `azure.search.documents.indexes.models.IndexedSharePointContainerName`
+  - `azure.search.documents.indexes.models.IndexedSharePointKnowledgeSource`
+  - `azure.search.documents.indexes.models.IndexedSharePointKnowledgeSourceParameters`
+  - `azure.search.documents.indexes.models.IndexedSqlKnowledgeSource`
+  - `azure.search.documents.indexes.models.IndexedSqlKnowledgeSourceParameters`
+  - `azure.search.documents.knowledgebases.models.IndexedSharePointKnowledgeSourceParams`
+  - `azure.search.documents.knowledgebases.models.IndexedSqlKnowledgeSourceParams`
+- Below models and properties are added for document permissions and private ingestion:
+  - `azure.search.documents.indexes.models.IndexingParametersConfiguration.refresh_all_acls`
+  - `azure.search.documents.indexes.models.IndexerPermissionOption`
+  - `azure.search.documents.indexes.models.KnowledgeSourceIngestionPermissionOption`
+  - `azure.search.documents.indexes.models.PermissionFilter`
+  - `azure.search.documents.indexes.models.SearchField.organization_access_expiration`
+  - `azure.search.documents.indexes.models.SearchField.permission_filter`
+  - `azure.search.documents.indexes.models.SearchField.sharepoint_site_url`
+  - `azure.search.documents.indexes.models.SearchIndex.permission_filter_option`
+  - `azure.search.documents.indexes.models.SearchIndex.share_point_connector_app_registration`
+  - `azure.search.documents.indexes.models.SearchIndexPermissionFilterOption`
+  - `azure.search.documents.indexes.models.SearchIndexerDataSourceConnection.indexer_permission_options`
+  - `azure.search.documents.indexes.models.SearchIndexerDataUserAssignedIdentity.federated_identity_client_id`
+  - `azure.search.documents.indexes.models.SharePointConnectorAppRegistration`
+  - `azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters.ingestion_permission_options`
+  - `azure.search.documents.knowledgebases.models.KnowledgeSourceIngestionParameters.network_access_mode`
+  - `azure.search.documents.knowledgebases.models.KnowledgeSourceNetworkAccessMode`
+- Added `azure.search.documents.knowledgebases.KnowledgeBaseRetrievalClient.retrieve.query_source_authorization`
+  to forward the querying user's authorization to knowledge retrieval.
+- Below properties are added for search-index and web knowledge source configuration:
+  - `azure.search.documents.indexes.models.SearchIndexKnowledgeSourceParameters.base_filter`
+  - `azure.search.documents.indexes.models.WebKnowledgeSourceParameters.count`
+  - `azure.search.documents.indexes.models.WebKnowledgeSourceParameters.freshness`
+  - `azure.search.documents.indexes.models.WebKnowledgeSourceParameters.language`
+  - `azure.search.documents.indexes.models.WebKnowledgeSourceParameters.market`
+- Below models and properties are added for knowledge base configuration and retrieval requests:
+  - `azure.search.documents.indexes.models.KnowledgeBase.answer_instructions`
+  - `azure.search.documents.indexes.models.KnowledgeBase.cors_options`
+  - `azure.search.documents.indexes.models.KnowledgeBase.output_mode`
+  - `azure.search.documents.indexes.models.KnowledgeBase.retrieval_instructions`
+  - `azure.search.documents.indexes.models.KnowledgeBase.retrieval_reasoning_effort`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest.max_output_documents`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest.messages`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest.output_mode`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest.retrieval_reasoning_effort`
+  - `azure.search.documents.knowledgebases.models.KnowledgeRetrievalLowReasoningEffort`
+  - `azure.search.documents.knowledgebases.models.KnowledgeRetrievalMediumReasoningEffort`
+  - `azure.search.documents.knowledgebases.models.KnowledgeRetrievalOutputMode`
+- Added per-source retrieval controls through
+  `azure.search.documents.knowledgebases.models.KnowledgeSourceParams.always_query_source`,
+  `azure.search.documents.knowledgebases.models.KnowledgeSourceParams.fail_on_error`, and
+  `azure.search.documents.knowledgebases.models.KnowledgeSourceParams.max_output_documents`.
+- Below activity, argument, reference, and diagnostic models are added for retrieval responses:
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecordModel`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseAzureBlobActivityArguments`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseAzureBlobActivityRecord`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseFileActivityArguments`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseFileActivityRecord`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseFileReference`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedOneLakeActivityArguments`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedOneLakeActivityRecord`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedSharePointActivityArguments`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedSharePointActivityRecord`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedSharePointReference`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedSqlActivityArguments`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedSqlActivityRecord`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedSqlReference`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseModelAnswerSynthesisActivityRecord`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseModelQueryPlanningActivityRecord`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseSearchIndexActivityArguments`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseSearchIndexActivityRecord`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseWebActivityArguments`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseWebActivityRecord`
+- Added `started_at`, `completed_at`, and `warning` to retrieval activity records, model and
+  deployment details to model activities, and `citation_url` to supported knowledge base references.
+- Added `azure.search.documents.knowledgebases.KnowledgeBaseRetrievalClient.retrieve_stream` for
+  native typed server-sent event streaming. Iteration yields retrieval-start, activity-start,
+  completed-activity, completed-answer, reference-list, stream-error, and response-completion
+  payloads. Completion payloads distinguish successful and partial results with status 200 or 206.
+- Below payload models and status enums are added for retrieval streaming:
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseActivityStartedEvent`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseAnswerCompletedEvent`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseResponseCompletedEvent`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStartedEvent`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStatusCode`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseStreamErrorEvent`
+- Below generated stream envelope models are added. Stream iteration returns their payloads
+  directly, rather than envelope objects:
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseActivityCompletedStreamEvent`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseActivityStartedStreamEvent`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseAnswerCompletedStreamEvent`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseErrorStreamEvent`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseReferencesCompletedStreamEvent`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseResponseCompletedStreamEvent`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStartedStreamEvent`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalStreamEvent`
+- Below models, properties, and enum members are added for Content Understanding:
+  - `azure.search.documents.indexes.models.ContentUnderstandingSkill.model_deployment`
+  - `azure.search.documents.indexes.models.ContentUnderstandingSkill.model_name`
+  - `azure.search.documents.indexes.models.ContentUnderstandingSkillChunkingMethod`
+  - `azure.search.documents.indexes.models.ContentUnderstandingSkillChunkingProperties.method`
+  - `azure.search.documents.indexes.models.ContentUnderstandingSkillChunkingUnit.TOKENS`
+- Below enum members are added for supported Azure OpenAI model names:
+  - `azure.search.documents.indexes.models.AzureOpenAIModelName.GPT54`
+  - `azure.search.documents.indexes.models.AzureOpenAIModelName.GPT55`
+  - `azure.search.documents.indexes.models.AzureOpenAIModelName.GPT56_LUNA`
+  - `azure.search.documents.indexes.models.AzureOpenAIModelName.GPT56_SOL`
+  - `azure.search.documents.indexes.models.AzureOpenAIModelName.GPT56_TERRA`
+- Below enum names are added for already supported Azure OpenAI model values. The existing
+  underscored names remain available as aliases:
+  - `azure.search.documents.indexes.models.AzureOpenAIModelName.GPT5_4_MINI`
+  - `azure.search.documents.indexes.models.AzureOpenAIModelName.GPT5_4_NANO`
+  - `azure.search.documents.indexes.models.AzureOpenAIModelName.GPT5_MINI`
+  - `azure.search.documents.indexes.models.AzureOpenAIModelName.GPT5_NANO`
+- Added public input TypedDicts and union aliases under `azure.search.documents.types`,
+  `azure.search.documents.indexes.types`, and `azure.search.documents.knowledgebases.types`.
+  Supported operation and customized-constructor inputs accept these types alongside existing
+  models and mappings; vector queries accept sequences of model or input-query objects.
+- Added asynchronous equivalents of the new operations.
+
+### Bugs Fixed
+
+- Fixed search metadata accessors clearing continuation tokens or skipping a prefetched first page.
+  Counts, facets, coverage, and semantic answers remain available after result iteration.
+- Fixed search continuation tokens using a hardcoded API version instead of the client's configured
+  version.
+- Fixed semantic answer and caption options serializing enum names instead of wire values, and
+  threshold-only answer options using an incorrect separator.
+- Fixed `IndexDocumentsBatch` action replacement, dequeue, and enqueue sending stale document
+  actions instead of the batch's current contents.
+- Fixed buffered senders requeueing only the first action after a request failure and asynchronous
+  auto-flush cancelling its own indexing request.
+- Fixed buffered senders ignoring the configured audience and omitting API version, credential
+  scopes, transport, and policy options from schema lookup.
+- Fixed document indexing rejecting caller-supplied error mappings instead of merging them with
+  the default mapping, including when splitting oversized batches.
+- Fixed resource deletes by name ignoring the requested match condition and caller-supplied ETag.
+- Fixed field builders silently discarding additional supported field properties while preserving
+  their existing defaults, selected field types, and `hidden` behavior.
+
 ## 12.1.0b2 (2026-08-27)
 
 ### Features Added
