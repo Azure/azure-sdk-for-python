@@ -297,7 +297,46 @@ pub(crate) fn download_blob(
     max_chunk_size: Option<u64>,
 ) -> PyResult<NativeDownloadStream> {
     let blob_client = build_blob_client(url, token_provider, credential_id)?;
+    download_with_client(
+        py,
+        blob_client,
+        offset,
+        length,
+        lease_id,
+        encryption_key,
+        encryption_key_sha256,
+        encryption_algorithm,
+        if_match,
+        if_none_match,
+        if_modified_since,
+        if_unmodified_since,
+        if_tags,
+        version_id,
+        timeout,
+        max_concurrency,
+        max_chunk_size,
+    )
+}
 
+fn download_with_client(
+    py: Python<'_>,
+    blob_client: BlobClient,
+    offset: Option<u64>,
+    length: Option<u64>,
+    lease_id: Option<&str>,
+    encryption_key: Option<&str>,
+    encryption_key_sha256: Option<&str>,
+    encryption_algorithm: Option<&str>,
+    if_match: Option<&str>,
+    if_none_match: Option<&str>,
+    if_modified_since: Option<i64>,
+    if_unmodified_since: Option<i64>,
+    if_tags: Option<&str>,
+    version_id: Option<&str>,
+    timeout: Option<i32>,
+    max_concurrency: Option<usize>,
+    max_chunk_size: Option<u64>,
+) -> PyResult<NativeDownloadStream> {
     let (concurrency, chunk_size) =
         transfer_sizes(max_concurrency, max_chunk_size).map_err(PyValueError::new_err)?;
     let concurrency_u64 = u64::try_from(concurrency.get())
@@ -348,3 +387,123 @@ pub(crate) fn download_blob(
         length,
     )
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::test_support::MockHttpClient;
+
+    #[test]
+    fn content_range_totals() {
+        for (value, expected) in [
+            ("bytes 0-3/10", Some(10)),
+            ("bytes 0-0/1", Some(1)),
+            ("bytes 42-42/100", Some(100)),
+            ("bytes 0-0/18446744073709551615", Some(u64::MAX)),
+            ("bytes 0-1/*", None),
+            ("", None),
+            ("items 0-1/2", None),
+            ("bytes 0-1", None),
+            ("bytes x-1/2", None),
+            ("bytes 0-x/2", None),
+            ("bytes 0-1/x", None),
+            ("bytes 0-1/18446744073709551616", None),
+            ("bytes 2-1/3", None),
+            ("bytes 0-2/2", None),
+            ("bytes 0-0/0", None),
+        ] {
+            assert_eq!(parse_content_range_total(value), expected, "{value:?}");
+        }
+    }
+
+    #[test]
+    fn total_size_uses_range_not_response_length() {
+        let mut headers = Headers::new();
+        headers.insert(CONTENT_RANGE, "bytes 4-5/100");
+        assert_eq!(total_blob_size(&headers, Some(2), 4).unwrap(), 100);
+        for (value, content_length, start, expected) in [
+            (None, Some(0), 0, Some(0)),
+            (None, None, 0, None),
+            (None, Some(2), 0, None),
+            (None, Some(0), 1, None),
+            (Some("invalid"), Some(0), 0, None),
+            (Some("bytes 0-1/*"), Some(2), 0, None),
+        ] {
+            let mut headers = Headers::new();
+            if let Some(value) = value {
+                headers.insert(CONTENT_RANGE, value);
+            }
+            let result = total_blob_size(&headers, content_length, start);
+            match expected {
+                Some(total) => assert_eq!(result.unwrap(), total),
+                None => assert!(matches!(
+                    result.unwrap_err().kind(),
+                    ErrorKind::DataConversion
+                )),
+            }
+        }
+    }
+
+    #[test]
+    fn validates_exact_short_and_excess_lengths() {
+        for (expected, actual) in [(0, 0), (4, 4), (u64::MAX, u64::MAX)] {
+            validate_download_length(12, expected, actual).unwrap();
+        }
+        for (actual, expected_kind) in [
+            (3, std::io::ErrorKind::UnexpectedEof),
+            (5, std::io::ErrorKind::InvalidData),
+        ] {
+            let error = validate_download_length(12, 4, actual).unwrap_err();
+            assert!(matches!(error.kind(), ErrorKind::Io));
+            let source = std::error::Error::source(&error)
+                .unwrap()
+                .downcast_ref::<std::io::Error>()
+                .unwrap();
+            assert_eq!(source.kind(), expected_kind);
+        }
+    }
+
+    #[test]
+    fn range_arithmetic_overflows_before_io() {
+        Python::initialize();
+        Python::attach(|py| {
+            let mock = MockHttpClient::new(|_| panic!("Overflow must fail before HTTP"));
+            for (start, length, window) in [(u64::MAX, Some(1), 1), (u64::MAX - 1, None, 2)] {
+                assert!(NativeDownloadStream::new(
+                    py,
+                    mock.client(),
+                    BlobClientDownloadOptions::default(),
+                    window,
+                    start,
+                    length,
+                )
+                .is_err());
+            }
+            assert!(download_with_client(
+                py,
+                mock.client(),
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                Some(2),
+                Some(u64::MAX),
+            )
+            .is_err());
+            assert!(mock.requests().is_empty());
+        });
+    }
+}
+
+#[cfg(test)]
+#[path = "../tests/rust/download.rs"]
+mod stream_tests;
