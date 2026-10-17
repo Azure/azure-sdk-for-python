@@ -13,6 +13,10 @@ mod credentials;
 mod download;
 mod upload;
 
+#[cfg(test)]
+#[path = "../tests/rust/support.rs"]
+mod test_support;
+
 use std::num::NonZero;
 use std::sync::Arc;
 
@@ -94,12 +98,19 @@ fn build_blob_client(
     token_provider: Option<Py<PyAny>>,
     credential_id: Option<usize>,
 ) -> PyResult<BlobClient> {
-    let blob_url =
-        Url::parse(blob_url).map_err(|e| PyValueError::new_err(format!("Invalid URL: {e}")))?;
-
-    // Reuse one shared connection pool across every client we build.
     let mut options = BlobClientOptions::default();
     options.client_options.transport = Some(SHARED_TRANSPORT.clone());
+    build_blob_client_with_options(blob_url, token_provider, credential_id, options)
+}
+
+fn build_blob_client_with_options(
+    blob_url: &str,
+    token_provider: Option<Py<PyAny>>,
+    credential_id: Option<usize>,
+    options: BlobClientOptions,
+) -> PyResult<BlobClient> {
+    let blob_url =
+        Url::parse(blob_url).map_err(|e| PyValueError::new_err(format!("Invalid URL: {e}")))?;
 
     let credential: Option<Arc<dyn TokenCredential>> = match token_provider {
         Some(provider) => {
@@ -145,7 +156,95 @@ fn _native(m: &Bound<'_, PyModule>) -> PyResult<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::test_support::{response, MockHttpClient};
     use azure_core::error::ErrorKind;
+    use azure_core::http::StatusCode;
+
+    #[test]
+    fn transfer_defaults_and_explicit_sizes() {
+        let (parallel, partition) = transfer_sizes(None, None).unwrap();
+        assert!(parallel.get() > 0);
+        assert_eq!(partition.get(), 4 * 1024 * 1024);
+        for (parallel, partition) in [(1, 1), (3, 17)] {
+            let actual = transfer_sizes(Some(parallel), Some(partition)).unwrap();
+            assert_eq!((actual.0.get(), actual.1.get()), (parallel, partition));
+        }
+    }
+
+    #[test]
+    fn zero_transfer_sizes_are_rejected() {
+        for (parallel, partition) in [(Some(0), None), (None, Some(0))] {
+            assert!(transfer_sizes(parallel, partition).is_err());
+        }
+    }
+
+    #[test]
+    fn runtime_is_shared_and_executes_tasks() {
+        let first = get_runtime().unwrap();
+        assert!(std::ptr::eq(first, get_runtime().unwrap()));
+        assert_eq!(first.block_on(async { 42 }), 42);
+    }
+
+    #[test]
+    fn client_validation_does_not_send_requests() {
+        Python::initialize();
+        Python::attach(|py| {
+            let mock = MockHttpClient::new(|request| panic!("Unexpected request: {request:?}"));
+            assert!(
+                build_blob_client_with_options("not a URL", None, None, mock.options()).is_err()
+            );
+            let provider = py.None();
+            assert!(build_blob_client_with_options(
+                "https://account.blob.core.windows.net/container/blob",
+                Some(provider),
+                None,
+                mock.options(),
+            )
+            .is_err());
+            assert!(mock.requests().is_empty());
+        });
+    }
+
+    #[test]
+    fn client_preserves_encoded_url_and_sas() {
+        let url =
+            "https://account.blob.core.windows.net/container/a%20b%2Fc?sv=2026-02-06&sig=a%2Bb%3D";
+        let mock = MockHttpClient::new(|request| {
+            assert_eq!(request.method, "GET");
+            assert_eq!(request.url.path(), "/container/a%20b%2Fc");
+            assert_eq!(
+                request
+                    .url
+                    .query_pairs()
+                    .find(|(key, _)| key == "sig")
+                    .unwrap()
+                    .1,
+                "a+b="
+            );
+            response(StatusCode::Ok, &[("content-length", "0")], Vec::new())
+        });
+        let client = build_blob_client_with_options(url, None, None, mock.options()).unwrap();
+        get_runtime()
+            .unwrap()
+            .block_on(client.download(None))
+            .unwrap();
+        assert_eq!(mock.requests().len(), 1);
+    }
+
+    #[test]
+    fn module_registers_transfer_bindings() {
+        Python::initialize();
+        Python::attach(|py| {
+            let module = PyModule::new(py, "_native").unwrap();
+            _native(&module).unwrap();
+            assert!(module.getattr("upload_blob").unwrap().is_callable());
+            assert!(module.getattr("download_blob").unwrap().is_callable());
+            assert!(module
+                .getattr("NativeDownloadStream")
+                .unwrap()
+                .is_instance_of::<pyo3::types::PyType>());
+        });
+    }
 
     #[test]
     fn python_error_is_preserved_through_nested_context() {
