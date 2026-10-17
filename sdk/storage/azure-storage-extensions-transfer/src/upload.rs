@@ -38,6 +38,21 @@ impl AsRef<[u8]> for PythonBytesOwner {
     }
 }
 
+fn python_bytes(data: &Bound<'_, PyAny>) -> PyResult<Bytes> {
+    if !data.is_instance_of::<PyBytes>() {
+        return Err(PyTypeError::new_err(
+            "Native zero-copy upload requires an immutable bytes object.",
+        ));
+    }
+    let buffer = PyBuffer::<u8>::get(data)?;
+    if !buffer.is_c_contiguous() {
+        return Err(PyValueError::new_err(
+            "Native upload requires a C-contiguous buffer.",
+        ));
+    }
+    Ok(Bytes::from_owner(PythonBytesOwner { buffer }))
+}
+
 /// Upload a block blob using the Rust SDK.
 ///
 /// This function releases the GIL during the entire Rust I/O operation,
@@ -110,23 +125,74 @@ pub(crate) fn upload_blob<'py>(
     max_block_size: Option<u64>,
 ) -> PyResult<Bound<'py, PyDict>> {
     let blob_client = build_blob_client(url, token_provider, credential_id)?;
+    upload_blob_with_client(
+        py,
+        blob_client,
+        data,
+        overwrite,
+        content_type,
+        content_encoding,
+        content_language,
+        content_disposition,
+        cache_control,
+        content_md5,
+        metadata,
+        tags,
+        lease_id,
+        encryption_key,
+        encryption_key_sha256,
+        encryption_algorithm,
+        encryption_scope,
+        if_match,
+        if_none_match,
+        if_modified_since,
+        if_unmodified_since,
+        if_tags,
+        immutability_policy_expiry,
+        immutability_policy_mode,
+        legal_hold,
+        tier,
+        timeout,
+        max_concurrency,
+        max_block_size,
+    )
+}
 
+fn upload_blob_with_client<'py>(
+    py: Python<'py>,
+    blob_client: azure_storage_blob::BlobClient,
+    data: &Bound<'py, PyAny>,
+    overwrite: bool,
+    content_type: Option<&str>,
+    content_encoding: Option<&str>,
+    content_language: Option<&str>,
+    content_disposition: Option<&str>,
+    cache_control: Option<&str>,
+    content_md5: Option<Vec<u8>>,
+    metadata: Option<HashMap<String, String>>,
+    tags: Option<HashMap<String, String>>,
+    lease_id: Option<&str>,
+    encryption_key: Option<&str>,
+    encryption_key_sha256: Option<&str>,
+    encryption_algorithm: Option<&str>,
+    encryption_scope: Option<&str>,
+    if_match: Option<&str>,
+    if_none_match: Option<&str>,
+    if_modified_since: Option<i64>,
+    if_unmodified_since: Option<i64>,
+    if_tags: Option<&str>,
+    immutability_policy_expiry: Option<i64>,
+    immutability_policy_mode: Option<&str>,
+    legal_hold: Option<bool>,
+    tier: Option<&str>,
+    timeout: Option<i32>,
+    max_concurrency: Option<usize>,
+    max_block_size: Option<u64>,
+) -> PyResult<Bound<'py, PyDict>> {
     // Export the Python allocation and make it the owner of `Bytes`. This passes its address
     // across the FFI boundary without copying; `Bytes` keeps the export alive while the Rust SDK
     // clones and slices the body across asynchronous upload tasks.
-    if !data.is_instance_of::<PyBytes>() {
-        return Err(PyTypeError::new_err(
-            "Native zero-copy upload requires an immutable bytes object.",
-        ));
-    }
-    let buffer = PyBuffer::<u8>::get(data)?;
-    if !buffer.is_c_contiguous() {
-        return Err(PyValueError::new_err(
-            "Native upload requires a C-contiguous buffer.",
-        ));
-    }
-    let content: RequestContent<Bytes, NoFormat> =
-        Bytes::from_owner(PythonBytesOwner { buffer }).into();
+    let content: RequestContent<Bytes, NoFormat> = python_bytes(data)?.into();
 
     let mut options = BlockBlobClientUploadOptions::default();
 
@@ -174,7 +240,9 @@ pub(crate) fn upload_blob<'py>(
     options.encryption_key_sha256 = encryption_key_sha256.map(str::to_string);
     options.encryption_scope = encryption_scope.map(str::to_string);
     options.if_match = if_match.map(Into::into);
-    options.if_none_match = if_none_match.map(Into::into);
+    if let Some(if_none_match) = if_none_match {
+        options.if_none_match = Some(if_none_match.into());
+    }
     options.if_modified_since = if_modified_since
         .map(azure_core::time::OffsetDateTime::from_unix_timestamp)
         .transpose()
@@ -249,3 +317,48 @@ pub(crate) fn upload_blob<'py>(
 
     Ok(dict)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use pyo3::types::{PyByteArray, PyString};
+
+    #[test]
+    fn upload_bytes_owner_preserves_allocation_and_lifetime() {
+        Python::initialize();
+        for contents in [b"".as_slice(), b"original Python allocation".as_slice()] {
+            let (bytes, pointer) = Python::attach(|py| {
+                let original = PyBytes::new(py, contents);
+                let pointer = original.as_bytes().as_ptr();
+                let bytes = python_bytes(original.as_any()).unwrap();
+                assert_eq!(bytes.as_ptr(), pointer);
+                assert_eq!(bytes.as_ref(), contents);
+                (bytes, pointer)
+            });
+            let cloned = bytes.clone();
+            let sliced = bytes.slice(contents.len().min(1)..);
+            drop(bytes);
+            assert_eq!(cloned.as_ptr(), pointer);
+            assert_eq!(cloned.as_ref(), contents);
+            drop(cloned);
+            assert_eq!(sliced.as_ref(), &contents[contents.len().min(1)..]);
+        }
+    }
+
+    #[test]
+    fn upload_bytes_rejects_mutable_and_non_bytes_input() {
+        Python::initialize();
+        Python::attach(|py| {
+            for value in [
+                PyByteArray::new(py, b"mutable").into_any(),
+                PyString::new(py, "not bytes").into_any(),
+            ] {
+                assert!(python_bytes(&value).is_err());
+            }
+        });
+    }
+}
+
+#[cfg(test)]
+#[path = "../tests/rust/upload.rs"]
+mod transfer_tests;

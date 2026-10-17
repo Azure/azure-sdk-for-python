@@ -134,3 +134,40 @@ impl TokenCredential for PyCallbackCredential {
         Ok(AccessToken::new(Secret::new(token), expires))
     }
 }
+
+#[cfg(test)]
+#[path = "../tests/rust/credentials.rs"]
+mod callback_tests;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn credential_cache_reuses_only_matching_ids() {
+        Python::initialize();
+        Python::attach(|py| {
+            let first_provider = pyo3::types::PyDict::new(py).into_any().unbind();
+            let second_provider = pyo3::types::PyDict::new(py).into_any().unbind();
+            let first_id = first_provider.as_ptr() as usize;
+            let second_id = second_provider.as_ptr() as usize;
+            let first = get_cached_credential(first_provider.clone_ref(py), first_id);
+            let same = get_cached_credential(second_provider.clone_ref(py), first_id);
+            let other = get_cached_credential(second_provider, second_id);
+            assert!(Arc::ptr_eq(&first, &same));
+            assert!(!Arc::ptr_eq(&first, &other));
+            let mut cache = CACHED_CREDENTIALS.lock().unwrap();
+            cache.remove(&first_id);
+            cache.remove(&second_id);
+        });
+    }
+
+    #[test]
+    fn new_callback_credential_has_no_token() {
+        Python::initialize();
+        Python::attach(|py| {
+            let credential = PyCallbackCredential::new(py.None());
+            assert!(credential.cache.read().unwrap().is_none());
+        });
+    }
+}
