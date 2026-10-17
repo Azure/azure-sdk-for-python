@@ -11,6 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from typing import Any, Union, List, Dict, Mapping, Optional, cast
 import asyncio  # pylint: disable=do-not-import-asyncio
+import inspect
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -190,7 +191,7 @@ class SearchIndexingBufferedSender:
                 if self._on_error:
                     actions = self._index_documents_batch.dequeue_actions()
                     for action in actions:
-                        if asyncio.iscoroutinefunction(self._on_error):
+                        if inspect.iscoroutinefunction(self._on_error):
                             await self._on_error(action)
                         else:
                             self._on_error(action)
@@ -213,11 +214,11 @@ class SearchIndexingBufferedSender:
                 )
                 try:
                     index_result = await client.get_index(self._index_name)
-                    if index_result:
-                        for field in index_result.fields:
-                            if field.key:
-                                self._index_key = field.name
-                                break
+                    fields = index_result.fields if index_result else []
+                    for field in fields:
+                        if field.key:
+                            self._index_key = field.name
+                            break
                 finally:
                     # User-supplied transports and pipelines remain owned by the sender.
                     if self._client_kwargs.get("transport") is None and self._client_kwargs.get("pipeline") is None:
@@ -393,24 +394,24 @@ class SearchIndexingBufferedSender:
 
     async def _callback_succeed(self, action: IndexAction) -> None:
         if self._on_remove:
-            if asyncio.iscoroutinefunction(self._on_remove):
+            if inspect.iscoroutinefunction(self._on_remove):
                 await self._on_remove(action)
             else:
                 self._on_remove(action)
         if self._on_progress:
-            if asyncio.iscoroutinefunction(self._on_progress):
+            if inspect.iscoroutinefunction(self._on_progress):
                 await self._on_progress(action)
             else:
                 self._on_progress(action)
 
     async def _callback_fail(self, action: IndexAction) -> None:
         if self._on_remove:
-            if asyncio.iscoroutinefunction(self._on_remove):
+            if inspect.iscoroutinefunction(self._on_remove):
                 await self._on_remove(action)
             else:
                 self._on_remove(action)
         if self._on_error:
-            if asyncio.iscoroutinefunction(self._on_error):
+            if inspect.iscoroutinefunction(self._on_error):
                 await self._on_error(action)
             else:
                 self._on_error(action)
@@ -418,7 +419,7 @@ class SearchIndexingBufferedSender:
     async def _callback_new(self, actions: List[IndexAction]) -> None:
         if self._on_new:
             for action in actions:
-                if asyncio.iscoroutinefunction(self._on_new):
+                if inspect.iscoroutinefunction(self._on_new):
                     await self._on_new(action)
                 else:
                     self._on_new(action)

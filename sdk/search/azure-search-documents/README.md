@@ -257,7 +257,7 @@ from azure.search.documents.indexes.models import (
 index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 fields = [
     SimpleField(name="HotelId", type=SearchFieldDataType.STRING, key=True),
-    SimpleField(name="HotelName", type=SearchFieldDataType.STRING, searchable=True),
+    SearchableField(name="HotelName", type=SearchFieldDataType.STRING),
     SimpleField(name="BaseRate", type=SearchFieldDataType.DOUBLE),
     SearchableField(name="Description", type=SearchFieldDataType.STRING, collection=True),
     ComplexField(

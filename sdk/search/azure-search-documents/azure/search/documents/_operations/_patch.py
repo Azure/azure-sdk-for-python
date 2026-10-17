@@ -123,7 +123,7 @@ def _build_search_request(
     semantic_max_wait_in_milliseconds: Optional[int] = None,
     debug: Optional[Union[str, _models.QueryDebugMode]] = None,
 ) -> SearchRequest:
-    # pylint:disable=too-many-locals
+    # pylint:disable=too-many-locals,protected-access
     """Build a SearchRequest from search parameters.
 
     This is a shared helper function used by both sync and async search methods.
@@ -220,9 +220,7 @@ def _build_search_request(
         scoring_statistics=scoring_statistics,
         vector_queries=(
             [
-                (
-                    query if isinstance(query, _models.VectorQuery) else _models.VectorQuery._deserialize(query, [])
-                )  # pylint: disable=protected-access
+                (query if isinstance(query, _models.VectorQuery) else _models.VectorQuery._deserialize(query, []))
                 for query in vector_queries
             ]
             if vector_queries is not None

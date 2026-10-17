@@ -21,7 +21,8 @@ from .models._enums import (
 
 if TYPE_CHECKING:
     from ..knowledgebases.models import KnowledgeRetrievalOutputMode
-    from ..knowledgebases.types import KnowledgeRetrievalReasoningEffort, KnowledgeSourceIngestionParameters
+    from ..knowledgebases.models import KnowledgeSourceIngestionParameters
+    from ..knowledgebases.types import KnowledgeRetrievalReasoningEffort
     from .models import (
         AzureOpenAIModelName,
         BlobIndexerDataToExtract,

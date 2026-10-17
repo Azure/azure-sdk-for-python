@@ -61,6 +61,32 @@ def test_package_source_distribution_includes_documentation():
     assert "recursive-include doc *.rst" in (package_root / "MANIFEST.in").read_text().splitlines()
 
 
+def test_generator_workarounds_restore_documentation_packaging(workarounds, tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(workarounds, "PACKAGE_ROOT", tmp_path)
+    monkeypatch.setattr(workarounds, "REPLACEMENTS", ())
+    manifest = tmp_path / "MANIFEST.in"
+    original_manifest = "include *.md\ninclude LICENSE\n"
+    manifest.write_text(original_manifest)
+    doc_dir = tmp_path / "doc"
+    doc_dir.mkdir()
+    for namespace in ("azure.search.documents", "azure.search.documents.indexes"):
+        source = 'Plain = TypedDict("Plain", {"name": str}, total=False)'
+        type_path = tmp_path.joinpath(*namespace.split("."), "types.py")
+        type_path.parent.mkdir(parents=True, exist_ok=True)
+        type_path.write_text(source)
+        (doc_dir / f"{namespace}.rst").write_text(workarounds.build_sphinx_type_section(f"{namespace}.types", source))
+
+    assert workarounds.update_sources(check=True) == 1
+    assert "include package-local Sphinx documentation in the source distribution" in capsys.readouterr().out
+    assert manifest.read_text() == original_manifest
+
+    assert workarounds.update_sources(check=False) == 0
+    assert manifest.read_text() == original_manifest + "recursive-include doc *.rst\n"
+    assert workarounds.update_sources(check=True) == 0
+    assert workarounds.update_sources(check=False) == 0
+    assert manifest.read_text().count("recursive-include doc *.rst") == 1
+
+
 def test_generator_workarounds_are_applied():
     package_root = Path(__file__).resolve().parents[1]
     script = package_root / ".github/skills/azure-search-documents/scripts/apply_generator_workarounds.py"

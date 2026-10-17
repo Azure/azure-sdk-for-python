@@ -249,6 +249,13 @@ def update_sources(*, check: bool) -> int:
             sources[path] = updated
             pending.append(f"refresh package-local TypedDict documentation for {namespace}.types")
 
+    manifest_path = PACKAGE_ROOT / "MANIFEST.in"
+    manifest = manifest_path.read_text(encoding="utf-8")
+    directive = "recursive-include doc *.rst"
+    if directive not in manifest.splitlines():
+        sources[manifest_path] = manifest.rstrip("\n") + "\n" + directive + "\n"
+        pending.append("include package-local Sphinx documentation in the source distribution")
+
     if check:
         if pending:
             print("Generator workarounds are required:")

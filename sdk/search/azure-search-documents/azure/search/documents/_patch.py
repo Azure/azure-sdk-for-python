@@ -219,11 +219,11 @@ class SearchIndexingBufferedSender:
                 )
                 try:
                     index_result = client.get_index(self._index_name)
-                    if index_result:
-                        for field in index_result.fields:
-                            if field.key:
-                                self._index_key = field.name
-                                break
+                    fields = index_result.fields if index_result else []
+                    for field in fields:
+                        if field.key:
+                            self._index_key = field.name
+                            break
                 finally:
                     # User-supplied transports and pipelines remain owned by the sender.
                     if self._client_kwargs.get("transport") is None and self._client_kwargs.get("pipeline") is None:

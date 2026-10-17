@@ -18,6 +18,9 @@ USAGE:
     3) AZURE_OPENAI_ENDPOINT - endpoint for your Azure OpenAI resource
     4) AZURE_OPENAI_EMBEDDING_DEPLOYMENT - deployment name for your embedding model
     5) AZURE_OPENAI_EMBEDDING_MODEL - model name for your embedding model
+
+    The Search service's managed identity needs Cognitive Services OpenAI User on
+    the embedding resource. Direct uploads do not require a Storage account.
 """
 
 import os
@@ -26,6 +29,7 @@ from sample_utils import (
     cleanup_resources,
     get_sample_run_tag,
     print_retrieval_summary,
+    wait_for_knowledge_source_active,
 )
 
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
@@ -53,6 +57,7 @@ def main():  # pylint: disable=too-many-locals
     from azure.search.documents.knowledgebases import KnowledgeBaseRetrievalClient
     from azure.search.documents.knowledgebases.models import (
         FileKnowledgeSourceParams,
+        KnowledgeBaseFileReference,
         KnowledgeBaseRetrievalRequest,
         KnowledgeRetrievalMinimalReasoningEffort,
         KnowledgeRetrievalSemanticIntent,
@@ -85,6 +90,14 @@ def main():  # pylint: disable=too-many-locals
         retrieved_knowledge_source = index_client.get_knowledge_source(knowledge_source_name)
         print(f"Retrieved: knowledge source '{retrieved_knowledge_source.name}'")
 
+        status = index_client.get_knowledge_source_status(knowledge_source_name)
+        capacity = status.as_dict().get("fileCapacity")
+        if capacity is not None:
+            print(f"File capacity: {capacity.get('remainingFileCount')} of {capacity.get('maxFileCount')} remaining")
+            print(f"Maximum upload size: {capacity.get('maxFileSizeBytes')} bytes")
+            if capacity.get("remainingFileCount") is not None and capacity["remainingFileCount"] < 2:
+                raise RuntimeError("This sample requires capacity for two files.")
+
         knowledge_base = KnowledgeBase(
             name=knowledge_base_name,
             description="Hotel File knowledge base",
@@ -107,6 +120,10 @@ def main():  # pylint: disable=too-many-locals
             ),
         )
         print(f"Uploaded: file '{uploaded_file.file_name}'")
+        print(f"Prefix: {uploaded_file.prefix}; size: {uploaded_file.file_size_bytes} bytes")
+        print(f"Service-selected modes: {uploaded_file.parsing_mode}, {uploaded_file.extraction_mode}")
+        print(f"Created: {uploaded_file.created_at}; updated: {uploaded_file.last_updated_at}")
+        print(f"Processing error: {uploaded_file.error_message}")
         assert uploaded_file.file_id is not None
 
         annex_file = index_client.upload_knowledge_source_file_multipart(
@@ -125,7 +142,10 @@ def main():  # pylint: disable=too-many-locals
             file_id=uploaded_file.file_id,
             name=knowledge_source_name,
             body=UpdateKnowledgeSourceFileRequest(
-                metadata=file_metadata,
+                metadata=FileUploadMetadata(
+                    file_name=f"hotels/{upload_file_name}",
+                    metadata={"category": "renovated hotel", "city": "Seattle"},
+                ),
                 content=(
                     upload_file_name,
                     b"Historic Harbor Hotel has free parking, free Wi-Fi, and a rooftop restaurant.",
@@ -134,7 +154,7 @@ def main():  # pylint: disable=too-many-locals
             ),
         )
         print(f"Updated: file '{updated_file.file_name}'")
-        assert updated_file.metadata == {"category": "hotel", "city": "Seattle"}
+        assert updated_file.metadata == {"category": "renovated hotel", "city": "Seattle"}
         assert updated_file.parsing_mode is not None
         assert updated_file.extraction_mode in {"minimal", "standard"}
 
@@ -152,6 +172,7 @@ def main():  # pylint: disable=too-many-locals
         assert len(file_ids) == len(set(file_ids))
         print(f"Paged through {len(files)} files without duplicates")
 
+        wait_for_knowledge_source_active(index_client, knowledge_source_name)
         retrieval_client = KnowledgeBaseRetrievalClient(
             service_endpoint, AzureKeyCredential(key), knowledge_base_name=knowledge_base_name
         )
@@ -169,6 +190,9 @@ def main():  # pylint: disable=too-many-locals
             )
             retrieval_result = retrieval_client.retrieve(request)
             print_retrieval_summary(retrieval_result)
+            for reference in retrieval_result.references or []:
+                if isinstance(reference, KnowledgeBaseFileReference):
+                    print(f"Search-owned citation URL: {reference.citation_url}")
         finally:
             retrieval_client.close()
 

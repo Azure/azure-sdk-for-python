@@ -32,6 +32,8 @@ USAGE:
     8) AZURE_AI_SERVICES_API_KEY - AI Services API key
     9) AZURE_SEARCH_EXPECTED_ANALYZER - analyzer expected for the supported-language fixture
     10) AZURE_SEARCH_EXPECTED_FALLBACK_ANALYZER - analyzer expected for the fallback fixture
+    11) AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_EMBEDDING_DEPLOYMENT, AZURE_OPENAI_EMBEDDING_MODEL
+        - embedding resource and deployment accessible to the Search identity
 
     The storage and AI Services shared private links must already be approved. Shared private-link
     resources are control-plane resources and are not configured by this data-plane sample.
@@ -39,11 +41,14 @@ USAGE:
 
 import os
 
+from sample_utils import cleanup_resources, get_sample_run_tag, wait_for_knowledge_source_active
+
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
 key = os.environ["AZURE_SEARCH_API_KEY"]
-knowledge_source_name = "hotels-sample-knowledge-source"
-private_blob_source_name = "hotels-private-blob-knowledge-source"
+run_tag = get_sample_run_tag()
+knowledge_source_name = f"hotels-sample-knowledge-source-{run_tag}"
+private_blob_source_name = f"hotels-private-blob-knowledge-source-{run_tag}"
 private_blob_environment_variables = (
     "AZURE_STORAGE_RESOURCE_ID_CONNECTION_STRING",
     "AZURE_STORAGE_CONTAINER",
@@ -52,6 +57,9 @@ private_blob_environment_variables = (
     "AZURE_AI_SERVICES_API_KEY",
     "AZURE_SEARCH_EXPECTED_ANALYZER",
     "AZURE_SEARCH_EXPECTED_FALLBACK_ANALYZER",
+    "AZURE_OPENAI_ENDPOINT",
+    "AZURE_OPENAI_EMBEDDING_DEPLOYMENT",
+    "AZURE_OPENAI_EMBEDDING_MODEL",
 )
 
 
@@ -164,10 +172,15 @@ def create_private_blob_knowledge_source():  # pylint: disable=too-many-locals
     from azure.search.documents.indexes.models import (
         AzureBlobKnowledgeSource,
         AzureBlobKnowledgeSourceParameters,
+        AzureOpenAIVectorizerParameters,
         LexicalAnalyzerName,
         SearchIndexerDataUserAssignedIdentity,
     )
-    from azure.search.documents.knowledgebases.models import AIServices, KnowledgeSourceIngestionParameters
+    from azure.search.documents.knowledgebases.models import (
+        AIServices,
+        KnowledgeSourceAzureOpenAIVectorizer,
+        KnowledgeSourceIngestionParameters,
+    )
 
     credential = AzureKeyCredential(key)
     index_client = SearchIndexClient(service_endpoint, credential)
@@ -182,6 +195,13 @@ def create_private_blob_knowledge_source():  # pylint: disable=too-many-locals
                     resource_id=os.environ["AZURE_SEARCH_USER_ASSIGNED_IDENTITY"]
                 ),
                 content_extraction_mode="minimal",
+                embedding_model=KnowledgeSourceAzureOpenAIVectorizer(
+                    azure_open_ai_parameters=AzureOpenAIVectorizerParameters(
+                        resource_url=os.environ["AZURE_OPENAI_ENDPOINT"],
+                        deployment_name=os.environ["AZURE_OPENAI_EMBEDDING_DEPLOYMENT"],
+                        model_name=os.environ["AZURE_OPENAI_EMBEDDING_MODEL"],
+                    )
+                ),
                 ai_services=AIServices(
                     uri=os.environ["AZURE_AI_SERVICES_ENDPOINT"],
                     api_key=os.environ["AZURE_AI_SERVICES_API_KEY"],
@@ -191,7 +211,9 @@ def create_private_blob_knowledge_source():  # pylint: disable=too-many-locals
         ),
     )
     try:
-        created = index_client.create_or_update_knowledge_source(private_source)
+        index_client.create_or_update_knowledge_source(private_source)
+        wait_for_knowledge_source_active(index_client, private_blob_source_name)
+        created = index_client.get_knowledge_source(private_blob_source_name)
         assert isinstance(created, AzureBlobKnowledgeSource)
         assert created.azure_blob_parameters.ingestion_parameters is not None
         assert created.as_dict()["azureBlobParameters"]["ingestionParameters"]["networkAccessMode"] == "private"
@@ -214,7 +236,7 @@ def create_private_blob_knowledge_source():  # pylint: disable=too-many-locals
         assert os.environ["AZURE_SEARCH_EXPECTED_FALLBACK_ANALYZER"] in analyzers
         print(f"Verified generated resources and analyzers: {sorted(analyzers)}")
     finally:
-        index_client.delete_knowledge_source(private_blob_source_name)
+        cleanup_resources(index_client, knowledge_source_name=private_blob_source_name)
         indexer_client.close()
         index_client.close()
     # [END create_private_blob_knowledge_source]
@@ -233,9 +255,16 @@ def delete_knowledge_source():
 
 
 if __name__ == "__main__":
-    create_knowledge_source()
-    get_knowledge_source()
-    update_knowledge_source()
-    list_knowledge_sources()
-    create_private_blob_knowledge_source()
-    delete_knowledge_source()
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.indexes import SearchIndexClient
+
+    try:
+        create_knowledge_source()
+        get_knowledge_source()
+        update_knowledge_source()
+        list_knowledge_sources()
+        create_private_blob_knowledge_source()
+        delete_knowledge_source()
+    finally:
+        with SearchIndexClient(service_endpoint, AzureKeyCredential(key)) as cleanup_client:
+            cleanup_resources(cleanup_client, knowledge_source_name=knowledge_source_name)

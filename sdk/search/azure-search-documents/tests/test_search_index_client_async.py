@@ -284,10 +284,10 @@ class TestKnowledgeSourceFileOperationsAsync:
 @pytest.mark.parametrize(
     ("public_method", "generated_method"),
     [
-        ("get_synonym_maps", "_get_synonym_maps"),
-        ("get_data_source_connections", "_get_data_source_connections"),
-        ("get_indexers", "_get_indexers"),
-        ("get_skillsets", "_get_skillsets"),
+        ("get_synonym_maps", "list_synonym_maps"),
+        ("get_data_source_connections", "list_data_source_connections"),
+        ("get_indexers", "list_indexers"),
+        ("get_skillsets", "list_skillsets"),
     ],
 )
 async def test_custom_list_wrappers_forward_search_paging(public_method, generated_method):
@@ -318,3 +318,62 @@ async def test_custom_list_wrappers_forward_search_paging(public_method, generat
         page_size=2,
         search_type="prefix",
     )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("api_version", ["2026-04-01", "2026-10-01"])
+@pytest.mark.parametrize(
+    ("public_method", "route", "model_name"),
+    [
+        ("get_synonym_maps", "synonymmaps", "SynonymMap"),
+        ("get_data_source_connections", "datasources", "SearchIndexerDataSourceConnection"),
+        ("get_indexers", "indexers", "SearchIndexer"),
+        ("get_skillsets", "skillsets", "SearchIndexerSkillset"),
+    ],
+)
+async def test_custom_list_wrappers_use_generated_paging(public_method, route, model_name, api_version):
+    from types import SimpleNamespace
+    from urllib.parse import parse_qs, urlsplit
+
+    from azure.search.documents.indexes import models
+    from azure.search.documents.indexes.aio import SearchIndexerClient
+
+    client_type = SearchIndexClient if public_method == "get_synonym_maps" else SearchIndexerClient
+    pages = [
+        {
+            "value": [{"name": "hot-first"}],
+            "@odata.nextLink": f"{ENDPOINT}/{route}?continuationToken=next&api-version={api_version}",
+        },
+        {"value": [{"name": "hot-second"}]},
+    ]
+    responses = [mock.Mock(status_code=200) for _ in pages]
+    for response, payload in zip(responses, pages):
+        response.json.return_value = payload
+    options = {"search": "hot", "page_size": 1, "search_type": "prefix"} if api_version == "2026-10-01" else {}
+
+    async with client_type(ENDPOINT, AzureKeyCredential(KEY), api_version=api_version) as client:
+        with mock.patch.object(
+            client._client._pipeline,
+            "run",
+            new=mock.AsyncMock(side_effect=[SimpleNamespace(http_response=response) for response in responses]),
+        ) as send:
+            result = await getattr(client, public_method)(select=["name"], headers={"x-custom": "value"}, **options)
+
+    assert isinstance(result, list)
+    assert [item.name for item in result] == ["hot-first", "hot-second"]
+    assert all(isinstance(item, getattr(models, model_name)) for item in result)
+    assert send.await_count == 2
+    for call in send.call_args_list:
+        request = call.args[0]
+        assert request.method == "GET"
+        assert urlsplit(request.url).path == f"/{route}"
+        assert parse_qs(urlsplit(request.url).query)["api-version"] == [api_version]
+        assert request.headers["x-custom"] == "value"
+    first_query = parse_qs(urlsplit(send.call_args_list[0].args[0].url).query)
+    assert first_query["$select"] == ["name"]
+    if options:
+        assert first_query["search"] == ["hot"]
+        assert first_query["pageSize"] == ["1"]
+        assert first_query["searchType"] == ["prefix"]
+    else:
+        assert not {"search", "pageSize", "searchType"}.intersection(first_query)

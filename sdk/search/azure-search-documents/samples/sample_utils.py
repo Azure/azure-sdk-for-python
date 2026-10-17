@@ -164,6 +164,68 @@ async def wait_for_knowledge_source_active_async(index_client, knowledge_source_
     raise RuntimeError(f"Knowledge source did not become active: {status.synchronization_status}")
 
 
+def wait_for_indexer(indexer_client, indexer_name):
+    import time
+
+    for attempt in range(60):
+        status = indexer_client.get_indexer_status(indexer_name)
+        result = status.last_result
+        if result is not None and result.status == "success":
+            if result.failed_item_count:
+                raise RuntimeError(f"Indexer completed with {result.failed_item_count} failed documents.")
+            return
+        if result is not None and result.status in {"persistentFailure", "transientFailure"}:
+            raise RuntimeError(f"Indexer failed: {result.error_message}")
+        if attempt < 59:
+            time.sleep(5)
+    raise TimeoutError(f"Indexer '{indexer_name}' did not complete within five minutes.")
+
+
+async def wait_for_indexer_async(indexer_client, indexer_name):
+    import asyncio
+
+    for attempt in range(60):
+        status = await indexer_client.get_indexer_status(indexer_name)
+        result = status.last_result
+        if result is not None and result.status == "success":
+            if result.failed_item_count:
+                raise RuntimeError(f"Indexer completed with {result.failed_item_count} failed documents.")
+            return
+        if result is not None and result.status in {"persistentFailure", "transientFailure"}:
+            raise RuntimeError(f"Indexer failed: {result.error_message}")
+        if attempt < 59:
+            await asyncio.sleep(5)
+    raise TimeoutError(f"Indexer '{indexer_name}' did not complete within five minutes.")
+
+
+def cleanup_indexer_resources(indexer_client, index_client, *, indexer_name, data_source_name, index_name):
+    from azure.core.exceptions import ResourceNotFoundError
+
+    for delete, name in (
+        (indexer_client.delete_indexer, indexer_name),
+        (indexer_client.delete_data_source_connection, data_source_name),
+        (index_client.delete_index, index_name),
+    ):
+        try:
+            delete(name)
+        except ResourceNotFoundError:
+            pass
+
+
+async def cleanup_indexer_resources_async(indexer_client, index_client, *, indexer_name, data_source_name, index_name):
+    from azure.core.exceptions import ResourceNotFoundError
+
+    for delete, name in (
+        (indexer_client.delete_indexer, indexer_name),
+        (indexer_client.delete_data_source_connection, data_source_name),
+        (index_client.delete_index, index_name),
+    ):
+        try:
+            await delete(name)
+        except ResourceNotFoundError:
+            pass
+
+
 def setup_search_index_knowledge_source(knowledge_source_name, index_name, service_endpoint, key):
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.indexes import SearchIndexClient

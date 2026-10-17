@@ -20,6 +20,8 @@ from azure.search.documents import RequestEntityTooLargeError
 from azure.search.documents.aio import SearchIndexingBufferedSender
 from azure.search.documents.models import IndexingResult
 
+pytestmark = pytest.mark.filterwarnings("error:.*iscoroutinefunction.*:DeprecationWarning")
+
 SEARCH_ENDPOINT = "https://my-search-service.search.windows.net"
 INDEX_NAME = "hotel-index"
 API_KEY = "fake-api-key"

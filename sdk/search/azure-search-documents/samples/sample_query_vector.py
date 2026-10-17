@@ -190,6 +190,9 @@ def single_vector_search():
 def single_vector_search_with_filter():
     """Perform a vector search with a filter applied."""
     # [START single_vector_search_with_filter]
+    from azure.search.documents.models import VectorQueryKind
+    from azure.search.documents.types import VectorQuery as VectorQueryInput, VectorizedQuery as VectorizedQueryInput
+
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
     vector_query = VectorizedQuery(
@@ -208,6 +211,22 @@ def single_vector_search_with_filter():
     print("Results: vector search with filter")
     for result in results:
         print(f"  HotelId: {result['HotelId']}, HotelName: {result['HotelName']}, " f"Tags: {result.get('Tags')}")
+
+    typed_query: VectorizedQueryInput = {
+        "kind": VectorQueryKind.VECTOR,
+        "vector": vector,
+        "k": 5,
+        "fields": "DescriptionVector",
+    }
+    query_input: VectorQueryInput = typed_query
+    typed_results = search_client.search(
+        vector_queries=[query_input],
+        filter="Tags/any(tag: tag eq 'free wifi')",
+        select=["HotelId", "HotelName", "Description", "Category", "Tags"],
+        top=5,
+    )
+    for result in typed_results:
+        print(f"TypedDict vector result: {result['HotelId']}: {result['HotelName']}")
     # [END single_vector_search_with_filter]
 
 

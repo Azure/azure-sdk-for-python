@@ -539,7 +539,7 @@ class _SearchIndexClientOperationsMixin(
             kwargs["page_size"] = page_size
         if search_type is not None:
             kwargs["search_type"] = search_type
-        return list(self._get_synonym_maps(select=select, **kwargs))
+        return list(self.list_synonym_maps(select=select, **kwargs))
 
     @distributed_trace
     def get_synonym_map_names(self, **kwargs: Any) -> List[str]:
@@ -896,7 +896,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             kwargs["page_size"] = page_size
         if search_type is not None:
             kwargs["search_type"] = search_type
-        return list(self._get_skillsets(select=select, **kwargs))
+        return list(self.list_skillsets(select=select, **kwargs))
 
     @distributed_trace
     def get_indexers(
@@ -931,7 +931,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             kwargs["page_size"] = page_size
         if search_type is not None:
             kwargs["search_type"] = search_type
-        return list(self._get_indexers(select=select, **kwargs))
+        return list(self.list_indexers(select=select, **kwargs))
 
     @distributed_trace
     def get_indexer_names(self, **kwargs: Any) -> Sequence[str]:
@@ -985,7 +985,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             kwargs["page_size"] = page_size
         if search_type is not None:
             kwargs["search_type"] = search_type
-        return list(self._get_data_source_connections(select=select, **kwargs))
+        return list(self.list_data_source_connections(select=select, **kwargs))
 
     @distributed_trace
     def get_data_source_connection_names(self, **kwargs: Any) -> Sequence[str]:
