@@ -75,7 +75,7 @@ All build definitions allow choice at queue time as to which checks actually run
 3. Before clicking `run` against `main` or your target commit, click `Variables` and add a variable of name `ChecksOverride`. The value should be a comma separated list of checks that you want to run in the test phase.
 4. Once it's set, run the build!
 
-The screenshot above narrows the default PR build set (`whl`, `sdist`, `mindependency`) to a specific subset.
+The screenshot above narrows the default PR build set (`whl`, `sdist`) to a specific subset (`mindependency` is temporarily disabled pending CFS onboarding per #48346).
 
 ![res/queue_time_variable.png](res/queue_time_variable.png)
 
@@ -240,12 +240,14 @@ The canonical definition of which install-and-test checks run in each mode lives
 |---|---|---|---|
 | `whl` | ✓ | ✓ | ✓ |
 | `sdist` | ✓ | ✓ | ✓ |
-| `mindependency` | ✓ | ✓ | ✓ |
+| `mindependency`* | — | — | — |
 | `import_all` | — | ✓ | ✓ |
 | `whl_no_aio` | — | ✓ | ✓ |
 | `latestdependency` | — | ✓ | ✓ |
 | `devtest` | — | ✓ | — |
 | `regression` | — | ✓ | — |
+
+*\*Note: `mindependency` is temporarily disabled in CI pending CFS onboarding ([#48346](https://github.com/Azure/azure-sdk-for-python/issues/48346)), but can still be run locally via `azpysdk mindependency`.*
 
 Static analysis checks always run against **Python 3.10** (configured via `PythonVersion` in `eng/pipelines/templates/variables/globals.yml`).
 
