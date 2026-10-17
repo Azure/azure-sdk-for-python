@@ -12,6 +12,7 @@ import asyncio
 import inspect
 import ipaddress
 import json
+import logging
 import math
 import os
 import time
@@ -24,6 +25,7 @@ from azure.core.pipeline.transport import AioHttpTransport
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from ..._common.utils import construct_prompty_model_config, validate_model_config
 from ..._http_utils import get_async_http_client
+from ._decision_execution import DecisionExecution
 
 if os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true":
     from promptflow.core._flow import AsyncPrompty
@@ -54,7 +56,6 @@ _DECISION_CONFIG_KEYS = {
     "probability_threshold",
 }
 _DEFAULT_PROBABILITY_THRESHOLD = 0.75
-_PROBABILITY_SUM_ABS_TOLERANCE = 1e-6
 # The service adds api_version to every resolved model configuration; the decision endpoint does not use it.
 _IGNORED_CONFIG_KEYS = {"api_version"}
 
@@ -141,7 +142,8 @@ def validate_noul_answer(answer: Dict[str, Any]) -> float:
 def validate_score_answer(answer: Dict[str, Any], levels: int) -> List[float]:
     """Return the level probabilities of a ``score`` answer after validating its fields.
 
-    Probabilities must sum to one within an absolute tolerance of ``1e-6`` for decimal rounding.
+    Hundredth-precision probabilities allow rounding error of ``0.005`` per level plus ``1e-12``.
+    Other distributions must sum to one within an absolute tolerance of ``0.001``.
     The native mean is checked for finiteness, not consistency with the distribution.
 
     :param answer: The answer for a ``score`` question.
@@ -156,8 +158,9 @@ def validate_score_answer(answer: Dict[str, Any], levels: int) -> List[float]:
     if not isinstance(probabilities, dict) or set(probabilities) != {str(i) for i in range(levels)}:
         raise ValueError(f"a score answer requires probabilities for exactly {levels} levels.")
     distribution = [_probability(probabilities[str(i)]) for i in range(levels)]
-    if not math.isclose(math.fsum(distribution), 1.0, rel_tol=0.0, abs_tol=_PROBABILITY_SUM_ABS_TOLERANCE):
-        raise ValueError("score probabilities must sum to one within an absolute tolerance of 1e-6.")
+    tolerance = len(distribution) * 0.005 + 1e-12 if all(value == round(value, 2) for value in distribution) else 0.001
+    if not math.isclose(math.fsum(distribution), 1.0, rel_tol=0.0, abs_tol=tolerance):
+        raise ValueError("score probabilities must sum to one within the precision-aware rounding tolerance.")
     mean = answer.get("score")
     if isinstance(mean, bool) or not isinstance(mean, (int, float)) or not math.isfinite(mean):
         raise ValueError("the score mean must be finite.")
@@ -287,7 +290,7 @@ class DecisionModelRunner:
         credential = credential if credential is not None else model_config.get("credential")
         if not api_key and not callable(getattr(credential, "get_token", None)):
             raise _invalid_config("Decision models require an 'api_key' or a credential with a callable 'get_token'.")
-        self._credential = None if api_key else credential
+        self._credential: Any = None if api_key else credential
 
         threshold = model_config.get("probability_threshold", _DEFAULT_PROBABILITY_THRESHOLD)
         if "probability_threshold" in model_config and not binary:
@@ -301,6 +304,15 @@ class DecisionModelRunner:
         self._deployment = deployment
         self._api_key = api_key
         self._user_agent = f"{UserAgentSingleton().value} (type=evaluator subtype={evaluator_name})"
+        self._execution_logger: Any = logging.getLogger(__name__)
+
+    def _bind_execution_logger(self, logger: Any) -> None:
+        """Bind a host's context-aware logger without changing transport or credential ownership.
+
+        :param logger: The host logger or LoggerAdapter; None disables execution logs, not metrics.
+        :type logger: Any
+        """
+        self._execution_logger = logger
 
     @property
     def deployment(self) -> str:
@@ -327,11 +339,13 @@ class DecisionModelRunner:
         ):
             raise _invalid_config("'timeout' must be a positive finite number.")
         deadline = time.monotonic() + timeout
-        for question in questions.values():
-            if question.get("type") not in ("noul", "score"):
-                raise _invalid_config(f"Decision question type '{question.get('type')}' is not supported.")
+        execution = DecisionExecution(self._execution_logger, self._max_response_bytes)
+        outcome = "error"
         properties = self._response_properties(None)
         try:
+            for question in questions.values():
+                if question.get("type") not in ("noul", "score"):
+                    raise _invalid_config(f"Decision question type '{question.get('type')}' is not supported.")
             body = {"model": self._deployment, "state": state, "questions": questions}
             try:
                 content = json.dumps(body, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode("utf-8")
@@ -361,19 +375,36 @@ class DecisionModelRunner:
                 raise _failed("The decision request exceeds the configured byte budget.", ErrorBlame.USER_ERROR)
             try:
                 payload = await asyncio.wait_for(
-                    self._await_request(content, deadline), timeout=max(0, deadline - time.monotonic())
+                    self._await_request(content, deadline, execution), timeout=max(0, deadline - time.monotonic())
                 )
             except asyncio.TimeoutError:
+                outcome = "deadline"
                 raise _failed("The decision model request timed out.") from None
             properties = self._response_properties(payload)
             try:
-                return self._validate_response(payload, questions)
+                result = self._validate_response(payload, questions)
             except ValueError as exc:
                 raise _failed(f"The decision model returned an invalid response: {exc}") from None
+            outcome = "completed"
+            return result
+        except asyncio.CancelledError as exc:
+            outcome = "cancelled"
+            setattr(exc, "properties", properties)
+            raise
         except EvaluationException as exc:
+            if outcome != "deadline":
+                outcome = execution.outcome
             if exc.properties is None:
                 exc.properties = properties
+            properties = exc.properties
             raise
+        finally:
+            summary = execution.finish(outcome)
+            if summary is not None:
+                if outcome == "completed":
+                    result["_decision_execution"] = summary
+                else:
+                    properties.setdefault("decision_model", {})["execution"] = summary
 
     def _cancelled(self) -> bool:
         callback = self._cancellation_requested
@@ -387,15 +418,17 @@ class DecisionModelRunner:
             raise _failed("The decision cancellation callback must return a boolean.", ErrorBlame.USER_ERROR)
         return result
 
-    async def _await_request(self, content: bytes, deadline: float) -> Any:
+    async def _await_request(self, content: bytes, deadline: float, execution: DecisionExecution) -> Any:
         if self._cancelled():
+            execution.outcome = "cancelled"
             raise _failed("The decision model request was cancelled.", ErrorBlame.USER_ERROR)
         if self._cancellation_requested is None:
-            return await self._post(content, deadline=deadline)
-        task = asyncio.create_task(self._post(content, deadline=deadline))
+            return await self._post(content, deadline=deadline, execution=execution)
+        task = asyncio.create_task(self._post(content, deadline=deadline, execution=execution))
         try:
             while not task.done():
                 if self._cancelled():
+                    execution.outcome = "cancelled"
                     raise _failed("The decision model request was cancelled.", ErrorBlame.USER_ERROR)
                 await asyncio.wait({task}, timeout=0.05)
             return await task
@@ -412,7 +445,7 @@ class DecisionModelRunner:
             token = await token
         return token.token
 
-    async def _post(self, content: bytes, *, deadline: float) -> Any:
+    async def _post(self, content: bytes, *, deadline: float, execution: DecisionExecution) -> Any:
         headers = {"x-ms-useragent": self._user_agent, "Content-Type": "application/json"}
         if self._api_key:
             headers["api-key"] = self._api_key
@@ -425,6 +458,7 @@ class DecisionModelRunner:
                 raise _failed("Could not acquire a token for the decision model.", ErrorBlame.USER_ERROR) from None
 
         policies: Dict[str, Any] = {
+            "custom_hook_policy": execution,
             "retry_policy": AsyncRetryPolicy(
                 retry_total=self._max_retries,
                 retry_connect=self._max_retries,
@@ -437,6 +471,7 @@ class DecisionModelRunner:
         }
         remaining = deadline - time.monotonic()
         if remaining <= 0:
+            execution.outcome = "deadline"
             raise _failed("The decision model request timed out.")
         # Native retry policy carries this budget across attempts and clamps the scalar connect/read timeout.
         options: Dict[str, Any] = {
@@ -457,6 +492,7 @@ class DecisionModelRunner:
             raise
         except Exception:  # pylint: disable=broad-except
             if time.monotonic() >= deadline:
+                execution.outcome = "deadline"
                 raise _failed("The decision model request timed out.") from None
             raise _failed("The decision model request failed; check the endpoint and network access.") from None
         if self._max_response_bytes is not None and len(content) > self._max_response_bytes:

@@ -15,6 +15,7 @@ import aiohttp
 import requests
 
 from azure.ai.evaluation._evaluators._common._model_runners import DecisionModelRunner
+from azure.ai.evaluation._evaluators._common._decision_execution import validated_execution
 from azure.ai.evaluation._evaluators._common._base_model_eval import ModelEvaluatorBase
 from azure.ai.evaluation._exceptions import ErrorBlame, EvaluationException
 from azure.ai.evaluation._http_utils import get_async_http_client
@@ -73,6 +74,16 @@ def invoke(endpoint, timeout=3, **controls):
     return asyncio.run(runner(state={"query": "é"}, questions=QUESTIONS, timeout=timeout))
 
 
+def assert_failure_execution(error, attempts, outcome):
+    assert set(error.properties) == {"decision_model"}
+    native = error.properties["decision_model"]
+    assert set(native) == {"deployment", "execution"} and native["deployment"] == "Decision-1"
+    execution = native["execution"]
+    assert validated_execution(execution) == execution
+    assert execution["attempt_count"] == attempts and execution["retry_count"] == max(0, attempts - 1)
+    assert execution["outcome"] == outcome
+
+
 class SynchronousDecisionEvaluator(ModelEvaluatorBase):
     _supports_decision_models = True
 
@@ -120,7 +131,9 @@ def test_public_synchronous_overall_timeout_bounds_native_async_transport(
     assert len(observed) == 1 and 0 < observed[0] <= bound + 1e-8
     if timeout_seconds is None or timeout_seconds > timeout:
         assert "timed out" in str(raised.value)
-    assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
+    assert_failure_execution(
+        raised.value, 1, "deadline" if timeout_seconds is None or timeout_seconds > timeout else "error"
+    )
 
 
 def test_public_synchronous_authentication_consumes_transport_deadline(localhost, monkeypatch):
@@ -190,7 +203,7 @@ def test_public_synchronous_retries_and_backoff_share_remaining_deadline(localho
     assert len(calls) == len(observed) == 2
     assert 0 < observed[1] <= observed[0] - 0.03
     assert observed[0] <= 0.8 + 1e-8
-    assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
+    assert_failure_execution(raised.value, 2, "deadline")
 
 
 def test_default_transport_sends_policy_request_and_retries(localhost, monkeypatch):
@@ -226,7 +239,7 @@ def test_default_transport_read_timeout_is_enforced(localhost):
         invoke(endpoint, timeout_seconds=0.05, max_retries=0)
     assert time.monotonic() - started < 0.4
     assert len(calls) == 1
-    assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
+    assert_failure_execution(raised.value, 1, "error")
 
 
 def test_default_transport_native_scalar_timeout_preserves_numeric_retry_deadline(localhost, monkeypatch):
@@ -335,7 +348,7 @@ def test_default_transport_cancellation_interrupts_awaiting_a_real_request(local
                 await runner(state={}, questions=QUESTIONS, timeout=3)
             assert time.monotonic() - started < 0.4
             assert raised.value.blame == ErrorBlame.USER_ERROR
-            assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
+            assert_failure_execution(raised.value, 1, "cancelled")
         finally:
             handle.cancel()
 
@@ -437,7 +450,7 @@ def test_trickling_body_is_stopped_by_overall_deadline_or_cancellation(trickling
         else:
             with pytest.raises(EvaluationException, match="cancelled" if cancel else "timed out") as raised:
                 evaluator(query="synthetic")
-            assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
+            assert_failure_execution(raised.value, 1, "cancelled" if cancel else "deadline")
         elapsed = time.monotonic() - started
         # The existing batch engine polls run completion every second; the HTTP read must stop sooner.
         assert elapsed < (1.5 if batch else 0.8)

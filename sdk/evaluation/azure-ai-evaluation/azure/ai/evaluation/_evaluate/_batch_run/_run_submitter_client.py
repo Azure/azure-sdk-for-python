@@ -23,6 +23,7 @@ from ..._legacy._common._thread_pool_executor_with_context import ThreadPoolExec
 from ..._evaluate._utils import _has_aggregator
 from ..._constants import Prefixes, PF_BATCH_TIMEOUT_SEC
 from ..._exceptions import EvaluationException
+from ..._evaluators._common._decision_execution import validated_execution
 
 from .._utils import get_int_env_var as get_int
 
@@ -31,7 +32,7 @@ MISSING_VALUE: Final[int] = sys.maxsize
 
 
 def _decision_error_metadata(exception: EvaluationException) -> Dict[str, Any]:
-    """Keep only known final-response usage and validated provenance for failed Decision rows."""
+    """Keep known usage and validated provenance, preserving the producer's distinct usage scopes."""
     properties: Dict[str, Any] = {}
     semantic_properties = exception.properties or {}
     for key in ("prompt_tokens", "completion_tokens", "total_tokens"):
@@ -57,6 +58,19 @@ def _decision_error_metadata(exception: EvaluationException) -> Dict[str, Any]:
                 and 0 <= value <= 1
             ):
                 provenance[key] = value
+        for key, accepted in (
+            ("backend", ("foundry_decision", "system_one")),
+            ("protocol", ("shared_sdk", "system_one")),
+            ("result_usage_scope", ("reported_attempts_only", "final_response_only")),
+        ):
+            value = native.get(key)
+            if isinstance(value, str) and value in accepted:
+                provenance[key] = value
+        if isinstance(native.get("usage_available"), bool):
+            provenance["usage_available"] = native["usage_available"]
+        execution = validated_execution(native.get("execution"))
+        if execution is not None:
+            provenance["execution"] = execution
         properties["decision_model"] = provenance
     return {"code": exception.category.value, "blame": exception.blame.value, "properties": properties}
 

@@ -7,8 +7,11 @@
 import asyncio
 import hashlib
 import json
+import logging
 import math
+import sys
 import threading
+from logging.handlers import BufferingHandler
 from concurrent.futures import ThreadPoolExecutor
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock, patch
@@ -34,6 +37,7 @@ from azure.ai.evaluation._evaluators._common._model_runners import (
     validate_score_answer,
 )
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._evaluators._common._decision_execution import DecisionExecution, validated_execution
 
 pytestmark = pytest.mark.unittest
 
@@ -420,6 +424,9 @@ class TestDecisionModelRunnerRequests:
         assert raised.value.blame == (ErrorBlame.USER_ERROR if status == 404 else ErrorBlame.SYSTEM_ERROR)
         assert raised.value.category == ErrorCategory.FAILED_EXECUTION
         assert raised.value.target == ErrorTarget.EVALUATE
+        execution = raised.value.properties["decision_model"].pop("execution")
+        assert validated_execution(execution) == execution
+        assert execution["outcome"] == "error"
         assert raised.value.properties == (
             {
                 "decision_model": {"deployment": "Decision-1"},
@@ -541,6 +548,32 @@ class TestAnswerValidation:
         levels = [0.3333333] * 3
         assert validate_score_answer(score_answer(levels), 3) == levels
 
+    @pytest.mark.parametrize(
+        "levels",
+        [
+            [0.19, 0.34, 0.11, 0.07, 0.28],
+            [0.20, 0.34, 0.11, 0.07, 0.29],
+            [0.19, 0.34, 0.11, 0.07, 0.27],
+            [0.21, 0.34, 0.11, 0.07, 0.29],
+        ],
+    )
+    def test_score_accepts_hundredths_rounding_without_normalizing(self, levels):
+        assert validate_score_answer(score_answer(levels), 5) == levels
+
+    @pytest.mark.parametrize(
+        "levels",
+        [
+            [0.1] * 5,
+            [0.22, 0.34, 0.11, 0.07, 0.29],
+            [0.18, 0.34, 0.11, 0.07, 0.27],
+            [0.191, 0.339, 0.11, 0.07, 0.28],
+            [0.201, 0.339, 0.11, 0.07, 0.29],
+        ],
+    )
+    def test_score_rejects_outside_hundredths_or_finer_precision_tolerance(self, levels):
+        with pytest.raises(ValueError, match="sum to one"):
+            validate_score_answer(score_answer(levels), 5)
+
     @pytest.mark.parametrize("levels", [[0] * 5, [0.1] * 5, [0.3] * 5])
     def test_score_rejects_nonunit_distribution(self, levels):
         with pytest.raises(ValueError, match="sum to one"):
@@ -549,7 +582,7 @@ class TestAnswerValidation:
     @pytest.mark.parametrize("direction", [-1, 1])
     @pytest.mark.parametrize("inside", [False, True])
     def test_score_sum_tolerance_boundary(self, direction, inside):
-        boundary = 1 + direction * 1e-6
+        boundary = 1 + direction * 0.001
         total = math.nextafter(boundary, 1.0 if inside else direction * math.inf)
         levels = [0.5, total - 0.5]
         assert math.fsum(levels) == total
@@ -1143,6 +1176,9 @@ class TestDecisionExecutionControls:
         with pytest.raises(EvaluationException, match=f"HTTP {status}") as raised:
             run(DecisionModelRunner(DECISION_CONFIG, max_retries=0, max_response_bytes=response_limit))
         assert raised.value.blame == (ErrorBlame.USER_ERROR if status == 400 else ErrorBlame.SYSTEM_ERROR)
+        execution = raised.value.properties["decision_model"].pop("execution")
+        assert validated_execution(execution) == execution
+        assert execution["outcome"] == "error"
         if response_limit == 1:
             assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
         else:
@@ -1249,12 +1285,14 @@ class TestDecisionExecutionControls:
         client.response = FakeResponse(body=json.dumps({"usage": {"input_tokens": True, "output_tokens": 3}}).encode())
         with pytest.raises(EvaluationException) as raised:
             run(DecisionModelRunner(DECISION_CONFIG))
+        execution = raised.value.properties["decision_model"].pop("execution")
+        assert execution["usage_state"] == "unknown"
         assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}, "completion_tokens": 3}
 
-    def test_default_pipeline_has_no_raising_observer_hook(self, client):
+    def test_default_pipeline_owns_an_execution_observer(self, client):
         client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
         run(DecisionModelRunner(DECISION_CONFIG))
-        assert "custom_hook_policy" not in client.policies
+        assert isinstance(client.policies["custom_hook_policy"], DecisionExecution)
         assert type(client.policies["retry_policy"]) is AsyncRetryPolicy
 
     def test_base_timeout_caps_existing_evaluator_timeout(self, client):
@@ -1333,6 +1371,9 @@ class TestDecisionExecutionControls:
         credential = Mock(get_token=Mock(side_effect=RuntimeError("credential-secret")))
         with pytest.raises(EvaluationException, match="acquire a token") as raised:
             run(DecisionModelRunner(config, credential))
+        execution = raised.value.properties["decision_model"].pop("execution")
+        assert execution["attempt_count"] == 0
+        assert execution["usage_state"] == "unknown"
         assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
         assert "secret" not in str(raised.value)
         assert not client.calls
@@ -1467,6 +1508,9 @@ class TestDecisionExecutionControls:
                 assert raised.value.blame == (
                     ErrorBlame.SYSTEM_ERROR if termination == "timeout" else ErrorBlame.USER_ERROR
                 )
+                execution = raised.value.properties["decision_model"].pop("execution")
+                assert execution["attempt_count"] == 1
+                assert execution["outcome"] == ("deadline" if termination == "timeout" else "cancelled")
                 assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
             finally:
                 handle.cancel()
@@ -1502,6 +1546,10 @@ class TestDecisionExecutionControls:
             run(DecisionModelRunner(DECISION_CONFIG, max_retries=max_retries))
         expected = max_retries + 1
         assert transport.calls == expected
+        execution = raised.value.properties["decision_model"].pop("execution")
+        assert execution["attempt_count"] == expected
+        assert execution["retry_count"] == max_retries
+        assert execution["outcome"] == "error"
         assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
         assert "secret" not in str(raised.value)
 
@@ -1537,3 +1585,217 @@ class TestDecisionExecutionControls:
         monkeypatch.setattr(_model_runners, "get_async_http_client", lambda **_: AsyncHttpPipeline(transport=transport))
         assert run(DecisionModelRunner(DECISION_CONFIG))["usage"] == {"input_tokens": 120, "output_tokens": 3}
         assert transport.calls == 1
+
+
+class TestDecisionExecutionObservations:
+    @pytest.mark.parametrize("case", ["completed", "retry", "error", "deadline", "cancelled", "external_cancelled"])
+    @pytest.mark.parametrize("sink", ["normal", "info_off", "log_failure", "metric_failure"])
+    def test_actual_pipeline_observations_are_owned_once_and_sinks_are_independent(self, monkeypatch, case, sink):
+        from azure.ai.evaluation._http_utils import AsyncHttpPipeline
+
+        logger = logging.Logger("decision-test", logging.WARNING if sink == "info_off" else logging.INFO)
+        handler = BufferingHandler(20)
+        logger.addHandler(handler)
+        adapter = logging.LoggerAdapter(logger, {"run_id": "private-run", "correlation_id": "private-correlation"})
+        instruments = {}
+        calls = []
+
+        def instrument(name, **_):
+            value = instruments.setdefault(name, Mock())
+            if sink == "metric_failure":
+                value.add.side_effect = RuntimeError("metric-secret")
+                value.record.side_effect = RuntimeError("metric-secret")
+            return value
+
+        meter = SimpleNamespace(create_counter=instrument, create_histogram=instrument)
+
+        class Response(HttpResponse):
+            def __init__(self, request, status, data):
+                super().__init__(request, None)
+                self.status_code = status
+                self.headers = {"Retry-After": "0"}
+                self.data = data
+
+            def body(self):
+                return json.dumps(self.data).encode()
+
+        class Transport(AsyncHttpTransport):
+            async def open(self):
+                pass
+
+            async def close(self):
+                pass
+
+            async def __aexit__(self, *_):
+                await self.close()
+
+            async def send(self, request, **_):
+                calls.append(request)
+                if case in ("deadline", "cancelled", "external_cancelled"):
+                    await asyncio.sleep(10)
+                if case == "error" or (case == "retry" and len(calls) == 1):
+                    return Response(request, 500, {"error": {"message": "provider-secret"}})
+                return Response(request, 200, level_payload(4))
+
+        monkeypatch.setattr(
+            _model_runners, "get_async_http_client", lambda **_: AsyncHttpPipeline(transport=Transport())
+        )
+        if sink == "log_failure":
+            monkeypatch.setattr(logger, "info", Mock(side_effect=RuntimeError("logger-secret")))
+
+        async def request():
+            cancelled = asyncio.Event()
+            runner = DecisionModelRunner(
+                DECISION_CONFIG,
+                max_retries=1 if case == "retry" else 0,
+                cancellation_requested=cancelled.is_set if case == "cancelled" else None,
+            )
+            runner._bind_execution_logger(adapter)
+            task = asyncio.current_task()
+            handle = asyncio.get_running_loop().call_later(
+                0.02, task.cancel if case == "external_cancelled" else cancelled.set
+            )
+            try:
+                if case in ("completed", "retry"):
+                    response = await runner(state="private-evidence", questions=QUESTIONS, timeout=1)
+                    summary = response["_decision_execution"]
+                    assert response["usage"]["input_tokens"] == 120
+                else:
+                    with pytest.raises(
+                        asyncio.CancelledError if case == "external_cancelled" else EvaluationException
+                    ) as error:
+                        await runner(
+                            state="private-evidence", questions=QUESTIONS, timeout=0.04 if case == "deadline" else 1
+                        )
+                    summary = error.value.properties["decision_model"]["execution"]
+                assert validated_execution(summary) == summary
+                assert summary["attempt_count"] == (2 if case == "retry" else 1)
+                assert summary["retry_count"] == (1 if case == "retry" else 0)
+                assert summary["outcome"] == (
+                    "completed" if case == "retry" else "cancelled" if case == "external_cancelled" else case
+                )
+                assert summary["usage_state"] == (
+                    "known" if case == "completed" else "partial" if case == "retry" else "unknown"
+                )
+                assert summary["last_http_status"] == (
+                    200 if case in ("completed", "retry") else 500 if case == "error" else None
+                )
+            finally:
+                handle.cancel()
+
+        with patch.dict(sys.modules, {"opentelemetry.metrics": SimpleNamespace(get_meter=lambda _: meter)}):
+            asyncio.run(request())
+        expected = 2 if case == "retry" else 1
+        assert len(calls) == expected
+        if sink not in ("info_off", "log_failure"):
+            assert len(handler.buffer) == expected + 1
+            dimensions = [json.loads(record.decision_dimensions) for record in handler.buffer]
+            assert [item["phase"] for item in dimensions] == ["attempt"] * expected + ["execution"]
+            for record in handler.buffer:
+                assert record.run_id == "private-run" and record.correlation_id == "private-correlation"
+                assert "private-evidence" not in record.decision_execution + record.getMessage()
+                assert "secret" not in record.decision_execution + record.getMessage()
+        else:
+            assert not handler.buffer
+        if sink != "metric_failure":
+            prefix = "azure.ai.evaluation.decision."
+            assert instruments[prefix + "provider.attempts"].add.call_count == expected
+            assert instruments[prefix + "provider.duration"].record.call_count == expected
+            instruments[prefix + "operations"].add.assert_called_once()
+            assert instruments[prefix + "provider.retries"].add.call_count == expected - 1
+            for value in instruments.values():
+                for call in value.add.call_args_list + value.record.call_args_list:
+                    attributes = call.kwargs["attributes"]
+                    assert set(attributes) == {
+                        "backend",
+                        "route",
+                        "phase",
+                        "outcome",
+                        "usage_state",
+                        "http_status_class",
+                        "throttled",
+                    }
+                    assert "private" not in str(attributes) and "Decision-1" not in str(attributes)
+        handler.close()
+
+    @pytest.mark.parametrize("outcome", ["completed", "skipped", "semantic_error"])
+    def test_strategy_projects_valid_execution_without_reemitting(self, outcome):
+        response = level_payload(4, status=0.1 if outcome == "skipped" else 0.9)
+        summary = {
+            "attempt_count": 1,
+            "retry_count": 0,
+            "elapsed_ms": 12.5,
+            "outcome": "completed",
+            "last_http_status": 200,
+            "usage_state": "known",
+        }
+        response["_decision_execution"] = summary
+        if outcome == "semantic_error":
+            response["answers"]["tool_call_accuracy"]["probabilities"]["4"] = 0.5
+        strategy = DecisionEvaluationStrategy(
+            DecisionModelRunner(DECISION_CONFIG),
+            result_key="tool_call_accuracy",
+            error_target=ErrorTarget.EVALUATE,
+            questions=QUESTIONS,
+            scoring=LikertScoring(5),
+            threshold=3,
+            timeout=1,
+        )
+        with patch.object(DecisionExecution, "emit") as emit:
+            if outcome == "semantic_error":
+                with pytest.raises(EvaluationException) as error:
+                    strategy.parse(response, {})
+                properties = error.value.properties
+            else:
+                properties = strategy.parse(response, {})["tool_call_accuracy_properties"]
+            assert properties["decision_model"]["execution"] == summary
+            assert properties["decision_model"]["execution"] is not summary
+            emit.assert_not_called()
+
+    @pytest.mark.parametrize(
+        "changes",
+        [
+            {"attempt_count": True},
+            {"attempt_count": 1.0},
+            {"attempt_count": 22},
+            {"retry_count": 21},
+            {"elapsed_ms": True},
+            {"elapsed_ms": float("nan")},
+            {"elapsed_ms": float("inf")},
+            {"elapsed_ms": 86400001},
+            {"elapsed_ms": 10**1000},
+            {"last_http_status": True},
+            {"last_http_status": 99},
+            {"last_http_status": 600},
+            {"outcome": "private-outcome"},
+            {"usage_state": "private-usage"},
+        ],
+    )
+    def test_malformed_shared_carrier_is_rejected_without_coercion(self, changes):
+        summary = {
+            "attempt_count": 1,
+            "retry_count": 0,
+            "elapsed_ms": 1,
+            "outcome": "completed",
+            "last_http_status": 200,
+            "usage_state": "known",
+        }
+        assert validated_execution({**summary, **changes}) is None
+
+    def test_hosted_summary_bounds_do_not_restrict_public_retry_configuration(self, caplog):
+        runner = DecisionModelRunner(DECISION_CONFIG, max_retries=100)
+        assert runner._max_retries == 100
+        execution = DecisionExecution(None, None)
+        execution.attempt_count = 21
+        execution.known_usage_attempts = 21
+        assert validated_execution(execution.summary("completed"))["retry_count"] == 20
+        execution.attempt_count = 22
+        with patch.object(DecisionExecution, "emit"):
+            assert execution.finish("completed") is None
+        assert "summary omitted" in caplog.text
+
+    def test_optional_metrics_absence_does_not_change_summary_or_require_a_logger(self):
+        execution = DecisionExecution(None, None)
+        with patch.dict(sys.modules, {"opentelemetry.metrics": None}):
+            summary = execution.finish("error")
+        assert summary["attempt_count"] == 0 and summary["usage_state"] == "unknown"

@@ -6,8 +6,9 @@
 
 - Added shared model runners and evaluation strategies for asset evaluators using Decision models in Microsoft Foundry, including Output Quality and Tool Use Quality aggregate and member metrics.
 - Decision authentication uses an explicit `api_key` or caller-owned credential with a callable `get_token`. Reuse a synchronous `azure.identity.DefaultAzureCredential` for synchronous or batch calls and close it afterward; async credentials require the same caller-managed event loop. API keys take precedence; Prompty authentication is unchanged.
-- Decision score probabilities must sum to one within an absolute `1e-6` tolerance; invalid distributions raise a system-classified `EvaluationException`.
+- Decision score probabilities use precision-aware sum validation: hundredth-precision values allow `0.005` rounding error per level plus `1e-12`; other values use an absolute `0.001` tolerance. Invalid distributions raise a system-classified `EvaluationException`; probabilities are not normalized.
 - Decision results expose known final-response usage, model, and provenance on completed, skipped, and failed evaluations, counting shared requests once and summing split-turn usage. Usage excludes earlier retry attempts.
+- Decision requests provide context-aware per-attempt and terminal execution observations with optional OpenTelemetry metrics. Validated shared and independent execution summaries and their distinct usage scopes are preserved in failed-row metadata.
 - Decision native async HTTP supports overall deadlines and cancellation during response body reads. TLS uses Python/OpenSSL trust settings such as `SSL_CERT_FILE`, not `REQUESTS_CA_BUNDLE`; shared Prompty transport behavior is unchanged.
 
 ### Breaking Changes

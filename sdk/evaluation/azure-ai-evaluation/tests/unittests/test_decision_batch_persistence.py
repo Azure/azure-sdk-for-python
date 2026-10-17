@@ -14,6 +14,7 @@ from azure.core.pipeline.transport import AsyncHttpTransport, HttpResponse
 
 from azure.ai.evaluation import F1ScoreEvaluator
 from azure.ai.evaluation._evaluate._batch_run import RunSubmitterClient
+from azure.ai.evaluation._evaluate._batch_run._run_submitter_client import _decision_error_metadata
 from azure.ai.evaluation._evaluate._evaluate import (
     _calculate_aoai_evaluation_summary,
     _convert_single_row_to_aoai_format,
@@ -107,6 +108,92 @@ def strategy(runner):
 
 
 class TestDecisionBatchPersistence:
+    @pytest.mark.parametrize("backend", ["system_one", "foundry_decision"])
+    @pytest.mark.parametrize("known", [False, True])
+    @pytest.mark.parametrize("attempted", [False, True])
+    def test_independent_failed_metadata_preserves_distinct_scopes_and_known_fields(self, backend, known, attempted):
+        native = {
+            "backend": backend,
+            "protocol": "system_one",
+            "usage_available": known,
+            "result_usage_scope": "reported_attempts_only",
+            "private": "never-persist",
+        }
+        execution = {
+            "operation_id": "abcdef0123456789" * 2,
+            "attempt_count": 1,
+            "unknown_usage_attempt_count": int(not known),
+            "result_usage_scope": "final_response_only",
+            "usage_completeness": "all_attempts_reported" if known else "no_attempts_reported",
+        }
+        if attempted:
+            native["execution"] = execution
+        properties = {"decision_model": native, "private": "never-persist"}
+        if known:
+            properties.update(prompt_tokens=41, completion_tokens=3, total_tokens=44, model="independent-model")
+        error = EvaluationException(
+            "synthetic failure",
+            category=ErrorCategory.FAILED_EXECUTION,
+            blame=ErrorBlame.SYSTEM_ERROR,
+            properties=properties,
+        )
+        saved = _decision_error_metadata(error)["properties"]
+        provenance = saved["decision_model"]
+        assert provenance["backend"] == backend and provenance["protocol"] == "system_one"
+        assert provenance["usage_available"] is known
+        assert provenance["result_usage_scope"] == "reported_attempts_only"
+        assert "private" not in json.dumps(saved)
+        if attempted:
+            assert provenance["execution"] == execution
+            assert provenance["execution"]["result_usage_scope"] == "final_response_only"
+        else:
+            assert "execution" not in provenance
+        assert saved.get("total_tokens") == (44 if known else None)
+
+    @pytest.mark.parametrize(
+        "changes",
+        [
+            {"operation_id": "A" * 32},
+            {"operation_id": "a" * 31},
+            {"operation_id": 42},
+            {"attempt_count": True},
+            {"attempt_count": -1},
+            {"unknown_usage_attempt_count": True},
+            {"unknown_usage_attempt_count": -1},
+            {"result_usage_scope": "reported_attempts_only"},
+            {"usage_completeness": "unknown"},
+            {"extra": "private"},
+        ],
+    )
+    def test_malformed_independent_summary_is_dropped_not_rewritten(self, changes):
+        execution = {
+            "operation_id": "a" * 32,
+            "attempt_count": 1,
+            "unknown_usage_attempt_count": 0,
+            "result_usage_scope": "final_response_only",
+            "usage_completeness": "all_attempts_reported",
+        }
+        error = EvaluationException(
+            "synthetic failure",
+            properties={"decision_model": {"execution": {**execution, **changes}, "usage_available": False}},
+        )
+        assert _decision_error_metadata(error)["properties"]["decision_model"] == {"usage_available": False}
+
+    def test_failed_metadata_rejects_untyped_and_unrecognized_provenance(self):
+        error = EvaluationException(
+            "synthetic failure",
+            properties={
+                "decision_model": {
+                    "backend": "private",
+                    "protocol": ["system_one"],
+                    "usage_available": 1,
+                    "result_usage_scope": True,
+                    "execution": "private",
+                }
+            },
+        )
+        assert _decision_error_metadata(error)["properties"] == {"decision_model": {}}
+
     @pytest.mark.parametrize("members", [5, 6])
     @pytest.mark.parametrize("case", ["completed", "skipped", "mixed", "semantic_error"])
     @pytest.mark.parametrize("primary_first", [False, True])
@@ -446,6 +533,14 @@ class TestDecisionBatchPersistence:
         result = next(item for item in rows[0]["results"] if item["name"] == "judge")
         assert result["status"] == "error" and result["score"] is None and result["passed"] is None
         assert "decision_request_observations" not in result["properties"]
+        execution = result["properties"]["decision_model"].pop("execution")
+        assert execution["attempt_count"] == (0 if case == "precancel" else 1)
+        assert execution["outcome"] == ("cancelled" if "cancel" in case else "error")
+        assert execution["usage_state"] == (
+            "known"
+            if case in ("malformed_shape", "billed_cancel")
+            else "partial" if case == "partial_usage" else "unknown"
+        )
         if case == "malformed_shape":
             assert result["sample"]["usage"] == {"prompt_tokens": 12, "completion_tokens": 4, "total_tokens": 16}
             assert result["sample"]["model"] == "decision-native"
