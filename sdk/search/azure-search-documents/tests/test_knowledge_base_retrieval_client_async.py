@@ -7,6 +7,8 @@
 import asyncio
 import datetime
 import json
+import logging
+import time
 from types import SimpleNamespace
 from unittest import mock
 
@@ -126,7 +128,8 @@ class TestKnowledgeBaseRetrievalClientStreamingAsync:
         assert client.retrieve_stream.__func__ is _KnowledgeBaseRetrievalClientOperationsMixin.retrieve_stream
 
     @pytest.mark.parametrize("status_code", [200, 206, "error"])
-    async def test_retrieve_stream_deserializes_lifecycle_payloads(self, client, status_code):
+    async def test_retrieve_stream_deserializes_lifecycle_payloads(self, client, status_code, caplog):
+        from _search_helpers import log_retrieval_stream_event, log_retrieval_stream_response
         from azure.search.documents.knowledgebases.models import (
             KnowledgeBaseActivityStartedEvent,
             KnowledgeBaseAnswerCompletedEvent,
@@ -138,6 +141,7 @@ class TestKnowledgeBaseRetrievalClientStreamingAsync:
             KnowledgeBaseStreamErrorEvent,
         )
 
+        caplog.set_level(logging.DEBUG, logger="_search_helpers")
         chunks = [
             _frame(
                 "retrieval.started",
@@ -167,13 +171,37 @@ class TestKnowledgeBaseRetrievalClientStreamingAsync:
                 )
             )
         else:
-            chunks.append(_frame("response.completed", {"statusCode": status_code, "response": {"references": []}}))
+            chunks.append(
+                _frame(
+                    "response.completed",
+                    {
+                        "statusCode": status_code,
+                        "response": {
+                            "response": [{"role": "assistant", "content": [{"type": "text", "text": "answer"}]}],
+                            "references": [{"type": "searchIndex", "id": "doc-1", "activitySource": 1}],
+                            "activity": [{"id": 1, "type": "searchIndex"}],
+                        },
+                    },
+                )
+            )
         chunks.append(b"event: unexpected\ndata: {invalid}\n\n")
-        response = _AsyncResponse(chunks)
+
+        def checked_chunks():
+            for index, chunk in enumerate(chunks):
+                if index:
+                    assert f"Stream event {index} (" in caplog.text, "Previous event was buffered instead of logged"
+                yield chunk
+
+        response = _AsyncResponse(checked_chunks())
+        log_retrieval_stream_response(SimpleNamespace(http_response=response))
         stream, _ = await _retrieve_stream(client, response)
 
+        started_at = time.perf_counter()
         async with stream:
-            events = [event async for event in stream]
+            events = []
+            async for event in stream:
+                log_retrieval_stream_event(event, event_number=len(events) + 1, started_at=started_at)
+                events.append(event)
 
         assert len(events) == 6
         assert isinstance(events[0], KnowledgeBaseRetrievalStartedEvent)
@@ -198,6 +226,15 @@ class TestKnowledgeBaseRetrievalClientStreamingAsync:
             assert isinstance(events[5], KnowledgeBaseResponseCompletedEvent)
             assert events[5].status_code == status_code
             assert isinstance(events[5].response, KnowledgeBaseRetrievalResponse)
+            assert f"Stream completed: status={status_code}, messages=1, references=1, activities=1" in caplog.text
+        assert "Stream HTTP response: status=200, content-type=text/event-stream" in caplog.text
+        assert '"text": "answer"' in caplog.text
+        reference_payload = next(
+            record.args[1]
+            for record in caplog.records
+            if record.msg == "Stream event %d body:\n%s" and record.args[0] == 5
+        )
+        assert json.loads(reference_payload)[0]["id"] == "doc-1"
         assert response.closed
 
     @pytest.mark.parametrize("chunk_size", [1, 2, 5, 512])

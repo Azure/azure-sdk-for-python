@@ -6,10 +6,17 @@
 
 from __future__ import annotations
 
+import time
+
 from devtools_testutils import AzureRecordedTestCase
 
 from _capabilities import require_capability
-from _search_helpers import knowledge_base_resources, live_test
+from _search_helpers import (
+    knowledge_base_resources,
+    live_test,
+    log_retrieval_stream_event,
+    log_retrieval_stream_response,
+)
 
 KNOWLEDGE_BASE_RETRIEVAL_DESCRIPTION = "Knowledge base for retrieval client live coverage"
 KNOWLEDGE_SOURCE_RETRIEVAL_DESCRIPTION = "Knowledge source for retrieval client live coverage"
@@ -88,6 +95,9 @@ class TestKnowledgeBaseRetrievalClient(AzureRecordedTestCase):
         )
         from azure.search.documents.knowledgebases import KnowledgeBaseRetrievalClient
         from azure.search.documents.knowledgebases.models import (
+            KnowledgeBaseActivityRecord,
+            KnowledgeBaseActivityStartedEvent,
+            KnowledgeBaseMessageTextContent,
             KnowledgeBaseResponseCompletedEvent,
             KnowledgeBaseRetrievalRequest,
             KnowledgeBaseRetrievalResponse,
@@ -95,6 +105,7 @@ class TestKnowledgeBaseRetrievalClient(AzureRecordedTestCase):
             KnowledgeBaseStreamErrorEvent,
             KnowledgeRetrievalMinimalReasoningEffort,
             KnowledgeRetrievalSemanticIntent,
+            SearchIndexKnowledgeSourceParams,
         )
 
         with knowledge_base_resources(
@@ -107,6 +118,13 @@ class TestKnowledgeBaseRetrievalClient(AzureRecordedTestCase):
         ) as context:
             retrieval_request = KnowledgeBaseRetrievalRequest(
                 intents=[KnowledgeRetrievalSemanticIntent(search=RETRIEVAL_QUERY)],
+                knowledge_source_params=[
+                    SearchIndexKnowledgeSourceParams(
+                        knowledge_source_name=context.knowledge_source_name,
+                        include_references=True,
+                        include_reference_source_data=True,
+                    )
+                ],
                 retrieval_reasoning_effort=KnowledgeRetrievalMinimalReasoningEffort(),
                 include_activity=True,
                 output_mode="extractiveData",
@@ -117,14 +135,31 @@ class TestKnowledgeBaseRetrievalClient(AzureRecordedTestCase):
                 credential=context.credential,
                 knowledge_base_name=context.knowledge_base_name,
             ) as client:
-                with client.retrieve_stream(retrieval_request) as stream:
-                    events = list(stream)
+                started_at = time.perf_counter()
+                events = []
+                with client.retrieve_stream(
+                    retrieval_request, raw_response_hook=log_retrieval_stream_response
+                ) as stream:
+                    for event in stream:
+                        log_retrieval_stream_event(event, event_number=len(events) + 1, started_at=started_at)
+                        assert not isinstance(event, KnowledgeBaseStreamErrorEvent), f"Stream error: {event.as_dict()}"
+                        events.append(event)
 
+            assert events, "The SSE response did not yield any events"
             assert isinstance(events[0], KnowledgeBaseRetrievalStartedEvent)
             assert events[0].knowledge_base_name == context.knowledge_base_name
             assert events[0].output_mode == "extractiveData"
             assert isinstance(events[-1], KnowledgeBaseResponseCompletedEvent)
             assert isinstance(events[-1].response, KnowledgeBaseRetrievalResponse)
+            assert any(isinstance(event, KnowledgeBaseActivityStartedEvent) for event in events[1:-1])
+            assert any(isinstance(event, KnowledgeBaseActivityRecord) for event in events[1:-1])
+            assert any(isinstance(event, list) and event for event in events[1:-1]), "No streamed references"
+            assert events[-1].response.response, "The completed response did not contain any messages"
+            assert any(
+                isinstance(content, KnowledgeBaseMessageTextContent) and content.text
+                for message in events[-1].response.response
+                for content in message.content
+            ), "The completed response did not contain any text"
             assert events[-1].response.references
             assert events[-1].response.activity
             assert events[-1].status_code in (200, 206)

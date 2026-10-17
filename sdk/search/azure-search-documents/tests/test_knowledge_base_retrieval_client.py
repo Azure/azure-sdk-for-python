@@ -6,6 +6,8 @@
 
 import datetime
 import json
+import logging
+import time
 from types import SimpleNamespace
 from unittest import mock
 
@@ -120,7 +122,8 @@ class TestKnowledgeBaseRetrievalClientStreaming:
         assert client.retrieve_stream.__func__ is _KnowledgeBaseRetrievalClientOperationsMixin.retrieve_stream
 
     @pytest.mark.parametrize("status_code", [200, 206, "error"])
-    def test_retrieve_stream_deserializes_lifecycle_payloads(self, client, status_code):
+    def test_retrieve_stream_deserializes_lifecycle_payloads(self, client, status_code, caplog):
+        from _search_helpers import log_retrieval_stream_event, log_retrieval_stream_response
         from azure.search.documents.knowledgebases.models import (
             KnowledgeBaseActivityStartedEvent,
             KnowledgeBaseAnswerCompletedEvent,
@@ -132,6 +135,7 @@ class TestKnowledgeBaseRetrievalClientStreaming:
             KnowledgeBaseStreamErrorEvent,
         )
 
+        caplog.set_level(logging.DEBUG, logger="_search_helpers")
         chunks = [
             _frame(
                 "retrieval.started",
@@ -161,13 +165,37 @@ class TestKnowledgeBaseRetrievalClientStreaming:
                 )
             )
         else:
-            chunks.append(_frame("response.completed", {"statusCode": status_code, "response": {"references": []}}))
+            chunks.append(
+                _frame(
+                    "response.completed",
+                    {
+                        "statusCode": status_code,
+                        "response": {
+                            "response": [{"role": "assistant", "content": [{"type": "text", "text": "answer"}]}],
+                            "references": [{"type": "searchIndex", "id": "doc-1", "activitySource": 1}],
+                            "activity": [{"id": 1, "type": "searchIndex"}],
+                        },
+                    },
+                )
+            )
         chunks.append(b"event: unexpected\ndata: {invalid}\n\n")
-        response = _Response(chunks)
+
+        def checked_chunks():
+            for index, chunk in enumerate(chunks):
+                if index:
+                    assert f"Stream event {index} (" in caplog.text, "Previous event was buffered instead of logged"
+                yield chunk
+
+        response = _Response(checked_chunks())
+        log_retrieval_stream_response(SimpleNamespace(http_response=response))
         stream, _ = _retrieve_stream(client, response)
 
+        started_at = time.perf_counter()
         with stream:
-            events = list(stream)
+            events = []
+            for event in stream:
+                log_retrieval_stream_event(event, event_number=len(events) + 1, started_at=started_at)
+                events.append(event)
 
         assert len(events) == 6
         assert isinstance(events[0], KnowledgeBaseRetrievalStartedEvent)
@@ -192,7 +220,49 @@ class TestKnowledgeBaseRetrievalClientStreaming:
             assert isinstance(events[5], KnowledgeBaseResponseCompletedEvent)
             assert events[5].status_code == status_code
             assert isinstance(events[5].response, KnowledgeBaseRetrievalResponse)
+            assert f"Stream completed: status={status_code}, messages=1, references=1, activities=1" in caplog.text
+        assert "Stream HTTP response: status=200, content-type=text/event-stream" in caplog.text
+        assert '"text": "answer"' in caplog.text
+        reference_payload = next(
+            record.args[1]
+            for record in caplog.records
+            if record.msg == "Stream event %d body:\n%s" and record.args[0] == 5
+        )
+        assert json.loads(reference_payload)[0]["id"] == "doc-1"
         assert response.closed
+
+    @pytest.mark.parametrize(
+        "status_code, content_type",
+        [(200, "text/event-stream; charset=utf-8"), (403, "application/json")],
+    )
+    def test_retrieve_stream_diagnostics_log_http_metadata_without_reading_body(
+        self, status_code, content_type, caplog
+    ):
+        from _search_helpers import log_retrieval_stream_response
+
+        caplog.set_level(logging.INFO, logger="_search_helpers")
+        response = mock.Mock(status_code=status_code, headers={"Content-Type": content_type})
+        log_retrieval_stream_response(SimpleNamespace(http_response=response))
+        assert f"Stream HTTP response: status={status_code}, content-type={content_type}" in caplog.text
+        response.read.assert_not_called()
+        response.iter_bytes.assert_not_called()
+
+    def test_retrieve_stream_diagnostics_reject_successful_non_sse_response(self):
+        from _search_helpers import log_retrieval_stream_response
+
+        response = SimpleNamespace(status_code=200, headers={"Content-Type": "application/json"})
+        with pytest.raises(AssertionError, match="Expected an SSE response"):
+            log_retrieval_stream_response(SimpleNamespace(http_response=response))
+
+    def test_retrieve_stream_diagnostics_do_not_serialize_payload_at_info(self, caplog):
+        from _search_helpers import log_retrieval_stream_event
+
+        caplog.set_level(logging.INFO, logger="_search_helpers")
+        event = mock.Mock()
+        log_retrieval_stream_event(event, event_number=1, started_at=time.perf_counter())
+        assert "Stream event 1 (" in caplog.text
+        assert "body:" not in caplog.text
+        event.as_dict.assert_not_called()
 
     @pytest.mark.parametrize("chunk_size", [1, 2, 5, 512])
     def test_retrieve_stream_handles_fragmented_utf8_and_sse_framing(self, client, chunk_size):

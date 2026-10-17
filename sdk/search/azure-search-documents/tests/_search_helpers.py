@@ -11,6 +11,8 @@ See ``_search_helpers_async.py`` for the async siblings.
 from __future__ import annotations
 
 from copy import deepcopy
+import json
+import logging
 import time
 from contextlib import contextmanager
 from dataclasses import dataclass, field
@@ -36,6 +38,8 @@ from search_service_preparer import SearchEnvVarPreparer, search_decorator
 if TYPE_CHECKING:
     from azure.search.documents.indexes.models import KnowledgeBase, SearchIndexKnowledgeSource
 
+
+_LOGGER = logging.getLogger(__name__)
 
 KNOWLEDGE_BASE_DESCRIPTION = "Search knowledge base description"
 KNOWLEDGE_SOURCE_DESCRIPTION = "Search knowledge source description"
@@ -486,6 +490,35 @@ def upload_documents(search_client: Any, documents: list[dict[str, Any]]) -> Non
     batch.add_upload_actions(documents)
     results = search_client.index_documents(batch)
     assert all(result.succeeded for result in results)
+
+
+def log_retrieval_stream_response(pipeline_response: Any) -> None:
+    response = pipeline_response.http_response
+    content_type = response.headers.get("Content-Type", "")
+    _LOGGER.info("Stream HTTP response: status=%s, content-type=%s", response.status_code, content_type)
+    if response.status_code == 200:
+        assert (
+            content_type.split(";", 1)[0].strip().lower() == "text/event-stream"
+        ), f"Expected an SSE response, got {content_type!r}"
+
+
+def log_retrieval_stream_event(event: Any, *, event_number: int, started_at: float) -> None:
+    from azure.search.documents.knowledgebases.models import KnowledgeBaseResponseCompletedEvent
+
+    event_type = "references.completed" if isinstance(event, list) else type(event).__name__
+    _LOGGER.info("Stream event %d (+%.3fs): %s", event_number, time.perf_counter() - started_at, event_type)
+    if _LOGGER.isEnabledFor(logging.DEBUG):
+        payload = [reference.as_dict() for reference in event] if isinstance(event, list) else event.as_dict()
+        _LOGGER.debug("Stream event %d body:\n%s", event_number, json.dumps(payload, indent=2, default=str))
+    if isinstance(event, KnowledgeBaseResponseCompletedEvent):
+        response = event.response
+        _LOGGER.info(
+            "Stream completed: status=%s, messages=%d, references=%d, activities=%d",
+            int(event.status_code),
+            len(response.response or []) if response is not None else 0,
+            len(response.references or []) if response is not None else 0,
+            len(response.activity or []) if response is not None else 0,
+        )
 
 
 # ---------------------------------------------------------------------------

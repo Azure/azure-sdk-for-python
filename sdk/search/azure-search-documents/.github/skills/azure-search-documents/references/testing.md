@@ -97,6 +97,39 @@ names and placeholders only; never commit actual resource credentials.
    ```
 5. Keep the updated `assets.json` with your changes.
 
+### Observing live retrieval streaming
+
+The sync and async retrieval live files each contain
+`test_retrieve_stream_returns_typed_lifecycle_events`. They consume and log each payload as it
+arrives, rather than collecting the entire stream before logging. INFO logs show the HTTP status,
+SSE content type, event number/type, elapsed time since the request started, and completion counts.
+DEBUG logs additionally show the deserialized JSON body of every event, including reference lists
+and the completed response. These are test diagnostics, not raw HTTP body reads: they do not consume
+the response ahead of the SDK's SSE parser.
+
+From the package directory in PowerShell, after configuring the live environment:
+
+```powershell
+$env:AZURE_TEST_RUN_LIVE = "true"
+$env:AZURE_SKIP_LIVE_RECORDING = "false"
+$env:PYTHONPATH = (Get-Location).Path
+$streamTests = @(
+    "tests/test_knowledge_base_retrieval_client_retrieve_live.py"
+    "tests/test_knowledge_base_retrieval_client_retrieve_live_async.py"
+)
+./.venv/bin/python -m pytest @streamTests `
+    -k "test_retrieve_stream_returns_typed_lifecycle_events" `
+    -vv -s --log-cli-level=DEBUG --tb=long
+```
+
+Use `--log-cli-level=INFO` for progress without payload bodies. Keep DEBUG logs local and review them
+before sharing: returned content and citation URLs are not sanitized by the test proxy's recording
+sanitizers when printed to the console. The tests explicitly request reference source data from their
+seeded hotel index and require intermediate activity/reference payloads plus nonempty response text.
+They do not generate answer-synthesis token deltas, and event timings alone do not prove that the
+service or a proxy delivered each event in a separate network chunk. Recordings must be regenerated
+for the updated request before playback can establish service compatibility.
+
 ## Adding new tests
 
 This checklist is mandatory for every test change. Do not add or update tests without checking each item below.
