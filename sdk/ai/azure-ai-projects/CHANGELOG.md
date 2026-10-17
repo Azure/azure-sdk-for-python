@@ -1,5 +1,15 @@
 # Release History
 
+## 2.9.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 2.9.0 (2026-10-16)
 
 ### Features Added
