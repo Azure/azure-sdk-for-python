@@ -31,6 +31,42 @@ This ensures you get compatible versions of both the SDK and the extensions pack
 - `src/upload.rs`: Upload bindings, zero-copy Python buffer ownership, and upload response conversion.
 - `src/download.rs`: Download bindings and the windowed download stream.
 
+## Running Rust tests
+
+The automated Rust tests run offline without an Azure account, Azurite, or an
+installed extension. They embed Python through PyO3 and use a fake HTTP transport
+to exercise transfer requests and responses. A Python 3.10+ installation and the
+Rust toolchain are required.
+
+From this package directory, run:
+
+```powershell
+cargo test --lib
+cargo test --lib credentials
+cargo test --lib upload
+cargo test --lib download
+cargo fmt --all -- --check
+```
+
+On Windows, the directory containing the Python DLL must be on `PATH`. If needed,
+select the interpreter and expose its DLL directory before running Cargo:
+
+```powershell
+$env:PYO3_PYTHON = python -c "import sys; print(sys.executable)"
+$pythonHome = python -c "import sys; print(sys.base_prefix)"
+$env:PATH = "$pythonHome;$env:PATH"
+cargo test --lib
+```
+
+To also verify extension packaging (requires maturin), run:
+
+```powershell
+python -m maturin build --interpreter python
+```
+
+Maturin enables the PyO3 extension-module feature through `pyproject.toml`;
+ordinary Cargo tests leave it disabled so the embedded interpreter can link.
+
 ## What it accelerates
 
 When installed, this package transparently accelerates:
