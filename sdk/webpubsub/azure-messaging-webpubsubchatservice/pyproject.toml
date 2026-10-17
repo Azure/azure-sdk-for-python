@@ -48,13 +48,14 @@ version = {attr = "azure.messaging.webpubsubchatservice._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
+include = ["azure.messaging.webpubsubchatservice*"]
 exclude = [
+    "build*",
     "tests*",
     "generated_tests*",
     "samples*",
     "generated_samples*",
     "doc*",
-    "build*",
     "azure",
     "azure.messaging",
 ]

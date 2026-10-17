@@ -36,31 +36,40 @@ from ..._operations._operations import (
     build_web_pub_sub_chat_service_create_or_replace_role_request,
     build_web_pub_sub_chat_service_create_or_replace_room_member_request,
     build_web_pub_sub_chat_service_create_or_replace_room_request,
+    build_web_pub_sub_chat_service_create_or_replace_topic_request,
     build_web_pub_sub_chat_service_create_or_replace_user_request,
     build_web_pub_sub_chat_service_delete_message_request,
     build_web_pub_sub_chat_service_delete_role_request,
     build_web_pub_sub_chat_service_delete_room_member_request,
     build_web_pub_sub_chat_service_delete_room_request,
+    build_web_pub_sub_chat_service_delete_topic_request,
     build_web_pub_sub_chat_service_delete_user_request,
     build_web_pub_sub_chat_service_generate_client_token_request,
     build_web_pub_sub_chat_service_get_conversation_request,
     build_web_pub_sub_chat_service_get_role_request,
     build_web_pub_sub_chat_service_get_room_request,
+    build_web_pub_sub_chat_service_get_topic_request,
     build_web_pub_sub_chat_service_get_user_request,
     build_web_pub_sub_chat_service_list_messages_request,
     build_web_pub_sub_chat_service_list_roles_request,
     build_web_pub_sub_chat_service_list_room_members_request,
+    build_web_pub_sub_chat_service_list_rooms_for_user_request,
+    build_web_pub_sub_chat_service_list_rooms_request,
+    build_web_pub_sub_chat_service_list_topics_request,
+    build_web_pub_sub_chat_service_list_users_request,
     build_web_pub_sub_chat_service_update_message_request,
+    build_web_pub_sub_chat_service_update_topic_request,
 )
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.utils import ClientMixinABC
+from ..._validation import api_version_validation
 from .._configuration import WebPubSubChatServiceClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class _WebPubSubChatServiceClientOperationsMixin(
+class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-public-methods
     ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], WebPubSubChatServiceClientConfiguration]
 ):
 
@@ -322,7 +331,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
         self,
         conversation_id: str,
         message_id: str,
-        resource: _models.ChatMessage,
+        resource: _models.ChatMessageUpdate,
         *,
         content_type: str = "application/merge-patch+json",
         etag: Optional[str] = None,
@@ -338,7 +347,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
         :param message_id: Message identifier. Required.
         :type message_id: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatMessage
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatMessageUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -357,7 +366,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
         self,
         conversation_id: str,
         message_id: str,
-        resource: _types.ChatMessage,
+        resource: _types.ChatMessageUpdate,
         *,
         content_type: str = "application/merge-patch+json",
         etag: Optional[str] = None,
@@ -373,7 +382,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
         :param message_id: Message identifier. Required.
         :type message_id: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatMessage
+        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatMessageUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -427,7 +436,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
         self,
         conversation_id: str,
         message_id: str,
-        resource: Union[_models.ChatMessage, _types.ChatMessage, IO[bytes]],
+        resource: Union[_models.ChatMessageUpdate, _types.ChatMessageUpdate, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -441,10 +450,10 @@ class _WebPubSubChatServiceClientOperationsMixin(
         :type conversation_id: str
         :param message_id: Message identifier. Required.
         :type message_id: str
-        :param resource: The resource instance. Is either a ChatMessage type or a IO[bytes] type.
+        :param resource: The resource instance. Is either a ChatMessageUpdate type or a IO[bytes] type.
          Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatMessage or
-         ~azure.messaging.webpubsubchatservice.types.ChatMessage or IO[bytes]
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatMessageUpdate or
+         ~azure.messaging.webpubsubchatservice.types.ChatMessageUpdate or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -697,7 +706,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
     async def create_or_replace_role(
         self,
         role_name: str,
-        resource: _models.ChatRole,
+        resource: _models.ChatRoleCreate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -711,7 +720,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
         :param role_name: Role name. Must start with 'user.' or 'room.' prefix. Required.
         :type role_name: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRole
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRoleCreate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -729,7 +738,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
     async def create_or_replace_role(
         self,
         role_name: str,
-        resource: _types.ChatRole,
+        resource: _types.ChatRoleCreate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -743,7 +752,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
         :param role_name: Role name. Must start with 'user.' or 'room.' prefix. Required.
         :type role_name: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatRole
+        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatRoleCreate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -793,7 +802,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
     async def create_or_replace_role(
         self,
         role_name: str,
-        resource: Union[_models.ChatRole, _types.ChatRole, IO[bytes]],
+        resource: Union[_models.ChatRoleCreate, _types.ChatRoleCreate, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -805,10 +814,10 @@ class _WebPubSubChatServiceClientOperationsMixin(
 
         :param role_name: Role name. Must start with 'user.' or 'room.' prefix. Required.
         :type role_name: str
-        :param resource: The resource instance. Is either a ChatRole type or a IO[bytes] type.
+        :param resource: The resource instance. Is either a ChatRoleCreate type or a IO[bytes] type.
          Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRole or
-         ~azure.messaging.webpubsubchatservice.types.ChatRole or IO[bytes]
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRoleCreate or
+         ~azure.messaging.webpubsubchatservice.types.ChatRoleCreate or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -962,11 +971,119 @@ class _WebPubSubChatServiceClientOperationsMixin(
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": ["api_version", "hub", "max_page_size", "continuation_token_parameter", "accept"]
+        },
+        api_versions_list=["2026-08-01-preview"],
+    )
+    def list_rooms(
+        self, *, max_page_size: Optional[int] = None, continuation_token_parameter: Optional[str] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ChatRoom"]:
+        """List rooms with pagination.
+
+        List rooms with pagination.
+
+        :keyword max_page_size: The maximum number of result items per page. Default value is None.
+        :paramtype max_page_size: int
+        :keyword continuation_token_parameter: Continuation token for pagination. Default value is
+         None.
+        :paramtype continuation_token_parameter: str
+        :return: An iterator like instance of ChatRoom
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.messaging.webpubsubchatservice.models.ChatRoom]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.ChatRoom]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_web_pub_sub_chat_service_list_rooms_request(
+                    hub=self._config.hub,
+                    max_page_size=max_page_size,
+                    continuation_token_parameter=continuation_token_parameter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models.ChatRoom],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
     @overload
     async def create_or_replace_room(
         self,
         room_id: str,
-        resource: _models.ChatRoom,
+        resource: _models.ChatRoomCreate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -980,7 +1097,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
         :param room_id: Room identifier. Required.
         :type room_id: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRoom
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRoomCreate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -998,7 +1115,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
     async def create_or_replace_room(
         self,
         room_id: str,
-        resource: _types.ChatRoom,
+        resource: _types.ChatRoomCreate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -1012,7 +1129,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
         :param room_id: Room identifier. Required.
         :type room_id: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatRoom
+        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatRoomCreate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1062,7 +1179,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
     async def create_or_replace_room(
         self,
         room_id: str,
-        resource: Union[_models.ChatRoom, _types.ChatRoom, IO[bytes]],
+        resource: Union[_models.ChatRoomCreate, _types.ChatRoomCreate, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1074,10 +1191,10 @@ class _WebPubSubChatServiceClientOperationsMixin(
 
         :param room_id: Room identifier. Required.
         :type room_id: str
-        :param resource: The resource instance. Is either a ChatRoom type or a IO[bytes] type.
+        :param resource: The resource instance. Is either a ChatRoomCreate type or a IO[bytes] type.
          Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRoom or
-         ~azure.messaging.webpubsubchatservice.types.ChatRoom or IO[bytes]
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRoomCreate or
+         ~azure.messaging.webpubsubchatservice.types.ChatRoomCreate or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -1296,6 +1413,737 @@ class _WebPubSubChatServiceClientOperationsMixin(
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": [
+                "api_version",
+                "hub",
+                "room_id",
+                "max_page_size",
+                "continuation_token_parameter",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-01-preview"],
+    )
+    def list_topics(
+        self,
+        room_id: str,
+        *,
+        max_page_size: Optional[int] = None,
+        continuation_token_parameter: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.ChatTopic"]:
+        """List topics in a room with pagination.
+
+        List topics in a room with pagination.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :keyword max_page_size: The maximum number of result items per page. Default value is None.
+        :paramtype max_page_size: int
+        :keyword continuation_token_parameter: Continuation token for pagination. Default value is
+         None.
+        :paramtype continuation_token_parameter: str
+        :return: An iterator like instance of ChatTopic
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.messaging.webpubsubchatservice.models.ChatTopic]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.ChatTopic]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_web_pub_sub_chat_service_list_topics_request(
+                    room_id=room_id,
+                    hub=self._config.hub,
+                    max_page_size=max_page_size,
+                    continuation_token_parameter=continuation_token_parameter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models.ChatTopic],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @overload
+    async def create_or_replace_topic(
+        self,
+        room_id: str,
+        topic_id: str,
+        resource: _models.ChatTopicCreateOrReplace,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.ChatTopic:
+        """Create or replace a topic.
+
+        Create or replace a topic with a client-specified ID.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :param topic_id: Topic identifier unique within the room. Required.
+        :type topic_id: str
+        :param resource: The resource instance. Required.
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatTopicCreateOrReplace
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: ChatTopic. The ChatTopic is compatible with MutableMapping
+        :rtype: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_replace_topic(
+        self,
+        room_id: str,
+        topic_id: str,
+        resource: _types.ChatTopicCreateOrReplace,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.ChatTopic:
+        """Create or replace a topic.
+
+        Create or replace a topic with a client-specified ID.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :param topic_id: Topic identifier unique within the room. Required.
+        :type topic_id: str
+        :param resource: The resource instance. Required.
+        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatTopicCreateOrReplace
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: ChatTopic. The ChatTopic is compatible with MutableMapping
+        :rtype: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_replace_topic(
+        self,
+        room_id: str,
+        topic_id: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.ChatTopic:
+        """Create or replace a topic.
+
+        Create or replace a topic with a client-specified ID.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :param topic_id: Topic identifier unique within the room. Required.
+        :type topic_id: str
+        :param resource: The resource instance. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: ChatTopic. The ChatTopic is compatible with MutableMapping
+        :rtype: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": [
+                "api_version",
+                "hub",
+                "room_id",
+                "topic_id",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-08-01-preview"],
+    )
+    async def create_or_replace_topic(
+        self,
+        room_id: str,
+        topic_id: str,
+        resource: Union[_models.ChatTopicCreateOrReplace, _types.ChatTopicCreateOrReplace, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.ChatTopic:
+        """Create or replace a topic.
+
+        Create or replace a topic with a client-specified ID.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :param topic_id: Topic identifier unique within the room. Required.
+        :type topic_id: str
+        :param resource: The resource instance. Is either a ChatTopicCreateOrReplace type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatTopicCreateOrReplace or
+         ~azure.messaging.webpubsubchatservice.types.ChatTopicCreateOrReplace or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: ChatTopic. The ChatTopic is compatible with MutableMapping
+        :rtype: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ChatTopic] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_web_pub_sub_chat_service_create_or_replace_topic_request(
+            room_id=room_id,
+            topic_id=topic_id,
+            hub=self._config.hub,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ChatTopic, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={"2026-08-01-preview": ["api_version", "hub", "room_id", "topic_id", "accept"]},
+        api_versions_list=["2026-08-01-preview"],
+    )
+    async def get_topic(self, room_id: str, topic_id: str, **kwargs: Any) -> _models.ChatTopic:
+        """Get topic information.
+
+        Get topic information.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :param topic_id: Topic identifier unique within the room. Required.
+        :type topic_id: str
+        :return: ChatTopic. The ChatTopic is compatible with MutableMapping
+        :rtype: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ChatTopic] = kwargs.pop("cls", None)
+
+        _request = build_web_pub_sub_chat_service_get_topic_request(
+            room_id=room_id,
+            topic_id=topic_id,
+            hub=self._config.hub,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ChatTopic, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update_topic(
+        self,
+        room_id: str,
+        topic_id: str,
+        resource: _models.ChatTopicUpdate,
+        *,
+        content_type: str = "application/merge-patch+json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.ChatTopic:
+        """Update a topic.
+
+        Update a topic.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :param topic_id: Topic identifier unique within the room. Required.
+        :type topic_id: str
+        :param resource: The resource instance. Required.
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatTopicUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: ChatTopic. The ChatTopic is compatible with MutableMapping
+        :rtype: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_topic(
+        self,
+        room_id: str,
+        topic_id: str,
+        resource: _types.ChatTopicUpdate,
+        *,
+        content_type: str = "application/merge-patch+json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.ChatTopic:
+        """Update a topic.
+
+        Update a topic.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :param topic_id: Topic identifier unique within the room. Required.
+        :type topic_id: str
+        :param resource: The resource instance. Required.
+        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatTopicUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: ChatTopic. The ChatTopic is compatible with MutableMapping
+        :rtype: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_topic(
+        self,
+        room_id: str,
+        topic_id: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.ChatTopic:
+        """Update a topic.
+
+        Update a topic.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :param topic_id: Topic identifier unique within the room. Required.
+        :type topic_id: str
+        :param resource: The resource instance. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: ChatTopic. The ChatTopic is compatible with MutableMapping
+        :rtype: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": [
+                "api_version",
+                "hub",
+                "room_id",
+                "topic_id",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-08-01-preview"],
+    )
+    async def update_topic(
+        self,
+        room_id: str,
+        topic_id: str,
+        resource: Union[_models.ChatTopicUpdate, _types.ChatTopicUpdate, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.ChatTopic:
+        """Update a topic.
+
+        Update a topic.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :param topic_id: Topic identifier unique within the room. Required.
+        :type topic_id: str
+        :param resource: The resource instance. Is either a ChatTopicUpdate type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatTopicUpdate or
+         ~azure.messaging.webpubsubchatservice.types.ChatTopicUpdate or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: ChatTopic. The ChatTopic is compatible with MutableMapping
+        :rtype: ~azure.messaging.webpubsubchatservice.models.ChatTopic
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ChatTopic] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/merge-patch+json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_web_pub_sub_chat_service_update_topic_request(
+            room_id=room_id,
+            topic_id=topic_id,
+            hub=self._config.hub,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ChatTopic, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": ["api_version", "hub", "room_id", "topic_id", "etag", "match_condition"]
+        },
+        api_versions_list=["2026-08-01-preview"],
+    )
+    async def delete_topic(
+        self,
+        room_id: str,
+        topic_id: str,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> None:
+        """Soft delete a topic.
+
+        Soft delete a topic.
+
+        :param room_id: Room identifier. Required.
+        :type room_id: str
+        :param topic_id: Topic identifier unique within the room. Required.
+        :type topic_id: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_web_pub_sub_chat_service_delete_topic_request(
+            room_id=room_id,
+            topic_id=topic_id,
+            hub=self._config.hub,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
     def list_room_members(
         self,
         room_id: str,
@@ -1409,7 +2257,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
         self,
         room_id: str,
         user_id: str,
-        resource: _models.ChatRoomMember,
+        resource: _models.ChatRoomMemberCreate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -1425,7 +2273,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
         :param user_id: User ID of the member. Required.
         :type user_id: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRoomMember
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRoomMemberCreate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1444,7 +2292,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
         self,
         room_id: str,
         user_id: str,
-        resource: _types.ChatRoomMember,
+        resource: _types.ChatRoomMemberCreate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -1460,7 +2308,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
         :param user_id: User ID of the member. Required.
         :type user_id: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatRoomMember
+        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatRoomMemberCreate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1514,7 +2362,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
         self,
         room_id: str,
         user_id: str,
-        resource: Union[_models.ChatRoomMember, _types.ChatRoomMember, IO[bytes]],
+        resource: Union[_models.ChatRoomMemberCreate, _types.ChatRoomMemberCreate, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1528,10 +2376,10 @@ class _WebPubSubChatServiceClientOperationsMixin(
         :type room_id: str
         :param user_id: User ID of the member. Required.
         :type user_id: str
-        :param resource: The resource instance. Is either a ChatRoomMember type or a IO[bytes] type.
-         Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRoomMember or
-         ~azure.messaging.webpubsubchatservice.types.ChatRoomMember or IO[bytes]
+        :param resource: The resource instance. Is either a ChatRoomMemberCreate type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatRoomMemberCreate or
+         ~azure.messaging.webpubsubchatservice.types.ChatRoomMemberCreate or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -1690,6 +2538,114 @@ class _WebPubSubChatServiceClientOperationsMixin(
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": ["api_version", "hub", "max_page_size", "continuation_token_parameter", "accept"]
+        },
+        api_versions_list=["2026-08-01-preview"],
+    )
+    def list_users(
+        self, *, max_page_size: Optional[int] = None, continuation_token_parameter: Optional[str] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ChatUser"]:
+        """List all users with pagination.
+
+        List all users with pagination.
+
+        :keyword max_page_size: The maximum number of result items per page. Default value is None.
+        :paramtype max_page_size: int
+        :keyword continuation_token_parameter: Continuation token for pagination. Default value is
+         None.
+        :paramtype continuation_token_parameter: str
+        :return: An iterator like instance of ChatUser
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.messaging.webpubsubchatservice.models.ChatUser]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.ChatUser]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_web_pub_sub_chat_service_list_users_request(
+                    hub=self._config.hub,
+                    max_page_size=max_page_size,
+                    continuation_token_parameter=continuation_token_parameter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models.ChatUser],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
     @distributed_trace_async
     async def get_user(self, user_id: str, **kwargs: Any) -> _models.ChatUser:
         """Get a user's profile.
@@ -1759,7 +2715,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
     async def create_or_replace_user(
         self,
         user_id: str,
-        resource: _models.ChatUser,
+        resource: _models.ChatUserCreate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -1774,7 +2730,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
         :param user_id: User identifier. Required.
         :type user_id: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatUser
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatUserCreate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1792,7 +2748,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
     async def create_or_replace_user(
         self,
         user_id: str,
-        resource: _types.ChatUser,
+        resource: _types.ChatUserCreate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -1807,7 +2763,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
         :param user_id: User identifier. Required.
         :type user_id: str
         :param resource: The resource instance. Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatUser
+        :type resource: ~azure.messaging.webpubsubchatservice.types.ChatUserCreate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1858,7 +2814,7 @@ class _WebPubSubChatServiceClientOperationsMixin(
     async def create_or_replace_user(
         self,
         user_id: str,
-        resource: Union[_models.ChatUser, _types.ChatUser, IO[bytes]],
+        resource: Union[_models.ChatUserCreate, _types.ChatUserCreate, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1871,10 +2827,10 @@ class _WebPubSubChatServiceClientOperationsMixin(
 
         :param user_id: User identifier. Required.
         :type user_id: str
-        :param resource: The resource instance. Is either a ChatUser type or a IO[bytes] type.
+        :param resource: The resource instance. Is either a ChatUserCreate type or a IO[bytes] type.
          Required.
-        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatUser or
-         ~azure.messaging.webpubsubchatservice.types.ChatUser or IO[bytes]
+        :type resource: ~azure.messaging.webpubsubchatservice.models.ChatUserCreate or
+         ~azure.messaging.webpubsubchatservice.types.ChatUserCreate or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -2027,6 +2983,129 @@ class _WebPubSubChatServiceClientOperationsMixin(
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": [
+                "api_version",
+                "hub",
+                "user_id",
+                "max_page_size",
+                "continuation_token_parameter",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-01-preview"],
+    )
+    def list_rooms_for_user(
+        self,
+        user_id: str,
+        *,
+        max_page_size: Optional[int] = None,
+        continuation_token_parameter: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.ChatUserRoom"]:
+        """List rooms for a user with pagination.
+
+        List rooms for a user with pagination.
+
+        :param user_id: User identifier. Required.
+        :type user_id: str
+        :keyword max_page_size: The maximum number of result items per page. Default value is None.
+        :paramtype max_page_size: int
+        :keyword continuation_token_parameter: Continuation token for pagination. Default value is
+         None.
+        :paramtype continuation_token_parameter: str
+        :return: An iterator like instance of ChatUserRoom
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.messaging.webpubsubchatservice.models.ChatUserRoom]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.ChatUserRoom]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_web_pub_sub_chat_service_list_rooms_for_user_request(
+                    user_id=user_id,
+                    hub=self._config.hub,
+                    max_page_size=max_page_size,
+                    continuation_token_parameter=continuation_token_parameter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                list[_models.ChatUserRoom],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def _generate_client_token(
