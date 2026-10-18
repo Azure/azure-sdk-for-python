@@ -111,7 +111,15 @@ def test_skipped_bypasses_score_validation(strict):
         "metric_reason": "Not applicable: not relevant",
         "metric_status": "skipped",
         "metric_threshold": 3,
-        "metric_properties": None,
+        "metric_properties": {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "total_tokens": 0,
+            "finish_reason": "",
+            "model": "",
+            "sample_input": "",
+            "sample_output": "",
+        },
     }
 
 
@@ -159,8 +167,66 @@ def test_exact_chat_schemas(key, alias, usage):
     assert set(completed) == expected_keys
     skipped = configured.parse({"llm_output": {"status": "skipped"}, "input_token_count": 9})
     assert set(skipped) == expected_keys - ({alias} if alias else set())
+    assert skipped[f"{key}_properties"] == metadata
     if usage:
-        assert skipped[f"{key}_prompt_tokens"] == 0
+        assert skipped[f"{key}_prompt_tokens"] == 9
+
+
+@pytest.mark.parametrize("strict", [True, False])
+@pytest.mark.parametrize("top_level_usage", [True, False])
+def test_post_inference_skip_preserves_measured_usage(strict, top_level_usage):
+    configured = strategy(strict=strict, top_level_usage=top_level_usage, completed_alias="legacy_metric")
+    output = {
+        "llm_output": {
+            "status": "skipped",
+            "score": None,
+            "reason": "not applicable",
+            "properties": {"custom": "kept"},
+        },
+        "input_token_count": 9,
+        "output_token_count": 3,
+        "total_token_count": 12,
+        "model_id": "chat-judge-skip-fixture",
+    }
+    configured.runner.return_value = output
+    result = asyncio.run(configured.evaluate({"query": "q"}))
+    metadata = {
+        "prompt_tokens": 9,
+        "completion_tokens": 3,
+        "total_tokens": 12,
+        "model": "chat-judge-skip-fixture",
+        "finish_reason": "",
+        "sample_input": "",
+        "sample_output": "",
+    }
+    assert result == {
+        "metric": None,
+        "metric_score": None,
+        "metric_passed": None,
+        "metric_result": "not_applicable",
+        "metric_reason": "Not applicable: not applicable",
+        "metric_status": "skipped",
+        "metric_threshold": 3,
+        "metric_properties": {"custom": "kept", **metadata},
+        **({f"metric_{key}": value for key, value in metadata.items()} if top_level_usage else {}),
+    }
+    configured.runner.assert_awaited_once_with(timeout=17, query="q")
+
+
+@pytest.mark.parametrize("top_level_usage", [True, False])
+def test_pre_inference_skip_does_not_call_runner_or_manufacture_usage(top_level_usage):
+    configured = strategy(top_level_usage=top_level_usage)
+    result = configured.skipped("no applicable input")
+    assert result["metric_status"] == "skipped"
+    assert result["metric"] is result["metric_score"] is result["metric_passed"] is None
+    assert result["metric_properties"] is None
+    if top_level_usage:
+        assert [result[f"metric_{key}"] for key in ("prompt_tokens", "completion_tokens", "total_tokens")] == [0, 0, 0]
+        assert result["metric_model"] == ""
+    else:
+        assert "metric_prompt_tokens" not in result
+        assert "metric_model" not in result
+    configured.runner.assert_not_called()
 
 
 def test_runtime_flow_resolution():

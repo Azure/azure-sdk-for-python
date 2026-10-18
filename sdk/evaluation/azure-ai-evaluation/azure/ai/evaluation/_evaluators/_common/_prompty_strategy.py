@@ -70,7 +70,14 @@ class PromptyEvaluationStrategy:
         score = self.missing_score
         if isinstance(answer, dict) and (self.strict or answer):
             if answer.get("status", "completed") == "skipped":
-                return self.skipped(answer.get("reason", ""))
+                return self.format_result(
+                    None,
+                    "not_applicable",
+                    f"Not applicable: {answer.get('reason', '')}",
+                    "skipped",
+                    answer.get("properties", {}) or {},
+                    output,
+                )
             score = answer.get("score", self.missing_score)
             reason = answer.get("reason", "")
             properties = answer.get("properties", {}) or {}
