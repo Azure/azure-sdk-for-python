@@ -112,7 +112,7 @@ def _binding_function_by_name(binding_function_name: Optional[str]) -> Optional[
     """Find an async binding function the caller has already named.
 
     For example, "fetch_page_with_cursor" selects fetch_page_with_cursor_async.
-    Callers supply the same unsuffixed function name as on the synchronous path.
+    Callers supply the synchronous function name, without the async suffix.
     None means no matching function for this call, not that the operation has
     no paging implementation in every cursor mode.
 
@@ -365,7 +365,17 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
             close_future.result()
             return
         # Each loop gets its own awaitable; cancellation must not cancel _close_future.
-        await asyncio.shield(asyncio.wrap_future(close_future))
+        close_wait = asyncio.wrap_future(close_future)
+        try:
+            await asyncio.shield(close_wait)
+        except asyncio.CancelledError:
+            def observe_cleanup_result(future: "asyncio.Future[None]") -> None:
+                # Observe errors after this caller leaves; later close calls still receive them.
+                if not future.cancelled() and future.exception() is not None:
+                    _LOGGER.debug("Async client cleanup failed after its close wait was cancelled")
+
+            close_wait.add_done_callback(observe_cleanup_result)
+            raise
 
     def __del__(self) -> None:
         """Hand abandoned resources to the cleanup helper without raising.

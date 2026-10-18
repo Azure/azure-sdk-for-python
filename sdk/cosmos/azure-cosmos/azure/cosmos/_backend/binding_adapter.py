@@ -87,9 +87,8 @@ def _binding_function_for_op(op: str) -> Optional[Any]:
     """Find the binding function that runs one operation.
 
     ``op`` is the Python wrapper's name for the operation. It usually matches
-    the public method the customer called, but not always: ``get_throughput``
-    and ``replace_throughput`` reach the binding as ``read_offer`` and
-    ``replace_offer``. ``OP_TO_BINDING_FUNCTION_NAME`` holds the mapping, and
+    the public method the customer called, including ``get_throughput`` and
+    ``replace_throughput``. ``OP_TO_BINDING_FUNCTION_NAME`` holds the mapping, and
     ``BindingAdapter.execute`` is the only caller.
 
     ``None`` means the binding cannot run ``op`` in this process, which

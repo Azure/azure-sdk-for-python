@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 """Original non-split async token assertions with owned, closed resources.
 
-Test methods and 100-write helpers come from tests/test_latest_session_token_async.py.
+Test methods and 100-write helpers come from tests/test_partition_split_scenarios_async.py.
 The forced 11000-RU split test remains outside this ordinary-account run.
 """
 
@@ -13,7 +13,7 @@ import uuid
 
 from azure.cosmos import PartitionKey
 from azure.cosmos.aio import CosmosClient
-import test_latest_session_token_async as original_tests
+import test_partition_split_scenarios_async as original_tests
 
 
 class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
@@ -29,8 +29,8 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         self.key_database = self.database
         print(f"\nOwned token-test database: {self.database.id}")
 
-    create_items_logical_pk_async = staticmethod(original_tests.TestLatestSessionTokenAsync.create_items_logical_pk_async)
-    create_items_physical_pk_async = staticmethod(original_tests.TestLatestSessionTokenAsync.create_items_physical_pk_async)
+    create_items_logical_pk_async = staticmethod(original_tests.TestPartitionSplitScenariosAsync.create_items_logical_pk_async)
+    create_items_physical_pk_async = staticmethod(original_tests.TestPartitionSplitScenariosAsync.create_items_physical_pk_async)
 
     async def test_latest_session_token_hpk(self):
         container_ref = await self.key_database.create_container(

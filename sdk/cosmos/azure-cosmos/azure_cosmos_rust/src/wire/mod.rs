@@ -115,8 +115,8 @@ pub(crate) use feed_range::{
 };
 pub(crate) use items::{execute_item_operation_async, execute_item_operation_sync, ItemTarget};
 pub(crate) use offers::{
-    run_read_offer_operation, run_read_offer_operation_async, run_replace_offer_operation,
-    run_replace_offer_operation_async,
+    run_get_throughput_operation, run_get_throughput_operation_async, run_replace_throughput_operation,
+    run_replace_throughput_operation_async,
 };
 pub(crate) use query::{
     run_query_operation, run_query_operation_async, run_read_all_items_operation,

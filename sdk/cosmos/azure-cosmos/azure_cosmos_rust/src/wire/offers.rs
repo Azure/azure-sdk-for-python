@@ -26,13 +26,16 @@ use azure_data_cosmos_driver::{
 use super::deadline::{parse_remaining_timeout, with_timeout};
 use super::diagnostics::BINDING_OP_COUNT;
 use super::request::{build_operation_options, RequestHeadersAndOptions};
-use super::response::{tuple_from_offer_feed_result, tuple_from_result, with_attempt_diagnostics};
+use super::response::{
+    tuple_from_offer_feed_result, tuple_from_result, tuple_from_result_with_attempts,
+    with_attempt_diagnostics,
+};
 use super::{lookup_driver, AbortOnDrop};
 use crate::runtime::require_runtime_context;
 
 /// Complete the offer query and return its binding response tuple.
 /// Wait on the calling thread with Python's global interpreter lock (GIL) released.
-pub(crate) fn run_read_offer_operation<'py>(
+pub(crate) fn run_get_throughput_operation<'py>(
     py: Python<'py>,
     driver_handle: &str,
     modifiers: RequestHeadersAndOptions,
@@ -48,7 +51,7 @@ pub(crate) fn run_read_offer_operation<'py>(
 
     let timed = with_timeout(
         timeout,
-        run_read_offer_future(driver, modifiers, body_bytes),
+        run_get_throughput_future(driver, modifiers, body_bytes),
     );
     let response_result = py
         .allow_threads(|| runtime_ctx.tokio_rt.block_on(timed))
@@ -56,8 +59,8 @@ pub(crate) fn run_read_offer_operation<'py>(
     offer_read_tuple(py, response_result, include_attempts)
 }
 
-/// Async sibling of `run_read_offer_operation`.
-pub(crate) fn run_read_offer_operation_async<'py>(
+/// Async sibling of `run_get_throughput_operation`.
+pub(crate) fn run_get_throughput_operation_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     modifiers: RequestHeadersAndOptions,
@@ -73,7 +76,7 @@ pub(crate) fn run_read_offer_operation_async<'py>(
 
     let timed = with_timeout(
         timeout,
-        run_read_offer_future(driver, modifiers, body_bytes),
+        run_get_throughput_future(driver, modifiers, body_bytes),
     );
     let join = runtime_ctx.tokio_rt.spawn(timed);
     let abort_guard = AbortOnDrop(join.abort_handle());
@@ -103,56 +106,85 @@ pub(crate) fn run_read_offer_operation_async<'py>(
 
 /// Replace the named offer and return its binding response tuple.
 /// Wait on the calling thread with the GIL released; the body contains one record.
-pub(crate) fn run_replace_offer_operation<'py>(
+pub(crate) fn run_replace_throughput_operation<'py>(
     py: Python<'py>,
     driver_handle: &str,
     modifiers: RequestHeadersAndOptions,
     offer_id: String,
     body_bytes: Vec<u8>,
     op_name: &str,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
     let driver = lookup_driver(driver_handle)?;
     let runtime_ctx = require_runtime_context(op_name)?;
 
-    let response_result: Result<CosmosResponse, CosmosError> = py.allow_threads(|| {
-        runtime_ctx.tokio_rt.block_on(run_replace_offer_future(
-            driver, modifiers, offer_id, body_bytes,
-        ))
-    });
-
-    tuple_from_result(py, response_result)
+    let timed = with_timeout(
+        timeout,
+        run_replace_throughput_future(driver, modifiers, offer_id, body_bytes),
+    );
+    let response_result = py
+        .allow_threads(|| runtime_ctx.tokio_rt.block_on(timed))
+        .map_err(|error| {
+            PyTimeoutError::new_err(format!("Throughput replacement timed out: {error}"))
+        })?;
+    if include_attempts {
+        tuple_from_result_with_attempts(py, response_result)
+    } else {
+        tuple_from_result(py, response_result)
+    }
 }
 
-/// Async sibling of `run_replace_offer_operation`.
-pub(crate) fn run_replace_offer_operation_async<'py>(
+/// Async sibling of `run_replace_throughput_operation`.
+pub(crate) fn run_replace_throughput_operation_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     modifiers: RequestHeadersAndOptions,
     offer_id: String,
     body_bytes: Vec<u8>,
     op_name: &str,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
+    let timeout = parse_remaining_timeout(timeout_seconds)?;
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
     let driver = lookup_driver(driver_handle)?;
     let runtime_ctx = require_runtime_context(op_name)?;
 
-    let join = runtime_ctx.tokio_rt.spawn(run_replace_offer_future(
-        driver, modifiers, offer_id, body_bytes,
-    ));
+    let timed = with_timeout(
+        timeout,
+        run_replace_throughput_future(driver, modifiers, offer_id, body_bytes),
+    );
+    let join = runtime_ctx.tokio_rt.spawn(timed);
     let abort_guard = AbortOnDrop(join.abort_handle());
 
     pyo3_async_runtimes::tokio::future_into_py(py, async move {
         let _abort_guard = abort_guard;
-        let response_result = join.await.map_err(|join_error| {
-            if join_error.is_cancelled() {
-                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
-            } else {
-                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
-            }
-        })?;
+        let response_result = join
+            .await
+            .map_err(|join_error| {
+                if join_error.is_cancelled() {
+                    PyRuntimeError::new_err(
+                        "cosmos async operation was cancelled before it completed",
+                    )
+                } else {
+                    PyRuntimeError::new_err(format!(
+                        "cosmos async operation task failed: {join_error}"
+                    ))
+                }
+            })?
+            .map_err(|error| {
+                PyTimeoutError::new_err(format!("Throughput replacement timed out: {error}"))
+            })?;
         Python::with_gil(|py| {
-            tuple_from_result(py, response_result).map(|tuple| tuple.into_any().unbind())
+            let result = if include_attempts {
+                tuple_from_result_with_attempts(py, response_result)
+            } else {
+                tuple_from_result(py, response_result)
+            };
+            result.map(|tuple| tuple.into_any().unbind())
         })
     })
 }
@@ -203,7 +235,7 @@ fn offer_read_tuple<'py>(
 /// Add default query `Content-Type` and `x-ms-documentdb-isquery` markers only if
 /// absent from custom headers. The prepared container-recreate guard header is
 /// also supplied through those custom headers; this helper does not enforce it.
-async fn run_read_offer_future(
+async fn run_get_throughput_future(
     driver: Arc<CosmosDriver>,
     modifiers: RequestHeadersAndOptions,
     body_bytes: Vec<u8>,
@@ -253,10 +285,10 @@ async fn run_read_offer_future(
     }
 }
 
-/// Build replace_offer using the offer resource id and prepared replacement body.
+/// Build replace_throughput using the offer resource id and prepared replacement body.
 /// Pass through custom headers, including any container-recreate guard. The
 /// Rust driver handles signing and execution; this helper does not enforce the guard.
-async fn run_replace_offer_future(
+async fn run_replace_throughput_future(
     driver: Arc<CosmosDriver>,
     modifiers: RequestHeadersAndOptions,
     offer_id: String,
@@ -385,7 +417,7 @@ mod tests {
             page(StatusCode::Ok, r#"{"Offers":[{"id":"a","content":{"offerThroughput":4000}}]}"#, Some("third"), "2"),
             page(StatusCode::Ok, r#"{"Offers":[{"id":"b","content":{"offerAutopilotSettings":{"maxThroughput":10000}}}]}"#, None, "3"),
         ]).await;
-        let result = run_read_offer_future(
+        let result = run_get_throughput_future(
             driver,
             modifiers(),
             br#"{"query":"SELECT * FROM c"}"#.to_vec(),
@@ -424,6 +456,73 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn replacement_returns_manual_and_autoscale_content_with_attempts() {
+        for body in [
+            r#"{"id":"AAAAAA==","content":{"offerThroughput":500}}"#,
+            r#"{"id":"AAAAAA==","content":{"offerAutopilotSettings":{"maxThroughput":10000}}}"#,
+        ] {
+            let (driver, rules) = setup(vec![page(StatusCode::Ok, body, None, "2")]).await;
+            let result = run_replace_throughput_future(
+                driver,
+                modifiers(),
+                "AAAAAA==".to_owned(),
+                body.as_bytes().to_vec(),
+            )
+            .await;
+            assert_eq!(rules[0].hit_count(), 1);
+            Python::with_gil(|py| {
+                let envelope = tuple_from_result_with_attempts(py, result).unwrap();
+                let response = envelope.get_item(0).unwrap();
+                assert_eq!(response.get_item(0).unwrap().extract::<u16>().unwrap(), 200);
+                let bytes = response.get_item(3).unwrap();
+                let actual: serde_json::Value =
+                    serde_json::from_slice(bytes.downcast::<PyBytes>().unwrap().as_bytes())
+                        .unwrap();
+                assert_eq!(
+                    actual,
+                    serde_json::from_str::<serde_json::Value>(body).unwrap()
+                );
+                assert!(!envelope.get_item(1).unwrap().is_none());
+            });
+        }
+    }
+
+    #[tokio::test]
+    async fn replacement_service_failure_keeps_status_and_headers() {
+        let (driver, rules) = setup(vec![page(
+            StatusCode::Forbidden,
+            r#"{"code":"Forbidden","message":"denied"}"#,
+            None,
+            "2",
+        )])
+        .await;
+        let result = run_replace_throughput_future(
+            driver,
+            modifiers(),
+            "AAAAAA==".to_owned(),
+            br#"{"id":"AAAAAA==","content":{"offerThroughput":500}}"#.to_vec(),
+        )
+        .await;
+        assert!(result.is_err());
+        assert_eq!(rules[0].hit_count(), 1);
+        Python::with_gil(|py| {
+            let envelope = tuple_from_result_with_attempts(py, result).unwrap();
+            let response = envelope.get_item(0).unwrap();
+            assert_eq!(response.get_item(0).unwrap().extract::<u16>().unwrap(), 403);
+            assert_eq!(
+                response
+                    .get_item(2)
+                    .unwrap()
+                    .get_item("etag")
+                    .unwrap()
+                    .extract::<String>()
+                    .unwrap(),
+                "page-2",
+            );
+        });
+    }
+
+    #[tokio::test]
     async fn later_offer_failure_does_not_return_partial_success() {
         let (driver, rules) = setup(vec![
             page(
@@ -440,7 +539,7 @@ mod tests {
             ),
         ])
         .await;
-        let result = run_read_offer_future(
+        let result = run_get_throughput_future(
             driver,
             modifiers(),
             br#"{"query":"SELECT * FROM c"}"#.to_vec(),
@@ -468,7 +567,7 @@ mod tests {
     async fn empty_final_offer_page_is_a_complete_empty_result() {
         let (driver, rules) =
             setup(vec![page(StatusCode::Ok, r#"{"Offers":[]}"#, None, "1")]).await;
-        let result = run_read_offer_future(
+        let result = run_get_throughput_future(
             driver,
             modifiers(),
             br#"{"query":"SELECT * FROM c"}"#.to_vec(),
@@ -496,7 +595,7 @@ mod tests {
             page(StatusCode::Ok, r#"{"Offers":"invalid"}"#, None, "2"),
         ])
         .await;
-        let result = run_read_offer_future(
+        let result = run_get_throughput_future(
             driver,
             modifiers(),
             br#"{"query":"SELECT * FROM c"}"#.to_vec(),
@@ -525,7 +624,7 @@ mod tests {
                 ),
             ])
             .await;
-            let result = run_read_offer_future(
+            let result = run_get_throughput_future(
                 driver,
                 modifiers(),
                 br#"{"query":"SELECT * FROM c"}"#.to_vec(),
@@ -595,7 +694,7 @@ mod tests {
     #[tokio::test]
     async fn offer_error_without_final_diagnostics_retains_partial_attempts() {
         let (driver, _) = setup(vec![page(StatusCode::Ok, r#"{"Offers":[]}"#, None, "1")]).await;
-        let mut result = run_read_offer_future(
+        let mut result = run_get_throughput_future(
             driver,
             modifiers(),
             br#"{"query":"SELECT * FROM c"}"#.to_vec(),

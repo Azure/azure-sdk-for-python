@@ -43,7 +43,12 @@ The options for the resource throttle retry policy used for 429 error codes can 
 - `Retry Throttle Total`: Represents the total amount of retries. Can be changed by passing the `retry_throttle_total` option. Default value is 9.
 - `Retry Fixed Interval`: Represents a fixed wait period between retry attempts in seconds. Can be changed by passing the
 `retry_fixed_interval` option (`float`). The default behaviour is to use an exponential retry policy. Must be a value >= 1.
-- `Retry Throttle Backoff Max`: Represents the maximum retry wait time. Can be changed by passing the `retry_throttle_backoff_max` option. Default value is 30s.
+- `Retry Throttle Backoff Max`: Configures the throttle retry waiting allowance through `retry_throttle_backoff_max`. Default value is 30s.
+
+On the Rust-backed path, this allowance governs ordinary throttle retries;
+it is not a strict cap on all waiting. The driver can use remaining operation
+time for a final retry after the ordinary allowance is exhausted. Configure
+`timeout` to bound the overall operation, including retry waiting.
 
 Previously, `retry_total` and `retry_backoff_max` were used to set both the throttle and connection retry policy configurations. 
 This option is backwards compatible though, the option remains to set both throttle and connection retry configurations with the same `retry_total` and `retry_backoff_max` value.

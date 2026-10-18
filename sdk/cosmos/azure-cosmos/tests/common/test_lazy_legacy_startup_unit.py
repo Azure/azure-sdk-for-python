@@ -200,9 +200,9 @@ def test_legacy_feed_setup_precedes_header_and_session_preparation(
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_permitted_fallback_initializes_legacy_before_dispatch(monkeypatch, async_mode):
+def test_throughput_rejection_does_not_initialize_legacy(monkeypatch, async_mode):
     from azure.cosmos._backend.capabilities import OperationRouting
-    from azure.cosmos._backend.operations import OP_READ_OFFER
+    from azure.cosmos._backend.operations import OP_GET_THROUGHPUT
     from azure.cosmos._backend.cosmos_backend import CosmosBackend
     from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 
@@ -216,7 +216,7 @@ def test_permitted_fallback_initializes_legacy_before_dispatch(monkeypatch, asyn
     transport = AsyncMock(side_effect=send) if async_mode else MagicMock(side_effect=send)
     monkeypatch.setattr(env.connection, "_CosmosClientConnection__Get", transport)
     options = dict(
-        routing=OperationRouting(OP_READ_OFFER, supported=False),
+        routing=OperationRouting(OP_GET_THROUGHPUT, supported=False),
         build_request=MagicMock(side_effect=AssertionError("must select the permitted fallback")),
         process_response=MagicMock(side_effect=AssertionError("must keep legacy response processing")),
         legacy_call=lambda: env.connection.Read("offers/id", "offers", "id", None),
@@ -224,15 +224,17 @@ def test_permitted_fallback_initializes_legacy_before_dispatch(monkeypatch, asyn
 
     async def run():
         async with env.client:
-            result = await AsyncCosmosBackend.run_operation(env.client._adapter, **options)
-            assert result["id"] == "offer"
+            with pytest.raises(NotImplementedError, match="legacy Python"):
+                await AsyncCosmosBackend.run_operation(env.client._adapter, **options)
 
     if async_mode:
         asyncio.run(run())
     else:
         with env.client:
-            assert CosmosBackend.run_operation(env.client._adapter, **options)["id"] == "offer"
-    env.manager._GetDatabaseAccount.assert_called_once()
+            with pytest.raises(NotImplementedError, match="legacy Python"):
+                CosmosBackend.run_operation(env.client._adapter, **options)
+    env.manager._GetDatabaseAccount.assert_not_called()
+    transport.assert_not_called()
 
 
 @pytest.mark.parametrize("async_mode", [False, True])

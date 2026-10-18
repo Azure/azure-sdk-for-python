@@ -12,6 +12,7 @@
 
 #### Breaking Changes
 
+* Rust-backed database and container `replace_throughput()` now reject unsupported inputs before metadata requests instead of falling back to legacy Python.
 * Removed `ContainerProxy.is_system_key` from synchronous and asynchronous clients on both backends. Legacy system-key containers are outside the release scope; the public compatibility property is no longer available.
 * Removed `raw_request_hook` and `raw_response_hook` from both legacy and Rust-backed clients, including constructor and per-operation inputs. Supplying either option, including `None`, raises `TypeError`. Use supported results, response headers, tracing, and diagnostics; the ordinary `response_hook` is unchanged.
 * Rust-backed clients reject `enable_endpoint_discovery`, `multiple_write_locations`, and explicit assignments to their `ConnectionPolicy` fields; Rust manages discovery and multi-write routing from account settings. The legacy comparison backend retains these controls.
@@ -28,15 +29,19 @@
 
 #### Bugs Fixed
 
+* Fixed synchronous and asynchronous database and container `get_throughput()` and `replace_throughput()` to share one overall timeout across uncached metadata, the complete offer query, any container-identity refresh and replacement, inherit the client timeout default, and await asynchronous cancellation cleanup.
+* Fixed database and container throughput replacements to retain autoscale fields and response headers, isolate callback and input data, and report missing offers with `CosmosResourceNotFoundError`. Both replacement steps now receive supported caller options.
+* Added remaining-timeout and optional attempt-diagnostics support to synchronous and asynchronous Rust throughput replacement bindings.
 * Added Rust-backed `ConsistentPrefix` and `BoundedStaleness` read mappings for synchronous and asynchronous client defaults and `read_item()` overrides; write consistency remains governed by account settings.
 * Restored synchronous and asynchronous Rust-backed `patch_item()` filter conditions by forwarding them to service-side PATCH, preserving conditional rejection without legacy replay.
 * Restored legacy resource-ID validation for synchronous and asynchronous Rust-backed `upsert_item()` calls, including `TypeError` for a non-string ID, before backend execution.
-* Fixed container `get_throughput()` response-header retention, input-option ownership, missing-offer errors and recovery after container recreation.
+* Fixed container `get_throughput()` response-header retention, input-option ownership and missing-offer errors. Reads and replacements now share bounded recovery after container recreation without replaying a throughput write.
 * Fixed `get_latest_session_token()` discarding a saved parent token when child observations leave an uncovered gap, and restored acceptance of a single simple token.
 * Restored synchronous and asynchronous `read_item()` support for mappings containing only `_self`, without requiring an additional `id` or changing the saved resource address.
 
 #### Other Changes
 
+* Renamed internal Python/Rust throughput operations to `get_throughput` and `replace_throughput`, matching the public APIs. External Rust-driver offer operations are unchanged.
 ### 4.17.1 (2026-09-16)
 
 #### Bugs Fixed

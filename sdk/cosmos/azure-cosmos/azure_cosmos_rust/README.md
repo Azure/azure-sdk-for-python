@@ -52,7 +52,7 @@ For public `create_item`, `read_item`, `delete_item`, `upsert_item`, `replace_it
 `patch_item`, `ContainerProxy.read`, `DatabaseProxy.delete_container`,
 `DatabaseProxy.create_container`, `DatabaseProxy.replace_container`,
 `DatabaseProxy.create_container_if_not_exists`,
-`DatabaseProxy.read`, `DatabaseProxy.get_throughput`, `CosmosClient.create_database`,
+`DatabaseProxy.read`, `DatabaseProxy.get_throughput`, `ContainerProxy.get_throughput`, `CosmosClient.create_database`,
 `CosmosClient.delete_database` and `CosmosClient.create_database_if_not_exists`, the Python
 wrapper requests structured request diagnostics when it owns a recording
 operation span or an SDK-internal
@@ -134,14 +134,14 @@ budget after Python driver setup. The composed call retains separate read
 and create budgets; this is not a new overall workflow timeout.
 
 Public `DatabaseProxy.get_throughput` selects one of two bounded sequences:
-`read_database`, `read_offer`, or just `read_offer` when properties are cached.
+`read_database`, `get_throughput`, or just `get_throughput` when properties are cached.
 Its internal public database read joins the outer operation through scoped
 delegation. Completion includes offer validation, throughput deserialization
 and the isolated response hook. An empty successful offer query still raises
 the public not-found error; recording neither repeats the read nor changes
 throughput settings.
 
-Both offer-read entry points accept internal `timeout_seconds=None` and
+Both throughput-read entry points accept internal `timeout_seconds=None` and
 `include_attempts=False`. The shared deadline covers scheduling and all offer
 pages. The attempt envelope aggregates returned page diagnostics with the
 driver's bounded helper, including completed pages before a returned later
@@ -149,15 +149,40 @@ failure. It preserves the ordinary merged body, final response headers,
 exception mapping and diagnostic-counter behavior. A final failure without
 diagnostics marks available detail `complete=False`; interruption before a
 returned result does not recover diagnostic detail from the cancelled future.
-The public timeout still applies to the offer query separately from a needed
-database-properties read's normal defaults. This does not instrument public
-container throughput reads or throughput replacement.
+The current database-throughput helper shares an explicit public deadline
+across properties lookup and offer query. Public throughput replacement is
+not instrumented by this integration.
+
+Public `ContainerProxy.get_throughput` uses the same read bindings but retains
+its existing separate step budgets. Cached properties select the bounded
+sequence `get_throughput`, `read_container`, `get_throughput`; an uncached
+call starts with one additional `read_container`. Only executed steps contribute.
+The internal properties read and recovery refresh join the public operation
+through single-use delegation. A changed container identity permits the second
+offer query; unchanged identity or an ordinary access error does not.
+Completion includes throughput deserialization and the isolated hook, without
+replaying work after hook or recording failures. No new binding entry point
+or Rust driver change is needed for this public integration.
+
+The binding names are now `get_throughput` / `get_throughput_async` and
+`replace_throughput` / `replace_throughput_async`; old `read_offer` and
+`replace_offer` exports are absent. The external driver still uses
+`CosmosOperation::query_offers` and `CosmosOperation::replace_offer`.
+
+Replacement bindings also accept `timeout_seconds=None` and
+`include_attempts=False`. For example, if Python passes 1.5 seconds remaining,
+the eager deadline covers scheduling and the native replacement, not a fresh
+budget after scheduling. Opt-in attempt data uses the existing response
+envelope. Async cancellation aborts the owned task. None of this creates a
+single public deadline for metadata, offer lookup and replacement, or adds
+public replacement telemetry collection automatically.
 
 Each binding invocation contributes through a single-use token. The Python
 collector rejects duplicate or late delivery and records operation totals once.
 Single-operation paths accept one binding result. Database get-or-create
 accepts at most three ordered results, and container get-or-create at most two,
-as does database throughput read, retaining the native-bounded detail
+as does database throughput read. Container throughput read accepts at most
+four ordered results, retaining the native-bounded detail
 from each. Other multi-result paths must explicitly bound collection rather
 than joining an operation merely through inherited context. Driver retries
 already included in one result are not additional Python contributions.
@@ -246,7 +271,7 @@ counters and eagerly formats the synthetic diagnostic response header.
 Removing that work requires deciding when the header remains available.
 Likewise, query/patch option snapshots still protect caller-owned mutable data.
 The retained SQL-query path already reuses prepared body bytes rather than
-parsing and reserializing the query in the binding. Synchronous driver
+parsing and serializing the query again in the binding. Synchronous driver
 acquisition still blocks for initial native construction with the GIL released;
 that is first-operation binding latency, not Python wrapper preparation time.
 

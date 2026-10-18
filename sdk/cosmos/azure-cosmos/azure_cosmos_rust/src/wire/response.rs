@@ -590,11 +590,11 @@ fn backend_response_tuple_from_offer_feed_success<'py>(
         diagnostics = record_diagnostics(response.diagnostics());
         let bytes = named_feed_response_body_to_vec(response.into_body(), b"Offers")?;
         let page: OfferFeedBody = serde_json::from_slice(&bytes)
-            .map_err(|error| PyValueError::new_err(format!("Invalid read_offer page: {error}")))?;
+            .map_err(|error| PyValueError::new_err(format!("Invalid get_throughput page: {error}")))?;
         body.offers.extend(page.offers);
     }
     let bytes = serde_json::to_vec(&body)
-        .map_err(|error| PyValueError::new_err(format!("Invalid read_offer result: {error}")))?;
+        .map_err(|error| PyValueError::new_err(format!("Invalid get_throughput result: {error}")))?;
     backend_response_tuple(
         py,
         status_code,

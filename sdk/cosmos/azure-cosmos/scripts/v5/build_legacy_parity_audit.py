@@ -1371,7 +1371,7 @@ def _validate_audit_inputs(
                         label, block.nodeid
                     )
                 )
-            if op in ("get_database_throughput", "read_offer") and block.status == "ok":
+            if op in ("get_database_throughput", "get_throughput") and block.status == "ok":
                 required = {
                     "offer_throughput", "auto_scale_max_throughput",
                     "auto_scale_increment_percent", "properties",

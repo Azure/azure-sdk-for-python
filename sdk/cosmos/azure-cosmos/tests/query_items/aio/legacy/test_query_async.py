@@ -404,32 +404,41 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
         a genuine one from the service rather than a fake.
         """
         # Source: tests/test_query_async.py::TestQueryAsync.test_paging_with_continuation_token_async
-        await self.container.upsert_item({"pk": "pk", "id": "1"})
-        await self.container.upsert_item({"pk": "pk", "id": "2"})
+        created_collection = self.container
 
-        query_iterable = self.container.query_items(
-            query="SELECT * from c",
-            partition_key="pk",
-            max_item_count=1,
+        document_definition = {'pk': 'pk', 'id': '1'}
+        await created_collection.upsert_item(body=document_definition)
+        document_definition = {'pk': 'pk', 'id': '2'}
+        await created_collection.upsert_item(body=document_definition)
+
+        query = 'SELECT * from c'
+        query_iterable = created_collection.query_items(
+            query=query,
+            partition_key='pk',
+            max_item_count=1
         )
         pager = query_iterable.by_page()
         await pager.__anext__()
         token = pager.continuation_token
         second_page = [item async for item in await pager.__anext__()][0]
 
-        replay_pager = query_iterable.by_page(token)
-        replay_second_page = [item async for item in await replay_pager.__anext__()][0]
-        assert second_page["id"] == replay_second_page["id"]
+        pager = query_iterable.by_page(token)
+        second_page_fetched_with_continuation_token = [item async for item in await pager.__anext__()][0]
+
+        assert second_page['id'] == second_page_fetched_with_continuation_token['id']
 
     async def test_cross_partition_query_with_continuation_token_async(self):
         """Original async cross-partition replay, without an explicit enable flag."""
         # Source: tests/test_query_async.py::TestQueryAsync.test_cross_partition_query_with_continuation_token_async
         created_collection = self.container
-        await created_collection.create_item(body={"pk": "pk1", "id": str(uuid.uuid4())})
-        await created_collection.create_item(body={"pk": "pk2", "id": str(uuid.uuid4())})
+        document_definition = {'pk': 'pk1', 'id': str(uuid.uuid4())}
+        await created_collection.create_item(body=document_definition)
+        document_definition = {'pk': 'pk2', 'id': str(uuid.uuid4())}
+        await created_collection.create_item(body=document_definition)
 
+        query = 'SELECT * from c'
         query_iterable = created_collection.query_items(
-            query="SELECT * from c",
+            query=query,
             max_item_count=1,
         )
         pager = query_iterable.by_page()
@@ -439,4 +448,4 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         pager = query_iterable.by_page(token)
         second_page_fetched_with_continuation_token = [item async for item in await pager.__anext__()][0]
-        assert second_page["id"] == second_page_fetched_with_continuation_token["id"]
+        assert second_page['id'] == second_page_fetched_with_continuation_token['id']

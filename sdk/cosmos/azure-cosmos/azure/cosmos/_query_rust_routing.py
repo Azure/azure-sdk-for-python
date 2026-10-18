@@ -222,8 +222,8 @@ def _master_feed_page_is_rust_eligible(
         timeout = options.get(Constants.Kwargs.TIMEOUT)
         if not is_supported_operation_timeout(timeout):
             return False
-        # The builder carries the option value. Do not accept an unforwarded or
-        # conflicting timeout supplied only through internal kwargs.
+        # The builder carries the option value. Do not accept a timeout supplied
+        # only through internal kwargs or conflicting with the forwarded value.
         if Constants.Kwargs.TIMEOUT in kwargs and kwargs[Constants.Kwargs.TIMEOUT] != timeout:
             return False
         allowed_kwargs = _DATABASE_FEED_ALLOWED_INTERNAL_KWARGS

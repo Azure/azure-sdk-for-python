@@ -28,6 +28,7 @@ from ..._backend.operations import (
     OP_REPLACE_CONTAINER,
 )
 from ..._cosmos_responses import CosmosDict
+from ..._operation_deadline import legacy_deadline_kwargs, legacy_deadline_options, remaining_timeout, run_with_deadline
 from ..._helpers._request_container import (
     build_create_container_prepared,
     build_delete_container_prepared,
@@ -108,6 +109,7 @@ class AsyncContainerHelper:
         response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
         routing: Optional[OperationRouting] = None,
+        deadline: Optional[float] = None,
     ) -> CosmosDict:
         """Read a container and return its properties."""
         operation_kwargs = dict(kwargs or {})
@@ -126,19 +128,25 @@ class AsyncContainerHelper:
             if routing is None
             else replace(routing, supported=routing.supported and supported)
         )
-        result = await self._backend.run_operation(
-            build_request=build_request,
-            routing=(routing),
-            legacy_call=lambda: self._client_connection.ReadContainer(
-                container_link,
-                options=request_options,
-                **operation_kwargs,
+        remaining_timeout(deadline)
+        result = await run_with_deadline(
+            lambda: self._backend.run_operation(
+                build_request=build_request,
+                routing=(routing),
+                legacy_call=lambda: self._client_connection.ReadContainer(
+                    container_link,
+                    options=legacy_deadline_options(request_options, deadline),
+                    **legacy_deadline_kwargs(operation_kwargs, deadline),
+                ),
+                process_response=lambda response: process_backend_response(
+                    response,
+                    client_connection=self._client_connection,
+                ),
+                deadline=deadline,
             ),
-            process_response=lambda response: process_backend_response(
-                response,
-                client_connection=self._client_connection,
-            ),
+            deadline,
         )
+        remaining_timeout(deadline)
         on_response = with_response_header_snapshot(response_hook, copy_body=True)
         if on_response is not None:
             on_response(result.get_response_headers(), result)

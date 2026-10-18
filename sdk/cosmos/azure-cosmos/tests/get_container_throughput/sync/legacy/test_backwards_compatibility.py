@@ -18,7 +18,7 @@ object that is BOTH named ``ThroughputProperties`` AND an instance of
 unpacking the wrong object) would slip through.
 
 This is NOT the side-by-side parity comparison. The parity tests
-(``read_offer/sync/test_read_offer_parity.py``) run the same call on both
+(``get_throughput/sync/test_get_throughput_parity.py``) run the same call on both
 engines and diff the numbers. This file runs on Rust only; the core-python
 side of the contract is already guaranteed by the original test in
 ``tests/``. Together: parity catches value drift (wrong RU/s), this catches
@@ -33,7 +33,7 @@ throughput and the container with dedicated throughput, because
 
 Run with::
 
-    pytest --noconftest tests/read_offer/sync/legacy/test_backwards_compatibility.py -v
+    pytest --noconftest tests/get_container_throughput/sync/legacy/test_backwards_compatibility.py -v
 """
 import os
 import unittest
@@ -56,7 +56,7 @@ class TestBackwardsCompatibility(unittest.TestCase):
 
     def setUp(self) -> None:
         self.client = CosmosClient(HOST, KEY, _backend="rust")
-        self._db_id = "legacy_read_offer_bwc_" + uuid.uuid4().hex[:8]
+        self._db_id = "legacy_get_throughput_bwc_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
         self.databaseForTest = self.client.create_database(self._db_id, offer_throughput=400)
         self.containerForTest = self.databaseForTest.create_container(

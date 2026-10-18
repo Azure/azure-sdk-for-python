@@ -19,13 +19,13 @@ import pytest
 
 from azure.cosmos import _base
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
-from azure.cosmos._backend.operations import OP_READ_OFFER, OP_TO_BINDING_FUNCTION_NAME
+from azure.cosmos._backend.operations import OP_GET_THROUGHPUT, OP_TO_BINDING_FUNCTION_NAME
 from azure.cosmos._helpers._request_settings import (
     HEADERS_THE_DRIVER_REGENERATES,
     HEADERS_THE_DRIVER_WOULD_SILENTLY_OVERWRITE,
 )
-from azure.cosmos._helpers._request_offer import build_read_offer_request, build_replace_offer_request
-from azure.cosmos._offer_rust_routing import can_use_rust_backend_for_read_offer, parse_read_offer_payload, build_read_offer_from_connection
+from azure.cosmos._helpers._request_throughput import build_get_throughput_request, build_replace_throughput_request
+from azure.cosmos._throughput_rust_routing import can_use_rust_backend_for_get_throughput, parse_get_throughput_payload, build_get_throughput_from_connection
 
 RUST_BACKEND = SimpleNamespace(name="rust")
 _OFFER_QUERY = {
@@ -41,10 +41,10 @@ def test_offer_native_accepts_remaining_timeout(suffix, remaining, include_attem
     """Native offer reads accept remaining budgets without changing default diagnostics."""
     from azure.cosmos import _rust
 
-    prepared = build_read_offer_request(
+    prepared = build_get_throughput_request(
         resource_link="dbs/db", offer_query=_OFFER_QUERY, request_options={}, default_headers={}
     )
-    native = getattr(_rust, "read_offer" + suffix)
+    native = getattr(_rust, "get_throughput" + suffix)
     assert inspect.signature(native).parameters["timeout_seconds"].default is None
     assert inspect.signature(native).parameters["include_attempts"].default is False
     with pytest.raises(RuntimeError, match="(?i)driver"):
@@ -57,11 +57,11 @@ def test_offer_native_rejects_invalid_remaining_timeout(suffix, remaining):
     """Reject invalid durations before looking up a driver or dispatching a request."""
     from azure.cosmos import _rust
 
-    prepared = build_read_offer_request(
+    prepared = build_get_throughput_request(
         resource_link="dbs/db", offer_query=_OFFER_QUERY, request_options={}, default_headers={}
     )
     with pytest.raises(ValueError, match="timeout_seconds"):
-        getattr(_rust, "read_offer" + suffix)("unregistered-offer-test", prepared, timeout_seconds=remaining)
+        getattr(_rust, "get_throughput" + suffix)("unregistered-offer-test", prepared, timeout_seconds=remaining)
 
 
 @pytest.mark.parametrize(
@@ -84,7 +84,7 @@ def test_offer_read_gate(backend, options, kwargs, expected):
     while quietly ignoring a timeout the caller asked for would be worse than
     not taking the fast path at all.
     """
-    assert can_use_rust_backend_for_read_offer(backend=backend, options=options, kwargs=kwargs) is expected
+    assert can_use_rust_backend_for_get_throughput(backend=backend, options=options, kwargs=kwargs) is expected
 
 
 @pytest.mark.parametrize("header", sorted(HEADERS_THE_DRIVER_WOULD_SILENTLY_OVERWRITE))
@@ -99,7 +99,7 @@ def test_offer_read_refuses_customer_overrides(header):
     are case insensitive on the wire, and a case-sensitive comparison here
     would let the override through unnoticed.
     """
-    assert not can_use_rust_backend_for_read_offer(
+    assert not can_use_rust_backend_for_get_throughput(
         backend=RUST_BACKEND,
         options={"initialHeaders": {header.upper(): "custom"}},
         kwargs={},
@@ -195,10 +195,10 @@ def test_offer_read_preparation_never_uses_legacy_transport(monkeypatch, resourc
     original = deepcopy((defaults, options, _OFFER_QUERY))
     connection = SimpleNamespace(default_headers=defaults)
     kwargs = dict(client_connection=connection, container_link=resource_link, offer_query=_OFFER_QUERY, options=options)
-    prepared = build_read_offer_from_connection(**kwargs)
+    prepared = build_get_throughput_from_connection(**kwargs)
     forbidden.assert_not_called()
     assert (defaults, options, _OFFER_QUERY) == original
-    assert prepared.op == OP_READ_OFFER == OP_TO_BINDING_FUNCTION_NAME[OP_READ_OFFER]
+    assert prepared.op == OP_GET_THROUGHPUT == OP_TO_BINDING_FUNCTION_NAME[OP_GET_THROUGHPUT]
     assert prepared.container_link == resource_link.strip("/")
     assert legacy_partition_key_from_request(prepared) == "[]"
     assert prepared.item_id is None
@@ -224,7 +224,7 @@ def test_offer_builder_does_not_generate_activity_or_session_headers():
     them here would mean every prepared request carried an id that never
     matched the one the service saw.
     """
-    prepared = build_read_offer_request(
+    prepared = build_get_throughput_request(
         resource_link="dbs/db",
         offer_query=_OFFER_QUERY,
         request_options={},
@@ -245,7 +245,7 @@ def test_offer_builder_rejects_invalid_initial_headers(initial_headers):
     character by character and build nonsense headers instead of complaining.
     """
     with pytest.raises(TypeError, match="initial_headers must be a mapping"):
-        build_read_offer_request(
+        build_get_throughput_request(
             resource_link="dbs/db", offer_query=_OFFER_QUERY,
             request_options={"initialHeaders": initial_headers}, default_headers={},
         )
@@ -258,13 +258,13 @@ def test_offer_parser_rejects_malformed_payload(payload):
     Three shapes: no ``Offers`` key at all, ``Offers`` holding a dict instead
     of a list, and a list holding something that is not an offer.
 
-    Each raises a ``ValueError`` naming the read_offer payload. Throughput
+    Each raises a ``ValueError`` naming the get_throughput payload. Throughput
     numbers come from here, so a parser that returns empty or partial results
     for a malformed response would report the wrong throughput rather than
     admit it could not read the answer.
     """
-    with pytest.raises(ValueError, match="read_offer Rust payload"):
-        parse_read_offer_payload(payload)
+    with pytest.raises(ValueError, match="get_throughput Rust payload"):
+        parse_get_throughput_payload(payload)
 
 
 @pytest.mark.parametrize("offers", [[], [{"id": "offer", "content": {"offerThroughput": 400}}]])
@@ -278,16 +278,16 @@ def test_offer_parser_preserves_records(offers):
     The empty list matters separately: no offers is a legitimate answer and
     must not be treated as a malformed payload.
     """
-    assert parse_read_offer_payload({"Offers": offers}) == offers
+    assert parse_get_throughput_payload({"Offers": offers}) == offers
 
 
 def test_offer_headers_belong_to_response_not_later_client_diagnostics():
     from types import SimpleNamespace
     from azure.cosmos._backend.contracts import BackendResponse
-    from azure.cosmos._offer_rust_routing import process_read_offer_response, offer_response_headers
+    from azure.cosmos._throughput_rust_routing import process_get_throughput_response, offer_response_headers
 
     connection = SimpleNamespace(last_response_headers={})
-    result = process_read_offer_response(
+    result = process_get_throughput_response(
         BackendResponse(status_code=200, headers={"etag": "offer-response"}, body=b'{"Offers":[]}'),
         client_connection=connection,
     )
@@ -300,8 +300,8 @@ def test_offer_headers_belong_to_response_not_later_client_diagnostics():
 
 
 @pytest.mark.parametrize("is_async", [False, True])
-@pytest.mark.parametrize("replace_offer", [False, True])
-def test_native_offer_entries_accept_direct_requests_before_io(monkeypatch, is_async, replace_offer):
+@pytest.mark.parametrize("replace_throughput", [False, True])
+def test_native_offer_entries_accept_direct_requests_before_io(monkeypatch, is_async, replace_throughput):
     """The real Rust entry points accept a prepared offer request without any account.
 
     Covers read and replace, sync and async, against the actual compiled
@@ -327,13 +327,13 @@ def test_native_offer_entries_accept_direct_requests_before_io(monkeypatch, is_a
         },
         "default_headers": {"User-Agent": "SDK default"},
     }
-    if replace_offer:
-        prepared = build_replace_offer_request(
+    if replace_throughput:
+        prepared = build_replace_throughput_request(
             offer_body={"_self": "offers/offer-rid/", "content": {"offerThroughput": 500}},
             **kwargs,
         )
     else:
-        prepared = build_read_offer_request(offer_query=_OFFER_QUERY, **kwargs)
+        prepared = build_get_throughput_request(offer_query=_OFFER_QUERY, **kwargs)
     entrypoint = getattr(native, prepared.op + ("_async" if is_async else ""))
     # Extraction runs before handle lookup. This verifies the real ABI and strict
     # request parser without creating a driver or contacting an account.

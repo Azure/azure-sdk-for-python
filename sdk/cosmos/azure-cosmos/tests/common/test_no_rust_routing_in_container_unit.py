@@ -42,7 +42,7 @@ from azure.cosmos.aio import _container as async_container_module
 _FORBIDDEN_SUBSTRINGS = (
     'getattr(self.client_connection, "_backend"',
     "getattr(self.client_connection, '_backend'",
-    "can_use_rust_backend_for_read_offer",
+    "can_use_rust_backend_for_get_throughput",
     "can_use_rust_backend_for_replace_throughput",
     "can_use_rust_backend_for_read_feed_ranges",
     "can_use_rust_backend_for_feed_range_from_partition_key",

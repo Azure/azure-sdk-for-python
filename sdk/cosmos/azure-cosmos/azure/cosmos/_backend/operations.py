@@ -42,8 +42,8 @@ OP_LIST_DATABASES = "list_databases"
 OP_READ_FEED_RANGES = "read_feed_ranges"
 OP_FEED_RANGE_FROM_PARTITION_KEY = "feed_range_from_partition_key"
 OP_IS_FEED_RANGE_SUBSET = "is_feed_range_subset"
-OP_READ_OFFER = "read_offer"
-OP_REPLACE_OFFER = "replace_offer"
+OP_GET_THROUGHPUT = "get_throughput"
+OP_REPLACE_THROUGHPUT = "replace_throughput"
 
 
 # ``PreparedRequest.op`` -> binding function name. Shared by the sync and
@@ -72,8 +72,8 @@ OP_TO_BINDING_FUNCTION_NAME = {
     OP_IS_FEED_RANGE_SUBSET: "is_feed_range_subset",
     # The two throughput operations: the public ``get_throughput`` /
     # ``replace_throughput`` calls reach the driver as offer reads and writes.
-    OP_READ_OFFER: "read_offer",
-    OP_REPLACE_OFFER: "replace_offer",
+    OP_GET_THROUGHPUT: "get_throughput",
+    OP_REPLACE_THROUGHPUT: "replace_throughput",
 }
 
 

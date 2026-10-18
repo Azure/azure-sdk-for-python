@@ -23,13 +23,21 @@ fake files in a temporary directory.
 """
 # pylint: disable=protected-access
 
+import importlib.util
 import json
 import os
 import threading
+from pathlib import Path
 
 import pytest
 
-import azure_cosmos_build_backend as build_backend
+# The build backend lives in the checkout, not in the installed SDK wheel.
+_BACKEND_PATH = Path(__file__).resolve().parents[2] / "azure_cosmos_build_backend.py"
+_BACKEND_SPEC = importlib.util.spec_from_file_location("azure_cosmos_build_backend", _BACKEND_PATH)
+if _BACKEND_SPEC is None or _BACKEND_SPEC.loader is None:
+    raise ImportError(f"Cannot load build backend from {_BACKEND_PATH}")
+build_backend = importlib.util.module_from_spec(_BACKEND_SPEC)
+_BACKEND_SPEC.loader.exec_module(build_backend)
 
 
 def _configure_test_paths(monkeypatch, tmp_path):

@@ -25,7 +25,7 @@ def test_header_pushback_references_match_reviewed_contract():
         "cache-control", "pragma", "strict-transport-security",
         "transfer-encoding", "x-ms-cosmos-min-throughput",
     }
-    expected_reference = (25, "The original HTTP response headers are discarded")
+    expected_reference = (29, "Closed: no generic success-response header map")
     assert _parity_helpers.BackendComparison._HEADER_TO_PUSHBACK == {
         header: expected_reference for header in expected_headers
     }
@@ -41,7 +41,7 @@ def test_header_verdict_references_current_pushbacks(header):
     comparison = _parity_helpers.BackendComparison(
         core_python=core, rust=rust, diffs=_parity_helpers.diff_outcomes(core, rust)
     )
-    assert "Pushback #25 (The original HTTP response headers are discarded):" in comparison._verdict()
+    assert "Pushback #29 (Closed: no generic success-response header map):" in comparison._verdict()
     assert not comparison.is_parity
 
 
@@ -61,7 +61,7 @@ def test_rust_diagnostics_are_reported_as_an_accepted_addition(name, raised):
     assert "ACCEPTED vNext ADDITIONS (not gaps)" in report
     assert "activity=abc requests=1" in report
     assert "HEADER GAP" not in report
-    assert "Pushback #32" not in report
+    assert "Pushback #18" not in report
     assert name in rust.response_headers
 
 

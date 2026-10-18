@@ -7,9 +7,9 @@
 
 See the sync sibling (``replace_throughput/sync/test_replace_throughput_parity.py``)
 for the full rationale. This is the async surface: each test runs the same
-``replace_throughput`` call once on core-python and once on rust against the *same*
-throwaway container and asserts the two agree on the applied RU/s. A fixed absolute
-target keeps both runs deterministic.
+``replace_throughput`` call once on core-python and once on rust against separate
+throwaway containers with equal initial capacity. Returned values and subsequent
+reads must both confirm the requested target.
 
 They run only when a real account and the compiled rust binding are both present.
 
@@ -19,37 +19,13 @@ Run with::
 """
 from __future__ import annotations
 
-import os
-import uuid
-
 import pytest
 
-from azure.cosmos import CosmosClient, PartitionKey, ThroughputProperties
+from azure.cosmos import ThroughputProperties
 from common._parity_helpers import run_on_both_backends_async, skip_unless_emulator, skip_unless_rust_binding
+from common.throughput_fixtures import container_for, autoscale_container_for, container_for_backend
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
-
-
-@pytest.fixture
-def container_for(request):
-    """A dedicated-throughput throwaway container, so ``replace_throughput`` has an offer to update."""
-    # Fresh throwaway container per test, deleted afterward, so tests don't share data.
-    # Created with dedicated throughput (offer_throughput) because replace_throughput
-    # only has an offer to change when the container owns one. A plain (core-python)
-    # client sets it up; the parity call itself runs on both engines below.
-    client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"])
-    db = client.create_database_if_not_exists("parity_db")
-    container_id = "parity_replace_tp_async_" + request.node.name + "_" + uuid.uuid4().hex[:6]
-    container = db.create_container(
-        id=container_id,
-        partition_key=PartitionKey(path="/pk"),
-        offer_throughput=400,
-    )
-    yield container
-    try:
-        db.delete_container(container_id)
-    except Exception:  # pylint: disable=broad-except
-        pass
 
 
 def _normalize_throughput(throughput_properties):
@@ -69,8 +45,11 @@ async def test_replace_throughput_int_applies_same_ru_async(container_for):
 
     async def _do(client):
         """Await ``replace_throughput(500)`` on the given async client and return normalised RU/s."""
-        container = client.get_database_client("parity_db").get_container_client(container_for.id)
-        return _normalize_throughput(await container.replace_throughput(500))
+        container = container_for_backend(client, container_for)
+        updated = _normalize_throughput(await container.replace_throughput(500))
+        assert updated["offer_throughput"] == 500
+        assert _normalize_throughput(await container.get_throughput()) == updated
+        return updated
 
     comparison = await run_on_both_backends_async(_do, description="async replace_throughput(500)")
     comparison.print_report()
@@ -83,10 +62,13 @@ async def test_replace_throughput_object_applies_same_ru_async(container_for):
 
     async def _do(client):
         """Await ``replace_throughput(ThroughputProperties(...))`` and return normalised RU/s."""
-        container = client.get_database_client("parity_db").get_container_client(container_for.id)
-        return _normalize_throughput(
+        container = container_for_backend(client, container_for)
+        updated = _normalize_throughput(
             await container.replace_throughput(ThroughputProperties(offer_throughput=500))
         )
+        assert updated["offer_throughput"] == 500
+        assert _normalize_throughput(await container.get_throughput()) == updated
+        return updated
 
     comparison = await run_on_both_backends_async(
         _do, description="async replace_throughput(ThroughputProperties(offer_throughput=500))"
@@ -95,38 +77,19 @@ async def test_replace_throughput_object_applies_same_ru_async(container_for):
     comparison.assert_functional_parity()
 
 
-@pytest.fixture
-def autoscale_container_for(request):
-    """An autoscale throwaway container, so the autoscale offer body is exercised in parity tests."""
-    # Fresh throwaway autoscale container per test. Autoscale is the throughput model
-    # a plain int can't express, so it exercises the offer-body path that carries
-    # offerAutopilotSettings rather than a single offerThroughput number. A plain
-    # (core-python) client sets it up; the parity call itself runs on both engines.
-    client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"])
-    db = client.create_database_if_not_exists("parity_db")
-    container_id = "parity_replace_tp_as_async_" + request.node.name + "_" + uuid.uuid4().hex[:6]
-    container = db.create_container(
-        id=container_id,
-        partition_key=PartitionKey(path="/pk"),
-        offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000),
-    )
-    yield container
-    try:
-        db.delete_container(container_id)
-    except Exception:  # pylint: disable=broad-except
-        pass
-
-
 @pytest.mark.asyncio
 async def test_replace_throughput_autoscale_applies_same_ceiling_async(autoscale_container_for):
     """Async replace_throughput of an autoscale ceiling behaves identically on both backends."""
 
     async def _do(client):
         """Await autoscale ``replace_throughput`` and return normalised RU ceiling."""
-        container = client.get_database_client("parity_db").get_container_client(autoscale_container_for.id)
-        return _normalize_throughput(
+        container = container_for_backend(client, autoscale_container_for)
+        updated = _normalize_throughput(
             await container.replace_throughput(ThroughputProperties(auto_scale_max_throughput=6000))
         )
+        assert updated["auto_scale_max_throughput"] == 6000
+        assert _normalize_throughput(await container.get_throughput()) == updated
+        return updated
 
     comparison = await run_on_both_backends_async(
         _do, description="async replace_throughput(ThroughputProperties(auto_scale_max_throughput=6000))"

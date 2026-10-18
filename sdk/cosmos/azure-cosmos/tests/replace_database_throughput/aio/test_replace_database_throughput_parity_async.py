@@ -90,7 +90,7 @@ async def test_replace_throughput_fixed_async(database_per_backend):
     async def _do(client):
         """Replace fixed throughput then read it back on one engine."""
         database = _database_for(client, created)
-        await database.replace_throughput(2000)
+        await database.replace_throughput(2000, timeout=30)
         return _normalize_throughput(await database.get_throughput())
 
     comparison = await run_on_both_backends_async(
@@ -123,6 +123,34 @@ async def test_replace_throughput_autoscale_async(database_per_backend):
     comparison.assert_functional_parity()
     assert comparison.rust.return_value["auto_scale_max_throughput"] == 7000
     assert comparison.rust.return_value["auto_scale_increment_percent"] == 20
+
+
+async def test_replace_throughput_callback_cannot_change_result_async(database_per_backend):
+    """Async callback mutations cannot change returned or persisted shared capacity."""
+    created = database_per_backend(1000)
+
+    async def replace(client):
+        database = _database_for(client, created)
+        calls = []
+
+        def hook(headers, offer):
+            calls.append(offer["content"]["offerThroughput"])
+            headers.clear()
+            offer["content"]["offerThroughput"] = 999
+
+        updated = await database.replace_throughput(2000, response_hook=hook)
+        assert calls == [2000]
+        assert updated.offer_throughput == 2000
+        assert updated.properties["content"]["offerThroughput"] == 2000
+        assert updated.get_response_headers()
+        assert (await database.get_throughput()).offer_throughput == 2000
+        return _normalize_throughput(updated)
+
+    comparison = await run_on_both_backends_async(
+        replace, description="async database replacement callback isolation",
+    )
+    comparison.print_report()
+    comparison.assert_functional_parity()
 
 
 async def test_replace_throughput_without_provisioned_throughput_async(database_per_backend):

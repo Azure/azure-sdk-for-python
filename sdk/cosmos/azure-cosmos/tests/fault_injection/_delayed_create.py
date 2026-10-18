@@ -13,7 +13,7 @@ OPERATION_TIMEOUT = 90
 def create_rule(rule_id, container_id, inject):
     return {
         "id": rule_id,  # Identifies the rule whose application count we inspect.
-        "operation_type": "CreateItem",  # Leave setup, metadata, and independent reads unfaulted.
+        "operation_type": "CreateItem",  # Do not inject faults into setup, metadata, or independent reads.
         "container_id": container_id,  # URL-substring match; use a unique owned container.
         "status_code": 502,  # Fabricated failure returned instead of sending the write.
         "delay_ms": DELAY_MS,  # Delay each affected attempt by ten seconds.

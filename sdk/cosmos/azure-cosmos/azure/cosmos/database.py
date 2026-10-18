@@ -147,9 +147,14 @@ class DatabaseProxy(object):
     def _get_container_link(self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]) -> str:
         return "{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
 
-    def _get_properties(self) -> dict[str, Any]:
+    def _get_properties(self, *, deadline: Optional[float] = None) -> dict[str, Any]:
         if self._properties is None:
-            self._properties = self.read()
+            if deadline is None:
+                self._properties = self.read()
+            else:
+                self._properties = DatabaseHelper(
+                    self.client_connection, get_selected_backend(self.client_connection),
+                ).read_database(self.id, {}, deadline=deadline)
         return self._properties
 
     @trace_operation(binding_operation="read_database")
@@ -1263,28 +1268,35 @@ class DatabaseProxy(object):
             self.database_link, container_properties["id"],
             properties=container_properties, _item_context=self._item_context), container_properties
 
-    @trace_operation(binding_operation=BindingAlternatives((("read_database", "read_offer"), ("read_offer",))))
+    @trace_operation(binding_operation=BindingAlternatives((("read_database", "get_throughput"), ("get_throughput",))))
     def get_throughput(
             self,
             *,
             response_hook: Optional[Callable[[Mapping[str, Any], list[dict[str, Any]]], None]] = None,
             **kwargs: Any) -> ThroughputProperties:
-        """Get the ThroughputProperties object for this database.
+        """Read the manual or autoscale throughput shared by this database.
 
-        If no ThroughputProperties already exist for the database, an exception is raised.
+        The Rust path does not fall back to legacy Python. A single timeout
+        budget covers uncached database properties and the complete offer query.
 
-        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword response_hook: Called once after success with copied response
+            headers and a list of offer dictionaries. Mutations do not change the result.
         :paramtype response_hook: Callable[[Mapping[str, Any], list[dict[str, Any]]], None]
-        :returns: ThroughputProperties for the database.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
-            the throughput properties could not be retrieved.
+        :keyword float timeout: Overall operation budget in seconds, including
+            metadata and all offer pages. None inherits the client default.
+            Rust requires a finite duration of at least one second.
+        :returns: The database's configured manual or autoscale throughput.
+        :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError:
+            The database does not exist or has no shared throughput.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The throughput could not be retrieved.
+        :raises NotImplementedError: An input cannot be honored on the Rust path.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        prepare_operation_kwargs(self, kwargs, inherit_timeout=False)
+        prepare_operation_kwargs(self, kwargs)
 
-        def get_properties() -> dict[str, Any]:
+        def get_properties(*, deadline: Optional[float] = None) -> dict[str, Any]:
             with delegate_operation(self, "read"):
-                return self._get_properties()
+                return self._get_properties() if deadline is None else self._get_properties(deadline=deadline)
 
         return get_database_throughput(
             client_connection=self.client_connection,
@@ -1301,9 +1313,11 @@ class DatabaseProxy(object):
         throughput: Union[int, ThroughputProperties],
         **kwargs: Any
     ) -> ThroughputProperties:
-        """Replace the database-level throughput.
+        """Replace the manual or autoscale throughput shared by this database.
 
-        :param throughput: The throughput to be set (an integer).
+        One operation budget covers metadata, offer lookup and replacement.
+
+        :param throughput: Manual RU/s as an integer, or manual/autoscale settings.
         :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: ThroughputProperties for the database, updated with new throughput.
@@ -1311,7 +1325,7 @@ class DatabaseProxy(object):
             If no throughput properties exists for the database or if the throughput properties could not be updated.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        prepare_operation_kwargs(self, kwargs, inherit_timeout=False)
+        prepare_operation_kwargs(self, kwargs)
         return replace_database_throughput(
             client_connection=self.client_connection,
             database_link=self.database_link,
@@ -1319,10 +1333,4 @@ class DatabaseProxy(object):
             throughput=throughput,
             not_found_message="Could not find ThroughputProperties for database " + self.database_link,
             kwargs=kwargs,
-            # Empty on purpose: the lookup of the current throughput is done
-            # with no keyword arguments, and the caller's keyword arguments
-            # apply only to the replace that follows. The async version in
-            # azure/cosmos/aio/_database.py does not do this, so there the
-            # caller's keyword arguments reach the lookup as well.
-            read_kwargs={},
         )

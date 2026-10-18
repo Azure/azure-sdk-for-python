@@ -197,7 +197,7 @@ class TestContainerPropertiesCache(unittest.TestCase):
         self._delete_container_for_test(container_name)
 
     def test_offer_throughput_container_recreate(self):
-        self._skip_if_aad_mode("read_offer/replace_throughput require key auth (control-plane).")
+        self._skip_if_aad_mode("get_throughput/replace_throughput require key auth (control-plane).")
         client = self.client
         created_db = self.databaseForTest
         container_name = str(uuid.uuid4())
@@ -223,7 +223,7 @@ class TestContainerPropertiesCache(unittest.TestCase):
         # Check to make sure it equals the new created container's throughput.
         client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
         try:
-            offer = created_container.read_offer()
+            offer = created_container.get_throughput()
             self.assertEqual(offer.offer_throughput, 800)
         except exceptions.CosmosHttpResponseError as e:
             self.fail("{}".format(e.http_error_message))
@@ -239,7 +239,7 @@ class TestContainerPropertiesCache(unittest.TestCase):
         self._delete_container_for_test(container_name)
 
     def test_offer_throughput_container_recreate_sub_partition(self):
-        self._skip_if_aad_mode("read_offer/replace_throughput require key auth (control-plane).")
+        self._skip_if_aad_mode("get_throughput/replace_throughput require key auth (control-plane).")
         client = self.client
         created_db = self.databaseForTest
         container_name = str(uuid.uuid4())
@@ -265,7 +265,7 @@ class TestContainerPropertiesCache(unittest.TestCase):
         # Check to make sure it equals the new created container's throughput.
         client.client_connection._CosmosClientConnection__container_properties_cache = copy.deepcopy(old_cache)
         try:
-            offer = created_container.read_offer()
+            offer = created_container.get_throughput()
             self.assertEqual(offer.offer_throughput, 800)
         except exceptions.CosmosHttpResponseError as e:
             self.fail("{}".format(e.http_error_message))

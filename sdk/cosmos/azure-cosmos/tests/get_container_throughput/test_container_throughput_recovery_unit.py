@@ -30,11 +30,21 @@ def response(offers=(), status=200, substatus=0):
 OFFER = {"content": {"offerThroughput": 800}, "_self": "offers/offer/"}
 
 
-@pytest.fixture(params=[False, True], ids=["sync", "async"])
+@pytest.fixture(
+    params=[(False, False), (True, False), (False, True), (True, True)],
+    ids=["sync-get", "async-get", "sync-replace", "async-replace"],
+)
 def read(request):
-    state = SimpleNamespace(requests=[], responses=[response([OFFER])])
+    asynchronous, replacement = request.param
+    state = SimpleNamespace(
+        requests=[], writes=[], responses=[response([OFFER])],
+        write_response=BackendResponse(status_code=200, headers={"etag": "last-page"}, body=json.dumps(OFFER).encode()),
+    )
 
     def execute(prepared):
+        if prepared.op == "replace_throughput":
+            state.writes.append(prepared)
+            return state.write_response
         state.requests.append(prepared)
         return state.responses.pop(0)
 
@@ -50,23 +60,28 @@ def read(request):
         async def execute(self, prepared, *, deadline=None):
             return execute(prepared)
 
-    proxy = AsyncContainerProxy if request.param else ContainerProxy
+    proxy = AsyncContainerProxy if asynchronous else ContainerProxy
     state.container = proxy.__new__(proxy)
     state.container.container_link = "dbs/sales/colls/orders"
     state.container.client_connection = SimpleNamespace(
-        _backend=AsyncBackend() if request.param else Backend(),
+        _backend=AsyncBackend() if asynchronous else Backend(),
         default_headers={}, last_response_headers={},
         QueryOffers=Mock(side_effect=AssertionError("legacy query must not execute")),
+        ReplaceOffer=Mock(side_effect=AssertionError("legacy write must not execute")),
     )
-    mock = AsyncMock if request.param else Mock
+    mock = AsyncMock if asynchronous else Mock
     state.container._get_properties = mock(return_value={"_rid": "old", "_self": "dbs/db/colls/old/"})
     state.container.read = mock(return_value={"_rid": "new", "_self": "dbs/db/colls/new/"})
 
     def invoke(**kwargs):
-        result = state.container.get_throughput(**kwargs)
-        return asyncio.run(result) if request.param else result
+        result = (
+            state.container.replace_throughput(800, **kwargs)
+            if replacement else state.container.get_throughput(**kwargs)
+        )
+        return asyncio.run(result) if asynchronous else result
 
     state.invoke = invoke
+    state.replacement = replacement
     return state
 
 
@@ -88,6 +103,10 @@ def test_recreated_container_rebuilds_query_once(read, first):
     read.container.read.assert_called_once()
     hook.assert_called_once()
     read.container.client_connection.QueryOffers.assert_not_called()
+    read.container.client_connection.ReplaceOffer.assert_not_called()
+    assert len(read.writes) == int(read.replacement)
+    if read.replacement:
+        assert wire_headers(read.writes[0])[HttpHeaders.IntendedCollectionRID] == "new"
 
 
 @pytest.mark.parametrize("changed", [False, True])
@@ -103,6 +122,7 @@ def test_missing_dedicated_offer_is_typed_and_bounded(read, changed):
     assert len(read.requests) == (2 if changed else 1)
     read.container.read.assert_called_once()
     hook.assert_not_called()
+    assert read.writes == []
 
 
 def test_failed_retry_does_not_return_partial_success(read):
@@ -150,6 +170,17 @@ def test_recovery_error_with_unchanged_metadata_is_not_replayed(read):
     assert caught.value.status_code == 400
     assert caught.value.sub_status == SubStatusCodes.COLLECTION_RID_MISMATCH
     assert len(read.requests) == 1
+
+
+def test_write_failure_is_never_a_recovery_signal(read):
+    if not read.replacement:
+        return
+    read.write_response = response(status=400, substatus=SubStatusCodes.COLLECTION_RID_MISMATCH)
+    with pytest.raises(exceptions.CosmosHttpResponseError) as caught:
+        read.invoke()
+    assert caught.value.sub_status == SubStatusCodes.COLLECTION_RID_MISMATCH
+    assert len(read.requests) == len(read.writes) == 1
+    read.container.read.assert_not_called()
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])

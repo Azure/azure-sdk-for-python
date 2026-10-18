@@ -41,11 +41,11 @@ from ._backend.contracts import PreparedRequest
 from ._constants import _Constants as Constants
 from ._cosmos_responses import CosmosDict, CosmosList
 from ._helpers._request_settings import overrides_driver_owned_header
-from ._helpers._request_offer import build_read_offer_request, build_replace_offer_request
+from ._helpers._request_throughput import build_get_throughput_request, build_replace_throughput_request
 from ._helpers._response_parse import process_backend_response
 
 
-def can_use_rust_backend_for_read_offer(*, backend: Any, options: Mapping[str, Any], kwargs: Mapping[str, Any]) -> bool:
+def can_use_rust_backend_for_get_throughput(*, backend: Any, options: Mapping[str, Any], kwargs: Mapping[str, Any]) -> bool:
     """Check the selected Python backend and options before reading an offer.
 
     False means this call cannot use the Rust path as supplied. The caller
@@ -57,10 +57,10 @@ def can_use_rust_backend_for_read_offer(*, backend: Any, options: Mapping[str, A
         return False
     if overrides_driver_owned_header(options):
         return False
-    return len(kwargs) == 0
+    return all(name in ("tracing_options", "tracing_attributes") for name in kwargs)
 
 
-def build_read_offer_from_connection(
+def build_get_throughput_from_connection(
     *,
     client_connection: Any,
     container_link: str,
@@ -69,9 +69,9 @@ def build_read_offer_from_connection(
 ) -> PreparedRequest:
     """Build a prepared request using connection headers and the supplied offer query.
 
-    build_read_offer_request prepares the inputs; it does not send the request.
+    build_get_throughput_request prepares the inputs; it does not send the request.
     """
-    return build_read_offer_request(
+    return build_get_throughput_request(
         resource_link=container_link,
         offer_query=offer_query,
         request_options=options,
@@ -81,7 +81,7 @@ def build_read_offer_from_connection(
 
 
 
-def process_read_offer_response(backend_response: Any, *, client_connection: Any) -> list[dict[str, Any]]:
+def process_get_throughput_response(backend_response: Any, *, client_connection: Any) -> list[dict[str, Any]]:
     """Parse a backend response into a CosmosList and update the connection's headers.
 
     The list retains this response's headers so later operations on the same
@@ -93,7 +93,7 @@ def process_read_offer_response(backend_response: Any, *, client_connection: Any
         response_hook=None,
     )
     return CosmosList(
-        parse_read_offer_payload(cast(Mapping[str, Any], parsed)),
+        parse_get_throughput_payload(cast(Mapping[str, Any], parsed)),
         response_headers=parsed.get_response_headers(),
     )
 
@@ -109,7 +109,7 @@ def offer_response_headers(result: Any, client_connection: Any) -> CaseInsensiti
     return CaseInsensitiveDict(deepcopy(client_connection.last_response_headers))
 
 
-def parse_read_offer_payload(payload: Mapping[str, Any]) -> list[dict[str, Any]]:
+def parse_get_throughput_payload(payload: Mapping[str, Any]) -> list[dict[str, Any]]:
     """Return copied offer dictionaries from a decoded {"Offers": [...]} response body.
 
     Check that Offers is a list and each entry is a mapping. Converting these
@@ -117,11 +117,11 @@ def parse_read_offer_payload(payload: Mapping[str, Any]) -> list[dict[str, Any]]
     """
     raw_offers = payload.get("Offers")
     if not isinstance(raw_offers, list):
-        raise ValueError("read_offer Rust payload must include a list field 'Offers'.")
+        raise ValueError("get_throughput Rust payload must include a list field 'Offers'.")
     offers: list[dict[str, Any]] = []
     for index, offer in enumerate(raw_offers):
         if not isinstance(offer, Mapping):
-            raise ValueError("read_offer Rust payload entry at index {} must be an object.".format(index))
+            raise ValueError("get_throughput Rust payload entry at index {} must be an object.".format(index))
         offers.append(dict(offer))
     return offers
 
@@ -137,10 +137,10 @@ def can_use_rust_backend_for_replace_throughput(
     The caller first reads the current offer and then replaces it. This shared
     check does not execute either step; the caller performs two separate operations.
     """
-    return can_use_rust_backend_for_read_offer(backend=backend, options=options, kwargs=kwargs)
+    return can_use_rust_backend_for_get_throughput(backend=backend, options=options, kwargs=kwargs)
 
 
-def build_replace_offer_from_connection(
+def build_replace_throughput_from_connection(
     *,
     client_connection: Any,
     container_link: str,
@@ -148,7 +148,7 @@ def build_replace_offer_from_connection(
     options: Mapping[str, Any],
 ) -> PreparedRequest:
     """Build a prepared replacement request using connection headers and the offer body."""
-    return build_replace_offer_request(
+    return build_replace_throughput_request(
         resource_link=container_link,
         offer_body=offer,
         request_options=options,
@@ -158,7 +158,7 @@ def build_replace_offer_from_connection(
 
 
 
-def process_replace_offer_response(backend_response: Any, *, client_connection: Any) -> Any:
+def process_replace_throughput_response(backend_response: Any, *, client_connection: Any) -> Any:
     """Parse the backend response and update the connection's latest response headers."""
     return process_backend_response(
         backend_response,

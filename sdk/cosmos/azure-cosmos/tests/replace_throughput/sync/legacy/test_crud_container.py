@@ -79,8 +79,8 @@ class TestCRUDContainerOperations(unittest.TestCase):
     def tearDown(self) -> None:
         try:
             self.client.delete_database(self._db_id)
-        except Exception:  # pylint: disable=broad-except
-            pass
+        finally:
+            self.client.close()
 
     def test_replace_throughput_offer_with_int(self):
         """Throughput can be changed by passing a plain number.

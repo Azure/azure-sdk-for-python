@@ -11,13 +11,14 @@ import pytest
 ROOT = Path(__file__).resolve().parents[2]
 
 
-@pytest.mark.parametrize("surface,name", [
-    ("sync", "test_session_token_helpers.py"),
-    ("sync", "test_latest_session_token.py"),
-    ("aio", "test_latest_session_token_async.py"),
+@pytest.mark.parametrize("surface,name,original_name", [
+    ("sync", "test_session_token_helpers_owned.py", "test_session_token_helpers.py"),
+    ("sync", "test_latest_session_token.py", "test_partition_split_scenarios.py"),
+    ("aio", "test_latest_session_token_async.py", "test_partition_split_scenarios_async.py"),
 ])
-def test_copied_method_bodies_match_originals(surface, name):
-    original = ast.parse((ROOT / "tests" / name).read_text(encoding="utf-8-sig"))
+def test_copied_method_bodies_match_originals(surface, name, original_name):
+    assert name != original_name, "Copied tests must not shadow their original helper modules"
+    original = ast.parse((ROOT / "tests" / original_name).read_text(encoding="utf-8-sig"))
     copied = ast.parse(
         (ROOT / "tests" / "get_latest_session_token" / surface / "legacy" / name).read_text(encoding="utf-8")
     )

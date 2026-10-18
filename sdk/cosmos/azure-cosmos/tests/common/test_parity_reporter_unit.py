@@ -280,7 +280,7 @@ class ReporterVerdictTests(unittest.TestCase):
     def test_same_exception_name_does_not_falsely_diverge(self):
         """Two captures that recorded ``ValueError`` on both sides
         must NOT register as EXCEPTION DIVERGENCE. This is the
-        bug we fixed by memoising ``_synthesise_exception_class``."""
+        bug we fixed by caching the result of ``_synthesise_exception_class``."""
         exc_payload = {
             "type": "ValueError",
             "message": "bad parameter",

@@ -27,6 +27,10 @@ test or its self-contained copy on either surface.
 --query-test advice selects the original seven-query advisor test or its
 copy on either surface. Both retain an unconditional emulator-related skip;
 selection is not runtime parity until enabled on a supported target.
+--query-test continuation selects the original partition-scoped continuation
+replay test or its owned copy on either surface.
+--query-test cross-continuation selects the original cross-partition replay
+test or its owned copy; both surfaces omit the enable flag.
 --query-test max selects the original MAX-result test or its Rust copy,
 including its async counterpart. Original item bodies omit the partition key.
 --query-test sum compares adapted full-feed-range SUM copies on either
@@ -67,6 +71,8 @@ QUERY_METHODS = {
     "metrics": "::TestQuery::test_populate_query_metrics",
     "index-metrics": "::TestQuery::test_populate_index_metrics",
     "advice": "::TestQuery::test_populate_query_advice",
+    "continuation": "::TestQuery::test_paging_with_continuation_token",
+    "cross-continuation": "::TestQuery::test_cross_partition_query_with_continuation_token",
     "sum": "::TestQueryFeedRange::test_query_value_sum_across_full_feed_range_still_sums",
     "avg": "::TestQueryFeedRange::test_query_with_avg_aggregate_single_partition_feed_range_succeeds",
     "max": "::TestQuery::test_value_max_query_results",
@@ -80,6 +86,8 @@ ASYNC_QUERY_METHODS = {
     "metrics": "::TestQueryAsync::test_populate_query_metrics_async",
     "index-metrics": "::TestQueryAsync::test_populate_index_metrics_async",
     "advice": "::TestQueryAsync::test_populate_query_advice_async",
+    "continuation": "::TestQueryAsync::test_paging_with_continuation_token_async",
+    "cross-continuation": "::TestQueryAsync::test_cross_partition_query_with_continuation_token_async",
     "sum": "::TestQueryFeedRangeAsync::test_query_value_sum_across_full_feed_range_still_sums_async",
     "avg": "::TestQueryFeedRangeAsync::test_query_with_avg_aggregate_single_partition_feed_range_succeeds_async",
     "max": "::TestQueryAsync::test_value_max_query_results_async",
@@ -139,7 +147,7 @@ def main(argv=None):
     if args.surface == "aio" and not (args.op == "query_items" and args.query_test in ASYNC_QUERY_METHODS):
         parser.error(
             "--surface aio requires --op query_items --query-test offset, distinct, count, "
-            "metrics, index-metrics, advice, sum, avg, max, or min"
+            "metrics, index-metrics, advice, continuation, cross-continuation, sum, avg, max, or min"
         )
     for name in ("ACCOUNT_HOST", "ACCOUNT_KEY"):
         if not os.environ.get(name):
@@ -202,7 +210,7 @@ def main(argv=None):
             database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
             config.TEST_DATABASE_ID = database_id
             config.TEST_SINGLE_PARTITION_CONTAINER_ID = container_id
-            if args.op == "upsert_item" or args.query_test in ("count", "max"):
+            if args.op == "upsert_item" or args.query_test in ("count", "max", "continuation", "cross-continuation"):
                 config.TEST_MULTI_PARTITION_CONTAINER_ID = container_id
             return pytest.main(options + [
                 str(ROOT / "tests" / filename) + node for filename, node in selections

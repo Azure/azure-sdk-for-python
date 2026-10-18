@@ -128,6 +128,7 @@ class AsyncDatabaseHelper:
             Callable[[Mapping[str, Any], Optional[dict[str, Any]]], None]
         ] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
+        deadline: Optional[float] = None,
     ) -> CosmosDict:
         """Read database properties and preserve the response hook's 304 behavior.
 
@@ -147,26 +148,31 @@ class AsyncDatabaseHelper:
                 kwargs=operation_kwargs,
             )
 
-        result = await self._backend.run_operation(
-            build_request=build_request,
-            routing=OperationRouting(
-                OP_READ_DATABASE,
-                is_read_database_rust_eligible(
-                    request_options,
-                    operation_kwargs,
+        result = await run_with_deadline(
+            lambda: self._backend.run_operation(
+                build_request=build_request,
+                routing=OperationRouting(
+                    OP_READ_DATABASE,
+                    is_read_database_rust_eligible(
+                        request_options,
+                        operation_kwargs,
+                    ),
                 ),
+                legacy_call=lambda: self._client_connection.ReadDatabase(
+                    "dbs/{}".format(database_id),
+                    options=legacy_deadline_options(request_options, deadline),
+                    **legacy_deadline_kwargs(operation_kwargs, deadline),
+                ),
+                process_response=lambda response: process_database_read_response(
+                    response,
+                    client_connection=self._client_connection,
+                    response_hook=response_hook,
+                ),
+                deadline=deadline,
             ),
-            legacy_call=lambda: self._client_connection.ReadDatabase(
-                "dbs/{}".format(database_id),
-                options=request_options,
-                **operation_kwargs,
-            ),
-            process_response=lambda response: process_database_read_response(
-                response,
-                client_connection=self._client_connection,
-                response_hook=response_hook,
-            ),
+            deadline,
         )
+        remaining_timeout(deadline)
         return result
 
     async def delete_database(

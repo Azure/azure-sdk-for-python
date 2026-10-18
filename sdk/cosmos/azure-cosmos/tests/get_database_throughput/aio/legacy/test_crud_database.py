@@ -8,13 +8,11 @@ separate backend object. A throughput read that works on the sync path proves
 nothing about the async path. Customers running async apps read a database's
 shared RU/s the same way, and Rust must report the same number there.
 
-Both v5 clients expose ``get_throughput`` without a ``read_offer`` alias.
-
-What it does: the real legacy test copied from
-``tests/test_crud_database_async.py``, changed in one place -- the client is
-built with ``_backend="rust"``. It creates a database with 1000 RU/s, reads it
-back and checks it says 1000, replaces it with 2000, and checks the replace
-result says 2000.
+These copies retain the throughput assertions from the original async database
+CRUD and manual-throughput tests, with owned fixtures and ``_backend="rust"``.
+The CRUD copy checks that get-or-create preserves existing 5000 RU/s despite
+a later 6000 RU/s creation argument. The manual copy reads 1000 RU/s and
+checks a replacement result of 2000 RU/s.
 
 This is NOT the side-by-side comparison. The comparison tests
 (``get_database_throughput/aio/test_get_database_throughput_parity_async.py``)
@@ -36,6 +34,7 @@ import uuid
 import pytest
 
 from azure.cosmos.aio import CosmosClient
+from azure.cosmos import exceptions
 
 
 HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
@@ -53,22 +52,37 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
         self._created_db_ids = []
 
     async def asyncTearDown(self) -> None:
-        for database_id in self._created_db_ids:
-            try:
-                await self.key_client.delete_database(database_id)
-            except Exception:  # pylint: disable=broad-except
-                pass
-        await self.key_client.close()
+        try:
+            for database_id in self._created_db_ids:
+                try:
+                    await self.key_client.delete_database(database_id)
+                except exceptions.CosmosResourceNotFoundError:
+                    continue
+        finally:
+            await self.key_client.close()
+
+    async def test_database_crud_async(self):
+        """Keep the original CRUD test's shared-throughput assertions."""
+        # Source: tests/test_crud_database_async.py::TestCRUDDatabaseOperationsAsync.test_database_crud_async
+        database_id = "get_db_crud_a_" + uuid.uuid4().hex
+        self._created_db_ids.append(database_id)
+        database_proxy = await self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
+        assert database_id == database_proxy.id
+        db_throughput = await database_proxy.get_throughput()
+        assert 5000 == db_throughput.offer_throughput
+        database_proxy = await self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
+        assert database_id == database_proxy.id
+        db_throughput = await database_proxy.get_throughput()
+        assert 5000 == db_throughput.offer_throughput
 
     async def test_database_level_offer_throughput_async(self):
-        """Throughput set on a database can be read back, then read back again after a change.
+        """Read provisioned throughput and check the replacement result.
 
         Creates a database at 1000 request units, confirms ``get_throughput``
         reports it, raises it to 2000 and confirms the new figure comes back.
 
-        Kept here for the reading half. Three operations have to agree about
-        one number, and the read after the change is the one that catches a
-        cached offer still reporting the original value.
+        The replacement result is checked here; a separate response-contract
+        copy checks a subsequent read of the persisted value.
         """
         # Source: tests/test_crud_database_async.py::TestCRUDDatabaseOperationsAsync.test_database_level_offer_throughput_async
         # Create a database with throughput

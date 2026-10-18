@@ -509,33 +509,41 @@ class TestQuery(unittest.TestCase):
         a genuine one from the service rather than a fake.
         """
         # Source: tests/test_query.py::TestQuery.test_paging_with_continuation_token
-        self.container.create_item({"pk": "pk", "id": "1"})
-        self.container.create_item({"pk": "pk", "id": "2"})
+        created_collection = self.container
 
-        query_iterable = self.container.query_items(
-            query="SELECT * from c",
-            partition_key="pk",
-            max_item_count=1,
+        document_definition = {'pk': 'pk', 'id': '1'}
+        created_collection.create_item(body=document_definition)
+        document_definition = {'pk': 'pk', 'id': '2'}
+        created_collection.create_item(body=document_definition)
+
+        query = 'SELECT * from c'
+        query_iterable = created_collection.query_items(
+            query=query,
+            partition_key='pk',
+            max_item_count=1
         )
         pager = query_iterable.by_page()
         pager.next()
         token = pager.continuation_token
         second_page = list(pager.next())[0]
 
-        replay_pager = query_iterable.by_page(token)
-        replay_second_page = list(replay_pager.next())[0]
-        self.assertEqual(second_page["id"], replay_second_page["id"])
+        pager = query_iterable.by_page(token)
+        second_page_fetched_with_continuation_token = list(pager.next())[0]
+
+        self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
     def test_cross_partition_query_with_continuation_token(self):
         """Original cross-partition continuation replay, using this test's isolated container."""
         # Source: tests/test_query.py::TestQuery.test_cross_partition_query_with_continuation_token
         created_collection = self.container
-        created_collection.create_item(body={"pk": "pk1", "id": str(uuid.uuid4())})
-        created_collection.create_item(body={"pk": "pk2", "id": str(uuid.uuid4())})
+        document_definition = {'pk': 'pk1', 'id': str(uuid.uuid4())}
+        created_collection.create_item(body=document_definition)
+        document_definition = {'pk': 'pk2', 'id': str(uuid.uuid4())}
+        created_collection.create_item(body=document_definition)
 
+        query = 'SELECT * from c'
         query_iterable = created_collection.query_items(
-            query="SELECT * from c",
-            enable_cross_partition_query=True,
+            query=query,
             max_item_count=1,
         )
         pager = query_iterable.by_page()
@@ -545,4 +553,4 @@ class TestQuery(unittest.TestCase):
 
         pager = query_iterable.by_page(token)
         second_page_fetched_with_continuation_token = list(pager.next())[0]
-        self.assertEqual(second_page["id"], second_page_fetched_with_continuation_token["id"])
+        self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])

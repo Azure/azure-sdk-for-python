@@ -1604,7 +1604,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         base._validate_resource(offer)
         path = base.GetPathFromLink(offer_link)
         offer_id = base.GetResourceIdOrFullNameFromLink(offer_link)
-        return self.Replace(offer, path, http_constants.ResourceType.Offer, offer_id, None, None, **kwargs)
+        return self.Replace(
+            offer, path, http_constants.ResourceType.Offer, offer_id,
+            None, kwargs.pop("options", None), **kwargs
+        )
 
     def ReadOffer(
         self,

@@ -222,7 +222,7 @@ def test_conditional_header_sources_resolve_case_insensitively_in_input_order(
     "create_item", "read_item", "delete_item", "upsert_item", "replace_item", "patch_item",
     "create_database", "read_database", "delete_database",
     "read_container", "delete_container", "replace_container",
-    "list_databases", "list_containers", "read_offer", "replace_offer",
+    "list_databases", "list_containers", "get_throughput", "replace_throughput",
 ])
 @pytest.mark.parametrize("async_mode", [False, True])
 def test_native_every_extraction_family_reads_request_options_before_io(monkeypatch, method, async_mode):

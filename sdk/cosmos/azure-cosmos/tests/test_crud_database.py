@@ -113,11 +113,11 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
 
         database_proxy = self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
         self.assertEqual(database_id, database_proxy.id)
-        self.assertEqual(5000, database_proxy.read_offer().offer_throughput)
+        self.assertEqual(5000, database_proxy.get_throughput().offer_throughput)
 
         database_proxy = self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
         self.assertEqual(database_id, database_proxy.id)
-        self.assertEqual(5000, database_proxy.read_offer().offer_throughput)
+        self.assertEqual(5000, database_proxy.get_throughput().offer_throughput)
 
         self.key_client.delete_database(database_id)
 
@@ -132,7 +132,7 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         self.assertEqual(created_db.id, database_id)
 
         # Verify offer throughput for database
-        offer = created_db.read_offer()
+        offer = created_db.get_throughput()
         self.assertEqual(offer.offer_throughput, offer_throughput)
 
         # Update database offer throughput

@@ -11,16 +11,18 @@ from .._backend.capabilities import OperationRouting
 from .._backend.constants import is_rust_backend
 from .._base import _deserialize_throughput
 from .._cosmos_responses import CosmosDict
-from .._offer_rust_routing import offer_response_headers
+from .._throughput_rust_routing import offer_response_headers
 from ..offer import ThroughputProperties
+from .._operation_deadline import legacy_deadline_kwargs, legacy_deadline_options
 from ._request_settings import COMMON_OPTIONS, is_supported_operation_timeout, prepare_service_request_settings
 from ._response_parse import with_response_header_snapshot
 
 
 def prepare_read_kwargs(
     kwargs: Mapping[str, Any],
-    response_hook: Optional[Callable[[Mapping[str, Any], list[dict[str, Any]]], None]],
+    response_hook: Optional[Callable[..., None]],
 ) -> dict[str, Any]:
+    """Validate a read or replacement callback and copy caller-owned options."""
     if response_hook is not None and not callable(response_hook):
         raise TypeError("response_hook must be callable or None")
     copied = dict(kwargs)
@@ -45,7 +47,7 @@ def read_routing(
     capability: str,
 ) -> OperationRouting:
     routing = OperationRouting(
-        "read_offer",
+        "get_throughput",
         supported and is_supported_operation_timeout(options.get("timeout")),
         capability=capability,
     )
@@ -57,11 +59,15 @@ def read_routing(
 
 def legacy_read_kwargs(
     options: dict[str, Any], transport_kwargs: Mapping[str, Any], original_kwargs: Mapping[str, Any],
+    *, deadline: Optional[float] = None,
 ) -> dict[str, Any]:
     result = dict(transport_kwargs)
     result.setdefault("options", options)
     if "timeout" in original_kwargs:
         result["timeout"] = original_kwargs["timeout"]
+    if deadline is not None:
+        result["options"] = legacy_deadline_options(result["options"], deadline)
+        return legacy_deadline_kwargs(result, deadline)
     return result
 
 

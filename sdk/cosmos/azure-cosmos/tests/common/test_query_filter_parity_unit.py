@@ -48,6 +48,12 @@ def load_module(name, path):
     ("query_items", "test_query_async.py", "::TestQueryAsync::test_populate_index_metrics_async", "index-metrics", "aio"),
     ("query_items", "test_query.py", "::TestQuery::test_populate_query_advice", "advice", "sync"),
     ("query_items", "test_query_async.py", "::TestQueryAsync::test_populate_query_advice_async", "advice", "aio"),
+    ("query_items", "test_query.py", "::TestQuery::test_paging_with_continuation_token", "continuation", "sync"),
+    ("query_items", "test_query_async.py", "::TestQueryAsync::test_paging_with_continuation_token_async", "continuation", "aio"),
+    ("query_items", "test_query.py", "::TestQuery::test_cross_partition_query_with_continuation_token",
+     "cross-continuation", "sync"),
+    ("query_items", "test_query_async.py", "::TestQueryAsync::test_cross_partition_query_with_continuation_token_async",
+     "cross-continuation", "aio"),
 ])
 def test_owned_runner_selects_original_or_copy(monkeypatch, backend, operation, filename, method, query_test, surface):
     monkeypatch.chdir(ROOT)
@@ -69,7 +75,9 @@ def test_owned_runner_selects_original_or_copy(monkeypatch, backend, operation, 
     monkeypatch.setattr(runner, "CosmosClient", MagicMock(return_value=client))
     selections = []
     def run(options):
-        if backend == "core-python" and (operation == "upsert_item" or query_test in ("count", "max")):
+        if backend == "core-python" and (
+            operation == "upsert_item" or query_test in ("count", "max", "continuation", "cross-continuation")
+        ):
             assert config.TEST_MULTI_PARTITION_CONTAINER_ID == config.TEST_SINGLE_PARTITION_CONTAINER_ID == "orders"
         selections.append(options)
         return 0
@@ -131,6 +139,32 @@ def test_filter_copy_preserves_original_query_body(method_name, start, stop):
         return [ast.dump(node) for node in method.body[start:stop]]
 
     assert body(ROOT / "tests" / "test_query.py") == body(COPY)
+
+
+@pytest.mark.parametrize("surface,filename,class_name,method_name", [
+    ("sync", "test_query.py", "TestQuery", "test_paging_with_continuation_token"),
+    ("aio", "test_query_async.py", "TestQueryAsync", "test_paging_with_continuation_token_async"),
+    ("sync", "test_query.py", "TestQuery", "test_cross_partition_query_with_continuation_token"),
+    ("aio", "test_query_async.py", "TestQueryAsync", "test_cross_partition_query_with_continuation_token_async"),
+])
+def test_continuation_copy_preserves_original_body(surface, filename, class_name, method_name):
+    def body(path):
+        module = ast.parse(path.read_text(encoding="utf-8"))
+        cls = next(node for node in module.body if isinstance(node, ast.ClassDef) and node.name == class_name)
+        method = next(node for node in cls.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+                      and node.name == method_name)
+        if method_name.startswith("test_cross_partition_query"):
+            assert not any(
+                isinstance(node, ast.keyword) and node.arg == "enable_cross_partition_query"
+                for node in ast.walk(method)
+            )
+        nodes = method.body[1:] if ast.get_docstring(method) else method.body
+        # Only the container lookup and explanatory docstring differ.
+        return [ast.dump(node) for node in nodes[1:]]
+
+    assert body(ROOT / "tests" / filename) == body(
+        ROOT / "tests" / "query_items" / surface / "legacy" / filename
+    )
 
 
 def test_query_selector_rejects_other_operations():

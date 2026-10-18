@@ -52,7 +52,7 @@ def test_invalid_collection_is_rejected_even_when_empty(rules):
         _prepare_fault_injection_rules(rules)
 
 
-@pytest.mark.parametrize("field", ["error_kind", "hit_limt", 42])
+@pytest.mark.parametrize("field", ["error_kind", "hit_limt", 42])  # cspell:disable-line
 def test_unknown_rule_fields_do_not_silently_change_the_test(field):
     """A field name that is not recognized is an error, including a near miss.
 

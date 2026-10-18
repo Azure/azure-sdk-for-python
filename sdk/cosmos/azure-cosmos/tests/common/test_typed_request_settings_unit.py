@@ -496,7 +496,7 @@ def test_native_schema_has_no_unconsumed_python_fields():
 @pytest.mark.parametrize("method", [
     "create_item", "read_item", "replace_item", "upsert_item", "delete_item", "patch_item",
     "create_database", "read_database", "delete_database", "create_container", "read_container",
-    "delete_container", "replace_container", "read_offer", "replace_offer", "list_databases", "list_containers",
+    "delete_container", "replace_container", "get_throughput", "replace_throughput", "list_databases", "list_containers",
 ])
 @pytest.mark.parametrize("is_async", [False, True])
 def test_every_native_reader_rejects_an_incompatible_schema_before_io(method, is_async):

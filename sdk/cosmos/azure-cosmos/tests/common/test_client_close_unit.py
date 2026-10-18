@@ -504,6 +504,91 @@ def test_repeated_async_close_waits_for_original_cleanup(monkeypatch, cancel_fir
     credential._close_cosmos_async_bridge.assert_called_once_with()
 
 
+@pytest.mark.parametrize("cancel_first", [False, True], ids=["waiting", "cancelled"])
+def test_async_close_observes_late_cleanup_errors(monkeypatch, caplog, cancel_first):
+    """Late errors remain observable without leaving an abandoned future warning."""
+    client = _make_async_client(monkeypatch)
+    binding, _ = _install_async_close_resources(monkeypatch, client)
+    adapter = client._adapter
+    caplog.set_level(logging.DEBUG, logger=async_rust_module.__name__)
+    loop = asyncio.new_event_loop()
+    allow_finish = threading.Event()
+    cleanup_error = RuntimeError("injected late cleanup error")
+    wrap_future = asyncio.wrap_future
+    error_observers = []
+
+    def observe_wrapping(future, *, loop=None):
+        wrapped = wrap_future(future, loop=loop)
+        if future is adapter._close_future:
+            observer = MagicMock(wraps=wrapped.exception)
+            monkeypatch.setattr(wrapped, "exception", observer)
+            error_observers.append(observer)
+        return wrapped
+
+    monkeypatch.setattr(asyncio, "wrap_future", observe_wrapping)
+
+    async def run():
+        started = asyncio.Event()
+        completed = asyncio.Event()
+
+        def fail_cleanup(_credential):
+            loop.call_soon_threadsafe(started.set)
+            assert allow_finish.wait(5), "cleanup worker timed out"
+            raise cleanup_error
+
+        cleanup = MagicMock(side_effect=fail_cleanup)
+        monkeypatch.setattr(async_rust_module, "close_credential_bridge_quietly", cleanup)
+        first = asyncio.create_task(adapter.close())
+        try:
+            await asyncio.wait_for(started.wait(), 2)
+            adapter._close_future.add_done_callback(
+                lambda _future: loop.call_soon_threadsafe(completed.set)
+            )
+            if cancel_first:
+                first.cancel()
+                with pytest.raises(asyncio.CancelledError):
+                    await first
+                assert not adapter._close_future.cancelled()
+                assert not adapter._close_future.done()
+
+            allow_finish.set()
+            await asyncio.wait_for(completed.wait(), 2)
+            if not cancel_first:
+                with pytest.raises(RuntimeError) as raised:
+                    await first
+                assert raised.value is cleanup_error
+
+            with pytest.raises(RuntimeError) as raised:
+                await adapter.close()
+            assert raised.value is cleanup_error
+            assert adapter._close_future.exception() is cleanup_error
+            cleanup.assert_called_once()
+        finally:
+            allow_finish.set()
+            await asyncio.wait_for(asyncio.gather(first, return_exceptions=True), 2)
+
+    try:
+        loop.run_until_complete(asyncio.wait_for(run(), 10))
+        loop.run_until_complete(loop.shutdown_default_executor())
+        loop.run_until_complete(asyncio.sleep(0))
+        assert len(error_observers) == 1
+        error_observers[0].assert_called()
+    finally:
+        allow_finish.set()
+        try:
+            loop.run_until_complete(loop.shutdown_default_executor())
+        finally:
+            # Retrieve even on regression failure, so the test itself leaves no warning.
+            for observer in error_observers:
+                observer()
+            loop.close()
+
+    binding.release_driver_handle.assert_called_once_with("close-test-driver")
+    message = "Async client cleanup failed after its close wait was cancelled"
+    assert (message in caplog.text) == cancel_first
+    assert str(cleanup_error) not in caplog.text
+
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("phase", ["account-refresh", "transport", "backend"])
 @pytest.mark.parametrize("context_manager", [False, True])
@@ -885,6 +970,68 @@ async def test_cleanup_runs_once_if_executor_queues_work_then_raises(monkeypatch
     assert len(queued) == 1
     queued[0]()
 
+    binding.release_driver_handle.assert_called_once_with("close-test-driver")
+    credential._close_cosmos_async_bridge.assert_called_once_with()
+
+
+@pytest.mark.asyncio
+async def test_cleanup_waits_for_worker_if_submission_raises_after_work_starts(monkeypatch):
+    """A running worker keeps cleanup ownership when submission subsequently raises."""
+    client = _make_async_client(monkeypatch)
+    binding, credential = _install_async_close_resources(monkeypatch, client)
+    loop = asyncio.get_running_loop()
+    started = threading.Event()
+    allow_finish = threading.Event()
+    submission_failed = asyncio.Event()
+    worker_result = concurrent.futures.Future()
+    workers = []
+
+    def release(_handle):
+        started.set()
+        assert allow_finish.wait(5), "cleanup worker timed out"
+
+    def submit(_executor, work):
+        def run():
+            try:
+                work()
+            except BaseException as error:
+                worker_result.set_exception(error)
+            else:
+                worker_result.set_result(None)
+
+        worker = threading.Thread(target=run)
+        workers.append(worker)
+        worker.start()
+        assert started.wait(2), "worker did not reach driver release"
+        # This callback runs once close yields after handling the submission error.
+        loop.call_soon(submission_failed.set)
+        raise RuntimeError("submission failed after cleanup started")
+
+    binding.release_driver_handle.side_effect = release
+    submit_mock = MagicMock(side_effect=submit)
+    monkeypatch.setattr(loop, "run_in_executor", submit_mock)
+    close_task = asyncio.create_task(client.close())
+    try:
+        await asyncio.wait_for(submission_failed.wait(), 2)
+        assert client._adapter._close_future.running()
+        assert not worker_result.done()
+        assert not close_task.done(), "close returned before its cleanup worker finished"
+        binding.release_driver_handle.assert_called_once_with("close-test-driver")
+        credential._close_cosmos_async_bridge.assert_called_once_with()
+    finally:
+        allow_finish.set()
+        try:
+            await asyncio.wait_for(close_task, 2)
+        finally:
+            for worker in workers:
+                worker.join(timeout=2)
+                assert not worker.is_alive(), "cleanup worker did not finish"
+
+    assert worker_result.result(timeout=2) is None
+    assert close_task.result() is None
+    assert client._adapter._close_future.result(timeout=2) is None
+    await client.close()
+    submit_mock.assert_called_once()
     binding.release_driver_handle.assert_called_once_with("close-test-driver")
     credential._close_cosmos_async_bridge.assert_called_once_with()
 

@@ -20,7 +20,7 @@ container's link. Without this copy, an offer-body regression on the Rust
 engine would slip through.
 
 This is NOT the side-by-side parity comparison. The parity tests
-(``read_offer/aio/test_read_offer_parity_async.py``) run the same call on both
+(``get_throughput/aio/test_get_throughput_parity_async.py``) run the same call on both
 engines and diff the numbers. This file runs on Rust only; the core-python
 side of the contract is already guaranteed by the original test in
 ``tests/``. Together: parity catches value drift (wrong RU/s), this catches
@@ -34,7 +34,7 @@ container owns one.
 
 Run with::
 
-    pytest --noconftest tests/read_offer/aio/legacy/test_crud_container_async.py -v
+    pytest --noconftest tests/get_container_throughput/aio/legacy/test_crud_container_async.py -v
 """
 import os
 import unittest
@@ -59,7 +59,7 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.client = CosmosClient(HOST, KEY, _backend="rust")
         await self.client.__aenter__()
-        self._db_id = "legacy_read_offer_async_" + uuid.uuid4().hex[:8]
+        self._db_id = "legacy_get_throughput_async_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
         self.database = await self.client.create_database(self._db_id)
         self.container = await self.database.create_container(
@@ -75,7 +75,7 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
             await self.client.close()
 
     def __validate_offer_response_body(self, offer, expected_coll_link, expected_offer_type):
-        assert offer.properties['id'] is not None
+        assert offer.properties.get('id') is not None
         assert offer.properties.get('_rid') is not None
         assert offer.properties.get('_self') is not None
         assert offer.properties.get('resource') is not None
@@ -102,6 +102,19 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         expected_offer = await collection.get_throughput()
         collection_properties = await collection.read()
         self.__validate_offer_response_body(expected_offer, collection_properties.get('_self'), None)
+
+    async def test_offer_replace_async(self):
+        # Source: tests/test_crud_container_async.py::TestCRUDContainerOperationsAsync.test_offer_replace_async
+        collection = self.container
+        expected_offer = await collection.get_throughput()
+        collection_properties = await collection.read()
+        self.__validate_offer_response_body(expected_offer, collection_properties.get('_self'), None)
+        replaced_offer = await collection.replace_throughput(expected_offer.offer_throughput + 100)
+        collection_properties = await collection.read()
+        self.__validate_offer_response_body(replaced_offer, collection_properties.get('_self'), None)
+        assert (expected_offer.properties.get('content').get('offerThroughput') + 100 ==
+                replaced_offer.properties.get('content').get('offerThroughput'))
+        assert expected_offer.offer_throughput + 100 == replaced_offer.offer_throughput
 
 
 if __name__ == "__main__":

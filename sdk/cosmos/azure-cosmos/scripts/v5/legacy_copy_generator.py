@@ -28,7 +28,7 @@ byte-for-byte (checked by ``tests/common/test_legacy_copy_generator_unit.py``):
   or ``"aio"`` (``unittest.IsolatedAsyncioTestCase``, ``asyncSetUp`` /
   ``asyncTearDown``, ``async def`` tests).
 * ``fixture`` -- ``"instance"`` (``setUp``) or ``"class"`` (``setUpClass``).
-  Async is always instance-fixtured.
+  Async always uses an instance fixture.
 * ``license_style`` -- ``"licensed"`` or ``"mit"`` (the two header styles).
 * ``module_code`` -- module-level helpers / constants (e.g. a response hook).
 * per-method ``decorators`` -- e.g. ``@pytest.mark.parametrize(...)``.
@@ -132,14 +132,14 @@ class LegacyFileSpec:
     extra_imports: Tuple[str, ...] = ()
 
     #: Optional module-level code (helpers / constants) rendered between the
-    #: ``HOST`` / ``KEY`` block and the class. Dedented to column 0.
+    #: ``HOST`` / ``KEY`` block and the class. Indentation is removed to column 0.
     module_code: str = ""
 
     #: Class-level pytest markers (without the ``@pytest.mark.`` prefix).
     class_markers: Tuple[str, ...] = ("cosmosEmulator",)
 
     #: ``"instance"`` (``setUp``) or ``"class"`` (``setUpClass``). Ignored for
-    #: the aio surface, which is always instance-fixtured.
+    #: the aio surface, which always uses an instance fixture.
     fixture: str = "instance"
 
     #: ``"licensed"`` or ``"mit"`` -- which two-line license header to emit.

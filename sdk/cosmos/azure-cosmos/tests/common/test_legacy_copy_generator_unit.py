@@ -7,7 +7,7 @@
 
 Fidelity: the generator reproduces the cleanest existing example file for each
 structural variation byte-for-byte (apart from line-ending / trailing-newline
-normalisation) -- sync instance ``test_none_options.py``, sync class-fixtured
+normalisation) -- sync instance ``test_none_options.py``, sync class fixture
 ``test_headers.py``, and async ``test_headers.py``.
 
 Enforcement: output generated from the bundled specs passes the existing

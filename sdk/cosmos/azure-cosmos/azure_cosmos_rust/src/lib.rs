@@ -40,7 +40,7 @@
 //!   `read_feed_ranges`, `feed_range_from_partition_key`, `is_feed_range_subset`
 //!
 //! Throughput offers (`ffi/offers.rs`):
-//!   `read_offer`, `replace_offer`
+//!   `get_throughput`, `replace_throughput`
 //!
 //! Databases (`ffi/databases.rs`):
 //!   `create_database`, `read_database`, `delete_database`, `list_databases`,
@@ -115,8 +115,8 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, ffi::read_feed_ranges);
     add_pyfn!(m, ffi::feed_range_from_partition_key);
     add_pyfn!(m, ffi::is_feed_range_subset);
-    add_pyfn!(m, ffi::read_offer);
-    add_pyfn!(m, ffi::replace_offer);
+    add_pyfn!(m, ffi::get_throughput);
+    add_pyfn!(m, ffi::replace_throughput);
     add_pyfn!(m, ffi::create_database);
     add_pyfn!(m, ffi::read_database);
     add_pyfn!(m, ffi::delete_database);
@@ -142,8 +142,8 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, ffi::read_feed_ranges_async);
     add_pyfn!(m, ffi::feed_range_from_partition_key_async);
     add_pyfn!(m, ffi::is_feed_range_subset_async);
-    add_pyfn!(m, ffi::read_offer_async);
-    add_pyfn!(m, ffi::replace_offer_async);
+    add_pyfn!(m, ffi::get_throughput_async);
+    add_pyfn!(m, ffi::replace_throughput_async);
     add_pyfn!(m, ffi::create_database_async);
     add_pyfn!(m, ffi::read_database_async);
     add_pyfn!(m, ffi::delete_database_async);

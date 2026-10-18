@@ -102,7 +102,7 @@ def dispatch(request):
     state.build = MagicMock()
     state.process = MagicMock(return_value="result")
 
-    def run(op="read_offer", *, supported=True, paged=False, capability=None):
+    def run(op="get_throughput", *, supported=True, paged=False, capability=None):
         state.build.return_value = (
             PreparedPageRequest(op=op, container_link="c")
             if paged
@@ -196,7 +196,7 @@ def test_workflow_policy_cannot_authorize_an_unrelated_operation(dispatch):
     Without the check, naming any workflow would grant its permissions to anything.
     """
     with pytest.raises(NotImplementedError, match="No migration capability"):
-        dispatch.run("read_offer", capability="create_database_if_not_exists")
+        dispatch.run("get_throughput", capability="create_database_if_not_exists")
     dispatch.build.assert_not_called()
 
 
@@ -242,7 +242,7 @@ def test_failures_never_replay_and_keep_the_original_error(
         dispatch.process.side_effect = error
     before = rust_compatibility_fallback_count()
     with pytest.raises(error_type) as failure:
-        dispatch.run("query_items" if paged else "read_offer", paged=paged)
+        dispatch.run("query_items" if paged else "get_throughput", paged=paged)
     assert failure.value is error
     dispatch.legacy.assert_not_called()
     assert rust_compatibility_fallback_count() == before
@@ -289,9 +289,9 @@ def test_mismatched_prepared_operation_is_a_protocol_error(dispatch):
     Nothing is sent, which is the point -- the mismatch here is between reading and
     writing.
     """
-    dispatch.build.side_effect = lambda: SimpleNamespace(op="replace_offer")
+    dispatch.build.side_effect = lambda: SimpleNamespace(op="replace_throughput")
     with pytest.raises(BindingProtocolError, match="does not match"):
-        dispatch.run("read_offer")
+        dispatch.run("get_throughput")
     assert dispatch.executed == 0
     dispatch.legacy.assert_not_called()
 
@@ -338,8 +338,8 @@ def test_throughput_workflow_policy_applies_to_both_legs(monkeypatch):
     """Changing throughput is one workflow, so both its steps follow the workflow's policy.
 
     Changing throughput reads the current setting and then replaces it. The test replaces
-    the read operation's own policy with one that forbids falling back, and both steps
-    still fall back, because the workflow's policy is what applies.
+    the read operation's own policy with one that permits falling back, and both steps
+    still reject fallback, because the workflow's policy is what applies.
 
     Otherwise the two steps could take different paths: the read on one, the replace on
     the other, with the value read in one place being written back in another.
@@ -347,10 +347,12 @@ def test_throughput_workflow_policy_applies_to_both_legs(monkeypatch):
     from azure.cosmos._backend.capabilities import OpCapability, REPLACE_THROUGHPUT
 
     monkeypatch.setitem(
-        CAPABILITIES, "read_offer", OpCapability(frozenset({"read_offer"}))
+        CAPABILITIES, "get_throughput", OpCapability(frozenset({"get_throughput"}), fallback_allowed=True)
     )
-    for op in ("read_offer", "replace_offer"):
-        assert OperationRouting(op, False, capability=REPLACE_THROUGHPUT).uses_legacy()
+    for op in ("get_throughput", "replace_throughput"):
+        with pytest.raises(NotImplementedError, match="legacy Python"):
+            OperationRouting(op, False, capability=REPLACE_THROUGHPUT).uses_legacy()
+        assert not OperationRouting(op, True, capability=REPLACE_THROUGHPUT).uses_legacy()
 
 
 def test_query_scope_is_typed_and_preserves_the_legacy_payload():

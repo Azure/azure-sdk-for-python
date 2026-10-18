@@ -20,7 +20,7 @@ Without this copy, an offer-body regression on the Rust engine would slip
 through.
 
 This is NOT the side-by-side parity comparison. The parity tests
-(``read_offer/sync/test_read_offer_parity.py``) run the same call on both
+(``get_throughput/sync/test_get_throughput_parity.py``) run the same call on both
 engines and diff the numbers. This file runs on Rust only; the core-python
 side of the contract is already guaranteed by the original test in
 ``tests/``. Together: parity catches value drift (wrong RU/s), this catches
@@ -34,7 +34,7 @@ container owns one.
 
 Run with::
 
-    pytest --noconftest tests/read_offer/sync/legacy/test_crud_container.py -v
+    pytest --noconftest tests/get_container_throughput/sync/legacy/test_crud_container.py -v
 """
 import os
 import unittest
@@ -57,7 +57,7 @@ class TestCRUDContainerOperations(unittest.TestCase):
 
     def setUp(self) -> None:
         self.client = CosmosClient(HOST, KEY, _backend="rust")
-        self._db_id = "legacy_read_offer_" + uuid.uuid4().hex[:8]
+        self._db_id = "legacy_get_throughput_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
         self.database = self.client.create_database(self._db_id)
         self.container = self.database.create_container(
@@ -101,6 +101,19 @@ class TestCRUDContainerOperations(unittest.TestCase):
         expected_offer = collection.get_throughput()
         collection_properties = collection.read()
         self.__ValidateOfferResponseBody(expected_offer, collection_properties.get('_self'), None)
+
+    def test_offer_replace(self):
+        # Source: tests/test_crud_container.py::TestCRUDContainerOperations.test_offer_replace
+        collection = self.container
+        expected_offer = collection.get_throughput()
+        collection_properties = collection.read()
+        self.__ValidateOfferResponseBody(expected_offer, collection_properties.get('_self'), None)
+        replaced_offer = collection.replace_throughput(expected_offer.offer_throughput + 100)
+        collection_properties = collection.read()
+        self.__ValidateOfferResponseBody(replaced_offer, collection_properties.get('_self'), None)
+        self.assertEqual(expected_offer.properties.get('content').get('offerThroughput') + 100,
+                         replaced_offer.properties.get('content').get('offerThroughput'))
+        self.assertEqual(expected_offer.offer_throughput + 100, replaced_offer.offer_throughput)
 
 
 if __name__ == "__main__":

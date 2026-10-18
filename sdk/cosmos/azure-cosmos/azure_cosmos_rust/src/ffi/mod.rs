@@ -44,12 +44,12 @@ use crate::wire::{
     run_query_databases_operation, run_query_databases_operation_async, run_query_operation,
     run_query_operation_async, run_read_all_items_operation, run_read_all_items_operation_async,
     run_read_database_operation, run_read_database_operation_async, run_read_feed_ranges_operation,
-    run_read_feed_ranges_operation_async, run_read_offer_operation, run_read_offer_operation_async,
-    run_replace_offer_operation, run_replace_offer_operation_async, RequestHeadersAndOptions,
+    run_read_feed_ranges_operation_async, run_get_throughput_operation, run_get_throughput_operation_async,
+    run_replace_throughput_operation, run_replace_throughput_operation_async, RequestHeadersAndOptions,
 };
 
 const REPLACE_ITEM_ID_REQUIRED: &str = "replace_item: PreparedRequest.item_id is required (the id of the document to overwrite, resolved from the `item` argument)";
-const REPLACE_OFFER_ID_REQUIRED: &str = "replace_offer: PreparedRequest.item_id is required (the offer RID to overwrite, resolved from the throughput offer's `_self`)";
+const REPLACE_THROUGHPUT_ID_REQUIRED: &str = "replace_throughput: PreparedRequest.item_id is required (the offer RID to overwrite, resolved from the throughput offer's `_self`)";
 const DELETE_ITEM_ID_REQUIRED: &str =
     "delete_item: PreparedRequest.item_id is required for delete operations";
 const DELETE_DATABASE_ID_REQUIRED: &str =
@@ -146,9 +146,9 @@ fn extract_body_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<BodyInputs> {
 /// Extract settings, the offer resource id from `item_id`, and replacement body bytes.
 /// The common extractor still reads the container link and typed partition key,
 /// but offer execution does not use them to select a container or partition.
-fn extract_replace_offer_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<OfferReplaceInputs> {
+fn extract_replace_throughput_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<OfferReplaceInputs> {
     let (_container_link, _partition_key, modifiers, body_bytes) = extract_body_inputs(prepared)?;
-    let offer_id = extract_required_item_id(prepared, REPLACE_OFFER_ID_REQUIRED)?;
+    let offer_id = extract_required_item_id(prepared, REPLACE_THROUGHPUT_ID_REQUIRED)?;
     Ok((modifiers, offer_id, body_bytes))
 }
 
@@ -211,5 +211,5 @@ pub(crate) use items::{
     create_item, create_item_async, delete_item, delete_item_async, patch_item, patch_item_async,
     read_item, read_item_async, replace_item, replace_item_async, upsert_item, upsert_item_async,
 };
-pub(crate) use offers::{read_offer, read_offer_async, replace_offer, replace_offer_async};
+pub(crate) use offers::{get_throughput, get_throughput_async, replace_throughput, replace_throughput_async};
 pub(crate) use query::{query_items, query_items_async, read_all_items, read_all_items_async};

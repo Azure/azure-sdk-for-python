@@ -1,6 +1,7 @@
 aiohttp>=3.8.5,<=3.12.2
 azure-monitor-opentelemetry
 hdrhistogram
+maturin==1.15.0
 psutil
 ../../core/azure-core
 ../../identity/azure-identity

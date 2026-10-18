@@ -7,11 +7,12 @@ share. A customer reads that number with ``get_throughput`` and puts it into
 cost and capacity dashboards. If Rust returned a different RU/s here, a
 customer would size their database against a wrong figure.
 
-What it does: the real legacy test copied from ``tests/test_crud_database.py``,
-adapted to build the client with ``_backend="rust"`` and call
-``get_throughput`` instead of the removed ``read_offer`` alias. It
-creates a database with 1000 RU/s, reads the offer back and checks it says
-1000, replaces it with 2000, and checks the replace result says 2000.
+These copies retain the throughput assertions from the original database CRUD
+and manual-throughput tests. Owned fixtures and ``_backend="rust"`` isolate
+execution; ``get_throughput`` replaces the removed ``read_offer`` alias.
+The CRUD copy checks that get-or-create preserves existing 5000 RU/s despite
+a later 6000 RU/s creation argument. The manual copy reads 1000 RU/s and
+checks a replacement result of 2000 RU/s.
 
 This is NOT the side-by-side comparison. The comparison tests
 (``get_database_throughput/sync/test_get_database_throughput_parity.py``) run
@@ -32,7 +33,7 @@ import uuid
 
 import pytest
 
-from azure.cosmos import CosmosClient
+from azure.cosmos import CosmosClient, exceptions
 
 
 HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
@@ -50,22 +51,35 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
         self._created_db_ids = []
 
     def tearDown(self) -> None:
-        for database_id in self._created_db_ids:
-            try:
-                self.key_client.delete_database(database_id)
-            except Exception:  # pylint: disable=broad-except
-                pass
-        self.key_client.close()
+        try:
+            for database_id in self._created_db_ids:
+                try:
+                    self.key_client.delete_database(database_id)
+                except exceptions.CosmosResourceNotFoundError:
+                    continue
+        finally:
+            self.key_client.close()
+
+    def test_database_crud(self):
+        """Keep the original CRUD test's shared-throughput assertions."""
+        # Source: tests/test_crud_database.py::TestCRUDDatabaseOperations.test_database_crud
+        database_id = "get_db_crud_" + uuid.uuid4().hex
+        self._created_db_ids.append(database_id)
+        database_proxy = self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
+        self.assertEqual(database_id, database_proxy.id)
+        self.assertEqual(5000, database_proxy.get_throughput().offer_throughput)
+        database_proxy = self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
+        self.assertEqual(database_id, database_proxy.id)
+        self.assertEqual(5000, database_proxy.get_throughput().offer_throughput)
 
     def test_database_level_offer_throughput(self):
-        """Throughput set on a database can be read back, then read back again after a change.
+        """Read provisioned throughput and check the replacement result.
 
         Creates a database at 1000 request units, confirms ``get_throughput``
         reports it, raises it to 2000 and confirms the new figure comes back.
 
-        Kept here for the reading half. Three operations have to agree about
-        one number, and the read after the change is the one that catches a
-        cached offer still reporting the original value.
+        The replacement result is checked here; a separate response-contract
+        copy checks a subsequent read of the persisted value.
         """
         # Source: tests/test_crud_database.py::TestCRUDDatabaseOperations.test_database_level_offer_throughput
         # Create a database with throughput

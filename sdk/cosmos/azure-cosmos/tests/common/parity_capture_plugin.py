@@ -474,25 +474,25 @@ _register_op(
 )
 
 
-# read_offer (get_throughput) --------------------------------------------------
+# get_throughput -------------------------------------------------------------
 # Points the parity harness at the customer call that reports provisioned RU/s
 # and the autoscale ceiling. Without this registration the harness would not
-# know how to intercept the throughput read, so the two-column read_offer audit
+# know how to intercept the throughput read, so the two-column get_throughput audit
 # (core-python vs rust) could not be generated at all.
 
-def _sync_read_offer_target() -> Tuple[Any, str, str]:
+def _sync_get_throughput_target() -> Tuple[Any, str, str]:
     """Return the synchronous container throughput read to record."""
     from azure.cosmos import container as _sync_container_mod
     return _sync_container_mod, "ContainerProxy", "get_throughput"
 
 
-def _aio_read_offer_target() -> Tuple[Any, str, str]:
+def _aio_get_throughput_target() -> Tuple[Any, str, str]:
     """Return the asynchronous container throughput read to record."""
     from azure.cosmos.aio import _container as _aio_container_mod
     return _aio_container_mod, "ContainerProxy", "get_throughput"
 
 
-_register_op("read_offer", sync=_sync_read_offer_target, aio=_aio_read_offer_target)
+_register_op("get_throughput", sync=_sync_get_throughput_target, aio=_aio_get_throughput_target)
 
 
 # replace_throughput --------------------------------------------------------

@@ -285,8 +285,8 @@ class BackendComparison:
     # recorded" so the next reviewer knows whether to file a new entry
     # or strengthen an existing one.
     _PUSHBACK_RAW_HEADERS: ClassVar[Tuple[int, str]] = (
-        25,
-        "The original HTTP response headers are discarded",
+        29,
+        "Closed: no generic success-response header map",
     )
     _HEADER_TO_PUSHBACK: ClassVar[Dict[str, Tuple[int, str]]] = {
         "date": _PUSHBACK_RAW_HEADERS,

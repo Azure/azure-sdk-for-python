@@ -14,21 +14,21 @@ use super::*;
 /// `{"Offers":[...]}` body. The execution helper supplies query headers when absent.
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
-pub(crate) fn read_offer<'py>(
+pub(crate) fn get_throughput<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    super::validate_prepared_operation(prepared, "read_offer")?;
+    super::validate_prepared_operation(prepared, "get_throughput")?;
     let (_container_link, _partition_key, modifiers, body_bytes) = extract_body_inputs(prepared)?;
-    run_read_offer_operation(
+    run_get_throughput_operation(
         py,
         driver_handle,
         modifiers,
         body_bytes,
-        "read_offer",
+        "get_throughput",
         timeout_seconds,
         include_attempts,
     )
@@ -39,60 +39,70 @@ pub(crate) fn read_offer<'py>(
 /// record as body bytes in a binding response tuple, not an Offers list.
 /// The execution helper requests response content for the throughput result.
 #[pyfunction]
-pub(crate) fn replace_offer<'py>(
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn replace_throughput<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    super::validate_prepared_operation(prepared, "replace_offer")?;
-    let (modifiers, offer_id, body_bytes) = extract_replace_offer_inputs(prepared)?;
-    run_replace_offer_operation(
+    super::validate_prepared_operation(prepared, "replace_throughput")?;
+    let (modifiers, offer_id, body_bytes) = extract_replace_throughput_inputs(prepared)?;
+    run_replace_throughput_operation(
         py,
         driver_handle,
         modifiers,
         offer_id,
         body_bytes,
-        "replace_offer",
+        "replace_throughput",
+        timeout_seconds,
+        include_attempts,
     )
 }
-/// Async twin of `read_offer`.
+/// Async twin of `get_throughput`.
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
-pub(crate) fn read_offer_async<'py>(
+pub(crate) fn get_throughput_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
-    super::validate_prepared_operation(prepared, "read_offer")?;
+    super::validate_prepared_operation(prepared, "get_throughput")?;
     let (_container_link, _partition_key, modifiers, body_bytes) = extract_body_inputs(prepared)?;
-    run_read_offer_operation_async(
+    run_get_throughput_operation_async(
         py,
         driver_handle,
         modifiers,
         body_bytes,
-        "read_offer",
+        "get_throughput",
         timeout_seconds,
         include_attempts,
     )
 }
 
-/// Async twin of `replace_offer`.
+/// Async twin of `replace_throughput`.
 #[pyfunction]
-pub(crate) fn replace_offer_async<'py>(
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn replace_throughput_async<'py>(
     py: Python<'py>,
     driver_handle: &str,
     prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
-    super::validate_prepared_operation(prepared, "replace_offer")?;
-    let (modifiers, offer_id, body_bytes) = extract_replace_offer_inputs(prepared)?;
-    run_replace_offer_operation_async(
+    super::validate_prepared_operation(prepared, "replace_throughput")?;
+    let (modifiers, offer_id, body_bytes) = extract_replace_throughput_inputs(prepared)?;
+    run_replace_throughput_operation_async(
         py,
         driver_handle,
         modifiers,
         offer_id,
         body_bytes,
-        "replace_offer",
+        "replace_throughput",
+        timeout_seconds,
+        include_attempts,
     )
 }

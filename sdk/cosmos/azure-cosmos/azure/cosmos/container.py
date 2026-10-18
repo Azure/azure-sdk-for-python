@@ -30,7 +30,7 @@ from typing_extensions import Literal
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from ._telemetry import trace_operation
+from ._telemetry import BindingAlternatives, delegate_operation, trace_operation
 from azure.core.utils import CaseInsensitiveDict
 
 from . import _utils as utils
@@ -172,13 +172,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 kwargs[Constants.Kwargs.TIMEOUT] = options[Constants.Kwargs.TIMEOUT]
         return self._get_properties(**kwargs)
 
-    def _get_properties(self, **kwargs: Any) -> dict[str, Any]:
-        deadline = kwargs.pop("_item_operation_deadline", None)
+    def _get_properties(self, *, deadline: Optional[float] = None, **kwargs: Any) -> dict[str, Any]:
+        deadline = kwargs.pop("_item_operation_deadline", deadline)
         if self.container_link not in self.__get_client_container_caches():
             with deadline_lock(self.container_cache_lock, deadline):
                 if self.container_link not in self.__get_client_container_caches():
                     if deadline is not None:
-                        kwargs["timeout"] = remaining_timeout(deadline)
+                        remaining_timeout(deadline)
+                        kwargs["_item_operation_deadline"] = deadline
                     self.read(**kwargs)
         return self.__get_client_container_caches()[self.container_link]
 
@@ -236,6 +237,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: Container properties with response headers available through ``get_response_headers()``.
         :rtype: ~azure.cosmos.CosmosDict
         """
+        deadline = kwargs.pop("_item_operation_deadline", None)
         prepare_operation_kwargs(self, kwargs, headers=initial_headers)
         validate_container_create_kwargs(kwargs, method_name="ContainerProxy.read")
         if priority is not None:
@@ -256,6 +258,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options,
             response_hook=response_hook,
             kwargs=kwargs,
+            deadline=deadline,
         )
         _normalize_gsi_container_properties(container)
         # Only cache Container Properties that will not change in the lifetime of the container
@@ -1748,7 +1751,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             **kwargs,
         )
 
-    @distributed_trace
+    @trace_operation(
+        binding_operation=BindingAlternatives(
+            (
+                ("read_container", "get_throughput", "read_container", "get_throughput"),
+                ("get_throughput", "read_container", "get_throughput"),
+            )
+        )
+    )
     def get_throughput(
             self,
             *,
@@ -1772,12 +1782,21 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :raises TypeError: The response hook or an options dictionary is invalid.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        prepare_operation_kwargs(self, kwargs, inherit_timeout=False)
+        prepare_operation_kwargs(self, kwargs)
+
+        def get_properties(*, deadline: Optional[float] = None) -> dict[str, Any]:
+            with delegate_operation(self, "read"):
+                return self._get_properties() if deadline is None else self._get_properties(deadline=deadline)
+
+        def refresh_properties(*, deadline: Optional[float] = None) -> dict[str, Any]:
+            with delegate_operation(self, "read"):
+                return self.read() if deadline is None else self.read(_item_operation_deadline=deadline)
+
         return _get_throughput(
             client_connection=self.client_connection,
             container_link=self.container_link,
-            get_properties=self._get_properties,
-            refresh_properties=self.read,
+            get_properties=get_properties,
+            refresh_properties=refresh_properties,
             response_hook=response_hook,
             kwargs=kwargs,
         )
@@ -1792,7 +1811,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     ) -> ThroughputProperties:
         """Replace the container's throughput.
 
-        If no ThroughputProperties already exist for the container, an exception is raised.
+        This changes dedicated container throughput, not shared database capacity.
+        Missing dedicated throughput raises CosmosResourceNotFoundError. A stale
+        container identity can be refreshed once during offer lookup, before the
+        write. Write failures are not replayed. Unsupported inputs fail before
+        requests, and callback mutation cannot change the returned settings.
 
         :param throughput: The throughput to be set.
         :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
@@ -1801,13 +1824,21 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: ThroughputProperties for the container, updated with new throughput.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be updated.
+        :raises NotImplementedError: The Rust path cannot honor the supplied settings.
+        :raises TypeError: The response hook or an options dictionary is invalid.
+        :raises KeyError: Manual and autoscale settings were supplied together.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        prepare_operation_kwargs(self, kwargs, inherit_timeout=False)
+        prepare_operation_kwargs(self, kwargs)
+
+        def refresh_properties(*, deadline: Optional[float] = None) -> dict[str, Any]:
+            return self.read() if deadline is None else self.read(_item_operation_deadline=deadline)
+
         return _replace_container_throughput(
             client_connection=self.client_connection,
             container_link=self.container_link,
             get_properties=self._get_properties,
+            refresh_properties=refresh_properties,
             throughput=throughput,
             response_hook=response_hook,
             kwargs=kwargs,

@@ -214,10 +214,11 @@ def manage_provisioned_throughput(db, id):
         # now use its _self to query for Offers
         offer = container.get_throughput()
 
-        print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(offer.properties['id'], container.id, offer.properties['content']['offerThroughput']))
+        print('Container \'{0}\' has throughput \'{1}\' RU/s'.format(container.id, offer.offer_throughput))
 
-    except exceptions.CosmosResourceExistsError:
+    except exceptions.CosmosResourceNotFoundError:
         print('A container with id \'{0}\' does not exist'.format(id))
+        return
 
     print("\n3.2 Change Provisioned Throughput of Container")
 
@@ -225,7 +226,7 @@ def manage_provisioned_throughput(db, id):
 
     #The following code shows how you can change Container's throughput
     offer = container.replace_throughput(offer.offer_throughput + 100)
-    print('Replaced Offer. Provisioned Throughput is now \'{0}\''.format(offer.properties['content']['offerThroughput']))
+    print('Replaced Offer. Provisioned Throughput is now \'{0}\''.format(offer.offer_throughput))
 
 
 def read_Container(db, id):
@@ -311,4 +312,3 @@ def run_sample():
 
 if __name__ == '__main__':
     run_sample()
-

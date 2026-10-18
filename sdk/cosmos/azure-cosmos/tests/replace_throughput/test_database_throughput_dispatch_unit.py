@@ -42,10 +42,14 @@ class _ReadBackend(CosmosBackend):
 
     def execute(self, prepared, *, deadline=None):
         self.requests.append(prepared)
+        body = (
+            prepared.body_bytes if prepared.op == "replace_throughput"
+            else json.dumps({"Offers": self.offers}).encode()
+        )
         return BackendResponse(
             status_code=self.status,
             headers={"x-ms-request-charge": "2.5", "etag": "offer-etag"},
-            body=json.dumps({"Offers": self.offers}).encode(),
+            body=body,
         )
 
 
@@ -71,7 +75,7 @@ def database_read(request):
     if request.param in ("async", "container-async"):
         database = _async_database(_AsyncReadBackend(recording), default_headers={})
 
-        async def get_properties():
+        async def get_properties(*, deadline=None):
             metadata.append(True)
             return properties
 
@@ -80,7 +84,7 @@ def database_read(request):
     else:
         database = _sync_database(recording, default_headers={})
 
-        def get_properties():
+        def get_properties(*, deadline=None):
             metadata.append(True)
             return properties
 
@@ -231,9 +235,9 @@ def test_explicit_legacy_database_read_preserves_owned_data(database_read, fail,
     def query(query_spec, options, **kwargs):
         expected_link = "dbs/db/colls/coll/" if hasattr(database, "container_link") else "dbs/db/"
         assert query_spec["parameters"][0]["value"] == expected_link
-        assert kwargs["timeout"] == 10
+        assert kwargs["timeout"] == pytest.approx(10, abs=0.1)
         if alias != "options":
-            assert options["timeout"] == 10
+            assert options["timeout"] == pytest.approx(10, abs=0.1)
         assert "request_options" not in kwargs
         assert "feed_options" not in kwargs
         options["initialHeaders"]["x-customer"] = "changed"
@@ -325,6 +329,164 @@ def test_database_read_preserves_autoscale_fields(database_read):
     assert result.get_response_headers()["etag"] == "offer-etag"
 
 
+@pytest.fixture
+def throughput_replace(database_read):
+    _, proxy, recording, metadata = database_read
+
+    def invoke(throughput=500, **kwargs):
+        result = proxy.replace_throughput(throughput, **kwargs)
+        if isinstance(proxy, (AsyncDatabaseProxy, AsyncContainerProxy)):
+            return asyncio.run(result)
+        return result
+
+    def no_legacy(*args, **kwargs):
+        pytest.fail("Rust throughput must never call legacy")
+
+    proxy.client_connection.QueryOffers = no_legacy
+    proxy.client_connection.ReplaceOffer = no_legacy
+    return invoke, proxy, recording, metadata
+
+
+@pytest.mark.parametrize("kwargs", [
+    {"unsupported_keyword": True},
+    {"availability_strategy": object()},
+    {"initial_headers": {"User-Agent": "not-allowed"}},
+    {"timeout": -1},
+    {"timeout": 0},
+    {"timeout": 0.5},
+])
+def test_replacement_rejects_unsupported_inputs_before_metadata(throughput_replace, kwargs):
+    from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
+
+    invoke, _, recording, metadata = throughput_replace
+    before = rust_compatibility_fallback_count()
+    with pytest.raises(NotImplementedError, match="legacy Python"):
+        invoke(**kwargs)
+    assert not metadata
+    assert not recording.requests
+    assert rust_compatibility_fallback_count() == before
+
+
+@pytest.mark.parametrize("hook", [False, 0, "", {}, "not-callable"])
+def test_replacement_rejects_invalid_hook_before_metadata(throughput_replace, hook):
+    invoke, _, recording, metadata = throughput_replace
+    with pytest.raises(TypeError, match="response_hook must be callable or None"):
+        invoke(response_hook=hook)
+    assert not metadata
+    assert not recording.requests
+
+
+def test_replacement_rejects_mixed_settings_before_metadata(throughput_replace):
+    from azure.cosmos import ThroughputProperties
+
+    invoke, _, recording, metadata = throughput_replace
+    with pytest.raises(KeyError, match="Manual and autoscale"):
+        invoke(ThroughputProperties(offer_throughput=500, auto_scale_max_throughput=10000))
+    assert not metadata
+    assert not recording.requests
+
+
+@pytest.mark.parametrize("value", [None, "500", {}, 500.5])
+def test_replacement_rejects_invalid_type_before_metadata(throughput_replace, value):
+    invoke, _, recording, metadata = throughput_replace
+    with pytest.raises(TypeError, match="offer_throughput must be"):
+        invoke(value)
+    assert not metadata
+    assert not recording.requests
+
+
+def test_replacement_missing_offer_does_not_write_or_call_hook(throughput_replace):
+    invoke, proxy, recording, _ = throughput_replace
+    recording.offers = []
+    hooks = []
+    with pytest.raises(exceptions.CosmosResourceNotFoundError) as caught:
+        invoke(response_hook=lambda *_: hooks.append(True))
+    assert caught.value.status_code == 404
+    if isinstance(proxy, (SyncContainerProxy, AsyncContainerProxy)):
+        assert caught.value.sub_status == 10004
+    assert [request.op for request in recording.requests] == ["get_throughput"]
+    assert not hooks
+
+
+@pytest.mark.parametrize("alias", ["request_options", "feed_options"])
+def test_replacement_owns_payload_options_and_response(throughput_replace, alias):
+    invoke, proxy, recording, _ = throughput_replace
+    options = {"initialHeaders": {"x-customer": "kept"}}
+    original = deepcopy((recording.offers, options))
+
+    class Hook:
+        calls = 0
+
+        def __bool__(self):
+            return False
+
+        def __call__(self, headers, offer):
+            self.calls += 1
+            assert offer["content"]["offerThroughput"] == 500
+            offer["content"]["offerThroughput"] = 999
+            headers.clear()
+            proxy.client_connection.last_response_headers = {"etag": "another-request"}
+
+    hook = Hook()
+    result = invoke(response_hook=hook, **{alias: options})
+    assert hook.calls == 1
+    assert result.offer_throughput == 500
+    assert result.properties["content"]["offerThroughput"] == 500
+    assert result.get_response_headers()["etag"] == "offer-etag"
+    assert (recording.offers, options) == original
+    assert [request.op for request in recording.requests] == ["get_throughput", "replace_throughput"]
+    assert all(request.headers["x-customer"] == "kept" for request in recording.requests)
+    assert json.loads(recording.requests[-1].body_bytes)["content"]["offerThroughput"] == 500
+
+
+@pytest.mark.parametrize("increment", [0, 10])
+def test_replacement_preserves_autoscale_result_and_zero_increment(throughput_replace, increment):
+    from azure.cosmos import ThroughputProperties
+
+    invoke, _, recording, _ = throughput_replace
+    recording.offers[0]["content"] = {"offerAutopilotSettings": {"maxThroughput": 5000}}
+    original = deepcopy(recording.offers)
+    result = invoke(ThroughputProperties(
+        auto_scale_max_throughput=10000, auto_scale_increment_percent=increment,
+    ))
+    assert result.offer_throughput is None
+    assert result.auto_scale_max_throughput == 10000
+    assert result.auto_scale_increment_percent == increment
+    assert recording.offers == original
+
+
+def test_replacement_does_not_replay_hook_failure(throughput_replace):
+    invoke, _, recording, _ = throughput_replace
+    error = RuntimeError("callback failed")
+
+    def hook(*_):
+        raise error
+
+    with pytest.raises(RuntimeError) as caught:
+        invoke(response_hook=hook)
+    assert caught.value is error
+    assert len(recording.requests) == 2
+
+
+@pytest.mark.parametrize("failed_leg", ["get_throughput", "replace_throughput"])
+def test_replacement_preserves_service_error_without_replay(throughput_replace, failed_leg):
+    invoke, _, recording, _ = throughput_replace
+    execute = recording.execute
+    hooks = []
+
+    def fail(prepared, **kwargs):
+        recording.status = 403 if prepared.op == failed_leg else 200
+        return execute(prepared, **kwargs)
+
+    recording.execute = fail
+    with pytest.raises(exceptions.CosmosHttpResponseError) as caught:
+        invoke(response_hook=lambda *_: hooks.append(True))
+    assert caught.value.status_code == 403
+    assert caught.value.headers["etag"] == "offer-etag"
+    assert len(recording.requests) == (1 if failed_leg == "get_throughput" else 2)
+    assert not hooks
+
+
 @pytest.mark.parametrize("proxy", [
     SyncDatabaseProxy, AsyncDatabaseProxy, SyncContainerProxy, AsyncContainerProxy,
 ])
@@ -376,6 +538,8 @@ def _offer(throughput: int = 400) -> Dict[str, Any]:
 class _Backend:
     """Stand-in backend that records which operations ran and returns canned offers."""
 
+    name = "rust"
+
     def __init__(self, offers: List[Dict[str, Any]] | None = None) -> None:
         """Initialise with an optional list of canned offer documents to return."""
         self.calls: List[str] = []
@@ -386,9 +550,9 @@ class _Backend:
         """Record the operation and route to the legacy path or canned offer list."""
         self.calls.append(routing.op)
         self.eligibility.append(routing.supported)
-        if not routing.supported:
+        if routing.uses_legacy():
             return legacy_call()
-        return self.offers if routing.op == "read_offer" else _offer(500)
+        return self.offers if routing.op == "get_throughput" else _offer(500)
 
 
 class _AsyncBackend(_Backend):
@@ -398,9 +562,9 @@ class _AsyncBackend(_Backend):
         """Record the operation and route to the legacy path or canned offer list."""
         self.calls.append(routing.op)
         self.eligibility.append(routing.supported)
-        if not routing.supported:
+        if routing.uses_legacy():
             return await legacy_call()
-        return self.offers if routing.op == "read_offer" else _offer(500)
+        return self.offers if routing.op == "get_throughput" else _offer(500)
 
 
 def _sync_database(backend: Any, **connection: Any) -> SyncDatabaseProxy:
@@ -447,7 +611,7 @@ def test_database_read_sends_no_intended_collection_rid(monkeypatch: pytest.Monk
         return True
 
     monkeypatch.setattr(
-        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_read_offer", _gate
+        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_get_throughput", _gate
     )
     database = _sync_database(_Backend())
 
@@ -468,7 +632,7 @@ def test_container_read_still_sends_the_intended_collection_rid(monkeypatch: pyt
         return True
 
     monkeypatch.setattr(
-        "azure.cosmos._helpers._container_throughput.can_use_rust_backend_for_read_offer", _gate
+        "azure.cosmos._helpers._container_throughput.can_use_rust_backend_for_get_throughput", _gate
     )
     container = ContainerProxy.__new__(ContainerProxy)
     container.container_link = "dbs/db/colls/coll"
@@ -486,7 +650,7 @@ def test_container_read_still_sends_the_intended_collection_rid(monkeypatch: pyt
 def test_sync_get_throughput_routes_to_rust(monkeypatch: pytest.MonkeyPatch) -> None:
     """A supported sync read uses Rust and does not call the Python query path."""
     monkeypatch.setattr(
-        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_read_offer",
+        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_get_throughput",
         lambda **_kwargs: True,
     )
     called = False
@@ -504,7 +668,7 @@ def test_sync_get_throughput_routes_to_rust(monkeypatch: pytest.MonkeyPatch) -> 
     result = database.get_throughput(response_hook=lambda headers, body: hooks.append(body))
 
     assert result.offer_throughput == 400
-    assert backend.calls == ["read_offer"]
+    assert backend.calls == ["get_throughput"]
     assert called is False
     assert len(hooks) == 1
 
@@ -521,14 +685,14 @@ def test_sync_replace_throughput_routes_both_legs_to_rust(monkeypatch: pytest.Mo
     result = database.replace_throughput(500)
 
     assert result.offer_throughput == 500
-    assert backend.calls == ["read_offer", "replace_offer"]
+    assert backend.calls == ["get_throughput", "replace_throughput"]
     assert backend.eligibility == [True, True]
 
 
 def test_async_get_throughput_routes_to_rust(monkeypatch: pytest.MonkeyPatch) -> None:
     """A supported async read uses Rust and does not call the Python query path."""
     monkeypatch.setattr(
-        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_read_offer",
+        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_get_throughput",
         lambda **_kwargs: True,
     )
     backend = _AsyncBackend()
@@ -537,7 +701,7 @@ def test_async_get_throughput_routes_to_rust(monkeypatch: pytest.MonkeyPatch) ->
     result = asyncio.run(database.get_throughput())
 
     assert result.offer_throughput == 400
-    assert backend.calls == ["read_offer"]
+    assert backend.calls == ["get_throughput"]
 
 
 def test_async_replace_throughput_routes_both_legs_to_rust(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -552,16 +716,16 @@ def test_async_replace_throughput_routes_both_legs_to_rust(monkeypatch: pytest.M
     result = asyncio.run(database.replace_throughput(500))
 
     assert result.offer_throughput == 500
-    assert backend.calls == ["read_offer", "replace_offer"]
+    assert backend.calls == ["get_throughput", "replace_throughput"]
 
 
-# --- legacy fallback ------------------------------------------------------
+# --- explicitly selected comparison backend ------------------------------
 
 
 def test_sync_explicit_legacy_get_throughput_preserves_options(monkeypatch: pytest.MonkeyPatch) -> None:
     """The separately selected legacy Python path remains available for comparison."""
     monkeypatch.setattr(
-        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_read_offer",
+        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_get_throughput",
         lambda **_kwargs: False,
     )
     seen: Dict[str, Any] = {}
@@ -583,10 +747,10 @@ def test_sync_explicit_legacy_get_throughput_preserves_options(monkeypatch: pyte
     assert seen["query"]["parameters"][0]["value"] == "dbs/db/"
 
 
-def test_sync_replace_throughput_reads_the_offer_without_caller_keywords(
+def test_sync_explicit_legacy_replacement_applies_options_to_both_legs(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Sync replacement options apply to the write, as the public API promises."""
+    """The isolated reference receives owned options on both legs."""
     monkeypatch.setattr(
         "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_replace_throughput",
         lambda **_kwargs: False,
@@ -599,25 +763,27 @@ def test_sync_replace_throughput_reads_the_offer_without_caller_keywords(
         read_kwargs.update(kwargs)
         return [_offer()]
 
-    def _replace_offer(*, offer_link: str, offer: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
+    def _replace_throughput(*, offer_link: str, offer: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
         """Record kwargs and offer details forwarded to the write leg."""
         replace_kwargs.update(kwargs)
         replace_kwargs["offer_link"] = offer_link
         replace_kwargs["sent_throughput"] = offer["content"]["offerThroughput"]
         return _offer(500)
 
-    database = _sync_database(_Backend(), QueryOffers=_query_offers, ReplaceOffer=_replace_offer)
+    from azure.cosmos._backend.legacy import LEGACY_BACKEND
+    database = _sync_database(LEGACY_BACKEND, QueryOffers=_query_offers, ReplaceOffer=_replace_throughput)
 
-    result = database.replace_throughput(500)
+    result = database.replace_throughput(500, initial_headers={"x-customer": "kept"})
 
     assert result.offer_throughput == 500
-    assert read_kwargs == {}
+    assert read_kwargs["options"]["initialHeaders"]["x-customer"] == "kept"
+    assert replace_kwargs["options"]["initialHeaders"]["x-customer"] == "kept"
     assert replace_kwargs["offer_link"] == "offers/AAAAAA==/"
     # The sent offer contains the requested value.
     assert replace_kwargs["sent_throughput"] == 500
 
 
-def test_async_replace_throughput_reads_the_offer_with_caller_keywords(
+def test_async_explicit_legacy_replacement_applies_options_to_both_legs(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Async replacement options continue to reach both operations."""
@@ -626,6 +792,7 @@ def test_async_replace_throughput_reads_the_offer_with_caller_keywords(
         lambda **_kwargs: False,
     )
     read_kwargs: Dict[str, Any] = {}
+    replace_kwargs: Dict[str, Any] = {}
 
     class _Offers:
         """Async iterable stub that records kwargs passed to the read leg."""
@@ -646,15 +813,19 @@ def test_async_replace_throughput_reads_the_offer_with_caller_keywords(
             self._sent = True
             return _offer()
 
-    async def _replace_offer(*, offer_link: str, offer: Dict[str, Any], **_kwargs: Any) -> Dict[str, Any]:
+    async def _replace_throughput(*, offer_link: str, offer: Dict[str, Any], **_kwargs: Any) -> Dict[str, Any]:
         """Return a canned updated offer to simulate a successful write."""
+        replace_kwargs.update(_kwargs)
         return _offer(500)
 
-    database = _async_database(_AsyncBackend(), QueryOffers=_Offers, ReplaceOffer=_replace_offer)
+    from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
+    database = _async_database(ASYNC_LEGACY_BACKEND, QueryOffers=_Offers, ReplaceOffer=_replace_throughput)
 
-    result = asyncio.run(database.replace_throughput(500))
+    result = asyncio.run(database.replace_throughput(500, initial_headers={"x-customer": "kept"}))
 
     assert result.offer_throughput == 500
+    assert read_kwargs["options"]["initialHeaders"]["x-customer"] == "kept"
+    assert replace_kwargs["options"]["initialHeaders"]["x-customer"] == "kept"
 
 
 # --- a database with no provisioned throughput ----------------------------
@@ -663,7 +834,7 @@ def test_async_replace_throughput_reads_the_offer_with_caller_keywords(
 def test_sync_get_throughput_raises_when_no_offer_exists(monkeypatch: pytest.MonkeyPatch) -> None:
     """Missing database throughput raises a typed error instead of ``IndexError``."""
     monkeypatch.setattr(
-        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_read_offer",
+        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_get_throughput",
         lambda **_kwargs: True,
     )
     database = _sync_database(_Backend(offers=[]))
@@ -687,13 +858,13 @@ def test_sync_replace_throughput_raises_when_no_offer_exists(monkeypatch: pytest
         database.replace_throughput(500)
 
     # No write occurs when there is no offer to update.
-    assert backend.calls == ["read_offer"]
+    assert backend.calls == ["get_throughput"]
 
 
-def test_async_replace_throughput_uses_its_own_not_found_wording(
+def test_async_replace_throughput_uses_consistent_not_found_wording(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """The async replacement keeps its current typed error message."""
+    """Both replacement variants name the missing throughput resource."""
     monkeypatch.setattr(
         "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_replace_throughput",
         lambda **_kwargs: True,
@@ -703,7 +874,7 @@ def test_async_replace_throughput_uses_its_own_not_found_wording(
     with pytest.raises(exceptions.CosmosResourceNotFoundError) as caught:
         asyncio.run(database.replace_throughput(500))
 
-    assert "Could not find Offer for database dbs/db" in caught.value.message
+    assert "Could not find ThroughputProperties for database dbs/db" in caught.value.message
 
 
 # --- async-specific regression cases --------------------------------------
@@ -712,7 +883,7 @@ def test_async_replace_throughput_uses_its_own_not_found_wording(
 def test_async_explicit_legacy_get_throughput_preserves_options(monkeypatch: pytest.MonkeyPatch) -> None:
     """The separately selected legacy Python path remains available for comparison."""
     monkeypatch.setattr(
-        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_read_offer",
+        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_get_throughput",
         lambda **_kwargs: False,
     )
     seen: Dict[str, Any] = {}
@@ -744,7 +915,7 @@ def test_async_explicit_legacy_get_throughput_preserves_options(monkeypatch: pyt
 def test_async_get_throughput_raises_when_no_offer_exists(monkeypatch: pytest.MonkeyPatch) -> None:
     """An async read uses the stable typed error and message for no throughput."""
     monkeypatch.setattr(
-        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_read_offer",
+        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_get_throughput",
         lambda **_kwargs: True,
     )
     database = _async_database(_AsyncBackend(offers=[]))
@@ -769,4 +940,4 @@ def test_async_replace_throughput_raises_before_writing_an_offer(
     with pytest.raises(exceptions.CosmosResourceNotFoundError):
         asyncio.run(database.replace_throughput(500))
 
-    assert backend.calls == ["read_offer"]
+    assert backend.calls == ["get_throughput"]

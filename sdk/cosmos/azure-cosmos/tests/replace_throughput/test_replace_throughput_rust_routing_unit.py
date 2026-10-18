@@ -18,9 +18,9 @@ import pytest
 
 from azure.cosmos import _base
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
-from azure.cosmos._backend.operations import OP_REPLACE_OFFER, OP_TO_BINDING_FUNCTION_NAME
-from azure.cosmos._helpers._request_offer import build_replace_offer_request
-from azure.cosmos._offer_rust_routing import can_use_rust_backend_for_replace_throughput, build_replace_offer_from_connection
+from azure.cosmos._backend.operations import OP_REPLACE_THROUGHPUT, OP_TO_BINDING_FUNCTION_NAME
+from azure.cosmos._helpers._request_throughput import build_replace_throughput_request
+from azure.cosmos._throughput_rust_routing import can_use_rust_backend_for_replace_throughput, build_replace_throughput_from_connection
 
 _OFFER = {"id": "offer", "_self": "offers/AAAAAA==/", "content": {"offerThroughput": 500}}
 
@@ -38,14 +38,8 @@ _OFFER = {"id": "offer", "_self": "offers/AAAAAA==/", "content": {"offerThroughp
 def test_replace_gate(backend, options, kwargs, expected):
     """Only a plain throughput replacement on the Rust backend is eligible.
 
-    Six cases: legacy backend, bare Rust call, unknown keyword, a
-    an availability strategy, and a custom user agent in the
-    initial headers.
-
-    Everything except the bare Rust call falls back, so a caller's timeout or
-    their own user agent is honoured by the legacy path rather than quietly
-    discarded. The user agent case is the one absent from the read gate list
-    above, since replacing throughput is a write and worth identifying.
+    Unsupported Rust inputs are rejected by the workflow policy, not routed
+    to legacy. Explicit legacy selection is reserved for comparison runs.
     """
     assert can_use_rust_backend_for_replace_throughput(backend=backend, options=options, kwargs=kwargs) is expected
 
@@ -96,10 +90,10 @@ def test_replace_preparation_never_uses_legacy_transport(monkeypatch, resource_l
         offer=_OFFER,
         options=options,
     )
-    prepared = build_replace_offer_from_connection(**kwargs)
+    prepared = build_replace_throughput_from_connection(**kwargs)
     forbidden.assert_not_called()
     assert (_OFFER, options) == original
-    assert prepared.op == OP_REPLACE_OFFER == OP_TO_BINDING_FUNCTION_NAME[OP_REPLACE_OFFER]
+    assert prepared.op == OP_REPLACE_THROUGHPUT == OP_TO_BINDING_FUNCTION_NAME[OP_REPLACE_THROUGHPUT]
     assert prepared.container_link == resource_link
     assert legacy_partition_key_from_request(prepared) == "[]"
     assert prepared.item_id == "AAAAAA=="
@@ -125,9 +119,27 @@ def test_replace_builder_requires_offer_identity():
     somewhere unintended.
     """
     with pytest.raises(KeyError, match="_self"):
-        build_replace_offer_request(
+        build_replace_throughput_request(
             resource_link="dbs/db",
             offer_body={"content": {}},
             request_options={},
             default_headers={},
         )
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+def test_native_replacement_accepts_deadline_and_attempt_controls(asynchronous):
+    from azure.cosmos import _rust
+
+    prepared = build_replace_throughput_request(
+        resource_link="dbs/db",
+        offer_body=_OFFER,
+        request_options={},
+        default_headers={},
+    )
+    function = _rust.replace_throughput_async if asynchronous else _rust.replace_throughput
+    # An invalid budget must fail before even resolving the driver handle.
+    with pytest.raises(ValueError, match="timeout_seconds must be positive"):
+        function("unused-driver", prepared, timeout_seconds=0, include_attempts=True)
+    assert not hasattr(_rust, "read_offer")
+    assert not hasattr(_rust, "replace_offer")

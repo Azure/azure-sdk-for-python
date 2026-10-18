@@ -104,7 +104,7 @@ class OpCapability:
 
 CAPABILITIES: dict[str, OpCapability] = {
     GET_CONTAINER_THROUGHPUT: OpCapability(
-        frozenset({ops.OP_READ_OFFER}),
+        frozenset({ops.OP_GET_THROUGHPUT}),
         unsupported_message=(
             "The container throughput read cannot honor this input on the Rust path: "
             "a per-call timeout, availability strategy, request-header override, or "
@@ -113,7 +113,7 @@ CAPABILITIES: dict[str, OpCapability] = {
         ),
     ),
     GET_DATABASE_THROUGHPUT: OpCapability(
-        frozenset({ops.OP_READ_OFFER}),
+        frozenset({ops.OP_GET_THROUGHPUT}),
         unsupported_message=(
             "The database throughput read cannot honor this input on the Rust path: "
             "a per-call timeout, availability strategy, request-header override, or "
@@ -122,7 +122,12 @@ CAPABILITIES: dict[str, OpCapability] = {
         ),
     ),
     REPLACE_THROUGHPUT: OpCapability(
-        frozenset({ops.OP_READ_OFFER, ops.OP_REPLACE_OFFER}), fallback_allowed=True
+        frozenset({ops.OP_GET_THROUGHPUT, ops.OP_REPLACE_THROUGHPUT}),
+        unsupported_message=(
+            "The throughput replacement cannot honor this input on the Rust path: "
+            "the timeout, availability strategy, request-header override, or additional "
+            "keyword is unsupported. The request will not be sent through legacy Python."
+        ),
     ),
     ops.OP_CREATE_DATABASE: OpCapability(
         frozenset({ops.OP_CREATE_DATABASE}),
@@ -234,13 +239,8 @@ CAPABILITIES: dict[str, OpCapability] = {
     ops.OP_QUERY_ITEMS_CHANGE_FEED: OpCapability(
         frozenset({ops.OP_QUERY_ITEMS_CHANGE_FEED}),
     ),
-    ops.OP_READ_OFFER: OpCapability(
-        frozenset({ops.OP_READ_OFFER}),
-        fallback_allowed=True,
-    ),
-    ops.OP_REPLACE_OFFER: OpCapability(
-        frozenset({ops.OP_REPLACE_OFFER}),
-        fallback_allowed=True,
+    ops.OP_GET_THROUGHPUT: OpCapability(
+        frozenset({ops.OP_GET_THROUGHPUT}),
     ),
     ops.OP_READ_FEED_RANGES: OpCapability(
         frozenset({ops.OP_READ_FEED_RANGES}),

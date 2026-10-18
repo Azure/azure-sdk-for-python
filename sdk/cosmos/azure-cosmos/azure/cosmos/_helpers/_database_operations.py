@@ -127,6 +127,7 @@ class DatabaseHelper:
             Callable[[Mapping[str, Any], Optional[dict[str, Any]]], None]
         ] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
+        deadline: Optional[float] = None,
     ) -> CosmosDict:
         """Read one database's properties, without exposing backend selection.
 
@@ -139,6 +140,7 @@ class DatabaseHelper:
         operation_kwargs.pop("response_hook", None)
         if response_hook is not None:
             operation_kwargs["response_hook"] = response_hook
+        remaining_timeout(deadline)
         result = self._backend.run_operation(
             build_request=lambda: build_read_database_prepared(
                 database_id,
@@ -154,15 +156,17 @@ class DatabaseHelper:
             ),
             legacy_call=lambda: self._client_connection.ReadDatabase(
                 "dbs/{}".format(database_id),
-                options=request_options,
-                **operation_kwargs,
+                options=legacy_deadline_options(request_options, deadline),
+                **legacy_deadline_kwargs(operation_kwargs, deadline),
             ),
             process_response=lambda response: process_database_read_response(
                 response,
                 client_connection=self._client_connection,
                 response_hook=response_hook,
             ),
+            deadline=deadline,
         )
+        remaining_timeout(deadline)
         return result
 
     def delete_database(

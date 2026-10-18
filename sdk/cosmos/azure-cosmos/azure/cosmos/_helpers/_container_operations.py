@@ -24,6 +24,7 @@ from .._backend.operations import (
 )
 from .._backend.cosmos_backend import CosmosBackend
 from .._cosmos_responses import CosmosDict
+from .._operation_deadline import legacy_deadline_kwargs, legacy_deadline_options, remaining_timeout
 from .._helpers._request_container import (
     build_create_container_prepared,
     build_delete_container_prepared,
@@ -105,6 +106,7 @@ class ContainerHelper:
         response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
         routing: Optional[OperationRouting] = None,
+        deadline: Optional[float] = None,
     ) -> CosmosDict:
         """Read a container and return its properties."""
         operation_kwargs = dict(kwargs or {})
@@ -115,6 +117,7 @@ class ContainerHelper:
             if routing is None
             else replace(routing, supported=routing.supported and supported)
         )
+        remaining_timeout(deadline)
         result = self._backend.run_operation(
             build_request=lambda: build_read_container_prepared(
                 container_link,
@@ -124,14 +127,16 @@ class ContainerHelper:
             routing=(routing),
             legacy_call=lambda: self._client_connection.ReadContainer(
                 container_link,
-                options=request_options,
-                **operation_kwargs,
+                options=legacy_deadline_options(request_options, deadline),
+                **legacy_deadline_kwargs(operation_kwargs, deadline),
             ),
             process_response=lambda response: process_backend_response(
                 response,
                 client_connection=self._client_connection,
             ),
+            deadline=deadline,
         )
+        remaining_timeout(deadline)
         on_response = with_response_header_snapshot(response_hook, copy_body=True)
         if on_response is not None:
             on_response(result.get_response_headers(), result)

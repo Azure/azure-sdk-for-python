@@ -3,8 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Async side-by-side parity tests for ``Container.get_throughput`` (the
-throughput read; v5 has no public ``read_offer`` alias).
+"""Side-by-side parity tests for ``Container.get_throughput``.
 
 Why these exist: customers call ``get_throughput`` to see their provisioned
 RU/s and autoscale ceiling, and they wire those numbers into cost and capacity
@@ -14,7 +13,7 @@ rust could return a different RU/s or autoscale ceiling and a customer watching
 capacity would act on a wrong number without anyone noticing.
 
 What they do: each test runs the same ``get_throughput`` call once on
-core-python and once on rust (via ``run_on_both_backends_async``), reduces each
+core-python and once on rust (via ``run_on_both_backends``), reduces each
 result to the customer-visible numbers with ``_normalize_throughput`` (so
 server-stamped fields like ``id`` / ``_rid`` / ``_ts`` don't cause false
 mismatches), and asserts the two agree. ``assert_functional_parity`` ignores
@@ -31,7 +30,7 @@ present.
 
 Run with::
 
-    pytest --noconftest tests/read_offer/aio/test_read_offer_parity_async.py -v
+    pytest --noconftest tests/get_container_throughput/sync/test_get_throughput_parity.py -v
 """
 from __future__ import annotations
 
@@ -41,7 +40,7 @@ import uuid
 import pytest
 
 from azure.cosmos import CosmosClient, PartitionKey
-from common._parity_helpers import run_on_both_backends_async, skip_unless_emulator, skip_unless_rust_binding
+from common._parity_helpers import run_on_both_backends, skip_unless_emulator, skip_unless_rust_binding
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
 
@@ -54,7 +53,7 @@ def container_for(request):
     # get_throughput only returns an offer when the container owns one.
     client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"])
     db = client.create_database_if_not_exists("parity_db")
-    container_id = "parity_read_offer_async_" + request.node.name + "_" + uuid.uuid4().hex[:6]
+    container_id = "parity_get_throughput_" + request.node.name + "_" + uuid.uuid4().hex[:6]
     container = db.create_container(
         id=container_id,
         partition_key=PartitionKey(path="/pk"),
@@ -78,19 +77,18 @@ def _normalize_throughput(throughput_properties):
     }
 
 
-@pytest.mark.asyncio
-async def test_get_throughput_baseline_async(container_for):
-    """Async baseline get_throughput returns the same RU/s on both backends."""
+def test_get_throughput_baseline(container_for):
+    """Baseline get_throughput returns the same RU/s on both backends."""
     # Without this, a basic divergence in the reported RU/s would go unnoticed.
 
-    async def _do(client):
-        """Await ``get_throughput`` on the given async client and return normalised throughput numbers."""
+    def _do(client):
+        """Run ``get_throughput`` on the given client and return normalised throughput numbers."""
         container = client.get_database_client("parity_db").get_container_client(container_for.id)
-        return _normalize_throughput(await container.get_throughput())
+        return _normalize_throughput(container.get_throughput())
 
-    comparison = await run_on_both_backends_async(
+    comparison = run_on_both_backends(
         _do,
-        description="async get_throughput baseline",
+        description="get_throughput baseline",
     )
     comparison.print_report()
     comparison.assert_functional_parity()

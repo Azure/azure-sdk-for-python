@@ -246,7 +246,7 @@ def test_default_does_not_become_unsupported_explicit_throughput_option(case, mo
     monkeypatch.setattr(module, helper, replacement)
     method = proxy.get_throughput if operation == "get" else proxy.replace_throughput
     assert _complete(method(*(() if operation == "get" else (400,)))) == "throughput"
-    assert "timeout" not in replacement.call_args.kwargs["kwargs"]
+    assert replacement.call_args.kwargs["kwargs"]["timeout"] == 1
     assert case.client._adapter._client_config.operation_timeout_seconds == 1
 
 

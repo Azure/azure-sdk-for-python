@@ -79,7 +79,7 @@ def test_replace_throughput_fixed(database_per_backend):
 
     def _do(client):
         """Replace fixed throughput on one engine."""
-        return _normalize_throughput(_database_for(client, created).replace_throughput(2000))
+        return _normalize_throughput(_database_for(client, created).replace_throughput(2000, timeout=30))
 
     comparison = run_on_both_backends(_do, description="database replace_throughput, fixed RU/s")
     comparison.print_report()
@@ -125,6 +125,32 @@ def test_replace_throughput_persists(database_per_backend):
     comparison.print_report()
     comparison.assert_functional_parity()
     assert comparison.rust.return_value["offer_throughput"] == 3000
+
+
+def test_replace_throughput_callback_cannot_change_result(database_per_backend):
+    """Callback mutations cannot change returned or persisted shared capacity."""
+    created = database_per_backend(1000)
+
+    def replace(client):
+        database = _database_for(client, created)
+        calls = []
+
+        def hook(headers, offer):
+            calls.append(offer["content"]["offerThroughput"])
+            headers.clear()
+            offer["content"]["offerThroughput"] = 999
+
+        updated = database.replace_throughput(2000, response_hook=hook)
+        assert calls == [2000]
+        assert updated.offer_throughput == 2000
+        assert updated.properties["content"]["offerThroughput"] == 2000
+        assert updated.get_response_headers()
+        assert database.get_throughput().offer_throughput == 2000
+        return _normalize_throughput(updated)
+
+    comparison = run_on_both_backends(replace, description="database replacement callback isolation")
+    comparison.print_report()
+    comparison.assert_functional_parity()
 
 
 def test_replace_throughput_without_provisioned_throughput():

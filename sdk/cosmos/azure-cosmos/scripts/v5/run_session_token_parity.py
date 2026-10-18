@@ -40,7 +40,7 @@ def main():
     files = [
         ROOT / "tests" / "get_latest_session_token" / surface / "legacy" / name
         for surface, name in (
-            ("sync", "test_session_token_helpers.py"),
+            ("sync", "test_session_token_helpers_owned.py"),
             ("sync", "test_latest_session_token.py"),
             ("aio", "test_latest_session_token_async.py"),
         )

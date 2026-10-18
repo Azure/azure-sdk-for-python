@@ -132,7 +132,7 @@ def _build_write_prepared(
     no_response_on_write_default: bool = False,
     extract_partition_key: bool = False,
 ) -> PreparedRequest:
-    """Package a write without inspecting or reserializing its body bytes."""
+    """Package a write without inspecting or serializing its body bytes again."""
     headers, settings = _build_item_headers_and_settings(
         request_options, container_rid, no_response_on_write_default
     )

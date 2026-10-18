@@ -55,7 +55,7 @@ from azure.cosmos._backend.operations import (
     OP_QUERY_ITEMS,
     OP_READ_ALL_ITEMS,
     OP_READ_FEED_RANGES,
-    OP_READ_OFFER,
+    OP_GET_THROUGHPUT,
     OP_TO_BINDING_FUNCTION_NAME,
     STATELESS_PAGE_BINDING_FUNCTION_NAMES,
 )
@@ -518,8 +518,8 @@ def test_public_throughput_and_feed_range_methods_do_not_select_backends(
     forbidden = (
         "_backend",
         "can_use_rust",
-        "try_read_offer_with_rust",
-        "try_replace_offer_with_rust",
+        "try_get_throughput_with_rust",
+        "try_replace_throughput_with_rust",
         "try_read_feed_ranges_with_rust",
         "try_feed_range_from_partition_key_with_rust",
         "try_is_feed_range_subset_with_rust",
@@ -826,11 +826,11 @@ def test_rust_backend_dispatches_read_all_items_to_binding(monkeypatch):
     assert pages[0].body == b'{"Documents":[{"id":"x"}]}'
 
 
-def test_rust_backend_dispatches_read_offer_to_binding(monkeypatch):
-    """A read_offer prepared request routes to the binding's read_offer entry point."""
+def test_rust_backend_dispatches_get_throughput_to_binding(monkeypatch):
+    """A get_throughput prepared request routes to the binding's get_throughput entry point."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
-    fake_module.read_offer.return_value = (
+    fake_module.get_throughput.return_value = (
         200,
         0,
         {"x-ms-continuation": "ct-read-offer"},
@@ -840,7 +840,7 @@ def test_rust_backend_dispatches_read_offer_to_binding(monkeypatch):
 
     backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
     prepared = PreparedRequest(
-        op=OP_READ_OFFER,
+        op=OP_GET_THROUGHPUT,
         container_link="dbs/d/colls/c",
         body_bytes=b'{"query":"SELECT * FROM root r WHERE r.resource=@link","parameters":[]}',
         partition_key=key_from_legacy_header("[]"),
@@ -848,7 +848,7 @@ def test_rust_backend_dispatches_read_offer_to_binding(monkeypatch):
     )
     resp = backend.execute(prepared)
 
-    fake_module.read_offer.assert_called_once_with("handle-1", prepared)
+    fake_module.get_throughput.assert_called_once_with("handle-1", prepared)
     assert resp.status_code == 200
     assert b'"Offers"' in resp.body
 
@@ -1242,11 +1242,11 @@ def test_async_rust_backend_surfaces_driver_query_capability_rejection(monkeypat
     asyncio.run(_run())
 
 
-def test_async_rust_backend_dispatches_read_offer_to_binding(monkeypatch):
-    """Async read_offer prepared requests route to read_offer_async."""
+def test_async_rust_backend_dispatches_get_throughput_to_binding(monkeypatch):
+    """Async get_throughput prepared requests route to get_throughput_async."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
-    fake_module.read_offer_async = AsyncMock(
+    fake_module.get_throughput_async = AsyncMock(
         return_value=(200, 0, {"x-ms-continuation": "ct-read-offer-async"}, b'{"Offers":[{"id":"offer-1"}]}')
     )
     monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
@@ -1254,14 +1254,14 @@ def test_async_rust_backend_dispatches_read_offer_to_binding(monkeypatch):
     async def _run():
         backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
         prepared = PreparedRequest(
-            op=OP_READ_OFFER,
+            op=OP_GET_THROUGHPUT,
             container_link="dbs/d/colls/c",
             body_bytes=b'{"query":"SELECT * FROM root r WHERE r.resource=@link","parameters":[]}',
             partition_key=key_from_legacy_header("[]"),
             headers={},
         )
         resp = await backend.execute(prepared)
-        fake_module.read_offer_async.assert_awaited_once_with("handle-1", prepared)
+        fake_module.get_throughput_async.assert_awaited_once_with("handle-1", prepared)
         assert resp.status_code == 200
         assert b'"Offers"' in resp.body
 
@@ -2812,7 +2812,7 @@ def test_async_credential_bridge_join_timeout_is_configurable(monkeypatch):
     b3._close_cosmos_async_bridge()
 
 
-def test_resolve_credential_sync_credential_not_false_positived():
+def test_resolve_credential_sync_credential_not_misclassified():
     """A plain synchronous credential must NOT be misread as async by the broader
     detector -- it is accepted as a token credential."""
     cred = _SyncTokenCredential()
@@ -3809,7 +3809,7 @@ def test_resolve_backend_name_still_rejects_genuine_typos(monkeypatch):
     """Normalization is only case/whitespace -- a real typo (and underscore
     spelling, which is not an alias) still fails loud."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
-    for bad in ("turbo", "rustt", "core_python", "python"):
+    for bad in ("turbo", "rustt", "core_python", "python"):  # cspell:disable-line
         with pytest.raises(ValueError, match="Invalid backend"):
             resolve_backend_name(bad)
 

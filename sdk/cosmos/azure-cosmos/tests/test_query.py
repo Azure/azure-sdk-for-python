@@ -625,7 +625,6 @@ class TestQuery(unittest.TestCase):
         query = 'SELECT * from c'
         query_iterable = created_collection.query_items(
             query=query,
-            enable_cross_partition_query=True,
             max_item_count=1,
         )
         pager = query_iterable.by_page()
