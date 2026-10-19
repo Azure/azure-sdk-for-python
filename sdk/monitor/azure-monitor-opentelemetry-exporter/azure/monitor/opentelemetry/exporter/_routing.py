@@ -8,8 +8,10 @@ from urllib.parse import urlsplit
 from opentelemetry.util.types import Attributes
 
 from azure.monitor.opentelemetry.exporter._constants import (
+    _MICROSOFT_INGESTION_AUTH,
     _MICROSOFT_INGESTION_ENDPOINT,
     _MICROSOFT_INSTRUMENTATION_KEY,
+    _MICROSOFT_MULTI_ENDPOINT_CLOUD_ROLE,
 )
 
 _MAX_INSTRUMENTATION_KEY_LENGTH = 200
@@ -82,3 +84,29 @@ def _normalize_endpoint_host(host: str) -> str:
     if not host or any(char.isascii() and not (char.isalnum() or char in "._-") for char in host):
         raise ValueError("Invalid URL host.")
     return host.lower() if host.isascii() else host
+
+
+def _get_cloud_role(attributes: Attributes) -> str:
+    """Resolve a per-item cloud role without falling back to the host resource.
+
+    :param attributes: The telemetry item's attributes.
+    :type attributes: ~opentelemetry.util.types.Attributes
+    :return: The trimmed role, or ``unknown_service`` for missing, blank, or non-string values.
+    :rtype: str
+    """
+    role = attributes.get(_MICROSOFT_MULTI_ENDPOINT_CLOUD_ROLE) if attributes else None
+    if not isinstance(role, str):
+        return "unknown_service"
+    return role.strip() or "unknown_service"
+
+
+def _is_aad_route(attributes: Attributes) -> bool:
+    """Read the explicit per-item AAD marker; this does not validate credentials.
+
+    :param attributes: The telemetry item's attributes.
+    :type attributes: ~opentelemetry.util.types.Attributes
+    :return: Whether the authentication value is a trimmed, case-insensitive ``aad`` string.
+    :rtype: bool
+    """
+    auth = attributes.get(_MICROSOFT_INGESTION_AUTH) if attributes else None
+    return isinstance(auth, str) and auth.strip().lower() == "aad"

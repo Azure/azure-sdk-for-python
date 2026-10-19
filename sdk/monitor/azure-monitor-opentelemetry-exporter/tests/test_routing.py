@@ -2,8 +2,14 @@
 # Licensed under the MIT License.
 
 import unittest
+from types import MappingProxyType
 
-from azure.monitor.opentelemetry.exporter._routing import _get_ingestion_endpoint, _get_instrumentation_key
+from azure.monitor.opentelemetry.exporter._routing import (
+    _get_cloud_role,
+    _get_ingestion_endpoint,
+    _get_instrumentation_key,
+    _is_aad_route,
+)
 
 
 class TestRouting(unittest.TestCase):
@@ -116,3 +122,37 @@ class TestIngestionEndpoint(unittest.TestCase):
             with self.subTest(host=host):
                 endpoint = f"https://{host}/"
                 self.assertEqual(_get_ingestion_endpoint({"microsoft.ingestion_endpoint": endpoint}), endpoint)
+
+
+class TestRoutingMetadata(unittest.TestCase):
+    def test_cloud_role(self):
+        for value, expected in (
+            ("Customer-Service", "Customer-Service"),
+            (" \tCustomer Service\n", "Customer Service"),
+            ("\u2003\u00c9quipe\u2003", "\u00c9quipe"),
+        ):
+            with self.subTest(value=value):
+                attributes = MappingProxyType({"microsoft.multi_endpoint_cloud_role": value})
+                self.assertEqual(_get_cloud_role(attributes), expected)
+
+    def test_invalid_cloud_role_uses_unknown_service(self):
+        for value in (None, "", " \t\n", 42, True, ("customer-service",), b"customer-service"):
+            with self.subTest(value=value):
+                self.assertEqual(_get_cloud_role({"microsoft.multi_endpoint_cloud_role": value}), "unknown_service")
+
+    def test_missing_routing_metadata(self):
+        for attributes in (None, {}, {"service.name": "host-service"}):
+            with self.subTest(attributes=attributes):
+                self.assertEqual(_get_cloud_role(attributes), "unknown_service")
+                self.assertFalse(_is_aad_route(attributes))
+
+    def test_aad_route(self):
+        for value in ("aad", "AAD", "AaD", " \taAd\n", "\u2003aad\u2003"):
+            with self.subTest(value=value):
+                attributes = MappingProxyType({"microsoft.ingestion_auth": value})
+                self.assertTrue(_is_aad_route(attributes))
+
+    def test_other_auth_values_use_instrumentation_key_only(self):
+        for value in (None, "", " \t\n", "ikey", "bearer", "aad-token", "a ad", 42, True, ("aad",), b"aad"):
+            with self.subTest(value=value):
+                self.assertFalse(_is_aad_route({"microsoft.ingestion_auth": value}))
