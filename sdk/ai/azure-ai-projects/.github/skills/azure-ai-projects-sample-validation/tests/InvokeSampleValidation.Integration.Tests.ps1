@@ -4,17 +4,49 @@
 . (Join-Path $PSScriptRoot "TestHelpers.ps1")
 $paths = Get-RecordSampleTestPaths $PSScriptRoot
 
-Describe "InvokeSampleTest.ps1 integration" {
+Describe "InvokeSampleValidation.ps1 integration" {
     BeforeAll {
         $script:packageRoot = Join-Path $TestDrive "runner-integration-package"
         New-SyntheticPackage $packageRoot
         $script:conflictCheckScript = Join-Path $packageRoot "synthetic-recording-conflict-check.ps1"
         $script:cleanupScript = Join-Path $packageRoot "synthetic-recording-cleanup.ps1"
+        $script:pipelineQueueScript = Join-Path $packageRoot "synthetic-pipeline-queue.ps1"
     }
 
     It "executes playback without live approval" {
         $actual = @(& $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable -SamplePath "sample_unique.py" -Mode "playback-only" -Run)
         ($actual -join "`n") | Should Match "playback result: 0"
+    }
+
+    It "executes every node selected by sample and test wildcards" {
+        $actual = @(
+            & $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable `
+                -SamplePath "samples\multiple\sample_*.py" -NodeId "*variant-*" `
+                -EnvironmentVariable "MULTIPLE_REQUIRED=from-command-line" -Mode "playback-only" -Run
+        )
+        $text = $actual -join "`n"
+        $text | Should Match "variant-one"
+        $text | Should Match "variant-two"
+        $text | Should Match "playback result: 0"
+        [Environment]::GetEnvironmentVariable("MULTIPLE_REQUIRED", "Process") | Should BeNullOrEmpty
+    }
+
+    It "queues selected samples and environment values for ADO live validation" {
+        $actual = @(
+            & $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable `
+                -PipelineQueueScript $pipelineQueueScript -PipelineSourceBranch "topic" `
+                -PipelineBearerToken "synthetic-token" -SamplePath "samples\multiple\sample_*.py" `
+                -NodeId "*variant-*" -EnvironmentVariable "MULTIPLE_REQUIRED=pipeline-value" `
+                -Mode "live-test-by-pipeline" -Run -ConfirmSelection -ConfirmPipeline
+        )
+        ($actual -join "`n") | Should Match "pipeline result: queued"
+        $payload = Get-Content -LiteralPath (Join-Path $packageRoot "pipeline-queue.json") -Raw | ConvertFrom-Json
+        $payload.DefinitionId | Should Be 8392
+        $payload.SourceBranch | Should Be "refs/heads/topic"
+        $payload.SamplePattern | Should Be "samples\multiple\sample_*.py"
+        $payload.TestPattern | Should Be "*variant-*"
+        ($payload.EnvironmentVariables -join "`n") | Should Match "MULTIPLE_REQUIRED=pipeline-value"
+        ($actual -join "`n") | Should Match "Pipeline URL: https://dev.azure.com/example/build/123"
     }
 
     It "executes record-only and live modes with approval" {

@@ -24,6 +24,10 @@ Describe "ResolveSampleTest.ps1" {
             & $paths.SampleResolver -PackageRoot $packageRoot `
                 -PythonExecutable $paths.PythonExecutable -SamplePath "sample_evaluation.py"
         )
+        $script:wildcardResults = @(
+            & $paths.SampleResolver -PackageRoot $packageRoot `
+                -PythonExecutable $paths.PythonExecutable -SamplePath "samples\*\sample_*.py"
+        )
     }
 
     It "resolves a filename to one synchronous pytest node" {
@@ -41,6 +45,13 @@ Describe "ResolveSampleTest.ps1" {
     It "resolves async and evaluation harnesses" {
         $asyncResult[0].NodeId | Should Match "test_samples_async.py::test_async\[async-case\]$"
         $evaluationResult[0].NodeId | Should Match "test_samples_evaluations.py::test_evaluation\[evaluation-case\]$"
+    }
+
+    It "resolves a wildcard to multiple sample paths and nodes" {
+        $wildcardResults.Count | Should Be 8
+        @($wildcardResults.SamplePath | Select-Object -Unique).Count | Should Be 7
+        ($wildcardResults.SamplePath -join "`n") | Should Match "samples\\unique\\sample_unique.py"
+        ($wildcardResults.SamplePath -join "`n") | Should Match "samples\\hosted_agents\\sample_hosted.py"
     }
 
     It "rejects ambiguous and missing filenames" {

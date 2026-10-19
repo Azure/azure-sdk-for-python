@@ -4,7 +4,7 @@
 . (Join-Path $PSScriptRoot "TestHelpers.ps1")
 $paths = Get-RecordSampleTestPaths $PSScriptRoot
 
-Describe "InvokeSampleTest.ps1 plan and guards" {
+Describe "InvokeSampleValidation.ps1 plan and guards" {
     BeforeAll {
         $script:packageRoot = Join-Path $TestDrive "runner-unit-package"
         New-SyntheticPackage $packageRoot
@@ -13,6 +13,7 @@ Describe "InvokeSampleTest.ps1 plan and guards" {
         $script:recordOnlyPlan = @(& $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable -RecordingConflictCheckScript $conflictCheckScript -SamplePath "sample_unique.py" -Mode "record-only")
         $script:playbackOnlyPlan = @(& $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable -SamplePath "sample_unique.py" -Mode "playback-only")
         $script:livePlan = @(& $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable -SamplePath "sample_unique.py" -Mode "live-test-locally")
+        $script:pipelinePlan = @(& $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable -PipelineQueueScript (Join-Path $packageRoot "synthetic-pipeline-queue.ps1") -PipelineSourceBranch "topic" -SamplePath "sample_unique.py" -Mode "live-test-by-pipeline")
     }
 
     It "plans record followed by playback when explicitly selected" {
@@ -42,6 +43,26 @@ Describe "InvokeSampleTest.ps1 plan and guards" {
         ($recordOnlyPlan -join "`n") | Should Match "--azure_test_run_live=true --azure_skip_live_recording=false"
         ($playbackOnlyPlan -join "`n") | Should Match "--azure_test_run_live=false --azure_skip_live_recording=true"
         ($livePlan -join "`n") | Should Match "--azure_test_run_live=true --azure_skip_live_recording=true"
+        ($pipelinePlan -join "`n") | Should Match "Pipeline source branch: refs/heads/topic"
+        ($pipelinePlan -join "`n") | Should Match "pipeline command: queue definition 8392"
+    }
+
+    It "preserves wildcard selections in every execution mode" {
+        foreach ($mode in @("record-and-playback", "record-only", "playback-only", "live-test-locally", "live-test-by-pipeline")) {
+            $arguments = @{
+                PackageRoot = $packageRoot
+                PythonExecutable = $paths.PythonExecutable
+                RecordingConflictCheckScript = $conflictCheckScript
+                PipelineQueueScript = (Join-Path $packageRoot "synthetic-pipeline-queue.ps1")
+                PipelineSourceBranch = "topic"
+                SamplePattern = "samples\multiple\sample_*.py"
+                TestPattern = "*variant-*"
+                Mode = $mode
+            }
+            $actual = @(& $paths.SampleTestRunner @arguments) -join "`n"
+            $actual | Should Match "variant-one"
+            $actual | Should Match "variant-two"
+        }
     }
 
     It "displays effective values while redacting command arguments" {
@@ -55,7 +76,40 @@ Describe "InvokeSampleTest.ps1 plan and guards" {
         $text | Should Match "CLI values loaded: 2; process values loaded: 2"
         $commandPreview = @($recordAndPlaybackPlan | Where-Object { $_ -like "* command: *" }) -join "`n"
         $commandPreview | Should Not Match "real-direct-value|real-helper-value|real-harness-value"
-        $commandPreview | Should Match "--direct_required=<from .env>"
+        $commandPreview | Should Match "--direct_required=<environment value>"
+    }
+
+    It "applies repeatable environment overrides before mapping values" {
+        $actual = @(
+            & $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable `
+                -SamplePath "sample_unique.py" -Mode "playback-only" `
+                -EnvironmentVariable @("DIRECT_REQUIRED=override-direct", "EXTRA_SETTING=extra=value")
+        )
+        $text = $actual -join "`n"
+        $text | Should Match "DIRECT_REQUIRED=override-direct \[command line\]"
+        $text | Should Match "EXTRA_SETTING=extra=value \[command line\]"
+        $text | Should Match "HELPER_REQUIRED=real-helper-value \[\.env\]"
+        $text | Should Match "CLI values loaded: 2; process values loaded: 3"
+        $commandPreview = @($actual | Where-Object { $_ -like "* command: *" }) -join "`n"
+        $commandPreview | Should Not Match "override-direct|extra=value"
+    }
+
+    It "redacts effective values when requested by pipeline execution" {
+        $actual = @(
+            & $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable `
+                -SamplePath "sample_unique.py" -Mode "playback-only" -HideEnvironmentValues
+        ) -join "`n"
+        $actual | Should Match "DIRECT_REQUIRED=<redacted> \[\.env\]"
+        $actual | Should Not Match "real-direct-value|real-helper-value|real-harness-value"
+    }
+
+    It "rejects malformed environment overrides" {
+        $caught = $null
+        try {
+            & $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable `
+                -SamplePath "sample_unique.py" -Mode "playback-only" -EnvironmentVariable "NOT-AN-ASSIGNMENT"
+        } catch { $caught = $_ }
+        $caught.Exception.Message | Should Match "NAME=VALUE"
     }
 
     It "requires selection and action confirmations for recording and live execution" {
@@ -73,18 +127,38 @@ Describe "InvokeSampleTest.ps1 plan and guards" {
         $liveError.Exception.Message | Should Match "Live execution contacts Azure"
     }
 
-    It "selects a valid explicit node and rejects missing selection" {
+    It "requires selection and pipeline confirmations for ADO execution" {
+        $selectionError = $null
+        $pipelineError = $null
+        $arguments = @{
+            PackageRoot = $packageRoot
+            PythonExecutable = $paths.PythonExecutable
+            PipelineQueueScript = (Join-Path $packageRoot "synthetic-pipeline-queue.ps1")
+            PipelineSourceBranch = "topic"
+            PipelineBearerToken = "synthetic-token"
+            SamplePath = "sample_unique.py"
+            Mode = "live-test-by-pipeline"
+            Run = $true
+        }
+        try { & $paths.SampleTestRunner @arguments } catch { $selectionError = $_ }
+        $arguments.ConfirmSelection = $true
+        try { & $paths.SampleTestRunner @arguments } catch { $pipelineError = $_ }
+        $selectionError.Exception.Message | Should Match "selection was not confirmed"
+        $pipelineError.Exception.Message | Should Match "Pipeline execution contacts Azure"
+    }
+
+    It "selects an exact node and includes all matching nodes by default" {
         $actual = @(& $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable -SamplePath "sample_multiple.py" -NodeId "tests/samples/test_samples.py::test_multiple[variant-one]" -Mode "playback-only")
         ($actual -join "`n") | Should Match "variant-one"
-        $caught = $null
-        try { & $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable -SamplePath "sample_multiple.py" -Mode "playback-only" } catch { $caught = $_ }
-        $caught.Exception.Message | Should Match "Multiple pytest nodes"
+        $selectedNodes = @(& $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable -SamplePath "sample_multiple.py" -Mode "playback-only")
+        ($selectedNodes -join "`n") | Should Match "variant-one"
+        ($selectedNodes -join "`n") | Should Match "variant-two"
     }
 
     It "rejects an invalid explicit node" {
         $caught = $null
         try { & $paths.SampleTestRunner -PackageRoot $packageRoot -PythonExecutable $paths.PythonExecutable -SamplePath "sample_multiple.py" -NodeId "tests/samples/test_samples.py::missing[node]" -Mode "playback-only" } catch { $caught = $_ }
-        $caught.Exception.Message | Should Match "requested node id does not execute"
+        $caught.Exception.Message | Should Match "does not match any nodes"
     }
 
     It "reports missing and empty required values" {

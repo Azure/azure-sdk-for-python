@@ -56,7 +56,8 @@ function Resolve-SampleFile {
     return $sampleMatches[0].FullName
 }
 
-$resolvedSample = Resolve-SampleFile $SamplePath
+$hasWildcard = [System.Management.Automation.WildcardPattern]::ContainsWildcardCharacters($SamplePath)
+$resolvedSample = if ($hasWildcard) { $null } else { Resolve-SampleFile $SamplePath }
 $testFiles = @(
     Get-ChildItem -Path (Join-Path $packageRoot "tests\samples") -File -Filter "test_samples*.py" |
         Where-Object { -not $_.Name.EndsWith("_helpers.py") } |
@@ -125,30 +126,54 @@ $pathComparison = if ($env:OS -eq "Windows_NT") {
 } else {
     [System.StringComparison]::Ordinal
 }
-$matchingNodes = @(
-    $records |
-        Where-Object { [string]::Equals($_.samplePath, $resolvedSample, $pathComparison) } |
-        Select-Object -ExpandProperty nodeId -Unique |
-        ForEach-Object {
-            $normalizedNodeId = $_.Replace("\", "/")
-            $testsIndex = $normalizedNodeId.IndexOf("tests/")
-            if ($testsIndex -ge 0) {
-                $normalizedNodeId.Substring($testsIndex)
-            } else {
-                $normalizedNodeId
-            }
-        } |
-        Sort-Object
+$normalizedPattern = $SamplePath.Replace("\", "/")
+$wildcardPattern = if ($hasWildcard) {
+    [System.Management.Automation.WildcardPattern]::new(
+        $normalizedPattern,
+        [System.Management.Automation.WildcardOptions]::IgnoreCase
+    )
+} else {
+    $null
+}
+
+$matchingRecords = @(
+    foreach ($record in $records) {
+        if (-not (Test-Path -LiteralPath $record.samplePath -PathType Leaf)) {
+            continue
+        }
+        $absoluteSamplePath = (Get-Item -LiteralPath $record.samplePath).FullName
+        $isMatch = if ($hasWildcard) {
+            $packageRelativePath = [System.IO.Path]::GetRelativePath($packageRoot, $absoluteSamplePath).Replace("\", "/")
+            $samplesRelativePath = [System.IO.Path]::GetRelativePath($samplesRoot, $absoluteSamplePath).Replace("\", "/")
+            $wildcardPattern.IsMatch($packageRelativePath) -or
+                $wildcardPattern.IsMatch($samplesRelativePath) -or
+                $wildcardPattern.IsMatch([System.IO.Path]::GetFileName($absoluteSamplePath))
+        } else {
+            [string]::Equals($absoluteSamplePath, $resolvedSample, $pathComparison)
+        }
+        if (-not $isMatch) {
+            continue
+        }
+
+        $normalizedNodeId = $record.nodeId.Replace("\", "/")
+        $testsIndex = $normalizedNodeId.IndexOf("tests/")
+        if ($testsIndex -ge 0) {
+            $normalizedNodeId = $normalizedNodeId.Substring($testsIndex)
+        }
+        [pscustomobject]@{
+            SamplePath = [System.IO.Path]::GetRelativePath($packageRoot, $absoluteSamplePath).Replace("/", "\")
+            NodeId = $normalizedNodeId
+        }
+    }
 )
 
-if ($matchingNodes.Count -eq 0) {
+if ($matchingRecords.Count -eq 0) {
+    if ($hasWildcard) {
+        throw "No collected sample tests match wildcard '$SamplePath'."
+    }
     throw "No collected sample test executes '$resolvedSample'. The sample may be excluded from the recorded sample harness."
 }
 
-$relativeSample = [System.IO.Path]::GetRelativePath($packageRoot, $resolvedSample).Replace("/", "\")
-foreach ($nodeId in $matchingNodes) {
-    [pscustomobject]@{
-        SamplePath = $relativeSample
-        NodeId = $nodeId
-    }
-}
+$matchingRecords |
+    Sort-Object SamplePath, NodeId -Unique |
+    Write-Output

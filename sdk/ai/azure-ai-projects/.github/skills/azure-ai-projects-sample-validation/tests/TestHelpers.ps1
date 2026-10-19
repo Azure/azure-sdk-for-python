@@ -10,7 +10,7 @@ function Get-RecordSampleTestPaths {
         EnvironmentScanner = Join-Path $skillRoot "scripts\GetSampleRequiredEnvironmentVariables.ps1"
         EnvironmentFileScanner = Join-Path $skillRoot "scripts\GetEnvironmentFileVariables.ps1"
         SampleResolver = Join-Path $skillRoot "scripts\ResolveSampleTest.ps1"
-        SampleTestRunner = Join-Path $skillRoot "scripts\InvokeSampleTest.ps1"
+        SampleTestRunner = Join-Path $skillRoot "scripts\InvokeSampleValidation.ps1"
         RecordingConflictCheck = Join-Path $skillRoot "scripts\TestRecordingGitConflicts.ps1"
         RecordingStateReset = Join-Path $skillRoot "scripts\ResetRecordingState.ps1"
         PythonExecutable = Join-Path $repositoryPackageRoot ".venv\Scripts\python.exe"
@@ -91,6 +91,39 @@ param([string]$PackageRoot, [string]$BaseBranch)
 New-Item -ItemType File -Path (Join-Path $PackageRoot "recording-conflict-check-called.txt") -Force | Out-Null
 [pscustomobject]@{ AssetRelationship = "synthetic"; SafeToRecord = $true }
 '@ | Set-Content -LiteralPath (Join-Path $Root "synthetic-recording-conflict-check.ps1") -Encoding UTF8
+
+    @'
+[CmdletBinding()]
+param(
+    [string]$Organization,
+    [string]$Project,
+    [int]$DefinitionId,
+    [string]$SourceBranch,
+    [string]$SamplePattern,
+    [string]$TestPattern,
+    [string[]]$EnvironmentVariable,
+    [string]$BearerToken
+)
+
+if ($BearerToken -ne "synthetic-token") {
+    throw "Unexpected bearer token."
+}
+[ordered]@{
+    Organization = $Organization
+    Project = $Project
+    DefinitionId = $DefinitionId
+    SourceBranch = $SourceBranch
+    SamplePattern = $SamplePattern
+    TestPattern = $TestPattern
+    EnvironmentVariables = $EnvironmentVariable
+} | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $PSScriptRoot "pipeline-queue.json") -Encoding UTF8
+[pscustomobject]@{
+    BuildId = 123
+    PipelineName = "synthetic sample validation"
+    Url = "https://dev.azure.com/example/build/123"
+    SourceBranch = $SourceBranch
+}
+'@ | Set-Content -LiteralPath (Join-Path $Root "synthetic-pipeline-queue.ps1") -Encoding UTF8
 
     @'
 def loader(**kwargs):

@@ -16,6 +16,8 @@ Describe "ResetRecordingState.ps1" {
             @(
                 [pscustomobject]@{ ProcessName = "testproxy" },
                 [pscustomobject]@{ ProcessName = "prefix-testproxy-child" },
+                [pscustomobject]@{ ProcessName = "test-proxy" },
+                [pscustomobject]@{ ProcessName = "test_proxy_worker" },
                 [pscustomobject]@{ ProcessName = "python" }
             )
         }.GetNewClosure()
@@ -29,7 +31,7 @@ Describe "ResetRecordingState.ps1" {
         & $paths.RecordingStateReset -PackageRoot $packageRoot `
             -ProcessProvider $provider -ProcessStopper $stopper
 
-        ($stoppedNames -join ",") | Should Be "testproxy,prefix-testproxy-child"
+        ($stoppedNames -join ",") | Should Be "testproxy,prefix-testproxy-child,test-proxy,test_proxy_worker"
         (Test-Path -LiteralPath $cachePath) | Should Be $false
     }
 

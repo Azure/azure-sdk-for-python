@@ -1,0 +1,99 @@
+trigger: none
+pr: none
+
+parameters:
+  - name: SamplePattern
+    type: string
+    default: 'samples/**/*.py'
+  - name: TestPattern
+    type: string
+    default: ''
+  - name: EnvironmentVariableNames
+    type: object
+    default: []
+
+extends:
+  template: /eng/pipelines/templates/stages/1es-redirect.yml
+  parameters:
+    stages:
+      - stage: LiveSampleValidation
+        displayName: Live sample validation
+        dependsOn: []
+        jobs:
+          - job: ValidateSamples
+            displayName: Validate selected samples
+            timeoutInMinutes: 120
+            pool:
+              name: azsdk-pool
+              image: ubuntu-24.04
+              os: linux
+            steps:
+              - checkout: self
+
+              - template: /eng/pipelines/templates/steps/use-python-version.yml
+                parameters:
+                  versionSpec: '3.12'
+
+              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                parameters:
+                  EnableTwineAuth: false
+
+              - template: /eng/pipelines/templates/steps/use-venv.yml
+
+              - pwsh: |
+                  $ErrorActionPreference = 'Stop'
+                  $PSNativeCommandUseErrorActionPreference = $true
+                  $(PIP_EXE) install -e sdk/ai/azure-ai-projects -r sdk/ai/azure-ai-projects/dev_requirements.txt
+                displayName: Install test dependencies
+
+              - task: AzurePowerShell@5
+                displayName: Run selected samples live
+                env:
+                  SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+                  AZURE_POD_IDENTITY_AUTHORITY_HOST: https://FakeAuthorityHost
+                  SAMPLE_ENVIRONMENT_VARIABLE_NAMES_JSON: ${{ convertToJson(parameters.EnvironmentVariableNames) }}
+                  SAMPLE_PATTERN: ${{ parameters.SamplePattern }}
+                  TEST_PATTERN: ${{ parameters.TestPattern }}
+                  ${{ each variableName in parameters.EnvironmentVariableNames }}:
+                    ${{ variableName }}: $(${{ variableName }})
+                inputs:
+                  azureSubscription: azure-sdk-tests-public
+                  azurePowerShellVersion: LatestVersion
+                  pwsh: true
+                  ScriptType: InlineScript
+                  Inline: |
+                    $ErrorActionPreference = 'Stop'
+                    $PSNativeCommandUseErrorActionPreference = $true
+
+                    $context = Get-AzContext
+                    $env:AZURESUBSCRIPTION_CLIENT_ID = $context.Account.Id
+                    $env:AZURESUBSCRIPTION_TENANT_ID = $context.Tenant.Id
+
+                    $environmentVariables = @(
+                      foreach ($name in @($env:SAMPLE_ENVIRONMENT_VARIABLE_NAMES_JSON | ConvertFrom-Json)) {
+                        "$name=$([Environment]::GetEnvironmentVariable($name))"
+                      }
+                    )
+                    $arguments = @{
+                      SamplePattern = $env:SAMPLE_PATTERN
+                      Mode = 'live-test-locally'
+                      Run = $true
+                      ConfirmSelection = $true
+                      ConfirmLive = $true
+                      EnvironmentVariable = $environmentVariables
+                      JUnitXml = "$(Build.SourcesDirectory)/sdk/ai/azure-ai-projects/test-junit-samples.xml"
+                      HideEnvironmentValues = $true
+                    }
+                    if ($env:TEST_PATTERN) {
+                      $arguments.TestPattern = $env:TEST_PATTERN
+                    }
+
+                    ./sdk/ai/azure-ai-projects/.github/skills/azure-ai-projects-sample-validation/scripts/InvokeSampleValidation.ps1 @arguments
+
+              - task: PublishTestResults@2
+                displayName: Publish sample test results
+                condition: always()
+                inputs:
+                  testResultsFiles: '**/test-junit*.xml'
+                  testRunTitle: azure-ai-projects live sample validation
+                  failTaskOnFailedTests: true

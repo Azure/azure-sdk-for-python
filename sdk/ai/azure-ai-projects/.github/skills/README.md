@@ -57,9 +57,9 @@ This skill compares a newly emitted or merged public API surface with its select
 
 This skill updates existing pytest coverage and authors complete sync/async Test Proxy tests for new behavior. New recorded service tests remain enabled so missing-recording errors surface in PR validation and authors can contact the SDK maintainer for help.
 
-### azure-ai-projects-record-sample
+### azure-ai-projects-sample-validation
 
-This skill prompts for record-and-playback, record-only, playback-only, or live test locally, then runs one parameterized sample test. It scans required environment variables and passes effective `.env` values as pytest arguments.
+This skill validates exact or wildcard-selected recorded samples through recording, playback, local live execution, or the azure-ai-projects Azure DevOps live-test pipeline. It resolves every matching pytest node and supports repeatable command-line environment overrides.
 
 ### azure-ai-projects-model-reference-graph
 

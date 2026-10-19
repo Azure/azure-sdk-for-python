@@ -16,7 +16,9 @@ if ($PackageRoot) {
 }
 
 $testProxyProcesses = @(
-    & $ProcessProvider | Where-Object { $_.ProcessName -like "*testproxy*" }
+    & $ProcessProvider | Where-Object {
+        ($_.ProcessName -replace "[-_ ]", "") -like "*testproxy*"
+    }
 )
 if ($testProxyProcesses.Count -gt 0) {
     & $ProcessStopper $testProxyProcesses
