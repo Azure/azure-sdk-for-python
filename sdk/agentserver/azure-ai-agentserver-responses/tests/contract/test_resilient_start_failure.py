@@ -35,6 +35,8 @@ from azure.ai.agentserver.core.tasks import (
 from azure.ai.agentserver.core.tasks._manager import get_task_manager, set_task_manager
 from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesServerOptions
 from azure.ai.agentserver.responses.hosting import _resilient_orchestrator as _ro
+from azure.ai.agentserver.responses.hosting._runtime_state import _RuntimeState
+from azure.ai.agentserver.responses.models.runtime import ResponseExecution
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 
@@ -225,6 +227,56 @@ class TestNoTaskManagerSwallowsAndRunsInProcess:
 class TestSnapshotTaskActivation:
     """Task definitions stay process-side; requests follow session activation."""
 
+    def test_enabled_cold_start_installs_task_runtime(self, _switch_off: Any) -> None:
+        set_resilient_tasks_enabled(True)
+        with _build_client():
+            assert get_task_manager() is not None
+
+    @pytest.mark.parametrize("background", [False, True])
+    @pytest.mark.parametrize("user_id", [None, "snapshot-user"])
+    def test_deferred_start_failure_removes_scoped_runtime(
+        self, _switch_off: Any, monkeypatch: pytest.MonkeyPatch, background: bool, user_id: str | None
+    ) -> None:
+        monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "true")
+        set_resilient_tasks_enabled(True)
+        registered: list[tuple[_RuntimeState, ResponseExecution]] = []
+        original_add = _RuntimeState.add
+
+        async def observe_add(
+            state: _RuntimeState,
+            record: ResponseExecution,
+            *,
+            expected_record: ResponseExecution | None = None,
+        ) -> bool:
+            registered.append((state, record))
+            return await original_add(state, record, expected_record=expected_record)
+
+        monkeypatch.setattr(_RuntimeState, "add", observe_add)
+        called: list[bool] = []
+
+        async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
+            called.append(True)
+            return await _noop_handler(request, context, cancellation_signal)
+
+        headers = {"x-agent-user-id": user_id} if user_id is not None else {}
+        with _build_client(handler) as http:
+            response = http.post(
+                "/responses",
+                headers=headers,
+                json={"model": "test", "input": "hi", "stream": False, "store": True, "background": background},
+            )
+            assert response.status_code == 500, response.text
+            assert response.headers.get(ERROR_SOURCE) == "platform"
+            assert not called
+            assert len(registered) == 1
+            state, record = registered[0]
+            assert record.user_id_key == user_id
+            assert http.portal is not None
+            assert http.portal.call(state.get, record.response_id, user_id) is None
+            assert http.portal.call(state.is_deleted, record.response_id, user_id)
+            assert not http.portal.call(state.is_deleted, record.response_id, "unrelated-user")
+            assert http.get(f"/responses/{record.response_id}", headers=headers).status_code == 404
+
     @pytest.mark.parametrize("stream", [False, True])
     def test_enabled_missing_runtime_does_not_fall_back(
         self, _switch_off: Any, monkeypatch: pytest.MonkeyPatch, stream: bool
@@ -285,6 +337,7 @@ class TestSnapshotTaskActivation:
     def test_requests_after_restore_use_registered_task_runtime(
         self, _switch_off: Any, monkeypatch: pytest.MonkeyPatch
     ) -> None:
+        monkeypatch.delenv("FOUNDRY_AGENT_SESSION_ID", raising=False)
         monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "true")
         set_resilient_tasks_enabled(True)
         with _build_client() as http:

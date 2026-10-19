@@ -211,6 +211,10 @@ cancels owned execution, renewal, and watchdog tasks, invalidates
 initialization state, and clears only its own singleton. Before the host rolls
 back session configuration, it asks cleanup to also wait for those tasks to
 finish, so cancelled handlers complete under the binding they started with.
+This rollback-only cleanup preserves unfinished task records and saved inputs.
+It stops workers before expiring their leases, allowing a restore retry to
+recover the original task rather than treating interruption as user cancellation.
+Ordinary shutdown and explicit task cancellation keep their existing behavior.
 
 Completed inactive phase resources can survive a failed restore attempt and
 be reused after the same session is rebound. However, rollback cannot revert
@@ -256,6 +260,9 @@ When resilience is enabled and startup is deferred (the variable is
 handling instead of silently running non-durably. When resilience is
 intentionally disabled, or startup is not deferred (absent/`false`, including in-process
 clients whose lifespan never ran), the existing in-process fallback remains.
+
+Deferred-start failures remove the exact caller-scoped execution record before
+propagating the error, so an execution that never started is not retained.
 
 No new HTTP 503 contract is introduced. Normal platform request admission
 occurs after successful restore.

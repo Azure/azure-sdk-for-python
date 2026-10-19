@@ -560,7 +560,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                     restore_id,
                 )
 
-    async def _shutdown_task_manager(self, *, wait_for_workers: bool = False) -> None:
+    async def _shutdown_task_manager(self, *, preserve_recoverable_tasks: bool = False) -> None:
         async with self._task_manager_lock:
             if self._task_manager is not None:
                 from .tasks._exceptions import (
@@ -572,8 +572,8 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 )  # pylint: disable=import-outside-toplevel
 
                 manager = self._task_manager
-                if wait_for_workers:
-                    await manager.shutdown(wait_for_workers=True)
+                if preserve_recoverable_tasks:
+                    await manager.shutdown(wait_for_workers=True, preserve_recoverable_tasks=True)
                 else:
                     await manager.shutdown()
                 try:
@@ -595,7 +595,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
             ):
                 return False
         logger.warning("Stopping task runtime before restoring its previous session binding")
-        cleanup = asyncio.create_task(self._shutdown_task_manager(wait_for_workers=True))
+        cleanup = asyncio.create_task(self._shutdown_task_manager(preserve_recoverable_tasks=True))
         interrupted = False
         while True:
             try:
