@@ -255,6 +255,9 @@ async def _capture_async_query_builder(query):
     connection.pipeline_client.post.return_value = _DummyRequest()
     connection._enable_compact_utf8_item_writes = True
     connection._UpdateSessionIfRequired = mock.Mock()
+    # __init__ is bypassed above, so _setup_complete must be set explicitly;
+    # otherwise _setup() (invoked internally by QueryFeed) raises AttributeError.
+    connection._setup_complete = True
     captured = {}
 
     async def _fake_execute(  # pylint: disable=too-many-arguments,too-many-positional-arguments

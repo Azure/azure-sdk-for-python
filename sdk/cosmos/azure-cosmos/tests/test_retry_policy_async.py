@@ -24,31 +24,11 @@ from azure.cosmos._constants import _Constants
 from azure.cosmos._health_check_retry_policy import HealthCheckRetryPolicy
 from _client_transport import create_client_with_transport
 
-class ConnectionMode:
-    """Represents the connection mode to be used by the client."""
-    Gateway: int = 0
-    """Use the Azure Cosmos gateway to route all requests. The gateway proxies
-    requests to the right data partition.
-    """
-
-class ConnectionPolicy:
-    #Represents the Connection policy associated with a CosmosClientConnection.
-    __defaultRequestTimeout: int = 5  # seconds
-    __defaultDBAConnectionTimeout: int = 3  # seconds
-    __defaultMaxBackoff: int = 1 # seconds
-
-    def __init__(self) -> None:
-        self.RequestTimeout: int = self.__defaultRequestTimeout
-        self.DBAConnectionTimeout: int = self.__defaultDBAConnectionTimeout
-        self.MaxBackoff: int = self.__defaultMaxBackoff
-        self.ConnectionMode: int = ConnectionMode.Gateway
-        self.EnableEndpointDiscovery: bool = True
-        self.PreferredLocations: List[str] = []
-        self.ExcludedLocations = []
-        self.RetryOptions: RetryOptions = RetryOptions()
-        self.UseMultipleWriteLocations: bool = False
-        self.ConnectionRetryConfiguration: Optional["ConnectionRetryPolicy"] = None
-        self.ResponsePayloadOnWriteDisabled: bool = False
+# Use the real azure.cosmos.documents.ConnectionPolicy/ConnectionMode (imported as `documents`
+# above) rather than a local lookalike, so isinstance checks in resolve_connection_policy_kwargs
+# and copy_connection_policy succeed.
+ConnectionMode = documents.ConnectionMode
+ConnectionPolicy = documents.ConnectionPolicy
 
 async def setup_method_with_custom_transport(
         custom_transport,
