@@ -120,6 +120,7 @@ class BaseExporter:
 
         :keyword str api_version: The service API version used. Defaults to latest.
         :keyword str connection_string: The connection string used for your Application Insights resource.
+        :keyword bool enable_multi_endpoint_routing: Opt in to per-item multi-endpoint routing. Defaults to `False`.
         :keyword ManagedIdentityCredential/ClientSecretCredential credential: Token credential, such as ManagedIdentityCredential or ClientSecretCredential, used for Azure Active Directory (AAD) authentication. Defaults to None.
         :keyword bool disable_offline_storage: Determines whether to disable storing failed telemetry records for retry. Defaults to `False`.
         :keyword str storage_directory: Storage path in which to store retry files. Defaults to `<tempfile.gettempdir()>/opentelemetry-python-<your-instrumentation-key>`.
@@ -127,6 +128,10 @@ class BaseExporter:
         :rtype: None
         """
         _get_experimental_features()
+        enable_routing = kwargs.pop("enable_multi_endpoint_routing", False)
+        if not isinstance(enable_routing, bool):
+            raise TypeError("enable_multi_endpoint_routing must be a boolean.")
+        self._enable_multi_endpoint_routing = enable_routing
         parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST

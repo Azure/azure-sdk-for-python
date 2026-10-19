@@ -24,6 +24,8 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _STATSBEAT_STATE,
 )
 from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
+from azure.monitor.opentelemetry.exporter.export.logs._exporter import AzureMonitorLogExporter
+from azure.monitor.opentelemetry.exporter.export.trace._exporter import AzureMonitorTraceExporter
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES,
     _DEFAULT_AAD_SCOPE,
@@ -151,6 +153,33 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._api_version, "2021-02-10_Preview")
         self.assertEqual(base._storage_min_retry_interval, 100)
         self.assertEqual(base._storage_directory, "test/path")
+        self.assertIs(base._enable_multi_endpoint_routing, False)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_constructor_multi_endpoint_routing(self, mock_client):
+        for exporter_type in (
+            BaseExporter,
+            AzureMonitorTraceExporter,
+            AzureMonitorLogExporter,
+            AzureMonitorMetricExporter,
+        ):
+            with self.subTest(exporter_type=exporter_type):
+                enabled = exporter_type(enable_multi_endpoint_routing=True, disable_offline_storage=True)
+                disabled = exporter_type(enable_multi_endpoint_routing=False, disable_offline_storage=True)
+                default = exporter_type(disable_offline_storage=True)
+                self.assertIs(enabled._enable_multi_endpoint_routing, True)
+                self.assertIs(disabled._enable_multi_endpoint_routing, False)
+                self.assertIs(default._enable_multi_endpoint_routing, False)
+        for call in mock_client.call_args_list:
+            self.assertNotIn("enable_multi_endpoint_routing", call.kwargs)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ConnectionStringParser")
+    def test_constructor_invalid_multi_endpoint_routing(self, mock_parser):
+        for value in (None, "true", "false", 1, 0, [], {}):
+            with self.subTest(value=value):
+                with self.assertRaisesRegex(TypeError, "enable_multi_endpoint_routing must be a boolean"):
+                    BaseExporter(enable_multi_endpoint_routing=value)
+        mock_parser.assert_not_called()
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
     def test_constructor_no_storage_directory(self, mock_get_temp_dir):
