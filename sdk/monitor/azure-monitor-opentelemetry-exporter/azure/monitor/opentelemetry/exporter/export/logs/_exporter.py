@@ -45,6 +45,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _MICROSOFT_AVAILABILITY_SUCCESS,
     _MICROSOFT_CUSTOM_EVENT_NAME,
     _MICROSOFT_CUSTOM_MEASUREMENTS,
+    _MULTI_ENDPOINT_ROUTING_ATTRIBUTES,
 )
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     AvailabilityData,
@@ -127,6 +128,7 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
         envelope = _convert_log_to_envelope(
             readable_log_record,
             increase_truncation_limit=self._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
+            exclude_routing_attributes=self._enable_multi_endpoint_routing,
         )
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
@@ -165,7 +167,8 @@ def _log_data_is_event(readable_log_record: ReadableLogRecord) -> bool:
 # pylint: disable=too-many-statements
 # pylint: disable=too-many-branches
 def _convert_log_to_envelope(
-    readable_log_record: ReadableLogRecord, *, increase_truncation_limit: bool = False
+    readable_log_record: ReadableLogRecord, *, increase_truncation_limit: bool = False,
+    exclude_routing_attributes: bool = False,
 ) -> TelemetryItem:
     log_record = readable_log_record.log_record
     time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
@@ -199,8 +202,8 @@ def _convert_log_to_envelope(
     if location_ip:
         tags[ContextTagKeys.AI_LOCATION_IP] = location_ip  # type: ignore
     properties = _utils._filter_custom_properties(
-        log_record.attributes,
-        lambda key, val: not _is_ignored_attribute(key),  # type: ignore
+        log_record.attributes,  # type: ignore[arg-type]
+        lambda key, val: not _is_ignored_attribute(key, exclude_routing_attributes=exclude_routing_attributes),
         increase_truncation_limit=increase_truncation_limit,
     )
     measurements = _utils._filter_custom_measurements(log_record.attributes)
@@ -352,8 +355,8 @@ def _get_availability_data(log_record) -> Optional[Dict[str, str]]:
     return {key: str(value) for key, value in availability_data.items() if value is not None}
 
 
-def _is_ignored_attribute(key: str) -> bool:
-    return key in _IGNORED_ATTRS
+def _is_ignored_attribute(key: str, *, exclude_routing_attributes: bool = False) -> bool:
+    return key in _IGNORED_ATTRS or (exclude_routing_attributes and key in _MULTI_ENDPOINT_ROUTING_ATTRIBUTES)
 
 
 _IGNORED_ATTRS = frozenset(

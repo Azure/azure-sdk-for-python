@@ -366,6 +366,42 @@ class TestAzureLogExporter(unittest.TestCase):
             self.assertEqual(result, LogRecordExportResult.SUCCESS)
             self.assertEqual(storage_mock.call_count, 1)
 
+    def test_export_routing_attributes(self):
+        attributes = {
+            "microsoft.instrumentation_key": "customer-key",
+            "microsoft.ingestion_endpoint": "https://example.com/",
+            "microsoft.multi_endpoint_cloud_role": "customer-service",
+            "microsoft.ingestion_auth": "ikey",
+            "custom": "value",
+            "microsoft.custom": "preserved",
+        }
+        record = _logs.ReadWriteLogRecord(
+            LogRecord(body="message", attributes=attributes.copy()), resource=Resource({})
+        )
+        for routing in (False, True):
+            with self.subTest(routing=routing):
+                exporter = type(self)._exporter_class(
+                    enable_multi_endpoint_routing=routing, disable_offline_storage=True
+                )
+                self.addCleanup(exporter.client.close)
+                with mock.patch.object(exporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
+                    self.assertEqual(exporter.export([record]), LogRecordExportResult.SUCCESS)
+                transmit.assert_called_once()
+                envelopes = transmit.call_args.args[0]
+                self.assertEqual(len(envelopes), 1)
+                self.assertEqual(envelopes[0].data.base_type, "MessageData")
+                properties = envelopes[0].data.base_data.properties
+                self.assertEqual(properties["custom"], "value")
+                self.assertEqual(properties["microsoft.custom"], "preserved")
+                if routing:
+                    self.assertNotIn("microsoft.instrumentation_key", properties)
+                    self.assertNotIn("microsoft.ingestion_endpoint", properties)
+                    self.assertNotIn("microsoft.multi_endpoint_cloud_role", properties)
+                    self.assertNotIn("microsoft.ingestion_auth", properties)
+                else:
+                    self.assertEqual(properties, attributes)
+                self.assertEqual(record.log_record.attributes, attributes)
+
     @mock.patch("azure.monitor.opentelemetry.exporter.export.logs._exporter._logger")
     def test_export_exception(self, logger_mock):
         exporter = self._exporter

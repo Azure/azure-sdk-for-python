@@ -168,6 +168,56 @@ class TestAzureTraceExporter(unittest.TestCase):
             self.assertEqual(result, SpanExportResult.SUCCESS)
             self.assertEqual(storage_mock.call_count, 1)
 
+    @mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED": "true"})
+    def test_export_routing_attributes(self):
+        attributes = {
+            "microsoft.instrumentation_key": "customer-key",
+            "microsoft.ingestion_endpoint": "https://example.com/",
+            "microsoft.multi_endpoint_cloud_role": "customer-service",
+            "microsoft.ingestion_auth": "ikey",
+            "custom": "value",
+            "microsoft.custom": "preserved",
+        }
+        span = trace.ReadableSpan(
+            name="test",
+            context=SpanContext(trace_id=1, span_id=2, is_remote=False),
+            start_time=1,
+            end_time=2,
+            attributes=attributes.copy(),
+            events=(
+                trace.Event("event", attributes=attributes.copy()),
+                trace.Event("exception", attributes=attributes.copy()),
+            ),
+        )
+        for routing in (False, True):
+            with self.subTest(routing=routing):
+                exporter = AzureMonitorTraceExporter(
+                    enable_multi_endpoint_routing=routing, disable_offline_storage=True
+                )
+                self.addCleanup(exporter.client.close)
+                with mock.patch.object(exporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
+                    self.assertEqual(exporter.export([span]), SpanExportResult.SUCCESS)
+                transmit.assert_called_once()
+                envelopes = transmit.call_args.args[0]
+                self.assertEqual(
+                    [envelope.data.base_type for envelope in envelopes],
+                    ["RemoteDependencyData", "MessageData", "ExceptionData"],
+                )
+                for envelope in envelopes:
+                    properties = envelope.data.base_data.properties
+                    self.assertEqual(properties["custom"], "value")
+                    self.assertEqual(properties["microsoft.custom"], "preserved")
+                    if routing:
+                        self.assertNotIn("microsoft.instrumentation_key", properties)
+                        self.assertNotIn("microsoft.ingestion_endpoint", properties)
+                        self.assertNotIn("microsoft.multi_endpoint_cloud_role", properties)
+                        self.assertNotIn("microsoft.ingestion_auth", properties)
+                    else:
+                        self.assertEqual(properties, attributes)
+                self.assertEqual(span.attributes, attributes)
+                for event in span.events:
+                    self.assertEqual(event.attributes, attributes)
+
     def test_export_with_tracer_provider(self):
         mock_resource = mock.Mock()
         tp = trace.TracerProvider(

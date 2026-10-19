@@ -42,6 +42,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _EXPORTER_DOMAIN_SCHEMA_VERSION,
     _INSTRUMENTATION_SUPPORTING_METRICS_LIST,
     _MICROSOFT_CUSTOM_MEASUREMENTS,
+    _MULTI_ENDPOINT_ROUTING_ATTRIBUTES,
     _SAMPLE_RATE_KEY,
     _METRIC_ENVELOPE_NAME,
     _MESSAGE_ENVELOPE_NAME,
@@ -216,6 +217,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         envelope = _convert_span_to_envelope(
             span,
             increase_truncation_limit=self._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
+            exclude_routing_attributes=self._enable_multi_endpoint_routing,
         )
         envelope.instrumentation_key = self._instrumentation_key
         return envelope  # type: ignore
@@ -226,6 +228,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         envelopes = _convert_span_events_to_envelopes(
             span,
             increase_truncation_limit=self._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
+            exclude_routing_attributes=self._enable_multi_endpoint_routing,
         )
         for envelope in envelopes:
             envelope.instrumentation_key = self._instrumentation_key
@@ -263,7 +266,9 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
 # pylint: disable=too-many-locals
 # mypy: disable-error-code="assignment,attr-defined,index,operator,union-attr"
 @no_type_check
-def _convert_span_to_envelope(span: ReadableSpan, *, increase_truncation_limit: bool = False) -> TelemetryItem:
+def _convert_span_to_envelope(
+    span: ReadableSpan, *, increase_truncation_limit: bool = False, exclude_routing_attributes: bool = False
+) -> TelemetryItem:
     # Update instrumentation bitmap if span was generated from instrumentation
     _check_instrumentation_span(span)
     duration = 0
@@ -544,7 +549,7 @@ def _convert_span_to_envelope(span: ReadableSpan, *, increase_truncation_limit: 
 
     data.properties = _utils._filter_custom_properties(
         span.attributes,
-        lambda key, val: not _is_standard_attribute(key),
+        lambda key, val: not _is_standard_attribute(key, exclude_routing_attributes=exclude_routing_attributes),
         increase_truncation_limit=increase_truncation_limit,
     )
 
@@ -572,7 +577,7 @@ def _convert_span_to_envelope(span: ReadableSpan, *, increase_truncation_limit: 
 
 # pylint: disable=protected-access
 def _convert_span_events_to_envelopes(
-    span: ReadableSpan, *, increase_truncation_limit: bool = False
+    span: ReadableSpan, *, increase_truncation_limit: bool = False, exclude_routing_attributes: bool = False
 ) -> Sequence[TelemetryItem]:
     envelopes = []
     for event in span.events:
@@ -593,7 +598,7 @@ def _convert_span_events_to_envelopes(
 
         properties = _utils._filter_custom_properties(
             event.attributes,
-            lambda key, val: not _is_standard_attribute(key),
+            lambda key, val: not _is_standard_attribute(key, exclude_routing_attributes=exclude_routing_attributes),
             increase_truncation_limit=increase_truncation_limit,
         )
         measurements = _utils._filter_custom_measurements(event.attributes)
@@ -659,7 +664,7 @@ def _check_instrumentation_span(span: ReadableSpan) -> None:
         _utils.add_instrumentation(name)
 
 
-def _is_standard_attribute(key: str) -> bool:
+def _is_standard_attribute(key: str, *, exclude_routing_attributes: bool = False) -> bool:
     for prefix in _STANDARD_OPENTELEMETRY_ATTRIBUTE_PREFIXES:
         if key.startswith(prefix):
             return True
@@ -667,6 +672,7 @@ def _is_standard_attribute(key: str) -> bool:
         key in _STANDARD_OPENTELEMETRY_ATTRIBUTES
         or key in _STANDARD_AZURE_MONITOR_ATTRIBUTES
         or key in _STANDARD_OPENTELEMETRY_HTTP_ATTRIBUTES
+        or (exclude_routing_attributes and key in _MULTI_ENDPOINT_ROUTING_ATTRIBUTES)
     )
 
 

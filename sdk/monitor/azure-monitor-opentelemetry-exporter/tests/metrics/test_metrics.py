@@ -165,6 +165,53 @@ class TestAzureMetricExporter(unittest.TestCase):
             self.assertEqual(result, MetricExportResult.SUCCESS)
             self.assertEqual(storage_mock.call_count, 1)
 
+    @mock.patch("azure.monitor.opentelemetry.exporter._utils._is_on_aks", return_value=False)
+    def test_export_routing_attributes(self, _is_on_aks):
+        attributes = {
+            "microsoft.instrumentation_key": "customer-key",
+            "microsoft.ingestion_endpoint": "https://example.com/",
+            "microsoft.multi_endpoint_cloud_role": "customer-service",
+            "microsoft.ingestion_auth": "ikey",
+            "custom": "value",
+            "microsoft.custom": "preserved",
+        }
+        point = NumberDataPoint(attributes=attributes.copy(), start_time_unix_nano=1, time_unix_nano=2, value=1)
+        metric = Metric(
+            name="custom",
+            description="",
+            unit="",
+            data=Sum(
+                data_points=[point], aggregation_temporality=AggregationTemporality.CUMULATIVE, is_monotonic=False
+            ),
+        )
+        scope = ScopeMetrics(scope=InstrumentationScope("test"), metrics=[metric], schema_url="")
+        data = MetricsData(
+            resource_metrics=[ResourceMetrics(resource=Resource({}), scope_metrics=[scope], schema_url="")]
+        )
+        for routing in (False, True):
+            with self.subTest(routing=routing):
+                exporter = AzureMonitorMetricExporter(
+                    enable_multi_endpoint_routing=routing, disable_offline_storage=True
+                )
+                self.addCleanup(exporter.client.close)
+                with mock.patch.object(exporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
+                    self.assertEqual(exporter.export(data), MetricExportResult.SUCCESS)
+                transmit.assert_called_once()
+                envelopes = transmit.call_args.args[0]
+                self.assertEqual(len(envelopes), 1)
+                self.assertEqual(envelopes[0].data.base_type, "MetricData")
+                properties = envelopes[0].data.base_data.properties
+                self.assertEqual(properties["custom"], "value")
+                self.assertEqual(properties["microsoft.custom"], "preserved")
+                if routing:
+                    self.assertNotIn("microsoft.instrumentation_key", properties)
+                    self.assertNotIn("microsoft.ingestion_endpoint", properties)
+                    self.assertNotIn("microsoft.multi_endpoint_cloud_role", properties)
+                    self.assertNotIn("microsoft.ingestion_auth", properties)
+                else:
+                    self.assertEqual(properties, attributes)
+                self.assertEqual(point.attributes, attributes)
+
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._logger")
     def test_export_exception(self, logger_mock):
         exporter = self._exporter

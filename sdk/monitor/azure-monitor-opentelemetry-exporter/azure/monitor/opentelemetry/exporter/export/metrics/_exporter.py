@@ -42,6 +42,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _EXPORTER_DOMAIN_SCHEMA_VERSION,
     _CUSTOMER_SDKSTATS_METRIC_NAME_MAPPINGS,
     _METRIC_ENVELOPE_NAME,
+    _MULTI_ENDPOINT_ROUTING_ATTRIBUTES,
     _STATSBEAT_METRIC_NAME_MAPPINGS,
 )
 from azure.monitor.opentelemetry.exporter import _utils
@@ -179,6 +180,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             resource,
             scope,
             increase_truncation_limit=self._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
+            exclude_routing_attributes=self._enable_multi_endpoint_routing,
         )
         # Note that Performance Counters are not counted as "Autocollected standard metrics"
         if name in _AUTOCOLLECTED_INSTRUMENT_NAMES:
@@ -243,6 +245,7 @@ def _convert_point_to_envelope(
     scope: Optional[InstrumentationScope] = None,
     *,
     increase_truncation_limit: bool = False,
+    exclude_routing_attributes: bool = False,
 ) -> TelemetryItem:
     envelope = _utils._create_telemetry_item(point.time_unix_nano)
     envelope.name = _METRIC_ENVELOPE_NAME
@@ -267,7 +270,11 @@ def _convert_point_to_envelope(
         max_ = point.max
 
     # truncation logic
-    properties = _utils._filter_custom_properties(point.attributes, increase_truncation_limit=increase_truncation_limit)
+    properties = _utils._filter_custom_properties(
+        point.attributes,
+        lambda key, val: not (exclude_routing_attributes and key in _MULTI_ENDPOINT_ROUTING_ATTRIBUTES),
+        increase_truncation_limit=increase_truncation_limit,
+    )
 
     # Map OTel-friendly name to Breeze Performance Counter name
     # Note that Performance Counters are not counted as "Autocollected standard metrics"
