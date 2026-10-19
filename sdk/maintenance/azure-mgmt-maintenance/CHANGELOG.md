@@ -10,10 +10,11 @@
   - Added model `ScheduledEventsIdList`
   - Added model `ScheduledEventsListAcknowledgeError`
   - Added model `ScheduledEventsListAcknowledgeErrorDetails`
+  - Added operation group `ScheduledEventsOperations`
 
 ### Breaking Changes
 
-  - Renamed operation group `ScheduledEventOperations` to `ScheduledEventsOperations`
+  - Deleted or renamed client operation group `MaintenanceManagementClient.scheduled_event`
   - Deleted or renamed model `ScheduledEventApproveResponse`
   - Deleted or renamed model `ScheduledEventOperations`
 
