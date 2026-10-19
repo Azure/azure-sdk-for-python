@@ -123,6 +123,7 @@
 
 ### Other Changes
 
+- Require Core `2.3.0b2` or later for snapshot task deferral and rollback handling.
 - Require Core's snapshot lifecycle integration. While task startup is deferred
   (`FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true`), enabled-but-uninitialized
   task errors are propagated instead of running non-durably; intentional opt-out
