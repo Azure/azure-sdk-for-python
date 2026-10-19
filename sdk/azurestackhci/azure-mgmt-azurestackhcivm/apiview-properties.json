@@ -436,5 +436,5 @@
         "azure.mgmt.azurestackhcivm.operations.Operations.list": "Azure.ResourceManager.Operations.list",
         "azure.mgmt.azurestackhcivm.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list"
     },
-    "CrossLanguageVersion": "dfd5ae4eddff"
+    "CrossLanguageVersion": "8e207b204b20"
 }

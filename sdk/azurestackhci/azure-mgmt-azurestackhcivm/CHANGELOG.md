@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (2026-10-15)
+## 1.0.0b2 (2026-10-19)
 
 ### Features Added
 
@@ -100,7 +100,7 @@
   - Added model `VirtualNetworkSubnetUpdateProperties`
   - Added model `VirtualNetworkSubnetUpdateRequest`
   - Added model `VirtualNetworkTagsUpdate`
-  - Operation group `VirtualMachineInstancesOperations` added method `begin_power_off`
+  - Model `VirtualMachineInstancesOperations` added method `begin_power_off`
   - Added operation group `InboundRulesOperations`
   - Added operation group `LoadBalancersOperations`
   - Added operation group `NatGatewaysOperations`
