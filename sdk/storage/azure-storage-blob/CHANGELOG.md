@@ -15,6 +15,10 @@
 - Added public `SignedIdentifier` model and updated `ContainerClient.get_container_access_policy`
   and `azure.storage.blob.aio.ContainerClient.get_container_access_policy` to return public
   models instead of generated internal types.
+- Changed the default `max_single_put_size` from 64 MiB to 4 MiB and the default `max_single_get_size` from 32 MiB
+to 4 MiB for all clients. Uploads and downloads larger than 4 MiB will now be performed in multiple requests by
+default. To restore the previous behavior, pass `max_single_put_size=64 * 1024 * 1024` and
+`max_single_get_size=32 * 1024 * 1024` when constructing the client.
 
 ## 12.31.0 (2026-09-30)
 
