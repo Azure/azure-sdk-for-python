@@ -5,6 +5,7 @@ import unittest
 from dataclasses import FrozenInstanceError
 from types import MappingProxyType
 
+from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._routing import (
     _get_cloud_role,
     _get_ingestion_endpoint,
@@ -12,6 +13,8 @@ from azure.monitor.opentelemetry.exporter._routing import (
     _get_route,
     _is_aad_route,
 )
+from azure.monitor.opentelemetry.exporter.export.logs._exporter import _is_ignored_attribute
+from azure.monitor.opentelemetry.exporter.export.trace._exporter import _is_standard_attribute
 
 
 class TestRouting(unittest.TestCase):
@@ -219,3 +222,36 @@ class TestRoute(unittest.TestCase):
         self.assertEqual(route.instrumentation_key, "customer-key")
         with self.assertRaises(FrozenInstanceError):
             route.instrumentation_key = "changed-key"
+
+
+class TestRoutingProperties(unittest.TestCase):
+    def setUp(self):
+        self.attributes = {
+            "microsoft.instrumentation_key": "customer-key",
+            "microsoft.ingestion_endpoint": "https://example.com/",
+            "microsoft.multi_endpoint_cloud_role": "customer-service",
+            "microsoft.ingestion_auth": "ikey",
+            "custom": "value",
+            "microsoft.custom": "preserved",
+        }
+        self.custom_properties = {"custom": "value", "microsoft.custom": "preserved"}
+
+    def test_custom_properties(self):
+        attributes = {**self.attributes, "microsoft.custom_measurements": '{"count": 1}'}
+        route = _get_route(attributes)
+        for predicate in (_is_ignored_attribute, _is_standard_attribute):
+            for routing in (False, True):
+                with self.subTest(predicate=predicate.__name__, routing=routing):
+                    properties = _utils._filter_custom_properties(
+                        attributes,
+                        lambda key, val: not predicate(key, exclude_routing_attributes=routing),
+                    )
+                    self.assertEqual(properties, self.custom_properties if routing else self.attributes)
+                    self.assertEqual(_get_route(attributes), route)
+        properties = _utils._filter_custom_properties(
+            attributes,
+            lambda key, val: key != "custom" and not _is_ignored_attribute(key, exclude_routing_attributes=True),
+        )
+        self.assertEqual(properties, {"microsoft.custom": "preserved"})
+        for attributes in (None, {}):
+            self.assertEqual(_utils._filter_custom_properties(attributes), {})
