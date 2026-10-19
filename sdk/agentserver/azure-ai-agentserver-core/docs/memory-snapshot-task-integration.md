@@ -215,10 +215,13 @@ This rollback-only cleanup preserves unfinished task records and saved inputs.
 It stops workers before expiring their leases, allowing a restore retry to
 recover the original task rather than treating interruption as user cancellation.
 Ordinary shutdown and explicit task cancellation keep their existing behavior.
-Rollback retains execution, renewal and watchdog handles before signalling
-shutdown, including workers whose active entries disappear during the grace
-period. No queued steering input is promoted during cleanup; the next
-activation processes retained steering state. A newly restored manager records
+The manager owns execution, renewal, scanner and watchdog workers until they
+finish, independently of active task records. Rollback joins those workers,
+including renewals whose handlers completed before cleanup began.
+No new steering turn executes during cleanup. If the current turn finishes
+normally, the next queued input is durably staged as `in_progress` for recovery,
+without invoking its handler; the next activation resumes that input.
+A newly restored manager records
 its restore ID before recovery so a same-ID retry cannot rotate lease identity
 under retained live workers.
 

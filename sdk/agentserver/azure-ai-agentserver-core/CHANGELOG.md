@@ -22,8 +22,8 @@
 - Preserve unfinished task records and saved inputs when failed restore
   activation stops workers before rolling back session configuration.
 - Keep the lease instance stable on same-restore retries, retain worker and
-  lease handles before shutdown is signalled, and defer steering promotion
-  until rollback cleanup has finished.
+  lease handles until workers finish, and defer steering execution during
+  rollback while keeping queued input eligible for recovery.
 
 ### Other Changes
 
