@@ -103,6 +103,7 @@ _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE = "APPLICATION_INSIGHTS_EVENT_MARKE
 _AZURE_MONITOR_DISTRO_VERSION_ARG = "distro_version"
 _MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
 _MICROSOFT_CUSTOM_MEASUREMENTS = "microsoft.custom_measurements"
+_MICROSOFT_INSTRUMENTATION_KEY = "microsoft.instrumentation_key"
 
 # Track Availability telemetry constants
 _MICROSOFT_AVAILABILITY_ID = "microsoft.availability.id"
