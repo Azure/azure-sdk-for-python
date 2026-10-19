@@ -160,6 +160,8 @@ namespace azure.mgmt.network
         virtual_router_peerings: VirtualRouterPeeringsOperations
         virtual_routers: VirtualRoutersOperations
         virtual_wans: VirtualWansOperations
+        vmss_network_interfaces: VmssNetworkInterfacesOperations
+        vmss_public_ip_addresses: VmssPublicIPAddressesOperations
         vpn_connections: VpnConnectionsOperations
         vpn_gateways: VpnGatewaysOperations
         vpn_link_connections: VpnLinkConnectionsOperations
@@ -733,6 +735,8 @@ namespace azure.mgmt.network.aio
         virtual_router_peerings: VirtualRouterPeeringsOperations
         virtual_routers: VirtualRoutersOperations
         virtual_wans: VirtualWansOperations
+        vmss_network_interfaces: VmssNetworkInterfacesOperations
+        vmss_public_ip_addresses: VmssPublicIPAddressesOperations
         vpn_connections: VpnConnectionsOperations
         vpn_gateways: VpnGatewaysOperations
         vpn_link_connections: VpnLinkConnectionsOperations
@@ -7361,18 +7365,6 @@ namespace azure.mgmt.network.aio.operations
                 **kwargs: Any
             ) -> NetworkInterfaceIPConfiguration: ...
 
-        @distributed_trace_async
-        async def get_virtual_machine_scale_set_network_interface(
-                self, 
-                resource_group_name: str, 
-                virtual_machine_scale_set_name: str, 
-                virtualmachine_index: str, 
-                network_interface_name: str, 
-                *, 
-                expand: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> NetworkInterface: ...
-
         @distributed_trace
         def list(
                 self, 
@@ -7417,15 +7409,6 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_machine_scale_set_name: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[NetworkInterface]: ...
-
-        @distributed_trace
-        def list_virtual_machine_scale_set_vm_network_interfaces(
-                self, 
-                resource_group_name: str, 
-                virtual_machine_scale_set_name: str, 
-                virtualmachine_index: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[NetworkInterface]: ...
 
@@ -10371,20 +10354,6 @@ namespace azure.mgmt.network.aio.operations
                 **kwargs: Any
             ) -> PublicIPAddress: ...
 
-        @distributed_trace_async
-        async def get_virtual_machine_scale_set_public_ip_address(
-                self, 
-                resource_group_name: str, 
-                virtual_machine_scale_set_name: str, 
-                virtualmachine_index: str, 
-                network_interface_name: str, 
-                ip_configuration_name: str, 
-                public_ip_address_name: str, 
-                *, 
-                expand: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> PublicIPAddress: ...
-
         @distributed_trace
         def list(
                 self, 
@@ -10419,17 +10388,6 @@ namespace azure.mgmt.network.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_machine_scale_set_name: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[PublicIPAddress]: ...
-
-        @distributed_trace
-        def list_virtual_machine_scale_set_vm_public_ip_addresses(
-                self, 
-                resource_group_name: str, 
-                virtual_machine_scale_set_name: str, 
-                virtualmachine_index: str, 
-                network_interface_name: str, 
-                ip_configuration_name: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[PublicIPAddress]: ...
 
@@ -15171,6 +15129,70 @@ namespace azure.mgmt.network.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> VirtualWAN: ...
+
+
+    class azure.mgmt.network.aio.operations.VmssNetworkInterfacesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def get_virtual_machine_scale_set_network_interface(
+                self, 
+                resource_group_name: str, 
+                virtual_machine_scale_set_name: str, 
+                virtualmachine_index: str, 
+                network_interface_name: str, 
+                *, 
+                expand: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> NetworkInterface: ...
+
+        @distributed_trace
+        def list_virtual_machine_scale_set_vm_network_interfaces(
+                self, 
+                resource_group_name: str, 
+                virtual_machine_scale_set_name: str, 
+                virtualmachine_index: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[NetworkInterface]: ...
+
+
+    class azure.mgmt.network.aio.operations.VmssPublicIPAddressesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def get_virtual_machine_scale_set_public_ip_address(
+                self, 
+                resource_group_name: str, 
+                virtual_machine_scale_set_name: str, 
+                virtualmachine_index: str, 
+                network_interface_name: str, 
+                ip_configuration_name: str, 
+                public_ip_address_name: str, 
+                *, 
+                expand: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> PublicIPAddress: ...
+
+        @distributed_trace
+        def list_virtual_machine_scale_set_vm_public_ip_addresses(
+                self, 
+                resource_group_name: str, 
+                virtual_machine_scale_set_name: str, 
+                virtualmachine_index: str, 
+                network_interface_name: str, 
+                ip_configuration_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[PublicIPAddress]: ...
 
 
     class azure.mgmt.network.aio.operations.VpnConnectionsOperations:
@@ -27340,6 +27362,8 @@ namespace azure.mgmt.network.models
         tags: dict[str, str]
         type: str
 
+        def __getattr__(self, name: str) -> Any: ...
+
         @overload
         def __init__(
                 self, 
@@ -27352,6 +27376,12 @@ namespace azure.mgmt.network.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
 
 
     class azure.mgmt.network.models.InterconnectGroupNodeAvailability(_Model):
@@ -35027,6 +35057,8 @@ namespace azure.mgmt.network.models
         properties: Optional[SubgroupProperties]
         type: str
 
+        def __getattr__(self, name: str) -> Any: ...
+
         @overload
         def __init__(
                 self, 
@@ -35038,6 +35070,12 @@ namespace azure.mgmt.network.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
 
 
     class azure.mgmt.network.models.SubgroupNodeAvailabilityEntry(_Model):
@@ -45081,18 +45119,6 @@ namespace azure.mgmt.network.operations
             ) -> NetworkInterfaceIPConfiguration: ...
 
         @distributed_trace
-        def get_virtual_machine_scale_set_network_interface(
-                self, 
-                resource_group_name: str, 
-                virtual_machine_scale_set_name: str, 
-                virtualmachine_index: str, 
-                network_interface_name: str, 
-                *, 
-                expand: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> NetworkInterface: ...
-
-        @distributed_trace
         def list(
                 self, 
                 resource_group_name: str, 
@@ -45136,15 +45162,6 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_machine_scale_set_name: str, 
-                **kwargs: Any
-            ) -> ItemPaged[NetworkInterface]: ...
-
-        @distributed_trace
-        def list_virtual_machine_scale_set_vm_network_interfaces(
-                self, 
-                resource_group_name: str, 
-                virtual_machine_scale_set_name: str, 
-                virtualmachine_index: str, 
                 **kwargs: Any
             ) -> ItemPaged[NetworkInterface]: ...
 
@@ -48091,20 +48108,6 @@ namespace azure.mgmt.network.operations
             ) -> PublicIPAddress: ...
 
         @distributed_trace
-        def get_virtual_machine_scale_set_public_ip_address(
-                self, 
-                resource_group_name: str, 
-                virtual_machine_scale_set_name: str, 
-                virtualmachine_index: str, 
-                network_interface_name: str, 
-                ip_configuration_name: str, 
-                public_ip_address_name: str, 
-                *, 
-                expand: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> PublicIPAddress: ...
-
-        @distributed_trace
         def list(
                 self, 
                 resource_group_name: str, 
@@ -48138,17 +48141,6 @@ namespace azure.mgmt.network.operations
                 self, 
                 resource_group_name: str, 
                 virtual_machine_scale_set_name: str, 
-                **kwargs: Any
-            ) -> ItemPaged[PublicIPAddress]: ...
-
-        @distributed_trace
-        def list_virtual_machine_scale_set_vm_public_ip_addresses(
-                self, 
-                resource_group_name: str, 
-                virtual_machine_scale_set_name: str, 
-                virtualmachine_index: str, 
-                network_interface_name: str, 
-                ip_configuration_name: str, 
                 **kwargs: Any
             ) -> ItemPaged[PublicIPAddress]: ...
 
@@ -52890,6 +52882,70 @@ namespace azure.mgmt.network.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> VirtualWAN: ...
+
+
+    class azure.mgmt.network.operations.VmssNetworkInterfacesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def get_virtual_machine_scale_set_network_interface(
+                self, 
+                resource_group_name: str, 
+                virtual_machine_scale_set_name: str, 
+                virtualmachine_index: str, 
+                network_interface_name: str, 
+                *, 
+                expand: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> NetworkInterface: ...
+
+        @distributed_trace
+        def list_virtual_machine_scale_set_vm_network_interfaces(
+                self, 
+                resource_group_name: str, 
+                virtual_machine_scale_set_name: str, 
+                virtualmachine_index: str, 
+                **kwargs: Any
+            ) -> ItemPaged[NetworkInterface]: ...
+
+
+    class azure.mgmt.network.operations.VmssPublicIPAddressesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def get_virtual_machine_scale_set_public_ip_address(
+                self, 
+                resource_group_name: str, 
+                virtual_machine_scale_set_name: str, 
+                virtualmachine_index: str, 
+                network_interface_name: str, 
+                ip_configuration_name: str, 
+                public_ip_address_name: str, 
+                *, 
+                expand: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> PublicIPAddress: ...
+
+        @distributed_trace
+        def list_virtual_machine_scale_set_vm_public_ip_addresses(
+                self, 
+                resource_group_name: str, 
+                virtual_machine_scale_set_name: str, 
+                virtualmachine_index: str, 
+                network_interface_name: str, 
+                ip_configuration_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[PublicIPAddress]: ...
 
 
     class azure.mgmt.network.operations.VpnConnectionsOperations:
