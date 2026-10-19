@@ -107,64 +107,45 @@ tsp-client update
 
 tsp-client will look for a `tsp-location.yaml` file in your local directory. `tsp-location.yaml` contains the configuration information that will be used to sync your TypeSpec project and generate your SDK. Please make sure that the commit is targeting the correct TypeSpec project updates you wish to generate your SDK from.
 
-## Repository-wide emitter validation
+## Validate emitter updates
 
 The [TypeSpec regeneration pipeline](../../eng/pipelines/typespec-regeneration.yml)
-regenerates selected TypeSpec clients when `eng/emitter-package.json` or its lock
-file changes on `main` or in a pull request. It can also be queued manually to
-validate the emitter pinned on another branch. After merging the pipeline YAML,
-maintainers must register it as an Azure Pipelines definition and enable its YAML
-CI and PR triggers.
+checks emitter updates by regenerating selected SDKs at their recorded spec
+revisions. It runs when `eng/emitter-package.json` or its lockfile changes on
+`main` or in a pull request, and can also be queued manually.
 
-By default, one job regenerates a small smoke-test set:
+The default run covers three SDKs:
 
-- `sdk/advisor/azure-mgmt-advisor`: management-plane generation.
-- `sdk/appconfiguration/azure-appconfiguration`: data-plane generation.
-- `sdk/agentserver/azure-ai-agentserver-responses/type_spec`: nested-client generation.
+- Advisor (management plane).
+- App Configuration (data plane).
+- Agent Server Responses (nested client).
 
-When queuing manually, set **PackageDirectories** to a comma-separated list of
-repository-relative SDK package or client directories to choose other clients.
-A package directory includes all tracked TypeSpec clients nested under it.
-Unknown directories fail the run rather than silently skipping a requested SDK.
-Set the parameter to exactly `*` to regenerate every client across eight jobs.
-Automatic CI and PR runs use the small default set; they do not validate every SDK.
+To choose other SDKs, set **PackageDirectories** when queuing a run. Use
+comma-separated repository paths, such as `sdk/advisor/azure-mgmt-advisor`.
+Package paths include their nested clients. Set it to `*` to run all SDKs across
+eight jobs instead of the default single job.
 
-Each job installs the pinned `eng/common/tsp-client` CLI and emitter
-dependencies once, then runs `tsp-client update --skip-install --debug`. No spec
-commit override is passed: each client's `tsp-location.yaml` determines the
-specification revision. Discovery includes tracked nested clients and runs batch
-members independently, so one generation failure does not skip the remaining
-members. Invalid configurations are reported as failures, not silently excluded.
+Download the `typespec-regeneration-<shard>` artifacts for `results.json`,
+per-client logs, and `changes.txt` / `changes.patch`. Generation failures fail
+the job without skipping later clients. Code differences do not fail the job:
+review the patches for unexpected changes.
 
-Download the `typespec-regeneration-<shard>` pipeline artifacts to inspect:
+Maintainers must register the pipeline YAML in Azure Pipelines and enable its
+YAML CI and PR triggers before automatic runs can start.
 
-- `results.json`: each attempted client's directory, exit code, and log filename.
-- Numbered `.log` files: combined generation output for each client.
-- `changes.txt` and `changes.patch`: the change summary and binary-capable patch,
-  including new and deleted generated files.
-
-Generation failures fail the job, but artifacts are published for failed jobs as
-well. Code differences alone do not fail the job: reviewers must inspect the
-patches for unexpected changes before accepting an emitter update. This pipeline
-does not publish packages, open regeneration PRs, or replace package tests.
-
-To reproduce the default selection locally, use a **clean, disposable checkout**, Node.js 24,
-Python 3.10 or later, and PyYAML (already part of `eng/ci_tools.txt`). Configure npm
-and pip feed access as described in [CONTRIBUTING.md](../../CONTRIBUTING.md), then
-run from the repository root:
+For a local run, use a **clean, disposable checkout**, Node.js 24, Python 3.10+,
+and PyYAML. Configure feed access using [CONTRIBUTING.md](../../CONTRIBUTING.md),
+then run:
 
 ```shell
 npm ci --prefix eng/common/tsp-client
 npm exec --prefix eng/common/tsp-client --no -- tsp-client install-dependencies
-python eng/scripts/regenerate_typespec.py --output ../regeneration-results --packages sdk/advisor/azure-mgmt-advisor,sdk/appconfiguration/azure-appconfiguration,sdk/agentserver/azure-ai-agentserver-responses/type_spec
+python eng/scripts/regenerate_typespec.py --output ../regeneration-results --packages sdk/advisor/azure-mgmt-advisor
 ```
 
-Omit `--packages` (or pass `--packages "*"`) to regenerate every client.
-For a shard of the full set, add `--shard-index 0 --shard-count 8`.
-Selection is applied before sharding. The output directory must
-be outside the checkout. The runner requires a clean Git working tree and marks
-new SDK files as intent-to-add to include them in its patch; it does not commit
-or revert generated changes.
+Omitting `--packages` runs all clients. Keep the output directory outside the
+checkout. The runner leaves generated changes in place and marks new SDK files
+as intent-to-add for patch collection; it does not commit them.
 
 ## Post-Generation Steps
 
