@@ -700,6 +700,120 @@ async def test_rollback_joins_renewal_after_handler_observes_shutdown(
 
 
 @pytest.mark.asyncio
+async def test_rollback_joins_renewal_after_completed_handler_leaves_active_entries(
+    provider_factory: tuple[LocalFileTaskProvider, Mock], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    provider, _ = provider_factory
+    running, complete, renewal_started, renewal_cancelled, release = (asyncio.Event() for _ in range(5))
+    final_bindings: list[str] = []
+    managers: list[TaskManager] = []
+    app = host()
+
+    @task(name="completed_handler_rollback")
+    async def existing(ctx: TaskContext[dict[str, str]]) -> str:
+        running.set()
+        await complete.wait()
+        return ctx.input["value"]
+
+    async def renewal(*_args: Any, **_kwargs: Any) -> None:
+        renewal_started.set()
+        try:
+            await release.wait()
+        except asyncio.CancelledError:
+            renewal_cancelled.set()
+            await release.wait()
+        finally:
+            final_bindings.append(app.config.session_id)
+
+    await seed_expired_task(provider, existing.name)
+    original = TaskManager._recover_stale_tasks
+
+    async def recovery(manager: TaskManager) -> None:
+        managers.append(manager)
+        await original(manager)
+        await running.wait()
+        await renewal_started.wait()
+        execution = manager._active_tasks["existing-task"].execution_task
+        complete.set()
+        await execution
+        assert not manager._active_tasks
+        raise RuntimeError("Recovery failed after a completed handler dropped its active entry")
+
+    monkeypatch.setattr(_manager, "lease_renewal_loop", renewal)
+    monkeypatch.setattr(TaskManager, "_recover_stale_tasks", recovery)
+    async with app.router.lifespan_context(app), client(app) as http:
+        restore = asyncio.create_task(http.post("/_agent/after-restore", json=payload()))
+        try:
+            await asyncio.wait_for(renewal_started.wait(), 2)
+            done, _ = await asyncio.wait({restore}, timeout=0.1)
+            assert not done, "Rollback missed a renewal whose handler had already completed"
+            assert renewal_cancelled.is_set()
+            assert app.config.session_id == "session-1"
+        finally:
+            release.set()
+            response = await restore
+        assert response.status_code == 500
+        assert final_bindings == ["session-1"]
+        assert app.config.session_id == ""
+        assert not managers[0]._has_live_workers
+        assert not managers[0]._owned_workers
+
+
+@pytest.mark.asyncio
+async def test_rollback_defers_queued_input_after_current_turn_returns_normally(
+    provider_factory: tuple[LocalFileTaskProvider, Mock], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("AGENTSERVER_SHUTDOWN_GRACE_SECONDS", "0.2")
+    provider, _ = provider_factory
+    running, queued, finish = (asyncio.Event() for _ in range(3))
+    observed: list[tuple[Any, str]] = []
+    app = host()
+
+    @multi_turn_task(name="normal_return_rollback", steerable=True)
+    async def existing(ctx: TaskContext[dict[str, str]]) -> str:
+        observed.append((ctx.input, ctx.entry_mode))
+        if ctx.input["value"] == "saved-input":
+            running.set()
+            await ctx.shutdown.wait()
+            return "current turn finished"
+        queued.set()
+        await finish.wait()
+        return ctx.input["value"]
+
+    await seed_expired_task(provider, existing.name, steering=True)
+    original = TaskManager._recover_stale_tasks
+    scans = 0
+
+    async def recovery(manager: TaskManager) -> None:
+        nonlocal scans
+        scans += 1
+        await original(manager)
+        if scans == 1:
+            await running.wait()
+            raise RuntimeError("Recovery failed before the handler returned during shutdown")
+
+    monkeypatch.setattr(TaskManager, "_recover_stale_tasks", recovery)
+    async with app.router.lifespan_context(app), client(app) as http:
+        try:
+            assert (await http.post("/_agent/after-restore", json=payload())).status_code == 500
+            assert not queued.is_set()
+            stored = await provider.get("existing-task")
+            assert stored is not None
+            assert stored.status == "in_progress"
+            assert stored.payload["input"] == {"value": "queued-input"}
+            assert stored.payload["steering"]["pending_inputs"] == []
+            response = await http.post("/_agent/after-restore", json=payload())
+            assert response.status_code == 200, response.text
+            await asyncio.wait_for(queued.wait(), 2)
+            assert observed == [
+                ({"value": "saved-input"}, "recovered"),
+                ({"value": "queued-input"}, "recovered"),
+            ]
+        finally:
+            finish.set()
+
+
+@pytest.mark.asyncio
 async def test_http_timeout_continues_activation_and_retry_deduplicates(
     provider_factory: tuple[LocalFileTaskProvider, Mock],
 ) -> None:

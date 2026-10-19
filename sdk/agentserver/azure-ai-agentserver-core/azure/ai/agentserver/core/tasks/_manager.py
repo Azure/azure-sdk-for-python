@@ -14,7 +14,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import os
 import traceback
-from collections.abc import Awaitable, Callable, Mapping
+from collections.abc import Awaitable, Callable, Coroutine, Mapping
 from dataclasses import dataclass
 from typing import Any, TypeVar
 
@@ -432,6 +432,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         self._config = config
         self._provider = provider or self._create_provider(config)
         self._active_tasks: dict[str, _ActiveTask] = {}
+        self._owned_workers: set[asyncio.Task[None]] = set()
         self._resume_callbacks: dict[str, Callable[..., Any]] = {}
         self._resume_opts: dict[str, TaskOptions] = {}
         self._lease_owner = derive_lease_owner(
@@ -760,9 +761,16 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
     def _has_live_workers(self) -> bool:
         return (
             bool(self._active_tasks)
+            or any(not worker.done() for worker in self._owned_workers)
             or (self._periodic_recovery_task is not None and not self._periodic_recovery_task.done())
             or any(not worker.done() for worker in self._timeout_watchdogs.values())
         )
+
+    def _create_worker_task(self, coroutine: Coroutine[Any, Any, None]) -> asyncio.Task[None]:
+        worker = asyncio.create_task(coroutine)
+        self._owned_workers.add(worker)
+        worker.add_done_callback(self._owned_workers.discard)
+        return worker
 
     async def startup(self, *, restore_id: str | None = None) -> None:
         """Initialize the manager and recover stale tasks.
@@ -808,7 +816,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                     scanner.result()
                 logger.warning("Restarting stopped periodic task recovery scanner")
             if self._periodic_recovery_task is None:
-                self._periodic_recovery_task = asyncio.create_task(self._periodic_recovery_loop())
+                self._periodic_recovery_task = self._create_worker_task(self._periodic_recovery_loop())
             self._startup_phases["periodic"].complete(restore_id)
             self._startup_phases["ready"].complete(restore_id)
 
@@ -848,6 +856,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         :paramtype retained_workers: set[asyncio.Task[Any]] | None
         """
         workers = set(retained_workers or ())
+        workers.update(self._owned_workers)
         for active in list(self._active_tasks.values()):
             active.renewal_cancel.set()
             if active.renewal_task and not active.renewal_task.done():
@@ -888,7 +897,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         self._preserve_recoverable_tasks_on_shutdown = preserve_recoverable_tasks
         retained_active = tuple(self._active_tasks.values()) if preserve_recoverable_tasks else ()
         retained_workers: set[asyncio.Task[Any]] = (
-            set(self._timeout_watchdogs.values()) if preserve_recoverable_tasks else set()
+            {*self._owned_workers, *self._timeout_watchdogs.values()} if preserve_recoverable_tasks else set()
         )
         for active in retained_active:
             retained_workers.add(active.execution_task)
@@ -1236,7 +1245,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
             steering_poll_cb_cs = _steering_poll_cs
 
-        renewal_task = asyncio.create_task(
+        renewal_task = self._create_worker_task(
             lease_renewal_loop(
                 self._provider,
                 task_id,
@@ -1259,7 +1268,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # Start execution
         terminate_event = asyncio.Event()
         terminate_reason_ref: list[str | None] = [None]
-        execution_task = asyncio.create_task(
+        execution_task = self._create_worker_task(
             self._execute_task(
                 fn=fn,
                 ctx=ctx,
@@ -1644,7 +1653,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
             steering_poll_cb = _steering_poll
 
-        renewal_task = asyncio.create_task(
+        renewal_task = self._create_worker_task(
             lease_renewal_loop(
                 self._provider,
                 task_id,
@@ -1664,7 +1673,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         terminate_event = asyncio.Event()
         terminate_reason_ref: list[str | None] = [None]
-        execution_task = asyncio.create_task(
+        execution_task = self._create_worker_task(
             self._execute_task(
                 fn=fn,
                 ctx=ctx,
@@ -1848,7 +1857,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         effective_timeout = _resolve_effective_timeout(opts.timeout)
         timeout_seconds = effective_timeout.total_seconds()
         remaining = await self._compute_remaining_for_watchdog(task_id, timeout_seconds, ctx)
-        self._timeout_watchdogs[task_id] = asyncio.create_task(
+        self._timeout_watchdogs[task_id] = self._create_worker_task(
             self._timeout_watchdog(
                 timeout_seconds=timeout_seconds,
                 cancel_event=ctx.cancel,
@@ -2451,9 +2460,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # (detect-not-clobber) so a genuine cross-process write is detected;
         # cross-process conflicts retry OUTSIDE the lock via the recursion
         # below (the per-task ``asyncio.Lock`` is non-reentrant).
-        if self._preserve_recoverable_tasks_on_shutdown:
-            return None
-
         drain_conflict: BaseException | None = None
         async with self._get_task_write_lock(task_id):
             task_info = await self._provider_get_tracked(task_id)
@@ -2568,6 +2574,10 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 partial_output=partial_output,
                 _conflict_attempt=_conflict_attempt + 1,
             )
+
+        if self._preserve_recoverable_tasks_on_shutdown:
+            # Persist the next input as recoverable, but do not dispatch a turn during rollback.
+            return None
 
         # Pop and bind the next pending steering future (if any)
         new_future: asyncio.Future[Any] | None = None
