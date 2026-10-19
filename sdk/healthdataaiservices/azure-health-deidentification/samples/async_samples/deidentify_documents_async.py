@@ -23,6 +23,7 @@ USAGE:
 
 
 import asyncio
+from azure.core.exceptions import HttpResponseError
 from azure.core.polling import AsyncLROPoller
 from azure.health.deidentification.aio import DeidentificationClient
 from azure.health.deidentification.models import (
@@ -56,9 +57,15 @@ async def deidentify_documents_async():
 
     async with client:
         lro: AsyncLROPoller = await client.begin_deidentify_documents(jobname, job)
-        finished_job: DeidentificationJob = await lro.result()
-
-        await credential.close()
+        try:
+            finished_job: DeidentificationJob = await lro.result()
+        except HttpResponseError:
+            # A failed or canceled job surfaces as a generic polling error; the job's own error explains why.
+            failed_job = await client.get_job(jobname)
+            print(f"Job {jobname} ended with status {failed_job.status}: {failed_job.error}")
+            raise
+        finally:
+            await credential.close()
 
         print(f"Job Name:   {finished_job.job_name}")
         print(f"Job Status: {finished_job.status}")  # Succeeded
