@@ -49,7 +49,23 @@ def discover_clients(repo: Path) -> list[Path]:
     return clients
 
 
-def regenerate(repo: Path, output: Path, shard_index: int = 0, shard_count: int = 1) -> int:
+def select_clients(repo: Path, clients: list[Path], packages: str) -> list[Path]:
+    if packages.strip() == "*":
+        return clients
+    selected = set()
+    for directory in packages.split(","):
+        relative = Path(directory.strip().replace("\\", "/"))
+        if relative.is_absolute() or len(relative.parts) < 3 or relative.parts[0] != "sdk" or ".." in relative.parts:
+            raise ValueError(f"Expected a repository-relative SDK package or client directory, got: {directory!r}")
+        target = repo / relative
+        matches = [client for client in clients if client == target or target in client.parents]
+        if not matches:
+            raise ValueError(f"No tracked TypeSpec clients match directory: {directory!r}")
+        selected.update(matches)
+    return [client for client in clients if client in selected]
+
+
+def regenerate(repo: Path, output: Path, shard_index: int = 0, shard_count: int = 1, packages: str = "*") -> int:
     if shard_count < 1 or not 0 <= shard_index < shard_count:
         raise ValueError("Require shard-count > 0 and 0 <= shard-index < shard-count")
     repo = repo.resolve()
@@ -63,6 +79,7 @@ def regenerate(repo: Path, output: Path, shard_index: int = 0, shard_count: int 
     clients = discover_clients(repo)
     if not clients:
         raise ValueError("No TypeSpec clients were found under sdk")
+    clients = select_clients(repo, clients, packages)
     clients = clients[shard_index::shard_count]
     node = shutil.which("node")
     if node is None:
@@ -102,8 +119,13 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True, help="Artifact directory outside the checkout")
     parser.add_argument("--shard-index", type=int, default=0)
     parser.add_argument("--shard-count", type=int, default=1)
+    parser.add_argument(
+        "--packages",
+        default="*",
+        help="Comma-separated repository-relative SDK package or client directories; '*' selects all clients",
+    )
     args = parser.parse_args()
-    return regenerate(args.repo, args.output, args.shard_index, args.shard_count)
+    return regenerate(args.repo, args.output, args.shard_index, args.shard_count, args.packages)
 
 
 if __name__ == "__main__":

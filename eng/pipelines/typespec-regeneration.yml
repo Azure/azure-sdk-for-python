@@ -1,4 +1,10 @@
 # Validate the pinned emitter against existing clients without advancing specs.
+parameters:
+  - name: PackageDirectories
+    displayName: 'SDK directories (comma-separated repository paths; * for all)'
+    type: string
+    default: sdk/advisor/azure-mgmt-advisor,sdk/appconfiguration/azure-appconfiguration,sdk/agentserver/azure-ai-agentserver-responses/type_spec
+
 trigger:
   branches:
     include:
@@ -29,6 +35,11 @@ extends:
         jobs:
           - job: Regenerate
             timeoutInMinutes: 360
+            variables:
+              ${{ if eq(parameters.PackageDirectories, '*') }}:
+                ShardCount: 8
+              ${{ else }}:
+                ShardCount: 1
             pool:
               name: azsdk-pool
               image: ubuntu-24.04
@@ -38,20 +49,21 @@ extends:
               matrix:
                 Batch0:
                   ShardIndex: 0
-                Batch1:
-                  ShardIndex: 1
-                Batch2:
-                  ShardIndex: 2
-                Batch3:
-                  ShardIndex: 3
-                Batch4:
-                  ShardIndex: 4
-                Batch5:
-                  ShardIndex: 5
-                Batch6:
-                  ShardIndex: 6
-                Batch7:
-                  ShardIndex: 7
+                ${{ if eq(parameters.PackageDirectories, '*') }}:
+                  Batch1:
+                    ShardIndex: 1
+                  Batch2:
+                    ShardIndex: 2
+                  Batch3:
+                    ShardIndex: 3
+                  Batch4:
+                    ShardIndex: 4
+                  Batch5:
+                    ShardIndex: 5
+                  Batch6:
+                    ShardIndex: 6
+                  Batch7:
+                    ShardIndex: 7
             templateContext:
               outputs:
                 - output: pipelineArtifact
@@ -92,5 +104,8 @@ extends:
                   python eng/scripts/regenerate_typespec.py
                   --output "$(Build.ArtifactStagingDirectory)/typespec-regeneration"
                   --shard-index $(ShardIndex)
-                  --shard-count 8
+                  --shard-count $(ShardCount)
+                  --packages "$TYPESPEC_REGENERATION_PACKAGES"
                 displayName: Regenerate clients and collect changes
+                env:
+                  TYPESPEC_REGENERATION_PACKAGES: ${{ parameters.PackageDirectories }}

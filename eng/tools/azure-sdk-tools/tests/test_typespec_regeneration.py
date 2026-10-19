@@ -101,6 +101,79 @@ def test_invalid_configurations_are_attempted_not_silently_excluded(repo, config
     assert set(regeneration.discover_clients(repo)) == {parent, child}
 
 
+def test_package_selection_includes_nested_clients_and_deduplicates(repo):
+    first = add_client(repo, "sdk/service/azure-first")
+    nested = add_client(repo, "sdk/service/azure-first/azure/internal")
+    other = add_client(repo, "sdk/service/azure-other")
+    clients = [first, nested, other]
+
+    assert regeneration.select_clients(
+        repo, clients, " sdk/service/azure-first, sdk/service/azure-first/azure/internal "
+    ) == [first, nested]
+    assert regeneration.select_clients(repo, clients, r"sdk\service\azure-first") == [first, nested]
+    assert regeneration.select_clients(repo, clients, "*") == clients
+    assert regeneration.select_clients(repo, clients, "sdk/service/azure-first/azure/internal") == [nested]
+
+
+@pytest.mark.parametrize(
+    "packages",
+    [
+        "",
+        "sdk/service/azure-missing",
+        "sdk/service/azure-first,",
+        "sdk/service/azure-first,sdk/service/azure-missing",
+        "sdk/service/azure-fir",
+        "sdk/service",
+        "../sdk/service/azure-first",
+        "sdk/service/../service/azure-first",
+        "/sdk/service/azure-first",
+        "*,sdk/service/azure-first",
+    ],
+)
+def test_invalid_package_selections_fail_explicitly(repo, packages):
+    client = add_client(repo, "sdk/service/azure-first")
+    with pytest.raises(ValueError, match="directory"):
+        regeneration.select_clients(repo, [client], packages)
+
+
+def test_selection_is_applied_before_sharding(repo, tmp_path):
+    selected = [
+        add_client(repo, "sdk/service/azure-selected/one"),
+        add_client(repo, "sdk/service/azure-selected/two"),
+    ]
+    unselected = add_client(repo, "sdk/service/azure-other")
+    commit(repo)
+    output = tmp_path / "artifacts"
+
+    assert regeneration.regenerate(repo, output, 1, 2, "sdk/service/azure-selected") == 0
+    results = json.loads((output / "results.json").read_text())
+    assert [result["directory"] for result in results] == [selected[1].relative_to(repo).as_posix()]
+    assert not (selected[0] / "generated.py").exists()
+    assert not (unselected / "generated.py").exists()
+
+
+def test_cli_forwards_package_selection(repo, tmp_path, monkeypatch):
+    output = tmp_path / "artifacts"
+    arguments = []
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "regenerate_typespec.py",
+            "--repo",
+            str(repo),
+            "--output",
+            str(output),
+            "--packages",
+            "sdk/service/azure-only",
+        ],
+    )
+    monkeypatch.setattr(regeneration, "regenerate", lambda *args: arguments.append(args) or 0)
+
+    assert regeneration.main() == 0
+    assert arguments == [(repo, output, 0, 1, "sdk/service/azure-only")]
+
+
 def test_regeneration_continues_after_failures_and_captures_complete_patch(repo, tmp_path):
     failed = add_client(repo, "sdk/service/azure-fail")
     succeeded = add_client(repo, "sdk/service/azure-success")
@@ -203,12 +276,33 @@ def test_pipeline_uses_pinned_dependencies_and_publishes_failed_job_artifacts():
         assert "eng/emitter-package-lock.json" in pipeline[trigger]["paths"]["include"]
     assert pipeline["extends"]["template"].endswith("1es-redirect.yml")
     job = pipeline["extends"]["parameters"]["stages"][0]["jobs"][0]
-    assert sorted(batch["ShardIndex"] for batch in job["strategy"]["matrix"].values()) == list(range(8))
+    all_gate = "${{ if eq(parameters.PackageDirectories, '*') }}"
+    matrix = job["strategy"]["matrix"]
+    assert matrix["Batch0"] == {"ShardIndex": 0}
+    assert sorted(batch["ShardIndex"] for batch in matrix[all_gate].values()) == list(range(1, 8))
+    assert job["variables"][all_gate]["ShardCount"] == 8
+    assert job["variables"]["${{ else }}"]["ShardCount"] == 1
     scripts = [step["script"] for step in job["steps"] if "script" in step]
     assert "npm ci --prefix eng/common/tsp-client" in scripts
     assert "npm exec --prefix eng/common/tsp-client --no -- tsp-client install-dependencies" in scripts
-    assert "--shard-count 8" in scripts[-1]
+    assert "--shard-count $(ShardCount)" in scripts[-1]
     assert "--shard-index $(ShardIndex)" in scripts[-1]
+    assert '--packages "$TYPESPEC_REGENERATION_PACKAGES"' in scripts[-1]
+    assert job["steps"][-1]["env"]["TYPESPEC_REGENERATION_PACKAGES"] == "${{ parameters.PackageDirectories }}"
     output = job["templateContext"]["outputs"][0]
     assert output["condition"] == "succeededOrFailed()"
     assert "$(ShardIndex)" in output["artifactName"]
+
+
+def test_pipeline_default_is_a_small_existing_representative_set():
+    pipeline = yaml.safe_load((REPO_ROOT / "eng/pipelines/typespec-regeneration.yml").read_text())
+    default = next(
+        parameter["default"] for parameter in pipeline["parameters"] if parameter["name"] == "PackageDirectories"
+    )
+    assert default.split(",") == [
+        "sdk/advisor/azure-mgmt-advisor",
+        "sdk/appconfiguration/azure-appconfiguration",
+        "sdk/agentserver/azure-ai-agentserver-responses/type_spec",
+    ]
+    clients = regeneration.select_clients(REPO_ROOT, regeneration.discover_clients(REPO_ROOT), default)
+    assert [client.relative_to(REPO_ROOT).as_posix() for client in clients] == sorted(default.split(","))
