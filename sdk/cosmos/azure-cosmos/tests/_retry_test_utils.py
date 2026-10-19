@@ -38,6 +38,9 @@ def send_to_test_host(send, host, request, **kwargs):
     if parsed.hostname and parsed.hostname.endswith(".retry-test.invalid"):
         target = urlsplit(host)
         request.url = urlunsplit((target.scheme, target.netloc, parsed.path, parsed.query, parsed.fragment))
+        # Match the SDK's loopback emulator TLS behavior after replacing the synthetic host.
+        if target.hostname in ("localhost", "127.0.0.1"):
+            kwargs["connection_verify"] = False
     try:
         return send(request, **kwargs)
     finally:

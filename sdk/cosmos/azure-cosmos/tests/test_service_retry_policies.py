@@ -352,6 +352,35 @@ class TestServiceRetryPolicyHelpers(unittest.TestCase):
         request_params = SimpleNamespace(operation_type=_OperationType.Read)
         assert _retry_utility._is_read_retryable_request(request, request_params) is True
 
+    def test_synthetic_transport_preserves_target_tls_behavior(self):
+        for host, supplied, expected in (
+            ("https://localhost:8081/", True, False),
+            ("https://127.0.0.1:8081/", True, False),
+            ("https://account.documents.azure.com/", True, True),
+            ("https://account.documents.azure.com/", "custom-ca.pem", "custom-ca.pem"),
+            ("https://localhost.example.com/", True, True),
+            ("https://127.0.0.10/", True, True),
+        ):
+            with self.subTest(host=host, supplied=supplied):
+                request = HttpRequest("GET", "https://westus.retry-test.invalid/dbs/test")
+                original_url = request.url
+                seen = []
+
+                def send(outgoing, **kwargs):
+                    seen.append((outgoing.url, kwargs["connection_verify"]))
+                    raise ServiceRequestError("transport error")
+
+                with self.assertRaises(ServiceRequestError):
+                    send_to_test_host(send, host, request, connection_verify=supplied)
+                self.assertEqual(seen, [(host + "dbs/test", expected)])
+                self.assertEqual(request.url, original_url)
+
+    def test_non_synthetic_transport_does_not_change_tls_options(self):
+        request = HttpRequest("GET", "https://localhost:8081/dbs/test")
+        sender = Mock(return_value="response")
+        send_to_test_host(sender, "https://localhost:8081/", request, connection_verify=True)
+        sender.assert_called_once_with(request, connection_verify=True)
+
     def test_is_read_retryable_request_write_without_header_is_not_retryable(self):
         request = SimpleNamespace(headers={})
         request_params = SimpleNamespace(operation_type=_OperationType.Create)
