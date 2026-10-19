@@ -2,12 +2,14 @@
 # Licensed under the MIT License.
 
 import unittest
+from dataclasses import FrozenInstanceError
 from types import MappingProxyType
 
 from azure.monitor.opentelemetry.exporter._routing import (
     _get_cloud_role,
     _get_ingestion_endpoint,
     _get_instrumentation_key,
+    _get_route,
     _is_aad_route,
 )
 
@@ -156,3 +158,64 @@ class TestRoutingMetadata(unittest.TestCase):
         for value in (None, "", " \t\n", "ikey", "bearer", "aad-token", "a ad", 42, True, ("aad",), b"aad"):
             with self.subTest(value=value):
                 self.assertFalse(_is_aad_route({"microsoft.ingestion_auth": value}))
+
+
+class TestRoute(unittest.TestCase):
+    def setUp(self):
+        self.attributes = {
+            "microsoft.instrumentation_key": "customer-key",
+            "microsoft.ingestion_endpoint": "https://example.com/",
+        }
+
+    def test_route(self):
+        attributes = MappingProxyType(
+            {
+                "microsoft.instrumentation_key": " customer-key ",
+                "microsoft.ingestion_endpoint": " HTTPS://Example.COM.:443/ingest/// ",
+                "microsoft.multi_endpoint_cloud_role": " Customer-Service ",
+                "microsoft.ingestion_auth": " AaD ",
+            }
+        )
+        route = _get_route(attributes)
+        self.assertEqual(route.instrumentation_key, "customer-key")
+        self.assertEqual(route.ingestion_endpoint, "https://example.com/ingest/")
+        self.assertEqual(route.cloud_role, "Customer-Service")
+        self.assertIs(route.is_aad, True)
+
+    def test_optional_defaults(self):
+        route = _get_route(self.attributes)
+        self.assertEqual(route.cloud_role, "unknown_service")
+        self.assertIs(route.is_aad, False)
+
+    def test_invalid_required_attributes_raise(self):
+        for attributes in (
+            None,
+            {},
+            {"microsoft.instrumentation_key": "customer-key"},
+            {"microsoft.ingestion_endpoint": "https://example.com/"},
+            {**self.attributes, "microsoft.instrumentation_key": 42},
+            {**self.attributes, "microsoft.ingestion_endpoint": "http://example.com/"},
+        ):
+            with self.subTest(attributes=attributes):
+                with self.assertRaisesRegex(ValueError, "Routing "):
+                    _get_route(attributes)
+
+    def test_transport_key(self):
+        key = ("https://example.com/", False)
+        self.assertEqual(_get_route(self.attributes).transport_key, key)
+        for changes, expected in (
+            ({"microsoft.instrumentation_key": "other-key"}, key),
+            ({"microsoft.multi_endpoint_cloud_role": "Other-Service"}, key),
+            ({"microsoft.ingestion_endpoint": "HTTPS://EXAMPLE.COM.:443///"}, key),
+            ({"microsoft.ingestion_auth": "aad"}, ("https://example.com/", True)),
+            ({"microsoft.ingestion_endpoint": "https://other.example/"}, ("https://other.example/", False)),
+        ):
+            with self.subTest(changes=changes):
+                self.assertEqual(_get_route({**self.attributes, **changes}).transport_key, expected)
+
+    def test_route_is_an_immutable_snapshot(self):
+        route = _get_route(self.attributes)
+        self.attributes["microsoft.instrumentation_key"] = "changed-key"
+        self.assertEqual(route.instrumentation_key, "customer-key")
+        with self.assertRaises(FrozenInstanceError):
+            route.instrumentation_key = "changed-key"
