@@ -4,6 +4,11 @@
 
 ### Features Added
 
+- Defer SDK Stats initialization until the first asynchronous OneSettings request completes, so startup telemetry
+  uses the configured connection string when available and falls back to the built-in Breeze route only when the
+  request fails or returns no valid SDK Stats connection string.
+  ([#49072](https://github.com/Azure/azure-sdk-for-python/pull/49072))
+
 ### Breaking Changes
 
 ### Bugs Fixed
