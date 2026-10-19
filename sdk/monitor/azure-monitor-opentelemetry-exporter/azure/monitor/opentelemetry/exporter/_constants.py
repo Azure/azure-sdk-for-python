@@ -105,6 +105,8 @@ _MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
 _MICROSOFT_CUSTOM_MEASUREMENTS = "microsoft.custom_measurements"
 _MICROSOFT_INSTRUMENTATION_KEY = "microsoft.instrumentation_key"
 _MICROSOFT_INGESTION_ENDPOINT = "microsoft.ingestion_endpoint"
+_MICROSOFT_MULTI_ENDPOINT_CLOUD_ROLE = "microsoft.multi_endpoint_cloud_role"
+_MICROSOFT_INGESTION_AUTH = "microsoft.ingestion_auth"
 
 # Track Availability telemetry constants
 _MICROSOFT_AVAILABILITY_ID = "microsoft.availability.id"
