@@ -27,6 +27,44 @@ if ([string]::IsNullOrWhiteSpace($storageAccountName)) {
     exit 1
 }
 
+# Retries a script block with exponential backoff until it succeeds or the time budget is exhausted.
+# Role assignments and network ACL changes can take minutes to propagate after deployment.
+function Invoke-WithRetry {
+    param (
+        [Parameter(Mandatory = $true)]
+        [scriptblock] $ScriptBlock,
+        [Parameter(Mandatory = $true)]
+        [string] $Operation,
+        [int] $MaxTotalSeconds = 300,
+        [int] $InitialDelaySeconds = 5,
+        [int] $MaxDelaySeconds = 60
+    )
+
+    $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+    $delay = $InitialDelaySeconds
+    $attempt = 0
+    while ($true) {
+        $attempt++
+        try {
+            $result = & $ScriptBlock
+            if ($attempt -gt 1) {
+                Write-Host "$Operation succeeded on attempt $attempt after $([int]$stopwatch.Elapsed.TotalSeconds)s."
+            }
+            return $result
+        }
+        catch {
+            $lastError = $_
+            $elapsed = $stopwatch.Elapsed.TotalSeconds
+            if ($elapsed + $delay -gt $MaxTotalSeconds) {
+                throw "$Operation failed after $attempt attempt(s) over $([int]$elapsed)s. This usually means the storage role assignment or network ACL change has not propagated. Last error: $($lastError.Exception.Message)"
+            }
+            Write-Host "$Operation failed (attempt $attempt, $([int]$elapsed)s elapsed): $($lastError.Exception.Message). Retrying in ${delay}s."
+            Start-Sleep -Seconds $delay
+            $delay = [Math]::Min($delay * 2, $MaxDelaySeconds)
+        }
+    }
+}
+
 # Load the Azure Storage module
 Import-Module Az.Storage
 
@@ -36,25 +74,26 @@ $storageContext = New-AzStorageContext -StorageAccountName $storageAccountName -
 # FIXME Remove once vpn team fixes the network acl issue
 $networkRuleSet = New-Object -TypeName Microsoft.Azure.Commands.Management.Storage.Models.PSNetworkRuleSet
 $networkRuleSet.DefaultAction = "Allow"
-Set-AzStorageAccount -ResourceGroupName $resourceGroup -Name $storageAccountName -NetworkRuleSet $networkRuleSet
+Set-AzStorageAccount -ResourceGroupName $resourceGroup -Name $storageAccountName -NetworkRuleSet $networkRuleSet -ErrorAction Stop
 
-# Sleep for 30 seconds to allow the network rule to take effect
-Write-Host "[Fix] Temporary sleep to allow network rule to take effect."
-Start-Sleep -Seconds 30
-
-Get-AzStorageContainer -Name $containerName -Context $storageContext
+# Wait until the container is reachable through the data plane (RBAC + network ACL propagated)
+Invoke-WithRetry -Operation "Accessing container '$containerName'" -ScriptBlock {
+    Get-AzStorageContainer -Name $containerName -Context $storageContext -ErrorAction Stop
+}
 
 # Upload the folder and its contents to the container
 # Gets last folder name + filename. example_patient_1/doctor_dictation.txt
-Get-ChildItem -Path $localFolderPath -Recurse | ForEach-Object {
-    $relativePath = $_.FullName
-    $folderName = Split-Path -Path (Split-Path -Path $relativePath -Parent) -Leaf
-    $blobName = Split-Path -Path $relativePath -Leaf
+Get-ChildItem -Path $localFolderPath -Recurse -File | ForEach-Object {
+    $filePath = $_.FullName
+    $folderName = Split-Path -Path (Split-Path -Path $filePath -Parent) -Leaf
+    $blobName = Split-Path -Path $filePath -Leaf
     $destinationBlob = $blobName -replace ":", ""
 
     $destinationBlob = "$folderName/$destinationBlob"
     Write-Host "Uploading file '$destinationBlob'"
-    Set-AzStorageBlobContent -File $_.FullName -Container $containerName -Blob $destinationBlob -Context $storageContext -Force
+    Invoke-WithRetry -Operation "Uploading blob '$destinationBlob'" -ScriptBlock {
+        Set-AzStorageBlobContent -File $filePath -Container $containerName -Blob $destinationBlob -Context $storageContext -Force -ErrorAction Stop
+    }
 }
 
 Write-Host "Folder '$localFolderPath' uploaded to container '$containerName' successfully."
