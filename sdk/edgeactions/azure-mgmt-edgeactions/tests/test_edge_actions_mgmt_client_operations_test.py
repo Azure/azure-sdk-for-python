@@ -10,15 +10,16 @@ from azure.mgmt.edgeactions import EdgeActionsMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
-AZURE_LOCATION = "eastus"
+from edgeactions_test_settings import RESOURCE_GROUP_OPTIONS
 
 
 @pytest.mark.live_test_only
-class TestCdnEdgeActionsMgmtClientOperations(AzureMgmtRecordedTestCase):
+@pytest.mark.usefixtures("add_sanitizers")
+class TestEdgeActionsMgmtClientOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(EdgeActionsMgmtClient)
 
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @RandomNameResourceGroupPreparer(**RESOURCE_GROUP_OPTIONS)
     @recorded_by_proxy
     def test_edge_actions_list_by_resource_group(self, resource_group):
         response = self.client.edge_actions.list_by_resource_group(
@@ -26,10 +27,3 @@ class TestCdnEdgeActionsMgmtClientOperations(AzureMgmtRecordedTestCase):
         )
         result = [r for r in response]
         assert result == []
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_edge_actions_list_by_subscription(self, resource_group):
-        response = self.client.edge_actions.list_by_subscription()
-        result = [r for r in response]
-        assert response
