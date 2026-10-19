@@ -35,10 +35,17 @@ def send_to_test_host(send, host, request, **kwargs):
     """Keep synthetic routing observable to policies, but never send it over the network."""
     url = request.url
     parsed = urlsplit(url)
+    rewritten = False
     if parsed.hostname and parsed.hostname.endswith(".retry-test.invalid"):
         target = urlsplit(host)
         request.url = urlunsplit((target.scheme, target.netloc, parsed.path, parsed.query, parsed.fragment))
+        rewritten = True
     try:
+        if rewritten:
+            # The synthetic hostname is rewritten to the real (emulator) host, which uses a
+            # self-signed certificate. The caller may already have resolved connection_verify
+            # based on the (synthetic) hostname, so force it off here regardless.
+            kwargs["connection_verify"] = False
         return send(request, **kwargs)
     finally:
         request.url = url
