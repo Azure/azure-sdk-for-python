@@ -1,5 +1,7 @@
 import argparse
 import os
+import pathlib
+import subprocess
 import sys
 import pytest
 
@@ -24,6 +26,31 @@ class TestApistubRegistration:
 
         assert args.command == "apistub"
         assert args.generate_from_pypi == "1.0.0"
+
+
+class TestApiViewMetadata:
+    def test_package_version_is_written(self, tmp_path):
+        api_markdown = tmp_path / "api.md"
+        api_markdown.write_text(
+            "# Package is parsed using apiview-stub-generator(version:0.3.31), Python version: 3.12.9\n" "API body\n",
+            encoding="utf-8",
+        )
+        metadata_script = pathlib.Path(__file__).parents[3] / "scripts" / "extract_apiview_metadata.py"
+
+        subprocess.run(
+            [
+                sys.executable,
+                str(metadata_script),
+                "--api-markdown-path",
+                str(api_markdown),
+                "--package-version",
+                "1.35.0",
+            ],
+            check=True,
+        )
+
+        metadata = (tmp_path / "api.metadata.yml").read_text(encoding="utf-8")
+        assert "packageVersion: 1.35.0\n" in metadata
 
 
 # ── get_package_wheel_path() ─────────────────────────────────────────────
@@ -74,6 +101,19 @@ class TestGetPackageWheelPath:
 
     @patch("azpysdk.apistub.ParsedSetup")
     @patch("azpysdk.apistub.find_whl")
+    def test_no_prebuilt_dir_returns_staging_whl(self, mock_find_whl, mock_parsed, monkeypatch):
+        monkeypatch.delenv("PREBUILT_WHEEL_DIR", raising=False)
+        mock_parsed.from_path.return_value.name = "azure-core"
+        mock_parsed.from_path.return_value.version = "1.0.0"
+        mock_find_whl.return_value = "azure_core-1.0.0-py3-none-any.whl"
+
+        result = get_package_wheel_path("/my/pkg", "/staging")
+
+        assert result == os.path.join("/staging", "azure_core-1.0.0-py3-none-any.whl")
+        mock_find_whl.assert_called_once_with("/staging", "azure-core", "1.0.0")
+
+    @patch("azpysdk.apistub.ParsedSetup")
+    @patch("azpysdk.apistub.find_whl")
     def test_no_prebuilt_dir_falls_back_to_pkg_root(self, mock_find_whl, mock_parsed, monkeypatch):
         """Without PREBUILT_WHEEL_DIR and no wheel found, fall back to pkg_root path."""
         monkeypatch.delenv("PREBUILT_WHEEL_DIR", raising=False)
@@ -83,6 +123,112 @@ class TestGetPackageWheelPath:
 
         result = get_package_wheel_path("/my/pkg")
         assert result == "/my/pkg"
+
+    @patch("azpysdk.apistub.ParsedSetup")
+    @patch("azpysdk.apistub.find_whl")
+    def test_prebuilt_dir_prefers_linux_whl_when_multiple_platform_whls_present(
+        self, mock_find_whl, mock_parsed, tmp_path, monkeypatch
+    ):
+        """When multiple platform-specific wheels are present (e.g. Build_Extended combining
+        Windows/macOS/Linux artifacts for a signed-binary package), deterministically pick the
+        Linux/manylinux wheel instead of relying on find_whl's interpreter-tag matching."""
+        prebuilt = str(tmp_path / "prebuilt")
+        os.makedirs(prebuilt, exist_ok=True)
+        for name in [
+            "azure_storage_extensions-1.0.0-cp39-cp39-win_amd64.whl",
+            "azure_storage_extensions-1.0.0-cp39-cp39-macosx_11_0_arm64.whl",
+            "azure_storage_extensions-1.0.0-cp39-cp39-manylinux_2_17_x86_64.whl",
+        ]:
+            pathlib.Path(prebuilt, name).touch()
+        monkeypatch.setenv("PREBUILT_WHEEL_DIR", prebuilt)
+
+        mock_parsed.from_path.return_value.name = "azure-storage-extensions"
+        mock_parsed.from_path.return_value.version = "1.0.0"
+
+        result = get_package_wheel_path("/some/pkg")
+        assert result == os.path.join(prebuilt, "azure_storage_extensions-1.0.0-cp39-cp39-manylinux_2_17_x86_64.whl")
+        # find_whl (the ambiguous interpreter-tag matching path) should not be needed at all.
+        mock_find_whl.assert_not_called()
+
+    @patch("azpysdk.apistub.ParsedSetup")
+    @patch("azpysdk.apistub.find_whl")
+    def test_prebuilt_dir_falls_back_to_find_whl_when_no_linux_whl_present(
+        self, mock_find_whl, mock_parsed, tmp_path, monkeypatch
+    ):
+        """When multiple platform wheels are present but none are Linux-tagged, fall back to
+        find_whl's existing interpreter-tag matching/error handling."""
+        prebuilt = str(tmp_path / "prebuilt")
+        os.makedirs(prebuilt, exist_ok=True)
+        for name in [
+            "azure_storage_extensions-1.0.0-cp39-cp39-win_amd64.whl",
+            "azure_storage_extensions-1.0.0-cp39-cp39-macosx_11_0_arm64.whl",
+        ]:
+            pathlib.Path(prebuilt, name).touch()
+        monkeypatch.setenv("PREBUILT_WHEEL_DIR", prebuilt)
+
+        mock_parsed.from_path.return_value.name = "azure-storage-extensions"
+        mock_parsed.from_path.return_value.version = "1.0.0"
+        mock_find_whl.return_value = "azure_storage_extensions-1.0.0-cp39-cp39-win_amd64.whl"
+
+        result = get_package_wheel_path("/some/pkg")
+        assert result == os.path.join(prebuilt, "azure_storage_extensions-1.0.0-cp39-cp39-win_amd64.whl")
+        mock_find_whl.assert_called_once_with(prebuilt, "azure-storage-extensions", "1.0.0")
+
+    @patch("azpysdk.apistub.ParsedSetup")
+    @patch("azpysdk.apistub.find_whl")
+    @patch("azpysdk.apistub.get_interpreter_compatible_tags")
+    def test_prebuilt_dir_picks_interpreter_compatible_whl_among_multiple_linux_whls(
+        self, mock_compatible_tags, mock_find_whl, mock_parsed, tmp_path, monkeypatch
+    ):
+        """A build (e.g. cibuildwheel) can legitimately produce more than one
+        Linux/manylinux wheel for the same package/version, one per Python implementation (CPython
+        vs PyPy). Picking the first Linux match unconditionally can select a wheel that isn't
+        installable on the invoking (CPython) interpreter."""
+        prebuilt = str(tmp_path / "prebuilt")
+        os.makedirs(prebuilt, exist_ok=True)
+        for name in [
+            "azure_storage_extensions-0.2.0-cp310-abi3-manylinux_2_17_x86_64.whl",
+            "azure_storage_extensions-0.2.0-pp311-pypy311_pp73-manylinux_2_17_x86_64.whl",
+        ]:
+            pathlib.Path(prebuilt, name).touch()
+        monkeypatch.setenv("PREBUILT_WHEEL_DIR", prebuilt)
+
+        mock_parsed.from_path.return_value.name = "azure-storage-extensions"
+        mock_parsed.from_path.return_value.version = "0.2.0"
+        # Simulate a CPython 3.10 invoking interpreter: only the cp310-abi3 wheel's tags appear
+        # among what this interpreter reports as compatible.
+        mock_compatible_tags.return_value = ["cp310-abi3-manylinux_2_17_x86_64", "cp310-cp310-manylinux_2_17_x86_64"]
+
+        result = get_package_wheel_path("/some/pkg")
+        assert result == os.path.join(prebuilt, "azure_storage_extensions-0.2.0-cp310-abi3-manylinux_2_17_x86_64.whl")
+        mock_find_whl.assert_not_called()
+
+    @patch("azpysdk.apistub.ParsedSetup")
+    @patch("azpysdk.apistub.find_whl")
+    @patch("azpysdk.apistub.get_interpreter_compatible_tags")
+    def test_prebuilt_dir_falls_back_to_find_whl_when_no_linux_whl_matches_interpreter(
+        self, mock_compatible_tags, mock_find_whl, mock_parsed, tmp_path, monkeypatch
+    ):
+        """When multiple Linux wheels are present but none match the invoking interpreter's tags,
+        fall back to find_whl instead of arbitrarily picking one."""
+        prebuilt = str(tmp_path / "prebuilt")
+        os.makedirs(prebuilt, exist_ok=True)
+        for name in [
+            "azure_storage_extensions-0.2.0-cp39-abi3-manylinux_2_17_x86_64.whl",
+            "azure_storage_extensions-0.2.0-pp311-pypy311_pp73-manylinux_2_17_x86_64.whl",
+        ]:
+            pathlib.Path(prebuilt, name).touch()
+        monkeypatch.setenv("PREBUILT_WHEEL_DIR", prebuilt)
+
+        mock_parsed.from_path.return_value.name = "azure-storage-extensions"
+        mock_parsed.from_path.return_value.version = "0.2.0"
+        # None of the candidate wheels' tags match this interpreter.
+        mock_compatible_tags.return_value = ["cp310-abi3-manylinux_2_17_x86_64"]
+        mock_find_whl.return_value = "azure_storage_extensions-0.2.0-cp39-abi3-manylinux_2_17_x86_64.whl"
+
+        result = get_package_wheel_path("/some/pkg")
+        assert result == os.path.join(prebuilt, "azure_storage_extensions-0.2.0-cp39-abi3-manylinux_2_17_x86_64.whl")
+        mock_find_whl.assert_called_once_with(prebuilt, "azure-storage-extensions", "0.2.0")
 
 
 # ── run() output directory logic ─────────────────────────────────────────
@@ -256,8 +402,10 @@ class TestRunOutputDirectory:
         fake_parsed = MagicMock()
         fake_parsed.folder = str(tmp_path)
         fake_parsed.name = "azure-core"
+        fake_parsed.version = "1.35.0"
 
         captured_cmds = []
+        metadata_cmd = None
 
         def fake_apistub_run(exe, cmds, **kwargs):
             captured_cmds.append(cmds)
@@ -266,10 +414,12 @@ class TestRunOutputDirectory:
             open(os.path.join(out_dir, "azure-core_python.json"), "w").close()
 
         def fake_pwsh(cmd, **kwargs):
+            nonlocal metadata_cmd
             output_arg = "--output-path" if "extract_apiview_metadata.py" in cmd[1] else "-OutputPath"
             out_idx = cmd.index(output_arg)
             out_dir = cmd[out_idx + 1]
             if "extract_apiview_metadata.py" in cmd[1]:
+                metadata_cmd = cmd
                 open(os.path.join(out_dir, "api.metadata.yml"), "w").close()
             else:
                 open(os.path.join(out_dir, "api.md"), "w").close()
@@ -295,6 +445,9 @@ class TestRunOutputDirectory:
         assert os.path.exists(os.path.join(str(tmp_path), "api.md"))
         assert os.path.exists(os.path.join(str(tmp_path), "api.metadata.yml"))
         assert os.path.exists(os.path.join(str(tmp_path), "azure-core_python.json"))
+        assert metadata_cmd is not None
+        version_idx = metadata_cmd.index("--package-version")
+        assert metadata_cmd[version_idx + 1] == "1.35.0"
 
     @patch(
         "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
