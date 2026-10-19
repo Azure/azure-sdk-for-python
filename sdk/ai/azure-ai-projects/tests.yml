@@ -39,7 +39,13 @@ extends:
               - pwsh: |
                   $ErrorActionPreference = 'Stop'
                   $PSNativeCommandUseErrorActionPreference = $true
-                  $(PIP_EXE) install -e sdk/ai/azure-ai-projects -r sdk/ai/azure-ai-projects/dev_requirements.txt
+                  Push-Location sdk/ai/azure-ai-projects
+                  try {
+                    $(PIP_EXE) install -e . -r dev_requirements.txt
+                  }
+                  finally {
+                    Pop-Location
+                  }
                 displayName: Install test dependencies
 
               - task: AzurePowerShell@5
