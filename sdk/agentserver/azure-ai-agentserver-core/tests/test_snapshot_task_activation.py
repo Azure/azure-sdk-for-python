@@ -22,6 +22,7 @@ from azure.ai.agentserver.core._base import _read_memory_snapshot_enabled
 from azure.ai.agentserver.core.tasks import (
     TaskContext,
     TaskManagerNotInitialized,
+    multi_turn_task,
     resilient_tasks_enabled,
     set_resilient_tasks_enabled,
     task,
@@ -487,18 +488,24 @@ async def test_recovered_task_runs_before_hook_success(
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("failure", ["cancel", "exception"])
+@pytest.mark.parametrize("kind", ["one_shot", "multi_turn"])
 async def test_cancelled_recovery_stops_workers_before_binding_rollback_and_retries(
     provider_factory: tuple[LocalFileTaskProvider, Mock],
     monkeypatch: pytest.MonkeyPatch,
     failure: str,
+    kind: str,
 ) -> None:
     provider, factory = provider_factory
     running, finish = asyncio.Event(), asyncio.Event()
     final_bindings: list[str] = []
+    resumed_inputs: list[tuple[str, Any, str]] = []
     app = host()
 
-    @task(name="cancelled_lra")
+    decorator = multi_turn_task if kind == "multi_turn" else task
+
+    @decorator(name="cancelled_lra")
     async def existing(ctx: TaskContext[dict[str, str]]) -> str:
+        resumed_inputs.append((ctx.task_id, ctx.input, ctx.entry_mode))
         running.set()
         try:
             await finish.wait()
@@ -542,6 +549,11 @@ async def test_cancelled_recovery_stops_workers_before_binding_rollback_and_retr
             assert app._task_manager is None
             with pytest.raises(TaskManagerNotInitialized):
                 get_task_manager()
+            stored = await provider.get("existing-task")
+            assert stored is not None
+            assert stored.status == "in_progress"
+            assert stored.payload["input"] == {"value": "saved-input"}
+            running.clear()
             response = await http.post("/_agent/after-restore", json=payload())
             assert response.status_code == 200, response.text
             second = get_task_manager()
@@ -549,6 +561,11 @@ async def test_cancelled_recovery_stops_workers_before_binding_rollback_and_retr
             assert second._instance_id != first_instance
             assert second._lease_owner == first._lease_owner
             assert factory.call_count == 2
+            await asyncio.wait_for(running.wait(), 2)
+            assert resumed_inputs == [
+                ("existing-task", {"value": "saved-input"}, "recovered"),
+                ("existing-task", {"value": "saved-input"}, "recovered"),
+            ]
         finally:
             finish.set()
             if not restore.done():

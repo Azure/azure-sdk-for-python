@@ -4,6 +4,8 @@
 
 ### Bugs Fixed
 
+- Remove the exact caller-scoped runtime record when deferred resilient-task
+  activation fails, rather than retaining an execution that never started.
 - Propagate source cancellation through SSE keep-alive streams instead of
   treating interrupted durable admission as successful stream completion.
 - Signal accepted durable task shutdown before awaiting response execution, so

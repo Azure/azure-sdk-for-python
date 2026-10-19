@@ -4465,6 +4465,7 @@ class _ResponseOrchestrator:
                     ctx.response_id,
                 )
                 setattr(exc, PLATFORM_ERROR_TAG, True)
+                await self._runtime_state.delete(ctx.response_id, ctx.user_id, expected_record=record)
                 raise
             # Without deferred activation, a missing runtime means resilient
             # tasks are disabled or the lifespan never ran (in-process clients).

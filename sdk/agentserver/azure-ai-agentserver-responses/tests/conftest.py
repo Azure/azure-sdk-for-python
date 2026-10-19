@@ -31,6 +31,12 @@ def pytest_configure(config):
 
 
 @pytest.fixture(autouse=True)
+def _cold_start_snapshot_mode(monkeypatch):
+    """Keep ordinary tests independent of inherited capture-mode configuration."""
+    monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "false")
+
+
+@pytest.fixture(autouse=True)
 def _reset_resilient_tasks_global_state():
     """Contain process-global resilient-tasks state per test.
 

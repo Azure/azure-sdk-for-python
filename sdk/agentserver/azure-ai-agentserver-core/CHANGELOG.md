@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Preserve unfinished task records and saved inputs when failed restore
+  activation stops workers before rolling back session configuration.
+
 ### Other Changes
 
 ## 2.3.0b1 (2026-10-15)

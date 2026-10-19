@@ -441,6 +441,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         self._instance_id = generate_instance_id()
         self._materialization_restore_id: str | None = None
         self._shutdown_event = shutdown_event or asyncio.Event()
+        self._preserve_recoverable_tasks_on_shutdown = False
         self._shutdown_grace_seconds = shutdown_grace_seconds
         self._active_generation_future: dict[str, asyncio.Future[Any]] = {}
         self._pending_steering_futures: dict[str, list[asyncio.Future[Any]]] = {}
@@ -867,7 +868,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                     exc_info=(type(result), result, result.__traceback__),
                 )
 
-    async def shutdown(self, *, wait_for_workers: bool = False) -> None:
+    async def shutdown(self, *, wait_for_workers: bool = False, preserve_recoverable_tasks: bool = False) -> None:
         """Signal shutdown on all active tasks and force-expire leases.
 
         Called by ``AgentServerHost`` during lifespan shutdown.
@@ -876,8 +877,13 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             and watchdog tasks to finish. Used before session configuration is
             rolled back so handlers cannot observe the later binding.
         :paramtype wait_for_workers: bool
+        :keyword preserve_recoverable_tasks: Stop workers before expiring leases
+            without treating rollback interruption as terminal cancellation.
+            Always waits for workers; used only for failed restore rollback.
+        :paramtype preserve_recoverable_tasks: bool
         """
         logger.info("TaskManager shutting down")
+        self._preserve_recoverable_tasks_on_shutdown = preserve_recoverable_tasks
         self._shutdown_event.set()
 
         #   Layer 2: stop the periodic recovery scan task.
@@ -934,9 +940,14 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             except asyncio.CancelledError:
                 logger.info("TaskManager shutdown grace period interrupted")
 
+        remaining = list(self._active_tasks.values())
+        if preserve_recoverable_tasks:
+            # Finish old-binding writes before making the records reclaimable.
+            await self._cancel_workers(wait=True)
+
         # Force-expire all leases. Tolerate cancellation here too.
         try:
-            for active in list(self._active_tasks.values()):
+            for active in remaining:
                 try:
                     await self._provider.update(
                         active.task_id,
@@ -957,7 +968,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         # Cancel all renewal and execution tasks. Always do this so handlers
         # listening on the cancellation signal wake up and exit cleanly.
-        await self._cancel_workers(wait=wait_for_workers)
+        if not preserve_recoverable_tasks:
+            await self._cancel_workers(wait=wait_for_workers)
 
         self._active_tasks.clear()
         self._timeout_watchdogs.clear()
@@ -2157,6 +2169,14 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
             except asyncio.CancelledError:
                 renewal_cancel.set()
+                if self._preserve_recoverable_tasks_on_shutdown and not ctx.cancel.is_set():
+                    from ._exceptions import (  # pylint: disable=import-outside-toplevel
+                        TaskDeferred,
+                    )
+
+                    if not current_result_future.done():
+                        current_result_future.set_exception(TaskDeferred())
+                    break
                 # asyncio.CancelledError is the cooperative-cancel path —
                 # the handler chose to raise it (or the framework signalled
                 # cancel via ctx.cancel and the handler did not catch).
