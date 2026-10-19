@@ -15,6 +15,7 @@
 - Added public `SignedIdentifier` model and updated `ContainerClient.get_container_access_policy`
   and `azure.storage.blob.aio.ContainerClient.get_container_access_policy` to return public
   models instead of generated internal types.
+- `ContainerClient`'s `list_blobs`, `list_blob_names`, and `walk_blobs` now use Arrow by default and `nanoarrow>=0.7.0` was added as a required dependency. Pass `response_format="xml"` to use the previous behavior.
 
 ## 12.31.0 (2026-09-30)
 

@@ -2395,7 +2395,7 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
 
             pcontainer = pbs.get_container_client(container_name)
             blobs = []
-            async for b in pcontainer.list_blobs():
+            async for b in pcontainer.list_blobs(response_format="xml"):
                 blobs.append(b)
 
             # Assert
@@ -2411,7 +2411,7 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
             assert not blob_ref2.blob_tier_inferred
 
             blobs = []
-            async for b in pcontainer.list_blobs():
+            async for b in pcontainer.list_blobs(response_format="xml"):
                 blobs.append(b)
 
             # Assert

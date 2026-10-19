@@ -2284,7 +2284,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         assert props.smart_access_tier is not None
 
         cc = self.bsc.get_container_client(self.container_name)
-        async for blob in cc.list_blobs():
+        async for blob in cc.list_blobs(response_format="xml"):
             assert blob.blob_tier == StandardBlobTier.SMART
             assert blob.smart_access_tier is not None
 

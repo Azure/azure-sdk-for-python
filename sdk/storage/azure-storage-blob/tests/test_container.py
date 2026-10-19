@@ -1112,7 +1112,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client("blob2").upload_blob(data)
 
         # Act
-        blobs = [b.name for b in container.list_blobs()]
+        blobs = [b.name for b in container.list_blobs(response_format="xml")]
 
         assert blobs == ["blob1", "blob2"]
 
@@ -1131,7 +1131,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         blob_client.upload_blob(data, standard_blob_tier=StandardBlobTier.Archive)
 
         # Act
-        for blob_properties in container.list_blobs():
+        for blob_properties in container.list_blobs(response_format="xml"):
             assert isinstance(blob_properties.last_accessed_on, datetime)
 
     @BlobPreparer()
@@ -1149,7 +1149,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         blob_client.set_standard_blob_tier(StandardBlobTier.Hot)
 
         # Act
-        for blob_properties in container.list_blobs():
+        for blob_properties in container.list_blobs(response_format="xml"):
             if blob_properties.name == blob_client.blob_name:
                 assert blob_properties.rehydrate_priority == "Standard"
 
@@ -1167,7 +1167,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         blob_client.upload_blob(data, standard_blob_tier=StandardBlobTier.Cold)
 
         # Act
-        for blob_properties in container.list_blobs():
+        for blob_properties in container.list_blobs(response_format="xml"):
             assert blob_properties.blob_tier == StandardBlobTier.Cold
 
     @BlobPreparer()
@@ -1183,7 +1183,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client("blob2").upload_blob(data)
 
         # Act
-        blobs = list(container.list_blobs())
+        blobs = list(container.list_blobs(response_format="xml"))
 
         # Assert
         assert blobs is not None
@@ -1210,7 +1210,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         props = bc.get_blob_properties()
 
         # Act
-        blobs = list(container.list_blobs())
+        blobs = list(container.list_blobs(response_format="xml"))
         assert blobs[0].name == blob_name
         assert props.name == blob_name
 
@@ -1232,7 +1232,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client("blob2").upload_blob(data, overwrite=True)
 
         # Act
-        blobs_list = container.list_blobs()
+        blobs_list = container.list_blobs(response_format="xml")
         number_of_blobs_with_policy = 0
         for blob in blobs_list:
             if blob.object_replication_source_properties:
@@ -1255,7 +1255,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         blob1.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
 
         # Act
-        resp = list(container.list_blobs())
+        resp = list(container.list_blobs(response_format="xml"))
 
         # Assert
         assert resp is not None
@@ -1281,7 +1281,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client("blob_b1").upload_blob(data)
 
         # Act
-        resp = list(container.list_blobs(name_starts_with="blob_a"))
+        resp = list(container.list_blobs(name_starts_with="blob_a", response_format="xml"))
 
         # Assert
         assert resp is not None
@@ -1304,7 +1304,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client("blob_b1").upload_blob(data)
 
         # Act
-        blobs = list(next(container.list_blobs(results_per_page=2).by_page()))
+        blobs = list(next(container.list_blobs(results_per_page=2, response_format="xml").by_page()))
 
         # Assert
         assert blobs is not None
@@ -1327,7 +1327,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client("blob2").upload_blob(data)
 
         # Act
-        blobs = list(container.list_blobs(include="snapshots"))
+        blobs = list(container.list_blobs(include="snapshots", response_format="xml"))
 
         # Assert
         assert len(blobs) == 3
@@ -1359,7 +1359,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         )
 
         # Act
-        blobs = list(container.list_blobs(include="metadata"))
+        blobs = list(container.list_blobs(include="metadata", response_format="xml"))
 
         # Assert
         assert len(blobs) == 2
@@ -1402,7 +1402,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         )
 
         # Act
-        blobs = list(container.list_blobs(include=["deletedwithversions"]))
+        blobs = list(container.list_blobs(include=["deletedwithversions"], response_format="xml"))
         downloaded_root_content = blob1.download_blob(version_id=root_version_id).readall()
         downloaded_original_content = blob1.download_blob(version_id=version_id_1).readall()
 
@@ -1434,7 +1434,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         blob2.upload_blob(data, metadata={"number": "2", "name": "car"})
 
         # Act
-        blobs = list(container.list_blobs(include="uncommittedblobs"))
+        blobs = list(container.list_blobs(include="uncommittedblobs", response_format="xml"))
 
         # Assert
         assert len(blobs) == 2
@@ -1459,7 +1459,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         blobcopy.start_copy_from_url(sourceblob, metadata={"status": "copy"})
 
         # Act
-        blobs = list(container.list_blobs(include="copy"))
+        blobs = list(container.list_blobs(include="copy", response_format="xml"))
 
         # Assert
         assert len(blobs) == 2
@@ -1497,7 +1497,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client("blob4").upload_blob(data)
 
         # Act
-        resp = list(container.walk_blobs())
+        resp = list(container.walk_blobs(response_format="xml"))
 
         # Assert
         assert resp is not None
@@ -1892,7 +1892,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client("blob2").upload_blob(data, overwrite=True)
         container.get_blob_client("blob3").upload_blob(data, overwrite=True)
 
-        blobs = list(container.list_blobs(include="snapshots"))
+        blobs = list(container.list_blobs(include="snapshots", response_format="xml"))
         assert len(blobs) == 4  # 3 blobs + 1 snapshot
 
         # Act
@@ -1905,7 +1905,7 @@ class TestStorageContainer(StorageRecordedTestCase):
             assert parts[1].status_code == 404  # There was no snapshot
             assert parts[2].status_code == 404  # There was no snapshot
 
-            blobs = list(container.list_blobs(include="snapshots"))
+            blobs = list(container.list_blobs(include="snapshots", response_format="xml"))
             assert len(blobs) == 3  # 3 blobs
 
     @pytest.mark.live_test_only
@@ -2172,7 +2172,7 @@ class TestStorageContainer(StorageRecordedTestCase):
                     blob_list.append(b.name)
 
         # Act
-        recursive_walk(container.walk_blobs())
+        recursive_walk(container.walk_blobs(response_format="xml"))
 
         # Assert
         assert len(blob_list) == 4
@@ -2195,7 +2195,9 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client("b/blob3").upload_blob(data)
 
         # Act
-        prefix_list = list(container.walk_blobs(name_starts_with="a", delimiter="/", include=["versions"]))
+        prefix_list = list(
+            container.walk_blobs(name_starts_with="a", delimiter="/", include=["versions"], response_format="xml")
+        )
 
         # Assert
         assert len(prefix_list) == 1
@@ -2219,7 +2221,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client("blob1").upload_blob(data, standard_blob_tier=StandardBlobTier.Cold)
 
         # Act
-        resp = list(container.walk_blobs())
+        resp = list(container.walk_blobs(response_format="xml"))
 
         # Assert
         for blob_properties in resp:
@@ -2241,7 +2243,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client("blob2").upload_blob(data, metadata={"number": "2", "name": "car"})
 
         # Act
-        blobs = list(container.list_blobs(include=["snapshots", "metadata"]))
+        blobs = list(container.list_blobs(include=["snapshots", "metadata"], response_format="xml"))
 
         # Assert
         assert len(blobs) == 3
@@ -2607,8 +2609,8 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client("test1").upload_blob(data, overwrite=True)
 
         # Act
-        all_blobs = list(container.list_blob_names())
-        test_blobs = list(container.list_blob_names(name_starts_with="test"))
+        all_blobs = list(container.list_blob_names(response_format="xml"))
+        test_blobs = list(container.list_blob_names(name_starts_with="test", response_format="xml"))
 
         # Assert
         assert len(all_blobs) == 3
@@ -2633,7 +2635,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client("blob3").upload_blob(data, overwrite=True)
 
         # Act
-        blob_pages = container.list_blob_names(results_per_page=2).by_page()
+        blob_pages = container.list_blob_names(results_per_page=2, response_format="xml").by_page()
         first_page = next(blob_pages)
         items_on_page1 = list(first_page)
         second_page = next(blob_pages)
@@ -2713,7 +2715,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         container.get_blob_client("a/blob4").upload_blob(data)
 
         # Act
-        blobs = list(container.list_blobs(name_starts_with="a/", start_from="a/blob2"))
+        blobs = list(container.list_blobs(name_starts_with="a/", start_from="a/blob2", response_format="xml"))
 
         # Assert
         assert blobs is not None
@@ -2748,7 +2750,9 @@ class TestStorageContainer(StorageRecordedTestCase):
                     blobs.append(b.name)
 
         # Act
-        recursive_walk(container.walk_blobs(name_starts_with="a/", start_from="a/b/", delimiter="/"))
+        recursive_walk(
+            container.walk_blobs(name_starts_with="a/", start_from="a/b/", delimiter="/", response_format="xml")
+        )
 
         # Assert
         assert blobs is not None

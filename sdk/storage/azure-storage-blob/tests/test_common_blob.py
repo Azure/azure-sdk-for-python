@@ -862,7 +862,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         self._create_block_blob()
         container = self.bsc.get_container_client(self.container_name)
-        blob_list = container.list_blobs()
+        blob_list = container.list_blobs(response_format="xml")
 
         # Act
 
@@ -900,7 +900,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         container = self.bsc.get_container_client(self.container_name)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         res = blob.create_snapshot()
-        blobs = list(container.list_blobs(include="snapshots"))
+        blobs = list(container.list_blobs(include="snapshots", response_format="xml"))
         assert len(blobs) == 2
 
         # Act
@@ -1080,7 +1080,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Act
         resp = blob_client.delete_blob(version_id=resp["version_id"])
 
-        blob_list = list(self.bsc.get_container_client(self.container_name).list_blobs(include="versions"))
+        blob_list = list(
+            self.bsc.get_container_client(self.container_name).list_blobs(include="versions", response_format="xml")
+        )
 
         # Assert
         assert resp is None
@@ -1119,7 +1121,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Assert
         assert resp is None
 
-        blob_list = list(self.bsc.get_container_client(self.container_name).list_blobs(include="versions"))
+        blob_list = list(
+            self.bsc.get_container_client(self.container_name).list_blobs(include="versions", response_format="xml")
+        )
         # make sure the deleted version is not in the blob version list
         for blob in blob_list:
             assert blob.version_id != version_id
@@ -1156,7 +1160,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Assert
         container = self.bsc.get_container_client(self.container_name)
-        blobs = list(container.list_blobs(include="snapshots"))
+        blobs = list(container.list_blobs(include="snapshots", response_format="xml"))
         assert len(blobs) == 1
         assert blobs[0].name == blob_name
         assert blobs[0].snapshot is None
@@ -1177,7 +1181,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Assert
         container = self.bsc.get_container_client(self.container_name)
-        blobs = list(container.list_blobs(include="snapshots"))
+        blobs = list(container.list_blobs(include="snapshots", response_format="xml"))
         assert len(blobs) == 1
         assert blobs[0].snapshot is None
 
@@ -1193,7 +1197,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         resp = blob.create_snapshot()
-        blobs = list(container.list_blobs(include="versions"))
+        blobs = list(container.list_blobs(include="versions", response_format="xml"))
 
         assert resp["version_id"] is not None
         # Both create blob and create snapshot will create a new version
@@ -1203,7 +1207,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob.delete_blob(delete_snapshots="include")
 
         # Assert
-        blobs = list(container.list_blobs(include=["snapshots", "versions"]))
+        blobs = list(container.list_blobs(include=["snapshots", "versions"], response_format="xml"))
         # versions are not deleted so blob lists shouldn't be empty
         assert len(blobs) > 0
         assert blobs[0].snapshot is None
@@ -1227,7 +1231,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Assert
         container = self.bsc.get_container_client(self.container_name)
-        blobs = list(container.list_blobs(include="snapshots"))
+        blobs = list(container.list_blobs(include="snapshots", response_format="xml"))
         assert len(blobs) == 0
 
     @BlobPreparer()
@@ -1244,21 +1248,21 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Soft delete the blob
         blob.delete_blob()
-        blob_list = list(container.list_blobs(include="deleted"))
+        blob_list = list(container.list_blobs(include="deleted", response_format="xml"))
 
         # Assert
         assert len(blob_list) == 1
         self._assert_blob_is_soft_deleted(blob_list[0])
 
         # list_blobs should not list soft deleted blobs if Include(deleted=True) is not specified
-        blob_list = list(container.list_blobs())
+        blob_list = list(container.list_blobs(response_format="xml"))
 
         # Assert
         assert len(blob_list) == 0
 
         # Restore blob with undelete
         blob.undelete_blob()
-        blob_list = list(container.list_blobs(include="deleted"))
+        blob_list = list(container.list_blobs(include="deleted", response_format="xml"))
 
         # Assert
         assert len(blob_list) == 1
@@ -1284,7 +1288,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             snapshot_1.delete_blob(delete_snapshots="only")
 
         container = self.bsc.get_container_client(self.container_name)
-        blob_list = list(container.list_blobs(include=["snapshots", "deleted"]))
+        blob_list = list(container.list_blobs(include=["snapshots", "deleted"], response_format="xml"))
 
         # Assert
         assert len(blob_list) == 3
@@ -1295,14 +1299,14 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
                 self._assert_blob_not_soft_deleted(listedblob)
 
         # list_blobs should not list soft deleted blob snapshots if Include(deleted=True) is not specified
-        blob_list = list(container.list_blobs(include="snapshots"))
+        blob_list = list(container.list_blobs(include="snapshots", response_format="xml"))
 
         # Assert
         assert len(blob_list) == 2
 
         # Restore snapshot with undelete
         blob.undelete_blob()
-        blob_list = list(container.list_blobs(include=["snapshots", "deleted"]))
+        blob_list = list(container.list_blobs(include=["snapshots", "deleted"], response_format="xml"))
 
         # Assert
         assert len(blob_list) == 3
@@ -1324,7 +1328,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Soft delete all snapshots
         blob.delete_blob(delete_snapshots="only")
         container = self.bsc.get_container_client(self.container_name)
-        blob_list = list(container.list_blobs(include=["snapshots", "deleted"]))
+        blob_list = list(container.list_blobs(include=["snapshots", "deleted"], response_format="xml"))
 
         # Assert
         assert len(blob_list) == 3
@@ -1337,14 +1341,14 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
                 self._assert_blob_not_soft_deleted(listedblob)
 
         # list_blobs should not list soft deleted blob snapshots if Include(deleted=True) is not specified
-        blob_list = list(container.list_blobs(include="snapshots"))
+        blob_list = list(container.list_blobs(include="snapshots", response_format="xml"))
 
         # Assert
         assert len(blob_list) == 1
 
         # Restore snapshots with undelete
         blob.undelete_blob()
-        blob_list = list(container.list_blobs(include=["snapshots", "deleted"]))
+        blob_list = list(container.list_blobs(include=["snapshots", "deleted"], response_format="xml"))
 
         # Assert
         assert len(blob_list) == 3
@@ -1366,7 +1370,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Soft delete blob and all snapshots
         blob.delete_blob(delete_snapshots="include")
         container = self.bsc.get_container_client(self.container_name)
-        blob_list = list(container.list_blobs(include=["snapshots", "deleted"]))
+        blob_list = list(container.list_blobs(include=["snapshots", "deleted"], response_format="xml"))
 
         # Assert
         assert len(blob_list) == 3
@@ -1374,14 +1378,14 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             self._assert_blob_is_soft_deleted(listedblob)
 
         # list_blobs should not list soft deleted blob snapshots if Include(deleted=True) is not specified
-        blob_list = list(container.list_blobs(include=["snapshots"]))
+        blob_list = list(container.list_blobs(include=["snapshots"], response_format="xml"))
 
         # Assert
         assert len(blob_list) == 0
 
         # Restore blob and snapshots with undelete
         blob.undelete_blob()
-        blob_list = list(container.list_blobs(include=["snapshots", "deleted"]))
+        blob_list = list(container.list_blobs(include=["snapshots", "deleted"], response_format="xml"))
 
         # Assert
         assert len(blob_list) == 3
@@ -1406,21 +1410,21 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Soft delete the blob
         blob.delete_blob(lease=lease)
         container = self.bsc.get_container_client(self.container_name)
-        blob_list = list(container.list_blobs(include="deleted"))
+        blob_list = list(container.list_blobs(include="deleted", response_format="xml"))
 
         # Assert
         assert len(blob_list) == 1
         self._assert_blob_is_soft_deleted(blob_list[0])
 
         # list_blobs should not list soft deleted blobs if Include(deleted=True) is not specified
-        blob_list = list(container.list_blobs())
+        blob_list = list(container.list_blobs(response_format="xml"))
 
         # Assert
         assert len(blob_list) == 0
 
         # Restore blob with undelete, this also gets rid of the lease
         blob.undelete_blob()
-        blob_list = list(container.list_blobs(include="deleted"))
+        blob_list = list(container.list_blobs(include="deleted", response_format="xml"))
 
         # Assert
         assert len(blob_list) == 1
@@ -2206,7 +2210,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         container_client = ContainerClient.from_container_url(container.url, credential=container_sas)
-        blob_list = list(container_client.list_blobs())
+        blob_list = list(container_client.list_blobs(response_format="xml"))
 
         blob_client = BlobClient.from_blob_url(blob.url, credential=blob_sas)
         blob_props = blob_client.get_blob_properties()
@@ -2539,7 +2543,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             container.upload_blob(blob_name + "3", b"HelloWorld")
 
             delete_batch = []
-            blob_list = container.list_blobs(name_starts_with=blob_name)
+            blob_list = container.list_blobs(name_starts_with=blob_name, response_format="xml")
             for blob in blob_list:
                 delete_batch.append(blob.name)
 
@@ -3395,7 +3399,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         )
         blob.upload_blob(content, immutability_policy=immutability_policy, legal_hold=True, overwrite=True)
 
-        blob_list = list(container_client.list_blobs(include=["immutabilitypolicy", "legalhold"]))
+        blob_list = list(
+            container_client.list_blobs(include=["immutabilitypolicy", "legalhold"], response_format="xml")
+        )
 
         assert blob_list[0]["has_legal_hold"]
         assert blob_list[0]["immutability_policy"]["expiry_time"] is not None
@@ -3912,7 +3918,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         container_client = ContainerClient.from_container_url(
             f"{container.url}?{container_token}", credential=token_credential
         )
-        blobs_list = list(container_client.list_blobs())
+        blobs_list = list(container_client.list_blobs(response_format="xml"))
         assert blobs_list is not None
 
         blob_token = self.generate_sas(

@@ -1632,7 +1632,7 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         with pytest.raises(HttpResponseError):
             copied_blob2.append_block("abc")
 
-        blobs_gen = bsc.get_container_client(self.container_name).list_blobs()
+        blobs_gen = bsc.get_container_client(self.container_name).list_blobs(response_format="xml")
         for blob in blobs_gen:
             if blob.name == "copiedblob2":
                 assert blob.is_append_blob_sealed

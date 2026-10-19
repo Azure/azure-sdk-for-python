@@ -35,6 +35,7 @@ dependencies = [
     "azure-core>=1.38.3",
     "typing-extensions>=4.6.0",
     "cryptography>=2.1.4",
+    "nanoarrow>=0.7.0",
 ]
 dynamic = [
 "version", "readme"

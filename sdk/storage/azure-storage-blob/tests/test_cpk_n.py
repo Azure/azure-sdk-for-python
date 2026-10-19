@@ -816,7 +816,7 @@ class TestStorageCPKN(StorageRecordedTestCase):
 
         container_client = bsc.get_container_client(self.container_name)
 
-        generator = container_client.list_blobs(include="metadata")
+        generator = container_client.list_blobs(include="metadata", response_format="xml")
         for blob in generator:
             assert blob is not None
             # Assert: every listed blob has encryption_scope
@@ -884,7 +884,7 @@ class TestStorageCPKN(StorageRecordedTestCase):
 
         # The ses field in SAS token when list blobs is different from the encryption scope used on creating blob, while
         # list blobs should also succeed
-        generator = container_client.list_blobs(include="metadata")
+        generator = container_client.list_blobs(include="metadata", response_format="xml")
         for blob in generator:
             assert blob is not None
             # Assert: every listed blob has encryption_scope
