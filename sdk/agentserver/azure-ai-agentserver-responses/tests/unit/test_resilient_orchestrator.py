@@ -327,13 +327,14 @@ class TestResilientOrchestratorCancellationBridge:
         ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
         ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx._cancellation_signal = asyncio.Event()
+        ctx.cancel = ctx._cancellation_signal
         ctx.shutdown = asyncio.Event()
         ctx.task_id = "test-task-id"
         ctx.input = {
             "response_id": "resp_cancel",
             "request": {"input": "hi"},
             "_record_ref": MagicMock(),
-            "_context_ref": MagicMock(),
+            "_context_ref": MagicMock(shutdown=asyncio.Event()),
             "_parsed_ref": MagicMock(),
             "_cancel_ref": cancel_signal,
             "_runtime_state_ref": MagicMock(),

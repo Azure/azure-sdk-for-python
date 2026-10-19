@@ -57,6 +57,7 @@ from ..models._enums import _AgentDefinitionOptInKeys
 from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 from .._utils.model_base import Model as _Model, SdkJSONEncoder
 from .._version import VERSION
+from .._realtime_utils import _normalize_transport, _without_transport_query
 
 _LOGGER = logging.getLogger("azure.ai.projects.realtime")
 
@@ -722,6 +723,26 @@ class AsyncBetaRealtimeConnectionManager:  # pylint: disable=too-many-instance-a
 
     Returned by :meth:`AsyncBetaRealtime.connect`; you normally use it as
     ``async with client.beta.voice_agents.realtime.connect(...) as conn:``.
+
+    :keyword str endpoint: The Foundry project endpoint.
+    :keyword credential: The credential used for the WebSocket handshake.
+    :paramtype credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword credential_scopes: The token scopes for the handshake.
+    :paramtype credential_scopes: list[str]
+    :keyword str api_version: The API version for the handshake.
+    :keyword str agent_name: The name of the voice agent.
+    :keyword agent_session_id: An optional session correlation identifier.
+    :paramtype agent_session_id: str or None
+    :keyword transport: The optional connection transport. The SDK encodes its wire value internally.
+    :paramtype transport: str or ~azure.ai.projects.models.VoiceAgentTransport or None
+    :keyword structured_inputs: Optional structured prompt inputs.
+    :paramtype structured_inputs: Mapping[str, Any] or None
+    :keyword connection_url: An optional WebSocket URL overriding the computed route.
+    :paramtype connection_url: str or None
+    :keyword extra_query: Additional handshake query parameters.
+    :paramtype extra_query: Mapping[str, str] or None
+    :keyword extra_headers: Additional handshake headers.
+    :paramtype extra_headers: Mapping[str, str] or None
     """
 
     def __init__(  # pylint: disable=too-many-arguments
@@ -733,6 +754,7 @@ class AsyncBetaRealtimeConnectionManager:  # pylint: disable=too-many-instance-a
         api_version: str,
         agent_name: str,
         agent_session_id: Optional[str] = None,
+        transport: Optional[Union[str, "_models.VoiceAgentTransport"]] = None,
         structured_inputs: Optional[Mapping[str, Any]] = None,
         connection_url: Optional[str] = None,
         extra_query: Optional[Mapping[str, str]] = None,
@@ -745,6 +767,7 @@ class AsyncBetaRealtimeConnectionManager:  # pylint: disable=too-many-instance-a
         self._api_version = api_version
         self._agent_name = agent_name
         self._agent_session_id = agent_session_id
+        self._transport = _normalize_transport(transport)
         self._structured_inputs = structured_inputs
         self._connection_url = connection_url
         self._extra_query = dict(extra_query or {})
@@ -777,6 +800,8 @@ class AsyncBetaRealtimeConnectionManager:  # pylint: disable=too-many-instance-a
         if self._connection_url is not None:
             _assert_trusted_connection_url(self._connection_url, self._endpoint)
         url = self._connection_url or _to_ws_url(self._endpoint, self._agent_name)
+        if self._transport is not None:
+            url = _without_transport_query(url)
         if not url.startswith("wss://"):
             raise ValueError("The realtime WebSocket URL must use wss:// to protect credentials in transit.")
 
@@ -789,6 +814,8 @@ class AsyncBetaRealtimeConnectionManager:  # pylint: disable=too-many-instance-a
             # header -- aiohttp appends `params` to the URL for us below.
             params["structured_input"] = json.dumps(self._structured_inputs, cls=SdkJSONEncoder)
         params.update(self._extra_query)
+        if self._transport is not None:
+            params["transport"] = self._transport
 
         target_url = urlparse(url)._replace(query="", fragment="").geturl()
         _LOGGER.debug("WebSocket CONNECT target=%s", target_url)
@@ -869,6 +896,7 @@ class AsyncBetaRealtime:  # pylint: disable=too-few-public-methods
         *,
         agent_name: str,
         agent_session_id: Optional[str] = None,
+        transport: Optional[Union[str, "_models.VoiceAgentTransport"]] = None,
         structured_inputs: Optional[Mapping[str, Any]] = None,
         connection_url: Optional[str] = None,
         api_version: Optional[str] = None,
@@ -883,6 +911,12 @@ class AsyncBetaRealtime:  # pylint: disable=too-few-public-methods
         :keyword agent_session_id: An optional identifier used to correlate the voice session.
          Default value is None.
         :paramtype agent_session_id: str or None
+        :keyword transport: The transport used for this connection. Known values are
+         ``VoiceAgentTransport.WEBSOCKET`` and ``VoiceAgentTransport.WEBRTC``. When omitted, the
+         service defaults to WebSocket. The SDK constructs the wire query internally; an explicit
+         selection overrides an existing transport query value. For WebRTC, the caller must
+         manage the peer connection, media, and SDP offer/answer exchange.
+        :paramtype transport: str or ~azure.ai.projects.models.VoiceAgentTransport or None
         :keyword structured_inputs: A mapping of structured-input names to their values for this
          session (see :attr:`~azure.ai.projects.models.CreateTelephonyCallJobRequest.structured_inputs`
          for the analogous shape used elsewhere). Serialized to JSON on the wire. Default value is
@@ -905,6 +939,7 @@ class AsyncBetaRealtime:  # pylint: disable=too-few-public-methods
         :paramtype extra_headers: Mapping[str, str] or None
         :return: An async context manager yielding an :class:`AsyncBetaRealtimeConnection`.
         :rtype: ~azure.ai.projects.aio.AsyncBetaRealtimeConnectionManager
+        :raises TypeError: If ``transport`` is not a string or VoiceAgentTransport.
         """
         return AsyncBetaRealtimeConnectionManager(
             endpoint=self._config.endpoint,
@@ -913,6 +948,7 @@ class AsyncBetaRealtime:  # pylint: disable=too-few-public-methods
             api_version=api_version or self._config.api_version,
             agent_name=agent_name,
             agent_session_id=agent_session_id,
+            transport=transport,
             structured_inputs=structured_inputs,
             connection_url=connection_url,
             extra_query=extra_query,

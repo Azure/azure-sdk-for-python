@@ -1,5 +1,13 @@
 # Release History
 
+## 41.8.0 (2026-10-19)
+
+### Features Added
+
+  - Model `GPUProfile` added property `nvidia`
+  - Added enum `ManagementMode`
+  - Added model `NvidiaGPUProfile`
+
 ## 41.8.0b1 (2026-10-01)
 
 ### Features Added

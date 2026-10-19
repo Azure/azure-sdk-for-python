@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
@@ -57,20 +57,42 @@ from ...operations._operations import (
     build_issue_list_resources_request,
     build_issue_set_background_visualization_request,
     build_issue_update_request,
+    build_metric_configurations_create_or_update_request,
+    build_metric_configurations_delete_request,
+    build_metric_configurations_get_request,
+    build_metric_configurations_list_by_metric_namespace_request,
+    build_metric_configurations_list_by_metrics_container_request,
+    build_metric_namespaces_get_request,
+    build_metric_namespaces_list_by_metrics_container_request,
     build_metrics_containers_create_or_update_request,
     build_metrics_containers_get_request,
     build_metrics_containers_list_by_azure_monitor_workspace_request,
     build_operations_list_request,
+    build_trace_associations_at_resource_group_create_or_update_request,
+    build_trace_associations_at_resource_group_delete_request,
+    build_trace_associations_at_resource_group_get_request,
+    build_trace_associations_at_resource_group_list_request,
+    build_trace_associations_at_subscription_create_or_update_request,
+    build_trace_associations_at_subscription_delete_request,
+    build_trace_associations_at_subscription_get_request,
+    build_trace_associations_at_subscription_list_request,
+    build_trace_associations_create_or_update_request,
+    build_trace_associations_delete_request,
+    build_trace_associations_get_request,
+    build_trace_associations_list_request,
+    build_trace_containers_create_or_update_request,
+    build_trace_containers_delete_request,
+    build_trace_containers_get_request,
+    build_trace_containers_list_by_azure_monitor_workspace_request,
 )
 from .._configuration import MonitorWorkspacesMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -182,7 +204,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AzureMonitorWorkspacesOperations:
+class AzureMonitorWorkspacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -310,7 +332,7 @@ class AzureMonitorWorkspacesOperations:
         self,
         resource_group_name: str,
         azure_monitor_workspace_name: str,
-        resource: JSON,
+        resource: _types.AzureMonitorWorkspaceResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -325,7 +347,7 @@ class AzureMonitorWorkspacesOperations:
         :type azure_monitor_workspace_name: str
         :param resource: Properties that need to be specified to create a new Azure Monitor Workspace.
          Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.monitorworkspaces.types.AzureMonitorWorkspaceResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -370,7 +392,7 @@ class AzureMonitorWorkspacesOperations:
         self,
         resource_group_name: str,
         azure_monitor_workspace_name: str,
-        resource: Union[_models.AzureMonitorWorkspaceResource, JSON, IO[bytes]],
+        resource: Union[_models.AzureMonitorWorkspaceResource, _types.AzureMonitorWorkspaceResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.AzureMonitorWorkspaceResource:
         """Creates or updates an Azure Monitor Workspace.
@@ -382,9 +404,9 @@ class AzureMonitorWorkspacesOperations:
          insensitive. Required.
         :type azure_monitor_workspace_name: str
         :param resource: Properties that need to be specified to create a new Azure Monitor Workspace.
-         Is one of the following types: AzureMonitorWorkspaceResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.monitorworkspaces.models.AzureMonitorWorkspaceResource or JSON or
-         IO[bytes]
+         Is either a AzureMonitorWorkspaceResource type or a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.monitorworkspaces.models.AzureMonitorWorkspaceResource or
+         ~azure.mgmt.monitorworkspaces.types.AzureMonitorWorkspaceResource or IO[bytes]
         :return: AzureMonitorWorkspaceResource. The AzureMonitorWorkspaceResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.monitorworkspaces.models.AzureMonitorWorkspaceResource
@@ -491,7 +513,7 @@ class AzureMonitorWorkspacesOperations:
         self,
         resource_group_name: str,
         azure_monitor_workspace_name: str,
-        properties: JSON,
+        properties: _types.AzureMonitorWorkspaceResourceUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -505,7 +527,7 @@ class AzureMonitorWorkspacesOperations:
          insensitive. Required.
         :type azure_monitor_workspace_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.monitorworkspaces.types.AzureMonitorWorkspaceResourceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -549,7 +571,9 @@ class AzureMonitorWorkspacesOperations:
         self,
         resource_group_name: str,
         azure_monitor_workspace_name: str,
-        properties: Union[_models.AzureMonitorWorkspaceResourceUpdate, JSON, IO[bytes]],
+        properties: Union[
+            _models.AzureMonitorWorkspaceResourceUpdate, _types.AzureMonitorWorkspaceResourceUpdate, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.AzureMonitorWorkspaceResource:
         """Updates part of an Azure Monitor Workspace.
@@ -560,10 +584,10 @@ class AzureMonitorWorkspacesOperations:
         :param azure_monitor_workspace_name: The name of the Azure Monitor Workspace. The name is case
          insensitive. Required.
         :type azure_monitor_workspace_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         AzureMonitorWorkspaceResourceUpdate, JSON, IO[bytes] Required.
+        :param properties: The resource properties to be updated. Is either a
+         AzureMonitorWorkspaceResourceUpdate type or a IO[bytes] type. Required.
         :type properties: ~azure.mgmt.monitorworkspaces.models.AzureMonitorWorkspaceResourceUpdate or
-         JSON or IO[bytes]
+         ~azure.mgmt.monitorworkspaces.types.AzureMonitorWorkspaceResourceUpdate or IO[bytes]
         :return: AzureMonitorWorkspaceResource. The AzureMonitorWorkspaceResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.monitorworkspaces.models.AzureMonitorWorkspaceResource
@@ -952,7 +976,7 @@ class AzureMonitorWorkspacesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class IssueOperations:
+class IssueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1012,7 +1036,7 @@ class IssueOperations:
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         issue_name: str,
-        resource: JSON,
+        resource: _types.IssueResource,
         *,
         related: Optional[str] = None,
         content_type: str = "application/json",
@@ -1029,7 +1053,7 @@ class IssueOperations:
         :param issue_name: The name of the IssueResource. Required.
         :type issue_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.monitorworkspaces.types.IssueResource
         :keyword related: Related resource or alert that is to be added to the issue (default: empty -
          the issue will be created without any related resources or alerts). Default value is None.
         :paramtype related: str
@@ -1082,7 +1106,7 @@ class IssueOperations:
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         issue_name: str,
-        resource: Union[_models.IssueResource, JSON, IO[bytes]],
+        resource: Union[_models.IssueResource, _types.IssueResource, IO[bytes]],
         *,
         related: Optional[str] = None,
         **kwargs: Any
@@ -1097,9 +1121,10 @@ class IssueOperations:
         :type azure_monitor_workspace_name: str
         :param issue_name: The name of the IssueResource. Required.
         :type issue_name: str
-        :param resource: Resource create parameters. Is one of the following types: IssueResource,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.monitorworkspaces.models.IssueResource or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a IssueResource type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.monitorworkspaces.models.IssueResource or
+         ~azure.mgmt.monitorworkspaces.types.IssueResource or IO[bytes]
         :keyword related: Related resource or alert that is to be added to the issue (default: empty -
          the issue will be created without any related resources or alerts). Default value is None.
         :paramtype related: str
@@ -1213,7 +1238,7 @@ class IssueOperations:
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         issue_name: str,
-        properties: JSON,
+        properties: _types.IssueResourceUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1229,7 +1254,7 @@ class IssueOperations:
         :param issue_name: The name of the IssueResource. Required.
         :type issue_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.monitorworkspaces.types.IssueResourceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1275,7 +1300,7 @@ class IssueOperations:
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         issue_name: str,
-        properties: Union[_models.IssueResourceUpdate, JSON, IO[bytes]],
+        properties: Union[_models.IssueResourceUpdate, _types.IssueResourceUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.IssueResource:
         """Update an issue.
@@ -1288,9 +1313,10 @@ class IssueOperations:
         :type azure_monitor_workspace_name: str
         :param issue_name: The name of the IssueResource. Required.
         :type issue_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         IssueResourceUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.monitorworkspaces.models.IssueResourceUpdate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a IssueResourceUpdate type
+         or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.monitorworkspaces.models.IssueResourceUpdate or
+         ~azure.mgmt.monitorworkspaces.types.IssueResourceUpdate or IO[bytes]
         :return: IssueResource. The IssueResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.monitorworkspaces.models.IssueResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1643,7 +1669,7 @@ class IssueOperations:
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         issue_name: str,
-        body: JSON,
+        body: _types.InvestigationResult,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1659,7 +1685,7 @@ class IssueOperations:
         :param issue_name: The name of the IssueResource. Required.
         :type issue_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.monitorworkspaces.types.InvestigationResult
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1713,14 +1739,14 @@ class IssueOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-10-03-preview", "2025-10-03"],
+        api_versions_list=["2025-10-03-preview", "2025-10-03", "2026-09-03-preview"],
     )
     async def add_investigation_result(
         self,
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         issue_name: str,
-        body: Union[_models.InvestigationResult, JSON, IO[bytes]],
+        body: Union[_models.InvestigationResult, _types.InvestigationResult, IO[bytes]],
         **kwargs: Any
     ) -> _models.InvestigationResult:
         """Adds investigation result.
@@ -1733,9 +1759,10 @@ class IssueOperations:
         :type azure_monitor_workspace_name: str
         :param issue_name: The name of the IssueResource. Required.
         :type issue_name: str
-        :param body: The content of the action request. Is one of the following types:
-         InvestigationResult, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.monitorworkspaces.models.InvestigationResult or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a InvestigationResult type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.monitorworkspaces.models.InvestigationResult or
+         ~azure.mgmt.monitorworkspaces.types.InvestigationResult or IO[bytes]
         :return: InvestigationResult. The InvestigationResult is compatible with MutableMapping
         :rtype: ~azure.mgmt.monitorworkspaces.models.InvestigationResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1845,7 +1872,7 @@ class IssueOperations:
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         issue_name: str,
-        body: JSON,
+        body: _types.FetchInvestigationResultParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1861,7 +1888,7 @@ class IssueOperations:
         :param issue_name: The name of the IssueResource. Required.
         :type issue_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.monitorworkspaces.types.FetchInvestigationResultParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1907,7 +1934,7 @@ class IssueOperations:
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         issue_name: str,
-        body: Union[_models.FetchInvestigationResultParameters, JSON, IO[bytes]],
+        body: Union[_models.FetchInvestigationResultParameters, _types.FetchInvestigationResultParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.InvestigationResult:
         """Fetch investigation result.
@@ -1920,10 +1947,10 @@ class IssueOperations:
         :type azure_monitor_workspace_name: str
         :param issue_name: The name of the IssueResource. Required.
         :type issue_name: str
-        :param body: The content of the action request. Is one of the following types:
-         FetchInvestigationResultParameters, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.monitorworkspaces.models.FetchInvestigationResultParameters or JSON or
-         IO[bytes]
+        :param body: The content of the action request. Is either a FetchInvestigationResultParameters
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.monitorworkspaces.models.FetchInvestigationResultParameters or
+         ~azure.mgmt.monitorworkspaces.types.FetchInvestigationResultParameters or IO[bytes]
         :return: InvestigationResult. The InvestigationResult is compatible with MutableMapping
         :rtype: ~azure.mgmt.monitorworkspaces.models.InvestigationResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2033,7 +2060,7 @@ class IssueOperations:
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         issue_name: str,
-        body: JSON,
+        body: _types.ListParameter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2049,7 +2076,7 @@ class IssueOperations:
         :param issue_name: The name of the IssueResource. Required.
         :type issue_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.monitorworkspaces.types.ListParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2095,7 +2122,7 @@ class IssueOperations:
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         issue_name: str,
-        body: Union[_models.ListParameter, JSON, IO[bytes]],
+        body: Union[_models.ListParameter, _types.ListParameter, IO[bytes]],
         **kwargs: Any
     ) -> _models.PagedRelatedAlert:
         """List all alerts in the issue - this method uses pagination to return all alerts.
@@ -2108,9 +2135,10 @@ class IssueOperations:
         :type azure_monitor_workspace_name: str
         :param issue_name: The name of the IssueResource. Required.
         :type issue_name: str
-        :param body: The content of the action request. Is one of the following types: ListParameter,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.monitorworkspaces.models.ListParameter or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a ListParameter type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.monitorworkspaces.models.ListParameter or
+         ~azure.mgmt.monitorworkspaces.types.ListParameter or IO[bytes]
         :return: PagedRelatedAlert. The PagedRelatedAlert is compatible with MutableMapping
         :rtype: ~azure.mgmt.monitorworkspaces.models.PagedRelatedAlert
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2220,7 +2248,7 @@ class IssueOperations:
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         issue_name: str,
-        body: JSON,
+        body: _types.RelatedAlerts,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2236,7 +2264,7 @@ class IssueOperations:
         :param issue_name: The name of the IssueResource. Required.
         :type issue_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.monitorworkspaces.types.RelatedAlerts
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2282,7 +2310,7 @@ class IssueOperations:
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         issue_name: str,
-        body: Union[_models.RelatedAlerts, JSON, IO[bytes]],
+        body: Union[_models.RelatedAlerts, _types.RelatedAlerts, IO[bytes]],
         **kwargs: Any
     ) -> _models.RelatedAlerts:
         """Add or update alerts associated with an issue.
@@ -2295,9 +2323,10 @@ class IssueOperations:
         :type azure_monitor_workspace_name: str
         :param issue_name: The name of the IssueResource. Required.
         :type issue_name: str
-        :param body: The content of the action request. Is one of the following types: RelatedAlerts,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.monitorworkspaces.models.RelatedAlerts or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a RelatedAlerts type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.monitorworkspaces.models.RelatedAlerts or
+         ~azure.mgmt.monitorworkspaces.types.RelatedAlerts or IO[bytes]
         :return: RelatedAlerts. The RelatedAlerts is compatible with MutableMapping
         :rtype: ~azure.mgmt.monitorworkspaces.models.RelatedAlerts
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2407,7 +2436,7 @@ class IssueOperations:
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         issue_name: str,
-        body: JSON,
+        body: _types.ListParameter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2423,7 +2452,7 @@ class IssueOperations:
         :param issue_name: The name of the IssueResource. Required.
         :type issue_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.monitorworkspaces.types.ListParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2469,7 +2498,7 @@ class IssueOperations:
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         issue_name: str,
-        body: Union[_models.ListParameter, JSON, IO[bytes]],
+        body: Union[_models.ListParameter, _types.ListParameter, IO[bytes]],
         **kwargs: Any
     ) -> _models.PagedRelatedResource:
         """List all resources in the issue - this method uses pagination to return all resources.
@@ -2482,9 +2511,10 @@ class IssueOperations:
         :type azure_monitor_workspace_name: str
         :param issue_name: The name of the IssueResource. Required.
         :type issue_name: str
-        :param body: The content of the action request. Is one of the following types: ListParameter,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.monitorworkspaces.models.ListParameter or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a ListParameter type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.monitorworkspaces.models.ListParameter or
+         ~azure.mgmt.monitorworkspaces.types.ListParameter or IO[bytes]
         :return: PagedRelatedResource. The PagedRelatedResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.monitorworkspaces.models.PagedRelatedResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2594,7 +2624,7 @@ class IssueOperations:
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         issue_name: str,
-        body: JSON,
+        body: _types.RelatedResources,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2610,7 +2640,7 @@ class IssueOperations:
         :param issue_name: The name of the IssueResource. Required.
         :type issue_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.monitorworkspaces.types.RelatedResources
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2656,7 +2686,7 @@ class IssueOperations:
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         issue_name: str,
-        body: Union[_models.RelatedResources, JSON, IO[bytes]],
+        body: Union[_models.RelatedResources, _types.RelatedResources, IO[bytes]],
         **kwargs: Any
     ) -> _models.RelatedResources:
         """Add or update resources associated with an issue.
@@ -2669,9 +2699,10 @@ class IssueOperations:
         :type azure_monitor_workspace_name: str
         :param issue_name: The name of the IssueResource. Required.
         :type issue_name: str
-        :param body: The content of the action request. Is one of the following types:
-         RelatedResources, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.monitorworkspaces.models.RelatedResources or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a RelatedResources type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.monitorworkspaces.models.RelatedResources or
+         ~azure.mgmt.monitorworkspaces.types.RelatedResources or IO[bytes]
         :return: RelatedResources. The RelatedResources is compatible with MutableMapping
         :rtype: ~azure.mgmt.monitorworkspaces.models.RelatedResources
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2757,7 +2788,7 @@ class IssueOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-10-03-preview", "2025-10-03"],
+        api_versions_list=["2025-10-03-preview", "2025-10-03", "2026-09-03-preview"],
     )
     async def fetch_background_visualization(
         self, resource_group_name: str, azure_monitor_workspace_name: str, issue_name: str, **kwargs: Any
@@ -2871,7 +2902,7 @@ class IssueOperations:
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         issue_name: str,
-        body: JSON,
+        body: _types.BackgroundVisualization,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2887,7 +2918,7 @@ class IssueOperations:
         :param issue_name: The name of the IssueResource. Required.
         :type issue_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.monitorworkspaces.types.BackgroundVisualization
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2940,14 +2971,14 @@ class IssueOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2025-10-03-preview", "2025-10-03"],
+        api_versions_list=["2025-10-03-preview", "2025-10-03", "2026-09-03-preview"],
     )
     async def set_background_visualization(
         self,
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         issue_name: str,
-        body: Union[_models.BackgroundVisualization, JSON, IO[bytes]],
+        body: Union[_models.BackgroundVisualization, _types.BackgroundVisualization, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Set the background visualization for the issue.
@@ -2960,9 +2991,10 @@ class IssueOperations:
         :type azure_monitor_workspace_name: str
         :param issue_name: The name of the IssueResource. Required.
         :type issue_name: str
-        :param body: The content of the action request. Is one of the following types:
-         BackgroundVisualization, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.monitorworkspaces.models.BackgroundVisualization or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a BackgroundVisualization type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.monitorworkspaces.models.BackgroundVisualization or
+         ~azure.mgmt.monitorworkspaces.types.BackgroundVisualization or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3023,7 +3055,7 @@ class IssueOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class MetricsContainersOperations:
+class MetricsContainersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3157,7 +3189,7 @@ class MetricsContainersOperations:
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         metrics_container_name: str,
-        resource: JSON,
+        resource: _types.MetricsContainerResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3173,7 +3205,7 @@ class MetricsContainersOperations:
         :param metrics_container_name: The name of the MetricsContainer. Required.
         :type metrics_container_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.monitorworkspaces.types.MetricsContainerResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3221,7 +3253,7 @@ class MetricsContainersOperations:
         resource_group_name: str,
         azure_monitor_workspace_name: str,
         metrics_container_name: str,
-        resource: Union[_models.MetricsContainerResource, JSON, IO[bytes]],
+        resource: Union[_models.MetricsContainerResource, _types.MetricsContainerResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.MetricsContainerResource:
         """Creates or updates metrics container settings for a monitoring account.
@@ -3234,10 +3266,10 @@ class MetricsContainersOperations:
         :type azure_monitor_workspace_name: str
         :param metrics_container_name: The name of the MetricsContainer. Required.
         :type metrics_container_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         MetricsContainerResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.monitorworkspaces.models.MetricsContainerResource or JSON or
-         IO[bytes]
+        :param resource: Resource create parameters. Is either a MetricsContainerResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.monitorworkspaces.models.MetricsContainerResource or
+         ~azure.mgmt.monitorworkspaces.types.MetricsContainerResource or IO[bytes]
         :return: MetricsContainerResource. The MetricsContainerResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.monitorworkspaces.models.MetricsContainerResource
@@ -3388,6 +3420,2910 @@ class MetricsContainersOperations:
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
                 List[_models.MetricsContainerResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class MetricNamespacesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.monitorworkspaces.aio.MonitorWorkspacesMgmtClient`'s
+        :attr:`metric_namespaces` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: MonitorWorkspacesMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={
+            "2026-09-03-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "azure_monitor_workspace_name",
+                "metrics_container_name",
+                "encoded_metric_namespace",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-03-preview"],
+    )
+    async def get(
+        self,
+        resource_group_name: str,
+        azure_monitor_workspace_name: str,
+        metrics_container_name: str,
+        encoded_metric_namespace: str,
+        **kwargs: Any
+    ) -> _models.MetricNamespaceResource:
+        """Gets a metric namespace.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param azure_monitor_workspace_name: The name of the Azure Monitor Workspace. The name is case
+         insensitive. Required.
+        :type azure_monitor_workspace_name: str
+        :param metrics_container_name: The name of the MetricsContainer. Required.
+        :type metrics_container_name: str
+        :param encoded_metric_namespace: Tilde encoding is used for the metric namespace in the URL
+         path. It is similar to percent encoding but uses ``~`` instead of ``%``. For example, ``/`` is
+         encoded as ``~2F``. Metric configurations provide the original namespace in
+         ``properties.namespace``. Required.
+        :type encoded_metric_namespace: str
+        :return: MetricNamespaceResource. The MetricNamespaceResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.MetricNamespaceResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.MetricNamespaceResource] = kwargs.pop("cls", None)
+
+        _request = build_metric_namespaces_get_request(
+            resource_group_name=resource_group_name,
+            azure_monitor_workspace_name=azure_monitor_workspace_name,
+            metrics_container_name=metrics_container_name,
+            encoded_metric_namespace=encoded_metric_namespace,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.MetricNamespaceResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={
+            "2026-09-03-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "azure_monitor_workspace_name",
+                "metrics_container_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-03-preview"],
+    )
+    def list_by_metrics_container(
+        self, resource_group_name: str, azure_monitor_workspace_name: str, metrics_container_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.MetricNamespaceResource"]:
+        """Lists metric namespaces for an Azure Monitor Workspace. Resource properties may be omitted in
+        collection responses.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param azure_monitor_workspace_name: The name of the Azure Monitor Workspace. The name is case
+         insensitive. Required.
+        :type azure_monitor_workspace_name: str
+        :param metrics_container_name: The name of the MetricsContainer. Required.
+        :type metrics_container_name: str
+        :return: An iterator like instance of MetricNamespaceResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.monitorworkspaces.models.MetricNamespaceResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.MetricNamespaceResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_metric_namespaces_list_by_metrics_container_request(
+                    resource_group_name=resource_group_name,
+                    azure_monitor_workspace_name=azure_monitor_workspace_name,
+                    metrics_container_name=metrics_container_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.MetricNamespaceResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class MetricConfigurationsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.monitorworkspaces.aio.MonitorWorkspacesMgmtClient`'s
+        :attr:`metric_configurations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: MonitorWorkspacesMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={
+            "2026-09-03-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "azure_monitor_workspace_name",
+                "metrics_container_name",
+                "encoded_metric_namespace",
+                "encoded_metric_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-03-preview"],
+    )
+    async def get(
+        self,
+        resource_group_name: str,
+        azure_monitor_workspace_name: str,
+        metrics_container_name: str,
+        encoded_metric_namespace: str,
+        encoded_metric_name: str,
+        **kwargs: Any
+    ) -> _models.MetricConfigurationResource:
+        """Gets a metric configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param azure_monitor_workspace_name: The name of the Azure Monitor Workspace. The name is case
+         insensitive. Required.
+        :type azure_monitor_workspace_name: str
+        :param metrics_container_name: The name of the MetricsContainer. Required.
+        :type metrics_container_name: str
+        :param encoded_metric_namespace: Tilde encoding is used for the metric namespace in the URL
+         path. It is similar to percent encoding but uses ``~`` instead of ``%``. For example, ``/`` is
+         encoded as ``~2F``. Metric configurations provide the original namespace in
+         ``properties.namespace``. Required.
+        :type encoded_metric_namespace: str
+        :param encoded_metric_name: Tilde encoding is used for the metric name in the URL path. It is
+         similar to percent encoding but uses ``~`` instead of ``%``. For example, ``/`` is encoded as
+         ``~2F``. The original metric name is provided in ``properties.metricName``. Required.
+        :type encoded_metric_name: str
+        :return: MetricConfigurationResource. The MetricConfigurationResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.MetricConfigurationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.MetricConfigurationResource] = kwargs.pop("cls", None)
+
+        _request = build_metric_configurations_get_request(
+            resource_group_name=resource_group_name,
+            azure_monitor_workspace_name=azure_monitor_workspace_name,
+            metrics_container_name=metrics_container_name,
+            encoded_metric_namespace=encoded_metric_namespace,
+            encoded_metric_name=encoded_metric_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.MetricConfigurationResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        azure_monitor_workspace_name: str,
+        metrics_container_name: str,
+        encoded_metric_namespace: str,
+        encoded_metric_name: str,
+        resource: _models.MetricConfigurationResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.MetricConfigurationResource:
+        """Creates or updates a metric configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param azure_monitor_workspace_name: The name of the Azure Monitor Workspace. The name is case
+         insensitive. Required.
+        :type azure_monitor_workspace_name: str
+        :param metrics_container_name: The name of the MetricsContainer. Required.
+        :type metrics_container_name: str
+        :param encoded_metric_namespace: Tilde encoding is used for the metric namespace in the URL
+         path. It is similar to percent encoding but uses ``~`` instead of ``%``. For example, ``/`` is
+         encoded as ``~2F``. Metric configurations provide the original namespace in
+         ``properties.namespace``. Required.
+        :type encoded_metric_namespace: str
+        :param encoded_metric_name: Tilde encoding is used for the metric name in the URL path. It is
+         similar to percent encoding but uses ``~`` instead of ``%``. For example, ``/`` is encoded as
+         ``~2F``. The original metric name is provided in ``properties.metricName``. Required.
+        :type encoded_metric_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.monitorworkspaces.models.MetricConfigurationResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MetricConfigurationResource. The MetricConfigurationResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.MetricConfigurationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        azure_monitor_workspace_name: str,
+        metrics_container_name: str,
+        encoded_metric_namespace: str,
+        encoded_metric_name: str,
+        resource: _types.MetricConfigurationResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.MetricConfigurationResource:
+        """Creates or updates a metric configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param azure_monitor_workspace_name: The name of the Azure Monitor Workspace. The name is case
+         insensitive. Required.
+        :type azure_monitor_workspace_name: str
+        :param metrics_container_name: The name of the MetricsContainer. Required.
+        :type metrics_container_name: str
+        :param encoded_metric_namespace: Tilde encoding is used for the metric namespace in the URL
+         path. It is similar to percent encoding but uses ``~`` instead of ``%``. For example, ``/`` is
+         encoded as ``~2F``. Metric configurations provide the original namespace in
+         ``properties.namespace``. Required.
+        :type encoded_metric_namespace: str
+        :param encoded_metric_name: Tilde encoding is used for the metric name in the URL path. It is
+         similar to percent encoding but uses ``~`` instead of ``%``. For example, ``/`` is encoded as
+         ``~2F``. The original metric name is provided in ``properties.metricName``. Required.
+        :type encoded_metric_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.monitorworkspaces.types.MetricConfigurationResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MetricConfigurationResource. The MetricConfigurationResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.MetricConfigurationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        azure_monitor_workspace_name: str,
+        metrics_container_name: str,
+        encoded_metric_namespace: str,
+        encoded_metric_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.MetricConfigurationResource:
+        """Creates or updates a metric configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param azure_monitor_workspace_name: The name of the Azure Monitor Workspace. The name is case
+         insensitive. Required.
+        :type azure_monitor_workspace_name: str
+        :param metrics_container_name: The name of the MetricsContainer. Required.
+        :type metrics_container_name: str
+        :param encoded_metric_namespace: Tilde encoding is used for the metric namespace in the URL
+         path. It is similar to percent encoding but uses ``~`` instead of ``%``. For example, ``/`` is
+         encoded as ``~2F``. Metric configurations provide the original namespace in
+         ``properties.namespace``. Required.
+        :type encoded_metric_namespace: str
+        :param encoded_metric_name: Tilde encoding is used for the metric name in the URL path. It is
+         similar to percent encoding but uses ``~`` instead of ``%``. For example, ``/`` is encoded as
+         ``~2F``. The original metric name is provided in ``properties.metricName``. Required.
+        :type encoded_metric_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MetricConfigurationResource. The MetricConfigurationResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.MetricConfigurationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={
+            "2026-09-03-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "azure_monitor_workspace_name",
+                "metrics_container_name",
+                "encoded_metric_namespace",
+                "encoded_metric_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-03-preview"],
+    )
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        azure_monitor_workspace_name: str,
+        metrics_container_name: str,
+        encoded_metric_namespace: str,
+        encoded_metric_name: str,
+        resource: Union[_models.MetricConfigurationResource, _types.MetricConfigurationResource, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.MetricConfigurationResource:
+        """Creates or updates a metric configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param azure_monitor_workspace_name: The name of the Azure Monitor Workspace. The name is case
+         insensitive. Required.
+        :type azure_monitor_workspace_name: str
+        :param metrics_container_name: The name of the MetricsContainer. Required.
+        :type metrics_container_name: str
+        :param encoded_metric_namespace: Tilde encoding is used for the metric namespace in the URL
+         path. It is similar to percent encoding but uses ``~`` instead of ``%``. For example, ``/`` is
+         encoded as ``~2F``. Metric configurations provide the original namespace in
+         ``properties.namespace``. Required.
+        :type encoded_metric_namespace: str
+        :param encoded_metric_name: Tilde encoding is used for the metric name in the URL path. It is
+         similar to percent encoding but uses ``~`` instead of ``%``. For example, ``/`` is encoded as
+         ``~2F``. The original metric name is provided in ``properties.metricName``. Required.
+        :type encoded_metric_name: str
+        :param resource: Resource create parameters. Is either a MetricConfigurationResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.monitorworkspaces.models.MetricConfigurationResource or
+         ~azure.mgmt.monitorworkspaces.types.MetricConfigurationResource or IO[bytes]
+        :return: MetricConfigurationResource. The MetricConfigurationResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.MetricConfigurationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.MetricConfigurationResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_metric_configurations_create_or_update_request(
+            resource_group_name=resource_group_name,
+            azure_monitor_workspace_name=azure_monitor_workspace_name,
+            metrics_container_name=metrics_container_name,
+            encoded_metric_namespace=encoded_metric_namespace,
+            encoded_metric_name=encoded_metric_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.MetricConfigurationResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={
+            "2026-09-03-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "azure_monitor_workspace_name",
+                "metrics_container_name",
+                "encoded_metric_namespace",
+                "encoded_metric_name",
+            ]
+        },
+        api_versions_list=["2026-09-03-preview"],
+    )
+    async def delete(
+        self,
+        resource_group_name: str,
+        azure_monitor_workspace_name: str,
+        metrics_container_name: str,
+        encoded_metric_namespace: str,
+        encoded_metric_name: str,
+        **kwargs: Any
+    ) -> None:
+        """Deletes a metric configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param azure_monitor_workspace_name: The name of the Azure Monitor Workspace. The name is case
+         insensitive. Required.
+        :type azure_monitor_workspace_name: str
+        :param metrics_container_name: The name of the MetricsContainer. Required.
+        :type metrics_container_name: str
+        :param encoded_metric_namespace: Tilde encoding is used for the metric namespace in the URL
+         path. It is similar to percent encoding but uses ``~`` instead of ``%``. For example, ``/`` is
+         encoded as ``~2F``. Metric configurations provide the original namespace in
+         ``properties.namespace``. Required.
+        :type encoded_metric_namespace: str
+        :param encoded_metric_name: Tilde encoding is used for the metric name in the URL path. It is
+         similar to percent encoding but uses ``~`` instead of ``%``. For example, ``/`` is encoded as
+         ``~2F``. The original metric name is provided in ``properties.metricName``. Required.
+        :type encoded_metric_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_metric_configurations_delete_request(
+            resource_group_name=resource_group_name,
+            azure_monitor_workspace_name=azure_monitor_workspace_name,
+            metrics_container_name=metrics_container_name,
+            encoded_metric_namespace=encoded_metric_namespace,
+            encoded_metric_name=encoded_metric_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={
+            "2026-09-03-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "azure_monitor_workspace_name",
+                "metrics_container_name",
+                "encoded_metric_namespace",
+                "filter",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-03-preview"],
+    )
+    def list_by_metric_namespace(
+        self,
+        resource_group_name: str,
+        azure_monitor_workspace_name: str,
+        metrics_container_name: str,
+        encoded_metric_namespace: str,
+        *,
+        filter: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.MetricConfigurationResource"]:
+        """Lists metrics in a metric namespace. Resource properties may be omitted in collection
+        responses.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param azure_monitor_workspace_name: The name of the Azure Monitor Workspace. The name is case
+         insensitive. Required.
+        :type azure_monitor_workspace_name: str
+        :param metrics_container_name: The name of the MetricsContainer. Required.
+        :type metrics_container_name: str
+        :param encoded_metric_namespace: Tilde encoding is used for the metric namespace in the URL
+         path. It is similar to percent encoding but uses ``~`` instead of ``%``. For example, ``/`` is
+         encoded as ``~2F``. Metric configurations provide the original namespace in
+         ``properties.namespace``. Required.
+        :type encoded_metric_namespace: str
+        :keyword filter: An OData filter for source metric resource IDs. Default value is None.
+        :paramtype filter: str
+        :return: An iterator like instance of MetricConfigurationResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.monitorworkspaces.models.MetricConfigurationResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.MetricConfigurationResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_metric_configurations_list_by_metric_namespace_request(
+                    resource_group_name=resource_group_name,
+                    azure_monitor_workspace_name=azure_monitor_workspace_name,
+                    metrics_container_name=metrics_container_name,
+                    encoded_metric_namespace=encoded_metric_namespace,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.MetricConfigurationResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={
+            "2026-09-03-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "azure_monitor_workspace_name",
+                "metrics_container_name",
+                "filter",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-03-preview"],
+    )
+    def list_by_metrics_container(
+        self,
+        resource_group_name: str,
+        azure_monitor_workspace_name: str,
+        metrics_container_name: str,
+        *,
+        filter: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.MetricConfigurationResource"]:
+        """Lists metrics across all namespaces in a metrics container. Resource properties may be omitted
+        in collection responses.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param azure_monitor_workspace_name: The name of the Azure Monitor Workspace. The name is case
+         insensitive. Required.
+        :type azure_monitor_workspace_name: str
+        :param metrics_container_name: The name of the MetricsContainer. Required.
+        :type metrics_container_name: str
+        :keyword filter: An OData filter for source metric resource IDs. Default value is None.
+        :paramtype filter: str
+        :return: An iterator like instance of MetricConfigurationResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.monitorworkspaces.models.MetricConfigurationResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.MetricConfigurationResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_metric_configurations_list_by_metrics_container_request(
+                    resource_group_name=resource_group_name,
+                    azure_monitor_workspace_name=azure_monitor_workspace_name,
+                    metrics_container_name=metrics_container_name,
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.MetricConfigurationResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class TraceContainersOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.monitorworkspaces.aio.MonitorWorkspacesMgmtClient`'s
+        :attr:`trace_containers` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: MonitorWorkspacesMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={
+            "2026-09-03-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "azure_monitor_workspace_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-03-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, azure_monitor_workspace_name: str, **kwargs: Any
+    ) -> _models.TraceContainerResource:
+        """Gets the trace container for an Azure Monitor Workspace.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param azure_monitor_workspace_name: The name of the Azure Monitor Workspace. The name is case
+         insensitive. Required.
+        :type azure_monitor_workspace_name: str
+        :return: TraceContainerResource. The TraceContainerResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.TraceContainerResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TraceContainerResource] = kwargs.pop("cls", None)
+
+        _request = build_trace_containers_get_request(
+            resource_group_name=resource_group_name,
+            azure_monitor_workspace_name=azure_monitor_workspace_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TraceContainerResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={
+            "2026-09-03-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "azure_monitor_workspace_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-03-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        azure_monitor_workspace_name: str,
+        resource: Union[_models.TraceContainerResource, _types.TraceContainerResource, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_trace_containers_create_or_update_request(
+            resource_group_name=resource_group_name,
+            azure_monitor_workspace_name=azure_monitor_workspace_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        azure_monitor_workspace_name: str,
+        resource: _models.TraceContainerResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.TraceContainerResource]:
+        """Creates or replaces the trace container for an Azure Monitor Workspace. Modeled as a
+        long-running operation (200 + 201); the service may complete synchronously by returning a
+        terminal provisioningState, or track progress via Azure-AsyncOperation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param azure_monitor_workspace_name: The name of the Azure Monitor Workspace. The name is case
+         insensitive. Required.
+        :type azure_monitor_workspace_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.monitorworkspaces.models.TraceContainerResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns TraceContainerResource. The
+         TraceContainerResource is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.monitorworkspaces.models.TraceContainerResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        azure_monitor_workspace_name: str,
+        resource: _types.TraceContainerResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.TraceContainerResource]:
+        """Creates or replaces the trace container for an Azure Monitor Workspace. Modeled as a
+        long-running operation (200 + 201); the service may complete synchronously by returning a
+        terminal provisioningState, or track progress via Azure-AsyncOperation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param azure_monitor_workspace_name: The name of the Azure Monitor Workspace. The name is case
+         insensitive. Required.
+        :type azure_monitor_workspace_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.monitorworkspaces.types.TraceContainerResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns TraceContainerResource. The
+         TraceContainerResource is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.monitorworkspaces.models.TraceContainerResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        azure_monitor_workspace_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.TraceContainerResource]:
+        """Creates or replaces the trace container for an Azure Monitor Workspace. Modeled as a
+        long-running operation (200 + 201); the service may complete synchronously by returning a
+        terminal provisioningState, or track progress via Azure-AsyncOperation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param azure_monitor_workspace_name: The name of the Azure Monitor Workspace. The name is case
+         insensitive. Required.
+        :type azure_monitor_workspace_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns TraceContainerResource. The
+         TraceContainerResource is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.monitorworkspaces.models.TraceContainerResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={
+            "2026-09-03-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "azure_monitor_workspace_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-03-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        azure_monitor_workspace_name: str,
+        resource: Union[_models.TraceContainerResource, _types.TraceContainerResource, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.TraceContainerResource]:
+        """Creates or replaces the trace container for an Azure Monitor Workspace. Modeled as a
+        long-running operation (200 + 201); the service may complete synchronously by returning a
+        terminal provisioningState, or track progress via Azure-AsyncOperation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param azure_monitor_workspace_name: The name of the Azure Monitor Workspace. The name is case
+         insensitive. Required.
+        :type azure_monitor_workspace_name: str
+        :param resource: Resource create parameters. Is either a TraceContainerResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.monitorworkspaces.models.TraceContainerResource or
+         ~azure.mgmt.monitorworkspaces.types.TraceContainerResource or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns TraceContainerResource. The
+         TraceContainerResource is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.monitorworkspaces.models.TraceContainerResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TraceContainerResource] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                azure_monitor_workspace_name=azure_monitor_workspace_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.TraceContainerResource, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.TraceContainerResource].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.TraceContainerResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={
+            "2026-09-03-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "azure_monitor_workspace_name",
+            ]
+        },
+        api_versions_list=["2026-09-03-preview"],
+    )
+    async def delete(self, resource_group_name: str, azure_monitor_workspace_name: str, **kwargs: Any) -> None:
+        """Deletes the trace container for an Azure Monitor Workspace.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param azure_monitor_workspace_name: The name of the Azure Monitor Workspace. The name is case
+         insensitive. Required.
+        :type azure_monitor_workspace_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_trace_containers_delete_request(
+            resource_group_name=resource_group_name,
+            azure_monitor_workspace_name=azure_monitor_workspace_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={
+            "2026-09-03-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "azure_monitor_workspace_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-03-preview"],
+    )
+    def list_by_azure_monitor_workspace(
+        self, resource_group_name: str, azure_monitor_workspace_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.TraceContainerResource"]:
+        """Lists trace containers for an Azure Monitor Workspace.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param azure_monitor_workspace_name: The name of the Azure Monitor Workspace. The name is case
+         insensitive. Required.
+        :type azure_monitor_workspace_name: str
+        :return: An iterator like instance of TraceContainerResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.monitorworkspaces.models.TraceContainerResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.TraceContainerResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_trace_containers_list_by_azure_monitor_workspace_request(
+                    resource_group_name=resource_group_name,
+                    azure_monitor_workspace_name=azure_monitor_workspace_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.TraceContainerResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class TraceAssociationsAtResourceGroupOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.monitorworkspaces.aio.MonitorWorkspacesMgmtClient`'s
+        :attr:`trace_associations_at_resource_group` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: MonitorWorkspacesMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={"2026-09-03-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-09-03-preview"],
+    )
+    async def get(self, resource_group_name: str, **kwargs: Any) -> _models.TraceAssociationResource:
+        """Gets the trace association at the scope.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: TraceAssociationResource. The TraceAssociationResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TraceAssociationResource] = kwargs.pop("cls", None)
+
+        _request = build_trace_associations_at_resource_group_get_request(
+            resource_group_name=resource_group_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TraceAssociationResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        resource: _models.TraceAssociationResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TraceAssociationResource:
+        """Creates or replaces the trace association at the scope.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TraceAssociationResource. The TraceAssociationResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        resource: _types.TraceAssociationResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TraceAssociationResource:
+        """Creates or replaces the trace association at the scope.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.monitorworkspaces.types.TraceAssociationResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TraceAssociationResource. The TraceAssociationResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self, resource_group_name: str, resource: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.TraceAssociationResource:
+        """Creates or replaces the trace association at the scope.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TraceAssociationResource. The TraceAssociationResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={
+            "2026-09-03-preview": ["api_version", "subscription_id", "resource_group_name", "content_type", "accept"]
+        },
+        api_versions_list=["2026-09-03-preview"],
+    )
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        resource: Union[_models.TraceAssociationResource, _types.TraceAssociationResource, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.TraceAssociationResource:
+        """Creates or replaces the trace association at the scope.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource: Resource create parameters. Is either a TraceAssociationResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource or
+         ~azure.mgmt.monitorworkspaces.types.TraceAssociationResource or IO[bytes]
+        :return: TraceAssociationResource. The TraceAssociationResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TraceAssociationResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_trace_associations_at_resource_group_create_or_update_request(
+            resource_group_name=resource_group_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TraceAssociationResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={"2026-09-03-preview": ["api_version", "subscription_id", "resource_group_name"]},
+        api_versions_list=["2026-09-03-preview"],
+    )
+    async def delete(self, resource_group_name: str, **kwargs: Any) -> None:
+        """Deletes the trace association at the scope.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_trace_associations_at_resource_group_delete_request(
+            resource_group_name=resource_group_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={"2026-09-03-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-09-03-preview"],
+    )
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.TraceAssociationResource"]:
+        """Lists the trace associations that apply to the scope.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of TraceAssociationResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.monitorworkspaces.models.TraceAssociationResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.TraceAssociationResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_trace_associations_at_resource_group_list_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.TraceAssociationResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class TraceAssociationsAtSubscriptionOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.monitorworkspaces.aio.MonitorWorkspacesMgmtClient`'s
+        :attr:`trace_associations_at_subscription` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: MonitorWorkspacesMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={"2026-09-03-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-09-03-preview"],
+    )
+    async def get(self, **kwargs: Any) -> _models.TraceAssociationResource:
+        """Gets the trace association at the scope.
+
+        :return: TraceAssociationResource. The TraceAssociationResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TraceAssociationResource] = kwargs.pop("cls", None)
+
+        _request = build_trace_associations_at_subscription_get_request(
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TraceAssociationResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self, resource: _models.TraceAssociationResource, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.TraceAssociationResource:
+        """Creates or replaces the trace association at the scope.
+
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TraceAssociationResource. The TraceAssociationResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self, resource: _types.TraceAssociationResource, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.TraceAssociationResource:
+        """Creates or replaces the trace association at the scope.
+
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.monitorworkspaces.types.TraceAssociationResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TraceAssociationResource. The TraceAssociationResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self, resource: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.TraceAssociationResource:
+        """Creates or replaces the trace association at the scope.
+
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TraceAssociationResource. The TraceAssociationResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={"2026-09-03-preview": ["api_version", "subscription_id", "content_type", "accept"]},
+        api_versions_list=["2026-09-03-preview"],
+    )
+    async def create_or_update(
+        self,
+        resource: Union[_models.TraceAssociationResource, _types.TraceAssociationResource, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.TraceAssociationResource:
+        """Creates or replaces the trace association at the scope.
+
+        :param resource: Resource create parameters. Is either a TraceAssociationResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource or
+         ~azure.mgmt.monitorworkspaces.types.TraceAssociationResource or IO[bytes]
+        :return: TraceAssociationResource. The TraceAssociationResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TraceAssociationResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_trace_associations_at_subscription_create_or_update_request(
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TraceAssociationResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={"2026-09-03-preview": ["api_version", "subscription_id"]},
+        api_versions_list=["2026-09-03-preview"],
+    )
+    async def delete(self, **kwargs: Any) -> None:
+        """Deletes the trace association at the scope.
+
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_trace_associations_at_subscription_delete_request(
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={"2026-09-03-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-09-03-preview"],
+    )
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.TraceAssociationResource"]:
+        """Lists the trace associations that apply to the scope.
+
+        :return: An iterator like instance of TraceAssociationResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.monitorworkspaces.models.TraceAssociationResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.TraceAssociationResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_trace_associations_at_subscription_list_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.TraceAssociationResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class TraceAssociationsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.monitorworkspaces.aio.MonitorWorkspacesMgmtClient`'s
+        :attr:`trace_associations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: MonitorWorkspacesMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={
+            "2026-09-03-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "provider_name",
+                "provider_type",
+                "resource_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-03-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, provider_name: str, provider_type: str, resource_name: str, **kwargs: Any
+    ) -> _models.TraceAssociationResource:
+        """Gets the trace association at the resource scope.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param provider_name: The provider namespace of the target resource. Required.
+        :type provider_name: str
+        :param provider_type: The resource type of the target resource. Required.
+        :type provider_type: str
+        :param resource_name: The name of the target resource. Required.
+        :type resource_name: str
+        :return: TraceAssociationResource. The TraceAssociationResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TraceAssociationResource] = kwargs.pop("cls", None)
+
+        _request = build_trace_associations_get_request(
+            resource_group_name=resource_group_name,
+            provider_name=provider_name,
+            provider_type=provider_type,
+            resource_name=resource_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TraceAssociationResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        provider_name: str,
+        provider_type: str,
+        resource_name: str,
+        resource: _models.TraceAssociationResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TraceAssociationResource:
+        """Creates or replaces the trace association at the resource scope.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param provider_name: The provider namespace of the target resource. Required.
+        :type provider_name: str
+        :param provider_type: The resource type of the target resource. Required.
+        :type provider_type: str
+        :param resource_name: The name of the target resource. Required.
+        :type resource_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TraceAssociationResource. The TraceAssociationResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        provider_name: str,
+        provider_type: str,
+        resource_name: str,
+        resource: _types.TraceAssociationResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TraceAssociationResource:
+        """Creates or replaces the trace association at the resource scope.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param provider_name: The provider namespace of the target resource. Required.
+        :type provider_name: str
+        :param provider_type: The resource type of the target resource. Required.
+        :type provider_type: str
+        :param resource_name: The name of the target resource. Required.
+        :type resource_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.monitorworkspaces.types.TraceAssociationResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TraceAssociationResource. The TraceAssociationResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        provider_name: str,
+        provider_type: str,
+        resource_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TraceAssociationResource:
+        """Creates or replaces the trace association at the resource scope.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param provider_name: The provider namespace of the target resource. Required.
+        :type provider_name: str
+        :param provider_type: The resource type of the target resource. Required.
+        :type provider_type: str
+        :param resource_name: The name of the target resource. Required.
+        :type resource_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TraceAssociationResource. The TraceAssociationResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={
+            "2026-09-03-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "provider_name",
+                "provider_type",
+                "resource_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-03-preview"],
+    )
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        provider_name: str,
+        provider_type: str,
+        resource_name: str,
+        resource: Union[_models.TraceAssociationResource, _types.TraceAssociationResource, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.TraceAssociationResource:
+        """Creates or replaces the trace association at the resource scope.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param provider_name: The provider namespace of the target resource. Required.
+        :type provider_name: str
+        :param provider_type: The resource type of the target resource. Required.
+        :type provider_type: str
+        :param resource_name: The name of the target resource. Required.
+        :type resource_name: str
+        :param resource: Resource create parameters. Is either a TraceAssociationResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource or
+         ~azure.mgmt.monitorworkspaces.types.TraceAssociationResource or IO[bytes]
+        :return: TraceAssociationResource. The TraceAssociationResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitorworkspaces.models.TraceAssociationResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TraceAssociationResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_trace_associations_create_or_update_request(
+            resource_group_name=resource_group_name,
+            provider_name=provider_name,
+            provider_type=provider_type,
+            resource_name=resource_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TraceAssociationResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={
+            "2026-09-03-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "provider_name",
+                "provider_type",
+                "resource_name",
+            ]
+        },
+        api_versions_list=["2026-09-03-preview"],
+    )
+    async def delete(
+        self, resource_group_name: str, provider_name: str, provider_type: str, resource_name: str, **kwargs: Any
+    ) -> None:
+        """Deletes the trace association at the resource scope.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param provider_name: The provider namespace of the target resource. Required.
+        :type provider_name: str
+        :param provider_type: The resource type of the target resource. Required.
+        :type provider_type: str
+        :param resource_name: The name of the target resource. Required.
+        :type resource_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_trace_associations_delete_request(
+            resource_group_name=resource_group_name,
+            provider_name=provider_name,
+            provider_type=provider_type,
+            resource_name=resource_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-03-preview",
+        params_added_on={
+            "2026-09-03-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "provider_name",
+                "provider_type",
+                "resource_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-03-preview"],
+    )
+    def list(
+        self, resource_group_name: str, provider_name: str, provider_type: str, resource_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.TraceAssociationResource"]:
+        """Lists the trace associations that apply to the resource scope.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param provider_name: The provider namespace of the target resource. Required.
+        :type provider_name: str
+        :param provider_type: The resource type of the target resource. Required.
+        :type provider_type: str
+        :param resource_name: The name of the target resource. Required.
+        :type resource_name: str
+        :return: An iterator like instance of TraceAssociationResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.monitorworkspaces.models.TraceAssociationResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.TraceAssociationResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_trace_associations_list_request(
+                    resource_group_name=resource_group_name,
+                    provider_name=provider_name,
+                    provider_type=provider_type,
+                    resource_name=resource_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.TraceAssociationResource],
                 deserialized.get("value", []),
             )
             if cls:

@@ -63,4 +63,6 @@ This skill generates structured and readable graphs that trace every generated m
 
 ### azure-ai-projects-run-issue-regeneration
 
-This skill orchestrates an unattended TypeSpec regeneration for a GitHub issue already assigned to Copilot (an issue labeled with a `TypeSpec commit` and `Base branch`). It validates those inputs, then runs `azure-ai-projects-emit-from-typespec`, `azure-ai-projects-author-samples`, `azure-ai-projects-author-tests`, and `azure-ai-projects-update-changelog` in order against the issue assignment's existing working branch and draft pull request, instead of the interactive branch/PR creation those skills use for a human developer. Use the other skills directly for interactive, local regeneration.
+This skill orchestrates an unattended TypeSpec regeneration for a GitHub issue already assigned to Copilot (an issue labeled with a `TypeSpec commit` and `Base branch`). It validates those inputs, then runs `azure-ai-projects-emit-from-typespec`, `azure-ai-projects-author-samples`, and `azure-ai-projects-author-tests` in order against the issue assignment's existing working branch and draft pull request, instead of the interactive branch/PR creation those skills use for a human developer. Use the other skills directly for interactive, local regeneration.
+
+Changelog updates are excluded from this workflow. The SDK maintainer runs `azure-ai-projects-update-changelog` separately at their discretion.
