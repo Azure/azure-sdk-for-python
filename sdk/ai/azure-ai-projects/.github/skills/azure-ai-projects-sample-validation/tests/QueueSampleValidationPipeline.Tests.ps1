@@ -50,4 +50,23 @@ Describe "QueueSampleValidationPipeline.ps1" {
         } catch { $caught = $_ }
         $caught.Exception.Message | Should Match "duplicate name"
     }
+
+    It "omits an empty test pattern so the YAML default applies" {
+        $state = [pscustomobject]@{ Body = $null }
+        $requestInvoker = {
+            param($RequestUri, $RequestHeaders, $RequestBody)
+            $state.Body = $RequestBody
+            [pscustomobject]@{
+                id = 43
+                definition = @{ name = "python - azure-ai-projects - tests" }
+                _links = @{ web = @{ href = "https://dev.azure.com/example/build/43" } }
+            }
+        }.GetNewClosure()
+
+        & $queueScript -SourceBranch "topic" -SamplePattern "samples\**\*.py" `
+            -BearerToken "ado-token" -PipelineRevision 3 -RequestInvoker $requestInvoker | Out-Null
+
+        $state.Body.templateParameters.SamplePattern | Should Be "samples\**\*.py"
+        $state.Body.templateParameters.Contains("TestPattern") | Should Be $false
+    }
 }

@@ -49,16 +49,20 @@ if ($PipelineRevision -le 0) {
     }
 }
 
+$templateParameters = [ordered]@{
+    SamplePattern = $SamplePattern
+}
+if ($TestPattern) {
+    $templateParameters.TestPattern = $TestPattern
+}
+
 $body = [ordered]@{
     resources = @{
         repositories = @{
             self = @{ refName = $SourceBranch }
         }
     }
-    templateParameters = [ordered]@{
-        SamplePattern = $SamplePattern
-        TestPattern = if ($TestPattern) { $TestPattern } else { "" }
-    }
+    templateParameters = $templateParameters
     variables = @{
         SAMPLE_ENVIRONMENT_VARIABLES_JSON = [ordered]@{
             value = ($environmentVariables | ConvertTo-Json -Compress)
