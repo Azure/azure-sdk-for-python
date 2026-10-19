@@ -1,11 +1,19 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import re
+from ipaddress import IPv6Address
+from urllib.parse import urlsplit
+
 from opentelemetry.util.types import Attributes
 
-from azure.monitor.opentelemetry.exporter._constants import _MICROSOFT_INSTRUMENTATION_KEY
+from azure.monitor.opentelemetry.exporter._constants import (
+    _MICROSOFT_INGESTION_ENDPOINT,
+    _MICROSOFT_INSTRUMENTATION_KEY,
+)
 
 _MAX_INSTRUMENTATION_KEY_LENGTH = 200
+_MAX_INGESTION_ENDPOINT_LENGTH = 2048
 
 
 def _get_instrumentation_key(attributes: Attributes) -> str:
@@ -26,3 +34,51 @@ def _get_instrumentation_key(attributes: Attributes) -> str:
     if not key:
         raise ValueError("Routing instrumentation key must be a nonempty string.")
     return key
+
+
+def _get_ingestion_endpoint(attributes: Attributes) -> str:
+    """Validate a trusted HTTPS destination and normalize its route key.
+
+    IDNA validation and conversion are left to the HTTP transport.
+
+    :param attributes: The telemetry item's attributes.
+    :type attributes: ~opentelemetry.util.types.Attributes
+    :return: The normalized ingestion endpoint with a trailing slash.
+    :rtype: str
+    :raises ValueError: If the endpoint is missing, invalid, or longer than 2048 characters.
+    """
+    endpoint = attributes.get(_MICROSOFT_INGESTION_ENDPOINT) if attributes else None
+    if not isinstance(endpoint, str) or not endpoint.strip():
+        raise ValueError("Routing ingestion endpoint must be a nonempty string.")
+    if len(endpoint) > _MAX_INGESTION_ENDPOINT_LENGTH:
+        raise ValueError("Routing ingestion endpoint must not exceed 2048 characters.")
+    endpoint = endpoint.strip()
+    try:
+        if any(char.isspace() or ord(char) < 32 or ord(char) == 127 for char in endpoint) or "\\" in endpoint:
+            raise ValueError("Invalid URL characters.")
+        parsed = urlsplit(endpoint)
+        host = parsed.hostname
+        if parsed.scheme != "https" or not host or "@" in parsed.netloc or "?" in endpoint or "#" in endpoint:
+            raise ValueError("Invalid HTTPS destination.")
+        authority_match = re.fullmatch(r"(\[[0-9a-f:.]+\]|[^\[\]:]+)(?::[0-9]+)?", parsed.netloc, re.IGNORECASE)
+        if not authority_match:
+            raise ValueError("Invalid URL authority.")
+        port = parsed.port
+        # parsed.hostname lowercases Unicode, which can change its subsequent IDNA conversion.
+        authority = _normalize_endpoint_host(authority_match.group(1))
+        if port is not None and port != 443:
+            authority += f":{port}"
+        return f"https://{authority}{parsed.path.rstrip('/')}/"
+    except ValueError:
+        raise ValueError(
+            "Routing ingestion endpoint must be an absolute HTTPS URL without credentials, query, or fragment."
+        ) from None
+
+
+def _normalize_endpoint_host(host: str) -> str:
+    if host.startswith("["):
+        return f"[{IPv6Address(host[1:-1]).compressed}]"
+    host = host.rstrip(".")
+    if not host or any(char.isascii() and not (char.isalnum() or char in "._-") for char in host):
+        raise ValueError("Invalid URL host.")
+    return host.lower() if host.isascii() else host
