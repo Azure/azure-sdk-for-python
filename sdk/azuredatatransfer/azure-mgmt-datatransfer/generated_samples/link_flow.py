@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.datatransfer import AzureDataTransferClient
+from azure.mgmt.datatransfer import DataTransferMgmtClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.datatransfer import AzureDataTransferClient
 
 
 def main():
-    client = AzureDataTransferClient(
+    client = DataTransferMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

@@ -200,5 +200,5 @@
         "azure.mgmt.datatransfer.operations.AzureDataTransferOperations.list_pipeline_metadata": "Microsoft.AzureDataTransfer.AzureDataTransfer.listPipelineMetadata",
         "azure.mgmt.datatransfer.aio.operations.AzureDataTransferOperations.list_pipeline_metadata": "Microsoft.AzureDataTransfer.AzureDataTransfer.listPipelineMetadata"
     },
-    "CrossLanguageVersion": "11fba6f817f1"
+    "CrossLanguageVersion": "011d300cbd38"
 }

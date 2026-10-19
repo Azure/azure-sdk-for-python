@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.datatransfer
 
-    class azure.mgmt.datatransfer.AzureDataTransferClient: implements ContextManager 
+    class azure.mgmt.datatransfer.DataTransferMgmtClient: implements ContextManager 
         azure_data_transfer: AzureDataTransferOperations
         connections: ConnectionsOperations
         flow_profiles: FlowProfilesOperations
@@ -34,7 +34,7 @@ namespace azure.mgmt.datatransfer
 
 namespace azure.mgmt.datatransfer.aio
 
-    class azure.mgmt.datatransfer.aio.AzureDataTransferClient: implements AsyncContextManager 
+    class azure.mgmt.datatransfer.aio.DataTransferMgmtClient: implements AsyncContextManager 
         azure_data_transfer: AzureDataTransferOperations
         connections: ConnectionsOperations
         flow_profiles: FlowProfilesOperations

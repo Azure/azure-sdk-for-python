@@ -33,7 +33,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models, types as _types
-from .._configuration import AzureDataTransferClientConfiguration
+from .._configuration import DataTransferMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._validation import api_version_validation
@@ -1386,14 +1386,14 @@ class Operations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.datatransfer.AzureDataTransferClient`'s
+        :class:`~azure.mgmt.datatransfer.DataTransferMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureDataTransferClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataTransferMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1496,14 +1496,14 @@ class FlowProfilesOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.datatransfer.AzureDataTransferClient`'s
+        :class:`~azure.mgmt.datatransfer.DataTransferMgmtClient`'s
         :attr:`flow_profiles` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureDataTransferClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataTransferMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2437,14 +2437,14 @@ class PipelinesOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.datatransfer.AzureDataTransferClient`'s
+        :class:`~azure.mgmt.datatransfer.DataTransferMgmtClient`'s
         :attr:`pipelines` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureDataTransferClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataTransferMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4368,14 +4368,14 @@ class ConnectionsOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.datatransfer.AzureDataTransferClient`'s
+        :class:`~azure.mgmt.datatransfer.DataTransferMgmtClient`'s
         :attr:`connections` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureDataTransferClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataTransferMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5663,14 +5663,14 @@ class FlowsOperations:  # pylint: disable=docstring-missing-param,too-many-publi
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.datatransfer.AzureDataTransferClient`'s
+        :class:`~azure.mgmt.datatransfer.DataTransferMgmtClient`'s
         :attr:`flows` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureDataTransferClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataTransferMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -8393,14 +8393,14 @@ class AzureDataTransferOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.datatransfer.AzureDataTransferClient`'s
+        :class:`~azure.mgmt.datatransfer.DataTransferMgmtClient`'s
         :attr:`azure_data_transfer` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AzureDataTransferClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DataTransferMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

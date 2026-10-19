@@ -19,8 +19,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzureDataTransferClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
-    """Configuration for AzureDataTransferClient.
+class DataTransferMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
+    """Configuration for DataTransferMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

@@ -18,7 +18,7 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import AzureDataTransferClientConfiguration
+from ._configuration import DataTransferMgmtClientConfiguration
 from .operations import (
     AzureDataTransferOperations,
     ConnectionsOperations,
@@ -38,8 +38,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzureDataTransferClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """AzureDataTransferClient.
+class DataTransferMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """DataTransferMgmtClient.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.datatransfer.aio.operations.Operations
@@ -87,7 +87,7 @@ class AzureDataTransferClient:  # pylint: disable=docstring-keyword-should-match
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = AzureDataTransferClientConfiguration(
+        self._config = DataTransferMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

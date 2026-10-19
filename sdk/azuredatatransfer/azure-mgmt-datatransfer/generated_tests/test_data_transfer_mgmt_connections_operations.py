@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.datatransfer import AzureDataTransferClient
+from azure.mgmt.datatransfer import DataTransferMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,16 +14,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestAzureDataTransferPipelinesOperations(AzureMgmtRecordedTestCase):
+class TestDataTransferMgmtConnectionsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(AzureDataTransferClient)
+        self.client = self.create_mgmt_client(DataTransferMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_pipelines_get(self, resource_group):
-        response = self.client.pipelines.get(
+    def test_connections_get(self, resource_group):
+        response = self.client.connections.get(
             resource_group_name=resource_group.name,
-            pipeline_name="str",
+            connection_name="str",
         )
 
         # please add some check logic here by yourself
@@ -31,11 +31,11 @@ class TestAzureDataTransferPipelinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_pipelines_begin_create_or_update(self, resource_group):
-        response = self.client.pipelines.begin_create_or_update(
+    def test_connections_begin_create_or_update(self, resource_group):
+        response = self.client.connections.begin_create_or_update(
             resource_group_name=resource_group.name,
-            pipeline_name="str",
-            pipeline={
+            connection_name="str",
+            connection={
                 "location": "str",
                 "id": "str",
                 "identity": {
@@ -46,40 +46,48 @@ class TestAzureDataTransferPipelinesOperations(AzureMgmtRecordedTestCase):
                 },
                 "name": "str",
                 "properties": {
-                    "remoteCloud": "str",
-                    "connections": [
+                    "pipeline": "str",
+                    "apiHostname": "str",
+                    "approver": "str",
+                    "dateSubmitted": "2020-02-20 00:00:00",
+                    "direction": "str",
+                    "flowProfileList": [
                         {
-                            "id": "str",
-                            "etag": "str",
-                            "location": "str",
+                            "description": "str",
+                            "flowProfileId": "str",
                             "name": "str",
-                            "properties": {
-                                "internalMetadata": {
-                                    "operationStatus": {"id": "str", "message": "str", "status": "str"},
-                                    "statusSetBy": "str",
-                                }
-                            },
-                            "systemData": {
-                                "createdAt": "2020-02-20 00:00:00",
-                                "createdBy": "str",
-                                "createdByType": "str",
-                                "lastModifiedAt": "2020-02-20 00:00:00",
-                                "lastModifiedBy": "str",
-                                "lastModifiedByType": "str",
-                            },
-                            "type": "str",
+                            "pipeline": "str",
+                            "replicationScenario": "str",
+                            "status": "str",
                         }
                     ],
-                    "disabledDataClass": ["str"],
-                    "disabledFlowTypes": ["str"],
-                    "displayName": "str",
                     "flowTypes": ["str"],
+                    "forceDisabledStatus": ["str"],
+                    "justification": "str",
+                    "linkStatus": "str",
+                    "linkedConnectionId": "str",
+                    "pin": "str",
                     "policies": ["str"],
+                    "primaryContact": "str",
                     "provisioningState": "str",
-                    "quarantineDownloadStorageAccount": "str",
-                    "quarantineDownloadStorageContainer": "str",
+                    "remoteSubscriptionId": "str",
+                    "requirementId": "str",
+                    "schemaUris": ["str"],
+                    "schemas": [
+                        {
+                            "connectionId": "str",
+                            "content": "str",
+                            "direction": "str",
+                            "id": "str",
+                            "name": "str",
+                            "schemaType": "str",
+                            "schemaUri": "str",
+                            "status": "str",
+                        }
+                    ],
+                    "secondaryContacts": ["str"],
                     "status": "str",
-                    "subscribers": [{"email": "str", "notifications": 0}],
+                    "statusReason": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -99,18 +107,17 @@ class TestAzureDataTransferPipelinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_pipelines_begin_update(self, resource_group):
-        response = self.client.pipelines.begin_update(
+    def test_connections_begin_update(self, resource_group):
+        response = self.client.connections.begin_update(
             resource_group_name=resource_group.name,
-            pipeline_name="str",
-            pipeline={
+            connection_name="str",
+            connection={
                 "identity": {
                     "type": "str",
                     "principalId": "str",
                     "tenantId": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
-                "properties": {"flowTypes": ["str"]},
                 "tags": {"str": "str"},
             },
         ).result()  # call '.result()' to poll until service return final result
@@ -120,10 +127,10 @@ class TestAzureDataTransferPipelinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_pipelines_begin_delete(self, resource_group):
-        response = self.client.pipelines.begin_delete(
+    def test_connections_begin_delete(self, resource_group):
+        response = self.client.connections.begin_delete(
             resource_group_name=resource_group.name,
-            pipeline_name="str",
+            connection_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -131,8 +138,8 @@ class TestAzureDataTransferPipelinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_pipelines_list_by_resource_group(self, resource_group):
-        response = self.client.pipelines.list_by_resource_group(
+    def test_connections_list_by_resource_group(self, resource_group):
+        response = self.client.connections.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
         result = [r for r in response]
@@ -141,18 +148,18 @@ class TestAzureDataTransferPipelinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_pipelines_list_by_subscription(self, resource_group):
-        response = self.client.pipelines.list_by_subscription()
+    def test_connections_list_by_subscription(self, resource_group):
+        response = self.client.connections.list_by_subscription()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_pipelines_begin_approve_connection(self, resource_group):
-        response = self.client.pipelines.begin_approve_connection(
+    def test_connections_begin_link(self, resource_group):
+        response = self.client.connections.begin_link(
             resource_group_name=resource_group.name,
-            pipeline_name="str",
+            connection_name="str",
             connection={"id": "str", "statusReason": "str"},
         ).result()  # call '.result()' to poll until service return final result
 
@@ -161,56 +168,22 @@ class TestAzureDataTransferPipelinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_pipelines_begin_execute_action(self, resource_group):
-        response = self.client.pipelines.begin_execute_action(
+    def test_connections_list(self, resource_group):
+        response = self.client.connections.list(
             resource_group_name=resource_group.name,
-            pipeline_name="str",
-            action={"actionType": "str", "targetType": "str", "justification": "str", "targets": ["str"]},
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_pipelines_list(self, resource_group):
-        response = self.client.pipelines.list(
-            resource_group_name=resource_group.name,
-            pipeline_name="str",
+            connection_name="str",
         )
-
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_pipelines_list_schemas_list(self, resource_group):
-        response = self.client.pipelines.list_schemas_list(
+    def test_connections_list_pending_flows_list(self, resource_group):
+        response = self.client.connections.list_pending_flows_list(
             resource_group_name=resource_group.name,
-            pipeline_name="str",
-            schema={
-                "connectionId": "str",
-                "content": "str",
-                "direction": "str",
-                "id": "str",
-                "name": "str",
-                "schemaType": "str",
-                "schemaUri": "str",
-                "status": "str",
-            },
+            connection_name="str",
         )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_pipelines_begin_reject_connection(self, resource_group):
-        response = self.client.pipelines.begin_reject_connection(
-            resource_group_name=resource_group.name,
-            pipeline_name="str",
-            connection={"id": "str", "statusReason": "str"},
-        ).result()  # call '.result()' to poll until service return final result
-
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
