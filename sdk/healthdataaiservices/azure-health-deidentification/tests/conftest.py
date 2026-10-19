@@ -21,16 +21,18 @@ uniquifier_file = os.path.join(os.path.dirname(__file__), "uniquifier.conf")
 
 @pytest.fixture(scope="session", autouse=True)
 def create_session_uniquifier():
-    if (
-        os.environ.get("AZURE_TEST_RUN_LIVE", "false").lower() == "true"  # Don't override uniquifier by default
-        and os.environ.get("AZURE_SKIP_LIVE_RECORDING", "false").lower() != "true"
-        and os.environ.get("AZURE_TEST_KEEP_UNIQUIFIER", "false").lower() != "true"
-    ):
-        print("Creating new uniquifier for live test run.")
+    is_live = os.environ.get("AZURE_TEST_RUN_LIVE", "false").lower() == "true"
+    skip_recording = os.environ.get("AZURE_SKIP_LIVE_RECORDING", "false").lower() == "true"
+    keep_uniquifier = os.environ.get("AZURE_TEST_KEEP_UNIQUIFIER", "false").lower() == "true"
+    if is_live and not keep_uniquifier:
+        # Every live run gets fresh job names so reused resources or parallel matrix legs can't collide.
         uniquifier = uuid.uuid4().hex[:6]
+        print(f"Creating new uniquifier for live test run: {uniquifier}")
         os.environ["HEALTHDATAAISERVICES_UNIQUIFIER"] = uniquifier
-        with open(uniquifier_file, "w") as file:
-            file.write(uniquifier)
+        if not skip_recording:
+            # Persist only when recording so playback replays the job names in the new recordings.
+            with open(uniquifier_file, "w") as file:
+                file.write(uniquifier)
     else:
         with open(uniquifier_file, "r") as file:
             uniquifier = file.read()

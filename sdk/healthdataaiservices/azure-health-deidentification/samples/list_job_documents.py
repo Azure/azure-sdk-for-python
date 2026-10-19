@@ -23,6 +23,7 @@ USAGE:
 """
 
 
+from azure.core.exceptions import HttpResponseError
 from azure.health.deidentification import DeidentificationClient
 from azure.health.deidentification.models import (
     DeidentificationJob,
@@ -56,7 +57,13 @@ def list_job_documents():
 
     print(f"Creating job with name: {jobname}")
 
-    job = client.begin_deidentify_documents(jobname, job).result(timeout=60)
+    try:
+        job = client.begin_deidentify_documents(jobname, job).result(timeout=60)
+    except HttpResponseError:
+        # A failed or canceled job surfaces as a generic polling error; the job's own error explains why.
+        failed_job = client.get_job(jobname)
+        print(f"Job {jobname} ended with status {failed_job.status}: {failed_job.error}")
+        raise
 
     print(f"Job Status: {job.status}")
 
