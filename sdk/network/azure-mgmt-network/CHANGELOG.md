@@ -1,5 +1,9 @@
 # Release History
 
+## 33.2.0 (2026-10-19)
+
+No new change
+
 ## 33.1.0 (2026-10-09)
 
 ### Features Added
