@@ -879,6 +879,20 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                     exc_info=(type(result), result, result.__traceback__),
                 )
 
+    async def _reconcile_steering_for_rollback(self, active_tasks: list[_ActiveTask]) -> None:
+        for active in active_tasks:
+            if active.opts is None or not active.opts.steerable:
+                continue
+            stored = await self._provider_get_tracked(active.task_id)
+            if stored is None or stored.status != "suspended":
+                continue
+            await self._try_drain_steering(
+                task_id=active.task_id,
+                ctx=active.context,
+                opts=active.opts,
+                result_future=active.result_future,
+            )
+
     async def shutdown(self, *, wait_for_workers: bool = False, preserve_recoverable_tasks: bool = False) -> None:
         """Signal shutdown on all active tasks and force-expire leases.
 
@@ -964,6 +978,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             remaining = list({id(active): active for active in (*retained_active, *remaining)}.values())
             # Finish old-binding writes before making the records reclaimable.
             await self._cancel_workers(wait=True, retained_workers=retained_workers)
+            await self._reconcile_steering_for_rollback(remaining)
 
         # Force-expire all leases. Tolerate cancellation here too.
         try:
@@ -2532,7 +2547,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                         payload=payload,
                         attachments=attachments_patch,
                         if_match=etag,
-                        **self._lease_ext_kwargs(task_id),
+                        **self._lease_ext_kwargs(task_id, allow_inactive=self._preserve_recoverable_tasks_on_shutdown),
                     ),
                 )
                 # Spec 031 / FR-002 — the drain consumed the head; the steered
@@ -3603,7 +3618,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # Branch (c): retry.
         return "retry"
 
-    def _lease_ext_kwargs(self, task_id: str) -> dict[str, Any]:
+    def _lease_ext_kwargs(self, task_id: str, *, allow_inactive: bool = False) -> dict[str, Any]:
         """Return lease-ownership kwargs for piggyback on a payload PATCH.
 
         Every framework-issued PATCH that mutates payload (metadata
@@ -3624,11 +3639,14 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         :param task_id: The task identifier.
         :type task_id: str
+        :keyword allow_inactive: Include the manager's lease identity for fenced
+            rollback reconciliation after the execution has stopped.
+        :paramtype allow_inactive: bool
         :return: kwargs for ``TaskPatchRequest`` carrying lease params,
-            or ``{}`` if this task is not active locally.
+            or ``{}`` if inactive tasks were not requested and this task is not active locally.
         :rtype: dict[str, Any]
         """
-        if self._active_tasks.get(task_id) is None:
+        if self._active_tasks.get(task_id) is None and not allow_inactive:
             return {}
         return {
             "lease_owner": self._lease_owner,

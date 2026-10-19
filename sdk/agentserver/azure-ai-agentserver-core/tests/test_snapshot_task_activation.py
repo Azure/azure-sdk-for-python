@@ -18,6 +18,7 @@ from unittest.mock import Mock
 
 import httpx
 import pytest
+from starlette.testclient import TestClient
 
 from azure.ai.agentserver.core import AgentServerHost, AgentSessionContext
 from azure.ai.agentserver.core._base import _read_memory_snapshot_enabled
@@ -104,6 +105,43 @@ def test_snapshot_flag_defaults_absence_to_false(
     else:
         monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", value)
     assert _read_memory_snapshot_enabled() is expected
+
+
+@pytest.mark.parametrize("enabled", [False, True])
+@pytest.mark.parametrize("value", [None, "false", "true"])
+def test_sequential_lifespans_restart_enabled_tasks(
+    monkeypatch: pytest.MonkeyPatch,
+    provider_factory: tuple[LocalFileTaskProvider, Mock],
+    enabled: bool,
+    value: str | None,
+) -> None:
+    set_resilient_tasks_enabled(enabled)
+    if value is None:
+        monkeypatch.delenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", raising=False)
+    else:
+        monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", value)
+    _, factory = provider_factory
+    app = host()
+    managers: list[TaskManager] = []
+
+    for cycle in range(2):
+        with TestClient(app) as http:
+            assert http.get("/readiness").status_code == 200
+            if value == "true":
+                assert app._task_manager is None
+                response = http.post("/_agent/after-restore", json=payload(restore_id=f"cycle-{cycle}"))
+                assert response.status_code == 200, response.text
+            if enabled:
+                managers.append(get_task_manager())
+                assert managers[-1] is app._task_manager
+            else:
+                factory.assert_not_called()
+                assert app._task_manager is None
+        assert app._task_manager is None
+
+    if enabled:
+        assert managers[0] is not managers[1]
+        assert factory.call_count == 2
 
 
 @pytest.mark.asyncio
@@ -760,8 +798,11 @@ async def test_rollback_joins_renewal_after_completed_handler_leaves_active_entr
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("interrupt_drain", [False, True])
 async def test_rollback_defers_queued_input_after_current_turn_returns_normally(
-    provider_factory: tuple[LocalFileTaskProvider, Mock], monkeypatch: pytest.MonkeyPatch
+    provider_factory: tuple[LocalFileTaskProvider, Mock],
+    monkeypatch: pytest.MonkeyPatch,
+    interrupt_drain: bool,
 ) -> None:
     monkeypatch.setenv("AGENTSERVER_SHUTDOWN_GRACE_SECONDS", "0.2")
     provider, _ = provider_factory
@@ -782,7 +823,22 @@ async def test_rollback_defers_queued_input_after_current_turn_returns_normally(
 
     await seed_expired_task(provider, existing.name, steering=True)
     original = TaskManager._recover_stale_tasks
+    original_get = TaskManager._provider_get_tracked
+    drain_cancelled = asyncio.Event()
+    blocked = False
     scans = 0
+
+    async def read_for_drain(manager: TaskManager, task_id: str) -> Any:
+        nonlocal blocked
+        stored = await original_get(manager, task_id)
+        if interrupt_drain and not blocked and stored is not None and stored.status == "suspended":
+            blocked = True
+            try:
+                await asyncio.Event().wait()
+            except asyncio.CancelledError:
+                drain_cancelled.set()
+                raise
+        return stored
 
     async def recovery(manager: TaskManager) -> None:
         nonlocal scans
@@ -793,10 +849,12 @@ async def test_rollback_defers_queued_input_after_current_turn_returns_normally(
             raise RuntimeError("Recovery failed before the handler returned during shutdown")
 
     monkeypatch.setattr(TaskManager, "_recover_stale_tasks", recovery)
+    monkeypatch.setattr(TaskManager, "_provider_get_tracked", read_for_drain)
     async with app.router.lifespan_context(app), client(app) as http:
         try:
             assert (await http.post("/_agent/after-restore", json=payload())).status_code == 500
             assert not queued.is_set()
+            assert drain_cancelled.is_set() == interrupt_drain
             stored = await provider.get("existing-task")
             assert stored is not None
             assert stored.status == "in_progress"

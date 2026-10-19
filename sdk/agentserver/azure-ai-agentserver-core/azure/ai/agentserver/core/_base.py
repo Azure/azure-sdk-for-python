@@ -335,6 +335,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
         # Build lifespan context manager
         @contextlib.asynccontextmanager
         async def _lifespan(_app: Starlette) -> AsyncGenerator[None, None]:  # noqa: RUF029
+            self._task_manager_stopping = False
             logger.info("AgentServerHost started")
 
             # --- Startup configuration logging ---
