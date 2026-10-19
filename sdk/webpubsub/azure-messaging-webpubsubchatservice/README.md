@@ -117,7 +117,7 @@ The asynchronous client is available from the `azure.messaging.webpubsubchatserv
 
 ### Hub
 
-A hub is a logical collection of WebSocket connections. A standard hub offers event-based real-time messaging through the Web PubSub subprotocol or a custom subprotocol. A chat hub adds built-in rooms, member management, message persistence, and chat-specific APIs.
+A hub is a logical collection of WebSocket connections. A chat hub adds built-in rooms, member management, message persistence, and chat-specific APIs.
 
 This SDK applies only to chat hubs. Chat must be enabled on the target hub before the SDK can manage roles, users, rooms, members, conversations, or messages.
 
@@ -129,7 +129,7 @@ User roles control operations such as creating rooms. Room roles control what a 
 
 ### User
 
-A user represents an application identity that can send and receive messages. In the service API, a user is identified by a user ID and assigned a user role. A human user also has a nickname. Client access credentials associate WebSocket connections with a user ID.
+A user represents an identity participating in chat, such as a human end user or an application. In the service API, a user is identified by a user ID and assigned a user role. The SDK provides `HumanChatUserCreate` for creating human users with a nickname and a user role. Client access credentials associate WebSocket connections with a user ID.
 
 ### Room
 
@@ -141,13 +141,13 @@ A room member represents a user added to a room. Membership controls which users
 
 ### Conversation and message history
 
-A conversation is a message thread that belongs to a room. Every room has a default conversation and can contain multiple conversations.
+A conversation is an ordered message stream within a room. Every room has a default conversation, and additional named conversations can be created through topics.
 
 Messages sent to a conversation are delivered in real time to the room's connected members. The chat service manages ordering and persistence, allowing members to load message history after reconnecting or joining later. The service client can list, update, and delete persisted messages.
 
 ### Topic
 
-A topic is a named thread within a room with its own conversation. The service returns its
+A topic represents a named conversation within a room. The service returns its
 ID, creation time, creator, conversation ID, and ETag in responses. Topic IDs are specified
 by the application in the request path. Topics have a lifecycle state of `Normal`, `Archived`,
 or `SoftDeleted`. Creating a topic requires a title; updating a topic can change its title
@@ -156,12 +156,38 @@ and state. Deleting a topic is a soft delete.
 The default service API version is `2026-08-01-preview`, which adds topics and the
 room, user, and user-room collection operations.
 
+### Request models and dictionaries
+
+Operations with JSON request bodies accept model instances from
+`azure.messaging.webpubsubchatservice.models` or dictionaries described by the
+`TypedDict` definitions in `azure.messaging.webpubsubchatservice.types`.
+Model instances use Python property names, such as `role_name`, and provide
+attribute access and JSON serialization. Dictionaries use JSON field names,
+such as `roleName`. `TypedDict` provides static type checking for those
+dictionaries; at runtime they are ordinary dictionaries, not model instances,
+and do not perform runtime validation.
+
+Concrete user models automatically set the JSON discriminator field.
+For example, `HumanChatUserCreate(nickname="Alice", role_name="user.normal")`
+sets `kind` to `"Human"`; callers do not pass `kind` or `discriminator` to
+this constructor. The `discriminator="Human"` in the generated class
+declaration registers the subtype for deserialization, while `kind` is the
+field sent in JSON. A dictionary request must include `"kind": "Human"`
+explicitly.
+
 ## Examples
 
 The following sections show common scenarios. Each operation snippet assumes an
 authenticated `client`, created as shown in Getting started. The async snippet
 uses a client from `azure.messaging.webpubsubchatservice.aio`.
 See the [package samples][samples] for complete synchronous and asynchronous programs.
+
+The hand-written request-body examples use model instances. The
+[generated operation samples][generated_samples] use dictionary literals
+with JSON field names, rather than explicitly constructing `TypedDict` values.
+Both request-body styles are supported. See the
+[sample guide and complete operation index](samples/README.md) for links to
+every operation and the available hand-written examples.
 
 ### Generate client access credentials
 
