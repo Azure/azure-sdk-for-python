@@ -62,6 +62,9 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
     :keyword str client_id: The client ID of a Microsoft Entra app registration.
     :keyword str token_file_path: The path to a file containing a Kubernetes service account token that authenticates
         the identity.
+    :keyword bool enable_azure_proxy: Whether to use the AKS identity binding proxy when its configuration is available.
+        Defaults to False. Use this credential directly; identity binding mode isn't supported through
+        DefaultAzureCredential.
 
     .. admonition:: Example:
 

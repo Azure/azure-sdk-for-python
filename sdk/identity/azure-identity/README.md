@@ -102,6 +102,21 @@ client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 - [Azure Virtual Machines](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/how-to-use-vm-token)
 - [Azure Virtual Machines Scale Sets](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/qs-configure-powershell-windows-vmss)
 
+## AKS identity bindings
+
+[`WorkloadIdentityCredential`][workload_id_cred_ref] supports [AKS identity bindings](https://learn.microsoft.com/azure/aks/identity-bindings), which allow multiple clusters to share a federated identity credential for a user-assigned managed identity.
+
+After configuring an identity binding and authorizing the pod's Kubernetes service account, construct `WorkloadIdentityCredential` directly with `enable_azure_proxy=True`:
+
+```python
+from azure.identity import WorkloadIdentityCredential
+
+with WorkloadIdentityCredential(enable_azure_proxy=True) as credential:
+    token = credential.get_token("https://management.azure.com/.default")
+```
+
+AKS supplies the pod's identity, projected-token, proxy, SNI, and CA configuration. Identity binding mode isn't supported through `DefaultAzureCredential`. The asynchronous `WorkloadIdentityCredential` in `azure.identity.aio` supports the same option.
+
 ## Cloud configuration
 
 Credentials default to authenticating to the Microsoft Entra endpoint for Azure Public Cloud. To access resources in other clouds, such as Azure Government or a private cloud, configure credentials with the `authority` argument. [AzureAuthorityHosts](https://aka.ms/azsdk/python/identity/docs#azure.identity.AzureAuthorityHosts) defines authorities for well-known clouds:
