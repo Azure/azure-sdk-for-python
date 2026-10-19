@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import re
+from dataclasses import dataclass
 from ipaddress import IPv6Address
 from urllib.parse import urlsplit
 
@@ -16,6 +17,25 @@ from azure.monitor.opentelemetry.exporter._constants import (
 
 _MAX_INSTRUMENTATION_KEY_LENGTH = 200
 _MAX_INGESTION_ENDPOINT_LENGTH = 2048
+
+
+@dataclass(frozen=True)
+class _Route:
+    """Validated per-item routing metadata, separate from its transport grouping key."""
+
+    instrumentation_key: str
+    ingestion_endpoint: str
+    cloud_role: str
+    is_aad: bool
+
+    @property
+    def transport_key(self) -> tuple[str, bool]:
+        """Group by endpoint and authentication, not instrumentation key or cloud role.
+
+        :return: The normalized ingestion endpoint and AAD flag.
+        :rtype: tuple[str, bool]
+        """
+        return self.ingestion_endpoint, self.is_aad
 
 
 def _get_instrumentation_key(attributes: Attributes) -> str:
@@ -110,3 +130,20 @@ def _is_aad_route(attributes: Attributes) -> bool:
     """
     auth = attributes.get(_MICROSOFT_INGESTION_AUTH) if attributes else None
     return isinstance(auth, str) and auth.strip().lower() == "aad"
+
+
+def _get_route(attributes: Attributes) -> _Route:
+    """Read one item's route without falling back to exporter-level settings.
+
+    :param attributes: The telemetry item's attributes.
+    :type attributes: ~opentelemetry.util.types.Attributes
+    :return: An immutable snapshot of the validated routing metadata.
+    :rtype: ~azure.monitor.opentelemetry.exporter._routing._Route
+    :raises ValueError: If either required routing attribute is missing or invalid.
+    """
+    return _Route(
+        instrumentation_key=_get_instrumentation_key(attributes),
+        ingestion_endpoint=_get_ingestion_endpoint(attributes),
+        cloud_role=_get_cloud_role(attributes),
+        is_aad=_is_aad_route(attributes),
+    )
