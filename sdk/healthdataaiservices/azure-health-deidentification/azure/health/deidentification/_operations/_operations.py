@@ -8,7 +8,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -30,15 +30,14 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import DeidentificationClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -193,8 +192,6 @@ def build_deidentification_delete_job_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/jobs/{name}"
     path_format_arguments = {
@@ -207,7 +204,6 @@ def build_deidentification_delete_job_request(  # pylint: disable=name-too-long
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -274,6 +270,7 @@ class _DeidentificationClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -296,7 +293,7 @@ class _DeidentificationClientOperationsMixin(
         )
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeidentificationJob, response.json())
 
@@ -306,7 +303,10 @@ class _DeidentificationClientOperationsMixin(
         return deserialized  # type: ignore
 
     def _deidentify_documents_initial(
-        self, job_name: str, resource: Union[_models.DeidentificationJob, JSON, IO[bytes]], **kwargs: Any
+        self,
+        job_name: str,
+        resource: Union[_models.DeidentificationJob, _types.DeidentificationJob, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -342,6 +342,7 @@ class _DeidentificationClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -363,7 +364,7 @@ class _DeidentificationClientOperationsMixin(
         )
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -399,7 +400,12 @@ class _DeidentificationClientOperationsMixin(
 
     @overload
     def begin_deidentify_documents(
-        self, job_name: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        job_name: str,
+        resource: _types.DeidentificationJob,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.DeidentificationJob]:
         """Create a de-identification job.
 
@@ -408,7 +414,7 @@ class _DeidentificationClientOperationsMixin(
         :param job_name: The name of a job. Required.
         :type job_name: str
         :param resource: The resource instance. Required.
-        :type resource: JSON
+        :type resource: ~azure.health.deidentification.types.DeidentificationJob
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -443,7 +449,10 @@ class _DeidentificationClientOperationsMixin(
 
     @distributed_trace
     def begin_deidentify_documents(
-        self, job_name: str, resource: Union[_models.DeidentificationJob, JSON, IO[bytes]], **kwargs: Any
+        self,
+        job_name: str,
+        resource: Union[_models.DeidentificationJob, _types.DeidentificationJob, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.DeidentificationJob]:
         """Create a de-identification job.
 
@@ -451,9 +460,10 @@ class _DeidentificationClientOperationsMixin(
 
         :param job_name: The name of a job. Required.
         :type job_name: str
-        :param resource: The resource instance. Is one of the following types: DeidentificationJob,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.health.deidentification.models.DeidentificationJob or JSON or IO[bytes]
+        :param resource: The resource instance. Is either a DeidentificationJob type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.health.deidentification.models.DeidentificationJob or
+         ~azure.health.deidentification.types.DeidentificationJob or IO[bytes]
         :return: An instance of LROPoller that returns DeidentificationJob. The DeidentificationJob is
          compatible with MutableMapping
         :rtype:
@@ -538,7 +548,7 @@ class _DeidentificationClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.DeidentificationJob]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.DeidentificationJob]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -576,7 +586,10 @@ class _DeidentificationClientOperationsMixin(
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -589,7 +602,10 @@ class _DeidentificationClientOperationsMixin(
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DeidentificationJob], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.DeidentificationJob],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -633,7 +649,7 @@ class _DeidentificationClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.DeidentificationDocumentDetails]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.DeidentificationDocumentDetails]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -672,7 +688,10 @@ class _DeidentificationClientOperationsMixin(
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -685,7 +704,10 @@ class _DeidentificationClientOperationsMixin(
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DeidentificationDocumentDetails], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.DeidentificationDocumentDetails],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -748,6 +770,7 @@ class _DeidentificationClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -770,7 +793,7 @@ class _DeidentificationClientOperationsMixin(
         )
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeidentificationJob, response.json())
 
@@ -854,14 +877,14 @@ class _DeidentificationClientOperationsMixin(
 
     @overload
     def deidentify_text(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.DeidentificationContent, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DeidentificationResult:
         """De-identify text.
 
         A remote procedure call (RPC) operation.
 
         :param body: Request body for de-identification operation. Required.
-        :type body: JSON
+        :type body: ~azure.health.deidentification.types.DeidentificationContent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -890,15 +913,16 @@ class _DeidentificationClientOperationsMixin(
 
     @distributed_trace
     def deidentify_text(
-        self, body: Union[_models.DeidentificationContent, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.DeidentificationContent, _types.DeidentificationContent, IO[bytes]], **kwargs: Any
     ) -> _models.DeidentificationResult:
         """De-identify text.
 
         A remote procedure call (RPC) operation.
 
-        :param body: Request body for de-identification operation. Is one of the following types:
-         DeidentificationContent, JSON, IO[bytes] Required.
-        :type body: ~azure.health.deidentification.models.DeidentificationContent or JSON or IO[bytes]
+        :param body: Request body for de-identification operation. Is either a DeidentificationContent
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.health.deidentification.models.DeidentificationContent or
+         ~azure.health.deidentification.types.DeidentificationContent or IO[bytes]
         :return: DeidentificationResult. The DeidentificationResult is compatible with MutableMapping
         :rtype: ~azure.health.deidentification.models.DeidentificationResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -936,6 +960,7 @@ class _DeidentificationClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -958,7 +983,7 @@ class _DeidentificationClientOperationsMixin(
         )
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeidentificationResult, response.json())
 

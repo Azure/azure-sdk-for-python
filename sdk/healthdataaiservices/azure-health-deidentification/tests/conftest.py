@@ -4,6 +4,7 @@ import os
 from devtools_testutils import (
     add_uri_regex_sanitizer,
     remove_batch_sanitizers,
+    set_custom_default_matcher,
     test_proxy,
 )
 
@@ -44,3 +45,6 @@ def add_sanitizers(test_proxy):
     # uri sanitization in favor of substitution
     remove_batch_sanitizers(["AZSDK3493", "AZSDK3430", "AZSDK4001"])
     add_uri_regex_sanitizer(regex='continuationToken=[^&"}]*', value="continuationToken=Sanitized")
+    # Regenerated delete_job no longer sends "Accept: application/json" for its 204 response; existing
+    # recordings still contain it.
+    set_custom_default_matcher(excluded_headers="Accept")

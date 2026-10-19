@@ -22,7 +22,7 @@ Use the client library for the de-identification service to:
 
 ### Prequisites
 
-- Python 3.9 or later is required to use this package.
+- Python 3.10 or later is required to use this package.
 - Install [pip][pip].
 - You need an [Azure subscription][azure_sub] to use this package.
 - [Deploy the de-identification service][deid_quickstart].
