@@ -24,7 +24,7 @@ T = TypeVar("T")
 def _checked_value(validate: Callable[..., T], error_target: ErrorTarget, *args: Any) -> T:
     try:
         return validate(*args)
-    except ValueError as exc:
+    except (ValueError, OverflowError) as exc:
         message = f"The decision model returned an invalid response: {exc}"
         raise EvaluationException(
             message=message,

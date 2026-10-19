@@ -61,7 +61,7 @@ def _decision_error_metadata(exception: EvaluationException) -> Dict[str, Any]:
         for key, accepted in (
             ("backend", ("foundry_decision", "system_one")),
             ("protocol", ("shared_sdk", "system_one")),
-            ("result_usage_scope", ("reported_attempts_only", "final_response_only")),
+            ("result_usage_scope", ("reported_attempts_only", "final_response_only", "reported_turns_only")),
         ):
             value = native.get(key)
             if isinstance(value, str) and value in accepted:

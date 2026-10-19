@@ -380,7 +380,9 @@ class TestDecisionBatchPersistence:
             }
         ]
 
-    @pytest.mark.parametrize("status", [float("nan"), float("inf"), "bad"])
+    @pytest.mark.parametrize(
+        "status", [float("nan"), float("inf"), "bad", pytest.param(10**309, id="oversized_integer")]
+    )
     def test_semantic_failure_retains_measured_usage_and_hashes(self, batch_client, tmp_path, status):
         class Runner:
             deployment = "Decision-1"

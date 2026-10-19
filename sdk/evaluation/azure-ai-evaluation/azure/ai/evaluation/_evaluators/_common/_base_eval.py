@@ -609,6 +609,11 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
 
         return tool_name_param_pairs
 
+    def _on_evaluation_error(
+        self, error: EvaluationException, per_turn_results: List[DoEvalResult[T_EvalValue]]
+    ) -> None:
+        """Allow a model-backed evaluator to retain completed-turn metadata on a later failure."""
+
     async def _real_call(self, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
         """The asynchronous call where real end-to-end evaluation logic is performed.
 
@@ -626,7 +631,11 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         per_turn_results = []
         # Evaluate all inputs.
         for eval_input in eval_input_list:
-            result = await self._do_eval(eval_input)
+            try:
+                result = await self._do_eval(eval_input)
+            except EvaluationException as error:
+                self._on_evaluation_error(error, per_turn_results)
+                raise
             # logic to determine threshold pass/fail
             # if it wasn't computed in _do_eval
             try:

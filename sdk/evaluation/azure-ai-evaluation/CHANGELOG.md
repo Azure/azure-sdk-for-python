@@ -16,6 +16,8 @@
 
 ### Bugs Fixed
 
+- Preserved known Decision usage when a later split conversation turn fails, without assigning mixed-model usage to one model or treating the failed turn's execution summary as a conversation summary.
+- Kept numeric-overflow validation failures on the typed Decision error path so known usage and provenance survive failed-row conversion.
 - Preserved measured token usage, model metadata, and response properties when the shared Prompty strategy parses a post-inference skipped result. Pre-inference skips still make no model request.
 - Hardened local Prompty image resolution so only relative files within the Prompty directory are inlined, with opened-file validation to prevent path changes from redirecting reads and without exposing the local directory in fallback logs.
 

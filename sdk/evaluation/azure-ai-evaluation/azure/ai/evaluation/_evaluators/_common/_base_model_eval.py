@@ -235,6 +235,61 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
                     aggregated.pop(metric, None)
         return aggregated
 
+    def _on_evaluation_error(self, error: EvaluationException, per_turn_results: List[Dict[str, T]]) -> None:
+        """Preserve known Decision turn usage without changing the failure or Prompty behavior.
+
+        Only the request-owning result's usage is accumulated. A failed turn's execution summary cannot
+        describe all these turns, so it is omitted and the wider usage scope is explicit.
+        """
+        if not self._uses_decision_model or not per_turn_results:
+            return
+        fields = ("prompt_tokens", "completion_tokens", "total_tokens")
+        contributions = []
+        for result in per_turn_results:
+            usage = self._known_turn_usage(result, fields, prefix=f"{self._result_key}_")
+            if usage:
+                contributions.append((usage, result.get(f"{self._result_key}_model")))
+        if not contributions:
+            return
+        properties = dict(error.properties) if isinstance(error.properties, dict) else {}
+        failing_usage = self._known_turn_usage(properties, fields)
+        if failing_usage:
+            contributions.append((failing_usage, properties.get("model")))
+        for field in fields:
+            known = [usage[field] for usage, _ in contributions if field in usage]
+            if known:
+                properties[field] = sum(known)
+            else:
+                properties.pop(field, None)
+        models = [model for _, model in contributions]
+        common_model = models[0] if isinstance(models[0], str) and models[0].strip() else None
+        if common_model is not None and all(model == common_model for model in models):
+            properties["model"] = common_model
+        else:
+            properties.pop("model", None)
+        native = properties.get("decision_model")
+        native = dict(native) if isinstance(native, dict) else {}
+        native.pop("execution", None)
+        if "model" in properties:
+            native["model"] = properties["model"]
+        else:
+            native.pop("model", None)
+        native["usage_available"] = True
+        native["result_usage_scope"] = "reported_turns_only"
+        properties["decision_model"] = native
+        error.properties = properties
+
+    @staticmethod
+    def _known_turn_usage(values: Dict[str, Any], fields: tuple, *, prefix: str = "") -> Dict[str, int]:
+        """Keep each known count independently; missing totals are not inferred from partial counts."""
+        return {
+            field: values[prefix + field]
+            for field in fields
+            if isinstance(values.get(prefix + field), int)
+            and not isinstance(values[prefix + field], bool)
+            and values[prefix + field] >= 0
+        }
+
     def _get_binary_result(self, score: float) -> str:
         """Get the binary result based on the score.
 

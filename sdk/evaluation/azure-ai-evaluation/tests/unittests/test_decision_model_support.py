@@ -843,6 +843,36 @@ def strategy_with(payload, scoring, key="tool_call_accuracy", extra_properties=N
 
 
 class TestSharedDecisionStrategy:
+    @pytest.mark.parametrize("field", ["status", "noul", "probability", "confidence", "score"])
+    def test_oversized_integer_preserves_typed_failure_metadata(self, field):
+        from azure.ai.evaluation._evaluate._batch_run._run_submitter_client import _decision_error_metadata
+
+        response = completion_payload(0.9) if field == "noul" else level_payload(4)
+        if field == "status":
+            response["answers"]["status"]["noul"] = 10**309
+        elif field == "noul":
+            response["answers"]["task_completion"]["noul"] = 10**309
+        elif field == "probability":
+            response["answers"]["tool_call_accuracy"]["probabilities"]["0"] = 10**309
+        else:
+            response["answers"]["tool_call_accuracy"][field] = 10**309
+        response = json.loads(json.dumps(response))
+        strategy = (
+            strategy_with(response, BinaryScoring(0.75), "task_completion")
+            if field == "noul"
+            else strategy_with(response, LikertScoring(5))
+        )
+        with pytest.raises(EvaluationException) as raised:
+            strategy.parse(response, {})
+        assert raised.value.blame == ErrorBlame.SYSTEM_ERROR
+        assert raised.value.category == ErrorCategory.FAILED_EXECUTION
+        metadata = _decision_error_metadata(raised.value)
+        assert metadata["properties"]["total_tokens"] == 123
+        assert metadata["properties"]["model"] == "microsoft-decision-1"
+        assert metadata["properties"]["decision_model"]["deployment"] == "Decision-1"
+        assert len(metadata["properties"]["decision_model"]["rubric_hash"]) == 64
+        json.dumps(metadata, allow_nan=False)
+
     @pytest.mark.parametrize("status", [0.1, 0.9])
     def test_parse_reuses_shared_response_without_http_or_usage_suffixes(self, status):
         strategy = strategy_with(level_payload(4, status=status), LikertScoring(5))
