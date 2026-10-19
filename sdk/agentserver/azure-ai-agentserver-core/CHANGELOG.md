@@ -19,6 +19,9 @@
 
 ### Bugs Fixed
 
+- Reset task startup admission when reusing a host across sequential lifespans.
+- Reconcile interrupted steering transitions before restore rollback completes,
+  retaining queued work as recoverable without dispatching a new turn.
 - Preserve unfinished task records and saved inputs when failed restore
   activation stops workers before rolling back session configuration.
 - Keep the lease instance stable on same-restore retries, retain worker and

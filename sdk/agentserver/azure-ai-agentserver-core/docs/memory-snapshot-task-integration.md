@@ -144,6 +144,9 @@ absent or false + application resilience opt-in
 ```
 
 Local development uses this path without platform snapshots.
+Sequential cold-start lifespans on the same host reset the task shutdown gate
+and create a fresh enabled runtime. Snapshot-mode startup still waits for
+session activation; disabled tasks remain disabled.
 
 ### Snapshot materialization
 
@@ -221,6 +224,11 @@ including renewals whose handlers completed before cleanup began.
 No new steering turn executes during cleanup. If the current turn finishes
 normally, the next queued input is durably staged as `in_progress` for recovery,
 without invoking its handler; the next activation resumes that input.
+After workers stop, rollback reconciles any suspended steering chain whose
+next-input transition was interrupted. Reconciliation uses the same fenced
+drain path with an explicit lease claim before that lease is expired for retry.
+If reconciliation fails, cleanup propagates the error rather than rolling
+configuration back while queued work is stranded.
 A newly restored manager records
 its restore ID before recovery so a same-ID retry cannot rotate lease identity
 under retained live workers.
