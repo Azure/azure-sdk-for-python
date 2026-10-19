@@ -107,6 +107,50 @@ tsp-client update
 
 tsp-client will look for a `tsp-location.yaml` file in your local directory. `tsp-location.yaml` contains the configuration information that will be used to sync your TypeSpec project and generate your SDK. Please make sure that the commit is targeting the correct TypeSpec project updates you wish to generate your SDK from.
 
+## Repository-wide emitter validation
+
+The [TypeSpec regeneration pipeline](../../eng/pipelines/typespec-regeneration.yml)
+regenerates existing TypeSpec clients when `eng/emitter-package.json` or its lock
+file changes on `main` or in a pull request. It can also be queued manually to
+validate the emitter pinned on another branch. After merging the pipeline YAML,
+maintainers must register it as an Azure Pipelines definition and enable its YAML
+CI and PR triggers.
+
+Each of eight jobs installs the pinned `eng/common/tsp-client` CLI and emitter
+dependencies once, then runs `tsp-client update --skip-install --debug`. No spec
+commit override is passed: each client's `tsp-location.yaml` determines the
+specification revision. Discovery includes tracked nested clients and runs batch
+members independently, so one generation failure does not skip the remaining
+members. Invalid configurations are reported as failures, not silently excluded.
+
+Download the `typespec-regeneration-<shard>` pipeline artifacts to inspect:
+
+- `results.json`: each attempted client's directory, exit code, and log filename.
+- Numbered `.log` files: combined generation output for each client.
+- `changes.txt` and `changes.patch`: the change summary and binary-capable patch,
+  including new and deleted generated files.
+
+Generation failures fail the job, but artifacts are published for failed jobs as
+well. Code differences alone do not fail the job: reviewers must inspect the
+patches for unexpected changes before accepting an emitter update. This pipeline
+does not publish packages, open regeneration PRs, or replace package tests.
+
+To reproduce a shard locally, use a **clean, disposable checkout**, Node.js 24,
+Python 3.10 or later, and PyYAML (already part of `eng/ci_tools.txt`). Configure npm
+and pip feed access as described in [CONTRIBUTING.md](../../CONTRIBUTING.md), then
+run from the repository root:
+
+```shell
+npm ci --prefix eng/common/tsp-client
+npm exec --prefix eng/common/tsp-client --no -- tsp-client install-dependencies
+python eng/scripts/regenerate_typespec.py --output ../regeneration-results --shard-index 0 --shard-count 8
+```
+
+Omit the shard arguments to regenerate every client. The output directory must
+be outside the checkout. The runner requires a clean Git working tree and marks
+new SDK files as intent-to-add to include them in its patch; it does not commit
+or revert generated changes.
+
 ## Post-Generation Steps
 
 The generated code is not enough to release directly. Follow these steps regardless of whether you generated from TypeSpec or Swagger.
