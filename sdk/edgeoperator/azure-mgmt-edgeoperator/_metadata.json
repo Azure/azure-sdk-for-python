@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-06-01-preview",
+  "apiVersions": {
+    "Microsoft.EdgeOperator": "2026-06-01-preview"
+  },
+  "commit": "c765bfa05a2bce47b705d262d5afcdd1ab4cc06e",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/edgeoperator/resource-manager/Microsoft.EdgeOperator/SystemReadiness",
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
+}
