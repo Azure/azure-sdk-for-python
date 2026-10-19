@@ -110,6 +110,7 @@ def _upload_file_helper(
         process_storage_error(error)
 
 
+# pylint: disable-next=too-many-instance-attributes
 class ShareFileClient(StorageAccountHostsMixin):
     """A client to interact with a specific file, although that file may not yet exist.
 
@@ -259,7 +260,15 @@ class ShareFileClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.fileshare.ShareFileClient
         """
         account_url, share_name, file_path, snapshot, file_id = _from_file_url(file_url, snapshot)
-        return cls(account_url, share_name, file_path, snapshot, credential, _file_id=file_id, **kwargs)  # type: ignore[arg-type]
+        return cls(
+            account_url,
+            share_name,
+            file_path,  # type: ignore[arg-type]
+            snapshot,
+            credential,
+            _file_id=file_id,
+            **kwargs,
+        )
 
     def _format_url(self, hostname: str):
         return _format_url(self.scheme, hostname, self.share_name, self.file_path, self._query_str, self.file_id)

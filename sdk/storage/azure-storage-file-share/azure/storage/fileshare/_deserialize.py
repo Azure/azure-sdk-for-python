@@ -96,13 +96,11 @@ def deserialize_permission_key(
 def deserialize_hard_links(
     response: "PipelineResponse", obj: HardLinkList, headers: Dict[str, Any]  # pylint: disable=unused-argument
 ) -> List[HardLink]:
-    return [
-        HardLink(
-            name=unquote(link.file_name.content) if link.file_name.encoded else link.file_name.content,
-            parent_id=link.parent_id,
-        )
-        for link in obj.hard_links or []
-    ]
+    hard_links = []
+    for link in obj.hard_links or []:
+        name = link.file_name.content or ""
+        hard_links.append(HardLink(name=unquote(name) if link.file_name.encoded else name, parent_id=link.parent_id))
+    return hard_links
 
 
 def get_file_ranges_result(ranges: ShareFileRangeList) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
