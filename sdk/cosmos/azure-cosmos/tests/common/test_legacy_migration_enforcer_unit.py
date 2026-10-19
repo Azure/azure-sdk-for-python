@@ -24,9 +24,9 @@ They check six invariants:
 1. Every ``legacy/`` folder is an importable package (has ``__init__.py``).
 2. Every ``test_*`` method carries a ``# Source:`` comment naming the
    original it was copied from.
-3. Every ``# Source:`` reference resolves -- the cited file, class, and
-   method still exist -- unless the source is marked ``(new)`` for a test
-   with no v4 ancestor.
+3. Every ``# Source:`` reference resolves to its original or an explicitly
+   approved retained replacement, unless marked ``(new)`` for a test with
+   no v4 ancestor.
 4. Every legacy test file pins the Rust backend with the literal
    ``_backend="rust"``.
 5. No test in a legacy folder is skipped without a structured reason, so
@@ -44,6 +44,8 @@ import pathlib
 import subprocess
 import sys
 import unittest
+
+from common._retired_test_sources import RETIRED_THROUGHPUT_SOURCES
 
 
 # tests/common/<this file> -> parents[1] is .../azure-cosmos/tests
@@ -209,7 +211,7 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
         )
 
     def test_every_source_reference_resolves(self):
-        """Invariant 3: each `# Source:` file::Class.method still exists."""
+        """Invariant 3: each source has a live original or approved replacement."""
         violations = []
         src_cache = {}
         for path in _legacy_test_files():
@@ -224,7 +226,7 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
                 if "::" not in ref:
                     violations.append("{} -> malformed Source {!r}".format(where, ref))
                     continue
-                path_part, qualified = ref.split("::", 1)
+                path_part, qualified = RETIRED_THROUGHPUT_SOURCES.get(ref, ref).split("::", 1)
                 src_path = _PKG_ROOT / path_part
                 if not src_path.is_file():
                     violations.append("{} -> source file not found: {}".format(where, path_part))

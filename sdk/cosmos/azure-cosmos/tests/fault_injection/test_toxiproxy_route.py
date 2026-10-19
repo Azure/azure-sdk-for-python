@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 """Real read routing, downstream faults, forwarding progress, and recovery."""
 
-import asyncio
 import hashlib
 import os
 import time
@@ -15,7 +14,6 @@ from azure.cosmos import (
     ConnectionPoolOptions,
     CosmosClient,
     CosmosRuntime,
-    _rust,
     exceptions,
 )
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
@@ -23,24 +21,27 @@ from common._parity_helpers import _binding_operation_count, _rust_fallback_coun
 from fault_injection._delayed_create import assert_route, emit
 from fault_injection._regional_routing import (
     capture_native,
-    emulator_endpoints,
     load_account,
 )
 from fault_injection._toxiproxy import (
-    OwnedProxy,
     CUTOFF_BYTES,
     READ_TIMEOUT,
     REGION,
     account_rule,
     assert_bandwidth_outcome,
     assert_latency_outcome,
+    assert_persistent_cutoff_outcome,
     assert_read_outcome,
     assert_stall_outcome,
     assert_warmed_connections,
+    invoke,
+    large_receipt,
     proxy_account,
+    wait_account,
 )
 from fault_injection._tcp_observer import (
     assert_cutoff_connection,
+    assert_persistent_cutoffs,
     assert_reset_connection,
     assert_response_exchange,
     exchange_events,
@@ -55,85 +56,13 @@ pytestmark = [
         reason="Opt-in network test: set TOXIPROXY_SERVER to the pinned Windows x64 executable",
     ),
 ]
-DRIVER_COMMIT = "84e2bb66c9911fa730dc9756c8fc3f9612456344"
-
-
-@pytest.fixture
-def proxy_route(tmp_path, request):
-    endpoint = os.environ.get("ACCOUNT_HOST", "")
-    emulator_endpoints(endpoint)
-    assert (
-        _rust.__rust_driver_commit__ == DRIVER_COMMIT
-    ), "Use the verified pinned driver build"
-    assert (
-        os.environ.get("AZURE_COSMOS_E2E_BACKGROUND_ACCOUNT_REFRESH_INTERVAL_MS")
-        == "100"
-    ), "Run this selection in its own process with account refresh interval 100ms"
-    server = os.environ.get("TOXIPROXY_SERVER", "")
-    proxy = OwnedProxy(
-        server,
-        endpoint,
-        "cosmos-route-" + uuid.uuid4().hex,
-        tmp_path,
-        observe=request.node.originalname
-        in (
-            "test_read_response_stall",
-            "test_read_connection_reset",
-            "test_read_response_latency",
-            "test_read_response_bandwidth",
-            "test_read_response_cutoff",
-        ),
-    )
-    request.addfinalizer(proxy.close)
-    proxy.start()
-    if request.node.originalname == "test_read_connection_reset":
-        proxy.prepare_reset()
-    if request.node.originalname in (
-        "test_read_response_bandwidth",
-        "test_read_response_cutoff",
-    ):
-        proxy.observe_sdk_side()
-    return proxy
-
-
-@pytest.fixture
-def proxy_target(proxy_route, owned_target):
-    return owned_target
-
-
-async def invoke(asynchronous, function, *args, **kwargs):
-    if asynchronous:
-        return await function(*args, **kwargs)
-    return function(*args, **kwargs)
-
-
-async def wait_account(client, asynchronous, rule_id):
-    handle = await invoke(asynchronous, client._adapter._ensure_driver_handle)
-    deadline = time.monotonic() + 30
-    while True:
-        regions = _rust._debug_cached_account_regions(handle)
-        hits = _rust._debug_fault_injection_rule_hit_count(handle, rule_id)
-        if regions == (["westus"], ["westus"]) and hits > 0:
-            emit(
-                "proxy_account_ready",
-                rule_id=rule_id,
-                hits=hits,
-                simulated_metadata=True,
-            )
-            return
-        assert (
-            time.monotonic() < deadline
-        ), f"Proxy topology not observed: {regions}; hits={hits}"
-        await asyncio.sleep(0.05)
 
 
 @pytest.mark.asyncio
 @pytest.mark.timeout(120)
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("disable_route", [True, False], ids=["unavailable", "control"])
-async def test_read_depends_on_proxy(
-    proxy_route, proxy_target, monkeypatch, asynchronous, disable_route
-):
+async def test_read_depends_on_proxy(proxy_route, proxy_target, monkeypatch, asynchronous, disable_route):
     await exercise_read(
         proxy_route,
         proxy_target,
@@ -148,33 +77,26 @@ async def test_read_depends_on_proxy(
 @pytest.mark.timeout(120)
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("stall_response", [True, False], ids=["stalled", "control"])
-async def test_read_response_stall(
-    proxy_route, proxy_target, monkeypatch, asynchronous, stall_response
-):
-    await exercise_read(
-        proxy_route, proxy_target, monkeypatch, asynchronous, "stall", stall_response
-    )
+@pytest.mark.parametrize("proxy_route", ["observed"], indirect=True)
+async def test_read_response_stall(proxy_route, proxy_target, monkeypatch, asynchronous, stall_response):
+    await exercise_read(proxy_route, proxy_target, monkeypatch, asynchronous, "stall", stall_response)
 
 
 @pytest.mark.asyncio
 @pytest.mark.timeout(120)
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("reset_connection", [True, False], ids=["reset", "control"])
-async def test_read_connection_reset(
-    proxy_route, proxy_target, monkeypatch, asynchronous, reset_connection
-):
-    await exercise_read(
-        proxy_route, proxy_target, monkeypatch, asynchronous, "reset", reset_connection
-    )
+@pytest.mark.parametrize("proxy_route", ["reset"], indirect=True)
+async def test_read_connection_reset(proxy_route, proxy_target, monkeypatch, asynchronous, reset_connection):
+    await exercise_read(proxy_route, proxy_target, monkeypatch, asynchronous, "reset", reset_connection)
 
 
 @pytest.mark.asyncio
 @pytest.mark.timeout(120)
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("delay_ms", [0, 500, 5000], ids=["control", "slow", "late"])
-async def test_read_response_latency(
-    proxy_route, proxy_target, monkeypatch, asynchronous, delay_ms
-):
+@pytest.mark.parametrize("proxy_route", ["observed"], indirect=True)
+async def test_read_response_latency(proxy_route, proxy_target, monkeypatch, asynchronous, delay_ms):
     await exercise_read(
         proxy_route,
         proxy_target,
@@ -190,9 +112,8 @@ async def test_read_response_latency(
 @pytest.mark.timeout(120)
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("rate_kbps", [0, 64, 16], ids=["control", "moderate", "slow"])
-async def test_read_response_bandwidth(
-    proxy_route, proxy_target, monkeypatch, asynchronous, rate_kbps
-):
+@pytest.mark.parametrize("proxy_route", ["sdk-observed"], indirect=True)
+async def test_read_response_bandwidth(proxy_route, proxy_target, monkeypatch, asynchronous, rate_kbps):
     await exercise_read(
         proxy_route,
         proxy_target,
@@ -208,11 +129,118 @@ async def test_read_response_bandwidth(
 @pytest.mark.timeout(120)
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("cut_response", [True, False], ids=["cutoff", "control"])
-async def test_read_response_cutoff(
-    proxy_route, proxy_target, monkeypatch, asynchronous, cut_response
-):
+@pytest.mark.parametrize("proxy_route", ["sdk-observed"], indirect=True)
+async def test_read_response_cutoff(proxy_route, proxy_target, monkeypatch, asynchronous, cut_response):
+    await exercise_read(proxy_route, proxy_target, monkeypatch, asynchronous, "cutoff", cut_response)
+
+
+@pytest.mark.asyncio
+@pytest.mark.timeout(120)
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize("cut_response", [True, False], ids=["persistent", "control"])
+@pytest.mark.parametrize("proxy_route", ["sdk-observed"], indirect=True)
+async def test_read_persistent_cutoff(proxy_route, proxy_target, monkeypatch, asynchronous, cut_response):
     await exercise_read(
-        proxy_route, proxy_target, monkeypatch, asynchronous, "cutoff", cut_response
+        proxy_route,
+        proxy_target,
+        monkeypatch,
+        asynchronous,
+        "persistent_cutoff",
+        cut_response,
+    )
+
+
+async def exercise_persistent_cutoff(
+    read,
+    proxy,
+    identity,
+    sdk_identity,
+    baseline_bytes,
+    inject_fault,
+    asynchronous,
+    records,
+):
+    before, sdk_before = proxy.observer.snapshot(), proxy.sdk_observer.snapshot()
+    with proxy.persistent_cutoff(inject_fault):
+        armed_at = time.monotonic()
+        try:
+            error, elapsed, started, finished = await read(
+                "persistent_cutoff" if inject_fault else "control",
+                must_fail=inject_fault,
+            )
+        finally:
+            after, sdk_after = proxy.observer.snapshot(), proxy.sdk_observer.snapshot()
+            configuration = proxy.request("/proxies/" + proxy.name + "/toxics")
+            checked_at = time.monotonic()
+            emit(
+                "proxy_persistent_cutoff_observation",
+                name=proxy.name,
+                asynchronous=asynchronous,
+                inject_fault=inject_fault,
+                armed_at=armed_at,
+                checked_at=checked_at,
+                configuration=configuration,
+                before=before,
+                after=after,
+                sdk_before=sdk_before,
+                sdk_after=sdk_after,
+                sdk_gate_open=proxy.sdk_observer.new_connections.is_set(),
+                upstream_gate_open=proxy.observer.new_connections.is_set(),
+            )
+        assert proxy.sdk_observer.new_connections.is_set()
+        assert proxy.observer.new_connections.is_set()
+        assert armed_at <= started < finished <= checked_at
+        source = assert_response_exchange(before, after, identity, started, finished)
+        if inject_fault:
+            assert len(configuration) == 1
+            assert all(
+                configuration[0][key] == value
+                for key, value in {
+                    "name": "response-limit_data",
+                    "type": "limit_data",
+                    "stream": "downstream",
+                    "toxicity": 1.0,
+                    "attributes": {"bytes": CUTOFF_BYTES},
+                }.items()
+            ), "Persistent fault was changed or removed before the call ended"
+            progress = assert_persistent_cutoffs(
+                sdk_before,
+                sdk_after,
+                sdk_identity,
+                started,
+                finished,
+                CUTOFF_BYTES,
+                baseline_bytes,
+            )
+            outcome = assert_persistent_cutoff_outcome(error, elapsed, records)
+            assert source["response_bytes"] > CUTOFF_BYTES
+            first = progress["first"]
+        else:
+            assert configuration == []
+            first = assert_response_exchange(sdk_before, sdk_after, sdk_identity, started, finished)
+            assert set(sdk_before) == set(sdk_after) and set(before) == set(after)
+            assert sdk_after[sdk_identity]["closed_at"] is None
+            assert baseline_bytes * 0.95 <= first["response_bytes"] <= baseline_bytes * 1.05
+            assert len(records) == 1
+            progress, outcome = {"first": first, "replacement_cutoffs": []}, "success"
+        assert source["request_bytes"] == first["request_bytes"]
+        assert source["first_response_after_start"] <= first["first_response_after_start"]
+    emit(
+        "proxy_persistent_cutoff_evidence",
+        name=proxy.name,
+        asynchronous=asynchronous,
+        inject_fault=inject_fault,
+        outcome=outcome,
+        elapsed=elapsed,
+        started=started,
+        finished=finished,
+        armed_at=armed_at,
+        fault_checked_at=checked_at,
+        removed_at=time.monotonic(),
+        baseline_bytes=baseline_bytes,
+        cutoff_bytes=CUTOFF_BYTES,
+        source=source,
+        progress=progress,
     )
 
 
@@ -248,39 +276,24 @@ async def exercise_cutoff(
             baseline_bytes,
         )
         closed = [
-            key
-            for key, value in sdk_after.items()
-            if value["closed_at"] is not None and value["closed_at"] >= started
+            key for key, value in sdk_after.items() if value["closed_at"] is not None and value["closed_at"] >= started
         ]
-        assert closed == [
-            sdk_identity
-        ], "More than one SDK-facing connection was interrupted"
-        replacements = [
-            value for key, value in sdk_after.items() if key not in sdk_before
-        ]
-        assert (
-            replacements
-        ), "The interrupted read did not open a replacement connection"
+        assert closed == [sdk_identity], "More than one SDK-facing connection was interrupted"
+        replacements = [value for key, value in sdk_after.items() if key not in sdk_before]
+        assert replacements, "The interrupted read did not open a replacement connection"
         assert all(
-            value["forwarding_started_at"] is not None
-            and value["forwarding_started_at"] >= state["removed_at"]
+            value["forwarding_started_at"] is not None and value["forwarding_started_at"] >= state["removed_at"]
             for value in replacements
         ), "Replacement traffic passed before cutoff removal"
         assert started <= state["cutoff_at"] <= state["removed_at"] < finished
         assert source["response_bytes"] > CUTOFF_BYTES
     else:
-        progress = assert_response_exchange(
-            sdk_before, sdk_after, sdk_identity, started, finished
-        )
+        progress = assert_response_exchange(sdk_before, sdk_after, sdk_identity, started, finished)
         assert set(before) == set(after) and set(sdk_before) == set(sdk_after)
         assert sdk_after[sdk_identity]["closed_at"] is None
-        assert (
-            baseline_bytes * 0.95 <= progress["response_bytes"] <= baseline_bytes * 1.05
-        )
+        assert baseline_bytes * 0.95 <= progress["response_bytes"] <= baseline_bytes * 1.05
     assert source["request_bytes"] == progress["request_bytes"]
-    assert (
-        source["first_response_after_start"] <= progress["first_response_after_start"]
-    )
+    assert source["first_response_after_start"] <= progress["first_response_after_start"]
     proxy.assert_enabled()
     emit(
         "proxy_cutoff_evidence",
@@ -320,19 +333,12 @@ async def exercise_bandwidth(
         after = proxy.observer.snapshot()
         sdk_after = proxy.sdk_observer.snapshot()
         source = assert_response_exchange(before, after, identity, started, finished)
-        progress = forwarding_progress(
-            sdk_before, sdk_after, sdk_identity, started, finished
-        )
+        progress = forwarding_progress(sdk_before, sdk_after, sdk_identity, started, finished)
         assert source["first_response_after_start"] < 0.5
-        assert (
-            source["first_response_after_start"]
-            <= progress["first_response_after_start"]
-        )
+        assert source["first_response_after_start"] <= progress["first_response_after_start"]
         assert source["request_bytes"] == progress["request_bytes"]
         assert source["response_bytes"] >= progress["response_bytes"]
-        observed_rate = assert_bandwidth_outcome(
-            error, elapsed, progress, baseline_bytes, rate_kbps, records
-        )
+        observed_rate = assert_bandwidth_outcome(error, elapsed, progress, baseline_bytes, rate_kbps, records)
         if rate_kbps != 16:
             assert sdk_after[sdk_identity]["closed_at"] is None
         proxy.assert_enabled()
@@ -364,12 +370,8 @@ async def exercise_latency(read, proxy, identity, delay_ms, asynchronous, record
         after = proxy.observer.snapshot()
         exchange = assert_response_exchange(before, after, identity, started, finished)
         if delay_ms <= READ_TIMEOUT * 1000:
-            assert set(after) == set(
-                before
-            ), "Successful delay case opened another connection"
-            assert (
-                after[identity]["closed_at"] is None
-            ), "Successful read connection closed"
+            assert set(after) == set(before), "Successful delay case opened another connection"
+            assert after[identity]["closed_at"] is None, "Successful read connection closed"
         elapsed_after_response = assert_latency_outcome(
             error, elapsed, exchange["first_response_after_start"], delay_ms, records
         )
@@ -402,19 +404,14 @@ async def exercise_reset(read, proxy, identity, inject_fault, asynchronous):
             and connection["end_direction"] == "upstream"
             and connection["closed_at"] >= started
         ]
-        assert resets == [
-            identity
-        ], "The fault reset more than the selected read connection"
+        assert resets == [identity], "The fault reset more than the selected read connection"
         replacements = [
             connection
             for key, connection in after.items()
             if key not in before and connection["forwarding_started_at"] is not None
         ]
         assert replacements, "Read did not open a replacement connection"
-        assert all(
-            connection["forwarding_started_at"] >= state["removed_at"]
-            for connection in replacements
-        )
+        assert all(connection["forwarding_started_at"] >= state["removed_at"] for connection in replacements)
         assert state["reset_at"] <= state["removed_at"] < finished
         emit(
             "proxy_reset_evidence",
@@ -430,14 +427,55 @@ async def exercise_reset(read, proxy, identity, inject_fault, asynchronous):
     else:
         _, _, started, finished = await read("control")
         after = proxy.observer.snapshot()
-        assert set(after) == set(
-            before
-        ), "No-fault control unexpectedly opened another connection"
+        assert set(after) == set(before), "No-fault control unexpectedly opened another connection"
         assert all(
-            connection["closed_at"] is None or connection["closed_at"] < started
-            for connection in after.values()
+            connection["closed_at"] is None or connection["closed_at"] < started for connection in after.values()
         ), "No-fault control unexpectedly closed a connection"
         assert_response_exchange(before, after, identity, started, finished)
+
+
+async def exercise_stall(read, proxy, connection, inject_fault, asynchronous, warm_before, warm_after):
+    connections_before = proxy.connection_state()
+    try:
+        if inject_fault:
+            proxy.add_response_stall()
+        observed_before = proxy.observer.snapshot()
+        error, elapsed, started, finished = await read("stall" if inject_fault else "control", must_fail=inject_fault)
+        proxy.assert_enabled()
+        connections_after = proxy.connection_state()
+        emit(
+            "proxy_warmed_connections",
+            name=proxy.name,
+            inject_fault=inject_fault,
+            before=connections_before,
+            after=connections_after,
+        )
+        observed_after = proxy.observer.snapshot()
+        evidence = assert_response_exchange(observed_before, observed_after, connection, started, finished)
+        emit(
+            "proxy_connection_evidence",
+            name=proxy.name,
+            inject_fault=inject_fault,
+            asynchronous=asynchronous,
+            started=started,
+            finished=finished,
+            warm_before=warm_before,
+            warm_after=warm_after,
+            before=observed_before,
+            after=observed_after,
+            exchange=evidence,
+        )
+        if inject_fault:
+            assert (
+                evidence["first_response_after_start"] < READ_TIMEOUT / 2
+            ), "Returning response traffic was not observed before the timeout approached"
+        else:
+            assert_warmed_connections(connections_before, connections_after)
+    finally:
+        if inject_fault:
+            proxy.remove_response_stall()
+    if inject_fault:
+        assert_stall_outcome(error, elapsed, proxy.completed_transfers())
 
 
 async def exercise_read(
@@ -453,11 +491,8 @@ async def exercise_read(
     database_id, observer = proxy_target
     item_id = uuid.uuid4().hex
     item = {"id": item_id, "pk": item_id, "name": "order-42", "state": "confirmed"}
-    if scenario in ("bandwidth", "cutoff"):
-        item["receipt"] = "".join(
-            hashlib.sha256(index.to_bytes(4, "big")).hexdigest()
-            for index in range(1000)
-        )
+    if scenario in ("bandwidth", "cutoff", "persistent_cutoff"):
+        item["receipt"] = large_receipt()
     observer.create_item(item)
     endpoint, key = os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"]
     read_endpoint = proxy_route.sdk_endpoint
@@ -484,13 +519,9 @@ async def exercise_read(
         _fault_injection_rules=[account_rule(rule_id, account)],
     )
     try:
-        await invoke(
-            asynchronous, client.__aenter__ if asynchronous else client.__enter__
-        )
+        await invoke(asynchronous, client.__aenter__ if asynchronous else client.__enter__)
         await wait_account(client, asynchronous, rule_id)
-        container = client.get_database_client(database_id).get_container_client(
-            observer.id
-        )
+        container = client.get_database_client(database_id).get_container_client(observer.id)
         await invoke(asynchronous, container.read, timeout=30)
         await invoke(
             asynchronous,
@@ -553,31 +584,19 @@ async def exercise_read(
             return error, elapsed, started, finished
 
         traffic_observer = proxy_route.observer
-        warm_before = (
-            traffic_observer.snapshot() if traffic_observer is not None else None
-        )
+        warm_before = traffic_observer.snapshot() if traffic_observer is not None else None
         sdk_warm_before = (
-            proxy_route.sdk_observer.snapshot()
-            if scenario in ("bandwidth", "cutoff")
-            else None
+            proxy_route.sdk_observer.snapshot() if scenario in ("bandwidth", "cutoff", "persistent_cutoff") else None
         )
         await read("before")
-        warm_after = (
-            traffic_observer.snapshot() if traffic_observer is not None else None
-        )
-        connection = (
-            warmed_connection(warm_before, warm_after)
-            if traffic_observer is not None
-            else None
-        )
-        if scenario in ("bandwidth", "cutoff"):
+        warm_after = traffic_observer.snapshot() if traffic_observer is not None else None
+        connection = warmed_connection(warm_before, warm_after) if traffic_observer is not None else None
+        if scenario in ("bandwidth", "cutoff", "persistent_cutoff"):
             sdk_warm_after = proxy_route.sdk_observer.snapshot()
             sdk_connection = warmed_connection(sdk_warm_before, sdk_warm_after)
             baseline_bytes = sum(
                 event["bytes"]
-                for event in exchange_events(
-                    sdk_warm_before, sdk_warm_after, sdk_connection
-                )
+                for event in exchange_events(sdk_warm_before, sdk_warm_after, sdk_connection)
                 if event["direction"] == "downstream"
             )
             emit(
@@ -590,23 +609,19 @@ async def exercise_read(
                 baseline_bytes=baseline_bytes,
                 receipt_bytes=len(item["receipt"]),
             )
-        connections_before = (
-            proxy_route.connection_state() if scenario == "stall" else None
-        )
         try:
-            if scenario == "reset":
-                await exercise_reset(
-                    read, proxy_route, connection, inject_fault, asynchronous
+            if scenario == "persistent_cutoff":
+                await exercise_persistent_cutoff(
+                    read,
+                    proxy_route,
+                    connection,
+                    sdk_connection,
+                    baseline_bytes,
+                    inject_fault,
+                    asynchronous,
+                    records,
                 )
-            elif inject_fault:
-                if scenario == "unavailable":
-                    proxy_route.set_enabled(False)
-                elif scenario == "stall":
-                    proxy_route.add_response_stall()
-            observed_before = (
-                traffic_observer.snapshot() if traffic_observer is not None else None
-            )
-            if scenario == "cutoff":
+            elif scenario == "cutoff":
                 await exercise_cutoff(
                     read,
                     proxy_route,
@@ -629,73 +644,30 @@ async def exercise_read(
                     records,
                 )
             elif scenario == "latency":
-                await exercise_latency(
-                    read, proxy_route, connection, delay_ms, asynchronous, records
-                )
-            elif scenario != "reset":
-                error, elapsed, started, finished = await read(
-                    scenario if inject_fault else "control", must_fail=inject_fault
-                )
-            if scenario == "stall":
-                proxy_route.assert_enabled()
-                connections_after = proxy_route.connection_state()
-                emit(
-                    "proxy_warmed_connections",
-                    name=proxy_route.name,
-                    inject_fault=inject_fault,
-                    before=connections_before,
-                    after=connections_after,
-                )
-                observed_after = traffic_observer.snapshot()
-                evidence = assert_response_exchange(
-                    observed_before,
-                    observed_after,
-                    connection,
-                    started,
-                    finished,
-                )
-                emit(
-                    "proxy_connection_evidence",
-                    name=proxy_route.name,
-                    inject_fault=inject_fault,
-                    asynchronous=asynchronous,
-                    started=started,
-                    finished=finished,
-                    warm_before=warm_before,
-                    warm_after=warm_after,
-                    before=observed_before,
-                    after=observed_after,
-                    exchange=evidence,
-                )
+                await exercise_latency(read, proxy_route, connection, delay_ms, asynchronous, records)
+            elif scenario == "reset":
+                await exercise_reset(read, proxy_route, connection, inject_fault, asynchronous)
+            elif scenario == "stall":
+                await exercise_stall(read, proxy_route, connection, inject_fault, asynchronous, warm_before, warm_after)
+            elif scenario == "unavailable":
                 if inject_fault:
-                    assert (
-                        evidence["first_response_after_start"] < READ_TIMEOUT / 2
-                    ), "Returning response traffic was not observed before the timeout approached"
-                else:
-                    assert_warmed_connections(connections_before, connections_after)
+                    proxy_route.set_enabled(False)
+                await read("unavailable" if inject_fault else "control", must_fail=inject_fault)
+            else:
+                raise ValueError(f"Unknown network scenario: {scenario}")
         finally:
-            if inject_fault and scenario in ("unavailable", "stall"):
-                if scenario == "unavailable":
-                    proxy_route.set_enabled(True)
-                else:
-                    proxy_route.remove_response_stall()
-        if scenario == "stall" and inject_fault:
-            transfers = proxy_route.completed_transfers()
-            assert_stall_outcome(error, elapsed, transfers)
+            if inject_fault and scenario == "unavailable":
+                proxy_route.set_enabled(True)
         await read("recovered")
         stored = observer.read_item(item_id, partition_key=item_id)
         assert {field: stored[field] for field in item} == item
-        if scenario in ("bandwidth", "cutoff"):
+        if scenario in ("bandwidth", "cutoff", "persistent_cutoff"):
             emit(
                 "proxy_stored_state",
                 database_id=database_id,
-                expected_fields={
-                    field: value for field, value in item.items() if field != "receipt"
-                },
+                expected_fields={field: value for field, value in item.items() if field != "receipt"},
                 receipt_bytes=len(item["receipt"]),
-                receipt_sha256=hashlib.sha256(
-                    stored["receipt"].encode("ascii")
-                ).hexdigest(),
+                receipt_sha256=hashlib.sha256(stored["receipt"].encode("ascii")).hexdigest(),
             )
         else:
             emit("proxy_stored_state", database_id=database_id, expected_fields=item)

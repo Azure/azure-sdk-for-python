@@ -8,7 +8,7 @@ import pytest
 
 import test_config
 from azure.core import MatchConditions
-from azure.cosmos import Offer, http_constants, CosmosClient, DatabaseProxy, ContainerProxy, PartitionKey
+from azure.cosmos import http_constants, CosmosClient, DatabaseProxy, ContainerProxy, PartitionKey
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
 def check_pk_range_statistics_request_headers(request):
@@ -43,15 +43,6 @@ class TestBackwardsCompatibility(unittest.TestCase):
         cls.data_client = test_config.TestConfig.create_data_client()
         cls.data_database = cls.data_client.get_database_client(cls.configs.TEST_DATABASE_ID)
 
-    def test_offer_methods(self):
-        database_offer = self.databaseForTest.get_throughput()
-        container_offer = self.containerForTest.get_throughput()
-
-        self.assertTrue("ThroughputProperties" in str(type(database_offer)))
-        self.assertTrue("ThroughputProperties" in str(type(container_offer)))
-
-        self.assertTrue(isinstance(database_offer, Offer))
-        self.assertTrue(isinstance(container_offer, Offer))
 
     def test_populate_quota_info(self):
             with test_config.capture_requests(self.containerForTest, resource_type='colls') as requests:

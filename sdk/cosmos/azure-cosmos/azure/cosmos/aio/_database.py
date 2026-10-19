@@ -47,7 +47,6 @@ from typing import TYPE_CHECKING, Any, Mapping, Optional, Union, Callable, overl
 
 import warnings
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.tracing.decorator_async import distributed_trace_async
 from .._telemetry import BindingAlternatives, delegate_operation, trace_operation_async
 from azure.core.tracing.decorator import distributed_trace
 
@@ -1351,7 +1350,14 @@ class DatabaseProxy(object):
             kwargs=kwargs,
         )
 
-    @distributed_trace_async
+    @trace_operation_async(
+        binding_operation=BindingAlternatives(
+            (
+                ("read_database", "get_throughput", "replace_throughput"),
+                ("get_throughput", "replace_throughput"),
+            )
+        )
+    )
     async def replace_throughput(
         self,
         throughput: Union[int, ThroughputProperties],
@@ -1372,10 +1378,17 @@ class DatabaseProxy(object):
         :rtype: ~azure.cosmos.offer.ThroughputProperties
         """
         prepare_operation_kwargs(self, kwargs)
+
+        async def get_properties(*, deadline: Optional[float] = None) -> dict[str, Any]:
+            with delegate_operation(self, "read"):
+                if deadline is None:
+                    return await self._get_properties()
+                return await self._get_properties(deadline=deadline)
+
         return await replace_database_throughput_async(
             client_connection=self.client_connection,
             database_link=self.database_link,
-            get_properties=self._get_properties,
+            get_properties=get_properties,
             throughput=throughput,
             not_found_message="Could not find ThroughputProperties for database " + self.database_link,
             kwargs=kwargs,

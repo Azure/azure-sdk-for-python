@@ -1,7 +1,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import copy
+from concurrent.futures import ThreadPoolExecutor
 import socket
+import threading
 import time
 
 import pytest
@@ -9,6 +11,7 @@ import pytest
 from fault_injection._tcp_observer import (
     TcpObserver,
     assert_cutoff_connection,
+    assert_persistent_cutoffs,
     assert_reset_connection,
     assert_response_exchange,
     forwarding_progress,
@@ -84,9 +87,7 @@ def test_rejects_missing_unwarmed_or_ambiguous_warm_connection(after):
 )
 def test_rejects_missing_response_wrong_order_or_outside_window(events):
     with pytest.raises(AssertionError):
-        assert_response_exchange(
-            {"1": connection()}, {"1": connection(events)}, "1", 2, 3
-        )
+        assert_response_exchange({"1": connection()}, {"1": connection(events)}, "1", 2, 3)
 
 
 def test_rejects_new_connection_as_only_fault_traffic():
@@ -130,9 +131,7 @@ def test_observer_forwards_counts_separate_connections_and_stops():
         try:
             observer.start()
             for index in range(2):
-                with socket.create_connection(
-                    ("127.0.0.1", observer.port), timeout=2
-                ) as client:
+                with socket.create_connection(("127.0.0.1", observer.port), timeout=2) as client:
                     upstream, _ = server.accept()
                     with upstream:
                         upstream.settimeout(2)
@@ -142,16 +141,11 @@ def test_observer_forwards_counts_separate_connections_and_stops():
                         assert client.recv(8) == b"response"
                         snapshot = wait_for_events(observer, (index + 1) * 2)
                         events = snapshot[str(index + 1)]["events"]
-                        assert [
-                            (event["direction"], event["bytes"]) for event in events
-                        ] == [
+                        assert [(event["direction"], event["bytes"]) for event in events] == [
                             ("upstream", 7),
                             ("downstream", 8),
                         ]
-                        assert all(
-                            set(event) == {"direction", "bytes", "at"}
-                            for event in events
-                        )
+                        assert all(set(event) == {"direction", "bytes", "at"} for event in events)
             assert len(observer.snapshot()) == 2
         finally:
             observer.close()
@@ -171,6 +165,182 @@ def test_observer_failure_is_not_silently_accepted():
         observer.close()
 
 
+def test_snapshot_waits_for_delivered_bytes_to_be_recorded(monkeypatch):
+    delivered, release, waiting = threading.Event(), threading.Event(), threading.Event()
+    sendall = socket.socket.sendall
+
+    def delayed_send(connection, payload, *args, **kwargs):
+        result = sendall(connection, payload, *args, **kwargs)
+        if threading.current_thread().name.startswith("cosmos-byte-observer-") and payload == b"response":
+            delivered.set()
+            assert release.wait(5)
+        return result
+
+    with socket.socket() as server:
+        server.bind(("127.0.0.1", 0))
+        server.listen()
+        server.settimeout(2)
+        observer = TcpObserver(server.getsockname()[1])
+        wait = observer.changed.wait
+
+        def observe_wait(timeout=None):
+            waiting.set()
+            return wait(timeout)
+
+        monkeypatch.setattr(socket.socket, "sendall", delayed_send)
+        monkeypatch.setattr(observer.changed, "wait", observe_wait)
+        try:
+            observer.start()
+            with socket.create_connection(("127.0.0.1", observer.port), timeout=2) as client:
+                upstream, _ = server.accept()
+                with upstream, ThreadPoolExecutor(max_workers=1) as executor:
+                    upstream.sendall(b"response")
+                    assert client.recv(8) == b"response" and delivered.wait(2)
+                    future = executor.submit(observer.snapshot)
+                    try:
+                        assert waiting.wait(2) and not future.done()
+                    finally:
+                        release.set()
+                    observed = future.result(timeout=2)
+                    assert observed["1"]["events"] == [
+                        {"direction": "downstream", "bytes": 8, "at": observed["1"]["events"][0]["at"]}
+                    ]
+        finally:
+            release.set()
+            observer.close()
+
+
+def test_snapshot_wait_is_bounded(monkeypatch):
+    observer = TcpObserver(8081)
+    wait_for = observer.changed.wait_for
+    monkeypatch.setattr(observer.changed, "wait_for", lambda predicate, timeout: wait_for(predicate, 0.01))
+    observer.forwarding.add("unfinished")
+    try:
+        with pytest.raises(TimeoutError, match="recording"):
+            observer.snapshot()
+    finally:
+        observer.forwarding.clear()
+        observer.close()
+
+
+def test_callback_teardown_waits_for_active_call_and_rejects_new_calls(monkeypatch):
+    entered, release, registered, finish, waiting = (threading.Event() for _ in range(5))
+    calls = []
+    with socket.socket() as server:
+        server.bind(("127.0.0.1", 0))
+        server.listen()
+        server.settimeout(2)
+        observer = TcpObserver(server.getsockname()[1])
+        wait = observer.changed.wait
+
+        def observe_wait(timeout=None):
+            waiting.set()
+            return wait(timeout)
+
+        def callback(identity, direction):
+            calls.append((identity, direction))
+            observer.snapshot()
+            entered.set()
+            assert release.wait(5)
+
+        def registration():
+            with observer.forwarding_callback(callback):
+                registered.set()
+                assert finish.wait(5)
+
+        monkeypatch.setattr(observer.changed, "wait", observe_wait)
+        try:
+            observer.start()
+            with ThreadPoolExecutor(max_workers=1) as executor:
+                future = executor.submit(registration)
+                try:
+                    assert registered.wait(2)
+                    with socket.create_connection(("127.0.0.1", observer.port), timeout=2) as client:
+                        upstream, _ = server.accept()
+                        with upstream:
+                            upstream.settimeout(2)
+                            client.sendall(b"first")
+                            assert entered.wait(2)
+                            finish.set()
+                            assert waiting.wait(2) and not future.done()
+                            with socket.create_connection(("127.0.0.1", observer.port), timeout=2) as second:
+                                other, _ = server.accept()
+                                with other:
+                                    other.settimeout(2)
+                                    second.sendall(b"later")
+                                    assert other.recv(5) == b"later"
+                            release.set()
+                            future.result(timeout=2)
+                            assert upstream.recv(5) == b"first"
+                    assert calls == [("1", "upstream")]
+                finally:
+                    release.set()
+                    finish.set()
+        finally:
+            release.set()
+            observer.close()
+
+
+def test_callback_failure_remains_visible_without_unhandled_thread_error():
+    with socket.socket() as server:
+        server.bind(("127.0.0.1", 0))
+        server.listen()
+        server.settimeout(2)
+        observer = TcpObserver(server.getsockname()[1])
+
+        def fail(identity, direction):
+            raise ValueError("deliberate callback failure")
+
+        try:
+            observer.start()
+            with observer.forwarding_callback(fail):
+                with socket.create_connection(("127.0.0.1", observer.port), timeout=2) as client:
+                    upstream, _ = server.accept()
+                    with upstream:
+                        client.sendall(b"request")
+                        for worker in observer.workers:
+                            worker.join(timeout=2)
+                            assert not worker.is_alive()
+                with pytest.raises(AssertionError, match="deliberate callback failure"):
+                    observer.snapshot()
+                assert observer.connections["1"]["events"] == []
+                assert observer.connections["1"]["end_reason"] == "forwarding_callback_error"
+        finally:
+            with pytest.raises(AssertionError, match="deliberate callback failure"):
+                observer.close()
+
+
+def test_failed_send_does_not_publish_bytes(monkeypatch):
+    sendall = socket.socket.sendall
+
+    def failed_send(connection, payload, *args, **kwargs):
+        if threading.current_thread().name.startswith("cosmos-byte-observer-"):
+            raise OSError("deliberate send failure")
+        return sendall(connection, payload, *args, **kwargs)
+
+    with socket.socket() as server:
+        server.bind(("127.0.0.1", 0))
+        server.listen()
+        server.settimeout(2)
+        observer = TcpObserver(server.getsockname()[1])
+        monkeypatch.setattr(socket.socket, "sendall", failed_send)
+        try:
+            observer.start()
+            with socket.create_connection(("127.0.0.1", observer.port), timeout=2) as client:
+                upstream, _ = server.accept()
+                with upstream:
+                    client.sendall(b"request")
+                    for worker in observer.workers:
+                        worker.join(timeout=2)
+                        assert not worker.is_alive()
+            assert observer.connections["1"]["events"] == [] and not observer.forwarding
+            with pytest.raises(AssertionError, match="deliberate send failure"):
+                observer.snapshot()
+        finally:
+            with pytest.raises(AssertionError, match="deliberate send failure"):
+                observer.close()
+
+
 def reset_connection():
     return dict(
         connection(traffic(), closed=2.1),
@@ -181,9 +351,7 @@ def reset_connection():
 
 
 def test_reset_evidence_requires_observed_reset_on_warmed_connection():
-    result = assert_reset_connection(
-        {"1": connection()}, {"1": reset_connection()}, "1", 2, 3
-    )
+    result = assert_reset_connection({"1": connection()}, {"1": reset_connection()}, "1", 2, 3)
     assert result["reset_after_start"] == pytest.approx(0.1)
     assert result["request_bytes"] == 100 and result["response_bytes"] == 200
 
@@ -202,9 +370,7 @@ def test_reset_evidence_requires_observed_reset_on_warmed_connection():
 )
 def test_reset_evidence_rejects_orderly_close_or_wrong_connection_failure(change):
     with pytest.raises(AssertionError):
-        assert_reset_connection(
-            {"1": connection()}, {"1": dict(reset_connection(), **change)}, "1", 2, 3
-        )
+        assert_reset_connection({"1": connection()}, {"1": dict(reset_connection(), **change)}, "1", 2, 3)
 
 
 def test_observer_holds_new_connections_until_fault_is_removed():
@@ -216,9 +382,7 @@ def test_observer_holds_new_connections_until_fault_is_removed():
         try:
             observer.start()
             observer.new_connections.clear()
-            with socket.create_connection(
-                ("127.0.0.1", observer.port), timeout=2
-            ) as client:
+            with socket.create_connection(("127.0.0.1", observer.port), timeout=2) as client:
                 client.sendall(b"request")
                 with pytest.raises(socket.timeout):
                     server.accept()
@@ -236,13 +400,8 @@ def test_observer_holds_new_connections_until_fault_is_removed():
 
 
 def test_forwarding_progress_records_deliveries_on_selected_connection():
-    events = traffic() + [
-        {"direction": "downstream", "bytes": 1600, "at": at}
-        for at in (2.11, 2.21, 2.31)
-    ]
-    progress = forwarding_progress(
-        {"1": connection()}, {"1": connection(events)}, "1", 2, 3
-    )
+    events = traffic() + [{"direction": "downstream", "bytes": 1600, "at": at} for at in (2.11, 2.21, 2.31)]
+    progress = forwarding_progress({"1": connection()}, {"1": connection(events)}, "1", 2, 3)
     assert progress["response_events"] == 4
     assert progress["response_bytes"] == 5000
     assert progress["forwarding_span"] == pytest.approx(0.3)
@@ -270,9 +429,7 @@ def test_two_observers_forward_through_both_legs_without_retaining_payloads():
             upstream_observer.start()
             sdk_observer = TcpObserver(upstream_observer.port)
             sdk_observer.start()
-            with socket.create_connection(
-                ("127.0.0.1", sdk_observer.port), timeout=2
-            ) as client:
+            with socket.create_connection(("127.0.0.1", sdk_observer.port), timeout=2) as client:
                 upstream, _ = server.accept()
                 with upstream:
                     upstream.settimeout(2)
@@ -283,18 +440,8 @@ def test_two_observers_forward_through_both_legs_without_retaining_payloads():
                         assert client.recv(len(value)) == value
                     for observer in (sdk_observer, upstream_observer):
                         events = wait_for_events(observer, 4)["1"]["events"]
-                        assert (
-                            sum(
-                                event["bytes"]
-                                for event in events
-                                if event["direction"] == "downstream"
-                            )
-                            == 15
-                        )
-                        assert all(
-                            set(event) == {"direction", "bytes", "at"}
-                            for event in events
-                        )
+                        assert sum(event["bytes"] for event in events if event["direction"] == "downstream") == 15
+                        assert all(set(event) == {"direction", "bytes", "at"} for event in events)
         finally:
             try:
                 if sdk_observer is not None:
@@ -315,9 +462,7 @@ def cutoff_connection():
 
 
 def test_cutoff_requires_exact_partial_bytes_then_observed_close():
-    evidence = assert_cutoff_connection(
-        {"1": connection()}, {"1": cutoff_connection()}, "1", 2, 3, 20000, 64000
-    )
+    evidence = assert_cutoff_connection({"1": connection()}, {"1": cutoff_connection()}, "1", 2, 3, 20000, 64000)
     assert evidence["response_bytes"] == 20000
     assert evidence["closed_after_start"] == pytest.approx(0.02)
 
@@ -355,11 +500,51 @@ def test_cutoff_rejects_wrong_close_missing_data_or_wrong_byte_count(change):
         )
 
 
-@pytest.mark.parametrize(
-    "baseline,cutoff", [(20000, 20000), (10000, 20000), (64000, 0)]
-)
+@pytest.mark.parametrize("baseline,cutoff", [(20000, 20000), (10000, 20000), (64000, 0)])
 def test_cutoff_rejects_complete_or_empty_transfer(baseline, cutoff):
     with pytest.raises(AssertionError):
-        assert_cutoff_connection(
-            {"1": connection()}, {"1": cutoff_connection()}, "1", 2, 3, cutoff, baseline
-        )
+        assert_cutoff_connection({"1": connection()}, {"1": cutoff_connection()}, "1", 2, 3, cutoff, baseline)
+
+
+def persistent_connections():
+    replacement = cutoff_connection()
+    replacement.update(accepted_at=2.1, forwarding_started_at=2.11, closed_at=2.3)
+    replacement["events"] = [
+        {"direction": "upstream", "bytes": 100, "at": 2.12},
+        {"direction": "downstream", "bytes": 20000, "at": 2.2},
+    ]
+    return {"1": cutoff_connection(), "2": replacement}
+
+
+def test_persistent_cutoff_requires_warmed_and_replacement_failures():
+    result = assert_persistent_cutoffs({"1": connection()}, persistent_connections(), "1", 2, 3, 20000, 64000)
+    assert result["first"]["response_bytes"] == 20000
+    assert result["replacement_cutoffs"][0]["connection"] == "2"
+
+
+@pytest.mark.parametrize(
+    "change",
+    [
+        {"forwarding_started_at": None},
+        {"forwarding_started_at": 4},
+        {"closed_at": None},
+        {"closed_at": 4},
+        {"closed_at": 2.15},
+        {"end_reason": "ConnectionResetError"},
+        {"end_direction": "upstream"},
+        {"end_operation": "send"},
+        {"events": traffic(2.12)},
+        {"events": [{"direction": "downstream", "bytes": 20001, "at": 2.2}]},
+        {"events": [{"direction": "downstream", "bytes": 20000, "at": 2.2}]},
+    ],
+)
+def test_persistent_cutoff_rejects_gated_or_unproven_replacement(change):
+    after = persistent_connections()
+    after["2"].update(change)
+    with pytest.raises(AssertionError):
+        assert_persistent_cutoffs({"1": connection()}, after, "1", 2, 3, 20000, 64000)
+
+
+def test_persistent_cutoff_rejects_only_one_interruption():
+    with pytest.raises(AssertionError, match="No replacement"):
+        assert_persistent_cutoffs({"1": connection()}, {"1": cutoff_connection()}, "1", 2, 3, 20000, 64000)

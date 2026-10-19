@@ -29,6 +29,7 @@
 
 #### Bugs Fixed
 
+* Restored synchronous and asynchronous Rust-backed `query_items()` service-token pass-through and positive `continuation_token_limit` support for complete partition keys, removing the migration-only Python token envelope.
 * Fixed synchronous and asynchronous database and container `get_throughput()` and `replace_throughput()` to share one overall timeout across uncached metadata, the complete offer query, any container-identity refresh and replacement, inherit the client timeout default, and await asynchronous cancellation cleanup.
 * Fixed database and container throughput replacements to retain autoscale fields and response headers, isolate callback and input data, and report missing offers with `CosmosResourceNotFoundError`. Both replacement steps now receive supported caller options.
 * Added remaining-timeout and optional attempt-diagnostics support to synchronous and asynchronous Rust throughput replacement bindings.

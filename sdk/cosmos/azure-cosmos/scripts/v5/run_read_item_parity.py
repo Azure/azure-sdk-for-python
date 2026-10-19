@@ -31,6 +31,11 @@ selection is not runtime parity until enabled on a supported target.
 replay test or its owned copy on either surface.
 --query-test cross-continuation selects the original cross-partition replay
 test or its owned copy; both surfaces omit the enable flag.
+--query-test token-limit selects the original one-kilobyte continuation
+token test or its owned copy on either surface.
+--query-test prefix-continuation compares owned copies of the original
+hierarchical-prefix replay/COUNT test. Both columns omit the unrelated
+shared fixture and preserve the test's own 400 RU/s hierarchical container.
 --query-test max selects the original MAX-result test or its Rust copy,
 including its async counterpart. Original item bodies omit the partition key.
 --query-test sum compares adapted full-feed-range SUM copies on either
@@ -73,6 +78,8 @@ QUERY_METHODS = {
     "advice": "::TestQuery::test_populate_query_advice",
     "continuation": "::TestQuery::test_paging_with_continuation_token",
     "cross-continuation": "::TestQuery::test_cross_partition_query_with_continuation_token",
+    "token-limit": "::TestQuery::test_continuation_token_size_limit_query",
+    "prefix-continuation": "::TestFeedRangeMultiPartition::test_prefix_partition_key_query_pagination_resume",
     "sum": "::TestQueryFeedRange::test_query_value_sum_across_full_feed_range_still_sums",
     "avg": "::TestQueryFeedRange::test_query_with_avg_aggregate_single_partition_feed_range_succeeds",
     "max": "::TestQuery::test_value_max_query_results",
@@ -88,6 +95,10 @@ ASYNC_QUERY_METHODS = {
     "advice": "::TestQueryAsync::test_populate_query_advice_async",
     "continuation": "::TestQueryAsync::test_paging_with_continuation_token_async",
     "cross-continuation": "::TestQueryAsync::test_cross_partition_query_with_continuation_token_async",
+    "token-limit": "::TestQueryAsync::test_continuation_token_size_limit_query_async",
+    "prefix-continuation": (
+        "::TestFeedRangeMultiPartitionAsync::test_prefix_partition_key_query_pagination_resume_async"
+    ),
     "sum": "::TestQueryFeedRangeAsync::test_query_value_sum_across_full_feed_range_still_sums_async",
     "avg": "::TestQueryFeedRangeAsync::test_query_with_avg_aggregate_single_partition_feed_range_succeeds_async",
     "max": "::TestQueryAsync::test_value_max_query_results_async",
@@ -147,7 +158,8 @@ def main(argv=None):
     if args.surface == "aio" and not (args.op == "query_items" and args.query_test in ASYNC_QUERY_METHODS):
         parser.error(
             "--surface aio requires --op query_items --query-test offset, distinct, count, "
-            "metrics, index-metrics, advice, continuation, cross-continuation, sum, avg, max, or min"
+            "metrics, index-metrics, advice, continuation, cross-continuation, token-limit, "
+            "prefix-continuation, sum, avg, max, or min"
         )
     for name in ("ACCOUNT_HOST", "ACCOUNT_KEY"):
         if not os.environ.get(name):
@@ -168,6 +180,11 @@ def main(argv=None):
         method = ASYNC_QUERY_METHODS[args.query_test]
     if args.query_test in ("sum", "avg", "min"):
         source_file = "test_query_feed_range_async.py" if args.surface == "aio" else "test_query_feed_range.py"
+    if args.query_test == "prefix-continuation":
+        source_file = (
+            "test_query_feed_range_multipartition_async.py"
+            if args.surface == "aio" else "test_query_feed_range_multipartition.py"
+        )
     selections = [(source_file, method)]
     if args.op == "upsert_item":
         selections.append(("test_crud.py", "::TestCRUDOperations::test_document_upsert"))
@@ -181,7 +198,7 @@ def main(argv=None):
         folder = ROOT / "tests" / args.op / args.surface / "legacy"
         return pytest.main(options + [str(folder / filename) + node for filename, node in selections])
 
-    if args.query_test in ("top", "sum", "avg", "min"):
+    if args.query_test in ("top", "sum", "avg", "min", "prefix-continuation"):
         from run_database_throughput_parity import _source_for_backend
 
         source = ROOT / "tests" / "query_items" / args.surface / "legacy" / source_file
@@ -210,7 +227,9 @@ def main(argv=None):
             database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
             config.TEST_DATABASE_ID = database_id
             config.TEST_SINGLE_PARTITION_CONTAINER_ID = container_id
-            if args.op == "upsert_item" or args.query_test in ("count", "max", "continuation", "cross-continuation"):
+            if args.op == "upsert_item" or args.query_test in (
+                "count", "max", "continuation", "cross-continuation", "token-limit"
+            ):
                 config.TEST_MULTI_PARTITION_CONTAINER_ID = container_id
             return pytest.main(options + [
                 str(ROOT / "tests" / filename) + node for filename, node in selections

@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 """Owned live resources; run with --confcutdir=tests/fault_injection."""
+
 import os
 import uuid
 
@@ -9,6 +10,43 @@ import pytest
 from azure.cosmos import CosmosClient, PartitionKey, exceptions
 from common.parity_provisioning import create_owned_container, create_owned_database
 from fault_injection._delayed_create import emit
+
+
+@pytest.fixture(params=["plain"])
+def proxy_route(tmp_path, request):
+    from azure.cosmos import _rust
+    from fault_injection._toxiproxy import OwnedProxy
+    from fault_injection._toxiproxy_config import DRIVER_COMMIT, validate_endpoint
+
+    mode = request.param
+    if mode not in ("plain", "observed", "reset", "sdk-observed"):
+        raise ValueError(f"Unknown proxy observation mode: {mode}")
+    endpoint = os.environ.get("ACCOUNT_HOST", "")
+    validate_endpoint(endpoint)
+    assert _rust.__rust_driver_commit__ == DRIVER_COMMIT, "Use the verified pinned driver build"
+    assert (
+        os.environ.get("AZURE_COSMOS_E2E_BACKGROUND_ACCOUNT_REFRESH_INTERVAL_MS") == "100"
+    ), "Run this selection in its own process with account refresh interval 100ms"
+    proxy = OwnedProxy(
+        os.environ.get("TOXIPROXY_SERVER", ""),
+        endpoint,
+        "cosmos-route-" + uuid.uuid4().hex,
+        tmp_path,
+        observe=mode != "plain",
+    )
+    request.addfinalizer(proxy.close)
+    proxy.start()
+    if mode == "reset":
+        proxy.prepare_reset()
+    if mode == "sdk-observed":
+        proxy.observe_sdk_side()
+    return proxy
+
+
+@pytest.fixture
+def proxy_target(proxy_route, owned_target):
+    # Provision only after the proxy fixture has validated the local endpoint.
+    return owned_target
 
 
 def pytest_addoption(parser):

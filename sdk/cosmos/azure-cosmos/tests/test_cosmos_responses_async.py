@@ -154,22 +154,7 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
         first_response = await container.read()
         assert len(first_response.get_response_headers()) > 0
 
-    async def test_container_replace_throughput_async(self):
-        container = await self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"), offer_throughput=400)
-        replace_throughput_value = 500
-        first_response = await container.replace_throughput(replace_throughput_value)
-        assert len(first_response.get_response_headers()) > 0
-        new_throughput = await container.get_throughput()
-        assert replace_throughput_value == new_throughput.offer_throughput
 
-    async def test_database_replace_throughput_async(self):
-        db = await self.client.create_database(id=test_config.unique_database_id("responses"), offer_throughput=400)
-        replace_throughput_value = 500
-        first_response = await db.replace_throughput(replace_throughput_value)
-        assert len(first_response.get_response_headers()) > 0
-        new_throughput = await db.get_throughput()
-        assert replace_throughput_value == new_throughput.offer_throughput
 
 
 if __name__ == '__main__':

@@ -25,7 +25,7 @@ def test_resume_rule_is_disabled_until_after_delivery(inject):
     assert rule.delay_ms == 0
 
 
-def failure(token="q1.saved", status=FAULT_STATUS, substatus=FAULT_SUBSTATUS):
+def failure(token="service-saved", status=FAULT_STATUS, substatus=FAULT_SUBSTATUS):
     error = exceptions.CosmosHttpResponseError(
         response=SimpleNamespace(
             status_code=status,
@@ -43,7 +43,7 @@ def failure(token="q1.saved", status=FAULT_STATUS, substatus=FAULT_SUBSTATUS):
     [
         (None, 1, 0.1),
         (TimeoutError(), 1, 0.1),
-        (failure(token="q1.advanced"), 1, 0.1),
+        (failure(token="service-advanced"), 1, 0.1),
         (failure(status=503), 1, 0.1),
         (failure(substatus=0), 1, 0.1),
         (failure(), 0, 0.1),
@@ -56,11 +56,11 @@ def test_resume_failure_rejects_wrong_error_progress_or_fault_count(
     error, hits, elapsed
 ):
     with pytest.raises(AssertionError):
-        assert_failure(error, "q1.saved", hits, elapsed)
+        assert_failure(error, "service-saved", hits, elapsed)
 
 
 def test_resume_failure_accepts_exact_public_bookmark():
-    assert_failure(failure(), "q1.saved", 1, 0.1)
+    assert_failure(failure(), "service-saved", 1, 0.1)
 
 
 @pytest.mark.parametrize("ids", [[0, 1, 2], [1], [2], [1, 1, 2], [2, 1]])

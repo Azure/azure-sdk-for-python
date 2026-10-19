@@ -2335,6 +2335,19 @@ value also determines the partition key. The review must ensure both values
 agree, without changing the customer's input dictionary, before the write
 is sent.
 
+**Bounded lost-response verification:** On October 18, 2026 (UTC), the selected
+isolated SDK snapshot cut a real create response after 20,000 forwarded bytes.
+Sync and async recorded transport-generated `503/20003`, then duplicate
+`409/0`, and raised `CosmosResourceExistsError`. Independent and subsequent
+same-client reads returned the complete stored order. This demonstrates
+an ambiguous create outcome, not matched legacy fault parity or validation
+of concurrent SDK changes. The local testing guide records the exact setup
+and retained evidence; broader retry and live-account requirements remain.
+
+The test-harness review follow-up
+repeated this outcome after fixing observation and process-cleanup races.
+It strengthens the local evidence without changing the API decision.
+
 **Why the Python contract changes:** Sync accepted optional positional arguments while async
 required keywords. Query metrics and conditional options were inconsistently
 warned about, validated, or forwarded. Automatic IDs could be generated after
@@ -2676,8 +2689,6 @@ This verifies the overall read budget and recovery for the isolated driver
 legacy-versus-Rust parity under the same network fault, per-call transport
 timeout support, or response-inactivity timeout behavior. The worktree's
 async binding adapter changed concurrently and is outside this evidence.
-The [recorded network verification](V5/testing/toxiproxy-testing.md#stalled-response-implementation-verified-on-the-isolated-snapshot)
-contains the controls, connection evidence, cleanup, and remaining limits.
 The API's partial migration status and unrelated requirements remain unchanged.
 
 **Verified single-reset recovery**
@@ -2690,9 +2701,7 @@ transport-generated `503/20003`, then successful `200/0`. This establishes
 recovery within that read, not merely success on a later call. Subsequent
 reads using the same client also passed.
 
-The [single-reset verification](V5/testing/toxiproxy-testing.md#single-reset-implementation-recovery-within-the-interrupted-read)
-records the genuine-reset check, controlled fault removal, and evidence.
-It does not guarantee recovery from persistent resets, change retry
+This does not guarantee recovery from persistent resets, change retry
 eligibility for writes, or close the remaining migration requirements.
 
 **Verified controlled response delay**
@@ -2703,8 +2712,7 @@ for sync and 0.509 seconds for async. With five seconds of added delay,
 both reads raised `CosmosClientTimeoutError` near their original three-second
 budget. No-fault controls and subsequent same-client reads passed.
 
-The [controlled-latency record](V5/testing/toxiproxy-testing.md#controlled-latency-implementation-success-versus-the-operation-budget)
-distinguishes the wait after returning traffic on the warmed connection from
+The measured delay distinguishes the wait after returning traffic on the warmed connection from
 setup time and emulator processing. Fault removal runs after the measured
 read and has a separate management timeout; it does not extend the customer's
 budget. This remains local, Rust-only snapshot evidence, not verification of
@@ -2719,8 +2727,7 @@ sync and async reads returned the complete order in about 1.041 and 1.033
 seconds. At 16,000 bytes/second, they raised `CosmosClientTimeoutError` in
 3.017 and 3.016 seconds despite repeated forwarding towards the SDK.
 
-The [bandwidth verification](V5/testing/toxiproxy-testing.md#bandwidth-implementation-progress-does-not-renew-the-operation-budget)
-records 30 encrypted forwarding events on each warmed read connection before
+The run recorded 30 encrypted forwarding events on each warmed read connection before
 timeout, partial transferred bytes, and successful subsequent reads using
 the same clients. This supports the overall operation budget under the
 tested conditions, not a response-inactivity or streaming contract. It
@@ -2736,12 +2743,26 @@ The original sync and async calls returned the complete order and receipt
 in 0.092 and 0.115 seconds, with exactly two data-plane attempts:
 transport-generated `503/20003`, then `200/0`.
 
-The [single-cutoff verification](V5/testing/toxiproxy-testing.md#single-cutoff-implementation-complete-read-recovery-after-partial-forwarding)
-records the byte count, end-of-stream, replacement ordering, controls, and
+The run recorded the byte count, end-of-stream, replacement ordering, controls, and
 subsequent same-client success. It does not expose the underlying body-read
 error or establish a particular HTTP/JSON parsing stage. This is bounded,
 local, Rust-only evidence, not validation of concurrent SDK changes or
 matched legacy parity; partial migration status remains unchanged.
+
+**Verified failure while the response cutoff remains active**
+
+On October 18, 2026 (UTC), the same isolated snapshot raised
+`ServiceResponseError` in 0.271 seconds for sync and 0.188 seconds for async.
+Each call retained eight transport-generated `503/20003` attempts. Separately,
+the SDK-facing observer recorded 20,000 bytes and end-of-stream on the
+warmed connection and seven replacements. Replacement forwarding was not
+gated, and the fault remained configured until after the call ended.
+
+The persistent-cutoff record
+records controls, subsequent same-client success, and cleanup. This proves
+bounded terminal transport failure, not expiration of the three-second
+deadline or a public eight-attempt retry guarantee. Local, snapshot-only,
+and no-matched-legacy-parity limits remain; migration status is unchanged.
 
 **Execution and preliminary requests**
 
@@ -2779,7 +2800,7 @@ governed metadata hedging.
 | Limit connection setup or response inactivity for this read | Configure connection and complete HTTP-attempt limits on `CosmosRuntime`; supported `timeout` bounds the overall operation. Legacy per-call transport overrides and read-inactivity timers are excluded by design, not pending driver support. |
 | Try additional regions while earlier read attempts remain slow | The release supports threshold-only hedging with one alternate. Explicit `threshold_steps_ms` is rejected rather than discarded; progressive third/later hedges are intentionally excluded. |
 | Obtain every original service response header | A generic success-response header map is excluded by design. The wrapper preserves the available modeled fields; copying hook arguments cannot restore an omitted original header. This is not an outstanding request to preserve every success header. |
-| Inspect throttle retry counts and accumulated waiting | The driver contract and binding mapping need clarification under [gap 30](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30). These SDK-added values are not original service headers. |
+| Inspect throttle retry counts and accumulated waiting | The driver contract and binding mapping need clarification. These SDK-added values are not original service headers. |
 | Inspect or modify the raw outgoing request | `raw_request_hook` is removed from both backends and raises `TypeError`. Use supported options/static headers for configuration and supported tracing/diagnostics for information. Arbitrary prepared-request mutation is not preserved. |
 | Inspect the raw pipeline response object | `raw_response_hook` is removed from both backends and raises `TypeError`. Use supported results, headers, tracing, and diagnostics. These do not reproduce the pipeline response object. |
 | Distinguish a permission failure from a temporary failure during physical-map loading | Eager container resolution can discard the underlying metadata error and return a generic topology-resolution failure. A generic error does not tell the customer whether to repair permissions or retry a temporary failure. Preserving that distinction remains required. |
@@ -3109,7 +3130,7 @@ fetching the page again. Only one fetch at a time may use a given result iterato
 | Set connection or read-inactivity limits for one scan | The Rust driver lacks those per-operation controls. An overall page-fetch budget does not provide the same limits. |
 | Start reads in additional regions when earlier attempts remain slow | Rust supports one primary and one alternate request, not progressively adding more regions. Explicit `threshold_steps_ms` is rejected. This is an accepted release-scope difference, not a request to add a third overlapping hedge. |
 | Inspect original response headers | The driver returns selected fields rather than a generic success-header map, which is excluded by design. |
-| Inspect throttle retry counts and accumulated waiting | Open [gap 30](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30); clarify the available driver metadata and Python mapping. |
+| Inspect throttle retry counts and accumulated waiting | Still open: clarify the available driver metadata and Python mapping. |
 | Inspect or edit the outgoing HTTP request with `raw_request_hook` | Removed from both backends; supplying it raises `TypeError`. Use supported observability for information and supported settings for configuration; arbitrary prepared-request mutation is not preserved. |
 
 The driver team owns the remaining driver requirements, not a new raw-hook
@@ -3483,7 +3504,22 @@ The SDK uses the added property to recognize a patch after a lost response. An a
 
 Decide whether to accept and document the added property or require a
 different retained contract. This is not approval to remove the driver's
-retry-safety information. Behavior after a lost response remains an open question.
+retry-safety information. Broader lost-response behavior remains open.
+
+**Bounded local verification:** On October 18, 2026 (UTC), the selected isolated
+snapshot recovered a tracked increment after an independent read confirmed
+counter one while returning traffic was held, followed by a 20,000-byte
+cutoff. Sync and async returned the complete order; independent and later
+same-client reads still found counter one. The test distinguishes a committed
+write response from the driver's preliminary read. PATCH attempt diagnostics
+are unavailable in this snapshot, so no exact retry sequence is claimed.
+This does not approve tracking-property compatibility, establish general
+exactly-once behavior, or validate concurrent SDK changes.
+
+The test-harness review follow-up
+repeated both committed-response cutoffs with synchronized observation.
+Both calls still recovered with counter one; PATCH attempt diagnostics
+remain unavailable.
 
 #### More than ten patch instructions
 
@@ -3517,8 +3553,7 @@ the deprecated public alias and applying the common response-hook contract
 are Python wrapper cleanup and compatibility decisions; neither requires a
 new Rust driver capability.
 
-Throttle retry metadata remains open in
-[gap 30](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30).
+Throttle retry metadata remains an open requirement.
 The wrapper cleanup does not settle that contract. Timeout scope follows
 the shared runtime/operation model; generic success-header preservation is
 excluded by design, not pending driver implementation.
@@ -3591,8 +3626,7 @@ Python wrapper integration corrections for missing throughput and recreated
 containers, plus the common response-hook compatibility change. These do
 not require a new Rust driver capability.
 
-Throttle retry metadata remains open in
-[gap 30](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30).
+Throttle retry metadata remains an open requirement.
 The wrapper corrections do not settle that contract. Timeout scope follows
 the shared runtime/operation model; generic success-header preservation is
 excluded by design, not pending driver implementation.
@@ -3728,9 +3762,8 @@ the external Rust driver's offer API. Explicit legacy selection remains
 only as a comparison reference. This is not a claim of formal API-board
 approval or complete response-header parity. The database correction passed
 all eight original-derived replacement methods on each backend and nine paired
-live comparisons, including callback isolation. The
-[verification record](V5/api-review/LIVE_VERIFICATION.md#database-throughput-replacement-completeness)
-distinguishes these live results from binding-boundary failure/deadline
+live comparisons, including callback isolation. These live results are
+distinct from binding-boundary failure/deadline
 checks. The container correction passed 25 original-derived read tests and
 18 replacement tests on each backend, plus 18 live read/rejection checks and
 14 paired replacement comparisons. Two replacement rejections and four
@@ -4207,9 +4240,9 @@ waiting, not a strict cap on every retry delay: a final retry can use the
 remaining overall operation budget. Retry-count and operation-timeout limits
 still apply.
 
-This compatibility decision closes [entry 28](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-28)
-by design. Throttle retry counts and accumulated wait-time metadata remain a
-separate open requirement in [gap 30](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30).
+This compatibility difference is intentional, not an outstanding implementation
+requirement. Throttle retry counts and accumulated wait-time metadata remain a
+separate open requirement.
 
 ### Timeout settings are explicit about their scope
 
@@ -4254,11 +4287,9 @@ The generic collection of original success-response headers is intentionally
 excluded from the Rust-backed contract. The Python wrapper and binding must
 preserve the available modeled metadata, but are not required to reconstruct
 every original header or its original textual spelling.
-The design disposition is recorded in [entry 29](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-29).
 
 Python-added throttle retry counts and accumulated wait time are a separate
-requirement, still open pending Rust-team clarification in
-[gap 30](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-30).
+requirement, still open pending Rust-team clarification.
 This decision does not rewrite historical capture results or establish
 current failure-response header parity.
 

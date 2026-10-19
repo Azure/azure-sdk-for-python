@@ -532,6 +532,23 @@ class TestQuery(unittest.TestCase):
 
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
+    def test_continuation_token_size_limit_query(self):
+        """Preserve the original one-kilobyte token assertions on owned data."""
+        # Source: tests/test_query.py::TestQuery.test_continuation_token_size_limit_query
+        container = self.container
+        for i in range(1, 1000):
+            container.create_item(body=dict(pk='123', id=str(uuid.uuid4()), some_value=str(i % 3)))
+        query = "Select * from c where c.some_value='2'"
+        response_query = container.query_items(query, partition_key='123', max_item_count=100,
+                                               continuation_token_limit=1)
+        pager = response_query.by_page()
+        pager.next()
+        token = pager.continuation_token
+        self.assertLessEqual(len(token.encode('utf-8')), 1024)
+        pager.next()
+        token = pager.continuation_token
+        self.assertLessEqual(len(token.encode('utf-8')), 1024)
+
     def test_cross_partition_query_with_continuation_token(self):
         """Original cross-partition continuation replay, using this test's isolated container."""
         # Source: tests/test_query.py::TestQuery.test_cross_partition_query_with_continuation_token

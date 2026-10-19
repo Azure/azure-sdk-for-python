@@ -427,6 +427,23 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         assert second_page['id'] == second_page_fetched_with_continuation_token['id']
 
+    async def test_continuation_token_size_limit_query_async(self):
+        """Preserve the original async one-kilobyte token assertions on owned data."""
+        # Source: tests/test_query_async.py::TestQueryAsync.test_continuation_token_size_limit_query_async
+        container = self.container
+        for i in range(1, 1000):
+            await container.create_item(body=dict(pk='123', id=str(uuid.uuid4()), some_value=str(i % 3)))
+        query = "Select * from c where c.some_value='2'"
+        response_query = container.query_items(query, partition_key='123', max_item_count=100,
+                                               continuation_token_limit=1)
+        pager = response_query.by_page()
+        await pager.__anext__()
+        token = pager.continuation_token
+        assert len(token.encode('utf-8')) <= 1024
+        await pager.__anext__()
+        token = pager.continuation_token
+        assert len(token.encode('utf-8')) <= 1024
+
     async def test_cross_partition_query_with_continuation_token_async(self):
         """Original async cross-partition replay, without an explicit enable flag."""
         # Source: tests/test_query_async.py::TestQueryAsync.test_cross_partition_query_with_continuation_token_async

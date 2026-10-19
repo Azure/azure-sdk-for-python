@@ -120,37 +120,13 @@ class TestCRUDDatabaseOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
         database_proxy = await self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
         assert database_id == database_proxy.id
-        db_throughput = await database_proxy.get_throughput()
-        assert 5000 == db_throughput.offer_throughput
 
         database_proxy = await self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
         assert database_id == database_proxy.id
-        db_throughput = await database_proxy.get_throughput()
-        assert 5000 == db_throughput.offer_throughput
 
         # delete database.
         await self.key_client.delete_database(database_id)
 
-    async def test_database_level_offer_throughput_async(self):
-        # Create a database with throughput
-        offer_throughput = 1000
-        database_id = test_config.unique_database_id()
-        created_db = await self.key_client.create_database(
-            id=database_id,
-            offer_throughput=offer_throughput
-        )
-        assert created_db.id == database_id
-
-        # Verify offer throughput for database
-        offer = await created_db.get_throughput()
-        assert offer.offer_throughput == offer_throughput
-
-        # Update database offer throughput
-        new_offer_throughput = 2000
-        offer = await created_db.replace_throughput(new_offer_throughput)
-        assert offer.offer_throughput == new_offer_throughput
-
-        await self.key_client.delete_database(database_id)
 
     async def test_sql_query_crud_async(self):
         # create two databases.

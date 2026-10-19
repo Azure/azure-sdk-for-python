@@ -168,37 +168,13 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
 
         database_proxy = await self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
         assert database_id == database_proxy.id
-        db_throughput = await database_proxy.get_throughput()
-        assert 5000 == db_throughput.offer_throughput
 
         database_proxy = await self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
         assert database_id == database_proxy.id
-        db_throughput = await database_proxy.get_throughput()
-        assert 5000 == db_throughput.offer_throughput
 
         # delete database.
         await self.key_client.delete_database(database_id)
 
-    async def test_database_level_offer_throughput_async(self):
-        # Create a database with throughput
-        offer_throughput = 1000
-        database_id = test_config.unique_database_id()
-        created_db = await self.key_client.create_database(
-            id=database_id,
-            offer_throughput=offer_throughput
-        )
-        assert created_db.id == database_id
-
-        # Verify offer throughput for database
-        offer = await created_db.get_throughput()
-        assert offer.offer_throughput == offer_throughput
-
-        # Update database offer throughput
-        new_offer_throughput = 2000
-        offer = await created_db.replace_throughput(new_offer_throughput)
-        assert offer.offer_throughput == new_offer_throughput
-
-        await self.key_client.delete_database(database_id)
 
     async def test_sql_query_crud_async(self):
         # create two databases.
@@ -289,11 +265,8 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         assert collection_definition.get('partitionKey').get('kind') == created_collection_properties['partitionKey'][
             'kind']
 
-        expected_offer = await created_collection.get_throughput()
 
-        assert expected_offer is not None
 
-        assert expected_offer.offer_throughput == offer_throughput
 
         await created_db.delete_container(created_collection.id)
 
@@ -1210,45 +1183,8 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
 
         await self.key_database_for_test.delete_container(collection.id)
 
-    def __validate_offer_response_body(self, offer, expected_coll_link, expected_offer_type):
-        # type: (Offer, str, Any) -> None
-        assert offer.properties.get('id') is not None
-        assert offer.properties.get('_rid') is not None
-        assert offer.properties.get('_self') is not None
-        assert offer.properties.get('resource') is not None
-        assert offer.properties['_self'].find(offer.properties['id']) != -1
-        assert expected_coll_link.strip('/') == offer.properties['resource'].strip('/')
-        if expected_offer_type:
-            assert expected_offer_type == offer.properties.get('offerType')
 
-    async def test_offer_read_and_query_async(self):
 
-        # Create database.
-        db = self.key_database_for_test
-
-        # Create collection.
-        collection = db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        # Read the offer.
-        expected_offer = await collection.get_throughput()
-        collection_properties = await collection.read()
-        self.__validate_offer_response_body(expected_offer, collection_properties.get('_self'), None)
-
-    async def test_offer_replace_async(self):
-
-        # Throughput / offer ops are control-plane (POST /offers); route through key-auth.
-        collection = self.key_database_for_test.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        # Read Offer
-        expected_offer = await collection.get_throughput()
-        collection_properties = await collection.read()
-        self.__validate_offer_response_body(expected_offer, collection_properties.get('_self'), None)
-        # Replace the offer.
-        replaced_offer = await collection.replace_throughput(expected_offer.offer_throughput + 100)
-        collection_properties = await collection.read()
-        self.__validate_offer_response_body(replaced_offer, collection_properties.get('_self'), None)
-        # Check if the replaced offer is what we expect.
-        assert expected_offer.properties.get('content').get('offerThroughput') + 100 == replaced_offer.properties.get(
-            'content').get('offerThroughput')
-        assert expected_offer.offer_throughput + 100 == replaced_offer.offer_throughput
 
     async def test_database_account_functionality_async(self):
 

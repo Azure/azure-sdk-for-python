@@ -14,11 +14,8 @@ The recurring themes:
   but does not acquire a driver or native cursor. Two page iterators from the same
   pager are independent and each gets its own cursor, released when it runs
   out.
-* **Continuation tokens are bound to a query.** A token records the endpoint,
-  container, query text, parameters, and scope. Resuming with a token issued
-  for a *different* query or partition must fail rather than silently return
-  someone else's rows. Tokens are also prefixed by kind -- ``q1.`` for public
-  query tokens, ``c1.`` for raw driver ones -- so the wrong kind is rejected.
+* **Continuation tokens pass through unchanged.** The service and driver own
+  resumable progress; Python does not add a query-identity envelope.
 * **Not every query can be resumed.** ``DISTINCT`` and similar queries
   enumerate fine but cannot produce a token, and asking for one says so
   instead of handing back something unusable.
@@ -35,7 +32,6 @@ from common.typed_requests import wire_headers, settings_options, legacy_setting
 
 import asyncio
 import inspect
-import hashlib
 import json
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
@@ -98,6 +94,7 @@ def query(request, monkeypatch):
         delay=0,
         resumable=True,
         failure=None,
+        token_prefix="c1.",
         setup_status=0,
         pages=[[{"id": "a", "nested": [1]}], [], [7, None, ["value"], "text"], None],
     )
@@ -119,7 +116,7 @@ def query(request, monkeypatch):
         clock.now += context.delay
         token = wire_headers(prepared).get("x-ms-continuation")
         if token is not None:
-            state.index = int(token.removeprefix("c1."))
+            state.index = int(token.removeprefix(context.token_prefix))
         rows = context.pages[state.index]
         state.index += 1
         state.has_more = rows is not None
@@ -132,7 +129,7 @@ def query(request, monkeypatch):
                 "x-custom": "preserved",
             }
             if context.resumable:
-                headers["x-ms-continuation"] = "c1." + str(state.index)
+                headers["x-ms-continuation"] = context.token_prefix + str(state.index)
         return (
             context.status,
             0,
@@ -281,20 +278,8 @@ def test_cursor_is_lazy_per_iterator_and_released_at_completion(query):
 
 
 @pytest.mark.parametrize("interval", [None, ("00", "FF")])
-def test_typed_scope_keeps_the_previous_bookmark_identity(query, interval):
-    """The identity behind a continuation token is computed exactly as it always was.
-
-    A token is only accepted if the query it is replayed against hashes to the
-    same identity. That hash is rebuilt here by hand from the endpoint,
-    container link, query text, parameters and scope, and must match what the
-    pager computed -- with and without a feed range.
-
-    This is a compatibility check. The scope is now held in typed form
-    internally, but if the hash input changed shape, every continuation token
-    a customer had already saved would stop working.
-
-    Computing the identity must also not create a cursor.
-    """
+def test_typed_scope_is_prepared_without_creating_a_cursor(query, interval):
+    """Scope preparation stays lazy and does not add a token envelope."""
     kwargs = (
         {}
         if interval is None
@@ -302,26 +287,6 @@ def test_typed_scope_keeps_the_previous_bookmark_identity(query, interval):
     )
     pager = query.proxy.query_items("SELECT * FROM c", **kwargs)
     config = pager.by_page().state.config
-    previous_identity_input = [
-        query.backend._endpoint,
-        query.proxy.container_link,
-        "SELECT * FROM c",
-        [],
-        {
-            "feed_range": list(interval) if interval is not None else None,
-            "allow_cross_partition": True,
-            "partition_key": None,
-        },
-    ]
-    expected = hashlib.sha256(
-        json.dumps(
-            previous_identity_input,
-            sort_keys=True,
-            separators=(",", ":"),
-            allow_nan=False,
-        ).encode()
-    ).hexdigest()
-    assert config.identity == expected
     assert config.scope.feed_range == interval
     query.binding._ItemFeedCursor.assert_not_called()
 
@@ -356,25 +321,14 @@ def test_complete_iteration_scalar_results_and_no_legacy_metadata(query):
     query.binding.query_items_async.assert_not_called()
 
 
-def test_bookmarks_resume_independently_and_bind_query_and_scope(query):
-    """A token resumes a matching query only, and each pager keeps its own position.
-
-    After one page, the token is a public ``q1.`` one. A second pager resumes
-    from it and continues correctly even though the connection's shared
-    response headers were meanwhile set to an unrelated token, and even though
-    the resumed call uses a different page size. The original pager then
-    returns the same next page from its own state.
-
-    The two use different cursors; the original keeps the one it started with.
-
-    Resuming is then refused for a different query text, a different partition
-    key, and different parameters. All three would otherwise return rows from
-    a position that has no meaning for the new query.
-    """
+@pytest.mark.parametrize("token_prefix", ["c1.", "service-"])
+def test_continuations_pass_through_and_resume_independently(query, token_prefix):
+    """Service and driver tokens resume independently without Python wrapping."""
+    query.token_prefix = token_prefix
     pages = query.proxy.query_items("SELECT * FROM c").by_page()
     assert query.next_page(pages)[0]["id"] == "a"
     bookmark = pages.continuation_token
-    assert bookmark.startswith("q1.")
+    assert bookmark == token_prefix + "1"
     query.connection.last_response_headers = {"x-ms-continuation": "unrelated"}
     resumed = query.proxy.query_items("SELECT * FROM c", max_item_count=50).by_page(
         continuation_token=bookmark
@@ -383,13 +337,7 @@ def test_bookmarks_resume_independently_and_bind_query_and_scope(query):
     assert query.next_page(pages) == [7, None, ["value"], "text"]
     assert query.calls[0][1] is not query.calls[1][1]
     assert query.calls[0][1] is query.calls[-1][1]
-    for kwargs in [
-        {"query": "SELECT c.id FROM c"},
-        {"query": "SELECT * FROM c", "partition_key": "other"},
-        {"query": "SELECT * FROM c", "parameters": [{"name": "@p", "value": 2}]},
-    ]:
-        with pytest.raises(ValueError, match="bookmark"):
-            query.proxy.query_items(**kwargs).by_page(continuation_token=bookmark)
+    assert wire_headers(query.calls[1][0])["x-ms-continuation"] == bookmark
 
 
 def test_nonresumable_queries_enumerate_but_bookmark_access_raises(query):
@@ -449,33 +397,21 @@ def test_partition_scope_normalization(query, key, expected):
     assert "partition_key" not in json.loads(prepared.body_bytes)
 
 
-@pytest.mark.parametrize("key,wire", [
-    (None, None), (False, "[false]"), (NonePartitionKeyValue, "[{}]"),
-    (NullPartitionKeyValue, "[null]"), (["tenant", None], '["tenant",null]'),
-])
-def test_existing_query_bookmark_identity_is_unchanged(query, key, wire):
-    """Partition keys hash into the token identity exactly as they did before.
-
-    The companion to the scope-identity test, focused on partition keys that
-    are easy to get wrong: ``False``, explicit null, the absent-key marker,
-    and a hierarchical key with a null component.
-
-    For each, the identity hash is rebuilt from the original scope shape and
-    must match. If any of these started hashing differently, saved
-    continuation tokens for those partitions would stop being accepted.
-    """
-    import hashlib
-    from azure.cosmos._helpers._query_items import QueryConfig
-
-    config = QueryConfig(query.proxy, {"query": "SELECT * FROM c", "partition_key": key})
-    original_scope = {
-        "partition_key": wire, "feed_range": None, "allow_cross_partition": True,
-    }
-    original = json.dumps(
-        [config.backend._endpoint, query.proxy.container_link, config.query, config.parameters, original_scope],
-        sort_keys=True, separators=(",", ":"), allow_nan=False,
-    ).encode()
-    assert config.identity == hashlib.sha256(original).hexdigest()
+@pytest.mark.parametrize("limit", [None, 0, 1, 2])
+def test_continuation_size_limit_is_forwarded_without_changing_the_token(query, limit):
+    query.token_prefix = "service-"
+    pages = query.proxy.query_items(
+        "SELECT * FROM c", partition_key="customer-501", continuation_token_limit=limit
+    ).by_page()
+    query.next_page(pages)
+    token = pages.continuation_token
+    assert token == "service-1"
+    assert query.calls[0][0].settings.query.continuation_limit_kb == (limit or None)
+    resumed = query.proxy.query_items(
+        "SELECT * FROM c", partition_key="customer-501", continuation_token_limit=limit
+    ).by_page(continuation_token=token)
+    assert query.next_page(resumed) == [7, None, ["value"], "text"]
+    assert wire_headers(query.calls[1][0])["x-ms-continuation"] == token
 
 
 @pytest.mark.parametrize(
@@ -642,14 +578,14 @@ def test_query_body_scope_options_and_client_defaults_are_preserved(query):
         ({"full_text_score_scope": "Local"}, NotImplementedError),
         ({"full_text_score_scope": "Global"}, NotImplementedError),
         ({"continuation_token_limit": -1}, ValueError),
-        ({"continuation_token_limit": 1}, NotImplementedError),
+        ({"continuation_token_limit": True}, ValueError),
+        ({"continuation_token_limit": 0.5}, ValueError),
         ({"availability_strategy": "True"}, TypeError),
         ({"initial_headers": {"X-MS-Start-EPK": "00"}}, NotImplementedError),
         ({"initial_headers": {"Authorization": "override"}}, NotImplementedError),
         ({"request_options": {"partitionKeyRangeId": "0"}}, NotImplementedError),
         ({"unknown_option": 1}, NotImplementedError),
-        ({"continuation": "legacy"}, ValueError),
-        ({"continuation": "c1.raw"}, ValueError),
+        ({"continuation": 1}, ValueError),
         ({"continuation": "q1.invalid"}, ValueError),
         ({"continuation": "cf1.feed"}, ValueError),
     ],
@@ -667,14 +603,13 @@ def test_invalid_or_unsupported_arguments_fail_without_dispatch(query, kwargs, e
     expected.
 
     ``NotImplementedError`` covers things the Rust path does not support yet
-    -- full text score scope, continuation token limits,
+    -- full text score scope,
     pinned partition key ranges, overriding the authorization or EPK headers,
     and any unrecognised keyword. Accepting and ignoring these would let a
     customer believe a setting took effect.
 
-    Continuation tokens are checked by kind: a legacy token, a raw driver
-    ``c1.`` token, a malformed ``q1.`` one, and a change feed ``cf1.`` token
-    are each rejected rather than misread.
+    Retired Python-wrapped and change-feed tokens are rejected.
+    Service and driver tokens pass through to native validation.
     """
     values = {"query": "SELECT * FROM c", **kwargs}
     with pytest.raises(error):
@@ -694,7 +629,7 @@ def test_empty_pages_share_deadline_and_preserve_hook_accounting(query):
     The hook is falsey and must still be called, once, for the one page the
     caller actually sees. Its attempts to rewrite the continuation header and
     clear the rows have no effect: the item is returned and the token is a
-    proper ``q1.`` one. An unrecognised header survives untouched.
+    unchanged driver token. An unrecognised header survives untouched.
     """
     query.pages = [[], [{"id": "a"}], None]
     query.delay = 0.3
@@ -714,7 +649,7 @@ def test_empty_pages_share_deadline_and_preserve_hook_accounting(query):
     assert len(calls) == 1
     assert calls[0][0]["x-ms-request-charge"] == "4.0"
     assert calls[0][0]["x-custom"] == "preserved"
-    assert calls[0][0]["x-ms-continuation"].startswith("q1.")
+    assert calls[0][0]["x-ms-continuation"] == "c1.2"
     assert query.calls[1][2] == pytest.approx(0.7)
 
 

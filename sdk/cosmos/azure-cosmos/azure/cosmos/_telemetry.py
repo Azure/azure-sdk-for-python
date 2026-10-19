@@ -42,15 +42,15 @@ _REPORT_LOCK = Lock()
 
 @dataclass(frozen=True)
 class BindingAlternatives:
-    """Bounded sequences selected by the first binding call, without phantom steps."""
+    """Bounded sequences narrowed by each executed binding step, without phantom steps."""
 
     paths: tuple[tuple[str, ...], ...]
 
     def __post_init__(self) -> None:
         if not self.paths or any(not path for path in self.paths):
             raise ValueError("Binding alternatives require nonempty paths")
-        if len({path[0] for path in self.paths}) != len(self.paths):
-            raise ValueError("Binding alternatives require distinct first operations")
+        if len(set(self.paths)) != len(self.paths):
+            raise ValueError("Binding alternatives require distinct paths")
 
 
 _BindingOperation = str | tuple[str, ...] | BindingAlternatives
@@ -481,7 +481,7 @@ def trace_operation(*, binding_operation: _BindingOperation) -> Callable[[Callab
 
     :keyword binding_operation: One binding operation, or the ordered steps of a bounded
         composed call. A tuple allows a prefix of that sequence, not arbitrary repeated calls.
-        BindingAlternatives selects a path by its first actual binding call.
+        BindingAlternatives narrows permitted paths with each actual binding call.
     :paramtype binding_operation: str or tuple[str, ...] or BindingAlternatives
     :return: A decorator with operation-scoped diagnostic collection.
     :rtype: callable
@@ -515,7 +515,7 @@ def trace_operation_async(
 
     :keyword binding_operation: One binding operation, or the ordered steps of a bounded
         composed call. A tuple allows a prefix of that sequence, not arbitrary repeated calls.
-        BindingAlternatives selects a path by its first actual binding call.
+        BindingAlternatives narrows permitted paths with each actual binding call.
     :paramtype binding_operation: str or tuple[str, ...] or BindingAlternatives
     :return: A decorator with operation-scoped diagnostic collection.
     :rtype: callable
@@ -555,17 +555,21 @@ def get_operation(backend: object, operation: str) -> Optional[_Operation]:
     state = _OPERATION.get()
     if state is None or state.closed:
         return None
-    if state.parent is None and not any(handler.collect_attempts for handler in state.handlers):
-        return None
-    if state.backend is not backend or not state.owns_execution():
+    if (
+        state.backend is not backend
+        or not state.owns_execution()
+        or (state.parent is None and not any(handler.collect_attempts for handler in state.handlers))
+    ):
         return None
     expected = state.binding_operation
     if isinstance(expected, BindingAlternatives):
-        selected = next((path for path in expected.paths if path[0] == operation), None)
-        if selected is not None:
-            state.binding_operation = expected = selected
-            state.collector.contribution_limit = len(selected)
-    if isinstance(expected, tuple):
+        index = state.collector.contributions
+        selected = tuple(path for path in expected.paths if index < len(path) and path[index] == operation)
+        if not selected:
+            return None
+        state.binding_operation = selected[0] if len(selected) == 1 else BindingAlternatives(selected)
+        state.collector.contribution_limit = max(len(path) for path in selected)
+    elif isinstance(expected, tuple):
         index = state.collector.contributions
         if index >= len(expected) or expected[index] != operation:
             return None

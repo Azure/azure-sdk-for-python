@@ -298,37 +298,39 @@ def test_invalid_retry_wait_rejected(value):
 
 @pytest.mark.parametrize("stage", ["encoding", "auth", "policy", "legacy"])
 def test_failed_constructor_unwinds_backend(module, monkeypatch, stage):
-    """Failures at each startup stage close the partially constructed backend."""
+    """Startup failures mark the stored adapter closed and preserve the error."""
     factory_name = "make_backend" if module is sync_client else "make_async_backend"
     factory = getattr(module, factory_name)
     retained = []
 
     def capture(*args, **kwargs):
-        backend = factory(*args, **kwargs)
-        retained.append(backend)
-        return backend
+        adapter = factory(*args, **kwargs)
+        retained.append(adapter)
+        return adapter
 
     monkeypatch.setattr(module, factory_name, capture)
     kwargs = {"timeout": 25}
     error = RuntimeError("startup failed")
     if stage == "encoding":
         kwargs["enable_compact_utf8_item_writes"] = "invalid"
-        expected = (TypeError, ValueError)
+        expected = TypeError
     else:
         target = {"auth": "_build_auth", "policy": "_build_connection_policy",
                   "legacy": "CosmosClientConnection"}[stage]
         monkeypatch.setattr(module, target, MagicMock(side_effect=error))
         expected = RuntimeError
-    with pytest.raises(expected):
-        module.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="rust", **kwargs)
-    assert len(retained) == 1
-    assert retained[0]._closing
-    replacement = sync_backend.BindingAdapter(
-        "https://startup.invalid", master_key="ZmFrZQ==",
-        client_config=PreparedClientConfig(operation_timeout_seconds=30),
-    )
-    close_backend(retained[0])
-    replacement.close()
+    try:
+        with pytest.raises(expected) as raised:
+            module.CosmosClient("https://startup.invalid", "ZmFrZQ==", _backend="rust", **kwargs)
+        if stage == "encoding":
+            assert str(raised.value) == "enable_compact_utf8_item_writes must be a bool."
+        else:
+            assert raised.value is error
+        assert len(retained) == 1
+        assert retained[0]._closing
+    finally:
+        for adapter in retained:
+            close_backend(adapter)
 
 
 def test_close_does_not_validate_or_replay_runtime_settings(monkeypatch):
@@ -420,43 +422,42 @@ class AsyncCredential:
 
 
 def test_failed_constructor_does_not_release_another_clients_credential_hold(module, monkeypatch):
-    """A client that fails to start does not tear down the credential machinery a working
-    client is still using.
+    """Failed construction releases only the failed adapter's credential bridge use.
 
-    One client is built successfully and takes a token, which starts a
-    background thread shared by everyone using that credential. A second client
-    is then built with the same credential and fails.
-
-    Cleaning up after the failure must not touch what the first client holds:
-    the shared count is still one and the thread is still alive. Only when the
-    first client itself closes does the thread stop.
-
-    Getting this wrong would be nasty to diagnose. A failed construction
-    anywhere in the program would silently break token renewal for an unrelated
-    working client, which would keep running until its current token expired and
-    then start failing to authenticate for no visible reason.
+    Check the shared count before explicitly closing the failed adapter, then
+    confirm that closing it again preserves the working client's bridge use.
+    The bridge thread stops only when the working client's adapter closes.
     """
     credential = AsyncCredential()
     first = module.CosmosClient("https://first.invalid", credential, _backend="rust")
     bridge = first._adapter._token_credential
-    bridge.get_token("test-scope")
-    thread = bridge._thread
     retained = []
     factory_name = "make_backend" if module is sync_client else "make_async_backend"
     factory = getattr(module, factory_name)
 
     def capture(*args, **kwargs):
-        backend = factory(*args, **kwargs)
-        retained.append(backend)
-        return backend
+        adapter = factory(*args, **kwargs)
+        retained.append(adapter)
+        return adapter
 
-    monkeypatch.setattr(module, factory_name, capture)
-    monkeypatch.setattr(module, "CosmosClientConnection", MagicMock(side_effect=RuntimeError("startup")))
-    with pytest.raises(RuntimeError, match="startup"):
-        module.CosmosClient("https://second.invalid", credential, _backend="rust")
-    close_backend(retained[0])
-    assert bridge._refcount == 1 and thread.is_alive()
-    close_backend(first._adapter)
+    try:
+        bridge.get_token("test-scope")
+        thread = bridge._thread
+        monkeypatch.setattr(module, factory_name, capture)
+        error = RuntimeError("startup")
+        monkeypatch.setattr(module, "CosmosClientConnection", MagicMock(side_effect=error))
+        with pytest.raises(RuntimeError, match="startup") as raised:
+            module.CosmosClient("https://second.invalid", credential, _backend="rust")
+        assert raised.value is error
+        assert len(retained) == 1
+        assert bridge._refcount == 1 and thread.is_alive()
+        assert retained[0]._token_credential is None
+        close_backend(retained[0])
+        assert bridge._refcount == 1 and thread.is_alive()
+    finally:
+        for adapter in retained:
+            close_backend(adapter)
+        close_backend(first._adapter)
     assert bridge._closed and not thread.is_alive()
 
 

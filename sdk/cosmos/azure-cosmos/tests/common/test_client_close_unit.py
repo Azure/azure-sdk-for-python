@@ -65,6 +65,54 @@ def test_finalizer_offloads_credential_shutdown_even_without_event_loop(async_mo
         assert finished.wait(2)
 
 
+@pytest.mark.parametrize("async_mode", [False, True])
+def test_finalizer_cleans_up_on_calling_thread_if_worker_start_fails(async_mode, monkeypatch, caplog):
+    from types import SimpleNamespace
+    from azure.cosmos._backend import _binding_adapter_shared as shared
+
+    calls = []
+    credential = SimpleNamespace(
+        _close_cosmos_async_bridge=MagicMock(
+            side_effect=lambda: calls.append(("credential", threading.get_ident()))
+        )
+    )
+    native = SimpleNamespace(
+        release_driver_handle=MagicMock(
+            side_effect=lambda handle: calls.append((handle, threading.get_ident()))
+        )
+    )
+    adapter_module = async_rust_module if async_mode else sync_rust_module
+    adapter_type = adapter_module.AsyncBindingAdapter if async_mode else adapter_module.BindingAdapter
+    monkeypatch.setattr(adapter_module, "_rust_module", native)
+    adapter = adapter_type(SYNC_URL, token_credential=credential)
+    adapter._driver_handle = "handle-finalizer-fallback"
+
+    worker = SimpleNamespace(start=MagicMock(side_effect=RuntimeError("cannot start thread")))
+    thread_factory = MagicMock(return_value=worker)
+    monkeypatch.setattr(shared, "threading", SimpleNamespace(Thread=thread_factory))
+    finalizing_thread = threading.get_ident()
+
+    with caplog.at_level(logging.WARNING, logger=shared.__name__):
+        adapter.__del__()
+        adapter.__del__()
+
+    assert adapter._driver_handle is None
+    assert adapter._token_credential is None
+    assert calls == [
+        ("credential", finalizing_thread),
+        ("handle-finalizer-fallback", finalizing_thread),
+    ]
+    credential._close_cosmos_async_bridge.assert_called_once_with()
+    native.release_driver_handle.assert_called_once_with("handle-finalizer-fallback")
+    thread_factory.assert_called_once()
+    worker.start.assert_called_once_with()
+    assert thread_factory.call_args.kwargs["daemon"] is True
+    assert [
+        record.getMessage() for record in caplog.records
+        if record.name == shared.__name__ and record.levelno == logging.WARNING
+    ] == ["Could not start finalizer worker; cleaning up on the finalizing thread"]
+
+
 def test_async_initialization_pair_is_locked_across_event_loops(monkeypatch):
     from types import SimpleNamespace
 

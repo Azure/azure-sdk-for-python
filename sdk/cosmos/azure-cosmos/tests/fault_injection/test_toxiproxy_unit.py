@@ -14,6 +14,7 @@ from fault_injection._toxiproxy import (
     account_rule,
     assert_bandwidth_outcome,
     assert_latency_outcome,
+    assert_persistent_cutoff_outcome,
     assert_read_outcome,
     assert_stall_outcome,
     assert_warmed_connections,
@@ -36,14 +37,103 @@ def records(endpoint=ENDPOINT, applied=False, status=200):
     ]
 
 
+@pytest.mark.parametrize(
+    "error,elapsed,expected",
+    [
+        (exceptions.CosmosClientTimeoutError(), 3.01, "operation_timeout"),
+        (ServiceRequestError("closed"), 0.5, "terminal_transport_failure"),
+    ],
+)
+def test_persistent_cutoff_classifies_bounded_failure(error, elapsed, expected):
+    attempts = [dict(record, sub_status=20003) for record in records(status=503)] * 2
+    assert assert_persistent_cutoff_outcome(error, elapsed, attempts) == expected
+
+
+@pytest.mark.parametrize(
+    "error,elapsed,pairs",
+    [
+        (None, 0.1, [(503, 20003), (200, 0)]),
+        (ValueError("bad setup"), 0.1, [(503, 20003)] * 2),
+        (exceptions.CosmosClientTimeoutError(), 1, [(503, 20003)] * 2),
+        (exceptions.CosmosClientTimeoutError(), 3.5, [(503, 20003)] * 2),
+        (exceptions.CosmosClientTimeoutError(), float("nan"), [(503, 20003)] * 2),
+        (ServiceRequestError("late"), 3.1, [(503, 20003)] * 2),
+        (ServiceRequestError("early"), 0.1, []),
+        (ServiceRequestError("early"), 0.1, [(503, 20003)]),
+        (ServiceRequestError("early"), 0.1, [(503, 20014)] * 2),
+        (ServiceRequestError("early"), 0.1, [(503, 20003), (429, 0)]),
+        (exceptions.CosmosHttpResponseError(408), 3.01, [(503, 20003)] * 2),
+    ],
+)
+def test_persistent_cutoff_rejects_wrong_classification_or_budget(error, elapsed, pairs):
+    with pytest.raises(AssertionError):
+        assert_persistent_cutoff_outcome(
+            error,
+            elapsed,
+            [{"status": status, "sub_status": sub} for status, sub in pairs],
+        )
+
+
+@pytest.mark.parametrize("failure", [None, "body", "remove", "configuration"])
+@pytest.mark.parametrize("active", [False, True])
+def test_persistent_fault_leaves_gates_open_until_cleanup(active, failure, monkeypatch):
+    monkeypatch.setattr("fault_injection._toxiproxy.emit", lambda *args, **kwargs: None)
+    gate = threading.Event()
+    gate.set()
+    observer = SimpleNamespace(new_connections=gate)
+    toxics, deleted = [], []
+
+    def request(path, body=None, method=None, *, timeout=2):
+        assert gate.is_set()
+        if body is not None:
+            assert body == {
+                "name": "response-limit_data",
+                "type": "limit_data",
+                "stream": "downstream",
+                "toxicity": 1.0,
+                "attributes": {"bytes": 20000},
+            }
+            toxics.append(body.copy())
+            return dict(body, stream="upstream") if failure == "configuration" else body
+        if method == "DELETE":
+            assert timeout == 10 and path.endswith("/response-limit_data")
+            deleted.append(path)
+            toxics.clear()
+            if failure == "remove":
+                raise TimeoutError("removal failed")
+        return toxics.copy()
+
+    proxy = SimpleNamespace(
+        name="owned",
+        sdk_observer=observer,
+        observer=observer,
+        request=request,
+        assert_enabled=lambda: None,
+    )
+
+    def exercise():
+        with OwnedProxy.persistent_cutoff(proxy, active):
+            assert gate.is_set() and bool(toxics) is active and not deleted
+            if failure == "body":
+                raise RuntimeError("read failed")
+
+    expected = {
+        "body": RuntimeError,
+        "remove": TimeoutError,
+        "configuration": AssertionError,
+    }
+    if failure == "body" or (active and failure in ("remove", "configuration")):
+        with pytest.raises(expected[failure]):
+            exercise()
+    else:
+        exercise()
+    assert gate.is_set() and not toxics and len(deleted) == int(active)
+
+
 def test_topology_copies_account_and_removes_direct_routes():
     original = {
-        "readableLocations": [
-            {"name": "South Central US", "databaseAccountEndpoint": "direct"}
-        ],
-        "writableLocations": [
-            {"name": "South Central US", "databaseAccountEndpoint": "direct"}
-        ],
+        "readableLocations": [{"name": "South Central US", "databaseAccountEndpoint": "direct"}],
+        "writableLocations": [{"name": "South Central US", "databaseAccountEndpoint": "direct"}],
         "thinClientReadableLocations": [{"databaseAccountEndpoint": "thin-direct"}],
         "thinClientWritableLocations": [{"databaseAccountEndpoint": "thin-direct"}],
         "enableMultipleWriteLocations": True,
@@ -88,12 +178,8 @@ def test_only_account_metadata_is_synthetic():
 
 def test_success_and_network_failure_are_distinct():
     assert_read_outcome(ITEM.copy(), None, 0.01, records(), ENDPOINT, ITEM, False)
-    assert_read_outcome(
-        None, ServiceRequestError("offline"), 1, [], ENDPOINT, ITEM, True
-    )
-    assert_read_outcome(
-        None, exceptions.CosmosClientTimeoutError(), 3, [], ENDPOINT, ITEM, True
-    )
+    assert_read_outcome(None, ServiceRequestError("offline"), 1, [], ENDPOINT, ITEM, True)
+    assert_read_outcome(None, exceptions.CosmosClientTimeoutError(), 3, [], ENDPOINT, ITEM, True)
 
 
 @pytest.mark.parametrize(
@@ -128,9 +214,7 @@ def test_success_requires_real_proxy_attempt(attempts):
 @pytest.mark.parametrize("elapsed", [-1, 6, float("inf"), float("nan")])
 def test_rejects_unbounded_or_invalid_elapsed(elapsed):
     with pytest.raises(AssertionError):
-        assert_read_outcome(
-            None, ServiceRequestError("offline"), elapsed, [], ENDPOINT, ITEM, True
-        )
+        assert_read_outcome(None, ServiceRequestError("offline"), elapsed, [], ENDPOINT, ITEM, True)
 
 
 def test_rejects_unverified_executable(tmp_path):
@@ -161,12 +245,7 @@ def metrics(name="owned"):
 
 
 def test_completed_transfer_metrics_select_only_owned_proxy():
-    assert (
-        proxy_transfers(
-            "# HELP comment\n" + metrics("other") + "\n" + metrics(), "owned"
-        )
-        == transfers()
-    )
+    assert proxy_transfers("# HELP comment\n" + metrics("other") + "\n" + metrics(), "owned") == transfers()
 
 
 @pytest.mark.parametrize(
@@ -248,9 +327,7 @@ def reset_attempts():
 
 
 def test_reset_retry_requires_transport_failure_then_success():
-    assert_read_outcome(
-        ITEM, None, 0.1, reset_attempts(), ENDPOINT, ITEM, False, transport_retry=True
-    )
+    assert_read_outcome(ITEM, None, 0.1, reset_attempts(), ENDPOINT, ITEM, False, transport_retry=True)
 
 
 @pytest.mark.parametrize(
@@ -267,9 +344,7 @@ def test_reset_retry_requires_transport_failure_then_success():
 )
 def test_reset_retry_rejects_missing_extra_or_unrelated_attempts(attempts):
     with pytest.raises(AssertionError):
-        assert_read_outcome(
-            ITEM, None, 0.1, attempts, ENDPOINT, ITEM, False, transport_retry=True
-        )
+        assert_read_outcome(ITEM, None, 0.1, attempts, ENDPOINT, ITEM, False, transport_retry=True)
 
 
 def test_reset_retry_does_not_accept_a_late_success():
@@ -294,12 +369,8 @@ def test_reset_retry_does_not_accept_a_late_success():
         (5000, exceptions.CosmosClientTimeoutError(), 3.01, []),
     ],
 )
-def test_latency_outcome_requires_delay_and_original_budget(
-    delay_ms, error, elapsed, attempts
-):
-    assert assert_latency_outcome(error, elapsed, 0.005, delay_ms, attempts) == (
-        elapsed - 0.005
-    )
+def test_latency_outcome_requires_delay_and_original_budget(delay_ms, error, elapsed, attempts):
+    assert assert_latency_outcome(error, elapsed, 0.005, delay_ms, attempts) == (elapsed - 0.005)
 
 
 @pytest.mark.parametrize(
@@ -327,9 +398,7 @@ def test_latency_outcome_requires_delay_and_original_budget(
         (3000, None, 0.51, 0.005, records()),
     ],
 )
-def test_latency_rejects_unproven_delay_and_wrong_deadline(
-    delay_ms, error, elapsed, response_after_start, attempts
-):
+def test_latency_rejects_unproven_delay_and_wrong_deadline(delay_ms, error, elapsed, response_after_start, attempts):
     with pytest.raises(AssertionError):
         assert_latency_outcome(error, elapsed, response_after_start, delay_ms, attempts)
 
@@ -383,9 +452,7 @@ def test_latency_configuration_and_cleanup(delay_ms, body_fails, monkeypatch):
 
 
 @pytest.mark.parametrize("mismatch", [False, True])
-def test_latency_surfaces_removal_failure_or_configuration_mismatch(
-    mismatch, monkeypatch
-):
+def test_latency_surfaces_removal_failure_or_configuration_mismatch(mismatch, monkeypatch):
     monkeypatch.setattr("fault_injection._toxiproxy.emit", lambda *args, **kwargs: None)
     deleted = []
 
@@ -483,13 +550,9 @@ def test_bandwidth_rejects_stall_burst_setup_or_unrelated_progress(change):
         (64, None, 1.1, 65000, records(status=503)),
     ],
 )
-def test_bandwidth_rejects_wrong_outcomes_and_unbounded_wait(
-    rate, error, elapsed, baseline, attempts
-):
+def test_bandwidth_rejects_wrong_outcomes_and_unbounded_wait(rate, error, elapsed, baseline, attempts):
     with pytest.raises(AssertionError):
-        assert_bandwidth_outcome(
-            error, elapsed, bandwidth_progress(rate), baseline, rate, attempts
-        )
+        assert_bandwidth_outcome(error, elapsed, bandwidth_progress(rate), baseline, rate, attempts)
 
 
 @pytest.mark.parametrize("rate", [0, 64, 16])
@@ -548,9 +611,7 @@ def test_single_cutoff_gates_replacements_and_surfaces_failures(failure, monkeyp
         "end_direction": "downstream",
         "end_operation": "recv",
     }
-    observer = SimpleNamespace(
-        new_connections=gate, snapshot=lambda: {"warm": observed.copy()}
-    )
+    observer = SimpleNamespace(new_connections=gate, snapshot=lambda: {"warm": observed.copy()})
     proxy = object.__new__(OwnedProxy)
     proxy.name = "owned"
     proxy.sdk_observer = observer
@@ -559,9 +620,7 @@ def test_single_cutoff_gates_replacements_and_surfaces_failures(failure, monkeyp
 
     def request(path, body=None, method=None, *, timeout=2):
         if body is not None:
-            assert (
-                not gate.is_set()
-            ), "Replacement forwarding was not gated before arming"
+            assert not gate.is_set(), "Replacement forwarding was not gated before arming"
             assert body == {
                 "name": "single-cutoff",
                 "type": "limit_data",

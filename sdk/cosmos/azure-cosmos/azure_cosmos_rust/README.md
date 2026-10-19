@@ -52,7 +52,8 @@ For public `create_item`, `read_item`, `delete_item`, `upsert_item`, `replace_it
 `patch_item`, `ContainerProxy.read`, `DatabaseProxy.delete_container`,
 `DatabaseProxy.create_container`, `DatabaseProxy.replace_container`,
 `DatabaseProxy.create_container_if_not_exists`,
-`DatabaseProxy.read`, `DatabaseProxy.get_throughput`, `ContainerProxy.get_throughput`, `CosmosClient.create_database`,
+`DatabaseProxy.read`, `DatabaseProxy.get_throughput`, `DatabaseProxy.replace_throughput`,
+`ContainerProxy.get_throughput`, `ContainerProxy.replace_throughput`, `CosmosClient.create_database`,
 `CosmosClient.delete_database` and `CosmosClient.create_database_if_not_exists`, the Python
 wrapper requests structured request diagnostics when it owns a recording
 operation span or an SDK-internal
@@ -150,11 +151,21 @@ exception mapping and diagnostic-counter behavior. A final failure without
 diagnostics marks available detail `complete=False`; interruption before a
 returned result does not recover diagnostic detail from the cancelled future.
 The current database-throughput helper shares an explicit public deadline
-across properties lookup and offer query. Public throughput replacement is
-not instrumented by this integration.
+across properties lookup and offer query.
 
-Public `ContainerProxy.get_throughput` uses the same read bindings but retains
-its existing separate step budgets. Cached properties select the bounded
+Public `DatabaseProxy.replace_throughput` selects the bounded sequence
+`read_database`, `get_throughput`, `replace_throughput`, or starts at
+`get_throughput` when properties are cached. The existing helper passes one
+deadline through all executed steps. Scoped delegation covers any internal
+public properties read without changing its deadline-aware helper path.
+Completion includes returned settings and the isolated response hook.
+Missing shared throughput stops before replacement; a hook failure after a
+successful update neither replays nor rolls back that update. Sync and async
+paths reuse existing binding entry points and the shared collector without
+Rust driver changes.
+
+Public `ContainerProxy.get_throughput` uses the same read bindings and preserves
+the helper's shared deadline across lookup and recovery. Cached properties select the bounded
 sequence `get_throughput`, `read_container`, `get_throughput`; an uncached
 call starts with one additional `read_container`. Only executed steps contribute.
 The internal properties read and recovery refresh join the public operation
@@ -163,6 +174,16 @@ offer query; unchanged identity or an ordinary access error does not.
 Completion includes throughput deserialization and the isolated hook, without
 replaying work after hook or recording failures. No new binding entry point
 or Rust driver change is needed for this public integration.
+
+Public `ContainerProxy.replace_throughput` owns the same lookup followed by
+one `replace_throughput` binding call. Ordinary and recovered paths share
+their starting steps, so `BindingAlternatives` narrows the allowed sequences
+at each actual binding call rather than guessing whether recovery will occur.
+Cached properties remove only the initial read; recovery can still refresh
+properties and query the current offer before writing. All steps use the
+existing shared deadline. Completion includes returned settings and the
+isolated hook, without replaying a write after service, parsing or hook failure.
+Both runtimes reuse existing binding support; no Rust driver change is needed.
 
 The binding names are now `get_throughput` / `get_throughput_async` and
 `replace_throughput` / `replace_throughput_async`; old `read_offer` and
@@ -173,16 +194,18 @@ Replacement bindings also accept `timeout_seconds=None` and
 `include_attempts=False`. For example, if Python passes 1.5 seconds remaining,
 the eager deadline covers scheduling and the native replacement, not a fresh
 budget after scheduling. Opt-in attempt data uses the existing response
-envelope. Async cancellation aborts the owned task. None of this creates a
-single public deadline for metadata, offer lookup and replacement, or adds
-public replacement telemetry collection automatically.
+envelope. Async cancellation aborts the owned task. These binding controls
+do not by themselves create a public completion boundary: the database helper
+owns the shared deadline, and its public decorator owns telemetry through the
+final hook.
 
 Each binding invocation contributes through a single-use token. The Python
 collector rejects duplicate or late delivery and records operation totals once.
 Single-operation paths accept one binding result. Database get-or-create
 accepts at most three ordered results, and container get-or-create at most two,
-as does database throughput read. Container throughput read accepts at most
-four ordered results, retaining the native-bounded detail
+as does database throughput read. Database throughput replacement accepts at
+most three ordered results. Container throughput read accepts at most four
+ordered results, and container throughput replacement at most five, retaining the driver-bounded detail
 from each. Other multi-result paths must explicitly bound collection rather
 than joining an operation merely through inherited context. Driver retries
 already included in one result are not additional Python contributions.

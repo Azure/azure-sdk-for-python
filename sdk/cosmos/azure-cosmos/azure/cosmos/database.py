@@ -1307,7 +1307,14 @@ class DatabaseProxy(object):
             kwargs=kwargs,
         )
 
-    @distributed_trace
+    @trace_operation(
+        binding_operation=BindingAlternatives(
+            (
+                ("read_database", "get_throughput", "replace_throughput"),
+                ("get_throughput", "replace_throughput"),
+            )
+        )
+    )
     def replace_throughput(
         self,
         throughput: Union[int, ThroughputProperties],
@@ -1326,10 +1333,15 @@ class DatabaseProxy(object):
         :rtype: ~azure.cosmos.ThroughputProperties
         """
         prepare_operation_kwargs(self, kwargs)
+
+        def get_properties(*, deadline: Optional[float] = None) -> dict[str, Any]:
+            with delegate_operation(self, "read"):
+                return self._get_properties() if deadline is None else self._get_properties(deadline=deadline)
+
         return replace_database_throughput(
             client_connection=self.client_connection,
             database_link=self.database_link,
-            get_properties=self._get_properties,
+            get_properties=get_properties,
             throughput=throughput,
             not_found_message="Could not find ThroughputProperties for database " + self.database_link,
             kwargs=kwargs,

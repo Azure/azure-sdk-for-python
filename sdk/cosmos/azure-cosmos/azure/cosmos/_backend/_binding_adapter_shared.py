@@ -211,12 +211,12 @@ def close_credential_bridge_quietly(credential: Optional[Any]) -> None:
             _LOGGER.debug("Failed closing async-credential bridge", exc_info=True)
 
 
-def finalize_backend_resources(credential: Optional[Any], driver_handle: Optional[str], binding: Any) -> None:
-    """Attempt last-resort cleanup of an abandoned Python wrapper's resources.
+def finalize_adapter_resources(credential: Optional[Any], driver_handle: Optional[str], binding: Any) -> None:
+    """Attempt last-resort cleanup of an abandoned Python adapter's resources.
 
-    Explicit close is the normal path. If a wrapper object is discarded with
+    Explicit close is the normal path. If an adapter is discarded with
     resources still attached, its finalizer passes the detached credential
-    and driver handle here, without retaining the wrapper object itself.
+    and driver handle here, without retaining the adapter itself.
 
     A background thread releases this client's async credential bridge and
     then attempts to release its driver handle. The customer's credential is

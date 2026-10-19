@@ -175,33 +175,12 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
         database_proxy = self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
         self.assertEqual(database_id, database_proxy.id)
-        self.assertEqual(5000, database_proxy.get_throughput().offer_throughput)
 
         database_proxy = self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
         self.assertEqual(database_id, database_proxy.id)
-        self.assertEqual(5000, database_proxy.get_throughput().offer_throughput)
 
         self.key_client.delete_database(database_id)
 
-    def test_database_level_offer_throughput(self):
-        # Create a database with throughput
-        offer_throughput = 1000
-        database_id = test_config.unique_database_id()
-        created_db = self.key_client.create_database(
-            id=database_id,
-            offer_throughput=offer_throughput
-        )
-        self.assertEqual(created_db.id, database_id)
-
-        # Verify offer throughput for database
-        offer = created_db.get_throughput()
-        self.assertEqual(offer.offer_throughput, offer_throughput)
-
-        # Update database offer throughput
-        new_offer_throughput = 2000
-        offer = created_db.replace_throughput(new_offer_throughput)
-        self.assertEqual(offer.offer_throughput, new_offer_throughput)
-        self.key_client.delete_database(created_db.id)
 
     def test_sql_query_crud(self):
         # create two databases.
@@ -295,11 +274,8 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         self.assertIsNotNone(created_collection_properties.get("statistics"))
         self.assertIsNotNone(created_db.client_connection.last_response_headers.get("x-ms-resource-usage"))
 
-        expected_offer = created_collection.get_throughput()
 
-        self.assertIsNotNone(expected_offer)
 
-        self.assertEqual(expected_offer.offer_throughput, offer_throughput)
 
         created_db.delete_container(created_collection.id)
 
@@ -1432,45 +1408,8 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
         self.key_databaseForTest.delete_container(collection.id)
 
-    def __ValidateOfferResponseBody(self, offer, expected_coll_link, expected_offer_type):
-        # type: (Offer, str, Any) -> None
-        self.assertIsNotNone(offer.properties['id'], 'Id cannot be null.')
-        self.assertIsNotNone(offer.properties.get('_rid'), 'Resource Id (Rid) cannot be null.')
-        self.assertIsNotNone(offer.properties.get('_self'), 'Self Link cannot be null.')
-        self.assertIsNotNone(offer.properties.get('resource'), 'Resource Link cannot be null.')
-        self.assertTrue(offer.properties['_self'].find(offer.properties['id']) != -1,
-                        'Offer id not contained in offer self link.')
-        self.assertEqual(expected_coll_link.strip('/'), offer.properties['resource'].strip('/'))
-        if (expected_offer_type):
-            self.assertEqual(expected_offer_type, offer.properties.get('offerType'))
 
-    def test_offer_read_and_query(self):
-        # Create database.
-        db = self.key_databaseForTest
-        collection = db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        # Read the offer.
-        expected_offer = collection.get_throughput()
-        collection_properties = collection.read()
-        self.__ValidateOfferResponseBody(expected_offer, collection_properties.get('_self'), None)
 
-    def test_offer_replace(self):
-        # Create database.
-        db = self.key_databaseForTest
-        # Create collection.
-        collection = db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        # Read Offer
-        expected_offer = collection.get_throughput()
-        collection_properties = collection.read()
-        self.__ValidateOfferResponseBody(expected_offer, collection_properties.get('_self'), None)
-        # Replace the offer.
-        replaced_offer = collection.replace_throughput(expected_offer.offer_throughput + 100)
-        collection_properties = collection.read()
-        self.__ValidateOfferResponseBody(replaced_offer, collection_properties.get('_self'), None)
-        # Check if the replaced offer is what we expect.
-        self.assertEqual(expected_offer.properties.get('content').get('offerThroughput') + 100,
-                         replaced_offer.properties.get('content').get('offerThroughput'))
-        self.assertEqual(expected_offer.offer_throughput + 100,
-                         replaced_offer.offer_throughput)
 
     def test_database_account_functionality(self):
         # Validate database account functionality.

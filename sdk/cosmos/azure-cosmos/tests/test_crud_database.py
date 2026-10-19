@@ -113,33 +113,12 @@ class TestCRUDDatabaseOperations(unittest.TestCase):
 
         database_proxy = self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=5000)
         self.assertEqual(database_id, database_proxy.id)
-        self.assertEqual(5000, database_proxy.get_throughput().offer_throughput)
 
         database_proxy = self.key_client.create_database_if_not_exists(id=database_id, offer_throughput=6000)
         self.assertEqual(database_id, database_proxy.id)
-        self.assertEqual(5000, database_proxy.get_throughput().offer_throughput)
 
         self.key_client.delete_database(database_id)
 
-    def test_database_level_offer_throughput(self):
-        # Create a database with throughput
-        offer_throughput = 1000
-        database_id = test_config.unique_database_id()
-        created_db = self.key_client.create_database(
-            id=database_id,
-            offer_throughput=offer_throughput
-        )
-        self.assertEqual(created_db.id, database_id)
-
-        # Verify offer throughput for database
-        offer = created_db.get_throughput()
-        self.assertEqual(offer.offer_throughput, offer_throughput)
-
-        # Update database offer throughput
-        new_offer_throughput = 2000
-        offer = created_db.replace_throughput(new_offer_throughput)
-        self.assertEqual(offer.offer_throughput, new_offer_throughput)
-        self.key_client.delete_database(created_db.id)
 
     def test_sql_query_crud(self):
         # create two databases.

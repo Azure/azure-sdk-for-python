@@ -918,8 +918,12 @@ class ContainerProxy:
 
         On the Rust backend, iteration retains its query plan across pages.
         Save a page's continuation token after consuming that page and resume
-        with the same query, parameters, scope and backend. Legacy bookmarks
-        are not interchangeable with Rust query bookmarks. Supported query
+        with the same query, parameters and scope. Complete partition-key
+        queries return service continuation tokens unchanged; broader queries
+        use driver continuation tokens, which cannot resume on legacy Python.
+        A positive ``continuation_token_limit`` requires a complete partition
+        key; for example, ``1`` requests at most 1,024 bytes from the service.
+        The retired Python ``q1.`` token format is not accepted. Supported query
         shapes without driver snapshot support can still be fully enumerated,
         but accessing their page iterator's continuation token raises
         ``NotImplementedError``. Unsupported Rust query shapes and options
@@ -1769,13 +1773,22 @@ class ContainerProxy:
             kwargs=kwargs,
         )
 
-    @distributed_trace_async
+    @trace_operation_async(
+        binding_operation=BindingAlternatives(
+            (
+                ("read_container", "get_throughput", "replace_throughput"),
+                ("read_container", "get_throughput", "read_container", "get_throughput", "replace_throughput"),
+                ("get_throughput", "replace_throughput"),
+                ("get_throughput", "read_container", "get_throughput", "replace_throughput"),
+            )
+        )
+    )
     async def replace_throughput(
         self,
         throughput: Union[int, ThroughputProperties],
         *,
         response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ThroughputProperties:
         """Replace the container's throughput.
 
@@ -1799,13 +1812,22 @@ class ContainerProxy:
         """
         prepare_operation_kwargs(self, kwargs)
 
+        async def get_properties(*, deadline: Optional[float] = None) -> dict[str, Any]:
+            with delegate_operation(self, "read"):
+                if deadline is None:
+                    return await self._get_properties()
+                return await self._get_properties(deadline=deadline)
+
         async def refresh_properties(*, deadline: Optional[float] = None) -> dict[str, Any]:
-            return await self.read() if deadline is None else await self.read(_item_operation_deadline=deadline)
+            with delegate_operation(self, "read"):
+                if deadline is None:
+                    return await self.read()
+                return await self.read(_item_operation_deadline=deadline)
 
         return await _replace_container_throughput(
             client_connection=self.client_connection,
             container_link=self.container_link,
-            get_properties=self._get_properties,
+            get_properties=get_properties,
             refresh_properties=refresh_properties,
             throughput=throughput,
             response_hook=response_hook,

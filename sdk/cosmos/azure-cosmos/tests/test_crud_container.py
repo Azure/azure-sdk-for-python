@@ -24,7 +24,7 @@ import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
 import test_config
-from azure.cosmos import _retry_utility, ThroughputProperties
+from azure.cosmos import _retry_utility
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
@@ -164,11 +164,8 @@ class TestCRUDContainerOperations(unittest.TestCase):
         self.assertIsNotNone(created_collection_properties.get("statistics"))
         self.assertIsNotNone(created_db.client_connection.last_response_headers.get("x-ms-resource-usage"))
 
-        expected_offer = created_collection.get_throughput()
 
-        self.assertIsNotNone(expected_offer)
 
-        self.assertEqual(expected_offer.offer_throughput, offer_throughput)
 
         created_db.delete_container(created_collection.id)
 
@@ -586,45 +583,8 @@ class TestCRUDContainerOperations(unittest.TestCase):
                                           if included_path['path'] == '/*'])
         self.assertFalse(root_included_path.get('indexes'))
 
-    def __ValidateOfferResponseBody(self, offer, expected_coll_link, expected_offer_type):
-        # type: (Offer, str, Any) -> None
-        self.assertIsNotNone(offer.properties['id'], 'Id cannot be null.')
-        self.assertIsNotNone(offer.properties.get('_rid'), 'Resource Id (Rid) cannot be null.')
-        self.assertIsNotNone(offer.properties.get('_self'), 'Self Link cannot be null.')
-        self.assertIsNotNone(offer.properties.get('resource'), 'Resource Link cannot be null.')
-        self.assertTrue(offer.properties['_self'].find(offer.properties['id']) != -1,
-                        'Offer id not contained in offer self link.')
-        self.assertEqual(expected_coll_link.strip('/'), offer.properties['resource'].strip('/'))
-        if (expected_offer_type):
-            self.assertEqual(expected_offer_type, offer.properties.get('offerType'))
 
-    def test_offer_read_and_query(self):
-        # Create database.
-        db = self.databaseForTest
-        collection = db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        # Read the offer.
-        expected_offer = collection.get_throughput()
-        collection_properties = collection.read()
-        self.__ValidateOfferResponseBody(expected_offer, collection_properties.get('_self'), None)
 
-    def test_offer_replace(self):
-        # Create database.
-        db = self.databaseForTest
-        # Create collection.
-        collection = db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-        # Read Offer
-        expected_offer = collection.get_throughput()
-        collection_properties = collection.read()
-        self.__ValidateOfferResponseBody(expected_offer, collection_properties.get('_self'), None)
-        # Replace the offer.
-        replaced_offer = collection.replace_throughput(expected_offer.offer_throughput + 100)
-        collection_properties = collection.read()
-        self.__ValidateOfferResponseBody(replaced_offer, collection_properties.get('_self'), None)
-        # Check if the replaced offer is what we expect.
-        self.assertEqual(expected_offer.properties.get('content').get('offerThroughput') + 100,
-                         replaced_offer.properties.get('content').get('offerThroughput'))
-        self.assertEqual(expected_offer.offer_throughput + 100,
-                         replaced_offer.offer_throughput)
 
     def test_index_progress_headers(self):
         created_db = self.databaseForTest
@@ -648,34 +608,8 @@ class TestCRUDContainerOperations(unittest.TestCase):
 
         created_db.delete_container(none_coll)
 
-    def test_replace_throughput_offer_with_int(self):
-        created_db = self.databaseForTest
-        collection = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
-        new_throughput = ThroughputProperties(offer_throughput=2500)
-        collection.replace_throughput(new_throughput.offer_throughput)
 
-        retrieve_throughput = collection.get_throughput()
-        assert getattr(retrieve_throughput, "offer_throughput") == getattr(new_throughput, "offer_throughput")
-
-    def test_replace_throughput_offer_with_object(self):
-        created_db = self.databaseForTest
-        collection = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-
-        new_throughput = ThroughputProperties(offer_throughput=2500)
-        collection.replace_throughput(new_throughput)
-
-        retrieve_throughput = collection.get_throughput()
-        assert getattr(retrieve_throughput, "offer_throughput") == getattr(new_throughput, "offer_throughput")
-
-    def test_negative_replace_throughput_with_all_configs_set(self):
-        created_db = self.databaseForTest
-        collection = created_db.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
-
-        new_throughput = ThroughputProperties(offer_throughput=2500, auto_scale_max_throughput=4000, auto_scale_increment_percent=5)
-
-        with pytest.raises(KeyError):
-            collection.replace_throughput(new_throughput)
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
         if HttpHeaders.PartitionKey in args[4].headers:

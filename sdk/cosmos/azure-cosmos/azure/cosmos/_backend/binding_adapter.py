@@ -52,7 +52,7 @@ from ._binding_adapter_shared import (
     _binding_error_type,
     driver_transport_error_type,
     driver_unsupported_query_error_type,
-    finalize_backend_resources,
+    finalize_adapter_resources,
     page_binding_call_errors,
     validate_page_request,
 )
@@ -247,14 +247,14 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         """Hand abandoned resources to the cleanup helper without raising.
 
         Unclosed BindingAdapter -> detach its async credential bridge and driver handle
-        -> finalize_backend_resources. Explicit close remains the normal path.
+        -> finalize_adapter_resources. Explicit close remains the normal path.
         """
         try:
             with self._driver_handle_lock:
                 self._closing = True
                 driver_handle, self._driver_handle = self._driver_handle, None
             credential = self._take_token_credential_for_close()
-            finalize_backend_resources(credential, driver_handle, _rust_module)
+            finalize_adapter_resources(credential, driver_handle, _rust_module)
         except Exception:  # pylint: disable=broad-except
             # Never raise from object finalization.
             pass

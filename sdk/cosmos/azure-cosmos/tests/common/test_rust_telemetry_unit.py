@@ -1715,7 +1715,7 @@ def metadata_read_harness(request, item_runtime):  # pylint: disable=unused-argu
 
 
 @pytest.fixture(name="database_throughput")
-def database_throughput_harness(database_read, monkeypatch):
+def database_throughput_harness(database_read, monkeypatch):  # pylint: disable=too-many-statements
     harness = database_read
     harness.operations = []
     harness.prepared_requests = []
@@ -1747,6 +1747,8 @@ def database_throughput_harness(database_read, monkeypatch):
         _, payload = contribution_response(5, time.time_ns())
         payload["attempts"][-1]["driver_status_code"] = status
         body = harness.properties if prepared.op == "read_database" else {"Offers": harness.offers}
+        if prepared.op == "replace_throughput":
+            body = json.loads(prepared.body_bytes)
         response = (
             status,
             0,
@@ -1782,7 +1784,7 @@ def database_throughput_harness(database_read, monkeypatch):
         await asyncio.sleep(0)
         return complete(prepared, include_attempts)
 
-    for operation in ("read_database", "get_throughput"):
+    for operation in ("read_database", "get_throughput", "replace_throughput"):
         monkeypatch.setattr(
             module._rust_module, operation + suffix, native_async if asynchronous else native, raising=False
         )
@@ -1790,14 +1792,461 @@ def database_throughput_harness(database_read, monkeypatch):
     return harness
 
 
-@pytest.fixture(name="container_throughput")
-def container_throughput_harness(item_runtime, monkeypatch):  # pylint: disable=too-many-statements
+@pytest.fixture(name="database_throughput_replace")
+def database_throughput_replace_harness(database_throughput):
+    harness = database_throughput
+    harness.offers[0]["_self"] = "offers/offer/"
+    harness.offers[0]["offerVersion"] = "V2"
+    harness.statuses["replace_throughput"] = 200
+    harness.connection.ReplaceOffer = Mock(side_effect=AssertionError("Unexpected legacy replacement"))
+    harness.replace_throughput = lambda throughput=800, **kwargs: harness.invoke(
+        harness.database.replace_throughput, throughput, **kwargs
+    )
+    return harness
+
+
+@pytest.mark.parametrize("cached", [False, True])
+@pytest.mark.parametrize(
+    "outcome",
+    [
+        "manual",
+        "manual-object",
+        "autoscale",
+        "no-offer",
+        "hook-error",
+        "metadata-error",
+        "lookup-error",
+        "write-error",
+    ],
+)
+@pytest.mark.parametrize(
+    "mode",
+    [
+        "enabled",
+        "disabled",
+        "global-disabled",
+        "sampled-out",
+        "merged",
+        "handler-only",
+        "attributes",
+        "enable-call",
+    ],
+)
+def test_database_throughput_replace_owns_all_executed_steps(  # pylint: disable=too-many-statements,too-many-branches
+    database_throughput_replace, recording, cached, outcome, mode
+):
+    from azure.cosmos import ThroughputProperties
+
+    harness = database_throughput_replace
+    if cached:
+        harness.database._properties = deepcopy(harness.properties)
+    throughput = 800
+    if outcome == "manual-object":
+        throughput = ThroughputProperties(offer_throughput=800)
+    elif outcome == "autoscale":
+        harness.offers[0]["content"] = {"offerAutopilotSettings": {"maxThroughput": 5000}}
+        throughput = ThroughputProperties(auto_scale_max_throughput=6000)
+    elif outcome == "no-offer":
+        harness.offers = []
+    elif outcome.endswith("-error") and outcome != "hook-error":
+        operation = {
+            "metadata-error": "read_database",
+            "lookup-error": "get_throughput",
+            "write-error": "replace_throughput",
+        }[outcome]
+        harness.statuses[operation] = 403
+    before = deepcopy(harness.offers)
+    seen, hooks = [], []
+    harness.database._item_context = replace(
+        harness.database._item_context,
+        telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=mode == "handler-only"),),
+    )
+    kwargs = {"timeout": 10}
+    if mode in ("global-disabled", "handler-only", "enable-call"):
+        settings.tracing_enabled = False
+    elif mode == "disabled":
+        kwargs["tracing_options"] = {"enabled": False}
+    elif mode == "sampled-out":
+        recording.provider.sampler = ALWAYS_OFF
+    elif mode == "merged":
+        kwargs["merge_span"] = True
+    if mode == "enable-call":
+        kwargs["tracing_options"] = {"enabled": True}
+    elif mode == "attributes":
+        kwargs["tracing_options"] = {"attributes": {"test.context": "replacement"}}
+        kwargs["tracing_attributes"] = {"test.legacy": "replacement"}
+    collect = mode in ("enabled", "handler-only", "attributes", "enable-call")
+    expected_ops = ([] if cached else ["read_database"]) + ["get_throughput", "replace_throughput"]
+    failed = outcome in ("no-offer", "hook-error", "lookup-error", "write-error") or (
+        outcome == "metadata-error" and not cached
+    )
+    if outcome == "metadata-error" and not cached:
+        expected_ops = ["read_database"]
+    elif outcome in ("no-offer", "lookup-error"):
+        expected_ops = expected_ops[:-1]
+    original = TimeoutError("customer hook failure")
+
+    def hook(headers, body):
+        state = telemetry._OPERATION.get()
+        assert state and not state.closed and state.operation == "replace_throughput"
+        assert state.collector.received == len(expected_ops) * int(collect)
+        assert not seen and not attempt_spans(recording)
+        hooks.append(deepcopy(body))
+        headers.clear()
+        body.clear()
+        if outcome == "hook-error":
+            raise original
+
+    with trace.get_tracer("customer").start_as_current_span("set_capacity") as parent:
+        if failed:
+            expected_error = TimeoutError if outcome == "hook-error" else CosmosHttpResponseError
+            with pytest.raises(expected_error) as caught:
+                harness.replace_throughput(throughput, response_hook=hook, **kwargs)
+            if outcome == "hook-error":
+                assert caught.value is original
+            else:
+                assert caught.value.status_code == (404 if outcome == "no-offer" else 403)
+        else:
+            result = harness.replace_throughput(throughput, response_hook=hook, **kwargs)
+            if outcome == "autoscale":
+                assert result.auto_scale_max_throughput == 6000
+            else:
+                assert result.offer_throughput == 800
+            assert result.get_response_headers()["etag"] == "offer-etag"
+            assert result.get_response_headers()["x-ms-cosmos-sdk-diagnostics"] == "diagnostic-text"
+        assert trace.get_current_span() is parent
+    assert harness.operations == expected_ops and harness.offers == before
+    assert len(seen) == 1 and seen[0].outcome == ("error" if failed else "success")
+    assert seen[0].operation == "replace_throughput"
+    assert len(hooks) == int(not failed or outcome == "hook-error")
+    assert all(call[0] is collect and 0 < call[1] <= 10 for call in harness.calls)
+    assert all(not any("tracing" in key or "test." in key for key in p.headers) for p in harness.prepared_requests)
+    if expected_ops[-1] == "replace_throughput":
+        prepared = harness.prepared_requests[-1]
+        assert prepared.item_id == "offer"
+        content = json.loads(prepared.body_bytes)["content"]
+        if outcome == "autoscale":
+            assert content["offerAutopilotSettings"]["maxThroughput"] == 6000
+        else:
+            assert content["offerThroughput"] == 800
+    if collect:
+        assert seen[0].diagnostics.complete and seen[0].diagnostics.request_count == 5 * len(expected_ops)
+    else:
+        assert seen[0].diagnostics is None
+    if mode in ("enabled", "attributes", "enable-call"):
+        operation = assert_composed_attempts(
+            harness, recording, parent, failed=failed, owner="DatabaseProxy", operation_name="replace_throughput"
+        )
+        if mode == "attributes":
+            assert operation.attributes["test.context"] == operation.attributes["test.legacy"] == "replacement"
+    else:
+        assert not attempt_spans(recording)
+    harness.connection.ReadDatabase.assert_not_called()
+    harness.connection.QueryOffers.assert_not_called()
+    harness.connection.ReplaceOffer.assert_not_called()
+    assert telemetry._OPERATION.get() is None and telemetry._DELEGATED_CALL.get() is None
+
+
+@pytest.mark.parametrize("stage", ["read_database", "get_throughput", "replace_throughput"])
+@pytest.mark.parametrize("returned", [False, True])
+@pytest.mark.parametrize("failure", ["timeout", "transport"])
+def test_database_throughput_replace_keeps_error_and_prior_attempts(
+    database_throughput_replace, recording, stage, returned, failure
+):
+    harness = database_throughput_replace
+    original = TimeoutError("binding timeout") if failure == "timeout" else DriverTransportError("driver failure")
+    (harness.returned_errors if returned else harness.errors)[stage] = original
+    hook = Mock()
+    with trace.get_tracer("customer").start_as_current_span("set_capacity") as parent:
+        with pytest.raises(CosmosClientTimeoutError if failure == "timeout" else ServiceResponseError) as caught:
+            harness.replace_throughput(timeout=10, response_hook=hook)
+        assert caught.value.__cause__ is original
+    assert (
+        harness.operations
+        == ["read_database", "get_throughput", "replace_throughput"][
+            : ["read_database", "get_throughput", "replace_throughput"].index(stage) + 1
+        ]
+    )
+    hook.assert_not_called()
+    assert_composed_attempts(
+        harness,
+        recording,
+        parent,
+        failed=True,
+        complete=returned,
+        owner="DatabaseProxy",
+        operation_name="replace_throughput",
+    )
+    harness.connection.ReplaceOffer.assert_not_called()
+
+
+@pytest.mark.parametrize("failure", ["partial", "missing", "invalid", "emitter", "handler", "body", "write-body"])
+@pytest.mark.parametrize("hook_error", [False, True])
+def test_database_throughput_replace_reporting_never_replays(
+    database_throughput_replace, recording, monkeypatch, failure, hook_error
+):
+    harness = database_throughput_replace
+    seen = []
+    handlers = (telemetry.CompletionHandler(seen.append),)
+    if failure == "partial":
+        harness.transform = lambda result: (result[0], {**result[1], "complete": False})
+    elif failure == "missing":
+        harness.transform = lambda result: (result[0], None)
+    elif failure == "invalid":
+        harness.transform = lambda result: (result[0], {"schema_version": 999})
+    elif failure == "emitter":
+        monkeypatch.setattr(telemetry, "emit_attempts", Mock(side_effect=RuntimeError("reporter")))
+    elif failure == "handler":
+        handlers = (telemetry.CompletionHandler(Mock(side_effect=RuntimeError("reporter"))),) + handlers
+    elif failure == "body":
+        harness.offers = "invalid"
+    elif failure == "write-body":
+
+        def malformed_write(result):
+            response, payload = result
+            if harness.operations[-1] == "replace_throughput":
+                response = (*response[:3], b"not-json", response[4])
+            return response, payload
+
+        harness.transform = malformed_write
+    harness.database._item_context = replace(harness.database._item_context, telemetry_handlers=handlers)
+    original = ValueError("customer callback error")
+    hook = Mock(side_effect=original if hook_error else None)
+    with trace.get_tracer("customer").start_as_current_span("set_capacity") as parent:
+        if hook_error or failure in ("body", "write-body"):
+            with pytest.raises(ValueError) as caught:
+                harness.replace_throughput(response_hook=hook)
+            if failure not in ("body", "write-body"):
+                assert caught.value is original
+        else:
+            assert harness.replace_throughput(response_hook=hook).offer_throughput == 800
+    assert len(harness.calls) == (2 if failure == "body" else 3)
+    assert len(seen) == 1 and seen[0].outcome == (
+        "error" if hook_error or failure in ("body", "write-body") else "success"
+    )
+    assert hook.call_count == int(failure not in ("body", "write-body"))
+    if failure == "partial":
+        assert not seen[0].diagnostics.complete
+        assert_composed_attempts(
+            harness,
+            recording,
+            parent,
+            failed=hook_error,
+            complete=False,
+            owner="DatabaseProxy",
+            operation_name="replace_throughput",
+        )
+    elif failure in ("missing", "invalid"):
+        assert seen[0].diagnostics is None and not attempt_spans(recording)
+    elif failure == "write-body":
+        assert_composed_attempts(
+            harness,
+            recording,
+            parent,
+            failed=True,
+            owner="DatabaseProxy",
+            operation_name="replace_throughput",
+        )
+    harness.connection.ReplaceOffer.assert_not_called()
+
+
+@pytest.mark.parametrize("stage", ["read_database", "get_throughput", "replace_throughput"])
+@pytest.mark.parametrize("cancel", [False, True])
+def test_async_database_throughput_replace_drains_interrupted_step(
+    database_throughput_replace, recording, stage, cancel
+):
+    harness = database_throughput_replace
+    if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
+        pytest.skip("Async interruption")
+    seen = []
+    harness.database._item_context = replace(
+        harness.database._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+    hook = Mock()
+
+    async def run():
+        harness.gate = asyncio.Event()
+        harness.gate_operation = stage
+        with trace.get_tracer("customer").start_as_current_span("set_capacity") as parent:
+            task = asyncio.create_task(harness.database.replace_throughput(800, timeout=1, response_hook=hook))
+            await asyncio.wait_for(harness.gate.wait(), timeout=5)
+            if cancel:
+                task.cancel()
+            with pytest.raises(asyncio.CancelledError if cancel else CosmosClientTimeoutError):
+                await asyncio.wait_for(task, timeout=5)
+        return parent
+
+    parent = asyncio.run(run())
+    assert harness.drained == [stage] and len(seen) == 1
+    assert seen[0].outcome == ("cancelled" if cancel else "error")
+    hook.assert_not_called()
+    assert_composed_attempts(
+        harness,
+        recording,
+        parent,
+        failed=not cancel or settings.tracing_implementation() is not None,
+        complete=False,
+        owner="DatabaseProxy",
+        operation_name="replace_throughput",
+    )
+    assert telemetry._OPERATION.get() is None and telemetry._DELEGATED_CALL.get() is None
+
+
+@pytest.mark.parametrize("expire_stage", [None, 0, 1, 2, 3])
+def test_database_throughput_replace_preserves_shared_budget(
+    database_throughput_replace, recording, monkeypatch, expire_stage
+):
+    from azure.cosmos._backend import _binding_adapter_shared
+    from azure.cosmos._helpers import _database_throughput
+
+    harness = database_throughput_replace
+    clock = [100.0]
+    clock_module = SimpleNamespace(monotonic=lambda: clock[0])
+    for module in (_binding_adapter_shared, _operation_deadline, _database_throughput):
+        monkeypatch.setattr(module, "time", clock_module)
+    asynchronous = isinstance(harness.backend, binding_adapter.AsyncBindingAdapter)
+    module = binding_adapter if asynchronous else sync_binding_adapter
+    suffix = "_async" if asynchronous else ""
+    native = getattr(module._rust_module, "get_throughput" + suffix)
+
+    def setup():
+        clock[0] += 10 if len(harness.calls) == expire_stage else 1
+        return "test-driver"
+
+    def dispatch(handle, prepared, **kwargs):
+        result = native(handle, prepared, **kwargs)
+        clock[0] += 6 if expire_stage == 3 and prepared.op == "replace_throughput" else 0.25
+        return result
+
+    async def dispatch_async(handle, prepared, **kwargs):
+        result = await native(handle, prepared, **kwargs)
+        clock[0] += 6 if expire_stage == 3 and prepared.op == "replace_throughput" else 0.25
+        return result
+
+    monkeypatch.setattr(
+        harness.backend, "_ensure_driver_handle", AsyncMock(side_effect=setup) if asynchronous else setup
+    )
+    for operation in ("read_database", "get_throughput", "replace_throughput"):
+        monkeypatch.setattr(module._rust_module, operation + suffix, dispatch_async if asynchronous else dispatch)
+    hook = Mock()
+    with trace.get_tracer("customer").start_as_current_span("set_capacity") as parent:
+        if expire_stage is None:
+            assert harness.replace_throughput(timeout=5, response_hook=hook).offer_throughput == 800
+        else:
+            with pytest.raises(CosmosClientTimeoutError):
+                harness.replace_throughput(timeout=5, response_hook=hook)
+    assert [call[1] for call in harness.calls] == [4.0, 2.75, 1.5][:expire_stage]
+    assert hook.call_count == int(expire_stage is None)
+    assert_composed_attempts(
+        harness,
+        recording,
+        parent,
+        failed=expire_stage is not None,
+        complete=expire_stage in (None, 3),
+        owner="DatabaseProxy",
+        operation_name="replace_throughput",
+    )
+
+
+@pytest.mark.parametrize("cached", [False, True])
+@pytest.mark.parametrize("with_timeout", [False, True])
+def test_database_throughput_replace_keeps_overrides(
+    database_throughput_replace, recording, monkeypatch, cached, with_timeout
+):
+    harness = database_throughput_replace
+    if cached:
+        harness.database._properties = harness.properties
+    mock = AsyncMock if isinstance(harness.backend, binding_adapter.AsyncBindingAdapter) else Mock
+    get_properties = mock(wraps=harness.database._get_properties)
+    read = mock(wraps=harness.database.read)
+    monkeypatch.setattr(harness.database, "_get_properties", get_properties)
+    monkeypatch.setattr(harness.database, "read", read)
+    assert harness.replace_throughput(**({"timeout": 10} if with_timeout else {})).offer_throughput == 800
+    assert get_properties.call_count == 1 and read.call_count == int(not cached and not with_timeout)
+    if with_timeout:
+        assert get_properties.call_args.kwargs["deadline"] is not None
+    else:
+        assert not get_properties.call_args.kwargs
+    public = [s for s in recording.exporter.get_finished_spans() if s.name.startswith("DatabaseProxy.")]
+    assert len(public) == 1 and public[0].name == "DatabaseProxy.replace_throughput"
+
+
+@pytest.mark.parametrize("cached", [False, True])
+def test_database_throughput_replace_disabled_masks_internal_read(database_throughput_replace, recording, cached):
+    harness = database_throughput_replace
+    if cached:
+        harness.database._properties = harness.properties
+    assert harness.replace_throughput(tracing_options={"enabled": False}).offer_throughput == 800
+    assert not recording.exporter.get_finished_spans() and not any(call[0] for call in harness.calls)
+
+
+@pytest.mark.parametrize(
+    "throughput,kwargs",
+    [
+        ("bad", {}),
+        (800, {"timeout": 0.5}),
+        (800, {"response_hook": 17}),
+        (800, {"unsupported": True}),
+    ],
+)
+def test_database_throughput_replace_preflight_precedes_metadata(database_throughput_replace, throughput, kwargs):
+    with pytest.raises((TypeError, ValueError, NotImplementedError)):
+        database_throughput_replace.replace_throughput(throughput, **kwargs)
+    assert not database_throughput_replace.calls
+
+
+@pytest.mark.parametrize("cached", [False, True])
+def test_database_throughput_replace_sequence_is_bounded_and_owned(database_throughput_replace, cached):
+    harness = database_throughput_replace
+    alternatives = telemetry.BindingAlternatives(
+        (
+            ("read_database", "get_throughput", "replace_throughput"),
+            ("get_throughput", "replace_throughput"),
+        )
+    )
+    harness.database._item_context = replace(
+        harness.database._item_context, telemetry_handlers=(telemetry.CompletionHandler(Mock(), collect_attempts=True),)
+    )
+    path = alternatives.paths[int(cached)]
+
+    async def run():
+        with telemetry._operation_scope(harness.database, "replace_throughput", {}, alternatives):
+            state = telemetry._OPERATION.get()
+            for expected in path:
+
+                async def inherited(operation):
+                    assert telemetry.get_operation(harness.backend, operation) is None
+
+                await asyncio.create_task(inherited(expected))
+                with ThreadPoolExecutor(max_workers=1) as pool:
+                    assert (
+                        pool.submit(copy_context().run, telemetry.get_operation, harness.backend, expected).result()
+                        is None
+                    )
+                assert telemetry.get_operation(object(), expected) is None
+                assert telemetry.get_operation(harness.backend, "delete_database") is None
+                assert telemetry.get_operation(harness.backend, expected) is state
+                state.begin_contribution().response(contribution_response(5, time.time_ns()))
+            assert state.collector.contributions == state.collector.contribution_limit == len(path)
+            assert telemetry.get_operation(harness.backend, "replace_throughput") is None
+            state.finish()
+
+    asyncio.run(run())
+
+
+@pytest.fixture(name="container_throughput", params=["get_throughput", "replace_throughput"])
+def container_throughput_harness(item_runtime, monkeypatch, request):  # pylint: disable=too-many-statements
     harness = item_runtime
+    harness.operation = request.param
+    harness.replacement = 800
+    harness.expected_throughput = 800 if harness.operation == "replace_throughput" else 400
     harness.operations = []
     harness.prepared_requests = []
     harness.old_properties = {**CONTAINER_PROPERTIES, "_rid": "old", "_self": "dbs/db/colls/old/"}
     harness.new_properties = {**harness.old_properties, "_rid": "new", "_self": "dbs/db/colls/new/"}
-    harness.offer_body = {"Offers": [{"id": "offer", "content": {"offerThroughput": 400}}]}
+    harness.offer_body = {
+        "Offers": [{"id": "offer", "_self": "offers/offer/", "offerVersion": "V2", "content": {"offerThroughput": 400}}]
+    }
     harness.plan = []
     harness.errors = {}
     harness.returned_errors = {}
@@ -1813,6 +2262,7 @@ def container_throughput_harness(item_runtime, monkeypatch):  # pylint: disable=
         _set_container_properties_cache=Mock(side_effect=cache.__setitem__),
         ReadContainer=Mock(side_effect=AssertionError("Unexpected legacy container read")),
         QueryOffers=Mock(side_effect=AssertionError("Unexpected legacy offer query")),
+        ReplaceOffer=Mock(side_effect=AssertionError("Unexpected legacy offer replacement")),
     )
     harness.container.client_connection = harness.connection
     asynchronous = isinstance(harness.backend, binding_adapter.AsyncBindingAdapter)
@@ -1833,6 +2283,8 @@ def container_throughput_harness(item_runtime, monkeypatch):  # pylint: disable=
         if index in harness.errors:
             raise harness.errors[index]
         _, status, substatus, body = harness.plan[index]
+        if harness.plan[index][0] == "replace_throughput" and status == 200:
+            body = json.loads(harness.prepared_requests[index].body_bytes)
         _, payload = contribution_response(5, time.time_ns())
         payload["attempts"][-1]["driver_status_code"] = status
         response = (
@@ -1870,15 +2322,35 @@ def container_throughput_harness(item_runtime, monkeypatch):  # pylint: disable=
         await asyncio.sleep(0)
         return complete(index, include_attempts)
 
-    for operation in ("read_container", "get_throughput"):
+    for operation in ("read_container", "get_throughput", "replace_throughput"):
         monkeypatch.setattr(
             module._rust_module, operation + suffix, native_async if asynchronous else native, raising=False
         )
-    harness.get_throughput = lambda **kwargs: harness.invoke(harness.container.get_throughput, **kwargs)
+    harness.run_throughput = lambda **kwargs: harness.invoke(
+        getattr(harness.container, harness.operation),
+        *((harness.replacement,) if harness.operation == "replace_throughput" else ()),
+        **kwargs,
+    )
     return harness
 
 
 def configure_container_throughput(harness, cached=False, flow="success"):
+    configure_container_offer_lookup(harness, cached, flow)
+    if harness.operation == "replace_throughput" and flow in (
+        "success",
+        "autoscale",
+        "hook-error",
+        "recreated",
+        "rid-recreated",
+    ):
+        if flow == "autoscale":
+            from azure.cosmos import ThroughputProperties
+
+            harness.replacement = ThroughputProperties(auto_scale_max_throughput=6000)
+        harness.plan.append(("replace_throughput", 200, 0, None))
+
+
+def configure_container_offer_lookup(harness, cached, flow):
     if cached:
         harness.connection._container_properties_cache[harness.container.container_link] = deepcopy(
             harness.old_properties
@@ -1888,7 +2360,8 @@ def configure_container_throughput(harness, cached=False, flow="success"):
     if flow in ("success", "autoscale", "hook-error", "forbidden", "malformed"):
         body = harness.offer_body
         if flow == "autoscale":
-            body = {"Offers": [{"content": {"offerAutopilotSettings": {"maxThroughput": 5000}}}]}
+            body = deepcopy(body)
+            body["Offers"][0]["content"] = {"offerAutopilotSettings": {"maxThroughput": 5000}}
         elif flow == "malformed":
             body = {"Offers": "invalid"}
         harness.plan.append(("get_throughput", 403 if flow == "forbidden" else 200, 0, body))
@@ -1980,7 +2453,7 @@ def test_container_throughput_owns_lookup_and_recovery(  # pylint: disable=too-m
 
     def hook(headers, body):
         state = telemetry._OPERATION.get()
-        assert state and not state.closed and state.operation == "get_throughput"
+        assert state and not state.closed and state.operation == harness.operation
         assert state.collector.received == len(harness.plan) * int(collect)
         assert not seen and not attempt_spans(recording)
         hooks.append(deepcopy(body))
@@ -1993,14 +2466,17 @@ def test_container_throughput_owns_lookup_and_recovery(  # pylint: disable=too-m
     with trace.get_tracer("customer").start_as_current_span("read_budget") as parent:
         if failed:
             with pytest.raises(ValueError if flow == "malformed" else CosmosHttpResponseError) as caught:
-                harness.get_throughput(response_hook=hook, **kwargs)
+                harness.run_throughput(response_hook=hook, **kwargs)
             if flow == "hook-error":
                 assert caught.value is original
             elif flow in ("unchanged-empty", "retry-empty"):
                 assert caught.value.status_code == 404 and caught.value.sub_status == 10004
         else:
-            result = harness.get_throughput(response_hook=hook, **kwargs)
-            assert result.auto_scale_max_throughput == 5000 if flow == "autoscale" else result.offer_throughput == 400
+            result = harness.run_throughput(response_hook=hook, **kwargs)
+            if flow == "autoscale":
+                assert result.auto_scale_max_throughput == (6000 if harness.operation == "replace_throughput" else 5000)
+            else:
+                assert result.offer_throughput == harness.expected_throughput
             assert result.get_response_headers()["etag"] == "offer-etag"
             assert result.get_response_headers()["x-ms-cosmos-sdk-diagnostics"] == "diagnostic-text"
         assert trace.get_current_span() is parent
@@ -2014,7 +2490,7 @@ def test_container_throughput_owns_lookup_and_recovery(  # pylint: disable=too-m
     ][: len(queries)]
     assert [wire_headers(p)["x-ms-cosmos-intended-collection-rid"] for p in queries] == ["old", "new"][: len(queries)]
     assert len(hooks) == int(not failed or flow == "hook-error")
-    assert len(seen) == 1 and seen[0].operation == "get_throughput"
+    assert len(seen) == 1 and seen[0].operation == harness.operation
     assert seen[0].outcome == ("error" if failed else "success")
     if collect:
         assert seen[0].diagnostics.complete and seen[0].diagnostics.request_count == 5 * len(harness.plan)
@@ -2022,7 +2498,7 @@ def test_container_throughput_owns_lookup_and_recovery(  # pylint: disable=too-m
         assert seen[0].diagnostics is None
     if mode in ("enabled", "attributes", "enable-call"):
         operation = assert_composed_attempts(
-            harness, recording, parent, failed=failed, owner="ContainerProxy", operation_name="get_throughput"
+            harness, recording, parent, failed=failed, owner="ContainerProxy", operation_name=harness.operation
         )
         if mode == "attributes":
             assert operation.attributes["test.context"] == operation.attributes["test.legacy"] == "container-throughput"
@@ -2030,10 +2506,20 @@ def test_container_throughput_owns_lookup_and_recovery(  # pylint: disable=too-m
         assert not attempt_spans(recording)
     harness.connection.ReadContainer.assert_not_called()
     harness.connection.QueryOffers.assert_not_called()
+    harness.connection.ReplaceOffer.assert_not_called()
+    assert harness.offer_body["Offers"][0]["content"] == {"offerThroughput": 400}
+    writes = [p for p in harness.prepared_requests if p.op == "replace_throughput"]
+    assert len(writes) == int(harness.operation == "replace_throughput" and (not failed or flow == "hook-error"))
+    if writes:
+        assert writes[0].item_id == "offer"
+        content = json.loads(writes[0].body_bytes)["content"]
+        assert content == (
+            {"offerAutopilotSettings": {"maxThroughput": 6000}} if flow == "autoscale" else {"offerThroughput": 800}
+        )
     assert telemetry._OPERATION.get() is None and telemetry._DELEGATED_CALL.get() is None
 
 
-@pytest.mark.parametrize("stage", [0, 1, 2, 3])
+@pytest.mark.parametrize("stage", [0, 1, 2, 3, 4])
 @pytest.mark.parametrize("returned", [False, True])
 @pytest.mark.parametrize("failure", ["timeout", "transport"])
 def test_container_throughput_failure_preserves_prior_attempts(
@@ -2041,18 +2527,16 @@ def test_container_throughput_failure_preserves_prior_attempts(
 ):
     harness = container_throughput
     configure_container_throughput(harness, flow="recreated")
+    if stage >= len(harness.plan):
+        pytest.skip("No replacement step in a read")
     error = TimeoutError("binding deadline") if failure == "timeout" else DriverTransportError("driver error")
     (harness.returned_errors if returned else harness.errors)[stage] = error
-    expected = (
-        ServiceResponseError
-        if failure == "transport"
-        else (TimeoutError if stage % 2 == 0 else CosmosClientTimeoutError)
-    )
+    expected = ServiceResponseError if failure == "transport" else CosmosClientTimeoutError
     hook = Mock()
     with trace.get_tracer("customer").start_as_current_span("read_budget") as parent:
         with pytest.raises(expected) as caught:
-            harness.get_throughput(timeout=10, response_hook=hook)
-        assert caught.value is error if expected is TimeoutError else caught.value.__cause__ is error
+            harness.run_throughput(timeout=10, response_hook=hook)
+        assert caught.value.__cause__ is error
     assert len(harness.calls) == stage + 1
     assert_composed_attempts(
         harness,
@@ -2061,7 +2545,7 @@ def test_container_throughput_failure_preserves_prior_attempts(
         failed=True,
         complete=returned,
         owner="ContainerProxy",
-        operation_name="get_throughput",
+        operation_name=harness.operation,
     )
     hook.assert_not_called()
 
@@ -2089,28 +2573,30 @@ def test_container_throughput_reporting_does_not_replay(container_throughput, re
     with trace.get_tracer("customer").start_as_current_span("read_budget") as parent:
         if failure == "cache":
             with pytest.raises(ValueError) as caught:
-                harness.get_throughput()
+                harness.run_throughput()
             assert caught.value is original
         else:
-            assert harness.get_throughput().offer_throughput == 400
-    assert len(harness.calls) == (1 if failure == "cache" else 4)
+            assert harness.run_throughput().offer_throughput == harness.expected_throughput
+    assert len(harness.calls) == (1 if failure == "cache" else len(harness.plan))
     assert len(seen) == 1 and seen[0].outcome == ("error" if failure == "cache" else "success")
     if failure == "partial":
         assert not seen[0].diagnostics.complete
         assert_composed_attempts(
-            harness, recording, parent, complete=False, owner="ContainerProxy", operation_name="get_throughput"
+            harness, recording, parent, complete=False, owner="ContainerProxy", operation_name=harness.operation
         )
     elif failure in ("missing", "invalid"):
         assert seen[0].diagnostics is None and not attempt_spans(recording)
 
 
-@pytest.mark.parametrize("stage", [0, 1, 2, 3])
+@pytest.mark.parametrize("stage", [0, 1, 2, 3, 4])
 @pytest.mark.parametrize("cancel", [False, True])
 def test_async_container_throughput_drains_interruption(container_throughput, recording, stage, cancel):
     harness = container_throughput
     if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
         pytest.skip("Async interruption")
     configure_container_throughput(harness, flow="recreated")
+    if stage >= len(harness.plan):
+        pytest.skip("No replacement step in a read")
     seen = []
     harness.container._item_context = replace(
         harness.container._item_context,
@@ -2123,7 +2609,11 @@ def test_async_container_throughput_drains_interruption(container_throughput, re
         harness.gate_stage = stage
         harness.native_deadline = not cancel
         with trace.get_tracer("customer").start_as_current_span("read_budget") as parent:
-            task = asyncio.create_task(harness.container.get_throughput(timeout=1))
+            task = asyncio.create_task(
+                getattr(harness.container, harness.operation)(
+                    *((harness.replacement,) if harness.operation == "replace_throughput" else ()), timeout=1
+                )
+            )
             await asyncio.wait_for(harness.gate.wait(), timeout=5)
             if cancel:
                 task.cancel()
@@ -2141,7 +2631,7 @@ def test_async_container_throughput_drains_interruption(container_throughput, re
         failed=not cancel or settings.tracing_implementation() is not None,
         complete=False,
         owner="ContainerProxy",
-        operation_name="get_throughput",
+        operation_name=harness.operation,
     )
 
 
@@ -2149,23 +2639,26 @@ def test_async_container_throughput_drains_interruption(container_throughput, re
 def test_container_throughput_disabled_masks_internal_reads(container_throughput, recording, cached):
     harness = container_throughput
     configure_container_throughput(harness, cached, "recreated")
-    assert harness.get_throughput(tracing_options={"enabled": False}).offer_throughput == 400
+    assert harness.run_throughput(tracing_options={"enabled": False}).offer_throughput == harness.expected_throughput
     assert not recording.exporter.get_finished_spans() and not any(call[0] for call in harness.calls)
 
 
 @pytest.mark.parametrize("kwargs", [{"unsupported": True}, {"timeout": 0.5}, {"response_hook": 17}])
 def test_container_throughput_preflight_precedes_lookup(container_throughput, kwargs):
     with pytest.raises((TypeError, ValueError, NotImplementedError)):
-        container_throughput.get_throughput(**kwargs)
+        container_throughput.run_throughput(**kwargs)
     assert not container_throughput.calls
 
 
-@pytest.mark.parametrize("expire_stage", [None, 0, 1, 2, 3])
-def test_container_throughput_preserves_each_step_budget(container_throughput, recording, monkeypatch, expire_stage):
+@pytest.mark.parametrize("expire_stage", [None, 0, 1, 2, 3, 4, "after-result"])
+def test_container_throughput_preserves_shared_budget(container_throughput, recording, monkeypatch, expire_stage):
     from azure.cosmos._backend import _binding_adapter_shared
+    from azure.cosmos._helpers import _container_throughput
 
     harness = container_throughput
     configure_container_throughput(harness, flow="recreated")
+    if isinstance(expire_stage, int) and expire_stage >= len(harness.plan):
+        pytest.skip("No replacement step in a read")
     harness.container._item_context = replace(
         harness.container._item_context,
         defaults=replace(harness.container._item_context.defaults, operation_timeout_seconds=7),
@@ -2174,51 +2667,59 @@ def test_container_throughput_preserves_each_step_budget(container_throughput, r
     clock_module = SimpleNamespace(monotonic=lambda: clock[0])
     monkeypatch.setattr(_binding_adapter_shared, "time", clock_module)
     monkeypatch.setattr(_operation_deadline, "time", clock_module)
+    monkeypatch.setattr(_container_throughput, "time", clock_module)
     asynchronous = isinstance(harness.backend, binding_adapter.AsyncBindingAdapter)
     module = binding_adapter if asynchronous else sync_binding_adapter
     suffix = "_async" if asynchronous else ""
     native = getattr(module._rust_module, "read_container" + suffix)
 
     def setup():
-        clock[0] += 10 if len(harness.calls) == expire_stage else 1
+        clock[0] += 20 if len(harness.calls) == expire_stage else 1
         return "test-driver"
 
     def dispatch(handle, prepared, **kwargs):
         result = native(handle, prepared, **kwargs)
-        clock[0] += 2
+        clock[0] += 20 if expire_stage == "after-result" and len(harness.calls) == len(harness.plan) else 0.25
         return result
 
     async def dispatch_async(handle, prepared, **kwargs):
         result = await native(handle, prepared, **kwargs)
-        clock[0] += 2
+        clock[0] += 20 if expire_stage == "after-result" and len(harness.calls) == len(harness.plan) else 0.25
         return result
 
     monkeypatch.setattr(
         harness.backend, "_ensure_driver_handle", AsyncMock(side_effect=setup) if asynchronous else setup
     )
-    for operation in ("read_container", "get_throughput"):
+    for operation in ("read_container", "get_throughput", "replace_throughput"):
         monkeypatch.setattr(module._rust_module, operation + suffix, dispatch_async if asynchronous else dispatch)
+    hook = Mock()
     with trace.get_tracer("customer").start_as_current_span("read_budget") as parent:
         if expire_stage is None:
-            assert harness.get_throughput(timeout=5).offer_throughput == 400
+            assert (
+                harness.run_throughput(timeout=10, response_hook=hook).offer_throughput == harness.expected_throughput
+            )
         else:
             with pytest.raises(CosmosClientTimeoutError):
-                harness.get_throughput(timeout=5)
-    assert [call[1] for call in harness.calls] == [6.0, 4.0, 6.0, 4.0][:expire_stage]
-    assert [p.settings.timeout_seconds for p in harness.prepared_requests] == [7, 5, 7, 5][:expire_stage]
+                harness.run_throughput(timeout=10, response_hook=hook)
+    count = expire_stage if isinstance(expire_stage, int) else len(harness.plan)
+    assert [call[1] for call in harness.calls] == [9.0, 7.75, 6.5, 5.25, 4.0][:count]
+    assert hook.call_count == int(expire_stage is None)
     assert_composed_attempts(
         harness,
         recording,
         parent,
         failed=expire_stage is not None,
-        complete=expire_stage is None,
+        complete=expire_stage in (None, "after-result"),
         owner="ContainerProxy",
-        operation_name="get_throughput",
+        operation_name=harness.operation,
     )
 
 
 @pytest.mark.parametrize("cached", [False, True])
-def test_container_throughput_preserves_public_overrides(container_throughput, recording, monkeypatch, cached):
+@pytest.mark.parametrize("with_timeout", [False, True])
+def test_container_throughput_preserves_public_overrides(
+    container_throughput, recording, monkeypatch, cached, with_timeout
+):
     harness = container_throughput
     configure_container_throughput(harness, cached, "recreated")
     asynchronous = isinstance(harness.backend, binding_adapter.AsyncBindingAdapter)
@@ -2227,30 +2728,46 @@ def test_container_throughput_preserves_public_overrides(container_throughput, r
     read = mock(wraps=harness.container.read)
     monkeypatch.setattr(harness.container, "_get_properties", lookup)
     monkeypatch.setattr(harness.container, "read", read)
-    assert harness.get_throughput().offer_throughput == 400
-    lookup.assert_called_once_with()
+    assert (
+        harness.run_throughput(**({"timeout": 10} if with_timeout else {})).offer_throughput
+        == harness.expected_throughput
+    )
+    if with_timeout:
+        assert lookup.call_count == 1
+        deadline = lookup.call_args.kwargs["deadline"]
+        assert deadline is not None
+        assert all(call.kwargs["_item_operation_deadline"] == deadline for call in read.call_args_list)
+    else:
+        lookup.assert_called_once_with()
     assert read.call_count == (1 if cached else 2)
     public = [s for s in recording.exporter.get_finished_spans() if s.name.startswith("ContainerProxy.")]
-    assert len(public) == 1 and public[0].name == "ContainerProxy.get_throughput"
+    assert len(public) == 1 and public[0].name == "ContainerProxy." + harness.operation
 
 
 @pytest.mark.parametrize("cached", [False, True])
-def test_container_throughput_sequence_rejects_unrelated_execution(container_throughput, cached):
+@pytest.mark.parametrize("recovered", [False, True])
+def test_container_throughput_sequence_rejects_unrelated_execution(container_throughput, cached, recovered):
     harness = container_throughput
-    alternatives = telemetry.BindingAlternatives(
-        (
-            ("read_container", "get_throughput", "read_container", "get_throughput"),
-            ("get_throughput", "read_container", "get_throughput"),
-        )
+    paths = (
+        ("read_container", "get_throughput", "read_container", "get_throughput"),
+        ("get_throughput", "read_container", "get_throughput"),
     )
-    path = alternatives.paths[int(cached)]
+    if harness.operation == "replace_throughput":
+        paths = (
+            ("read_container", "get_throughput", "replace_throughput"),
+            ("read_container", "get_throughput", "read_container", "get_throughput", "replace_throughput"),
+            ("get_throughput", "replace_throughput"),
+            ("get_throughput", "read_container", "get_throughput", "replace_throughput"),
+        )
+    alternatives = telemetry.BindingAlternatives(paths)
+    path = paths[2 * int(cached) + int(recovered)] if harness.operation == "replace_throughput" else paths[int(cached)]
     harness.container._item_context = replace(
         harness.container._item_context,
         telemetry_handlers=(telemetry.CompletionHandler(Mock(), collect_attempts=True),),
     )
 
     async def run():
-        with telemetry._operation_scope(harness.container, "get_throughput", {}, alternatives):
+        with telemetry._operation_scope(harness.container, harness.operation, {}, alternatives):
             state = telemetry._OPERATION.get()
             for expected in path:
 
@@ -2264,15 +2781,125 @@ def test_container_throughput_sequence_rejects_unrelated_execution(container_thr
                         is None
                     )
                 assert telemetry.get_operation(object(), expected) is None
-                assert telemetry.get_operation(harness.backend, "replace_throughput") is None
+                previous = state.binding_operation
+                assert telemetry.get_operation(harness.backend, "delete_container") is None
+                assert state.binding_operation == previous
                 assert telemetry.get_operation(harness.backend, expected) is state
                 state.begin_contribution().response(contribution_response(5, time.time_ns()))
             assert state.collector.contributions == state.collector.contribution_limit == len(path)
-            for operation in ("read_container", "get_throughput"):
+            for operation in ("read_container", "get_throughput", "replace_throughput"):
                 assert telemetry.get_operation(harness.backend, operation) is None
             state.finish()
 
     asyncio.run(run())
+
+
+@pytest.mark.parametrize("cached", [False, True])
+@pytest.mark.parametrize("recovered", [False, True])
+@pytest.mark.parametrize("failure", ["forbidden", "rid-mismatch", "body", "deserialize"])
+def test_container_throughput_write_failure_never_replays(
+    container_throughput, recording, monkeypatch, cached, recovered, failure
+):
+    from azure.cosmos._helpers import _throughput_replace
+    from azure.cosmos.http_constants import SubStatusCodes
+
+    harness = container_throughput
+    if harness.operation != "replace_throughput":
+        pytest.skip("Replacement boundary")
+    configure_container_throughput(harness, cached, "recreated" if recovered else "success")
+    original = ValueError("returned settings")
+    if failure in ("forbidden", "rid-mismatch"):
+        harness.plan[-1] = (
+            "replace_throughput",
+            403 if failure == "forbidden" else 400,
+            0 if failure == "forbidden" else SubStatusCodes.COLLECTION_RID_MISMATCH,
+            {"message": "write rejected"},
+        )
+    elif failure == "body":
+
+        def malformed(result):
+            response, payload = result
+            if harness.operations[-1] == "replace_throughput":
+                response = (*response[:3], b"not-json", response[4])
+            return response, payload
+
+        harness.transform = malformed
+    else:
+        monkeypatch.setattr(_throughput_replace, "_deserialize_throughput", Mock(side_effect=original))
+    seen = []
+    harness.container._item_context = replace(
+        harness.container._item_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+    hook = Mock()
+    with trace.get_tracer("customer").start_as_current_span("set_capacity") as parent:
+        with pytest.raises(
+            CosmosHttpResponseError if failure in ("forbidden", "rid-mismatch") else ValueError
+        ) as caught:
+            harness.run_throughput(timeout=10, response_hook=hook)
+        if failure == "deserialize":
+            assert caught.value is original
+    assert harness.operations == [step[0] for step in harness.plan]
+    assert harness.operations.count("replace_throughput") == 1
+    assert len(seen) == 1 and seen[0].outcome == "error"
+    hook.assert_not_called()
+    harness.connection.ReplaceOffer.assert_not_called()
+    assert_composed_attempts(
+        harness,
+        recording,
+        parent,
+        failed=True,
+        owner="ContainerProxy",
+        operation_name=harness.operation,
+    )
+
+
+@pytest.mark.parametrize("invalid", ["bad", None, "mixed-settings"])
+def test_container_throughput_replacement_validation_precedes_requests(container_throughput, invalid):
+    from azure.cosmos import ThroughputProperties
+
+    harness = container_throughput
+    if harness.operation != "replace_throughput":
+        pytest.skip("Replacement inputs")
+    harness.replacement = (
+        ThroughputProperties(offer_throughput=800, auto_scale_max_throughput=6000)
+        if invalid == "mixed-settings"
+        else invalid
+    )
+    with pytest.raises((TypeError, ValueError, KeyError)):
+        harness.run_throughput()
+    assert not harness.calls
+
+
+@pytest.mark.parametrize("path", [("a",), ("a", "b", "c"), ("a", "b", "d"), ("a", "a", "c")])
+def test_binding_alternatives_shared_prefix_is_bounded_and_not_speculative(item_runtime, path):
+    harness = item_runtime
+    paths = (("a",), ("a", "b", "c"), ("a", "b", "d"), ("a", "a", "c"))
+    alternatives = telemetry.BindingAlternatives(paths)
+    harness.container._item_context = replace(
+        harness.container._item_context,
+        telemetry_handlers=(telemetry.CompletionHandler(Mock(), collect_attempts=True),),
+    )
+    with telemetry._operation_scope(harness.container, "replace_throughput", {}, alternatives):
+        state = telemetry._OPERATION.get()
+        for index, operation in enumerate(path):
+            previous = state.binding_operation
+            assert telemetry.get_operation(harness.backend, "unrelated") is None
+            assert state.binding_operation == previous
+            assert state.collector.contributions == index
+            assert telemetry.get_operation(harness.backend, operation) is state
+            assert state.collector.contributions == index
+            contribution = state.begin_contribution()
+            response = contribution_response(5, time.time_ns())
+            contribution.response(response)
+            contribution.response(response)
+            assert state.collector.contributions == index + 1
+        assert state.collector.contributions <= state.collector.contribution_limit == 3
+        if len(path) == 3:
+            for operation in ("a", "b", "c", "d"):
+                assert telemetry.get_operation(harness.backend, operation) is None
+        _, diagnostics = state.collector.close()
+        assert diagnostics.complete and diagnostics.request_count == 5 * len(path)
+        assert telemetry.get_operation(harness.backend, "a") is None
 
 
 @pytest.mark.parametrize("cached", [False, True])
@@ -2645,8 +3272,8 @@ def test_completeness_stays_partial_after_aggregation(partial_first):
     assert not diagnostics.complete
 
 
-@pytest.mark.parametrize("paths", [(), ((),), (("get_throughput",), ("get_throughput", "read_database"))])
-def test_binding_alternatives_reject_ambiguous_or_empty_paths(paths):
+@pytest.mark.parametrize("paths", [(), ((),), (("get_throughput",), ("get_throughput",))])
+def test_binding_alternatives_reject_duplicate_or_empty_paths(paths):
     with pytest.raises(ValueError):
         telemetry.BindingAlternatives(paths)
 

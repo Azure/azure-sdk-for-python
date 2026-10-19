@@ -62,7 +62,7 @@ def assert_failure(error, bookmark, hits, elapsed):
     assert error.headers.get("x-ms-substatus") == str(FAULT_SUBSTATUS)
     assert hits == 1, "Expected one faulted attempt with throttle retries disabled"
     assert math.isfinite(elapsed) and 0 <= elapsed < PAGE_BUDGET
-    assert bookmark.startswith("q1.")
+    assert isinstance(bookmark, str) and bookmark
     assert (
         error.continuation_token == bookmark
     ), "Error advanced or lost the delivered public bookmark"

@@ -53,7 +53,7 @@ from azure.cosmos._backend._binding_adapter_shared import (
     close_credential_bridge_quietly,
     driver_transport_error_type,
     driver_unsupported_query_error_type,
-    finalize_backend_resources,
+    finalize_adapter_resources,
     page_binding_call_errors,
     validate_page_request,
 )
@@ -386,7 +386,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         try:
             credential = self._take_token_credential_for_close()
             driver_handle = self._take_driver_handle_for_close()
-            finalize_backend_resources(credential, driver_handle, _rust_module)
+            finalize_adapter_resources(credential, driver_handle, _rust_module)
         except Exception:  # pylint: disable=broad-except
             # Never raise from object finalization.
             pass

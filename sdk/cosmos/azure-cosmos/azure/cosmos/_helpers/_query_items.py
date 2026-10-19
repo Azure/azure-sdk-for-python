@@ -6,17 +6,12 @@
 """Prepare item queries and fetch pages with a retained feed cursor.
 
 QueryConfig serializes the query body once. Each QueryPageIterator retains
-its own feed cursor and progress. A q1. continuation token adds a compatibility
-check for the account, container, query, parameters, and scope around the
-binding's c1. token; neither format changes when these Python helpers are renamed.
+its own feed cursor and progress. Continuation tokens pass through unchanged:
+service tokens for complete partition keys, driver tokens for broader scopes.
 """
 
 from __future__ import annotations
 
-import base64
-import binascii
-import hashlib
-import json
 from copy import deepcopy
 from dataclasses import replace
 from typing import TYPE_CHECKING, Any, Iterator, Optional
@@ -33,13 +28,12 @@ from .._backend.operations import OP_QUERY_ITEMS
 from .._backend.partition_key_input import BindingPartitionKey
 from .._cosmos_responses import CosmosItemPaged
 from .._query_advisor import get_query_advice_info
-from ._partition_key import query_partition_key_components, serialize_partition_key_for_continuation
+from ._partition_key import query_partition_key_components
 from ._read_all_items import ReadAllConfig, ReadAllPageState
 from ._read_items import partition_key_components
 from ._wire_encoding import serialize_body_to_bytes
 from ._request_settings import normalize_query_specification
 
-_PREFIX = "q1."
 _QUERY_OPTIONS = {
     "populate_query_metrics": "populateQueryMetrics",
     "populate_index_metrics": "populateIndexMetrics",
@@ -62,6 +56,13 @@ def reject_rust_continuation_token(kwargs: dict[str, Any]) -> None:
     token = kwargs.get("continuation", options.get("continuation"))
     if isinstance(token, str) and token.startswith(("q1.", "c1.", "cf1.")):
         raise ValueError("query_items continuation belongs to an incompatible backend.")
+
+
+def validate_query_continuation(token: Optional[str]) -> None:
+    if token is not None and (
+        not isinstance(token, str) or token.startswith(("q1.", "cf1."))
+    ):
+        raise ValueError("query_items requires a service or driver query continuation token.")
 
 
 if TYPE_CHECKING:
@@ -134,9 +135,7 @@ class QueryConfig(ReadAllConfig):
                     "continuation_token_limit must be a nonnegative integer."
                 )
             if limit:
-                raise NotImplementedError(
-                    "Rust query bookmarks include client merge state and cannot honor continuation_token_limit; no fallback."
-                )
+                options["responseContinuationTokenLimitInKb"] = limit
         scope = kwargs.pop(
             "full_text_score_scope", options.pop("fullTextScoreScope", None)
         )
@@ -176,75 +175,18 @@ class QueryConfig(ReadAllConfig):
             raise NotImplementedError(
                 "Query scope, paging and planning headers cannot be overridden; no fallback."
             )
-        continuation_scope = {
-            **self.scope.as_dict(),
-            "partition_key": serialize_partition_key_for_continuation(partition) if partition is not None else None,
-        }
-        encoded = json.dumps(
-            [
-                self.backend._endpoint,
-                proxy.container_link,
-                self.query,
-                self.parameters,
-                continuation_scope,
-            ],
-            sort_keys=True,
-            separators=(",", ":"),
-            allow_nan=False,
-        ).encode()
-        self.identity = hashlib.sha256(encoded).hexdigest()
         payload: dict[str, Any] = {"query": self.query}
         if self.parameters:
             payload["parameters"] = list(self.parameters)
         self.query_body = serialize_body_to_bytes(payload, allow_nan=False)
         self.parameters = freeze_json(self.parameters)
-        self.decode(self.options.get("continuation"))
-
-    def decode(self, token: Optional[str]) -> Optional[str]:
-        """Validate the query inputs recorded by the token and return its inner token."""
-        if token is None:
-            return None
-        if not isinstance(token, str) or not token.startswith(_PREFIX):
-            raise ValueError(
-                "query_items requires a query bookmark, not a legacy or other feed token."
-            )
-        try:
-            value = json.loads(
-                base64.b64decode(
-                    token[len(_PREFIX) :] + "=" * (-len(token[len(_PREFIX) :]) % 4),
-                    altchars=b"-_",
-                    validate=True,
-                )
-            )
-        except (ValueError, UnicodeError, binascii.Error) as error:
-            raise ValueError("Invalid query_items continuation.") from error
-        if (
-            not isinstance(value, dict)
-            or set(value) != {"identity", "token"}
-            or value["identity"] != self.identity
-            or not isinstance(value["token"], str)
-            or not value["token"].startswith("c1.")
-        ):
-            raise ValueError(
-                "Query bookmark does not match the account, container, query, parameters or scope."
-            )
-        return value["token"]
-
-    def encode(self, token: Optional[str]) -> Optional[str]:
-        """Add this query's compatibility identity to a binding continuation token."""
-        if token is None:
-            return None
-        return _PREFIX + base64.urlsafe_b64encode(
-            json.dumps(
-                {"identity": self.identity, "token": token}, separators=(",", ":")
-            ).encode()
-        ).decode().rstrip("=")
+        validate_query_continuation(self.options.get("continuation"))
 
     def prepared(
         self, token: Optional[str], cursor: Optional[_ItemFeedCursor], deadline: Optional[float]
     ) -> PreparedPageRequest:
         return replace(
-            super().prepared(self.decode(token), cursor, deadline),
+            super().prepared(token, cursor, deadline),
             op=OP_QUERY_ITEMS,
             query=self.query,
             parameters=self.parameters,
@@ -267,7 +209,7 @@ class QueryPageState(ReadAllPageState):
     def __init__(
         self, config: QueryConfig, headers: CaseInsensitiveDict, token: Optional[str]
     ) -> None:
-        config.decode(token)
+        validate_query_continuation(token)
         super().__init__(config, headers, token)
         self.more = True
         self.resumable = True
@@ -292,7 +234,7 @@ class QueryPageState(ReadAllPageState):
         self.more = page.has_more
         self.resumable = self.resumable and page.continuation_supported
         headers = CaseInsensitiveDict(page.headers or {})
-        token = self.config.encode(page.continuation)
+        token = page.continuation
         if token is None:
             headers.pop("x-ms-continuation", None)
         else:

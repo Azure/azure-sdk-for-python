@@ -10,7 +10,10 @@
 
 use std::{
     future::Future,
-    sync::{atomic::{AtomicU8, Ordering}, Arc},
+    sync::{
+        atomic::{AtomicU8, Ordering},
+        Arc,
+    },
     time::Duration,
 };
 
@@ -55,6 +58,7 @@ struct Progress {
     identity: (String, String),
     continuation: Option<String>,
     request: FeedRequest,
+    service_continuation: bool,
 }
 
 #[derive(Clone, PartialEq)]
@@ -70,6 +74,7 @@ struct QueryRequest {
     partition_key: Option<PartitionKey>,
     feed_range: Option<(String, String)>,
     allow_cross_partition: bool,
+    continuation_limit_kb: Option<i64>,
 }
 
 fn feed_range_from_bounds(min: &str, max: &str) -> Result<FeedRange, CosmosError> {
@@ -101,6 +106,12 @@ impl QueryRequest {
         };
         let operation =
             CosmosOperation::query_items(container, Some(range)).with_body(self.body.clone());
+        if self.continuation_limit_kb.is_some_and(|limit| limit > 0) && !operation.is_trivial() {
+            return Err(PyNotImplementedError::new_err(
+                "continuation_token_limit requires a complete partition_key; \
+                 the driver cannot bound combined query progress. No fallback was performed.",
+            ));
+        }
         if !self.allow_cross_partition && !operation.is_trivial() {
             return Err(PyNotImplementedError::new_err(
                 "Rust query_items requires a complete partition_key when cross-partition execution \
@@ -364,6 +375,8 @@ async fn next_plan_page(
         if let Some(session) = modifiers.session_header {
             operation = operation.with_session_token(SessionToken::from(session));
         }
+        let service_continuation =
+            matches!(request, FeedRequest::Query(_)) && operation.is_trivial();
         let token = continuation.map(ContinuationToken::from_string);
         let plan = match driver
             .plan_operation(operation, &options, token.as_ref(), &plan_options)
@@ -378,6 +391,7 @@ async fn next_plan_page(
             identity,
             continuation: None,
             request,
+            service_continuation,
         }
     };
     // Before execution starts, a later fetch can repeat setup. Execution may
@@ -404,7 +418,11 @@ async fn next_plan_page(
         };
         ChangeFeedRequest::validate_width(width)?;
     }
-    let token = if response.is_some() && !state.continuation_unsupported {
+    let token = if progress.service_continuation {
+        response
+            .as_ref()
+            .and_then(|page| page.headers().continuation.clone())
+    } else if response.is_some() && !state.continuation_unsupported {
         match progress.plan.to_continuation_token() {
             Ok(token) => Some(token.as_str().to_owned()),
             Err(error)
@@ -420,8 +438,17 @@ async fn next_plan_page(
     } else {
         None
     };
+    if let (FeedRequest::Query(request), Some(token)) = (&progress.request, &token) {
+        if let Some(limit) = request.continuation_limit_kb.filter(|limit| *limit > 0) {
+            if token.len() as u128 > limit as u128 * 1024 {
+                return Err(PyRuntimeError::new_err(
+                    "The service returned a continuation token exceeding continuation_token_limit.",
+                ));
+            }
+        }
+    }
     progress.continuation = token.clone();
-    state.has_more = response.is_some();
+    state.has_more = response.is_some() && (!progress.service_continuation || token.is_some());
     state.progress = if response.is_some() {
         Some(progress)
     } else {
@@ -462,6 +489,11 @@ fn feed_inputs(prepared: &Bound<'_, PyAny>, scope: BindingPartitionKey) -> PyRes
             partition_key: key,
             feed_range: scope.getattr("feed_range")?.extract()?,
             allow_cross_partition: scope.getattr("allow_cross_partition")?.extract()?,
+            continuation_limit_kb: prepared
+                .getattr("settings")?
+                .getattr("query")?
+                .getattr("continuation_limit_kb")?
+                .extract()?,
         }));
     }
     match op.as_str() {
@@ -503,9 +535,11 @@ fn inputs(
         .getattr("query")?
         .getattr("continuation")?
         .extract()?;
-    if continuation
-        .as_ref()
-        .is_some_and(|token| !token.starts_with("c1."))
+    let op: String = prepared.getattr("op")?.extract()?;
+    if op != "query_items"
+        && continuation
+            .as_ref()
+            .is_some_and(|token| !token.starts_with("c1."))
     {
         return Err(PyValueError::new_err(
             "read_all_items requires a Rust driver continuation token, not a legacy bookmark",
@@ -533,7 +567,15 @@ pub(crate) fn fetch_page_with_cursor<'py>(
     let runtime = require_runtime_context("fetch_page_with_cursor")?;
     let future = page_timeout(
         timeout,
-        next_plan_page(driver, state, identity, token, modifiers, request, PlanOptions::default()),
+        next_plan_page(
+            driver,
+            state,
+            identity,
+            token,
+            modifiers,
+            request,
+            PlanOptions::default(),
+        ),
     );
     let result = py.allow_threads(|| runtime.tokio_rt.block_on(future))??;
     finish_page(py, result)
@@ -558,7 +600,15 @@ pub(crate) fn fetch_page_with_cursor_async<'py>(
     let runtime = require_runtime_context("fetch_page_with_cursor_async")?;
     let future = page_timeout(
         timeout,
-        next_plan_page(driver, state, identity, token, modifiers, request, PlanOptions::default()),
+        next_plan_page(
+            driver,
+            state,
+            identity,
+            token,
+            modifiers,
+            request,
+            PlanOptions::default(),
+        ),
     );
     let join = runtime.tokio_rt.spawn(future);
     let abort = AbortOnDrop(join.abort_handle());
@@ -588,8 +638,7 @@ mod tests {
         },
         models::{AccountReference, ItemReference, PartitionKey, PartitionKeyDefinition},
         options::{
-            ContentResponseOnWrite, DriverOptions, EndToEndOperationLatencyPolicy,
-            QueryPlanMode,
+            ContentResponseOnWrite, DriverOptions, EndToEndOperationLatencyPolicy, QueryPlanMode,
         },
     };
     use std::{
@@ -605,7 +654,13 @@ mod tests {
         let range = feed_range_from_bounds("3f00", "7f00").unwrap();
         assert_eq!(range.min_inclusive().to_hex(), "3F00");
         assert_eq!(range.max_exclusive().to_hex(), "7F00");
-        for (min, max) in [("3", "7F"), ("GG", "7F"), ("3F", "7"), ("3F", "GG"), ("7F", "3F")] {
+        for (min, max) in [
+            ("3", "7F"),
+            ("GG", "7F"),
+            ("3F", "7"),
+            ("3F", "GG"),
+            ("7F", "3F"),
+        ] {
             assert!(feed_range_from_bounds(min, max).is_err());
         }
     }
@@ -652,7 +707,9 @@ mod tests {
         let driver = runtime
             .create_driver(
                 DriverOptions::builder(account)
-                    .with_partition_failover_options(crate::runtime::partition_failover_options().unwrap())
+                    .with_partition_failover_options(
+                        crate::runtime::partition_failover_options().unwrap(),
+                    )
                     .with_fault_injection_rules(rules)
                     .unwrap()
                     .build(),
@@ -695,7 +752,9 @@ mod tests {
             session_header: None,
             content_response_on_write: ContentResponseOnWrite::Enabled,
             excluded_regions_value: None,
-            driver_timeout_policy: Some(EndToEndOperationLatencyPolicy::new(Duration::from_secs(1))),
+            driver_timeout_policy: Some(EndToEndOperationLatencyPolicy::new(Duration::from_secs(
+                1,
+            ))),
             operation_timeout: None,
             availability_strategy: None,
             read_consistency_strategy: None,
@@ -749,7 +808,8 @@ mod tests {
                 "cursor-phase",
                 FaultInjectionResultBuilder::new()
                     .with_custom_response(
-                        CustomResponseBuilder::new(azure_core::http::StatusCode::BadRequest).build(),
+                        CustomResponseBuilder::new(azure_core::http::StatusCode::BadRequest)
+                            .build(),
                     )
                     .with_delay(delay)
                     .build(),
@@ -798,14 +858,7 @@ mod tests {
                 assert!(state.progress.is_none(), "{operation}");
             }
             rule.disable();
-            let retry = next_page(
-                driver,
-                cursor.state.clone(),
-                identity,
-                None,
-                modifiers(),
-            )
-            .await;
+            let retry = next_page(driver, cursor.state.clone(), identity, None, modifiers()).await;
             if setup_failed {
                 assert!(retry.unwrap().0.is_ok(), "{operation}");
                 assert!(!cursor.can_retry_setup(), "{operation}");
@@ -855,7 +908,11 @@ mod tests {
             if setup_cancelled {
                 assert!(retry.unwrap().0.is_ok(), "{operation}");
             } else {
-                assert!(retry.err().unwrap().to_string().contains("Feed cursor failed"));
+                assert!(retry
+                    .err()
+                    .unwrap()
+                    .to_string()
+                    .contains("Feed cursor failed"));
             }
         }
     }
@@ -922,6 +979,7 @@ mod tests {
             partition_key: None,
             feed_range: None,
             allow_cross_partition: true,
+            continuation_limit_kb: None,
         })
     }
 
@@ -942,6 +1000,8 @@ mod tests {
                 .setattr("body_bytes", pyo3::types::PyBytes::new_bound(py, body))
                 .unwrap();
             prepared.setattr("query_scope", &scope).unwrap();
+            let settings = super::super::settings::test_settings(py);
+            prepared.setattr("settings", settings).unwrap();
             scope.setattr("feed_range", ("00", "AA")).unwrap();
             scope.setattr("allow_cross_partition", false).unwrap();
             let FeedRequest::Query(query) =
@@ -1138,6 +1198,77 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn complete_key_query_preserves_service_token_and_resumes_with_size_limit() {
+        let (_emulator, driver) = setup(0).await;
+        let container = driver
+            .resolve_container("db", "c", Default::default())
+            .await
+            .unwrap();
+        for i in 0..7 {
+            driver
+                .execute_operation(
+                    CosmosOperation::create_item(ItemReference::from_name(
+                        &container,
+                        PartitionKey::from("customer-501"),
+                        i.to_string(),
+                    ))
+                    .with_body(
+                        serde_json::to_vec(
+                            &serde_json::json!({"id": i.to_string(), "pk": "customer-501"}),
+                        )
+                        .unwrap(),
+                    ),
+                    Default::default(),
+                )
+                .await
+                .unwrap();
+        }
+        let request = FeedRequest::Query(QueryRequest {
+            body: br#"{"query":"SELECT * FROM c ORDER BY c.id"}"#.to_vec(),
+            partition_key: Some(PartitionKey::from("customer-501")),
+            feed_range: None,
+            allow_cross_partition: true,
+            continuation_limit_kb: Some(1),
+        });
+        let mut options = modifiers();
+        options.custom_headers.insert(
+            HeaderName::from_static("x-ms-documentdb-responsecontinuationtokenlimitinkb"),
+            HeaderValue::from_static("1"),
+        );
+        let state = Arc::new(Mutex::new(CursorState::default()));
+        let (response, token) = next_plan_page(
+            driver.clone(),
+            state.clone(),
+            ("query-test".into(), "dbs/db/colls/c".into()),
+            None,
+            options,
+            request.clone(),
+            PlanOptions::default(),
+        )
+        .await
+        .unwrap();
+        let response = response.unwrap().unwrap();
+        assert_eq!(token, response.headers().continuation);
+        let token = token.unwrap();
+        assert!(!token.starts_with("c1."));
+        assert!(token.len() <= 1024);
+        let first = match response.body().clone() {
+            azure_data_cosmos_driver::models::ResponseBody::Bytes(bytes) => {
+                let envelope: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
+                envelope["Documents"].as_array().unwrap().clone()
+            }
+            body => body.into_items::<serde_json::Value>().unwrap(),
+        };
+        let remaining = query_drain(&driver, &request, Some(token)).await;
+        let ids: Vec<_> = first
+            .iter()
+            .chain(&remaining)
+            .map(|row| row["id"].as_str().unwrap())
+            .collect();
+        assert_eq!(ids, vec!["0", "1", "2", "3", "4", "5", "6"]);
+    }
+
+    #[tokio::test]
     async fn query_scopes_and_disabled_cross_partition_are_not_ignored() {
         let (_emulator, driver) = setup(12).await;
         let container = driver
@@ -1149,6 +1280,7 @@ mod tests {
             partition_key: Some(legacy_partition_key_header(r#"["key-5"]"#).unwrap()),
             feed_range: None,
             allow_cross_partition: false,
+            continuation_limit_kb: None,
         };
         let rows = query_drain(&driver, &FeedRequest::Query(request.clone()), None).await;
         assert_eq!(rows.len(), 1);
@@ -1156,6 +1288,19 @@ mod tests {
         request.partition_key = None;
         assert!(request.operation(container.clone()).is_err());
         request.allow_cross_partition = true;
+        request.continuation_limit_kb = Some(1);
+        assert!(request
+            .operation(container.clone())
+            .unwrap_err()
+            .to_string()
+            .contains("continuation_token_limit requires a complete partition_key"));
+        request.feed_range = Some(("".into(), "FF".into()));
+        assert!(request
+            .operation(container.clone())
+            .unwrap_err()
+            .to_string()
+            .contains("continuation_token_limit requires a complete partition_key"));
+        request.continuation_limit_kb = None;
         let ranges = driver
             .resolve_all_partition_key_ranges(&container, false)
             .await
@@ -1233,10 +1378,21 @@ mod tests {
             partition_key: Some(legacy_partition_key_header(r#"["tenant-1"]"#).unwrap()),
             feed_range: None,
             allow_cross_partition: true,
+            continuation_limit_kb: None,
         };
         let rows = query_drain(&driver, &FeedRequest::Query(request.clone()), None).await;
         assert_eq!(rows.len(), 9);
         assert!(rows.iter().all(|row| row["tenant"] == "tenant-1"));
+        let container = driver
+            .resolve_container("db", "c", Default::default())
+            .await
+            .unwrap();
+        request.continuation_limit_kb = Some(1);
+        assert!(request
+            .operation(container)
+            .unwrap_err()
+            .to_string()
+            .contains("continuation_token_limit requires a complete partition_key"));
         request.partition_key =
             Some(legacy_partition_key_header(r#"["tenant-1","key-5"]"#).unwrap());
         request.allow_cross_partition = false;

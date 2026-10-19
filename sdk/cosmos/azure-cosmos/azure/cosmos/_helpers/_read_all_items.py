@@ -128,6 +128,7 @@ class ReadAllConfig:
                 allowed |= {
                     "populateQueryMetrics", "populateIndexMetrics", "populateQueryAdvice",
                     "enableScanInQuery", "availabilityStrategy", "correlatedActivityId",
+                    "responseContinuationTokenLimitInKb",
                 }
             initial = self.options.get("initialHeaders")
             if initial is not None and not isinstance(initial, dict):

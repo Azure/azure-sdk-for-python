@@ -54,6 +54,10 @@ def load_module(name, path):
      "cross-continuation", "sync"),
     ("query_items", "test_query_async.py", "::TestQueryAsync::test_cross_partition_query_with_continuation_token_async",
      "cross-continuation", "aio"),
+    ("query_items", "test_query.py", "::TestQuery::test_continuation_token_size_limit_query",
+     "token-limit", "sync"),
+    ("query_items", "test_query_async.py", "::TestQueryAsync::test_continuation_token_size_limit_query_async",
+     "token-limit", "aio"),
 ])
 def test_owned_runner_selects_original_or_copy(monkeypatch, backend, operation, filename, method, query_test, surface):
     monkeypatch.chdir(ROOT)
@@ -76,7 +80,9 @@ def test_owned_runner_selects_original_or_copy(monkeypatch, backend, operation, 
     selections = []
     def run(options):
         if backend == "core-python" and (
-            operation == "upsert_item" or query_test in ("count", "max", "continuation", "cross-continuation")
+            operation == "upsert_item" or query_test in (
+                "count", "max", "continuation", "cross-continuation", "token-limit"
+            )
         ):
             assert config.TEST_MULTI_PARTITION_CONTAINER_ID == config.TEST_SINGLE_PARTITION_CONTAINER_ID == "orders"
         selections.append(options)
@@ -146,6 +152,8 @@ def test_filter_copy_preserves_original_query_body(method_name, start, stop):
     ("aio", "test_query_async.py", "TestQueryAsync", "test_paging_with_continuation_token_async"),
     ("sync", "test_query.py", "TestQuery", "test_cross_partition_query_with_continuation_token"),
     ("aio", "test_query_async.py", "TestQueryAsync", "test_cross_partition_query_with_continuation_token_async"),
+    ("sync", "test_query.py", "TestQuery", "test_continuation_token_size_limit_query"),
+    ("aio", "test_query_async.py", "TestQueryAsync", "test_continuation_token_size_limit_query_async"),
 ])
 def test_continuation_copy_preserves_original_body(surface, filename, class_name, method_name):
     def body(path):
@@ -367,6 +375,10 @@ def test_async_fixture_cleans_database_when_container_setup_fails(monkeypatch):
      "test_query_value_min_across_full_feed_range_returns_scalar"),
     ("min", "aio", "test_query_feed_range_async.py", "TestQueryFeedRangeAsync",
      "test_query_value_min_across_full_feed_range_returns_scalar_async"),
+    ("prefix-continuation", "sync", "test_query_feed_range_multipartition.py", "TestFeedRangeMultiPartition",
+     "test_prefix_partition_key_query_pagination_resume"),
+    ("prefix-continuation", "aio", "test_query_feed_range_multipartition_async.py", "TestFeedRangeMultiPartitionAsync",
+     "test_prefix_partition_key_query_pagination_resume_async"),
 ])
 def test_adapted_runner_uses_same_copy_with_only_backend_changed(
     monkeypatch, backend, query_test, surface, filename, class_name, method_name,
@@ -514,6 +526,66 @@ def test_avg_copy_preserves_original_query_body(surface, filename, class_name, m
     assert body(ROOT / "tests" / filename) == body(
         ROOT / "tests" / "query_items" / surface / "legacy" / filename
     )
+
+
+@pytest.mark.parametrize("surface,suffix", [("sync", ""), ("aio", "_async")])
+def test_prefix_copy_preserves_original_container_and_functional_body(surface, suffix):
+    filename = f"test_query_feed_range_multipartition{suffix}.py"
+    method_name = f"test_prefix_partition_key_query_pagination_resume{suffix}"
+
+    def parts(path):
+        module = ast.parse(path.read_text(encoding="utf-8"))
+        method = next(node for node in ast.walk(module)
+                      if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == method_name)
+        setup = next(node for node in ast.walk(method)
+                     if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+                     and node.func.attr == "create_container_if_not_exists")
+        body = next(node.body for node in ast.walk(method)
+                    if isinstance(node, ast.Try) and isinstance(node.body[0], ast.For))
+        return ast.dump(setup), [ast.dump(node) for node in body]
+
+    assert parts(ROOT / "tests" / filename) == parts(
+        ROOT / "tests" / "query_items" / surface / "legacy" / filename
+    )
+
+
+@pytest.mark.parametrize("surface,suffix", [("sync", ""), ("aio", "_async")])
+@pytest.mark.parametrize("failure_stage", ["container", "query"])
+def test_prefix_fixture_cleans_owned_database_on_failure(monkeypatch, surface, suffix, failure_stage):
+    monkeypatch.setenv("ACCOUNT_HOST", "https://example.invalid")
+    monkeypatch.setenv("ACCOUNT_KEY", "unit-test-key")
+    module = load_module(
+        f"_prefix_cleanup_{surface}",
+        ROOT / "tests" / "query_items" / surface / "legacy" / f"test_query_feed_range_multipartition{suffix}.py",
+    )
+    client, database, container = MagicMock(), MagicMock(), MagicMock()
+    if surface == "aio":
+        client.__aenter__ = AsyncMock(return_value=client)
+        client.close = AsyncMock()
+        client.create_database = AsyncMock(return_value=database)
+        client.delete_database = AsyncMock()
+        database.create_container_if_not_exists = AsyncMock(return_value=container)
+        database.delete_container = AsyncMock()
+        container.upsert_item = AsyncMock()
+    else:
+        client.create_database.return_value = database
+        database.create_container_if_not_exists.return_value = container
+    target = database.create_container_if_not_exists if failure_stage == "container" else container.query_items
+    target.side_effect = RuntimeError(f"{failure_stage} failed")
+    monkeypatch.setattr(module, "CosmosClient", MagicMock(return_value=client))
+    class_name = "TestFeedRangeMultiPartitionAsync" if surface == "aio" else "TestFeedRangeMultiPartition"
+    case = getattr(module, class_name)(f"test_prefix_partition_key_query_pagination_resume{suffix}")
+    result = unittest.TestResult()
+    case.run(result)
+    assert len(result.errors) == 1
+    assert f"{failure_stage} failed" in result.errors[0][1]
+    assert not result.failures
+    if surface == "aio":
+        client.delete_database.assert_awaited_once_with(case.database_id)
+        client.close.assert_awaited_once()
+    else:
+        client.delete_database.assert_called_once_with(case.database_id)
+        client.close.assert_called_once()
 
 
 def test_async_sum_fixture_cleans_database_when_container_setup_fails(monkeypatch):
