@@ -11,7 +11,6 @@
 
 ### Breaking Changes
 
-  - Deleted or renamed method `NetworkInterfacesOperations.get_virtual_machine_scale_set_network_interface`
   - Deleted or renamed method `NetworkInterfacesOperations.list_virtual_machine_scale_set_vm_network_interfaces`
   - Deleted or renamed method `PublicIPAddressesOperations.get_virtual_machine_scale_set_public_ip_address`
   - Deleted or renamed method `PublicIPAddressesOperations.list_virtual_machine_scale_set_vm_public_ip_addresses`

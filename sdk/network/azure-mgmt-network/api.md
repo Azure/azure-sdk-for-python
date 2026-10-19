@@ -7365,6 +7365,18 @@ namespace azure.mgmt.network.aio.operations
                 **kwargs: Any
             ) -> NetworkInterfaceIPConfiguration: ...
 
+        @distributed_trace_async
+        async def get_virtual_machine_scale_set_network_interface(
+                self, 
+                resource_group_name: str, 
+                virtual_machine_scale_set_name: str, 
+                virtualmachine_index: str, 
+                network_interface_name: str, 
+                *, 
+                expand: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> NetworkInterface: ...
+
         @distributed_trace
         def list(
                 self, 
@@ -15138,18 +15150,6 @@ namespace azure.mgmt.network.aio.operations
                 *args, 
                 **kwargs
             ) -> None: ...
-
-        @distributed_trace_async
-        async def get_virtual_machine_scale_set_network_interface(
-                self, 
-                resource_group_name: str, 
-                virtual_machine_scale_set_name: str, 
-                virtualmachine_index: str, 
-                network_interface_name: str, 
-                *, 
-                expand: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> NetworkInterface: ...
 
         @distributed_trace
         def list_virtual_machine_scale_set_vm_network_interfaces(
@@ -45119,6 +45119,18 @@ namespace azure.mgmt.network.operations
             ) -> NetworkInterfaceIPConfiguration: ...
 
         @distributed_trace
+        def get_virtual_machine_scale_set_network_interface(
+                self, 
+                resource_group_name: str, 
+                virtual_machine_scale_set_name: str, 
+                virtualmachine_index: str, 
+                network_interface_name: str, 
+                *, 
+                expand: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> NetworkInterface: ...
+
+        @distributed_trace
         def list(
                 self, 
                 resource_group_name: str, 
@@ -52891,18 +52903,6 @@ namespace azure.mgmt.network.operations
                 *args, 
                 **kwargs
             ) -> None: ...
-
-        @distributed_trace
-        def get_virtual_machine_scale_set_network_interface(
-                self, 
-                resource_group_name: str, 
-                virtual_machine_scale_set_name: str, 
-                virtualmachine_index: str, 
-                network_interface_name: str, 
-                *, 
-                expand: Optional[str] = ..., 
-                **kwargs: Any
-            ) -> NetworkInterface: ...
 
         @distributed_trace
         def list_virtual_machine_scale_set_vm_network_interfaces(

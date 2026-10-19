@@ -7730,6 +7730,20 @@ class TestNetworkManagementNetworkInterfacesOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_network_interfaces_get_virtual_machine_scale_set_network_interface(self, resource_group):
+        response = await self.client.network_interfaces.get_virtual_machine_scale_set_network_interface(
+            resource_group_name=resource_group.name,
+            virtual_machine_scale_set_name="str",
+            virtualmachine_index="str",
+            network_interface_name="str",
+            api_version="2018-10-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_network_interfaces_list_cloud_service_network_interfaces(self, resource_group):
         response = self.client.network_interfaces.list_cloud_service_network_interfaces(
             resource_group_name=resource_group.name,

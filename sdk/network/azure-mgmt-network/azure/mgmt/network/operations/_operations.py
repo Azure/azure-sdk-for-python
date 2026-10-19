@@ -1811,6 +1811,47 @@ def build_network_interfaces_list_virtual_machine_scale_set_network_interfaces_r
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_network_interfaces_get_virtual_machine_scale_set_network_interface_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    virtual_machine_scale_set_name: str,
+    virtualmachine_index: str,
+    network_interface_name: str,
+    subscription_id: str,
+    *,
+    expand: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/virtualMachines/{virtualmachineIndex}/networkInterfaces/{networkInterfaceName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "virtualMachineScaleSetName": _SERIALIZER.url(
+            "virtual_machine_scale_set_name", virtual_machine_scale_set_name, "str"
+        ),
+        "virtualmachineIndex": _SERIALIZER.url("virtualmachine_index", virtualmachine_index, "str"),
+        "networkInterfaceName": _SERIALIZER.url("network_interface_name", network_interface_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if expand is not None:
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_network_interfaces_list_cloud_service_network_interfaces_request(  # pylint: disable=name-too-long
     resource_group_name: str, cloud_service_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
@@ -16374,47 +16415,6 @@ def build_virtual_wans_list_request(subscription_id: str, **kwargs: Any) -> Http
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_vmss_network_interfaces_get_virtual_machine_scale_set_network_interface_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    virtual_machine_scale_set_name: str,
-    virtualmachine_index: str,
-    network_interface_name: str,
-    subscription_id: str,
-    *,
-    expand: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-10-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{virtualMachineScaleSetName}/virtualMachines/{virtualmachineIndex}/networkInterfaces/{networkInterfaceName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "virtualMachineScaleSetName": _SERIALIZER.url(
-            "virtual_machine_scale_set_name", virtual_machine_scale_set_name, "str"
-        ),
-        "virtualmachineIndex": _SERIALIZER.url("virtualmachine_index", virtualmachine_index, "str"),
-        "networkInterfaceName": _SERIALIZER.url("network_interface_name", network_interface_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if expand is not None:
-        _params["$expand"] = _SERIALIZER.query("expand", expand, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -33387,6 +33387,95 @@ class NetworkInterfacesOperations:  # pylint: disable=docstring-missing-param
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get_virtual_machine_scale_set_network_interface(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        virtual_machine_scale_set_name: str,
+        virtualmachine_index: str,
+        network_interface_name: str,
+        *,
+        expand: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.NetworkInterface:
+        """Get the specified network interface in a virtual machine scale set.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param virtual_machine_scale_set_name: Required.
+        :type virtual_machine_scale_set_name: str
+        :param virtualmachine_index: Required.
+        :type virtualmachine_index: str
+        :param network_interface_name: Required.
+        :type network_interface_name: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
+        :return: NetworkInterface. The NetworkInterface is compatible with MutableMapping
+        :rtype: ~azure.mgmt.network.models.NetworkInterface
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-10-01"))
+        cls: ClsType[_models.NetworkInterface] = kwargs.pop("cls", None)
+
+        _request = build_network_interfaces_get_virtual_machine_scale_set_network_interface_request(
+            resource_group_name=resource_group_name,
+            virtual_machine_scale_set_name=virtual_machine_scale_set_name,
+            virtualmachine_index=virtualmachine_index,
+            network_interface_name=network_interface_name,
+            subscription_id=self._config.subscription_id,
+            expand=expand,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.NetworkInterface, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_cloud_service_network_interfaces(
@@ -102772,95 +102861,6 @@ class VmssNetworkInterfacesOperations:  # pylint: disable=docstring-missing-para
         self._config: NetworkManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def get_virtual_machine_scale_set_network_interface(  # pylint: disable=name-too-long
-        self,
-        resource_group_name: str,
-        virtual_machine_scale_set_name: str,
-        virtualmachine_index: str,
-        network_interface_name: str,
-        *,
-        expand: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.NetworkInterface:
-        """Get the specified network interface in a virtual machine scale set.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param virtual_machine_scale_set_name: Required.
-        :type virtual_machine_scale_set_name: str
-        :param virtualmachine_index: Required.
-        :type virtualmachine_index: str
-        :param network_interface_name: Required.
-        :type network_interface_name: str
-        :keyword expand: Expands referenced resources. Default value is None.
-        :paramtype expand: str
-        :return: NetworkInterface. The NetworkInterface is compatible with MutableMapping
-        :rtype: ~azure.mgmt.network.models.NetworkInterface
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-10-01"))
-        cls: ClsType[_models.NetworkInterface] = kwargs.pop("cls", None)
-
-        _request = build_vmss_network_interfaces_get_virtual_machine_scale_set_network_interface_request(
-            resource_group_name=resource_group_name,
-            virtual_machine_scale_set_name=virtual_machine_scale_set_name,
-            virtualmachine_index=virtualmachine_index,
-            network_interface_name=network_interface_name,
-            subscription_id=self._config.subscription_id,
-            expand=expand,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.CloudError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.NetworkInterface, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
 
     @distributed_trace
     def list_virtual_machine_scale_set_vm_network_interfaces(  # pylint: disable=name-too-long
