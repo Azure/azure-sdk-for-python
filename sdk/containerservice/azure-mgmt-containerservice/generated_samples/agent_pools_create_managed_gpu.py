@@ -15,7 +15,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
     pip install azure-identity
     pip install azure-mgmt-containerservice
 # USAGE
-    python get_safeguards_versions.py
+    python agent_pools_create_managed_gpu.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,23 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.managed_clusters.get_safeguards_versions(
-        location="location1",
-        version="v1.0.0",
-    )
+    response = client.agent_pools.begin_create_or_update(
+        resource_group_name="rg1",
+        resource_name="clustername1",
+        agent_pool_name="agentpool1",
+        parameters={
+            "properties": {
+                "count": 3,
+                "gpuProfile": {"driver": "Install", "nvidia": {"managementMode": "Managed"}},
+                "mode": "User",
+                "osType": "Linux",
+                "vmSize": "Standard_NC4as_T4_v3",
+            }
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-07-02-preview/GetSafeguardsVersions.json
+# x-ms-original-file: 2026-08-01/AgentPoolsCreate_ManagedGPU.json
 if __name__ == "__main__":
     main()
